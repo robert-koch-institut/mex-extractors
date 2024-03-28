@@ -2,7 +2,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 from mex.rdmo.models.source import RDMOSource
 
 
@@ -30,7 +30,7 @@ def transform_rdmo_sources_to_extracted_activities(
         else:
             continue
         end = (
-            Timestamp(project_end)
+            TemporalEntity(project_end)
             if (
                 project_end := rdmo_source.question_answer_pairs.get(
                     "/domain/project/schedule/project_end"
@@ -69,7 +69,7 @@ def transform_rdmo_sources_to_extracted_activities(
             "/domain/project/title/acronym"
         )
         start = (
-            Timestamp(project_start)
+            TemporalEntity(project_start)
             if (
                 project_start := rdmo_source.question_answer_pairs.get(
                     "/domain/project/schedule/project_start"

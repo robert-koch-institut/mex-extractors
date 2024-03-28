@@ -1,5 +1,5 @@
 from mex.common.models import BaseModel
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 
 
 class BlueAntClient(BaseModel):
@@ -13,11 +13,11 @@ class BlueAntProject(BaseModel):
 
     clients: list[BlueAntClient]
     departmentId: int
-    end: Timestamp
+    end: TemporalEntity
     name: str
     number: str
     projectLeaderId: int
-    start: Timestamp
+    start: TemporalEntity
     statusId: int
     typeId: int
 

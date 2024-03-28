@@ -1,6 +1,6 @@
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
-from mex.common.types import Identifier, TextLanguage, Timestamp
+from mex.common.types import Identifier, TemporalEntity, TextLanguage
 from mex.rdmo.models.person import RDMOPerson
 from mex.rdmo.models.source import RDMOSource
 from mex.rdmo.transform import transform_rdmo_sources_to_extracted_activities
@@ -37,13 +37,13 @@ def test_transform_rdmo_sources_to_extracted_activities(
         "abstract": [{"value": "ABC"}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
         "contact": [Identifier.generate(seed=42)],
-        "end": [Timestamp("2006-05")],
+        "end": [TemporalEntity("2006-05")],
         "hadPrimarySource": extracted_primary_sources["rdmo"].stableTargetId,
         "identifierInPrimarySource": "123",
         "identifier": Joker(),
         "responsibleUnit": [Identifier.generate(seed=24)],
         "stableTargetId": Joker(),
-        "start": [Timestamp("2004")],
+        "start": [TemporalEntity("2004")],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"language": TextLanguage.EN, "value": "A, B and C"}],
     }

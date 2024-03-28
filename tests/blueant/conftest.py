@@ -13,16 +13,16 @@ from mex.blueant.settings import BlueAntSettings
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson
 from mex.common.models import ExtractedPerson
-from mex.common.types import Identifier, Timestamp
+from mex.common.types import Identifier, TemporalEntity
 
 MOCKED_API_SOURCE = {
     "clients": [{"clientId": 1}],
     "departmentId": 123,
-    "end": Timestamp(2019, 12, 31),
+    "end": TemporalEntity(2019, 12, 31),
     "name": "Prototype Space Rocket",
     "number": "00123",
     "projectLeaderId": 12345,
-    "start": Timestamp(2019, 1, 7),
+    "start": TemporalEntity(2019, 1, 7),
     "statusId": 3215,
     "typeId": 8762,
 }
@@ -60,10 +60,10 @@ def extracted_person() -> ExtractedPerson:
 def blueant_source() -> BlueAntSource:
     """Return a sample Blue Ant source."""
     return BlueAntSource(
-        end=Timestamp(2019, 12, 31),
+        end=TemporalEntity(2019, 12, 31),
         name="3_Prototype Space Rocket",
         number="00123",
-        start=Timestamp(2019, 1, 7),
+        start=TemporalEntity(2019, 1, 7),
         client_names="Robert Koch-Institut",
         department="C1",
         projectLeaderEmployeeId="person-567",
@@ -76,10 +76,10 @@ def blueant_source() -> BlueAntSource:
 def blueant_source_without_leader() -> BlueAntSource:
     """Return a sample Blue Ant source without a project leader."""
     return BlueAntSource(
-        end=Timestamp(2010, 10, 11),
+        end=TemporalEntity(2010, 10, 11),
         name="2_Prototype Moon Lander",
         number="00255",
-        start=Timestamp(2018, 8, 9),
+        start=TemporalEntity(2018, 8, 9),
         client_names="Robert Koch-Institut",
         department="C1 Child Department",
         status="Projektumsetzung",

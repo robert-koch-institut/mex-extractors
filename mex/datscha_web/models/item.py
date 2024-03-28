@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from pydantic import Field
 
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 from mex.models import BaseRawData
 
 
@@ -108,11 +108,11 @@ class DatschaWebItem(BaseRawData):
             if partner
         ]
 
-    def get_start_year(self) -> Timestamp | None:
+    def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
         return None
 
-    def get_end_year(self) -> Timestamp | None:
+    def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
         return None
 

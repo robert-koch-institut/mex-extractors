@@ -202,12 +202,8 @@ def extract_sumo_organizations(
         "forValues"
     ][0]
     for label in [publisher]:
-        if (
-            label
-            and (orgs := list(search_organization_by_label(label)))
-            and len(orgs) == 1
-        ):
-            sumo_resource_organizations[label] = orgs[0]
+        if label and (org := search_organization_by_label(label)):
+            sumo_resource_organizations[label] = org
     return sumo_resource_organizations
 
 

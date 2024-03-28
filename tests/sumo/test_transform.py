@@ -16,8 +16,8 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
+    TemporalEntity,
     TextLanguage,
-    Timestamp,
 )
 from mex.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.sumo.models.cc1_data_valuesets import Cc1DataValuesets
@@ -481,7 +481,7 @@ def test_transform_sumo_activity_to_extracted_activity(
         ],
         "responsibleUnit": [unit_merged_ids_by_synonym["FG32"]],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
-        "start": [Timestamp("2018-07")],
+        "start": [TemporalEntity("2018-07")],
         "theme": [
             "https://mex.rki.de/item/theme-35",
             "https://mex.rki.de/item/theme-11",

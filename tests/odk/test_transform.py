@@ -117,6 +117,7 @@ def test_get_external_partner_and_publisher_by_label(
     organization_dict = get_external_partner_and_publisher_by_label(
         odk_resource_mappings, extracted_primary_sources["wikidata"]
     )
+
     assert organization_dict == {
         "invidunt": Joker(),
         "consetetur": Joker(),

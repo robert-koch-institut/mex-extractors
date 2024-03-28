@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 from mex.models import BaseRawData
 
 
@@ -12,8 +12,8 @@ class FFProjectsSource(BaseRawData):
     thema_des_projekts: str
     rki_az: str
     laufzeit_cells: tuple[str | None, str | None]
-    laufzeit_bis: Timestamp | None = None
-    laufzeit_von: Timestamp | None = None
+    laufzeit_bis: TemporalEntity | None = None
+    laufzeit_von: TemporalEntity | None = None
     projektleiter: str
     rki_oe: str | None = None
     zuwendungs_oder_auftraggeber: str
@@ -23,11 +23,11 @@ class FFProjectsSource(BaseRawData):
         """Return partners from extractor."""
         return []
 
-    def get_start_year(self) -> Timestamp | None:
+    def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
         return self.laufzeit_von
 
-    def get_end_year(self) -> Timestamp | None:
+    def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
         return self.laufzeit_bis
 

@@ -2,7 +2,7 @@ from abc import abstractmethod
 from collections.abc import Sequence
 
 from mex.common.models import BaseModel
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 
 
 class BaseRawData(BaseModel):
@@ -13,11 +13,11 @@ class BaseRawData(BaseModel):
         """Return partners from extractor."""
 
     @abstractmethod
-    def get_start_year(self) -> Timestamp | None:
+    def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
 
     @abstractmethod
-    def get_end_year(self) -> Timestamp | None:
+    def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
 
     @abstractmethod

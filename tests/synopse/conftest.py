@@ -20,10 +20,10 @@ from mex.common.types import (
     AccessRestriction,
     Identifier,
     Link,
+    TemporalEntity,
     Text,
     TextLanguage,
     Theme,
-    Timestamp,
 )
 from mex.synopse.models.project import SynopseProject
 from mex.synopse.models.study import SynopseStudy
@@ -410,13 +410,13 @@ def extracted_activity(
                 title="- Fragebogen\n- Labor",
             )
         ],
-        end=[Timestamp("2013")],
+        end=[TemporalEntity("2013")],
         hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
         identifierInPrimarySource="12345",
         involvedPerson=[Identifier.generate(seed=12)],
         responsibleUnit=[Identifier.generate(seed=13)],
         shortName=[{"value": "BBCCDD_00"}],
-        start=[Timestamp("2000")],
+        start=[TemporalEntity("2000")],
         theme=["https://mex.rki.de/item/theme-35"],
         title=[Text(language=TextLanguage.DE, value="Studie zu Lorem und Ipsum")],
     )

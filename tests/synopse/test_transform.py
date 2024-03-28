@@ -14,9 +14,9 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedOrganizationalUnitIdentifier,
+    TemporalEntity,
     Text,
     TextLanguage,
-    Timestamp,
 )
 from mex.synopse.models.project import SynopseProject
 from mex.synopse.models.study import SynopseStudy
@@ -388,7 +388,7 @@ def test_transform_synopse_data_to_mex_resources(
         "contributingUnit": extracted_activity.involvedUnit
         + extracted_activity.responsibleUnit,
         "contributor": extracted_activity.involvedPerson,
-        "created": Timestamp(synopse_studies[0].erstellungs_datum),
+        "created": TemporalEntity(synopse_studies[0].erstellungs_datum),
         "description": [
             {"language": TextLanguage.DE, "value": synopse_studies[0].beschreibung}
         ],
@@ -463,7 +463,7 @@ def test_transform_synopse_data_regular_to_mex_resources(
         "contributingUnit": extracted_activity.involvedUnit
         + extracted_activity.responsibleUnit,
         "contributor": extracted_activity.involvedPerson,
-        "created": Timestamp("2022"),
+        "created": TemporalEntity("2022"),
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
@@ -594,7 +594,7 @@ def test_transform_synopse_projects_to_mex_activities(
                 "title": "- Fragebogen\n- Labor",
             }
         ],
-        "end": [Timestamp(synopse_project.projektende)],
+        "end": [TemporalEntity(synopse_project.projektende)],
         "hadPrimarySource": extracted_primary_sources["report-server"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
@@ -602,7 +602,7 @@ def test_transform_synopse_projects_to_mex_activities(
         "responsibleUnit": [Identifier.generate(seed=13)],
         "shortName": [{"value": "BBCCDD_00"}],
         "stableTargetId": Joker(),
-        "start": [Timestamp(synopse_project.projektbeginn)],
+        "start": [TemporalEntity(synopse_project.projektbeginn)],
         "succeeds": Joker(),
         "theme": ["https://mex.rki.de/item/theme-35"],
         "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],

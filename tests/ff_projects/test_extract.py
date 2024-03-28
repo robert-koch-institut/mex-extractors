@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity, TemporalEntityPrecision
 from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.ff_projects.extract import (
     extract_ff_projects_organizations,
@@ -23,30 +23,27 @@ def test_extract_ff_projects_sources() -> None:
 
     expected = [
         {
-            "kategorie": "Entgelt",
-            "thema_des_projekts": "Skipped Auftraggeber",
+            "kategorie": "Sonstige",
+            "thema_des_projekts": "Skipped Kategorie",
             "rki_az": "1364",
             "laufzeit_cells": (None, None),
-            "projektleiter": "(Leitung) 1 Ficticious, Frieda / OE1?",
-            "zuwendungs_oder_auftraggeber": "Sonstige",
-            "lfd_nr": "17",
+            "projektleiter": "Dr. Ficticious, Frieda",
+            "zuwendungs_oder_auftraggeber": "Banana",
+            "lfd_nr": "10",
         },
         {
             "kategorie": "Auftragsforschung",
-            "foerderprogr": "Funding",
-            "thema_des_projekts": "Fully Specified Source",
+            "foerderprogr": "Sonstige",
+            "thema_des_projekts": "Skipped Förderprogr.",
             "rki_az": "1364",
-            "laufzeit_cells": ("2018-01-01 00:00:00", "2019-09-01 00:00:00"),
-            "laufzeit_bis": Timestamp("2019-08-31T23:00:00Z"),
-            "laufzeit_von": Timestamp("2017-12-31T23:00:00Z"),
+            "laufzeit_cells": (None, None),
             "projektleiter": "Dr Frieda Ficticious",
-            "rki_oe": "FG33",
-            "zuwendungs_oder_auftraggeber": "Test-Institute",
-            "lfd_nr": "18",
+            "zuwendungs_oder_auftraggeber": "Orange",
+            "lfd_nr": "11",
         },
     ]
 
-    assert source_dicts[8:10] == expected
+    assert source_dicts[1:3] == expected
 
 
 @pytest.mark.parametrize(
@@ -68,7 +65,9 @@ def test_get_clean_names(name: str, expected_clean_name: str) -> None:
 def test_get_timestamp_from_cell() -> None:
     cell_value = datetime(2018, 1, 1, 0, 0)
     ts = get_timestamp_from_cell(cell_value)
-    assert ts == Timestamp("2017-12-31T23:00:00Z")
+    expected_ts = TemporalEntity("2017-12-31T23:00:00Z")
+    expected_ts.precision = TemporalEntityPrecision.DAY
+    assert ts == expected_ts
 
     cell_value = MagicMock()
     ts = get_timestamp_from_cell(cell_value)

@@ -1,6 +1,6 @@
 from collections.abc import Generator, Sequence
 
-from mex.common.types import Identifier, Timestamp
+from mex.common.types import Identifier, TemporalEntity
 from mex.filters import filter_by_global_rules
 from mex.models import BaseRawData
 from mex.settings import Settings
@@ -11,8 +11,8 @@ class MockedBaseRawData(BaseRawData):
 
     item_id: str
     partner: str
-    start_year: Timestamp
-    end_year: Timestamp
+    start_year: TemporalEntity
+    end_year: TemporalEntity
     unit: str
     identifier_in_primary_source: str
 
@@ -20,11 +20,11 @@ class MockedBaseRawData(BaseRawData):
         """Return partners from extractor."""
         return [self.partner]
 
-    def get_start_year(self) -> Timestamp | None:
+    def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
         return self.start_year
 
-    def get_end_year(self) -> Timestamp | None:
+    def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
         return self.end_year
 
@@ -43,40 +43,40 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
         MockedBaseRawData(
             item_id="1",
             partner="permitted partner",
-            start_year=Timestamp(2020),
-            end_year=Timestamp(2021),
+            start_year=TemporalEntity(2020),
+            end_year=TemporalEntity(2021),
             unit="permitted unit",
             identifier_in_primary_source="42",
         ),
         MockedBaseRawData(
             item_id="2",
             partner=["Schmiedecke OHG"],
-            start_year=Timestamp(2020),
-            end_year=Timestamp(2021),
+            start_year=TemporalEntity(2020),
+            end_year=TemporalEntity(2021),
             unit="permitted unit",
             identifier_in_primary_source="42",
         ),
         MockedBaseRawData(
             item_id="3",
             partner="permitted partner",
-            start_year=Timestamp(2018),
-            end_year=Timestamp(2021),
+            start_year=TemporalEntity(2018),
+            end_year=TemporalEntity(2021),
             unit="permitted unit",
             identifier_in_primary_source="42",
         ),
         MockedBaseRawData(
             item_id="4",
             partner="permitted partner",
-            start_year=Timestamp(2020),
-            end_year=Timestamp(2019),
+            start_year=TemporalEntity(2020),
+            end_year=TemporalEntity(2019),
             unit="permitted unit",
             identifier_in_primary_source="42",
         ),
         MockedBaseRawData(
             item_id="5",
             partner="permitted partner",
-            start_year=Timestamp(2020),
-            end_year=Timestamp(2021),
+            start_year=TemporalEntity(2020),
+            end_year=TemporalEntity(2021),
             unit="FG99",
             identifier_in_primary_source="42",
         ),

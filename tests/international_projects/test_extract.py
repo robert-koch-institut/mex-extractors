@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 from mex.international_projects.extract import (
     extract_international_projects_project_leaders,
     extract_international_projects_sources,
@@ -14,7 +14,7 @@ def test_extract_international_projects_sources() -> None:
         {
             "funding_type": "Third party funded",
             "project_lead_person": "Dr Frieda Ficticious",
-            "end_date": Timestamp("2021-12-30"),
+            "end_date": TemporalEntity("2021-12-30"),
             "partner_organization": "",
             "funding_source": ["Test-Institute"],
             "funding_program": "",
@@ -22,7 +22,7 @@ def test_extract_international_projects_sources() -> None:
             "additional_rki_units": "FG99",
             "project_lead_rki_unit": "FG99",
             "project_abbreviation": "testAAbr",
-            "start_date": Timestamp("2021-07-26"),
+            "start_date": TemporalEntity("2021-07-26"),
             "activity1": "",
             "activity2": "",
             "topic1": "Laboratory diagnostics",
@@ -33,7 +33,7 @@ def test_extract_international_projects_sources() -> None:
         {
             "funding_type": "Third party funded",
             "project_lead_person": "Dr Frieda Ficticious",
-            "end_date": Timestamp("2025-12-30"),
+            "end_date": TemporalEntity("2025-12-30"),
             "partner_organization": "",
             "funding_source": ["Test-Institute"],
             "funding_program": "GHPP2",
@@ -41,7 +41,7 @@ def test_extract_international_projects_sources() -> None:
             "additional_rki_units": "",
             "project_lead_rki_unit": "FG99",
             "project_abbreviation": "testAAbr2",
-            "start_date": Timestamp("2022-12-31"),
+            "start_date": TemporalEntity("2022-12-31"),
             "activity1": "Capacity building including trainings",
             "activity2": "Other",
             "topic1": "Laboratory diagnostics",

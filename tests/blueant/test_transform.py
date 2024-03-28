@@ -5,7 +5,7 @@ from mex.blueant.models.source import BlueAntSource
 from mex.blueant.transform import transform_blueant_sources_to_extracted_activities
 from mex.common.models import ExtractedAccessPlatform
 from mex.common.testing import Joker
-from mex.common.types import Identifier, Timestamp
+from mex.common.types import Identifier, TemporalEntity
 
 
 def test_transform_blueant_sources_to_extracted_activities(
@@ -36,28 +36,28 @@ def test_transform_blueant_sources_to_extracted_activities(
     assert len(mex_sources) == 2
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [Identifier.generate(seed=99)],
-        "end": [Timestamp("2019-12-31")],
+        "end": [TemporalEntity("2019-12-31")],
         "responsibleUnit": [Identifier.generate(seed=555)],
         "identifier": Joker(),
         "identifierInPrimarySource": "00123",
         "involvedPerson": [Identifier("bFQoRhcVH5DHV1")],
         "title": [{"value": "3_Prototype Space Rocket", "language": "en"}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
-        "start": [Timestamp("2019-01-07")],
+        "start": [TemporalEntity("2019-01-07")],
         "hadPrimarySource": extracted_primary_sources["blueant"].stableTargetId,
         "stableTargetId": Joker(),
         "theme": ["https://mex.rki.de/item/theme-1"],
     }
     assert mex_sources[1].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [Identifier("bFQoRhcVH5DH3n")],
-        "end": [Timestamp("2010-10-11")],
+        "end": [TemporalEntity("2010-10-11")],
         "responsibleUnit": [Identifier("bFQoRhcVH5DH3n")],
         "identifier": Joker(),
         "identifierInPrimarySource": "00255",
         "involvedPerson": [Identifier("bFQoRhcVH5DH3n")],
         "title": [{"value": "2_Prototype Moon Lander", "language": "en"}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "start": [Timestamp("2018-08-09")],
+        "start": [TemporalEntity("2018-08-09")],
         "hadPrimarySource": extracted_primary_sources["blueant"].stableTargetId,
         "stableTargetId": Joker(),
         "theme": ["https://mex.rki.de/item/theme-1"],

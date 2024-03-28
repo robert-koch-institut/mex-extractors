@@ -15,9 +15,10 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedPrimarySourceIdentifier,
+    TemporalEntity,
+    TemporalEntityPrecision,
     Text,
     TextLanguage,
-    Timestamp,
 )
 
 
@@ -96,7 +97,7 @@ def test_builder_provider_inner_type_and_pattern(faker: Faker) -> None:
         (Link, [Link(language=None, title=None, url="http://trost.org/")]),
         (Email, ["schollluise@example.com"]),
         (Text, [Text(value="Zurück man Schuh nicht der.", language=TextLanguage.DE)]),
-        (Timestamp, [Timestamp("2021")]),
+        (TemporalEntity, [TemporalEntity("2021")]),
         (APIType, [APIType["OTHER"]]),
         (
             Annotated[Pattern, Field(pattern=r"^https://ror\.org/[a-z0-9]{9}$")],
@@ -189,7 +190,9 @@ def test_link_provider(faker: Faker) -> None:
 
 
 def test_timestamp_provider(faker: Faker) -> None:
-    assert faker.timestamp() == Timestamp("2000-02-08T23:01:31Z")
+    assert faker.temporal_entity([TemporalEntityPrecision.DAY]) == TemporalEntity(
+        "2000-02-08"
+    )
 
 
 def test_text_provider_string(faker: Faker) -> None:

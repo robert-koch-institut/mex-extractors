@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from pydantic import ConfigDict
 
-from mex.common.types import Timestamp
+from mex.common.types import TemporalEntity
 from mex.models import BaseRawData
 
 
@@ -13,7 +13,7 @@ class InternationalProjectsSource(BaseRawData):
 
     funding_type: str
     project_lead_person: str
-    end_date: Timestamp | None = None
+    end_date: TemporalEntity | None = None
     partner_organization: list[str] = []
     funding_source: list[str] = []
     funding_program: str
@@ -21,7 +21,7 @@ class InternationalProjectsSource(BaseRawData):
     additional_rki_units: str
     project_lead_rki_unit: str
     project_abbreviation: str
-    start_date: Timestamp | None = None
+    start_date: TemporalEntity | None = None
     activity1: str
     activity2: str
     topic1: str
@@ -33,11 +33,11 @@ class InternationalProjectsSource(BaseRawData):
         """Return partners from extractor."""
         return self.partner_organization
 
-    def get_start_year(self) -> Timestamp | None:
+    def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
         return self.start_date
 
-    def get_end_year(self) -> Timestamp | None:
+    def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
         return self.end_date
 

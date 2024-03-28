@@ -6,8 +6,8 @@ from mex.artificial.provider import (
     IdentityProvider,
     LinkProvider,
     PatternProvider,
+    TemporalEntityProvider,
     TextProvider,
-    TimestampProvider,
 )
 from mex.artificial.settings import ArtificialSettings
 from mex.common.cli import entrypoint
@@ -68,7 +68,7 @@ def factories(faker: Faker, identities: IdentityMap) -> Faker:
         factory.add_provider(PatternProvider(factory))
         factory.add_provider(BuilderProvider(factory))
         factory.add_provider(TextProvider(factory))
-        factory.add_provider(TimestampProvider(factory))
+        factory.add_provider(TemporalEntityProvider(factory))
     return faker
 
 

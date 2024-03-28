@@ -13,8 +13,8 @@ from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    TemporalEntity,
     TextLanguage,
-    Timestamp,
 )
 from mex.seq_repo.model import SeqRepoSource
 from mex.seq_repo.transform import (
@@ -140,7 +140,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
             str(project_coordinators_merged_ids_by_query_string["mustermann"][0]),
         ],
         "contributingUnit": [str(unit_stable_target_ids_by_synonym["FG99"])],
-        "created": Timestamp("2023-08-07"),
+        "created": TemporalEntity("2023-08-07"),
         "distribution": [distribution.stableTargetId],
         "instrumentToolOrApparatus": [{"value": "TEST"}],
         "keyword": [

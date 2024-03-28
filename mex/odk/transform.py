@@ -12,6 +12,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
 )
 from mex.common.wikidata.extract import search_organization_by_label
+from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.common.wikidata.transform import (
     transform_wikidata_organizations_to_extracted_organizations,
 )
@@ -144,23 +145,32 @@ def get_external_partner_and_publisher_by_label(
         for attribute in ["publisher", "externalPartner"]
         for value in resource[attribute][0]["mappingRules"][0]["forValues"]
     }
-    external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier] = (
-        {}
-    )
+    external_partner_and_publisher_by_label: dict[str, WikidataOrganization] = {}
     for label in labels:
-        if organization := list(search_organization_by_label(label)):
-            external_partner_and_publisher_by_label[label] = (
-                MergedOrganizationIdentifier(
-                    next(
-                        transform_wikidata_organizations_to_extracted_organizations(
-                            organization,
-                            extracted_primary_source_wikidata,
-                        )
-                    ).stableTargetId
-                )
+        if organization := search_organization_by_label(label):
+            external_partner_and_publisher_by_label[label] = organization
+
+    mex_extracted_organizations = list(
+        transform_wikidata_organizations_to_extracted_organizations(
+            external_partner_and_publisher_by_label.values(),
+            extracted_primary_source_wikidata,
+        )
+    )
+    load(mex_extracted_organizations)
+
+    identity_provider = get_provider()
+    organization_stable_target_id_by_query = {}
+    for query, wikidata_org in external_partner_and_publisher_by_label.items():
+        identities = identity_provider.fetch(
+            had_primary_source=extracted_primary_source_wikidata.stableTargetId,
+            identifier_in_primary_source=wikidata_org.identifier,
+        )
+        if identities:
+            organization_stable_target_id_by_query[query] = (
+                MergedOrganizationIdentifier(identities[0].stableTargetId)
             )
-            load(organization)
-    return external_partner_and_publisher_by_label
+
+    return organization_stable_target_id_by_query
 
 
 def get_variable_groups_from_raw_data(
@@ -234,7 +244,6 @@ def transform_odk_variable_groups_to_extracted_variable_groups(
         for resource in extracted_resources_odk
     }
     for begin_group_name, group in odk_variable_groups.items():
-
         contained_by = resource_id_by_identifier_in_primary_source[
             group[0]["file_name"].split(".")[0]
         ]
@@ -280,7 +289,6 @@ def transform_odk_data_to_extracted_variables(
         for resource in extracted_resources_odk
     }
     for begin_group_name, group in odk_variable_groups.items():
-
         used_in = resource_id_by_identifier_in_primary_source[
             group[0]["file_name"].split(".")[0]
         ]

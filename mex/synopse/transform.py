@@ -27,10 +27,10 @@ from mex.common.types import (
     MergedResourceIdentifier,
     ResourceTypeGeneral,
     TechnicalAccessibility,
+    TemporalEntity,
     Text,
     TextLanguage,
     Theme,
-    Timestamp,
 )
 from mex.synopse.models.project import SynopseProject
 from mex.synopse.models.study import SynopseStudy
@@ -629,7 +629,7 @@ def transform_synopse_project_to_activity(
         contact=contact,
         documentation=documentation,
         end=(
-            Timestamp(synopse_project.projektende)
+            TemporalEntity(synopse_project.projektende)
             if synopse_project.projektende
             else None
         ),
@@ -644,7 +644,7 @@ def transform_synopse_project_to_activity(
         responsibleUnit=responsible_unit,
         shortName=synopse_project.akronym_des_studientitels,
         start=(
-            Timestamp(synopse_project.projektbeginn)
+            TemporalEntity(synopse_project.projektbeginn)
             if synopse_project.projektbeginn
             else None
         ),

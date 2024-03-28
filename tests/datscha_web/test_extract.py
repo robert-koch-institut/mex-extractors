@@ -30,6 +30,7 @@ def test_extract_datscha_web_organizations(
         mex.datscha_web.extract, "search_organization_by_label", lambda x: ["test"]
     )
     result = extract_datscha_web_organizations([datscha_web_item])
+
     assert result == {
-        datscha_web_item.empfaenger_der_daten_im_drittstaat: "test",
+        datscha_web_item.empfaenger_der_daten_im_drittstaat: ["test"],
     }
