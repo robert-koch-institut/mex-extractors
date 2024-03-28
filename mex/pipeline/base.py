@@ -36,4 +36,12 @@ def load_job_definitions() -> Definitions:
         for group_name in group_names
         if group_name != "default"
     ]
+    jobs.append(
+        define_asset_job(
+            "all_assets",
+            AssetSelection.groups(
+                *[group for group in group_names if group != "synopse"]
+            ).upstream(),
+        )
+    )
     return Definitions(assets=assets, jobs=jobs, resources=resources)

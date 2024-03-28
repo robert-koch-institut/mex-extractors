@@ -44,6 +44,7 @@ optional-dependencies.dev = [
 ]
 
 [project.scripts]
+all = "mex.main:run"
 artificial = "mex.artificial.main:run"
 biospecimen = "mex.biospecimen.main:run"
 blueant = "mex.blueant.main:run"
