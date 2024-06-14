@@ -60,6 +60,7 @@ seq-repo = "mex.seq_repo.main:run"
 sumo = "mex.sumo.main:run"
 sync-persons = "mex.ldap.main:run"
 synopse = "mex.synopse.main:run"
+publisher = "mex.publisher.main:run"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
