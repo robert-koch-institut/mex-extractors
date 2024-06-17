@@ -400,7 +400,7 @@ files = [
 
 [[package]]
 name = "dagster"
-version = "1.7.9"
+version = "1.7.10"
 requires_python = "<3.13,>=3.8"
 summary = "Dagster is an orchestration platform for the development, production, and observation of data assets."
 groups = ["default"]
@@ -411,7 +411,7 @@ dependencies = [
     "click>=5.0",
     "coloredlogs<=14.0,>=6.1",
     "croniter>=0.3.34",
-    "dagster-pipes==1.7.9",
+    "dagster-pipes==1.7.10",
     "docstring-parser",
     "filelock",
     "grpcio-health-checking>=1.44.0",
@@ -441,70 +441,70 @@ dependencies = [
     "watchdog>=0.8.3",
 ]
 files = [
-    {file = "dagster-1.7.9-py3-none-any.whl", hash = "sha256:4c4541cebec5084e44dd5a85ab2f2e38407e18e1efcf82c3f4f2dc3c41501155"},
-    {file = "dagster-1.7.9.tar.gz", hash = "sha256:91be5523d9721fc0ff27ef49f9d392f12966f787c6208a5fa3ceb3142cc4493c"},
+    {file = "dagster-1.7.10-py3-none-any.whl", hash = "sha256:8ae23b45b9ed7b7598e4b0150c23cf86e76392a8db26028d1af522dac03d6321"},
+    {file = "dagster-1.7.10.tar.gz", hash = "sha256:5e4ae3307f17584a5fa51c1aef94ff599cd3ace9ebcf0e047d21956d9035080f"},
 ]
 
 [[package]]
 name = "dagster-graphql"
-version = "1.7.9"
+version = "1.7.10"
 requires_python = "<3.13,>=3.8"
 summary = "The GraphQL frontend to python dagster."
 groups = ["default"]
 dependencies = [
-    "dagster==1.7.9",
+    "dagster==1.7.10",
     "gql[requests]<4,>=3",
     "graphene<4,>=3",
     "requests",
     "starlette",
 ]
 files = [
-    {file = "dagster-graphql-1.7.9.tar.gz", hash = "sha256:ca2f37a9d801f25d59ff10e6f18f3d657a6f228797a9bc3f6be0a4cc8d174af3"},
-    {file = "dagster_graphql-1.7.9-py3-none-any.whl", hash = "sha256:99880e9a451e208ab6f180b5fdbdb5276e74f6c19100399411a1b9908b14aa13"},
+    {file = "dagster-graphql-1.7.10.tar.gz", hash = "sha256:bbb771f7e7b4676bc584c150f99841949f6bcd2869753ee6122958537599cf54"},
+    {file = "dagster_graphql-1.7.10-py3-none-any.whl", hash = "sha256:fcfd47e6488880c4e38dc26be11a9214b2044aa7f5a2713e4bbb2d60c133c094"},
 ]
 
 [[package]]
 name = "dagster-pipes"
-version = "1.7.9"
+version = "1.7.10"
 requires_python = "<3.13,>=3.8"
 summary = "Toolkit for Dagster integrations with transform logic outside of Dagster"
 groups = ["default"]
 files = [
-    {file = "dagster-pipes-1.7.9.tar.gz", hash = "sha256:4d18fd71b065749d4ac3f20aa9ccba5fb0a54227f6c4eb0828a4ba00a182cf39"},
-    {file = "dagster_pipes-1.7.9-py3-none-any.whl", hash = "sha256:91abe159d6e233653009f3e54eb6a18ae76328c6b76b172234b310286f75cb99"},
+    {file = "dagster-pipes-1.7.10.tar.gz", hash = "sha256:7353ba30a815b4d34b7e57345a326646fc6f10e3cc672b50f5f193a58c24cc17"},
+    {file = "dagster_pipes-1.7.10-py3-none-any.whl", hash = "sha256:1dec32e58efac56e584e865ba34ba8acc03d547af4866d034200c7abe7626677"},
 ]
 
 [[package]]
 name = "dagster-postgres"
-version = "0.23.9"
+version = "0.23.10"
 requires_python = "<3.13,>=3.8"
 summary = "A Dagster integration for postgres"
 groups = ["default"]
 dependencies = [
-    "dagster==1.7.9",
+    "dagster==1.7.10",
     "psycopg2-binary",
 ]
 files = [
-    {file = "dagster-postgres-0.23.9.tar.gz", hash = "sha256:5ada17de5c19d0df7af09e310ea274f88949e3e57f90bb9fb2651eddc48b675a"},
-    {file = "dagster_postgres-0.23.9-py3-none-any.whl", hash = "sha256:c0bc510d92e633505f928278157986d37de6eb0d5233dc9e9e00d922b5f344f7"},
+    {file = "dagster-postgres-0.23.10.tar.gz", hash = "sha256:cf1148d9d5eb7936133d16fcdd33f53ac30ffe71d2aa4021b3b8db66279ebc0c"},
+    {file = "dagster_postgres-0.23.10-py3-none-any.whl", hash = "sha256:7a97eaf7263c02e3c9c4f6d19f8629495ee52e5fa3a7cae6a3aa40a79f697b10"},
 ]
 
 [[package]]
 name = "dagster-webserver"
-version = "1.7.9"
+version = "1.7.10"
 requires_python = "<3.13,>=3.8"
 summary = "Web UI for dagster."
 groups = ["default"]
 dependencies = [
     "click<9.0,>=7.0",
-    "dagster-graphql==1.7.9",
-    "dagster==1.7.9",
+    "dagster-graphql==1.7.10",
+    "dagster==1.7.10",
     "starlette!=0.36.0",
     "uvicorn[standard]",
 ]
 files = [
-    {file = "dagster-webserver-1.7.9.tar.gz", hash = "sha256:bc9a493bfc48b103bca32bb94258480de4e404ae36c93bb37d9901629ca24675"},
-    {file = "dagster_webserver-1.7.9-py3-none-any.whl", hash = "sha256:fc11480ec039746c59210bc9f466e41fb3462e04baef75fe7c7df23fdbc0309e"},
+    {file = "dagster-webserver-1.7.10.tar.gz", hash = "sha256:f2f147f1d7fc1ebc82e42677070b2a65f2cb095d649bc284eb07da66464b1171"},
+    {file = "dagster_webserver-1.7.10-py3-none-any.whl", hash = "sha256:9380d1eaf8108be340c9d801eecd230a55d0ab0254435abe62afe902262b0fbd"},
 ]
 
 [[package]]
@@ -1016,11 +1016,11 @@ files = [
 
 [[package]]
 name = "mex-common"
-version = "0.27.0"
+version = "0.27.1"
 requires_python = "<3.13,>=3.11"
 git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "0.27.0"
-revision = "391a62e51be247863b9fbad46384ebb22bb1074d"
+ref = "0.27.1"
+revision = "575cd77a829d2f2293d47c171f9acc3d741dfb21"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [
@@ -1028,22 +1028,22 @@ dependencies = [
     "click==8.1.7",
     "langdetect==1.0.9",
     "ldap3==2.9.1",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@2.3.0",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@2.5.0",
     "numpy==1.26.4",
     "pandas==2.2.2",
     "pyarrow==16.1.0",
-    "pydantic-settings==2.2.1",
-    "pydantic==2.7.3",
+    "pydantic-settings==2.3.3",
+    "pydantic==2.7.4",
     "requests==2.32.3",
 ]
 
 [[package]]
 name = "mex-model"
-version = "2.3.0"
-requires_python = "<4.0,>=3.11"
+version = "2.5.0"
+requires_python = "<3.13,>=3.11"
 git = "https://github.com/robert-koch-institut/mex-model.git"
-ref = "2.3.0"
-revision = "d4aba623fc54f9b0f1b412408a21e62b6913f875"
+ref = "2.5.0"
+revision = "463ffde9776477b127e08b949606d6a7b32ca60b"
 summary = "Conceptual and machine-readable versions of the MEx metadata model."
 groups = ["default"]
 
@@ -1502,7 +1502,7 @@ files = [
 
 [[package]]
 name = "pydantic"
-version = "2.7.3"
+version = "2.7.4"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
 groups = ["default"]
@@ -1512,8 +1512,8 @@ dependencies = [
     "typing-extensions>=4.6.1",
 ]
 files = [
-    {file = "pydantic-2.7.3-py3-none-any.whl", hash = "sha256:ea91b002777bf643bb20dd717c028ec43216b24a6001a280f83877fd2655d0b4"},
-    {file = "pydantic-2.7.3.tar.gz", hash = "sha256:c46c76a40bb1296728d7a8b99aa73dd70a48c3510111ff290034f860c99c419e"},
+    {file = "pydantic-2.7.4-py3-none-any.whl", hash = "sha256:ee8538d41ccb9c0a9ad3e0e5f07bf15ed8015b481ced539a1759d8cc89ae90d0"},
+    {file = "pydantic-2.7.4.tar.gz", hash = "sha256:0c84efd9548d545f63ac0060c1e4d39bb9b14db8b3c0652338aecc07b5adec52"},
 ]
 
 [[package]]
@@ -1573,17 +1573,17 @@ files = [
 
 [[package]]
 name = "pydantic-settings"
-version = "2.2.1"
+version = "2.3.3"
 requires_python = ">=3.8"
 summary = "Settings management using Pydantic"
 groups = ["default"]
 dependencies = [
-    "pydantic>=2.3.0",
+    "pydantic>=2.7.0",
     "python-dotenv>=0.21.0",
 ]
 files = [
-    {file = "pydantic_settings-2.2.1-py3-none-any.whl", hash = "sha256:0235391d26db4d2190cb9b31051c4b46882d28a51533f97440867f012d4da091"},
-    {file = "pydantic_settings-2.2.1.tar.gz", hash = "sha256:00b9f6a5e95553590434c0fa01ead0b216c3e10bc54ae02e37f359948643c5ed"},
+    {file = "pydantic_settings-2.3.3-py3-none-any.whl", hash = "sha256:e4ed62ad851670975ec11285141db888fd24947f9440bd4380d7d8788d4965de"},
+    {file = "pydantic_settings-2.3.3.tar.gz", hash = "sha256:87fda838b64b5039b970cd47c3e8a1ee460ce136278ff672980af21516f6e6ce"},
 ]
 
 [[package]]
@@ -1800,18 +1800,18 @@ files = [
 
 [[package]]
 name = "requests-ntlm"
-version = "1.2.0"
-requires_python = ">=3.7"
+version = "1.3.0"
+requires_python = ">=3.8"
 summary = "This package allows for HTTP NTLM authentication using the requests library."
 groups = ["default"]
 dependencies = [
     "cryptography>=1.3",
-    "pyspnego>=0.1.6",
+    "pyspnego>=0.4.0",
     "requests>=2.0.0",
 ]
 files = [
-    {file = "requests_ntlm-1.2.0-py3-none-any.whl", hash = "sha256:b7781090c647308a88b55fb530c7b3705cef45349e70a83b8d6731e7889272a6"},
-    {file = "requests_ntlm-1.2.0.tar.gz", hash = "sha256:33c285f5074e317cbdd338d199afa46a7c01132e5c111d36bd415534e9b916a8"},
+    {file = "requests_ntlm-1.3.0-py3-none-any.whl", hash = "sha256:4c7534a7d0e482bb0928531d621be4b2c74ace437e88c5a357ceb7452d25a510"},
+    {file = "requests_ntlm-1.3.0.tar.gz", hash = "sha256:b29cc2462623dffdf9b88c43e180ccb735b4007228a542220e882c58ae56c668"},
 ]
 
 [[package]]
