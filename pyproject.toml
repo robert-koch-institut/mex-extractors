@@ -14,7 +14,7 @@ dependencies = [
     "dagster==1.7.10",
     "faker==25.8.0",
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.27.1",
-    "numpy==1.26.4",
+    "numpy==2.0.0",
     "openpyxl==3.1.4",
     "pandas==2.2.2",
     "pydantic==2.7.4",
