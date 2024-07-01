@@ -39,7 +39,7 @@ optional-dependencies.dev = [
     "types-beautifulsoup4==4.12.0.20240511",
     "types-pytz==2024.1.0.20240417",
     "types-pyyaml==6.0.12.20240311",
-    "types-requests==2.32.0.20240602",
+    "types-requests==2.32.0.20240622",
 ]
 
 [project.scripts]
