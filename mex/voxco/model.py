@@ -11,3 +11,4 @@ class VoxcoVariable(BaseModel):
     Type: str
     QuestionText: str = Field(min_length=0)
     Choices: list[str]
+    Text: str = Field(min_length=0)

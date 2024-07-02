@@ -6,6 +6,7 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_to_mex_persons,
 )
 from mex.common.models import (
+    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
@@ -107,6 +108,7 @@ def extracted_voxco_resources(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_voxco: ExtractedPrimarySource,
+    extracted_international_projects_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:
     """Transform mex resources, load to them to the sinks and return."""
     mex_resources = transform_voxco_resource_mappings_to_extracted_resources(
@@ -116,12 +118,14 @@ def extracted_voxco_resources(
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         extracted_primary_source_voxco,
+        extracted_international_projects_activities,
     )
     load(mex_resources.values())
 
     return mex_resources
 
 
+@asset(group_name="voxco")
 def extracted_variables_voxco(
     extracted_voxco_resources: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],

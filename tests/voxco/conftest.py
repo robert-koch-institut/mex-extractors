@@ -3,7 +3,7 @@ from typing import Any, TypeVar
 import pytest
 from pydantic import BaseModel
 
-from mex.common.models import ExtractedPerson, ExtractedResource
+from mex.common.models import ExtractedActivity, ExtractedPerson, ExtractedResource
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -610,7 +610,7 @@ def extracted_voxco_resources() -> dict[str, ExtractedResource]:
 @pytest.fixture
 def voxco_variables() -> dict[str, list[VoxcoVariable]]:
     return {
-        "resource_voxco-plus": [
+        "project_voxco-plus": [
             VoxcoVariable(
                 Id=50614,
                 DataType="Text",
@@ -620,6 +620,20 @@ def voxco_variables() -> dict[str, list[VoxcoVariable]]:
                     "@{Code=1; Text=Januar; Image=; HasOpenEnd=False; Visible=True; Default=False}",
                     "@{Code=1; Text=Februar; Image=; HasOpenEnd=False; Visible=True; Default=False}",
                 ],
+                Text="Tag",
             )
         ]
     }
+
+
+@pytest.fixture
+def extracted_international_projects_activities() -> list[ExtractedActivity]:
+    return [
+        ExtractedActivity(
+            contact=MergedOrganizationalUnitIdentifier.generate(30),
+            responsibleUnit=MergedOrganizationalUnitIdentifier.generate(32),
+            title=[Text(value="title", language="de")],
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(31),
+            identifierInPrimarySource="2022-006",
+        )
+    ]

@@ -25,6 +25,7 @@ def test_extract_voxco_variables() -> None:
             "@{Code=1; Text=Januar; Image=; HasOpenEnd=False; Visible=True; Default=False}",
             "@{Code=1; Text=Februar; Image=; HasOpenEnd=False; Visible=True; Default=False}",
         ],
+        "Text": "Tag",
     }
     assert sources["voxco_data"][0].model_dump() == expected
 
