@@ -1,39 +1,15 @@
-import re
 from typing import Any
 
 from mex.common.exceptions import MExError
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
 from mex.common.types import (
-    ActivityType,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    TemporalEntityPrecision,
+    YearMonthDay,
 )
 from mex.ff_projects.models.source import FFProjectsSource
-
-RKI_AZ_TYPES: dict[str, Any] = {}
-
-
-def get_rki_az_types(rki_azs: str) -> list[ActivityType]:
-    """Get the source types for numerical RKI AZs.
-
-    Args:
-        rki_azs: numerical AZS
-
-    Returns:
-        Source type enums
-    """
-    try:
-        return sorted(
-            {
-                type_
-                for number in re.findall(r"[0-9]{4}", rki_azs)
-                for type_ in RKI_AZ_TYPES[number]
-            },
-            key=lambda s: s.name,
-        )
-    except KeyError:
-        return []
 
 
 def transform_ff_projects_source_to_extracted_activity(
@@ -42,6 +18,7 @@ def transform_ff_projects_source_to_extracted_activity(
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organization_stable_target_id_by_synonyms: dict[str, MergedOrganizationIdentifier],
+    ff_projects_activity: dict[str, Any],
 ) -> ExtractedActivity:
     """Transform FF Projects source to an extracted activity.
 
@@ -54,6 +31,7 @@ def transform_ff_projects_source_to_extracted_activity(
                                           to unit stable target ID
         organization_stable_target_id_by_synonyms: Mapping from organization synonyms
                                                    to organization stable target ID
+        ff_projects_activity: activity default values
 
     Returns:
         Extracted activity for the given projects source
@@ -69,13 +47,37 @@ def transform_ff_projects_source_to_extracted_activity(
     funder_or_commissioner = organization_stable_target_id_by_synonyms.get(
         ff_projects_source.zuwendungs_oder_auftraggeber
     )
+    activity_type = (
+        ff_projects_activity["activityType"][0]["mappingRules"][0]["setValues"]
+        if ff_projects_source.rki_az
+        in ff_projects_activity["activityType"][0]["mappingRules"][0]["forValues"]
+        else []
+    )
+    start = (
+        [
+            YearMonthDay(
+                ff_projects_source.laufzeit_von, precision=TemporalEntityPrecision.DAY
+            )
+        ]
+        if ff_projects_source.laufzeit_von
+        else []
+    )
+    end = (
+        [
+            YearMonthDay(
+                ff_projects_source.laufzeit_bis, precision=TemporalEntityPrecision.DAY
+            )
+        ]
+        if ff_projects_source.laufzeit_bis
+        else []
+    )
     return ExtractedActivity(
         title=ff_projects_source.thema_des_projekts,
-        activityType=get_rki_az_types(ff_projects_source.rki_az),
+        activityType=activity_type,
         contact=project_lead or responsible_unit,
         involvedPerson=project_lead,
-        start=ff_projects_source.laufzeit_von,
-        end=ff_projects_source.laufzeit_bis,
+        start=start,
+        end=end,
         responsibleUnit=responsible_unit,
         identifierInPrimarySource=ff_projects_source.lfd_nr,
         funderOrCommissioner=funder_or_commissioner,

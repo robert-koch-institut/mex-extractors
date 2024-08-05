@@ -1,9 +1,8 @@
-import pytest
+from typing import Any
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import (
-    ActivityType,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -12,45 +11,13 @@ from mex.common.types import (
 )
 from mex.ff_projects.models.source import FFProjectsSource
 from mex.ff_projects.transform import (
-    get_rki_az_types,
     transform_ff_projects_source_to_extracted_activity,
 )
 
 
-@pytest.mark.parametrize(
-    ("rki_azs", "expected_types"),
-    [
-        ("foo", []),
-        ("9999", []),
-        (
-            "1360",
-            [
-                ActivityType["CONTRACT_RESEARCH"],
-                ActivityType["THIRD_PARTY_FUNDED_PROJECT"],
-            ],
-        ),
-        (
-            "(1363)1361",
-            [
-                ActivityType["CONTRACT_RESEARCH"],
-                ActivityType["INTERNATIONAL_PROJECT"],
-                ActivityType["THIRD_PARTY_FUNDED_PROJECT"],
-            ],
-        ),
-        (
-            "1361   /   9999",
-            [],
-        ),
-    ],
-)
-def test_get_rki_az_types(rki_azs: str, expected_types: list[ActivityType]) -> None:
-    types = get_rki_az_types(rki_azs)
-
-    assert types == expected_types
-
-
 def test_transform_ff_projects_source_to_extracted_activity(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    ff_projects_activity: dict[str, Any],
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
     organizations_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
@@ -81,6 +48,7 @@ def test_transform_ff_projects_source_to_extracted_activity(
         person_stable_target_ids_by_query_string,
         unit_stable_target_ids_by_synonym,
         organizations_stable_target_ids_by_synonym,
+        ff_projects_activity,
     )
 
     assert extracted_activity.model_dump(exclude_none=True, exclude_defaults=True) == {
