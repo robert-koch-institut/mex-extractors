@@ -1,44 +1,14 @@
-from collections import defaultdict
 from collections.abc import Generator, Hashable, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
 from mex.common.types import (
-    ActivityType,
     Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    Theme,
 )
 from mex.international_projects.models.source import InternationalProjectsSource
-
-THEME_BY_ACTIVITY_OR_TOPIC = {
-    "Other": Theme["PUBLIC_HEALTH"],
-    "Crisis management": Theme["PUBLIC_HEALTH"],
-    "Capacity building including trainings": Theme["PUBLIC_HEALTH"],
-    "Conducting research": Theme["RESEARCH"],
-    "Supporting global governance structures and processes": Theme["PUBLIC_HEALTH"],
-    "Public health systems": Theme["PUBLIC_HEALTH"],
-    "Non-communicable diseases": Theme["NON_COMMUNICABLE_DISEASES"],
-    "Laboratory diagnostics": Theme["LABORATORY"],
-    "One Health": Theme["ONE_HEALTH"],
-    "Surveillance (infectious diseases)": Theme["PUBLIC_HEALTH"],
-    "Vaccines/vaccinations": Theme["PUBLIC_HEALTH"],
-}
-ACTIVITY_TYPES_BY_FUNDING_TYPE = defaultdict(
-    lambda: [ActivityType["INTERNATIONAL_PROJECT"]],
-    {
-        "Third party funded": [
-            ActivityType["INTERNATIONAL_PROJECT"],
-            ActivityType["THIRD_PARTY_FUNDED_PROJECT"],
-        ],
-        "RKI funded": [
-            ActivityType["INTERNATIONAL_PROJECT"],
-            ActivityType["RKI_INTERNAL_PROJECT"],
-        ],
-    },
-)
 
 
 def transform_international_projects_source_to_extracted_activity(
@@ -106,7 +76,7 @@ def transform_international_projects_source_to_extracted_activity(
 
     return ExtractedActivity(
         title=source.full_project_name,
-        activityType=ACTIVITY_TYPES_BY_FUNDING_TYPE.get(source.funding_type),
+        activityType={},
         alternativeTitle=source.project_abbreviation,
         contact=[*project_leads, project_lead_rki_unit],
         involvedPerson=project_leads,
@@ -121,9 +91,7 @@ def transform_international_projects_source_to_extracted_activity(
         hadPrimarySource=extracted_primary_source.stableTargetId,
         fundingProgram=source.funding_program if source.funding_program else [],
         shortName=source.project_abbreviation,
-        theme=get_theme_for_activity_or_topic(
-            source.activity1, source.activity2, source.topic1, source.topic2
-        ),
+        theme=[],
         website=(
             []
             if source.website in ("", "does not exist yet")
@@ -172,37 +140,3 @@ def transform_international_projects_sources_to_extracted_activities(
             partner_organizations_stable_target_id_by_query,
         ):
             yield activity
-
-
-def get_theme_for_activity_or_topic(
-    activity1: str | None, activity2: str | None, topic1: str | None, topic2: str | None
-) -> list[Theme]:
-    """Get theme identifier for activities and topics.
-
-    Args:
-        activity1: activity 1
-        activity2: activity 1
-        topic1: topic 1
-        topic2: topic 2
-
-    Returns:
-        Sorted list of Theme
-    """
-    theme = set()
-
-    if not activity1 and activity2 and topic1 and topic2:
-        return [THEME_BY_ACTIVITY_OR_TOPIC["Other"]]
-    if activity1:
-        if a1 := THEME_BY_ACTIVITY_OR_TOPIC.get(activity1):
-            theme.add(a1)
-    if activity2:
-        if a2 := THEME_BY_ACTIVITY_OR_TOPIC.get(activity2):
-            theme.add(a2)
-    if topic1:
-        if t1 := THEME_BY_ACTIVITY_OR_TOPIC.get(topic1):
-            theme.add(t1)
-    if topic2:
-        if t2 := THEME_BY_ACTIVITY_OR_TOPIC.get(topic2):
-            theme.add(t2)
-
-    return sorted(list(theme), key=lambda x: x.name)

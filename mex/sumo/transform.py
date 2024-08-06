@@ -15,7 +15,6 @@ from mex.common.models import (
     ExtractedVariableGroup,
 )
 from mex.common.types import (
-    DataType,
     Email,
     Link,
     MergedContactPointIdentifier,
@@ -32,11 +31,11 @@ from mex.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 VARIABLE_DATA_TYPE_MAP = defaultdict(
-    lambda: DataType("https://mex.rki.de/item/data-type-2"),
+    lambda: "https://mex.rki.de/item/data-type-2",
     {
-        "number": DataType("https://mex.rki.de/item/data-type-1"),
-        "string": DataType("https://mex.rki.de/item/data-type-2"),
-        "boolean": DataType("https://mex.rki.de/item/data-type-3"),
+        "number": "https://mex.rki.de/item/data-type-1",
+        "string": "https://mex.rki.de/item/data-type-2",
+        "boolean": "https://mex.rki.de/item/data-type-3",
     },
 )
 

@@ -18,7 +18,6 @@ from mex.common.models import (
 from mex.common.types import (
     AccessRestriction,
     ActivityType,
-    DataType,
     Identifier,
     Language,
     Link,
@@ -38,11 +37,11 @@ from mex.synopse.models.study_overview import SynopseStudyOverview
 from mex.synopse.models.variable import SynopseVariable
 
 VARIABLE_DATA_TYPE_MAP = defaultdict(
-    lambda: DataType("https://mex.rki.de/item/data-type-2"),
+    lambda: "https://mex.rki.de/item/data-type-2",
     {
-        "Text": DataType("https://mex.rki.de/item/data-type-2"),
-        "Zahl": DataType("https://mex.rki.de/item/data-type-1"),
-        None: DataType("https://mex.rki.de/item/data-type-2"),
+        "Text": "https://mex.rki.de/item/data-type-2",
+        "Zahl": "https://mex.rki.de/item/data-type-1",
+        None: "https://mex.rki.de/item/data-type-2",
     },
 )
 
