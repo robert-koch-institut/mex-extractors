@@ -19,28 +19,33 @@ class SynopseSettings(BaseModel):
         description="Report Server password",
     )
     variablenuebersicht_path: AssetsPath = Field(
-        AssetsPath("../../../assets/raw-data/synopse/variablenuebersicht.csv"),
+        AssetsPath("raw-data/synopse/variablenuebersicht.csv"),
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
     projekt_und_studienverwaltung_path: AssetsPath = Field(
-        AssetsPath(
-            "../../../assets/raw-data/synopse/projekt_und_studienverwaltung.csv"
-        ),
+        AssetsPath("raw-data/synopse/projekt_und_studienverwaltung.csv"),
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
     metadaten_zu_datensaetzen_path: AssetsPath = Field(
-        AssetsPath("../../../assets/raw-data/synopse/metadaten_zu_datensaetzen.csv"),
+        AssetsPath("raw-data/synopse/metadaten_zu_datensaetzen.csv"),
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
     datensatzuebersicht_path: AssetsPath = Field(
-        AssetsPath("../../../assets/raw-data/synopse/datensatzuebersicht.csv"),
+        AssetsPath("raw-data/synopse/datensatzuebersicht.csv"),
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
+        ),
+    )
+    mapping_path: AssetsPath = Field(
+        AssetsPath("mappings/__final__/synopse"),
+        description=(
+            "Path to the directory with the synopse mapping files"
+            "values, absolute path or relative to `assets_dir`."
         ),
     )

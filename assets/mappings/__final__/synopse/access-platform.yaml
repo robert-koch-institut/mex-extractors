@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../__schema__/ExtractedAccessPlatform_MappingSchema.json
+
+contact:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - forValues:
+      - C1
+      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json.
+identifierInPrimarySource:
+  - fieldInPrimarySource: PlattformAdresse
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA21\\GEDA21_t1\\Daten"
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA22kida\\GEDA22\\t1"
+    mappingRules:
+      - rule: Extract original value.
+landingPage:
+  - fieldInPrimarySource: PlattformAdresse
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA21\\GEDA21_t1\\Daten"
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA22kida\\GEDA22\\t1"
+    mappingRules:
+      - rule: Extract original value for the url property of the link object.
+technicalAccessibility:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - https://mex.rki.de/item/technical-accessibility-1
+    comment: internal
+title:
+  - fieldInPrimarySource: PlattfromAdresse
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA21\\GEDA21_t1\\Daten"
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\GEDA22kida\\GEDA22\\t1"
+    mappingRules:
+      - rule: Extract original value.
+unitInCharge:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - forValues:
+      - C1
+      rule: Use value to match with identifer in /raw-data/organigram/organizational-units.json.

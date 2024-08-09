@@ -5,6 +5,8 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
+from mex.common.wikidata.extract import search_organization_by_label
+from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -103,3 +105,29 @@ def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
     yield from parse_csv(
         settings.synopse.datensatzuebersicht_path, SynopseStudyOverview
     )
+
+
+def extract_synopse_organizations(
+    synopse_projects: list[SynopseProject],
+) -> dict[str, WikidataOrganization]:
+    """Search and extract organization from wikidata.
+
+    Args:
+        synopse_projects: list of synopse projects
+    Returns:
+        Dict with organization label and WikidataOrganization
+    """
+    synopse_organizations = {
+        project.externe_partner for project in synopse_projects
+    }.union(
+        {
+            project.foerderinstitution_oder_auftraggeber.split("(")[0]
+            for project in synopse_projects
+            if project.foerderinstitution_oder_auftraggeber
+        }
+    )
+    return {
+        org_name: org
+        for org_name in synopse_organizations
+        if org_name and (org := search_organization_by_label(org_name))
+    }

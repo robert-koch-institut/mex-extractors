@@ -1,0 +1,166 @@
+# yaml-language-server: $schema=../../__schema__/ExtractedResource_MappingSchema.json
+
+accessPlatform:
+  - fieldInPrimarySource: PlattformAdresse
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    mappingRules:
+    - rule: Assign 'stable target id' of access platform with the identifierInPrimarySource from
+        column 'PlattformAdresse'.
+accessRestriction:
+  - fieldInPrimarySource: Zugangsbeschraenkung
+    examplesInPrimarySource:
+    - restriktiv
+    mappingRules:
+    - forValues:
+      - restriktiv
+      setValues:
+      - https://mex.rki.de/item/access-restriction-2 # restricted
+contact:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - forValues:
+      - C1
+      rule: Use value to match with identifer in /raw-data/organigram/organizational-units.json.
+contributingUnit:
+  - fieldInPrimarySource: Partner_intern
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - fg23
+    mappingRules:
+    - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Partner_intern' given in projekt_und_studienverwaltung.csv. Use value to match with identifer in /raw-data/organigram/organizational-units.json.
+  - fieldInPrimarySource: VerantwortlicheOE
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    mappingRules:
+      - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'VerantwortlicheOE' given in projekt_und_studienverwaltung.csv. Use value to match with identifer in /raw-data/organigram/organizational-units.json.
+contributor:
+  - fieldInPrimarySource: Beitragende
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - Jane Doe
+    - Dr. Jane Doe
+    mappingRules:
+    - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Beitragende' in 'projekt_und_studienverwaltung.csv'. Use value to match using ldap extractor.
+hasLegalBasis:
+  - fieldInPrimarySource: Rechte
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+      - Die GEDA-Studie wurde auf Grundlage der geltenden Datenschutzgrundverordnung
+        (DSGVO) und des Bundesdatenschutzgesetzes (BDSG) vorab durch die Behördliche Datenschutzbeauftragte
+        des RKI geprüft.
+    mappingRules:
+      - rule: Assign 'de' as default for langauge property of the text object.
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - rule: Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json.
+identifierInPrimarySource:
+  - fieldInPrimarySource: StudienID + -extended-data-use
+    mappingRules:
+    - rule: This resource covers variables that have no DStypID and intvar=1, keepvar=1.
+        Use 'StudienID' and add '-extended-data-use' as default string, e.g. '1120141-extened-data-use'.
+keyword:
+  - fieldInPrimarySource: textbox2
+    locationInPrimarySource: variablenuebersicht.csv
+    examplesInPrimarySource:
+    - Depression (13101)
+    mappingRules:
+    - rule: Use the field 'StudienID' to identify the correct study in 'variablenuebersicht.csv'. The use field 'textbox2'. Only extract the text and
+        delete the number, e.g. for the example it would be 'Depression'. Assign 'de' as default for langauge property of text object.
+language:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - https://mex.rki.de/item/language-1
+    comment: Deutsch
+publication:
+  - fieldInPrimarySource: Version
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+    - "1"
+    - "26"
+    - "DOI: 10.7797/9-200306-1-1-5"
+    - "noch nicht erstellt"
+    mappingRules:
+      - rule: If value starts with 'DOI:'' then search the doi field of the bibliographic resources. Assign stableTargetId of the matching bibliographic resource item.
+    comment: Exclude from extraction until we have a workflow. Preferably we do this this manually with the MEx editor.
+publisher:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - forValues:
+      - Robert Koch-Institut
+      rule: Use value to find the organization item with official name as given in the value. Assign the 'stable target id' of the item.
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-2 # Studies, surveys and interviews
+resourceTypeGeneral:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-type-general-13 # Data collection
+resourceTypeSpecific:
+  - fieldInPrimarySource: StudienArtTyp
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    mappingRules:
+    - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then look
+        in the field 'StudienArtTyp'. Extract value as it is. Assign 'de' as default language for text field.
+rights:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+          - language: de
+            value: "Gesundheitsdaten"
+spatial:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - language: de
+        value: Deutschland
+temporal:
+  - fieldInPrimarySource: Projektbeginn + Projektende
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - "2009"
+    - "2012"
+    mappingRules:
+    - rule: "Use the field"
+theme:
+  - fieldInPrimarySource: StudienID
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    mappingRules:
+    - forValues:
+      - "7202001"
+      - "7202002"
+      - "7202003"
+      - "7202004"
+      setValues:
+      - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
+    - rule: For all other StudienID set value as mentioned below in "setValues".
+      setValues:
+      - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+title:
+  - fieldInPrimarySource: Studie
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    mappingRules:
+    - rule: "Construct the title using the value of the field 'Studie' and add the default value ': Erweiterte Datennutzung',
+        e.g. 'KiGGS2: Erweiterte Datennutzung'."
+unitInCharge:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - forValues:
+      - C1
+      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+wasGeneratedBy:
+  - fieldInPrimarySource: StudienID
+    locationInPrimarySource: variablenuebersicht.csv
+    examplesInPrimarySource:
+    - "1120031"
+    - "1120091"
+    mappingRules:
+    - rule: "Use 'StudienID' in 'variablenuebersicht.csv' to identify the study. Match with 'identifierInPrimarySource' from the respective activity."

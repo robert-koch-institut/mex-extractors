@@ -2,32 +2,31 @@ from collections.abc import Generator, Iterable
 
 from mex.common.models import ExtractedPrimarySource
 from mex.extractors.logging import log_filter
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.synopse.models.study import SynopseStudy
 
 
-def filter_and_log_variables(
-    synopse_variables: Iterable[SynopseVariable],
-    synopse_overviews: Iterable[SynopseStudyOverview],
+def filter_and_log_access_platforms(
+    synopse_studies: Iterable[SynopseStudy],
     extracted_primary_source: ExtractedPrimarySource,
-) -> Generator[SynopseVariable, None, None]:
-    """Filter out and log variables which are not in datensatzuebersicht.
+) -> Generator[SynopseStudy, None, None]:
+    """Filter out and log studies which annot be accessed via an internal netword drive.
 
     Args:
-        synopse_variables: iterable of synopse variables
-        synopse_overviews: iterable of synopse overviews
+        synopse_studies: iterable of synopse studies
         extracted_primary_source: primary source for report server platform
 
     Returns:
-        Generator for filtered synopse variables
+        Generator for filtered synopse studies
     """
-    variables_in_datensatzuebersicht = {s.synopse_id for s in synopse_overviews}
-    for variable in synopse_variables:
-        if variable.synopse_id in variables_in_datensatzuebersicht:
-            yield variable
+    for study in synopse_studies:
+        if study.plattform_adresse not in [
+            "interne Datennutzung",
+            "noch nicht erstellt",
+        ]:
+            yield study
         else:
             log_filter(
-                variable.synopse_id,
+                study.plattform_adresse,
                 extracted_primary_source.stableTargetId,
-                "Variable not in datensatzuebersicht, cannot assign resource.",
+                "Platform adress cannot be accessed via an internal netword drive.",
             )
