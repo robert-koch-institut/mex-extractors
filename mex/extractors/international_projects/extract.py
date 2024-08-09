@@ -1,3 +1,4 @@
+import re
 import warnings
 from collections.abc import Generator, Iterable
 from typing import Any
@@ -96,7 +97,7 @@ def extract_international_projects_source(
         funding_type=funding_type,
         project_lead_person=project_lead_person,
         end_date=end_date,
-        partner_organization=partner_organization.split("\n"),
+        partner_organization=get_clean_organizations_names(partner_organization),
         funding_source=funding_source.split("\n"),
         funding_program=funding_program,
         rki_internal_project_number=rki_internal_project_number,
@@ -173,8 +174,8 @@ def extract_international_projects_partner_organizations(
     """
     found_orgs = {}
     for source in international_projects_sources:
-        if funder_or_commissioner := source.partner_organization:
-            for org in funder_or_commissioner:
+        if partner_organizations := source.partner_organization:
+            for org in partner_organizations:
                 if wikidata_org := search_organization_by_label(org):
                     found_orgs[org] = wikidata_org
     return found_orgs
@@ -196,3 +197,26 @@ def get_temporal_entity_from_cell(
     except (TypeError, ValueError) as error:
         logger.debug(error)
         return None
+
+
+def get_clean_organizations_names(organizations_str: str) -> list[str]:
+    """Get clean names for partner organizations.
+
+    Args:
+        organizations_str (str): string containing all organizations names
+
+    Returns:
+        list of clean organizations names
+    """
+    organizations_str = (
+        organizations_str.replace(",,", ",").replace("»", "").replace("•", "")
+    )
+    unclean_organizations = organizations_str.split("\n")
+    clean_organizations = []
+    for org in unclean_organizations:
+        if org:
+            org = re.sub("^[0-9]+", "", org)
+            org = org.strip()
+            clean_organizations.append(org)
+
+    return clean_organizations

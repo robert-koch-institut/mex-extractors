@@ -13,8 +13,8 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import MergedPrimarySourceIdentifier
-from mex.identity import BackendIdentityProvider
-from mex.sinks import load
+from mex.extractors.identity import BackendIdentityProvider
+from mex.extractors.sinks import load
 
 
 @pytest.fixture

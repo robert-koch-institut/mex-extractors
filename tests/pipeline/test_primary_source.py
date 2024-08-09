@@ -3,7 +3,7 @@ from mex.common.models import (
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
 )
-from mex.pipeline.primary_source import (
+from mex.extractors.pipeline.primary_source import (
     extracted_primary_source_ldap,
     extracted_primary_source_mex,
     extracted_primary_source_organigram,

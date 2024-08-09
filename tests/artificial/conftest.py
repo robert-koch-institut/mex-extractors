@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 
 from mex.extractors.artificial.main import factories, faker, identities
-from mex.settings import Settings
+from mex.extractors.settings import Settings
 
 
 @pytest.fixture(autouse=True)

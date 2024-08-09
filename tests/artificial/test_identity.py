@@ -18,7 +18,7 @@ from mex.extractors.artificial.identity import (
     create_identities,
     restore_identities,
 )
-from mex.settings import Settings
+from mex.extractors.settings import Settings
 
 
 def test_restore_identities() -> None:

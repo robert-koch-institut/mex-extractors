@@ -3,7 +3,7 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.common.wikidata.transform import (
     transform_wikidata_organizations_to_extracted_organizations,
 )
-from mex.wikidata.transform import (
+from mex.extractors.wikidata.transform import (
     transform_wikidata_organizations_to_extracted_organizations_with_query,
 )
 

@@ -14,7 +14,7 @@ from mex.extractors.biospecimen.extract import (
     get_year_from_zeitlicher_bezug,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.settings import Settings
+from mex.extractors.settings import Settings
 
 
 @pytest.mark.usefixtures("mocked_ldap")

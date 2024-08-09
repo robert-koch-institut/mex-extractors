@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import MergedPrimarySourceIdentifier
-from mex.pipeline.organigram import (
+from mex.extractors.pipeline.organigram import (
     extracted_organizational_units,
     unit_stable_target_ids_by_synonym,
 )

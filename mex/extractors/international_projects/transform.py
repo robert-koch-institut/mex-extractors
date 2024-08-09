@@ -1,20 +1,29 @@
 from collections.abc import Generator, Hashable, Iterable
+from typing import Any
 
 from mex.common.logging import watch
-from mex.common.models import ExtractedActivity, ExtractedPrimarySource
+from mex.common.models import (
+    ExtractedActivity,
+    ExtractedOrganization,
+    ExtractedPrimarySource,
+)
 from mex.common.types import (
+    ActivityType,
     Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    Text,
 )
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
+from mex.extractors.sinks import load
 
 
 def transform_international_projects_source_to_extracted_activity(
     source: InternationalProjectsSource,
+    international_projects_activity: dict[str, Any],
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
         Hashable, list[MergedPersonIdentifier]
@@ -29,6 +38,8 @@ def transform_international_projects_source_to_extracted_activity(
 
     Args:
         source: international projects sources
+        international_projects_activity: extracted activity for default
+                                         values from mapping
         extracted_primary_source: Extracted primary_source for FF Projects
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
@@ -70,15 +81,35 @@ def transform_international_projects_source_to_extracted_activity(
 
     all_partner_organizations: list[MergedOrganizationIdentifier] = []
     if source.partner_organization:
-        all_partner_organizations.extend(
-            wfc
-            for fc in source.partner_organization
-            if (wfc := partner_organizations_stable_target_id_by_query.get(fc))
-        )
+        for partner_org in source.partner_organization:
+            if wfc := partner_organizations_stable_target_id_by_query.get(partner_org):
+                all_partner_organizations.append(wfc)
+            else:
+                extracted_organization = ExtractedOrganization(
+                    officialName=[Text(value=partner_org)],
+                    identifierInPrimarySource=partner_org,
+                    hadPrimarySource=extracted_primary_source.stableTargetId,
+                )
+                load([extracted_organization])
+                all_partner_organizations.append(
+                    MergedOrganizationIdentifier(extracted_organization.stableTargetId)
+                )
+
+    activity_types = international_projects_activity["activityType"][0]["mappingRules"]
+    activity_types_dict: dict[str, ActivityType] = {}
+    for activity_type in activity_types:
+        for_value = activity_type.get("forValues")
+        set_value = activity_type.get("setValues")[0]
+        if not for_value:
+            activity_types_dict.setdefault("Other", set_value)
+            continue
+        activity_types_dict.setdefault(for_value[0], set_value)
 
     return ExtractedActivity(
         title=source.full_project_name,
-        activityType={},
+        activityType=(
+            [activity_types_dict[source.funding_type]] if source.funding_type else []
+        ),
         alternativeTitle=source.project_abbreviation,
         contact=[*project_leads, project_lead_rki_unit],
         involvedPerson=project_leads,
@@ -105,6 +136,7 @@ def transform_international_projects_source_to_extracted_activity(
 @watch
 def transform_international_projects_sources_to_extracted_activities(
     international_projects_sources: Iterable[InternationalProjectsSource],
+    international_projects_activity: dict[str, Any],
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
         Hashable, list[MergedPersonIdentifier]
@@ -119,6 +151,8 @@ def transform_international_projects_sources_to_extracted_activities(
 
     Args:
         international_projects_sources: international projects sources
+        international_projects_activity: extracted activity for default
+                                         values from mapping
         extracted_primary_source: Extracted primary_source for FF Projects
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
@@ -135,6 +169,7 @@ def transform_international_projects_sources_to_extracted_activities(
     for source in international_projects_sources:
         if activity := transform_international_projects_source_to_extracted_activity(
             source,
+            international_projects_activity,
             extracted_primary_source,
             person_stable_target_ids_by_query_string,
             unit_stable_target_id_by_synonym,
