@@ -20,9 +20,9 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
-from mex.seq_repo.filter import filter_sources_on_latest_sequencing_date
-from mex.seq_repo.model import SeqRepoSource
-from mex.seq_repo.transform import (
+from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
+from mex.extractors.seq_repo.model import SeqRepoSource
+from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_activities_to_extracted_activities,
 )
@@ -90,48 +90,8 @@ def seq_repo_activity() -> dict[str, Any]:
                     {
                         "setValues": [
                             "https://mex.rki.de/item/theme-11",
-                            "https://mex.rki.de/item/theme-34",
+                            "https://mex.rki.de/item/theme-23",
                         ]
-                    }
-                ],
-            }
-        ],
-    }
-
-
-@pytest.fixture
-def seq_repo_distribution() -> dict[str, Any]:
-    return {
-        "accessRestriction": [
-            {
-                "fieldInPrimarySource": "n/a",
-                "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/access-restriction-2"]}
-                ],
-            }
-        ],
-        "mediaType": [
-            {
-                "fieldInPrimarySource": "n/a",
-                "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/mime-type-12"]}
-                ],
-            }
-        ],
-        "title": [
-            {
-                "fieldInPrimarySource": "n/a",
-                "mappingRules": [{"setValues": ["dummy-fastq-file"]}],
-                "comment": "So there must be rules for titles.",
-            }
-        ],
-        "publisher": [
-            {
-                "fieldInPrimarySource": "n/a",
-                "mappingRules": [
-                    {
-                        "forValues": ["Dummy Publisher"],
-                        "rule": "There are rules in life.",
                     }
                 ],
             }
@@ -263,6 +223,19 @@ def seq_repo_resource() -> dict[str, Any]:
                 ],
             }
         ],
+        "keyword": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": [
+                            {"value": "fastc", "language": "de"},
+                            {"value": "fastd", "language": "de"},
+                        ],
+                    }
+                ],
+            }
+        ],
         "method": [
             {
                 "fieldInPrimarySource": "n/a",
@@ -287,11 +260,23 @@ def seq_repo_resource() -> dict[str, Any]:
                 ],
             }
         ],
+        "resourceCreationMethod": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": [
+                            "https://mex.rki.de/item/resource-creation-method-4"
+                        ]
+                    }
+                ],
+            }
+        ],
         "resourceTypeGeneral": [
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/resource-type-general-1"]}
+                    {"setValues": ["https://mex.rki.de/item/resource-type-general-13"]}
                 ],
             }
         ],
@@ -338,7 +323,7 @@ def seq_repo_resource() -> dict[str, Any]:
                     {
                         "setValues": [
                             "https://mex.rki.de/item/theme-11",
-                            "https://mex.rki.de/item/theme-34",
+                            "https://mex.rki.de/item/theme-23",
                         ]
                     }
                 ],

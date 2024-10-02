@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.sumo.extract import (
+from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
     extract_cc2_aux_mapping,
@@ -14,12 +14,12 @@ from mex.sumo.extract import (
     extract_ldap_contact_points_by_emails,
     extract_ldap_contact_points_by_name,
 )
-from mex.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
-from mex.sumo.models.cc1_data_valuesets import Cc1DataValuesets
-from mex.sumo.models.cc2_aux_mapping import Cc2AuxMapping
-from mex.sumo.models.cc2_aux_model import Cc2AuxModel
-from mex.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
-from mex.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
+from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
+from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
+from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
+from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 
 def test_extract_cc1_data_model_nokeda() -> None:

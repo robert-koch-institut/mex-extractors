@@ -2,7 +2,7 @@ from collections.abc import Iterable
 
 import pytest
 
-from mex.rdmo.extract import extract_rdmo_sources
+from mex.extractors.rdmo.extract import extract_rdmo_sources
 
 
 @pytest.mark.usefixtures("mocked_rdmo")

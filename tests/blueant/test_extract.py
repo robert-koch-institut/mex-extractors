@@ -1,13 +1,13 @@
 import pytest
 from pytest import MonkeyPatch
 
-from mex.blueant.extract import (
+from mex.common.ldap.connector import LDAPConnector
+from mex.extractors.blueant.extract import (
     extract_blueant_project_leaders,
     extract_blueant_sources,
     remove_prefixes_from_name,
 )
-from mex.blueant.models.source import BlueAntSource
-from mex.common.ldap.connector import LDAPConnector
+from mex.extractors.blueant.models.source import BlueAntSource
 from tests.blueant.mocked_blueant import MOCKED_API_SOURCE, MOCKED_RESOLVED_ATTRIBUTES
 
 

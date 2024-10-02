@@ -4,10 +4,10 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.blueant.connector import BlueAntConnector
-from mex.blueant.models.person import BlueAntPerson
-from mex.blueant.models.project import BlueAntProject
 from mex.common.types import TemporalEntity
+from mex.extractors.blueant.connector import BlueAntConnector
+from mex.extractors.blueant.models.person import BlueAntPerson
+from mex.extractors.blueant.models.project import BlueAntProject
 
 MOCKED_API_SOURCE = {
     "clients": [{"clientId": 1}],

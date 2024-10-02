@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.confluence_vvt import main
-from mex.confluence_vvt.models.source import ConfluenceVvtSource
+from mex.extractors.confluence_vvt import main
+from mex.extractors.confluence_vvt.models.source import ConfluenceVvtSource
 
 
 @pytest.fixture

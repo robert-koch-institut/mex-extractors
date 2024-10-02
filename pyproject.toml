@@ -13,7 +13,7 @@ dependencies = [
     "dagster-webserver>=1.7.15,<2",
     "dagster>=1.7.15,<2",
     "faker>=29,<30",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.36.1",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/model-update-v3",
     "numpy>=2.0.1,<3",
     "openpyxl>=3.1.5,<4",
     "pandas>=2.2.2,<3",
@@ -41,32 +41,32 @@ optional-dependencies.dev = [
 ]
 
 [project.scripts]
-all-extractors = "mex.main:run"
-artificial = "mex.artificial.main:run"
-biospecimen = "mex.biospecimen.main:run"
-blueant = "mex.blueant.main:run"
-confluence-vvt = "mex.confluence_vvt.main:run"
-datscha-web = "mex.datscha_web.main:run"
-ff-projects = "mex.ff_projects.main:run"
-grippeweb = "mex.grippeweb.main:run"
-ifsg = "mex.ifsg.main:run"
-international-projects = "mex.international_projects.main:run"
-odk = "mex.odk.main:run"
-organigram = "mex.organigram.main:run"
-rdmo = "mex.rdmo.main:run"
-seq-repo = "mex.seq_repo.main:run"
-sumo = "mex.sumo.main:run"
-sync-persons = "mex.ldap.main:run"
-synopse = "mex.synopse.main:run"
-voxco = "mex.voxco.main:run"
-publisher = "mex.publisher.main:run"
+all-extractors = "mex.extractors.main:run"
+artificial = "mex.extractors.artificial.main:run"
+biospecimen = "mex.extractors.biospecimen.main:run"
+blueant = "mex.extractors.blueant.main:run"
+confluence-vvt = "mex.extractors.confluence_vvt.main:run"
+datscha-web = "mex.extractors.datscha_web.main:run"
+ff-projects = "mex.extractors.ff_projects.main:run"
+grippeweb = "mex.extractors.grippeweb.main:run"
+ifsg = "mex.extractors.ifsg.main:run"
+international-projects = "mex.extractors.international_projects.main:run"
+odk = "mex.extractors.odk.main:run"
+organigram = "mex.extractors.organigram.main:run"
+rdmo = "mex.extractors.rdmo.main:run"
+seq-repo = "mex.extractors.seq_repo.main:run"
+sumo = "mex.extractors.sumo.main:run"
+sync-persons = "mex.extractors.ldap.main:run"
+synopse = "mex.extractors.synopse.main:run"
+voxco = "mex.extractors.voxco.main:run"
+publisher = "mex.extractors.publisher.main:run"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
 skip = ["CHANGELOG.md", "mex", "tests"]
 
 [tool.dagster]
-module_name = "mex"
+module_name = "mex.extractors"
 
 [tool.ipdb]
 context = 5

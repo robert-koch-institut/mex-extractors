@@ -17,9 +17,12 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
+    PersonalData,
+    ResourceCreationMethod,
     Text,
+    TextLanguage,
 )
-from mex.grippeweb.connector import GrippewebConnector
+from mex.extractors.grippeweb.connector import GrippewebConnector
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
@@ -355,6 +358,41 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                 }
             ],
             "externalPartner": None,
+            "hasLegalBasis": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [
+                                {
+                                    "value": "Bei dem Verfahren.",
+                                    "language": TextLanguage.DE,
+                                }
+                            ],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
+            "hasPersonalData": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [PersonalData["PERSONAL_DATA"]],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "icd10code": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -463,7 +501,18 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
-            "publication": [
+            "minTypicalAge": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {"forValues": None, "setValues": [0], "rule": None}
+                    ],
+                    "comment": None,
+                }
+            ],
+            "populationCoverage": [
                 {
                     "fieldInPrimarySource": "n/a",
                     "locationInPrimarySource": None,
@@ -472,12 +521,23 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                         {
                             "forValues": None,
                             "setValues": [
-                                {
-                                    "language": "en",
-                                    "title": "Feasibility study",
-                                    "url": "https://doi.org/10.25646/11292",
-                                }
+                                {"value": "Alle Personen.", "language": TextLanguage.DE}
                             ],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
+            "publication": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": None,
                             "rule": None,
                         }
                     ],
@@ -499,6 +559,21 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "resourceCreationMethod": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [ResourceCreationMethod["SURVEILLANCE"]],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "resourceTypeGeneral": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -507,7 +582,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/resource-type-general-10",
+                            "setValues": "https://mex.rki.de/item/resource-type-general-13",
                             "rule": None,
                         }
                     ],
@@ -608,7 +683,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/theme-35",
+                            "setValues": "https://mex.rki.de/item/theme-11",
                             "rule": None,
                         }
                     ],
@@ -654,7 +729,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "examplesInPrimarySource": None,
                     "mappingRules": [
                         {
-                            "forValues": ["2022-006"],
+                            "forValues": ["C1"],
                             "setValues": None,
                             "rule": "Match value with corresponding identifierInPrimarySource.",
                         }
@@ -849,6 +924,41 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "hasLegalBasis": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [
+                                {
+                                    "value": "Bei dem Verfahren.",
+                                    "language": TextLanguage.DE,
+                                }
+                            ],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
+            "hasPersonalData": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [PersonalData["PERSONAL_DATA"]],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "icd10code": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -948,6 +1058,34 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "minTypicalAge": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {"forValues": None, "setValues": [0], "rule": None}
+                    ],
+                    "comment": None,
+                }
+            ],
+            "populationCoverage": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [
+                                {"value": "Alle Personen.", "language": TextLanguage.DE}
+                            ],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "modified": None,
             "publication": [
                 {
@@ -957,13 +1095,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "title": "COVID-19-Raten",
-                                    "url": "https://doi.org/10.25646/11292",
-                                }
-                            ],
+                            "setValues": None,
                             "rule": None,
                         }
                     ],
@@ -985,6 +1117,21 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "resourceCreationMethod": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [ResourceCreationMethod["SURVEILLANCE"]],
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "qualityInformation": None,
             "resourceTypeGeneral": [
                 {
@@ -994,7 +1141,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/resource-type-general-10",
+                            "setValues": "https://mex.rki.de/item/resource-type-general-13",
                             "rule": None,
                         }
                     ],
@@ -1096,7 +1243,7 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/theme-35",
+                            "setValues": "https://mex.rki.de/item/theme-11",
                             "rule": None,
                         },
                     ],
@@ -1128,21 +1275,6 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
                             "forValues": ["C1"],
                             "setValues": None,
                             "rule": "Match value using organigram extractor.",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "wasGeneratedBy": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["2022-006"],
-                            "setValues": None,
-                            "rule": "Match value with corresponding identifierInPrimarySource",
                         }
                     ],
                     "comment": None,
@@ -1307,7 +1439,7 @@ def grippeweb_extracted_resource_dict(
             accrualPeriodicity="https://mex.rki.de/item/frequency-15",
             contact=[MergedContactPointIdentifier.generate(42)],
             temporal="seit 2011",
-            theme=["https://mex.rki.de/item/theme-35"],
+            theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="GrippeWeb", language="de")],
             anonymizationPseudonymization=[
                 "https://mex.rki.de/item/anonymization-pseudonymization-2"
@@ -1321,7 +1453,7 @@ def grippeweb_extracted_resource_dict(
             methodDescription=[
                 Text(value="Online-Surveillanceintrument", language="de")
             ],
-            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-10"],
+            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[
                 Text(value="bevölkerungsbasierte Surveillancedaten", language="de")
             ],

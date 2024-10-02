@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 from pytest import MonkeyPatch
 
-from mex.ifsg.connector import IFSGConnector
-from mex.ifsg.models.meta_schema2type import MetaSchema2Type
+from mex.extractors.ifsg.connector import IFSGConnector
+from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 
 
 def test_parse_rows(monkeypatch: MonkeyPatch) -> None:

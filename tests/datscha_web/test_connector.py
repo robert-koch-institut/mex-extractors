@@ -1,6 +1,6 @@
 import pytest
 
-from mex.datscha_web.connector import DatschaWebConnector
+from mex.extractors.datscha_web.connector import DatschaWebConnector
 
 
 @pytest.mark.integration

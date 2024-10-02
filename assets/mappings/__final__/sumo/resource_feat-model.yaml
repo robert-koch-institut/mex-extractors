@@ -1,53 +1,40 @@
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
-hadPrimarySource:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier '...' in /raw-data/primary-sources/primary-sources.json."
-identifierInPrimarySource:
-- fieldInPrimarySource: IdType
-  locationInPrimarySource: Meta.Field
-  mappingRules:
-    - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
-  comment: "Create variable groups for each IdType. Example: IdType=101 (Adenovirus) has variable groups Clinical and Labor."
-- fieldInPrimarySource: 'StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
-  locationInPrimarySource: Meta.Field
-  mappingRules:
-  - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
-  - forValues:
-    - "NULL"
-    - "AdditionalAttributes"
-    rule: "See /mappings/../ifsg/variable-group_entity-filter."
-stableTargetId:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign 'stable target id' of merged item.
+# yaml-language-server: $schema=../../__schema__/ExtractedResource_MappingSchema.json
+
+
 accessRestriction:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/access-restriction-2
-    comment: restricted
 accrualPeriodicity:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/frequency-17
-    comment: irregular
 contact:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - email@email.de
-      rule: Use value to match with ldap extractor.
 contributingUnit:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - Abteilung
-      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: Assign 'stable target id' of primary source with identifier 'nokeda'
+identifierInPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - "Dummy"
 keyword:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -57,18 +44,30 @@ keyword:
     - setValues:
       - language: de
         value: keyword 2
+
 meshId:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - http://id.nlm.nih.gov/mesh/D004636
-    comment: Emergency Service, Hospital
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/resource-type-general-1
-    comment: Public Health Fachdaten
+      - https://mex.rki.de/item/resource-type-general-14
+resourceTypeSpecific:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - language: de
+        value: Daten 1
+      - language: en
+        value: Data 1
 spatial:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -79,7 +78,8 @@ theme:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/theme-35
+      - https://mex.rki.de/item/theme-11
+      - https://mex.rki.de/item/theme-36
 title:
   - fieldInPrimarySource: n/a
     mappingRules:

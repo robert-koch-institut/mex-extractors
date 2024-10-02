@@ -7,8 +7,8 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.common.wikidata.transform import (
     transform_wikidata_organizations_to_extracted_organizations,
 )
-from mex.wikidata import extract
-from mex.wikidata.extract import (
+from mex.extractors.wikidata import extract
+from mex.extractors.wikidata.extract import (
     get_merged_organization_id_by_query_with_transform_and_load,
 )
 

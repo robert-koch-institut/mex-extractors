@@ -1,6 +1,6 @@
 import pytest
 
-from mex.publisher.extract import get_merged_items
+from mex.extractors.publisher.extract import get_merged_items
 
 
 @pytest.mark.usefixtures("mocked_backend")

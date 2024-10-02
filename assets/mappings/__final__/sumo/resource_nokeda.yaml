@@ -1,59 +1,31 @@
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
-hadPrimarySource:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier '...' in /raw-data/primary-sources/primary-sources.json."
-identifierInPrimarySource:
-- fieldInPrimarySource: IdType
-  locationInPrimarySource: Meta.Field
-  mappingRules:
-    - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
-  comment: "Create variable groups for each IdType. Example: IdType=101 (Adenovirus) has variable groups Clinical and Labor."
-- fieldInPrimarySource: 'StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
-  locationInPrimarySource: Meta.Field
-  mappingRules:
-  - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
-  - forValues:
-    - "NULL"
-    - "AdditionalAttributes"
-    rule: "See /mappings/../ifsg/variable-group_entity-filter."
-stableTargetId:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign 'stable target id' of merged item.
+# yaml-language-server: $schema=../../__schema__/ExtractedResource_MappingSchema.json
+
 accessRestriction:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/access-restriction-2
-    comment: restricted
 accrualPeriodicity:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/frequency-15
-    comment: daily
 contact:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - email@email.de
-      rule: Match value to using ldap extractor.
 contributingUnit:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - Abteilung
-      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 description:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - language: de
-        value: "Echtzeitdaten der Routinedokumenation"
+        value: Echtzeitdaten der Routinedokumenation.
 documentation:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -66,47 +38,61 @@ externalPartner:
     mappingRules:
     - forValues:
       - Register
-      rule: Use value to match with wikidata extractor.
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: Assign 'stable target id' of primary source with identifier 'nokeda'
+identifierInPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - rule: Assign field 'title' value of resource nokeda model as identifierInPrimarySource
 keyword:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - language: de
-        value: keyword1
-    - setValues:
+        value: Keyword1
       - language: de
-        value: keyword2
+        value: Keyword2
 meshId:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - http://id.nlm.nih.gov/mesh/D004636
-    comment: Emergency Service, Hospital
 publication:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - setValues:
-      - language: de
-        title: "Situationsreport"
-        url: https://link.com
+    - forValues:
+      -  "Dummy publication"
 publisher:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - Robert Koch-Institut
       rule: Assign 'stable target id' of organization-item with official name as given in forValues.
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/resource-type-general-1
-    comment: Public Health Fachdaten
+      - https://mex.rki.de/item/resource-type-general-14
 resourceTypeSpecific:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - language: de
         value: Daten
+      - language: en
+        value: data
 rights:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -125,15 +111,12 @@ stateOfDataProcessing:
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/data-processing-state-2
-    comment: Sekundärdaten
 theme:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/theme-11
-    - setValues:
-      - https://mex.rki.de/item/theme-35
-    comment: Infektionskrankheiten.
+      - https://mex.rki.de/item/theme-36
 title:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -145,4 +128,3 @@ unitInCharge:
     mappingRules:
     - forValues:
       - FG99
-      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.

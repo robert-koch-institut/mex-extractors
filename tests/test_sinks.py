@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex import sinks as sinks_module
 from mex.common.exceptions import MExError
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, ExtractedContactPoint
 from mex.common.settings import BaseSettings
 from mex.common.types import Sink
-from mex.sinks import load
+from mex.extractors import sinks as sinks_module
+from mex.extractors.sinks import load
 
 
 def test_load_multiple(monkeypatch: MonkeyPatch) -> None:

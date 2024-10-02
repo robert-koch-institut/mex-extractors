@@ -12,7 +12,7 @@ identifierInPrimarySource:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-    - test_raw_data
+    - BCHW_ZIG2_FG37_main_questionnaire_01052021
     rule: Use value as it is.
   comment: identifierInPrimarySource also for the corresponding activity extracted from international projects
 stableTargetId:
@@ -61,6 +61,14 @@ externalPartner:
     - "consetetur"
     - " sadipscing  "
     rule: Use value
+hasLegalBasis:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - language: en
+          value: Informed consent
+        - language: de
+          value: Informierte Einwilligung
 keyword:
 - fieldInPrimarySource: n/a
   mappingRules:
@@ -105,12 +113,25 @@ publisher:
   - forValues:
     - invidunt
     rule: Use value to match with wikidata extractor.
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-2
 resourceTypeGeneral:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-    - https://mex.rki.de/item/resource-type-general-8
+    - https://mex.rki.de/item/resource-type-general-15
     rule: Set value as indicated.
+resourceTypeSpecific:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - language: en
+          value: Questionnaire
+        - language: de
+          value: Fragebogen
 rights:
 - fieldInPrimarySource: n/a
   mappingRules:
@@ -147,7 +168,7 @@ theme:
   mappingRules:
   - setValues:
     - https://mex.rki.de/item/theme-11
-    - https://mex.rki.de/item/theme-35
+    - https://mex.rki.de/item/theme-37
     rule: Set values as indicated.
 title:
 - fieldInPrimarySource: n/a

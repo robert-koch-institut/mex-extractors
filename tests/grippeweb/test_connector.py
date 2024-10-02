@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 from pytest import MonkeyPatch
 
-from mex.grippeweb.connector import GrippewebConnector
+from mex.extractors.grippeweb.connector import GrippewebConnector
 
 
 def test_parse_rows(monkeypatch: MonkeyPatch) -> None:

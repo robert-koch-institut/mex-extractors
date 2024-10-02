@@ -19,7 +19,7 @@ from mex.common.wikidata.connector import (
     WikidataQueryServiceConnector,
 )
 from mex.common.wikidata.models.organization import WikidataOrganization
-from mex.settings import Settings
+from mex.extractors.settings import Settings
 
 pytest_plugins = (
     "mex.common.testing.plugin",

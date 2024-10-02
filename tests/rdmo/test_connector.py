@@ -5,7 +5,7 @@ import requests
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
-from mex.rdmo.connector import RDMOConnector
+from mex.extractors.rdmo.connector import RDMOConnector
 
 
 @pytest.fixture

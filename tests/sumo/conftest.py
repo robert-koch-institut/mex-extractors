@@ -4,6 +4,7 @@ import pytest
 from traitlets import Any
 
 from mex.common.models import (
+    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedPerson,
@@ -16,15 +17,16 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
+    TechnicalAccessibility,
     Text,
     TextLanguage,
 )
-from mex.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
-from mex.sumo.models.cc1_data_valuesets import Cc1DataValuesets
-from mex.sumo.models.cc2_aux_mapping import Cc2AuxMapping
-from mex.sumo.models.cc2_aux_model import Cc2AuxModel
-from mex.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
-from mex.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
+from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
+from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
+from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
+from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 
 @pytest.fixture
@@ -123,6 +125,16 @@ def sumo_resources_feat() -> dict[str, Any]:
                 ],
             }
         ],
+        "hasPersonalData": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": ["https://mex.rki.de/item/personal-data-1"],
+                    }
+                ],
+            }
+        ],
         "keyword": [
             {
                 "fieldInPrimarySource": "n/a",
@@ -139,19 +151,47 @@ def sumo_resources_feat() -> dict[str, Any]:
                 "comment": "Emergency Service, Hospital",
             }
         ],
+        "resourceCreationMethod": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": [
+                            "https://mex.rki.de/item/resource-creation-method-1"
+                        ],
+                    }
+                ],
+            }
+        ],
         "resourceTypeGeneral": [
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/resource-type-general-1"]}
+                    {"setValues": ["https://mex.rki.de/item/resource-type-general-14"]}
                 ],
-                "comment": "Public Health Fachdaten",
+            }
+        ],
+        "resourceTypeSpecific": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {"setValues": [{"language": "de", "value": "Dummy resource type"}]},
+                    {"setValues": [{"language": "en", "value": "Dummy resource type"}]},
+                ],
+            }
+        ],
+        "spatial": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {"setValues": [{"language": "de", "value": "Dummy spatial"}]},
+                ],
             }
         ],
         "theme": [
             {
                 "fieldInPrimarySource": "n/a",
-                "mappingRules": [{"setValues": ["https://mex.rki.de/item/theme-35"]}],
+                "mappingRules": [{"setValues": ["https://mex.rki.de/item/theme-11"]}],
             }
         ],
         "title": [
@@ -208,6 +248,16 @@ def sumo_resources_nokeda() -> dict[str, Any]:
                     {
                         "forValues": ["MF4"],
                         "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
+                    }
+                ],
+            }
+        ],
+        "hasPersonalData": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": ["https://mex.rki.de/item/personal-data-1"],
                     }
                 ],
             }
@@ -297,13 +347,24 @@ def sumo_resources_nokeda() -> dict[str, Any]:
                 ],
             }
         ],
+        "resourceCreationMethod": [
+            {
+                "fieldInPrimarySource": "n/a",
+                "mappingRules": [
+                    {
+                        "setValues": [
+                            "https://mex.rki.de/item/resource-creation-method-3"
+                        ],
+                    }
+                ],
+            }
+        ],
         "resourceTypeGeneral": [
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/resource-type-general-1"]}
+                    {"setValues": ["https://mex.rki.de/item/resource-type-general-14"]}
                 ],
-                "comment": "Public Health Fachdaten",
             }
         ],
         "resourceTypeSpecific": [
@@ -349,9 +410,8 @@ def sumo_resources_nokeda() -> dict[str, Any]:
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
                     {"setValues": ["https://mex.rki.de/item/theme-11"]},
-                    {"setValues": ["https://mex.rki.de/item/theme-35"]},
+                    {"setValues": ["https://mex.rki.de/item/theme-36"]},
                 ],
-                "comment": "Infektionskrankheiten.",
             }
         ],
         "title": [
@@ -435,6 +495,20 @@ def sumo_access_platform() -> dict[str, Any]:
 
 
 @pytest.fixture
+def transformed_sumo_access_platform() -> ExtractedAccessPlatform:
+    return ExtractedAccessPlatform(
+        identifierInPrimarySource="sumo",
+        hadPrimarySource=UUID(int=5, version=4),
+        title=[Text(value="SUMO Access Platform", language=TextLanguage.EN)],
+        technicalAccessibility=TechnicalAccessibility(
+            "https://mex.rki.de/item/technical-accessibility-1"
+        ),
+        unitInCharge=[MergedOrganizationalUnitIdentifier.generate(seed=42)],
+        contact=[MergedOrganizationalUnitIdentifier("bFQoRhcVH5DHVf")],
+    )
+
+
+@pytest.fixture
 def sumo_activity() -> dict[str, Any]:
     """Return Sumo Activity."""
     return {
@@ -442,7 +516,9 @@ def sumo_activity() -> dict[str, Any]:
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": [{"language": "de", "value": "Dummy abstract."}]}
+                    {
+                        "setValues": [{"language": "de", "value": "Dummy abstract"}],
+                    }
                 ],
             }
         ],
@@ -450,9 +526,10 @@ def sumo_activity() -> dict[str, Any]:
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/activity-type-3"]}
+                    {
+                        "setValues": ["https://mex.rki.de/item/activity-type-3"],
+                    }
                 ],
-                "comment": "RKI-internes Projekt",
             }
         ],
         "contact": [
@@ -461,7 +538,6 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "forValues": ["email@email.de"],
-                        "rule": "Use value to match with ldap extractor.",
                     }
                 ],
             }
@@ -477,7 +553,7 @@ def sumo_activity() -> dict[str, Any]:
                                 "title": "SUMO im internen RKI Confluence",
                                 "url": "https://url.url",
                             }
-                        ]
+                        ],
                     }
                 ],
             }
@@ -488,7 +564,6 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "forValues": ["Dummy Associate"],
-                        "rule": "Use value to match with wikidata extractor.",
                     }
                 ],
             }
@@ -496,7 +571,11 @@ def sumo_activity() -> dict[str, Any]:
         "identifierInPrimarySource": [
             {
                 "fieldInPrimarySource": "n/a",
-                "mappingRules": [{"setValues": ["https://url.url"]}],
+                "mappingRules": [
+                    {
+                        "setValues": ["https://url.url"],
+                    }
+                ],
             }
         ],
         "involvedUnit": [
@@ -505,7 +584,6 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "forValues": ["mf4"],
-                        "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
                     }
                 ],
             }
@@ -515,22 +593,10 @@ def sumo_activity() -> dict[str, Any]:
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
                     {
-                        "setValues": [
-                            {
-                                "language": "de",
-                                "title": "Dummy title.",
-                                "url": "http://url.url",
-                            }
-                        ]
+                        "forValues": ["Dummy publication"],
                     },
                     {
-                        "setValues": [
-                            {
-                                "language": "de",
-                                "title": "Dummy title.",
-                                "url": "https://url.url",
-                            }
-                        ]
+                        "forValues": ["Dummy publication"],
                     },
                 ],
             }
@@ -541,7 +607,6 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "forValues": ["fg32"],
-                        "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
                     }
                 ],
             }
@@ -549,13 +614,21 @@ def sumo_activity() -> dict[str, Any]:
         "shortName": [
             {
                 "fieldInPrimarySource": "n/a",
-                "mappingRules": [{"setValues": [{"value": "SUMO"}]}],
+                "mappingRules": [
+                    {
+                        "setValues": [{"language": "de", "value": "SUMO"}],
+                    }
+                ],
             }
         ],
         "start": [
             {
                 "fieldInPrimarySource": "n/a",
-                "mappingRules": [{"setValues": ["2018-07"]}],
+                "mappingRules": [
+                    {
+                        "setValues": ["2018-07-01"],
+                    }
+                ],
             }
         ],
         "succeeds": [
@@ -564,7 +637,6 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "forValues": ["Dummy project"],
-                        "rule": "Ignore the value, the item is not in MEx.",
                     }
                 ],
             }
@@ -573,13 +645,13 @@ def sumo_activity() -> dict[str, Any]:
             {
                 "fieldInPrimarySource": "n/a",
                 "mappingRules": [
-                    {"setValues": ["https://mex.rki.de/item/theme-35"]},
-                    {"setValues": ["https://mex.rki.de/item/theme-11"]},
-                    {"setValues": ["https://mex.rki.de/item/theme-3"]},
-                    {"setValues": ["https://mex.rki.de/item/theme-36"]},
-                    {"setValues": ["https://mex.rki.de/item/theme-38"]},
+                    {
+                        "setValues": [
+                            "https://mex.rki.de/item/theme-11",
+                            "https://mex.rki.de/item/theme-36",
+                        ],
+                    }
                 ],
-                "comment": "dummy comment",
             }
         ],
         "title": [
@@ -588,8 +660,11 @@ def sumo_activity() -> dict[str, Any]:
                 "mappingRules": [
                     {
                         "setValues": [
-                            {"language": "de", "value": "SUMO Notaufnahmesurveillance"}
-                        ]
+                            {
+                                "language": "de",
+                                "value": "SUMO Notaufnahmesurveillance",
+                            }
+                        ],
                     }
                 ],
             }
@@ -605,7 +680,7 @@ def sumo_activity() -> dict[str, Any]:
                                 "title": "Surveillance Monitor",
                                 "url": "https://url.url",
                             }
-                        ]
+                        ],
                     }
                 ],
             }
@@ -636,7 +711,7 @@ def transformed_activity() -> ExtractedActivity:
         shortName=[Text(value="SUMO", language=TextLanguage.DE)],
         start=[],
         succeeds=[],
-        theme=["https://mex.rki.de/item/theme-35"],
+        theme=["https://mex.rki.de/item/theme-36"],
         title=[Text(value="SUMO Notaufnahmesurveillance", language=TextLanguage.DE)],
         website=[],
     )
@@ -659,7 +734,8 @@ def mex_resources_nokeda() -> ExtractedResource:
         meshId=["http://id.nlm.nih.gov/mesh/D004636"],
         publication=["Situationsreport"],
         publisher=[MergedOrganizationIdentifier("bFQoRhcVH5DHU6")],
-        resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-1"],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
+        resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-14"],
         resourceTypeSpecific=["Daten"],
         rights=[
             "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des RKI zur Nutzung zur Verfügung gestellt werden."
@@ -684,8 +760,8 @@ def mex_resources_feat() -> ExtractedResource:
         contributingUnit=[UUID(int=5, version=4)],
         keyword=["keyword 1", "keyword 2"],
         meshId=["http://id.nlm.nih.gov/mesh/D004636"],
-        resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-1"],
-        theme=["https://mex.rki.de/item/theme-1"],
+        resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-14"],
+        theme=["https://mex.rki.de/item/theme-11"],
         title=["Syndrome"],
         unitInCharge=[MergedOrganizationalUnitIdentifier.generate(seed=42)],
     )

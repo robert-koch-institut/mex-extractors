@@ -14,11 +14,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
-    ResourceTypeGeneral,
     Text,
-    Theme,
 )
-from mex.odk.model import ODKData
+from mex.extractors.odk.model import ODKData
 
 
 @pytest.fixture
@@ -192,6 +190,23 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "hasLegalBasis": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [
+                                {"value": "Informed consent", "language": "en"}
+                            ],
+                            "rule": "Set value as indicated.",
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "icd10code": None,
             "instrumentToolOrApparatus": None,
             "isPartOf": None,
@@ -294,7 +309,23 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
-            "qualityInformation": None,
+            "resourceCreationMethod": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [
+                                "https://mex.rki.de/item/resource-creation-method-2"
+                            ],
+                            "rule": "Set value as indicated.",
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "resourceTypeGeneral": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -303,14 +334,30 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": [ResourceTypeGeneral["QUESTIONNAIRE"]],
+                            "setValues": [
+                                "https://mex.rki.de/item/resource-type-general-15"
+                            ],
                             "rule": "Set value as indicated.",
                         }
                     ],
                     "comment": None,
                 }
             ],
-            "resourceTypeSpecific": None,
+            "resourceTypeSpecific": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": [{"value": "tempor", "language": "en"}],
+                            "rule": "Set value as indicated.",
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "rights": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -384,8 +431,8 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
                         {
                             "forValues": None,
                             "setValues": [
-                                Theme["INFECTIOUS_DISEASES"],
-                                Theme["STUDIES_AND_SURVEILLANCE"],
+                                "https://mex.rki.de/item/theme-11",
+                                "https://mex.rki.de/item/theme-37",
                             ],
                             "rule": "Set values as indicated.",
                         }
@@ -485,7 +532,7 @@ def extracted_resources_odk() -> list[ExtractedResource]:
             ],
             methodDescription=[Text(value="tempor", language="en")],
             publisher=["bFQoRhcVH5DHU6"],
-            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-8"],
+            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
             rights=[Text(value="ut labore", language="de")],
             sizeOfDataBasis="et dolore",
             spatial=[
@@ -496,7 +543,7 @@ def extracted_resources_odk() -> list[ExtractedResource]:
             temporal="2021-07-27 - 2021-12-31",
             theme=[
                 "https://mex.rki.de/item/theme-11",
-                "https://mex.rki.de/item/theme-35",
+                "https://mex.rki.de/item/theme-37",
             ],
             title=[
                 Text(value="aliquyam", language="en"),

@@ -3,7 +3,7 @@ import logging
 from pytest import LogCaptureFixture
 
 from mex.common.types import Identifier
-from mex.logging import log_filter
+from mex.extractors.logging import log_filter
 
 
 def test_log_filter(caplog: LogCaptureFixture) -> None:

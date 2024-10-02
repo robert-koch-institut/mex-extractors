@@ -55,6 +55,17 @@ documentation:
       - language: de
         title: RKI Website
         url: https://www.rki.de
+hasLegalBasis:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - language: de
+        value: "Bei dem Verfahren GrippeWeb."
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -102,24 +113,39 @@ methodDescription:
     - setValues:
       - language: de
         value: "Online-Surveillanceintrument"
+minTypicalAge:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - 0
+populationCoverage:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - language: de
+          value: "Alle Personen."
 publication:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - setValues:
-      - language: de
-        title: "COVID-19-Raten"
-        url: https://doi.org/10.25646/11292
+      - forValues:
+          - "study"
+        rule: Skip extraction. Add the bibliographic resources with the editor.
 publisher:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - Robert Koch-Institut
       rule: Match value with organization item using wikidata extractor.
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-3 # Surveillance
 resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/resource-type-general-10 #Surveillance data
+      - https://mex.rki.de/item/resource-type-general-13 #Surveillance data
 resourceTypeSpecific:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -161,8 +187,6 @@ theme:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/theme-35 #Studies and Surveillance
-    - setValues:
       - https://mex.rki.de/item/theme-11 #Infectious Diseases
 title:
   - fieldInPrimarySource: n/a
@@ -180,5 +204,5 @@ wasGeneratedBy:
   - fieldInPrimarySource: n/a
     mappingRules:
       - forValues:
-        - 2022-006
+        - C1
         rule: Match value with corresponding identifierInPrimarySource

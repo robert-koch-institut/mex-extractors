@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../__schema__/ExtractedActivity_MappingSchema.json
+
+activityType:
+  - fieldInPrimarySource: Funding type
+    mappingRules:
+    - forValues:
+      - Third party funded
+      setValues:
+      - https://mex.rki.de/item/activity-type-1 # Third party funded Project
+    - forValues:
+      - RKI funded
+      setValues:
+      - https://mex.rki.de/item/activity-type-3 # Internal project/endeavor
+    - rule: If the values in primary source do not match "Third party funded" or "RKI
+        funded", then match to the following default value in "setValues".
+      setValues:
+      - https://mex.rki.de/item/activity-type-6 # Other
+contact:
+  - fieldInPrimarySource: Project lead (person)
+    examplesInPrimarySource:
+      - Doe, Jane
+    mappingRules:
+    - forValues:
+      - ZIG-GS
+      rule: Match value with identifier "zig" in /raw-data/organigram/organizational-units.json
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: "Assign 'stable target id' of primary source with identifier 'international-projects' in /raw-data/primary-sources/primary-sources.json."
+identifierInPrimarySource:
+  - fieldInPrimarySource: RKI internal project number (e.g. 1368-2022)
+    examplesInPrimarySource:
+      - 1368-2022
+    mappingRules:
+    - rule: Extract original value. Not applicable for all projects.
+  - fieldInPrimarySource: Project Abbreviation
+    examplesInPrimarySource:
+      - ABCM
+      - ACGSL
+      - BoCO-19
+    mappingRules:
+      - rule: Only use this field, if no value is applicable in the fieldInPrimarySource 'RKI internal project number'.
+responsibleUnit:
+  - fieldInPrimarySource: Project lead (RKI unit)
+    examplesInPrimarySource:
+    - ZIG1
+    - ZIG2
+    - FG37
+    mappingRules:
+    - rule: Match value with identifier in /raw-data/organigram/organizational-units.json.
+    - forValues:
+      - ZIG-GS
+      rule: Match with identifier 'zig' in /raw-data/organigram/organizational-units.json.
+theme:
+  - fieldInPrimarySource: Activity [1|2 (optional)]
+    mappingRules:
+    - forValues:
+      - Crisis management
+      - Capacity building including trainings
+      - Supporting global governance structures and processes
+      - Conducting research
+      setValues:
+      - https://mex.rki.de/item/theme-37
+      rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
+  - fieldInPrimarySource: Topic [1|2 (optional)]
+    mappingRules:
+    - forValues:
+      - Public health systems
+      - One Health
+      - Laboratory diagnostics
+      setValues:
+        - https://mex.rki.de/item/theme-37
+      rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
+    - forValues:
+      - Non-communciable diseases
+      setValues:
+      - https://mex.rki.de/item/theme-36
+title:
+  - fieldInPrimarySource: Full project name (as in application or officially amended later)
+    examplesInPrimarySource:
+    - "Strengthening of the collaboration between GOARN and PAE, Nigeria Centre for Disease Control: Capacity Develpoment for Preparedness
+      and Response for Infectious Diseases"
+    mappingRules:
+      - rule: Extract original value. Assign 'en' as default for language property of the text object.

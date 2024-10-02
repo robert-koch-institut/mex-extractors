@@ -13,9 +13,10 @@ from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    TextLanguage,
 )
-from mex.odk.model import ODKData
-from mex.odk.transform import (
+from mex.extractors.odk.model import ODKData
+from mex.extractors.odk.transform import (
     get_variable_groups_from_raw_data,
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
@@ -33,7 +34,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             responsibleUnit=["bFQoRhcVH5DHUL"],
             title="This is a test project full title",
             activityType=[
-                "https://mex.rki.de/item/activity-type-2",
+                "https://mex.rki.de/item/activity-type-3",
                 "https://mex.rki.de/item/activity-type-1",
             ],
             alternativeTitle="testAAbr",
@@ -44,7 +45,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             involvedUnit=["bFQoRhcVH5DHUL"],
             shortName="testAAbr",
             start="2021-07-27",
-            theme=["https://mex.rki.de/item/theme-27"],
+            theme=["https://mex.rki.de/item/theme-37"],
             website=[],
         ),
         ExtractedActivity(
@@ -54,7 +55,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             responsibleUnit=["bFQoRhcVH5DHUL"],
             title="This is a test project full title 2",
             activityType=[
-                "https://mex.rki.de/item/activity-type-2",
+                "https://mex.rki.de/item/activity-type-3",
                 "https://mex.rki.de/item/activity-type-1",
             ],
             alternativeTitle="testAAbr2",
@@ -65,8 +66,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             shortName="testAAbr2",
             start="2023-01-01",
             theme=[
-                "https://mex.rki.de/item/theme-27",
-                "https://mex.rki.de/item/theme-1",
+                "https://mex.rki.de/item/theme-37",
             ],
         ),
         ExtractedActivity(
@@ -76,7 +76,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             responsibleUnit=["bFQoRhcVH5DHUL"],
             title="This is a test project full title 4",
             activityType=[
-                "https://mex.rki.de/item/activity-type-2",
+                "https://mex.rki.de/item/activity-type-3",
                 "https://mex.rki.de/item/activity-type-1",
             ],
             alternativeTitle="testAAbr3",
@@ -88,9 +88,7 @@ def extracted_international_projects_activities() -> list[ExtractedActivity]:
             shortName="testAAbr3",
             start="2021-08-01",
             theme=[
-                "https://mex.rki.de/item/theme-27",
-                "https://mex.rki.de/item/theme-36",
-                "https://mex.rki.de/item/theme-1",
+                "https://mex.rki.de/item/theme-37",
             ],
             website=[Link(language=None, title=None, url="None")],
         ),
@@ -111,7 +109,7 @@ def test_transform_odk_resources_to_mex_resources(
         )
     ).stableTargetId
 
-    resources = transform_odk_resources_to_mex_resources(
+    resources, is_part_of = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
@@ -121,66 +119,95 @@ def test_transform_odk_resources_to_mex_resources(
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": "00000000000000",
+        "hasLegalBasis": [
+            {
+                "language": TextLanguage.EN,
+                "value": "Informed consent",
+            },
+        ],
         "identifierInPrimarySource": "test_raw_data",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "alternativeTitle": [
-            {"value": "dolor", "language": "en"},
-            {"value": "sit", "language": "de"},
+            {"value": "dolor", "language": TextLanguage.EN},
+            {"value": "sit", "language": TextLanguage.DE},
         ],
-        "contact": [unit_stable_target_ids_by_synonym["C1"]],
-        "contributingUnit": [unit_stable_target_ids_by_synonym["C1"]],
-        "description": [{"value": "amet", "language": "en"}],
+        "contact": [str(unit_stable_target_ids_by_synonym["C1"])],
+        "contributingUnit": [str(unit_stable_target_ids_by_synonym["C1"])],
+        "description": [{"value": "amet", "language": TextLanguage.EN}],
         "externalPartner": [
-            external_partner_and_publisher_by_label["consetetur"],
-            external_partner_and_publisher_by_label["invidunt"],
+            str(external_partner_and_publisher_by_label["consetetur"]),
+            str(external_partner_and_publisher_by_label["invidunt"]),
+            "gnhGhU3ATowGuV0KJwGuxB",
         ],
         "keyword": [
             {"value": "elitr"},
-            {"value": "sed", "language": "en"},
-            {"value": "diam", "language": "en"},
+            {"value": "sed", "language": TextLanguage.EN},
+            {"value": "diam", "language": TextLanguage.EN},
         ],
         "language": ["https://mex.rki.de/item/language-2"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D000086382"],
         "method": [
-            {"value": "nonumy", "language": "en"},
-            {"value": "eirmod", "language": "de"},
+            {"value": "nonumy", "language": TextLanguage.EN},
+            {"value": "eirmod", "language": TextLanguage.DE},
         ],
-        "methodDescription": [{"value": "tempor", "language": "en"}],
+        "methodDescription": [{"value": "tempor", "language": TextLanguage.EN}],
         "publisher": [
-            external_partner_and_publisher_by_label["invidunt"],
-            external_partner_and_publisher_by_label["consetetur"],
+            str(external_partner_and_publisher_by_label["invidunt"]),
+            str(external_partner_and_publisher_by_label["consetetur"]),
         ],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-8"],
-        "rights": [{"value": "ut labore", "language": "de"}],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-2",
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-15"],
+        "resourceTypeSpecific": [
+            {
+                "language": TextLanguage.EN,
+                "value": "tempor",
+            },
+        ],
+        "rights": [{"value": "ut labore", "language": TextLanguage.DE}],
         "sizeOfDataBasis": "et dolore",
         "spatial": [
-            {"value": "magna", "language": "de"},
-            {"value": "magna", "language": "en"},
+            {"value": "magna", "language": TextLanguage.DE},
+            {"value": "magna", "language": TextLanguage.EN},
         ],
         "temporal": "2021-07-27 - 2021-12-31",
         "theme": [
             "https://mex.rki.de/item/theme-11",
-            "https://mex.rki.de/item/theme-35",
+            "https://mex.rki.de/item/theme-37",
         ],
         "title": [
-            {"value": "aliquyam", "language": "en"},
-            {"value": "erat", "language": "de"},
+            {"value": "aliquyam", "language": TextLanguage.EN},
+            {"value": "erat", "language": TextLanguage.DE},
         ],
-        "unitInCharge": [unit_stable_target_ids_by_synonym["C1"]],
-        "wasGeneratedBy": international_project_stable_target_id,
+        "unitInCharge": [str(unit_stable_target_ids_by_synonym["C1"])],
+        "wasGeneratedBy": str(international_project_stable_target_id),
     }
-    assert resources[0].model_dump(exclude_defaults=True) == expected
-
-    resources_without_organizations = transform_odk_resources_to_mex_resources(
-        odk_resource_mappings,
-        unit_stable_target_ids_by_synonym,
-        {},
-        extracted_international_projects_activities,
-        extracted_primary_sources["mex"],
+    assert resources["test_raw_data"].model_dump(exclude_defaults=True) == expected
+    assert is_part_of == []
+    resources_organizations_empty_or_created, _ = (
+        transform_odk_resources_to_mex_resources(
+            odk_resource_mappings,
+            unit_stable_target_ids_by_synonym,
+            {},
+            extracted_international_projects_activities,
+            extracted_primary_sources["mex"],
+        )
     )
-    assert resources_without_organizations[0].model_dump()["publisher"] == []
-    assert resources_without_organizations[0].model_dump()["externalPartner"] == []
+    assert (
+        resources_organizations_empty_or_created["test_raw_data"].model_dump()[
+            "publisher"
+        ]
+        == []
+    )
+    assert resources_organizations_empty_or_created["test_raw_data"].model_dump()[
+        "externalPartner"
+    ] == [
+        "dHOP0smFLofntMGAA4Z89M",
+        "hmAkmTAONYQFjxpqrElERm",
+        "gnhGhU3ATowGuV0KJwGuxB",
+    ]
 
 
 def test_get_variable_groups_from_raw_data(
@@ -302,26 +329,34 @@ def test_transform_odk_data_to_extracted_variables(
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources["odk"].stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
         "identifierInPrimarySource": "gatekeeper",
         "stableTargetId": Joker(),
-        "belongsTo": [extracted_variable_groups_odk[0].stableTargetId],
+        "belongsTo": [str(extracted_variable_groups_odk[0].stableTargetId)],
+        "dataType": "begin_group",
         "label": [
-            {"value": "Introduction of study to gatekeeper", "language": "en"},
-            {"value": "Introduction of study to gatekeeper", "language": "en"},
+            {
+                "value": "Introduction of study to gatekeeper",
+                "language": TextLanguage.EN,
+            },
+            {
+                "value": "Introduction of study to gatekeeper",
+                "language": TextLanguage.EN,
+            },
         ],
-        "usedIn": [extracted_resources_odk[0].stableTargetId],
+        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
-        "hadPrimarySource": extracted_primary_sources["odk"].stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
         "identifierInPrimarySource": "consent_gatekeeper",
-        "belongsTo": [extracted_variable_groups_odk[0].stableTargetId],
+        "belongsTo": [str(extracted_variable_groups_odk[0].stableTargetId)],
+        "dataType": "select_one consent",
         "label": [
             {"value": "**Verbal consent**"},
             {"value": "**Omaitaverero wokotjinyo**"},
         ],
-        "usedIn": [extracted_resources_odk[0].stableTargetId],
+        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
         "valueSet": [
             "consent",
             "I AGREE with the above statements and wish to take part in the survey",

@@ -4,9 +4,9 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.blueant.connector import BlueAntConnector
-from mex.blueant.models.project import BlueAntProject
 from mex.common.exceptions import MExError
+from mex.extractors.blueant.connector import BlueAntConnector
+from mex.extractors.blueant.models.project import BlueAntProject
 
 
 @pytest.fixture

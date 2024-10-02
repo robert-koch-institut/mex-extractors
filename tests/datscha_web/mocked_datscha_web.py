@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.datscha_web.connector import DatschaWebConnector
-from mex.datscha_web.models.item import DatschaWebItem
+from mex.extractors.datscha_web.connector import DatschaWebConnector
+from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
 @pytest.fixture
@@ -66,14 +66,14 @@ def datscha_web_item_raw() -> dict[str, Any]:
         "Verantwortlicher für das Abrufverfahren": "None",
         "EU-Verfahren": "nein",
         "Auftragsverarbeitung (Art.\xa028\xa0DSGVO)": "nein",
-        "Auftragsverarbeiter": "None",
+        "Auftragsverarbeiter": "Fancy Fake Firm & CoKG",
         "Datenverarbeitung (Übermittlung/Offenlegung)": "nein",
         "Art der verarbeiteten (übermittelten/offengelegten) Daten": "None",
-        "Empfänger der verarbeiteten (übermittelten/offengelegten) Daten": "None",
+        "Empfänger der verarbeiteten (übermittelten/offengelegten) Daten": "Fancy Fake Firm & CoKG",
         "Datenübermittlung in Drittstaat": "nein",
         "Name des Drittstaats": "None",
         "Art der verarbeiteten (übermittelten/offengelegten) Daten in Drittstaat": "None",
-        "Empfänger der Daten im Drittstaat": "Mentzel Oderwald OHG mbH",
+        "Empfänger der Daten im Drittstaat": "Fancy Fake Firm & CoKG",
         "Hard- und Software": "test://dms-vbs/fsc/mx/COO.2219.100.4.251163>",
         "Schutzmaßnahmen (Art.\xa032\xa0DSGVO)": "Siehe DS-Fragenkatalog",
         "Zugriffskontrolle": "Siehe DS-Fragenkatalog",

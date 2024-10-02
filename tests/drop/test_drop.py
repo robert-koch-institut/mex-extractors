@@ -4,7 +4,7 @@ import pytest
 from pytest import MonkeyPatch
 from requests.exceptions import HTTPError
 
-from mex.drop import DropApiConnector
+from mex.extractors.drop import DropApiConnector
 
 
 @pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")

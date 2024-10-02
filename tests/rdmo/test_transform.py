@@ -1,9 +1,9 @@
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Identifier, TemporalEntity, TextLanguage
-from mex.rdmo.models.person import RDMOPerson
-from mex.rdmo.models.source import RDMOSource
-from mex.rdmo.transform import transform_rdmo_sources_to_extracted_activities
+from mex.extractors.rdmo.models.person import RDMOPerson
+from mex.extractors.rdmo.models.source import RDMOSource
+from mex.extractors.rdmo.transform import transform_rdmo_sources_to_extracted_activities
 
 
 def test_transform_rdmo_sources_to_extracted_activities(

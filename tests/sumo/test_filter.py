@@ -1,8 +1,8 @@
 from itertools import tee
 
 from mex.common.models import ExtractedPrimarySource
-from mex.sumo.extract import extract_cc2_aux_model
-from mex.sumo.filter import filter_and_log_cc2_aux_model
+from mex.extractors.sumo.extract import extract_cc2_aux_model
+from mex.extractors.sumo.filter import filter_and_log_cc2_aux_model
 
 
 def test_filter_and_log_variables(

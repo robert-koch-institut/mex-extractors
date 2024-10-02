@@ -1,6 +1,6 @@
 from mex.common.models import ExtractedAccessPlatform
 from mex.common.types import AssetsPath, TechnicalAccessibility, TextLanguage
-from mex.mapping.extract import extract_mapping_data
+from mex.extractors.mapping.extract import extract_mapping_data
 
 
 def test_get_mapping_model() -> None:

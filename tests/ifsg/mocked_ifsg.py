@@ -5,15 +5,17 @@ import pytest
 from pydantic import BaseModel
 from pytest import MonkeyPatch
 
-from mex.ifsg.connector import IFSGConnector
-from mex.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
-from mex.ifsg.models.meta_catalogue2item2schema import MetaCatalogue2Item2Schema
-from mex.ifsg.models.meta_disease import MetaDisease
-from mex.ifsg.models.meta_field import MetaField
-from mex.ifsg.models.meta_item import MetaItem
-from mex.ifsg.models.meta_schema2field import MetaSchema2Field
-from mex.ifsg.models.meta_schema2type import MetaSchema2Type
-from mex.ifsg.models.meta_type import MetaType
+from mex.extractors.ifsg.connector import IFSGConnector
+from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
+from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
+    MetaCatalogue2Item2Schema,
+)
+from mex.extractors.ifsg.models.meta_disease import MetaDisease
+from mex.extractors.ifsg.models.meta_field import MetaField
+from mex.extractors.ifsg.models.meta_item import MetaItem
+from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
+from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
+from mex.extractors.ifsg.models.meta_type import MetaType
 
 
 @pytest.fixture

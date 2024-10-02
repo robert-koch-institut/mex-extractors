@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../__schema__/ExtractedActivity_MappingSchema.json
+
+activityType:
+  - fieldInPrimarySource: RKI-AZ
+    mappingRules:
+    - forValues:
+      - "1364"
+      - "1365"
+      - "1367"
+      - "1368"
+      setValues:
+      - https://mex.rki.de/item/activity-type-1
+contact:
+  - fieldInPrimarySource: Projektleiter
+    examplesInPrimarySource:
+    - Doe
+    - Müller-Schmidt
+    mappingRules:
+    - rule: Match person using ldap extractor. If the value does not match, use the organizational unit
+        given in the field 'RKI-OE'.
+end:
+  - fieldInPrimarySource: Laufzeit bis
+    examplesInPrimarySource:
+    - "31.12.2020"
+    mappingRules:
+      - rule: Extract original value.
+funderOrCommissioner:
+  - fieldInPrimarySource: Zuwendungs-/Auftraggeber
+    examplesInPrimarySource:
+    - EC
+    - DFG
+    - G-BA
+    - SV Frankfurt
+    - Charité
+    mappingRules:
+      - rule: Match value using wikidata extractor.
+fundingProgram:
+  - fieldInPrimarySource: Förderprogr.(FP7, H2020 etc.) ab 08/2015
+    examplesInPrimarySource:
+    - H2020
+    mappingRules:
+      - rule: Extract original value.
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: Assign 'stable target id' of primary source with identifier 'ff-project' in /raw-data/primary-sources/primary-sources.json.
+identifierInPrimarySource:
+  - fieldInPrimarySource: lfd. Nr.
+    examplesInPrimarySource:
+    - "1632"
+    - 1754/XX
+    mappingRules:
+      - rule: Extract original value.
+involvedPerson:
+  - fieldInPrimarySource: Projektleiter
+    examplesInPrimarySource:
+    - Doe
+    - Müller-Schmidt
+    mappingRules:
+      - rule: Match person using ldap extractor. If the value does not match, use the organizational unit given in the field 'RKI-OE'.
+responsibleUnit:
+  - fieldInPrimarySource: RKI-OE
+    examplesInPrimarySource:
+    - Präs
+    - GGBS
+    - FG 24
+    - NG 4
+    - P 3
+    mappingRules:
+      - rule: Match value using organigram extractor.
+start:
+  - fieldInPrimarySource: Laufzeit von
+    examplesInPrimarySource:
+    - "01.06.2017"
+    mappingRules:
+      - rule: Extract original value.
+title:
+  - fieldInPrimarySource: Thema des Projekts
+    examplesInPrimarySource:
+    - EuroBioTox
+    - Genetische Anpassung von nicht typhoiden Salmonellen im Human- und Tierreservior
+      in sup-Sahara Afrika
+    mappingRules:
+      - rule: Extract original value.

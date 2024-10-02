@@ -3,7 +3,7 @@ import uuid
 import pytest
 
 from mex.common.types import TemporalEntity
-from mex.international_projects.extract import (
+from mex.extractors.international_projects.extract import (
     extract_international_projects_project_leaders,
     extract_international_projects_sources,
 )

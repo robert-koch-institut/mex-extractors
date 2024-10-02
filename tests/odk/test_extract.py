@@ -1,7 +1,7 @@
 from numpy import nan
 from pandas import DataFrame
 
-from mex.odk.extract import extract_odk_raw_data, get_column_dict_by_pattern
+from mex.extractors.odk.extract import extract_odk_raw_data, get_column_dict_by_pattern
 
 
 def test_extract_odk_raw_data() -> None:

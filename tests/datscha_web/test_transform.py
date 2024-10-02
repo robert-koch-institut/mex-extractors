@@ -4,9 +4,9 @@ import pytest
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
-from mex.common.types import Identifier
-from mex.datscha_web.models.item import DatschaWebItem
-from mex.datscha_web.transform import (
+from mex.common.types import Identifier, MergedOrganizationIdentifier
+from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.datscha_web.transform import (
     transform_datscha_web_items_to_mex_activities,
 )
 
@@ -32,9 +32,11 @@ def unit_stable_target_ids_by_synonym() -> dict[str, Identifier]:
 
 
 @pytest.fixture
-def organizations_stable_target_ids_by_query_string() -> dict[str, Identifier]:
+def organizations_stable_target_ids_by_query_string() -> (
+    dict[str, MergedOrganizationIdentifier]
+):
     return {
-        "Mentzel Oderwald OHG mbH": Identifier("ID000000000077"),
+        "Fancy Fake Firm & CoKG": Identifier("ID000000000077"),
         "FG99": Identifier("ID000000000884"),
         "Abteilung 2": Identifier("ID000000000039"),
     }
@@ -44,7 +46,9 @@ def test_transform_datscha_web_items_to_mex_activities(
     datscha_web_item: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
     unit_stable_target_ids_by_synonym: dict[str, Identifier],
-    organizations_stable_target_ids_by_query_string: dict[str, Identifier],
+    organizations_stable_target_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     mex_sources = list(
@@ -69,7 +73,7 @@ def test_transform_datscha_web_items_to_mex_activities(
         ],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "contact": [Identifier("ID000000001111"), Identifier("ID000000002222")],
-        "externalAssociate": [Identifier("ID000000000077")],
+        "externalAssociate": ["ID000000000077", "ID000000000077", "ID000000000077"],
         "hadPrimarySource": extracted_primary_sources["datscha-web"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": "17",
@@ -80,7 +84,6 @@ def test_transform_datscha_web_items_to_mex_activities(
             Identifier("ID000000000044"),
         ],
         "stableTargetId": Joker(),
-        "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }
 
@@ -89,7 +92,9 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     datscha_web_item_without_contributors: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
     unit_stable_target_ids_by_synonym: dict[str, Identifier],
-    organizations_stable_target_ids_by_query_string: dict[str, Identifier],
+    organizations_stable_target_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     mex_sources = list(
@@ -117,7 +122,7 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
             Identifier("ID000000000033"),
             Identifier("ID000000000044"),
         ],
-        "externalAssociate": [Identifier("ID000000000077")],
+        "externalAssociate": ["ID000000000077", "ID000000000077", "ID000000000077"],
         "hadPrimarySource": extracted_primary_sources["datscha-web"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": "92",
@@ -126,6 +131,5 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
             Identifier("ID000000000044"),
         ],
         "stableTargetId": Joker(),
-        "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }

@@ -6,7 +6,7 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.drop import DropApiConnector
+from mex.extractors.drop import DropApiConnector
 
 
 @pytest.fixture

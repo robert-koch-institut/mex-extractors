@@ -1,19 +1,21 @@
 import pytest
 
-from mex.synopse.extract import (
+from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
     extract_study_overviews,
     extract_synopse_project_contributors,
     extract_variables,
 )
-from mex.synopse.models.project import SynopseProject
+from mex.extractors.synopse.models.project import SynopseProject
 
 
 def test_extract_variables() -> None:
     expected_first_variable = {
         "auspraegungen": "-95",
         "datentyp": "Zahl",
+        "int_var": False,
+        "keep_varname": True,
         "originalfrage": None,
         "studie": "BBCCDD1",
         "studie_id": 1122999,
@@ -28,6 +30,8 @@ def test_extract_variables() -> None:
     expected_second_variable = {
         "auspraegungen": "-98",
         "datentyp": "Zahl",
+        "int_var": False,
+        "keep_varname": True,
         "originalfrage": None,
         "studie": "BBCCDD1",
         "studie_id": 1122999,

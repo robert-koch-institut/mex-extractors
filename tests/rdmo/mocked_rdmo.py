@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.rdmo.connector import RDMOConnector
-from mex.rdmo.models.person import RDMOPerson
-from mex.rdmo.models.source import RDMOSource
+from mex.extractors.rdmo.connector import RDMOConnector
+from mex.extractors.rdmo.models.person import RDMOPerson
+from mex.extractors.rdmo.models.source import RDMOSource
 
 
 @pytest.fixture

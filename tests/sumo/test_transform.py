@@ -1,6 +1,7 @@
 from typing import Any
 
 from mex.common.models import (
+    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganization,
@@ -11,21 +12,22 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
+    Email,
     Identifier,
     LinkLanguage,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
-    TemporalEntity,
     TextLanguage,
+    YearMonthDay,
 )
-from mex.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
-from mex.sumo.models.cc1_data_valuesets import Cc1DataValuesets
-from mex.sumo.models.cc2_aux_mapping import Cc2AuxMapping
-from mex.sumo.models.cc2_aux_model import Cc2AuxModel
-from mex.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
-from mex.sumo.models.cc2_feat_projection import Cc2FeatProjection
-from mex.sumo.transform import (
+from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
+from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
+from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
+from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
+from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.sumo.transform import (
     get_contact_merged_ids_by_emails,
     get_contact_merged_ids_by_names,
     transform_feat_projection_variable_to_mex_variable,
@@ -69,9 +71,10 @@ def test_transform_resource_nokeda_to_mex_resource(
     sumo_resources_nokeda: dict[str, Any],
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
+    transformed_sumo_access_platform: ExtractedAccessPlatform,
 ) -> None:
     contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
+        Email("email@email.de"): MergedContactPointIdentifier.generate(43)
     }
     mex_source = transform_resource_nokeda_to_mex_resource(
         sumo_resources_nokeda,
@@ -80,14 +83,17 @@ def test_transform_resource_nokeda_to_mex_resource(
         contact_merged_ids_by_emails,
         extracted_organization_rki,
         transformed_activity,
+        transformed_sumo_access_platform,
     )
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             extracted_primary_sources["nokeda"].stableTargetId
         ),
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "test_project",
         "stableTargetId": Joker(),
+        "accessPlatform": [transformed_sumo_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "contact": [Identifier.generate(43)],
@@ -105,20 +111,17 @@ def test_transform_resource_nokeda_to_mex_resource(
                 "url": "https://link.com",
             }
         ],
+        "externalPartner": Joker(),
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword1"},
             {"language": TextLanguage.DE, "value": "keyword2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
-        "publication": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Situationsreport",
-                "url": "https://link.com",
-            }
-        ],
         "publisher": [extracted_organization_rki.stableTargetId],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-1"],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3",
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
         "resourceTypeSpecific": [{"language": TextLanguage.DE, "value": "Daten"}],
         "rights": [
             {
@@ -130,7 +133,6 @@ def test_transform_resource_nokeda_to_mex_resource(
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-2"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
-            "https://mex.rki.de/item/theme-35",
         ],
         "title": [{"language": TextLanguage.DE, "value": "test_project"}],
         "unitInCharge": [unit_merged_ids_by_synonym["FG99"]],
@@ -145,9 +147,10 @@ def test_transform_resource_feat_model_to_mex_resource(
     sumo_resources_feat: dict[str, Any],
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
+    transformed_sumo_access_platform: ExtractedAccessPlatform,
 ) -> None:
     contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
+        Email("email@email.de"): MergedContactPointIdentifier.generate(43)
     }
     mex_source = transform_resource_feat_model_to_mex_resource(
         sumo_resources_feat,
@@ -156,12 +159,15 @@ def test_transform_resource_feat_model_to_mex_resource(
         contact_merged_ids_by_emails,
         mex_resources_nokeda,
         transformed_activity,
+        transformed_sumo_access_platform,
     )
     expected = {
+        "accessPlatform": [transformed_sumo_access_platform.stableTargetId],
         "identifier": Joker(),
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             extracted_primary_sources["nokeda"].stableTargetId
         ),
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "Syndrome",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -174,8 +180,23 @@ def test_transform_resource_feat_model_to_mex_resource(
             {"language": TextLanguage.DE, "value": "keyword 2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-1"],
-        "theme": ["https://mex.rki.de/item/theme-35"],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-1",
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
+        "resourceTypeSpecific": [
+            {
+                "language": TextLanguage.DE,
+                "value": "Dummy resource type",
+            },
+        ],
+        "spatial": [
+            {
+                "language": TextLanguage.DE,
+                "value": "Dummy spatial",
+            },
+        ],
+        "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Syndrome"}],
         "unitInCharge": [unit_merged_ids_by_synonym["FG 99"]],
         "wasGeneratedBy": transformed_activity.stableTargetId,
@@ -448,7 +469,7 @@ def test_transform_sumo_activity_to_extracted_activity(
     sumo_activity: dict[str, Any],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
+    contact_merged_ids_by_emails: dict[Email, MergedContactPointIdentifier],
 ) -> None:
     extracted_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
@@ -456,14 +477,15 @@ def test_transform_sumo_activity_to_extracted_activity(
         contact_merged_ids_by_emails,
         extracted_primary_sources["nokeda"],
     )
+
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": extracted_primary_sources["nokeda"].stableTargetId,
         "identifierInPrimarySource": "https://url.url",
         "stableTargetId": Joker(),
-        "abstract": [{"value": "Dummy abstract.", "language": TextLanguage.DE}],
+        "abstract": [{"value": "Dummy abstract", "language": TextLanguage.DE}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
-        "contact": [contact_merged_ids_by_emails["email@email.de"]],
+        "contact": [contact_merged_ids_by_emails[Email("email@email.de")]],
         "documentation": [
             {
                 "language": LinkLanguage.DE,
@@ -471,23 +493,14 @@ def test_transform_sumo_activity_to_extracted_activity(
                 "url": "https://url.url",
             }
         ],
+        "externalAssociate": Joker(),
         "involvedUnit": [unit_merged_ids_by_synonym["MF4"]],
-        "publication": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Dummy title.",
-                "url": "http://url.url",
-            }
-        ],
         "responsibleUnit": [unit_merged_ids_by_synonym["FG32"]],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
-        "start": [TemporalEntity("2018-07")],
+        "start": [YearMonthDay("2018-07-01")],
         "theme": [
-            "https://mex.rki.de/item/theme-35",
             "https://mex.rki.de/item/theme-11",
-            "https://mex.rki.de/item/theme-3",
             "https://mex.rki.de/item/theme-36",
-            "https://mex.rki.de/item/theme-38",
         ],
         "title": [
             {"value": "SUMO Notaufnahmesurveillance", "language": TextLanguage.DE}

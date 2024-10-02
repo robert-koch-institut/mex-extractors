@@ -12,13 +12,13 @@ from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Identifier, TextLanguage
-from mex.confluence_vvt.connector import ConfluenceVvtConnector
-from mex.confluence_vvt.extract import (
+from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.confluence_vvt.extract import (
     extract_confluence_vvt_authors,
     fetch_all_data_page_ids,
     fetch_all_pages_data,
 )
-from mex.confluence_vvt.transform import (
+from mex.extractors.confluence_vvt.transform import (
     transform_confluence_vvt_sources_to_extracted_activities,
 )
 
@@ -31,13 +31,15 @@ def test_transform_confluence_vvt_source_items_to_mex_activity(
     unit_merged_ids_by_synonym: dict[str, Identifier],
 ) -> None:
     expected = {
-        "hadPrimarySource": extracted_primary_sources["confluence-vvt"].stableTargetId,
-        "identifierInPrimarySource": "86355570",
+        "hadPrimarySource": str(
+            extracted_primary_sources["confluence-vvt"].stableTargetId
+        ),
+        "identifierInPrimarySource": "DS-2023-177",
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "title": [
             {
-                "value": "Accessing and Building Capacities: "
-                "Madagascar Public Health System (ABCM) \u2013 Work Package 1",
+                "value": "Accessing and increasing vaccine readiness in Sub-Saharan Africa "
+                "(VRSA) – Work Package 1",  # noqa: RUF001
                 "language": TextLanguage.EN,
             }
         ],

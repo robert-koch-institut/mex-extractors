@@ -5,7 +5,7 @@ import requests
 from pytest import MonkeyPatch
 from requests import HTTPError
 
-from mex.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 
 
 @pytest.fixture

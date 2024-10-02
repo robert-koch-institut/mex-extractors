@@ -9,24 +9,21 @@ theme:
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/theme-11
-      - https://mex.rki.de/item/theme-34
+      - https://mex.rki.de/item/theme-23
 hadPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
     - rule: "dummy rule"
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
 identifierInPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
       - setValues:
         - https://dummy.url.com/
-stableTargetId:
+resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - rule: Assign 'stable target id' of merged item.
+    - setValues:
+      - https://mex.rki.de/item/resource-type-general-13
 responsibleUnit:
   - fieldInPrimarySource: n/a
     mappingRules:

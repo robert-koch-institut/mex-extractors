@@ -1,4 +1,2 @@
 locations:
   - location_name: mex-extractors
-    code_source:
-      module_name: mex

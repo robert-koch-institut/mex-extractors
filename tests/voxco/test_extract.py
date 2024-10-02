@@ -4,7 +4,7 @@ from uuid import UUID
 import pytest
 
 from mex.common.wikidata.models.organization import WikidataOrganization
-from mex.voxco.extract import (
+from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
     extract_voxco_variables,

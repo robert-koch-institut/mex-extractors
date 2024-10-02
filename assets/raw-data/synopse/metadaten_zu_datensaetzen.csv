@@ -4,4 +4,4 @@ StudienID,DStypID,Studie,Titel_Datenset,Beschreibung,SchlagworteThemen,Dateiform
 1122999,15,BBCCDD1,BBCCDD1,"BBCCDD Welle 1, Kohorte","BBCCDD Welle 1, Kohorte, Telefon, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",2014,,,,restriktiv,Reportserver,,
 1144444,1,BBCCDD2,BBCCDD2,"BBCCDD Welle 2, 1. Datensatz","BBCCDD Welle 2, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Inanspruchnahme Prävention, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",,,,,restriktiv,Reportserver,,
 1229999,999,EEFFGG,EEFFGG,"BGS 98, Dummy",,"sas,stata",2016,,,,restriktiv,Reportserver,,
-1,999,EEFFGG,EEFFGG,"BGS 98, Dummy",,"sas,stata",2016,,,,restriktiv,Reportserver,,
+1234567,999,EEFFGG,EEFFGG,"BGS 98, Dummy",,"sas,stata",2016,,,,restriktiv,Reportserver,,

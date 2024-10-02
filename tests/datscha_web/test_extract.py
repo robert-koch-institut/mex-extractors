@@ -2,11 +2,11 @@ import pytest
 from pytest import MonkeyPatch
 
 import mex.common.wikidata.extract
-from mex.datscha_web.extract import (
+from mex.extractors.datscha_web.extract import (
     extract_datscha_web_items,
     extract_datscha_web_organizations,
 )
-from mex.datscha_web.models.item import DatschaWebItem
+from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
 @pytest.mark.usefixtures("mocked_datscha_web")
@@ -27,7 +27,9 @@ def test_extract_datscha_web_organizations(
     datscha_web_item: DatschaWebItem, monkeypatch: MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        mex.datscha_web.extract, "search_organization_by_label", lambda x: "test"
+        mex.extractors.datscha_web.extract,
+        "search_organization_by_label",
+        lambda x: "test",
     )
     result = extract_datscha_web_organizations([datscha_web_item])
 

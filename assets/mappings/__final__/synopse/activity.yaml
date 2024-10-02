@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=../../__schema__/ExtractedActivity_MappingSchema.json
+
+abstract:
+  - fieldInPrimarySource: BeschreibungStudie
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - 'Mit'
+    mappingRules:
+      - rule: Assign 'de' as default for language property of the text object.
+activityType:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - https://mex.rki.de/item/activity-type-6 # Other
+contact:
+  - fieldInPrimarySource: Kontakt
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - abc@rki.de
+    - cde@rki.de
+    mappingRules:
+      - rule: Use value and match it using ldap extractor.
+documentation:
+  - fieldInPrimarySource: Projektdokumentation
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - "S:\Projekte\\Abt2_Daten\\SURVEYS\\KiGGS2\\Dokumentation.\n-
+      Fragebogen-Ausschnitte\n- Labor\n- Manuals\n- Untersuchungsorte\n- Publikationen\n-
+      Dateninformation\n- Releaseiniformation\n- Datensatzbeschreibung\n- Releaseinformation\n-
+      Variablenübersicht"
+    mappingRules:
+    - rule: 'Use the path starting with "S:\\ "as the url property of the link object. Use the text following "-" as the title property of the link object. Example: "language": "de", "title":"- Fragebogen-Ausschnitte - Labor - Manuals - Untersuchungsorte - Publikationen - Dateninformation - Releaseiniformation - Datensatzbeschreibung - Releaseinformation - Variablenübersicht","url": "S:\\Projekte\\Abt2_Daten\\SURVEYS\\KiGGS2\\Dokumentation\".'
+end:
+  - fieldInPrimarySource: Projektende
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - "2003"
+    - "2009"
+    mappingRules:
+      - rule: Extract original value.
+externalAssociate:
+  - fieldInPrimarySource: Partner_extern
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - Bundesinstituts für Risikobewertung, Karlsruher Institut für Technologie, Uniklinik Hamburg Eppendorf
+    - USUMA GmbH
+    mappingRules:
+    - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization.
+            Use ', ' as marker to separate organizations.
+funderOrCommissioner:
+  - fieldInPrimarySource: Auftraggeber
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - Bundesministerium für Gesundheit (BMG)
+    mappingRules:
+    - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
+    - forValues:
+      - Bundesministerium für Gesundheit (BMG)
+      rule: Ignore '(BMG)' in wikidata search string to find a match.
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
+identifierInPrimarySource:
+  - fieldInPrimarySource: StudienID
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - "1120141"
+    - "1219981"
+    mappingRules:
+      - rule: Extract original value.
+involvedPerson:
+  - fieldInPrimarySource: Beitragende
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - Jane Doe
+    - Dr. Jane Doe
+    mappingRules:
+      - rule: Use value to match using ldap extractor.
+involvedUnit:
+  - fieldInPrimarySource: Partner_intern
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - C1
+    mappingRules:
+      - rule: Use value to match with identifer in /raw-data/organigram/organizational-units.json.
+responsibleUnit:
+  - fieldInPrimarySource: VerantwortlicheOE
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - C1
+    mappingRules:
+      - rule: Use value to match with identifer in /raw-data/organigram/organizational-units.json. If unit unit cannot be resovled, set to fg21.
+shortName:
+  - fieldInPrimarySource: Studie
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - KiGGS
+    - KiGGS Welle 2
+    mappingRules:
+      - rule: Extract original value.
+start:
+  - fieldInPrimarySource: Projektbeginn
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - "2003"
+    - "2009"
+    mappingRules:
+      - rule: Extract original value.
+succeeds:
+  - fieldInPrimarySource: Anschlussprojekt
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - KiGGS-Basiserhebung
+    mappingRules:
+    - rule: match with the field `Studie` OR skip this until FG 21 updates the data.
+        (We want to have `StudienID` inside the field).
+theme:
+  - fieldInPrimarySource: StudienID
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    mappingRules:
+    - forValues:
+      - "7202001"
+      - "7202002"
+      - "7202003"
+      - "7202004"
+      setValues:
+      - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+    - rule: For all other StudienID set value as mentioned below in "setValues".
+      setValues:
+      - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
+title:
+  - fieldInPrimarySource: ProjektStudientitel
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+    - Studie zur Gesundheit von Kindern und Jugendlichen in Deutschland
+      Welle 2
+    mappingRules:
+    - rule: Assign 'de' as default for the language property of the text object. If no value is given in field 'ProjektStudientitel' extract value from field
+        'Studie'. Extract value only, if field 'ProjektStudientitel' is empty.

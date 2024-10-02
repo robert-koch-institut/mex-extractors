@@ -11,7 +11,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.voxco.model import VoxcoVariable
+from mex.extractors.voxco.model import VoxcoVariable
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
@@ -393,6 +393,21 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
                     "comment": None,
                 }
             ],
+            "resourceCreationMethod": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": None,
+                            "setValues": "https://mex.rki.de/item/resource-creation-method-2",
+                            "rule": None,
+                        }
+                    ],
+                    "comment": None,
+                }
+            ],
             "resourceTypeGeneral": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -401,7 +416,7 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/resource-type-general-10",
+                            "setValues": "https://mex.rki.de/item/resource-type-general-15",
                             "rule": None,
                         }
                     ],
@@ -517,7 +532,7 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
                     "mappingRules": [
                         {
                             "forValues": None,
-                            "setValues": "https://mex.rki.de/item/theme-35",
+                            "setValues": "https://mex.rki.de/item/theme-37",
                             "rule": None,
                         }
                     ],
@@ -580,7 +595,7 @@ def extracted_voxco_resources() -> dict[str, ExtractedResource]:
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(21),
             identifierInPrimarySource="voxco-plus",
             accessRestriction="https://mex.rki.de/item/access-restriction-2",
-            theme=["https://mex.rki.de/item/theme-35"],
+            theme=["https://mex.rki.de/item/theme-37"],
             title=[Text(value="voxco-Plus", language="de")],
             anonymizationPseudonymization=[
                 "https://mex.rki.de/item/anonymization-pseudonymization-2"
@@ -598,7 +613,11 @@ def extracted_voxco_resources() -> dict[str, ExtractedResource]:
             ],
             method=[Text(value="Selbstabstriche", language="de")],
             qualityInformation=[Text(value="description", language="de")],
-            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-10"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-2"
+            ],
+            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
+            resourceTypeSpecific=[Text(value="Nasenabstrich", language="de")],
             rights=[Text(value="Die Daten", language="de")],
             spatial=[Text(value="Deutschland", language="de")],
             entityType="ExtractedResource",

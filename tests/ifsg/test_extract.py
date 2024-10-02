@@ -1,9 +1,9 @@
 import pytest
 
-from mex.ifsg.extract import (
+from mex.extractors.ifsg.extract import (
     extract_sql_table,
 )
-from mex.ifsg.models.meta_schema2type import MetaSchema2Type
+from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 
 
 @pytest.mark.usefixtures("mocked_ifsg")

@@ -1,7 +1,7 @@
 from pytest import MonkeyPatch
 
 from mex.common.settings import SETTINGS_STORE
-from mex.settings import Settings
+from mex.extractors.settings import Settings
 
 
 def test_settings(monkeypatch: MonkeyPatch) -> None:

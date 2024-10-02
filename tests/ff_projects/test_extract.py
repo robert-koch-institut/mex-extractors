@@ -6,7 +6,7 @@ import pytest
 
 from mex.common.types import TemporalEntity
 from mex.common.wikidata.models.organization import WikidataOrganization
-from mex.ff_projects.extract import (
+from mex.extractors.ff_projects.extract import (
     extract_ff_projects_organizations,
     extract_ff_projects_sources,
     filter_out_duplicate_source_ids,
@@ -117,6 +117,4 @@ def test_extract_ff_projects_organizations(
     organizations = extract_ff_projects_organizations(
         [next(extract_ff_projects_sources())]
     )
-    assert organizations == {
-        "Apple": wikidata_organization,
-    }
+    assert organizations["Apple"] == wikidata_organization

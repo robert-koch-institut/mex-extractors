@@ -13,13 +13,15 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     TextLanguage,
 )
-from mex.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
-from mex.ifsg.models.meta_catalogue2item2schema import MetaCatalogue2Item2Schema
-from mex.ifsg.models.meta_disease import MetaDisease
-from mex.ifsg.models.meta_field import MetaField
-from mex.ifsg.models.meta_item import MetaItem
-from mex.ifsg.models.meta_type import MetaType
-from mex.ifsg.transform import (
+from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
+from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
+    MetaCatalogue2Item2Schema,
+)
+from mex.extractors.ifsg.models.meta_disease import MetaDisease
+from mex.extractors.ifsg.models.meta_field import MetaField
+from mex.extractors.ifsg.models.meta_item import MetaItem
+from mex.extractors.ifsg.models.meta_type import MetaType
+from mex.extractors.ifsg.transform import (
     get_instrument_tool_or_apparatus,
     transform_ifsg_data_to_mex_variable_group,
     transform_ifsg_data_to_mex_variables,

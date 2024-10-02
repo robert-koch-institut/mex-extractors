@@ -5,7 +5,7 @@ import pytest
 
 from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson
-from mex.grippeweb.extract import (
+from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_organizations,
     extract_ldap_actors_for_functional_accounts,

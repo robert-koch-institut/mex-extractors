@@ -17,7 +17,7 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 

@@ -3,12 +3,6 @@ from typing import cast
 
 from faker import Faker
 
-from mex.artificial.identity import (
-    _create_numeric_ids,
-    _get_offset_int,
-    create_identities,
-    restore_identities,
-)
 from mex.common.identity import get_provider
 from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.models import (
@@ -18,7 +12,13 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import MergedPrimarySourceIdentifier
-from mex.settings import Settings
+from mex.extractors.artificial.identity import (
+    _create_numeric_ids,
+    _get_offset_int,
+    create_identities,
+    restore_identities,
+)
+from mex.extractors.settings import Settings
 
 
 def test_restore_identities() -> None:

@@ -1,33 +1,21 @@
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
-hadPrimarySource:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier '...' in /raw-data/primary-sources/primary-sources.json."
-stableTargetId:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign 'stable target id' of merged item.
+# yaml-language-server: $schema=../../__schema__/ExtractedActivity_MappingSchema.json
+
 abstract:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - language: de
-        value: 'Dummy abstract.'
+        value: Dummy abstract.
 activityType:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/activity-type-3
-    comment: RKI-internes Projekt
 contact:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - email@email.de
-      rule: Use value to match with ldap extractor.
 documentation:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -40,7 +28,11 @@ externalAssociate:
     mappingRules:
     - forValues:
       - C1
-      rule: Use value to match with wikidata extractor.
+hadPrimarySource:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - rule: Assign 'stable target id' of primary source.
+
 identifierInPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -51,24 +43,18 @@ involvedUnit:
     mappingRules:
     - forValues:
       - C1
-      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 publication:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - setValues:
-      - language: de
-        title: "Dummy title."
-        url: http://url.url
-    - setValues:
-      - language: de
-        title: "Dummy title."
-        url: https://url.url
+    - forValues:
+      - "Dummy publication"
+    - forValues:
+      - "Dummy publication"
 responsibleUnit:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
       - C1
-      rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 shortName:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -78,27 +64,18 @@ start:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - 2018-07
+      - 2018-07-01
 succeeds:
   - fieldInPrimarySource: n/a
     mappingRules:
     - forValues:
         - "Dummy project"
-      rule: Ignore the value, the item is not in MEx.
 theme:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/theme-35
-    - setValues:
       - https://mex.rki.de/item/theme-11
-    - setValues:
-      - https://mex.rki.de/item/theme-3
-    - setValues:
       - https://mex.rki.de/item/theme-36
-    - setValues:
-      - https://mex.rki.de/item/theme-38
-    comment: dummy comment
 title:
   - fieldInPrimarySource: n/a
     mappingRules:

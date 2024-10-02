@@ -4,7 +4,7 @@ import pytest
 from bs4 import BeautifulSoup
 
 from mex.common.exceptions import MExError
-from mex.datscha_web.parse_html import (
+from mex.extractors.datscha_web.parse_html import (
     parse_detail_block,
     parse_item_urls_from_overview_html,
     parse_single_item_html,

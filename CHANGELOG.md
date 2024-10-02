@@ -11,11 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: refactor package structure from `mex.foo` to `mex.extractors.foo`
+- model update: international-projects, seqrepo, synopse, blueant, sumo, biospecimen,
+  odk, datscha-web, confluence-vvt, grippeweb, voxco
+- confluence vvt now ignores ill templated pages
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- bug in seq-repo that caused exponential run-time as well as incorrect resource
+  keywords
 
 ### Security
 
@@ -141,7 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - documentation workflow to Makefile, mex.bat and as github action
 - README.md for mesh data
 - ifsg raw data extraction
-- ifsg resource tranformation
+- ifsg resource transformation
 - add IFSG Variable and VariableGroup transformation
 - add wikidata dagster assets
 - integrate wikidata and organigram into the ifsg extractor

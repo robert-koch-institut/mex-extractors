@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from mex.synopse.models.project import SynopseProject
+from mex.extractors.synopse.models.project import SynopseProject
 
 
 @pytest.mark.parametrize(

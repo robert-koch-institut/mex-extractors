@@ -1,5 +1,5 @@
 from mex.common.settings import BaseSettings
-from mex.publisher.load import write_merged_items
+from mex.extractors.publisher.load import write_merged_items
 
 
 def test_write_merged_items(ndjson_path) -> None:

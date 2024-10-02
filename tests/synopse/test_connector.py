@@ -1,7 +1,7 @@
 import pytest
 from requests import HTTPError
 
-from mex.synopse.connector import ReportServerConnector
+from mex.extractors.synopse.connector import ReportServerConnector
 
 
 @pytest.mark.integration

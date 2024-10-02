@@ -19,6 +19,12 @@ contact:
     - forValues:
       - email@email.de
       rule: Use value to match with ldap extractor.
+keyword:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - value: FASTA
+        - value: FASTQ
 method:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -33,11 +39,16 @@ publisher:
     - forValues:
       - Dummy Publisher
       rule: This rule is just a dummy rule.
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - https://mex.rki.de/item/resource-creation-method-4
 resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/resource-type-general-1
+      - https://mex.rki.de/item/resource-type-general-13
 resourceTypeSpecific:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -62,24 +73,16 @@ theme:
     mappingRules:
     - setValues:
       - https://mex.rki.de/item/theme-11
-      - https://mex.rki.de/item/theme-34
+      - https://mex.rki.de/item/theme-23
 hadPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
     - rule: "dummy rule"
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
 identifierInPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
       - setValues:
         - https://dummy.url.com/
-stableTargetId:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign 'stable target id' of merged item.
 title:
   - fieldInPrimarySource: n/a
     mappingRules:

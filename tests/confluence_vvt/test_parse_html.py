@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from mex.confluence_vvt.parse_html import (
+from mex.extractors.confluence_vvt.parse_html import (
     get_row_data_for_all_rows,
     parse_data_html_page,
 )

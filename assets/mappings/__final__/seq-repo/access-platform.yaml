@@ -24,10 +24,6 @@ hadPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
     - rule: "dummy rule"
-identifier:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign identifier.
 identifierInPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -38,10 +34,6 @@ landingPage:
     mappingRules:
     - setValues:
       - url: https://dummy.url.com/
-stableTargetId:
-  - fieldInPrimarySource: n/a
-    mappingRules:
-    - rule: Assign 'stable target id' of merged item.
 technicalAccessibility:
   - fieldInPrimarySource: n/a
     mappingRules:
