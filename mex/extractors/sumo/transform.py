@@ -191,10 +191,6 @@ def transform_resource_nokeda_to_mex_resource(
     Returns:
         ExtractedResource
     """
-    keyword = [
-        k["setValues"][0]
-        for k in extracted_sumo_resource_nokeda["keyword"][0]["mappingRules"]
-    ]
     return ExtractedResource(
         accessPlatform=[sumo_access_platform.stableTargetId],
         accessRestriction=extracted_sumo_resource_nokeda["accessRestriction"][0][
@@ -246,7 +242,9 @@ def transform_resource_nokeda_to_mex_resource(
         identifierInPrimarySource=extracted_sumo_resource_nokeda["title"][0][
             "mappingRules"
         ][0]["setValues"][0]["value"],
-        keyword=keyword,
+        keyword=extracted_sumo_resource_nokeda["keyword"][0]["mappingRules"][0][
+            "setValues"
+        ],
         meshId=extracted_sumo_resource_nokeda["meshId"][0]["mappingRules"][0][
             "setValues"
         ],
