@@ -10,6 +10,7 @@ from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
 from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
     MetaCatalogue2Item2Schema,
 )
+from mex.extractors.ifsg.models.meta_datatype import MetaDataType
 from mex.extractors.ifsg.models.meta_disease import MetaDisease
 from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
@@ -36,6 +37,7 @@ except ImportError:
 QUERY_BY_MODEL = {
     MetaCatalogue2Item: "SELECT * FROM SurvNet3Meta.Meta.Catalogue2Item",
     MetaCatalogue2Item2Schema: "SELECT * FROM SurvNet3Meta.Meta.Catalogue2Item2Schema",
+    MetaDataType: "SELECT * FROM SurvNet3Meta.Meta.DataType",
     MetaDisease: "SELECT * FROM SurvNet3Meta.Meta.Disease",
     MetaField: "SELECT * FROM SurvNet3Meta.Meta.Field",
     MetaItem: "SELECT * FROM SurvNet3Meta.Meta.Item",

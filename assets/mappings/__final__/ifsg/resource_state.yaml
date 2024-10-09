@@ -31,10 +31,89 @@ contact:
   mappingRules:
   - forValues:
       - "FG99"
+documentation:
+  - fieldInPrimarySource: InBundesland
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            title: "Rheinland-Pfalz"
+            url: "http://landesrecht.rlp.de/jportal/portal/page/bsrlpprod.psml?doc.id=jlr-IfSGMeldpflVRPpP1%3Ajuris-lr00&showdoccase=1&doc.hl=1&documentnumber=1"
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            title:
+              "Bayern"
+            url: "https://www.gesetze-bayern.de/Content/Document/BayMeldePflV/true"
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            title:
+              "Saarland"
+            url: "https://www.saarland.de/msgff/DE/portale/gesundheitundpraevention/leistungenabisz/gesundheitsschutz/infektionsschutzgesetz/infektionsschutzgesetz.html"
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            title:
+              "Berlin"
+            url: "https://gesetze.berlin.de/bsbe/document/jlr-IfSGMeldpflVBEpP1"
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            title:
+              "Brandenburg"
+            url: "https://bravors.brandenburg.de/verordnungen/infkrankmv_2016"
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            title:
+              "Mecklenburg-Vorpommern"
+            url: "https://www.landesrecht-mv.de/bsmv/document/jlr-InfSchAGMVrahmen"
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            title:
+              "Sachsen"
+            url: "https://www.revosax.sachsen.de/vorschrift/1307-IfSGMeldeVO"
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            title:
+              "Sachsen-Anhalt"
+            url: "https://www.landesrecht.sachsen-anhalt.de/bsst/document/jlr-IfSGMeldpflVST2005rahmen"
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            title:
+              "Thüringen"
+            url: "https://landesrecht.thueringen.de/bsth/document/jlr-IfKrMeldAnpVTHrahmen"
+hasLegalBasis:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz (IfSG)
+          - language: en
+            value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
 - fieldInPrimarySource: n/a
   mappingRules:
-  - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
+  - rule: "Assign 'stable target id'"
 identifier:
 - fieldInPrimarySource: n/a
   mappingRules:
@@ -110,7 +189,7 @@ identifierInPrimarySource:
 isPartOf:
 - fieldInPrimarySource: n/a
   mappingRules:
-  - rule: Use the 'stable target id' of item described by mapping/../ifsg/resource_parent
+  - rule: Use the 'stable target id'
 keyword:
 - fieldInPrimarySource: n/a
   mappingRules:
@@ -126,81 +205,16 @@ language:
   - setValues:
       - https://mex.rki.de/item/language-1
   comment: Deutsch
-publication:
-- fieldInPrimarySource: n/a
-  mappingRules:
-  - setValues:
-      - language: de
-        title: Infektionsepidemiologisches Jahrbuch
-        url: https://www.rki.de/DE/Content/Infekt/Jahrbuch/jahrbuch_node.html
-      - language: de
-        title: Epidemiologisches Bulletin
-        url: https://www.rki.de/DE/Content/Infekt/EpidBull/epid_bull_node.html
-      - language: de
-        title: Falldefinitionen
-        url: https://www.rki.de/DE/Content/Infekt/IfSG/Falldefinition/falldefinition_node.html
-- fieldInPrimarySource: InBundesland
-  locationInPrimarySource: Meta.Disease
-  mappingRules:
-    - forValues:
-        - "07"
-      setValues:
-        - language: de
-          title: "Rheinland-Pfalz"
-          url: "http://landesrecht.rlp.de/jportal/portal/page/bsrlpprod.psml?doc.id=jlr-IfSGMeldpflVRPpP1%3Ajuris-lr00&showdoccase=1&doc.hl=1&documentnumber=1"
-    - forValues:
-        - "09"
-      setValues:
-        - language: de
-          title: "Bayern"
-          url: "https://www.gesetze-bayern.de/Content/Document/BayMeldePflV/true"
-    - forValues:
-        - "10"
-      setValues:
-        - language: de
-          title: "Saarland"
-          url: "https://www.saarland.de/msgff/DE/portale/gesundheitundpraevention/leistungenabisz/gesundheitsschutz/infektionsschutzgesetz/infektionsschutzgesetz.html"
-    - forValues:
-        - "11"
-      setValues:
-        - language: de
-          title: "Berlin"
-          url: "https://gesetze.berlin.de/bsbe/document/jlr-IfSGMeldpflVBEpP1"
-    - forValues:
-        - "12"
-      setValues:
-        - language: de
-          title: "Brandenburg"
-          url: "https://bravors.brandenburg.de/verordnungen/infkrankmv_2016"
-    - forValues:
-        - "13"
-      setValues:
-        - language: de
-          title: "Mecklenburg-Vorpommern"
-          url: "https://www.landesrecht-mv.de/bsmv/document/jlr-InfSchAGMVrahmen"
-    - forValues:
-        - "14"
-      setValues:
-        - language: de
-          title: "Sachsen"
-          url: "https://www.revosax.sachsen.de/vorschrift/1307-IfSGMeldeVO"
-    - forValues:
-        - "15"
-      setValues:
-        - language: de
-          title: "Sachsen-Anhalt"
-          url: "https://www.landesrecht.sachsen-anhalt.de/bsst/document/jlr-IfSGMeldpflVST2005rahmen"
-    - forValues:
-        - "16"
-      setValues:
-        - language: de
-          title: "Thüringen"
-          url: "https://landesrecht.thueringen.de/bsth/document/jlr-IfKrMeldAnpVTHrahmen"
+resourceCreationMethod:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-      - https://mex.rki.de/item/resource-type-general-1
+      - https://mex.rki.de/item/resource-type-general-13
   comment: Public Health Fachdaten
 resourceTypeSpecific:
 - fieldInPrimarySource: n/a
@@ -301,14 +315,12 @@ spatial:
 stableTargetId:
 - fieldInPrimarySource: n/a
   mappingRules:
-  - rule: Assign 'stable target id' of merged item.
+  - rule: Assign 'stable target id'.
 theme:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-      - https://mex.rki.de/item/theme-17
-  - setValues:
-      - https://mex.rki.de/item/theme-2
+      - https://mex.rki.de/item/theme-11
   comment: Meldewesen, Infektionskrankheiten
 title:
 - fieldInPrimarySource: InBundesland
@@ -399,4 +411,4 @@ unitInCharge:
   mappingRules:
   - forValues:
       - "FG99"
-    rule: Use value to match with identifer in /raw-data/organigram/organizational-units.json.
+    rule: Use value.

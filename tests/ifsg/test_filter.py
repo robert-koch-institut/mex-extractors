@@ -42,7 +42,7 @@ def test_filter_variables(
         "gui_tool_tip": "lokaler",
         "id_catalogue": 0,
         "id_type": 101,
-        "id_data_type": 2,
+        "id_data_type": 0,
         "id_field": 1,
         "id_field_type": 3,
         "to_transport": 0,

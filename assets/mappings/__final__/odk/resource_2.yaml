@@ -156,5 +156,5 @@ wasGeneratedBy:
 - fieldInPrimarySource: n/a
   mappingRules:
   - forValues:
-    - 0000-1001
+    - 0000-1005
     rule: Use value to match with identifierInPrimarySource in international projects. Assign stableTargetId of the matching item.
