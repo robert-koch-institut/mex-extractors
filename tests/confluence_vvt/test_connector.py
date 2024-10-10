@@ -6,6 +6,7 @@ from pytest import MonkeyPatch
 from requests import HTTPError
 
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.confluence_vvt.extract import fetch_all_data_page_ids
 
 
 @pytest.fixture
@@ -78,3 +79,11 @@ def test_initialization_mocked_server_error(
     response = connector.request("GET", "localhost")
 
     assert response["statusCode"] == 500
+
+
+@pytest.mark.integration
+def test_get_page_by_id() -> None:
+    connector = ConfluenceVvtConnector.get()
+    all_pages_ids = fetch_all_data_page_ids()
+    for page_id in all_pages_ids:
+        connector.get_page_by_id(page_id)

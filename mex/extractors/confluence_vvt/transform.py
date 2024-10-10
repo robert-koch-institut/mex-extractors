@@ -3,7 +3,7 @@ from collections.abc import Generator, Hashable, Iterable
 from mex.common.logging import watch
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
 from mex.common.types import ActivityType, Identifier
-from mex.extractors.confluence_vvt.models.source import ConfluenceVvtSource
+from mex.extractors.confluence_vvt.models import ConfluenceVvtSource
 
 
 @watch

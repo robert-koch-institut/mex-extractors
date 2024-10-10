@@ -17,7 +17,7 @@ from mex.extractors.confluence_vvt.extract import (
     fetch_all_data_page_ids,
     fetch_all_pages_data,
 )
-from mex.extractors.confluence_vvt.models.source import ConfluenceVvtSource
+from mex.extractors.confluence_vvt.models import ConfluenceVvtSource
 from mex.extractors.confluence_vvt.transform import (
     transform_confluence_vvt_sources_to_extracted_activities,
 )

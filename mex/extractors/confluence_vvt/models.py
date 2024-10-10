@@ -1,8 +1,30 @@
 from collections.abc import Sequence
 from typing import cast
+from mex.common.models import BaseModel
 
 from mex.common.types import TemporalEntity
 from mex.extractors.models import BaseRawData
+
+
+class ConfluenceVvtHeading(BaseModel):
+    text: str | None
+
+
+class ConfluenceVvtValue(BaseModel):
+    texts: list[str]
+
+
+class ConfluenceVvtRow(BaseModel):
+    cells: list[ConfluenceVvtHeading | ConfluenceVvtValue]
+
+
+class ConfluenceVvtTable(BaseModel):
+    rows: list[ConfluenceVvtRow]
+
+
+class ConfluenceVvtPage(BaseModel):
+    title: str
+    tables: list[ConfluenceVvtTable]
 
 
 class ConfluenceVvtSource(BaseRawData):

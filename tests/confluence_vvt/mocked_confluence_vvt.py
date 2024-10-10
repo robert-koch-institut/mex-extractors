@@ -4,7 +4,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.extractors.confluence_vvt import main
-from mex.extractors.confluence_vvt.models.source import ConfluenceVvtSource
+from mex.extractors.confluence_vvt.models import ConfluenceVvtSource
 
 
 @pytest.fixture

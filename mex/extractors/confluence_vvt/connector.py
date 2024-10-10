@@ -1,5 +1,8 @@
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
 from mex.common.connector import HTTPConnector
 from mex.extractors.settings import Settings
+from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 
 
 class ConfluenceVvtConnector(HTTPConnector):
@@ -17,3 +20,37 @@ class ConfluenceVvtConnector(HTTPConnector):
             settings.confluence_vvt.username.get_secret_value(),
             settings.confluence_vvt.password.get_secret_value(),
         )
+
+    def get_page_by_id(self, page_id: str) -> ConfluenceVvtPage:
+        settings = Settings.get()
+        response = self.session.get(
+            urljoin(
+                settings.confluence_vvt.url,
+                f"rest/api/content/{page_id}?expand=body.view",
+            ),
+        )
+        response.raise_for_status()
+        json_data = response.json()
+
+        html = json_data["body"]["view"]["value"]
+        title = json_data["title"]
+        soup = BeautifulSoup(html, "html.parser")
+        tables = []
+
+        for table in soup.find_all("table", {"class": "confluenceTable"}):
+            rows = []
+            for row in table.find_all("tr"):
+                cells = []
+                for header in row.find_all("th"):
+                    cells.append({"text": header.get_text().strip() or None})
+                for value in row.find_all("td"):
+                    texts = [
+                        text
+                        for child in value.children
+                        if (text := child.get_text().strip())
+                    ]
+                    cells.append({"texts": texts})
+                rows.append({"cells": cells})
+            tables.append({"rows": rows})
+
+        return ConfluenceVvtPage.model_validate({"title": title, "tables": tables})
