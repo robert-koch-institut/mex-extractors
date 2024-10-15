@@ -95,6 +95,8 @@ class BuilderProvider(PythonFakerProvider):
             factory = partial(self.random_element, inner_type)
         elif issubclass(inner_type, str):
             factory = self.generator.text_string
+        elif issubclass(inner_type, int):
+            factory = self.generator.random_int
         else:
             raise RuntimeError(f"Cannot create fake data for {field}")
         return [factory() for _ in range(self.pyint(*self.min_max_for_field(field)))]
@@ -210,6 +212,8 @@ class PatternProvider(BaseFakerProvider):
         r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$": "https://gepris.dfg.de/gepris/institution/#######",
         r"^https://orcid\.org/[-X0-9]{9,21}$": "https://orcid.org/0000-####-####-###X",
         r"^https://ror\.org/[a-z0-9]{9}$": "https://ror.org/#########",
+        r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$": "https://loinc.org/#####-#",
+        r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Z0-9]+)$": "https://dx.doi.org/10.####/#######",
     }
     MESH_TO_TEMPLATE = {
         r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$": "http://id.nlm.nih.gov/mesh/{}"

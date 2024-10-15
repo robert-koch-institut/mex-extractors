@@ -13,6 +13,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     Text,
+    TextLanguage,
     Theme,
 )
 from mex.extractors.international_projects.models.source import (
@@ -40,7 +41,7 @@ def transform_international_projects_source_to_extracted_activity(
         source: international projects sources
         international_projects_activity: extracted activity for default
                                          values from mapping
-        extracted_primary_source: Extracted primary_source for FF Projects
+        extracted_primary_source: Extracted primary_source for international Projects
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
         unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
@@ -55,12 +56,21 @@ def transform_international_projects_source_to_extracted_activity(
     """
     if not source.full_project_name and not source.project_abbreviation:
         return None
-    project_leads = person_stable_target_ids_by_query_string.get(
-        source.project_lead_person, []
-    )
-    project_lead_rki_unit = unit_stable_target_id_by_synonym.get(
-        source.project_lead_rki_unit
-    )
+
+    project_lead = [
+        found_person[0]
+        for person in source.get_project_lead_persons()
+        if (
+            found_person := person_stable_target_ids_by_query_string.get(person.strip())
+        )
+    ]
+
+    project_lead_rki_unit = []
+    for unit in source.get_project_lead_rki_units():
+        if unit == "ZIG-GS":
+            unit = "zig"
+        if found_unit := unit_stable_target_id_by_synonym.get(unit):
+            project_lead_rki_unit.append(found_unit)
 
     if not project_lead_rki_unit:
         return None
@@ -75,25 +85,9 @@ def transform_international_projects_source_to_extracted_activity(
     if source.funding_source:
         all_funder_or_commissioner.extend(
             wfc
-            for fc in source.funding_source
+            for fc in source.get_funding_sources()
             if (wfc := funding_sources_stable_target_id_by_query.get(fc))
         )
-
-    all_partner_organizations: list[MergedOrganizationIdentifier] = []
-    if source.partner_organization:
-        for partner_org in source.partner_organization:
-            if wpo := partner_organizations_stable_target_id_by_query.get(partner_org):
-                all_partner_organizations.append(wpo)
-            else:
-                extracted_organization = ExtractedOrganization(
-                    officialName=[Text(value=partner_org)],
-                    identifierInPrimarySource=partner_org,
-                    hadPrimarySource=extracted_primary_source.stableTargetId,
-                )
-                load([extracted_organization])
-                all_partner_organizations.append(
-                    MergedOrganizationIdentifier(extracted_organization.stableTargetId)
-                )
 
     activity_type_from_mapping = international_projects_activity["activityType"][0][
         "mappingRules"
@@ -106,20 +100,29 @@ def transform_international_projects_source_to_extracted_activity(
         activity_type = activity_type_from_mapping[2]["setValues"][0]
 
     theme = international_projects_activity["theme"]
+
     return ExtractedActivity(
-        title=source.full_project_name,
+        title=[Text(language=TextLanguage.EN, value=source.full_project_name)],
         activityType=activity_type,
         alternativeTitle=source.project_abbreviation,
-        contact=[*project_leads, project_lead_rki_unit],
-        involvedPerson=project_leads,
+        contact=[*project_lead, *project_lead_rki_unit],
+        involvedPerson=project_lead,
         involvedUnit=additional_rki_units,
         start=source.start_date,
         end=source.end_date,
         responsibleUnit=project_lead_rki_unit,
-        identifierInPrimarySource=source.rki_internal_project_number
+        identifierInPrimarySource=source.rki_internal_project_number.replace("\n", "/")
         or source.project_abbreviation,
         funderOrCommissioner=all_funder_or_commissioner,
-        externalAssociate=all_partner_organizations,
+        externalAssociate=(
+            get_or_create_partner_organization(
+                source.partner_organization,
+                partner_organizations_stable_target_id_by_query,
+                extracted_primary_source,
+            )
+            if source.partner_organization
+            else []
+        ),
         hadPrimarySource=extracted_primary_source.stableTargetId,
         fundingProgram=source.funding_program if source.funding_program else [],
         shortName=source.project_abbreviation,
@@ -128,7 +131,15 @@ def transform_international_projects_source_to_extracted_activity(
         ),
         website=(
             []
-            if source.website in ("", "does not exist yet")
+            if not source.website
+            or source.website
+            in (
+                "",
+                "None",
+                "does not exist yet",
+                "does not exist",
+                "will be on GO4BSB Platform",
+            )
             else [Link(url=source.website)]
         ),
     )
@@ -191,27 +202,29 @@ def get_theme_for_activity_or_topic(
 
     Args:
         theme: theme extracted from mapping
-        activity1: activity 1
-        activity2: activity 1
-        topic1: topic 1
-        topic2: topic 2
+        activity1: activity 1 from the international-projects raw data file
+        activity2: activity 2 from the international-projects raw data file
+        topic1: topic 1 from the international-projects raw data file
+        topic2: topic 2 from the international-projects raw data file
 
     Returns:
         Sorted list of Theme
     """
-    default_theme_from_mapping: Theme = theme[0]["mappingRules"][0]["setValues"][0]
     themes_dict_from_mapping: dict[str, Theme] = {}
+    default_theme_from_mapping: Theme = theme[0]["mappingRules"][0]["setValues"][0]
+
     for theme_item in theme:
-        for rule in theme_item["mappingRules"]:
-            themes_dict_from_mapping.update(
-                dict.fromkeys(rule["forValues"], rule["setValues"][0])
-            )
+        for mapping_rule in theme_item["mappingRules"]:
+            rule_for_values = mapping_rule["forValues"]
+            if rule_for_values:
+                themes_dict_from_mapping.update(
+                    dict.fromkeys(rule_for_values, mapping_rule["setValues"][0])
+                )
 
     def get_theme_or_default(key: str | None) -> Theme:
         if key:
             if theme := themes_dict_from_mapping.get(key):
                 return theme
-
         return default_theme_from_mapping
 
     theme_set = set()
@@ -221,3 +234,35 @@ def get_theme_for_activity_or_topic(
     theme_set.add(get_theme_or_default(topic2))
 
     return sorted(list(theme_set), key=lambda x: x.name)
+
+
+def get_or_create_partner_organization(
+    partner_organization: list[str],
+    extracted_organizations: dict[str, MergedOrganizationIdentifier],
+    extracted_primary_source: ExtractedPrimarySource,
+) -> list[MergedOrganizationIdentifier]:
+    """Get partner organizations merged ids.
+
+    Args:
+        partner_organization: partner organizations from the source
+        extracted_organizations: merged organization identifier extracted from wikidata
+        extracted_primary_source: Extracted primary_source for international projects
+
+    Returns:
+        list of matched or created merged organization identifier
+    """
+    final_partner_organizations: list[MergedOrganizationIdentifier] = []
+    for partner_org in partner_organization:
+        if wpo := extracted_organizations.get(partner_org):
+            final_partner_organizations.append(wpo)
+        else:
+            extracted_organization = ExtractedOrganization(
+                officialName=[Text(value=partner_org)],
+                identifierInPrimarySource=partner_org,
+                hadPrimarySource=extracted_primary_source.stableTargetId,
+            )
+            load([extracted_organization])
+            final_partner_organizations.append(
+                MergedOrganizationIdentifier(extracted_organization.stableTargetId)
+            )
+    return final_partner_organizations

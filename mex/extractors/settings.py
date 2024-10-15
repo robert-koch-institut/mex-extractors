@@ -24,6 +24,11 @@ from mex.extractors.voxco.settings import VoxcoSettings
 class Settings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
 
+    skip_extractors: list[str] = Field(
+        [],
+        description="Skip execution of these extractors in dagster",
+        validation_alias="MEX_SKIP_EXTRACTORS",
+    )
     skip_partners: list[str] = Field(
         ["test"],
         description="Skip projects with these external partners",

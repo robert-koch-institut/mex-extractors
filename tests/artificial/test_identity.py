@@ -54,8 +54,8 @@ def test_create_numeric_ids(faker: Faker) -> None:
         },
     )
     assert numeric_ids == {
-        "AccessPlatform": range(3427526317, 3427526320),
-        "PrimarySource": range(2516530558, 2516530570),
+        "AccessPlatform": range(3427526317, 3427526324),
+        "PrimarySource": range(2516530558, 2516530566),
     }
 
 

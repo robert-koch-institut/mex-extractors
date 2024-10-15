@@ -40,7 +40,7 @@ def load_job_definitions() -> Definitions:
     jobs = [
         define_asset_job(group_name, AssetSelection.groups(group_name).upstream())
         for group_name in group_names
-        if group_name != "default"
+        if group_name not in ["default", *settings.skip_extractors]
     ]
     schedules = [
         ScheduleDefinition(

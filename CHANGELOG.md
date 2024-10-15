@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - model update: international-projects, seqrepo, synopse, blueant, sumo, biospecimen,
   odk, datscha-web, confluence-vvt, grippeweb, voxco
 - confluence vvt now ignores ill templated pages
+- artifical extractor now creates data for type 'consent'
 
 ### Deprecated
 
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - bug in seq-repo that caused exponential run-time as well as incorrect resource
   keywords
+- fixed artificial data generation for Integers, Loinc, and BibliographicResources
 
 ### Security
 
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - transform voxco resources and variables
+- setting for configuring extractors to skip in dagster
 
 ### Changes
 
@@ -54,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix confluence_vvt: use interne Vorgangsnummer as identifierInPrimarySource
 - remaining issues in voxco extractor
+- bug in seq-repo that caused exponential run-time as well as incorrect resource
+  keywords
+
+### Security
 
 ## [0.17.1] - 2024-06-14
 
