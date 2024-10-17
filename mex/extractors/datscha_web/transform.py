@@ -66,7 +66,7 @@ def transform_datscha_web_items_to_mex_activities(
                     partner
                 ):
                     external_associate.append(associate)
-                else:
+                elif partner != "None":
                     extracted_organization = ExtractedOrganization(
                         officialName=partner,
                         identifierInPrimarySource=partner,

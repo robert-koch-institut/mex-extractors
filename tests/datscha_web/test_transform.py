@@ -72,17 +72,16 @@ def test_transform_datscha_web_items_to_mex_activities(
             }
         ],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": [Identifier("ID000000001111"), Identifier("ID000000002222")],
-        "externalAssociate": ["ID000000000077", "ID000000000077", "ID000000000077"],
-        "hadPrimarySource": extracted_primary_sources["datscha-web"].stableTargetId,
+        "contact": ["ID000000001111", "ID000000002222"],
+        "externalAssociate": ["ID000000000077"],
+        "hadPrimarySource": str(
+            extracted_primary_sources["datscha-web"].stableTargetId
+        ),
         "identifier": Joker(),
         "identifierInPrimarySource": "17",
-        "involvedPerson": [Identifier("ID000000001111"), Identifier("ID000000002222")],
-        "involvedUnit": [Identifier("ID000000000055")],
-        "responsibleUnit": [
-            Identifier("ID000000000033"),
-            Identifier("ID000000000044"),
-        ],
+        "involvedPerson": ["ID000000001111", "ID000000002222"],
+        "involvedUnit": ["ID000000000055"],
+        "responsibleUnit": ["ID000000000033", "ID000000000044"],
         "stableTargetId": Joker(),
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }
@@ -118,18 +117,14 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
             }
         ],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": [
-            Identifier("ID000000000033"),
-            Identifier("ID000000000044"),
-        ],
-        "externalAssociate": ["ID000000000077", "ID000000000077", "ID000000000077"],
-        "hadPrimarySource": extracted_primary_sources["datscha-web"].stableTargetId,
+        "contact": ["ID000000000033", "ID000000000044"],
+        "externalAssociate": ["ID000000000077"],
+        "hadPrimarySource": str(
+            extracted_primary_sources["datscha-web"].stableTargetId
+        ),
         "identifier": Joker(),
         "identifierInPrimarySource": "92",
-        "responsibleUnit": [
-            Identifier("ID000000000033"),
-            Identifier("ID000000000044"),
-        ],
+        "responsibleUnit": ["ID000000000033", "ID000000000044"],
         "stableTargetId": Joker(),
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }

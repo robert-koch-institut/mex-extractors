@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bug in seq-repo that caused exponential run-time as well as incorrect resource
   keywords
 - fixed artificial data generation for Integers, Loinc, and BibliographicResources
+- -Datscha-Extraktor: "create new organization if wikidata match fails" now ignores Organizations with name "None"
 
 ### Security
 
