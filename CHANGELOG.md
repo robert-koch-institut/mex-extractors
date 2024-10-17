@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- convenience / helper functions for wikidata and primary source
+
 ### Changes
 
 - BREAKING: refactor package structure from `mex.foo` to `mex.extractors.foo`
