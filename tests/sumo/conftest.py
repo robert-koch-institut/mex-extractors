@@ -790,6 +790,7 @@ def cc1_data_valuesets() -> list[Cc1DataValuesets]:
     return [
         Cc1DataValuesets(
             category_label_de="Herzstillstand (nicht traumatisch)",
+            category_label_en="Cardiac arrest (non-traumatic)",
             sheet_name="nokeda_cedis",
         )
     ]
@@ -801,7 +802,7 @@ def cc2_aux_mapping() -> list[Cc2AuxMapping]:
     return [
         Cc2AuxMapping(
             variable_name_column=["0", "1", "2"],
-            column_name="aux_age21_max",
+            column_name="aux_age21_min",
             sheet_name="nokeda_age21",
         ),
         Cc2AuxMapping(
