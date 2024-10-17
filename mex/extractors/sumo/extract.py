@@ -95,6 +95,7 @@ def extract_cc2_aux_mapping(
         aux_mapping = excel_file.parse(sheet_name=sheet_name)
         yield Cc2AuxMapping(
             sheet_name=sheet_name,
+            column_name=row.variable_name,
             variable_name_column=aux_mapping[row.variable_name].tolist(),
         )
 

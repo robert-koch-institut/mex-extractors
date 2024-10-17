@@ -52,7 +52,9 @@ def test_extract_cc2_aux_mapping(
     cc2_aux_model: Iterable[Cc2AuxModel],
 ) -> None:
     expected = Cc2AuxMapping(
-        variable_name_column=["0", "1", "2"], sheet_name="nokeda_age21"
+        variable_name_column=["0", "1", "2"],
+        column_name="aux_age21_max",
+        sheet_name="nokeda_age21",
     )
     extracted_data = list(extract_cc2_aux_mapping(cc2_aux_model))
     assert len(extracted_data) == 2
