@@ -112,7 +112,7 @@ def extract_cc2_aux_valuesets() -> Generator[Cc2AuxValuesets, None, None]:
     settings = Settings.get()
     excel_path = settings.sumo.raw_data_path / "cc2_aux_valuesets_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
-    sheet_name = "aux_cedis_groups"
+    sheet_name = "aux_cedis_group"
     aux_valuesets = excel_file.parse(sheet_name=sheet_name)
     for _, row in aux_valuesets.iterrows():
         yield Cc2AuxValuesets(**row)
