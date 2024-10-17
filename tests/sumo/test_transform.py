@@ -114,7 +114,6 @@ def test_transform_resource_nokeda_to_mex_resource(
         "externalPartner": Joker(),
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword1"},
-            {"language": TextLanguage.DE, "value": "keyword2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
         "publisher": [extracted_organization_rki.stableTargetId],
@@ -305,7 +304,7 @@ def test_transform_nokeda_model_variable_to_mex_variable(
         "identifierInPrimarySource": "nokeda_edis_software",
         "stableTargetId": Joker(),
         "belongsTo": [stable_target_id_by_label_values[variable.domain]],
-        "dataType": "https://mex.rki.de/item/data-type-2",
+        "dataType": "string",
         "description": [
             {"language": TextLanguage.DE, "value": "shobidoo"},
             {"language": TextLanguage.EN, "value": "shobidoo_en"},

@@ -1,4 +1,3 @@
-from collections import defaultdict
 from collections.abc import Generator, Iterable
 from typing import Any
 
@@ -31,15 +30,6 @@ from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
-
-VARIABLE_DATA_TYPE_MAP = defaultdict(
-    lambda: "https://mex.rki.de/item/data-type-2",
-    {
-        "number": "https://mex.rki.de/item/data-type-1",
-        "string": "https://mex.rki.de/item/data-type-2",
-        "boolean": "https://mex.rki.de/item/data-type-3",
-    },
-)
 
 
 def get_contact_merged_ids_by_emails(
@@ -191,10 +181,6 @@ def transform_resource_nokeda_to_mex_resource(
     Returns:
         ExtractedResource
     """
-    keyword = [
-        k["setValues"][0]
-        for k in extracted_sumo_resource_nokeda["keyword"][0]["mappingRules"]
-    ]
     return ExtractedResource(
         accessPlatform=[sumo_access_platform.stableTargetId],
         accessRestriction=extracted_sumo_resource_nokeda["accessRestriction"][0][
@@ -246,7 +232,9 @@ def transform_resource_nokeda_to_mex_resource(
         identifierInPrimarySource=extracted_sumo_resource_nokeda["title"][0][
             "mappingRules"
         ][0]["setValues"][0]["value"],
-        keyword=keyword,
+        keyword=extracted_sumo_resource_nokeda["keyword"][0]["mappingRules"][0][
+            "setValues"
+        ],
         meshId=extracted_sumo_resource_nokeda["meshId"][0]["mappingRules"][0][
             "setValues"
         ],
@@ -420,12 +408,14 @@ def transform_nokeda_model_variable_to_mex_variable(
     value_sets = list(extracted_cc1_data_valuesets)
     for variable in extracted_cc1_data_model_nokeda:
         value_set = [
-            v.category_label_de
+            f"{variable.variable_name},"
+            f"{v.category_label_de},"
+            f"{v.category_label_en or ''}"
             for v in value_sets
             if v.sheet_name == variable.variable_name
         ]
         yield ExtractedVariable(
-            dataType=VARIABLE_DATA_TYPE_MAP[variable.type_json],
+            dataType=variable.type_json,
             belongsTo=stable_target_id_by_label_values[variable.domain],
             description=[
                 Text(value=variable.element_description, language=TextLanguage.DE),
@@ -473,11 +463,15 @@ def transform_nokeda_aux_variable_to_mex_variable(
     }
     mappings = list(extracted_cc2_aux_mapping)
     value_sets = list(extracted_cc2_aux_valuesets)
+    value_set_by_sheet_and_variable_name = {
+        f"{column.sheet_name}_{column.column_name}": column.variable_name_column
+        for column in mappings
+    }
+
     for variable in extracted_cc2_aux_model:
-        value_set = []
-        for m in mappings:
-            if m.sheet_name == variable.depends_on_nokeda_variable:
-                value_set.extend(m.variable_name_column)
+        value_set = value_set_by_sheet_and_variable_name[
+            f"{variable.depends_on_nokeda_variable}_{variable.variable_name}"
+        ]
         if variable.variable_name == "aux_cedis_group":
             for row in value_sets:
                 value_set.append(row.label_de)
