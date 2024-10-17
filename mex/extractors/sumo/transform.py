@@ -408,7 +408,9 @@ def transform_nokeda_model_variable_to_mex_variable(
     value_sets = list(extracted_cc1_data_valuesets)
     for variable in extracted_cc1_data_model_nokeda:
         value_set = [
-            v.category_label_de
+            f"{variable.variable_name},"
+            f"{v.category_label_de},"
+            f"{v.category_label_en or ''}"
             for v in value_sets
             if v.sheet_name == variable.variable_name
         ]
