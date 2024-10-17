@@ -9,7 +9,6 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
-    LinkLanguage,
     MergedOrganizationalUnitIdentifier,
     TextLanguage,
 )
@@ -17,6 +16,7 @@ from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
 from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
     MetaCatalogue2Item2Schema,
 )
+from mex.extractors.ifsg.models.meta_datatype import MetaDataType
 from mex.extractors.ifsg.models.meta_disease import MetaDisease
 from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
@@ -41,37 +41,44 @@ def test_transform_resource_parent_to_mex_resource(
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources_ifsg.stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
         "identifierInPrimarySource": "ifsg-parent",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "alternativeTitle": [{"value": "IfSG Meldedaten", "language": TextLanguage.DE}],
-        "contact": [Identifier.generate(43)],
+        "contact": [str(Identifier.generate(43))],
         "description": [
             {"value": "Das Infektionsschutzgesetz", "language": TextLanguage.DE}
         ],
+        "hasLegalBasis": [
+            {
+                "language": "de",
+                "value": "Infektionsschutzgesetz (IfSG)",
+            },
+            {
+                "language": "en",
+                "value": "German Federal Law on the Prevention of Infectious Diseases "
+                "(IfSG)",
+            },
+        ],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "keyword": [{"value": "Infektionsschutzgesetz", "language": TextLanguage.DE}],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publication": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Infektionsepidemiologisches Jahrbuch",
-                "url": "https://www.rki.de/DE/Content/Infekt/Jahrbuch/jahrbuch_node.html",
-            }
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
         ],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-1"],
-        "resourceTypeSpecific": [{"value": "Meldedaten", "language": TextLanguage.DE}],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "rights": [{"value": "Gesundheitsdaten.", "language": TextLanguage.DE}],
         "spatial": [{"value": "Deutschland", "language": TextLanguage.DE}],
-        "theme": ["https://mex.rki.de/item/theme-17"],
+        "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [
             {
                 "value": "Meldedaten nach Infektionsschutzgesetz (IfSG)",
                 "language": TextLanguage.DE,
             }
         ],
-        "unitInCharge": [Identifier.generate(43)],
+        "unitInCharge": [str(Identifier.generate(43))],
     }
     assert extracted_resource.model_dump(exclude_defaults=True) == expected
 
@@ -81,6 +88,7 @@ def test_transform_resource_state_to_mex_resource(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
+    meta_disease: list[MetaDisease],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
@@ -88,12 +96,13 @@ def test_transform_resource_state_to_mex_resource(
             extracted_ifsg_resource_parent,
             extracted_primary_sources_ifsg,
             unit_stable_target_ids,
+            meta_disease,
         )
         for resource_state in resource_states
     ]
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources_ifsg.stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
         "identifierInPrimarySource": "01",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -101,39 +110,48 @@ def test_transform_resource_state_to_mex_resource(
         "alternativeTitle": [
             {"value": "Meldedaten Schleswig-Holstein", "language": TextLanguage.DE}
         ],
-        "contact": [Identifier.generate(43)],
-        "isPartOf": [extracted_ifsg_resource_parent.stableTargetId],
-        "keyword": [{"value": "Infektionsschutzgesetz", "language": TextLanguage.DE}],
-        "language": ["https://mex.rki.de/item/language-1"],
-        "publication": [
+        "contact": [str(Identifier.generate(43))],
+        "hasLegalBasis": [
             {
-                "language": LinkLanguage.DE,
-                "title": "Infektionsepidemiologisches Jahrbuch",
-                "url": "https://www.rki.de/DE/Content/Infekt/Jahrbuch/jahrbuch_node.html",
+                "language": "de",
+                "value": "Infektionsschutzgesetz (IfSG)",
             },
             {
-                "language": LinkLanguage.DE,
-                "title": "Epidemiologisches Bulletin",
-                "url": "https://www.rki.de/DE/Content/Infekt/EpidBull/epid_bull_node.html",
-            },
-            {
-                "language": LinkLanguage.DE,
-                "title": "Falldefinitionen",
-                "url": "https://www.rki.de/DE/Content/Infekt/IfSG/Falldefinition/falldefinition_node.html",
-            },
-            {
-                "language": LinkLanguage.DE,
-                "title": "Rheinland-Pfalz",
-                "url": "http://landesrecht.rlp.de/jportal/portal/page/bsrlpprod.psml?doc.id=jlr-IfSGMeldpflVRPpP1%3Ajuris-lr00&showdoccase=1&doc.hl=1&documentnumber=1",
+                "language": "en",
+                "value": "German Federal Law on the Prevention of Infectious Diseases "
+                "(IfSG)",
             },
         ],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-1"],
-        "resourceTypeSpecific": [{"value": "Meldedaten", "language": TextLanguage.DE}],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
+        "isPartOf": [str(extracted_ifsg_resource_parent.stableTargetId)],
+        "keyword": [
+            {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
+            {"value": "virus", "language": TextLanguage.DE},
+            {"value": "virus", "language": TextLanguage.DE},
+            {"value": "virus", "language": TextLanguage.DE},
+            {"value": "Epidemic", "language": TextLanguage.EN},
+            {"value": "Epidemic", "language": TextLanguage.EN},
+            {"value": "Epidemic", "language": TextLanguage.EN},
+            {
+                "value": "virus",
+            },
+            {
+                "value": "virus",
+            },
+            {
+                "value": "virus",
+            },
+        ],
+        "language": ["https://mex.rki.de/item/language-1"],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "rights": [{"value": "Gesundheitsdaten.", "language": TextLanguage.DE}],
         "spatial": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
-        "theme": ["https://mex.rki.de/item/theme-17"],
+        "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
-        "unitInCharge": [Identifier.generate(43)],
+        "unitInCharge": [str(Identifier.generate(43))],
     }
     assert extracted_resources[0][0].model_dump(exclude_defaults=True) == expected
 
@@ -172,45 +190,64 @@ def test_transform_resource_disease_to_mex_resource(
             extracted_primary_sources_ifsg,
             unit_stable_target_ids,
             extracted_organization_rki,
+            1,
         )
         for resource_disease in resource_diseases
     ]
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources_ifsg.stableTargetId,
-        "identifierInPrimarySource": "101",
+        "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
+        "identifierInPrimarySource": "Meta.Disease_101_1",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
-        "contact": [Identifier.generate(43)],
+        "contact": [str(Identifier.generate(43))],
+        "hasLegalBasis": [
+            {
+                "language": TextLanguage.DE,
+                "value": "Infektionsschutzgesetz (IfSG)",
+            },
+            {
+                "language": TextLanguage.EN,
+                "value": "German Federal Law on the Prevention of Infectious Diseases "
+                "(IfSG)",
+            },
+        ],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "icd10code": ["A1"],
         "instrumentToolOrApparatus": [
             {"value": "Falldefinition B", "language": TextLanguage.DE},
             {"value": "Falldefinition C", "language": TextLanguage.DE},
         ],
         "isPartOf": [
-            extracted_ifsg_resource_parent.stableTargetId,
-            extracted_ifsg_resource_state[0].stableTargetId,
-            extracted_ifsg_resource_state[1].stableTargetId,
+            str(extracted_ifsg_resource_parent.stableTargetId),
+            str(extracted_ifsg_resource_state[0].stableTargetId),
+            str(extracted_ifsg_resource_state[1].stableTargetId),
         ],
-        "keyword": [{"value": "virus"}, {"value": "Epidemic"}, {"value": "virus"}],
-        "language": ["https://mex.rki.de/item/language-1"],
-        "publication": [
+        "keyword": [
+            {"value": "virus"},
+            {"value": "Epidemic"},
+            {"value": "virus"},
             {
-                "language": LinkLanguage.DE,
-                "title": "Falldefinitionen",
-                "url": "https://www.rki.de/DE/Content/Infekt/IfSG/Falldefinition/falldefinition_node.html",
-            }
+                "language": TextLanguage.DE,
+                "value": "Infektionsschutzgesetz",
+            },
+            {
+                "language": TextLanguage.DE,
+                "value": "Infektionsschutz",
+            },
         ],
-        "publisher": [extracted_organization_rki.stableTargetId],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-1"],
-        "resourceTypeSpecific": [{"value": "Meldedaten", "language": TextLanguage.DE}],
+        "language": ["https://mex.rki.de/item/language-1"],
+        "publisher": [str(extracted_organization_rki.stableTargetId)],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "rights": [{"value": "Gesundheitsdaten.", "language": TextLanguage.DE}],
         "spatial": [{"value": "Deutschland", "language": TextLanguage.DE}],
         "theme": [
-            "https://mex.rki.de/item/theme-17",
-            "https://mex.rki.de/item/theme-2",
+            "https://mex.rki.de/item/theme-11",
         ],
         "title": [
             {
@@ -218,7 +255,7 @@ def test_transform_resource_disease_to_mex_resource(
                 "value": "Meldedaten nach Infektionsschutzgesetz (IfSG) zu virus",
             }
         ],
-        "unitInCharge": [Identifier.generate(43)],
+        "unitInCharge": [str(Identifier.generate(43))],
     }
     assert extracted_resource[0][0].model_dump(exclude_defaults=True) == expected
 
@@ -235,6 +272,7 @@ def test_transform_ifsg_data_to_mex_variable_group(
         extracted_primary_sources_ifsg,
         [meta_field[0]],
         [101],
+        1,
     )
     expected = {
         "identifier": Joker(),
@@ -257,6 +295,7 @@ def test_transform_ifsg_data_to_mex_variable(
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     meta_item: list[MetaItem],
+    meta_datatype: list[MetaDataType],
 ) -> None:
     extracted_variable = transform_ifsg_data_to_mex_variables(
         meta_field,
@@ -266,19 +305,22 @@ def test_transform_ifsg_data_to_mex_variable(
         meta_catalogue2item,
         meta_catalogue2item2schema,
         meta_item,
+        meta_datatype,
+        1,
     )
 
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources_ifsg.stableTargetId,
-        "identifierInPrimarySource": "1",
+        "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
+        "dataType": "DummyType",
+        "identifierInPrimarySource": "Meta.Field_1_1",
         "stableTargetId": Joker(),
-        "belongsTo": [extracted_ifsg_variable_group[0].stableTargetId],
+        "belongsTo": [str(extracted_ifsg_variable_group[0].stableTargetId)],
         "description": [{"value": "lokaler"}],
         "label": [
             {"value": "Id der Version (berechneter Wert)", "language": TextLanguage.DE}
         ],
-        "usedIn": [extracted_ifsg_resource_disease[0].stableTargetId],
+        "usedIn": [str(extracted_ifsg_resource_disease[0].stableTargetId)],
         "valueSet": ["NullItem", "NullItem2"],
     }
     assert extracted_variable[0].model_dump(exclude_defaults=True) == expected

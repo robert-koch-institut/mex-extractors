@@ -29,7 +29,7 @@ contact:
 hadPrimarySource:
 - fieldInPrimarySource: n/a
   mappingRules:
-  - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
+  - rule: "Assign 'stable target id'"
 icd10code:
 - fieldInPrimarySource: ICD10Code
   locationInPrimarySource: Meta.Disease
@@ -83,81 +83,61 @@ isPartOf:
   mappingRules:
   - forValues:
       - "0"
-  - rule: "Assign 'stable target id' of the item described by /mappings/../ifsg/resource_parent"
+  - rule: "Assign 'stable target id'"
 - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
   locationInPrimarySource: Meta.Disease
   mappingRules:
   - forValues:
       - "07"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='07' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "09"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='09' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "10"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='10' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "11"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='11' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "12"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='12' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "13"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='13' as  described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "14"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='14' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "15"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='15' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
   - forValues:
       - "16"
-    rule: "Assign 'stable target id' of the item with identiferInPrimarySource='16' as described by mapping/../ifsg/resource_state"
+    rule: "Assign 'stable target id'"
 keyword:
-- fieldInPrimarySource: DiseaseName
-  locationInPrimarySource: Meta.Disease
-  examplesInPrimarySource:
-  - "Milzbrand"
-  - "Borreliose"
-  mappingRules:
-  - rule: "Assign 'de' as default for the language property of the text object."
-- fieldInPrimarySource: DiseaseNameEN
-  locationInPrimarySource: Meta.Disease
-  examplesInPrimarySource:
-  - "Anthrax"
-  - "Lyme disease"
-  mappingRules:
-  - rule: "Assign 'en' as default for the language property of the text object."
-- fieldInPrimarySource: 'SpecimenName'
-  locationInPrimarySource: Meta.Disease
-  examplesInPrimarySource:
-  - "Bacillus anthracis"
-  - "Borelia burgdorferi"
-  mappingRules:
-  - rule: "Use value as it is. Use language detection."
+  - fieldInPrimarySource: n/a
+    mappingRules:
+    - setValues:
+      - language: de
+        value: Infektionsschutzgesetz
+    - setValues:
+      - language: de
+        value: Infektionsschutz
 language:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
       - "https://mex.rki.de/item/language-1"
   comment: Deutsch
-publication:
-- fieldInPrimarySource: n/a
-  mappingRules:
-  - setValues:
-      - language: de
-        title: "Falldefinitionen"
-        url: "https://www.rki.de/DE/Content/Infekt/IfSG/Falldefinition/falldefinition_node.html"
 publisher:
 - fieldInPrimarySource: n/a
   mappingRules:
-  - rule: "Set a default by using the 'stable target id' of the organization-item with the name 'Robert Koch-Institut'."
+  - rule: "Set a default"
 resourceTypeGeneral:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-      - "https://mex.rki.de/item/resource-type-general-1"
+      - "https://mex.rki.de/item/resource-type-general-13"
   comment: Public Health Fachdaten
 resourceTypeSpecific:
 - fieldInPrimarySource: n/a
@@ -234,17 +214,16 @@ theme:
 - fieldInPrimarySource: n/a
   mappingRules:
   - setValues:
-    - https://mex.rki.de/item/theme-17
-    - https://mex.rki.de/item/theme-2
+    - https://mex.rki.de/item/theme-11
   comment: Meldewesen, Infektionskrankheiten
 title:
 - fieldInPrimarySource: DiseaseName
   locationInPrimarySource: Meta.Disease
   mappingRules:
-  - rule: "Construct the title after the following schema: Meldedaten nach Infektionsschutzgesetz (IfSG) zu [DiseaseName]. Assign 'de' as default for the language property of the text object."
+  - rule: "Construct the title "
 unitInCharge:
 - fieldInPrimarySource: n/a
   mappingRules:
   - forValues:
     - "FG99"
-    rule: Use value to match with identifier from /raw-data/organigram/organizational-units.json.
+    rule: Use value.

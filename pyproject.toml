@@ -12,7 +12,7 @@ dependencies = [
     "dagster-postgres>=0.23.15,<1",
     "dagster-webserver>=1.7.15,<2",
     "dagster>=1.7.15,<2",
-    "faker>=29,<30",
+    "faker>=30,<31",
     "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/model-update-v3",
     "numpy>=2.0.1,<3",
     "openpyxl>=3.1.5,<4",
@@ -33,7 +33,7 @@ optional-dependencies.dev = [
     "pytest-xdist>=3.6.1,<4",
     "pytest>=8.3.1,<9",
     "ruff>=0.5.4,<1",
-    "sphinx>=7.4.5,<8",
+    "sphinx>=8.0.2,<9",
     "types-beautifulsoup4>=4.12.0,<5",
     "types-pytz>=2024.1.0,<2025",
     "types-pyyaml>=6.0.12,<7",
@@ -175,5 +175,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.3.3"]
+requires = ["pdm-backend==2.4.1"]
 build-backend = "pdm.backend"

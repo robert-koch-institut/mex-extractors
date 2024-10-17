@@ -30,10 +30,23 @@ description:
     - setValues:
       - language: de
         value: "Das Infektionsschutzgesetz"
+hasLegalBasis:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz (IfSG)
+          - language: en
+            value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
+hasPersonalData:
+  - fieldInPrimarySource: n/a
+    mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
+    - rule: "Assign 'stable target id'"
 identifier:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -59,26 +72,16 @@ language:
     - setValues:
       - https://mex.rki.de/item/language-1
     comment: Deutsch
-publication:
+resourceCreationMethod:
   - fieldInPrimarySource: n/a
     mappingRules:
-    - setValues:
-      - language: de
-        title: Infektionsepidemiologisches Jahrbuch
-        url: https://www.rki.de/DE/Content/Infekt/Jahrbuch/jahrbuch_node.html
-    - setValues:
-      - language: de
-        title: Epidemiologisches Bulletin
-        url: https://www.rki.de/DE/Content/Infekt/EpidBull/epid_bull_node.html
-    - setValues:
-      - language: de
-        title: Falldefinitionen
-        url: https://www.rki.de/DE/Content/Infekt/IfSG/Falldefinition/falldefinition_node.html
+      - setValues:
+        - https://mex.rki.de/item/resource-creation-method-3 # Surveillance
 resourceTypeGeneral:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/resource-type-general-1
+      - https://mex.rki.de/item/resource-type-general-13
     comment: Public Health Fachdaten
 resourceTypeSpecific:
   - fieldInPrimarySource: n/a
@@ -106,10 +109,7 @@ theme:
   - fieldInPrimarySource: n/a
     mappingRules:
     - setValues:
-      - https://mex.rki.de/item/theme-17
-    - setValues:
-      - https://mex.rki.de/item/theme-2
-    comment: Meldewesen, Infektionskrankheiten
+      - https://mex.rki.de/item/theme-11
 title:
   - fieldInPrimarySource: n/a
     mappingRules:
@@ -121,4 +121,4 @@ unitInCharge:
     mappingRules:
     - forValues:
       - "FG99"
-      rule: Use value to match identifer using /raw-data/organigram/organizational-units.json.
+      rule: Use value.

@@ -25,6 +25,7 @@ from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
 from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
     MetaCatalogue2Item2Schema,
 )
+from mex.extractors.ifsg.models.meta_datatype import MetaDataType
 from mex.extractors.ifsg.models.meta_disease import MetaDisease
 from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
@@ -61,6 +62,12 @@ def extracted_primary_sources_ifsg(
 def meta_catalogue2item() -> list[MetaCatalogue2Item]:
     """Extract `Catalogue2Item` table."""
     return extract_sql_table(MetaCatalogue2Item)
+
+
+@asset(group_name="ifsg")
+def meta_datatype() -> list[MetaDataType]:
+    """Extract `MetaDataType` table."""
+    return extract_sql_table(MetaDataType)
 
 
 @asset(group_name="ifsg")
@@ -207,6 +214,7 @@ def extracted_ifsg_resource_state(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    meta_disease: list[MetaDisease],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
@@ -214,6 +222,7 @@ def extracted_ifsg_resource_state(
         extracted_ifsg_resource_parent,
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
+        meta_disease,
     )
     load(mex_resource_state)
 
@@ -231,6 +240,7 @@ def extracted_ifsg_resource_disease(
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
+    max_id_schema: int,
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_disease = transform_resource_disease_to_mex_resource(
@@ -243,6 +253,7 @@ def extracted_ifsg_resource_disease(
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
+        max_id_schema,
     )
     load(mex_resource_disease)
 
@@ -256,6 +267,7 @@ def extracted_ifsg_variable_group(
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     filtered_empty_statement_area_group: list[MetaField],
     id_types_of_diseases: list[int],
+    max_id_schema: int,
 ) -> list[ExtractedVariableGroup]:
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
@@ -264,6 +276,7 @@ def extracted_ifsg_variable_group(
         extracted_primary_sources_ifsg,
         filtered_empty_statement_area_group,
         id_types_of_diseases,
+        max_id_schema,
     )
     load(extracted_variable_group)
 
@@ -279,6 +292,8 @@ def extracted_ifsg_variable(
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     meta_item: list[MetaItem],
+    meta_datatype: list[MetaDataType],
+    max_id_schema: int,
 ) -> None:
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
@@ -289,6 +304,8 @@ def extracted_ifsg_variable(
         meta_catalogue2item,
         meta_catalogue2item2schema,
         meta_item,
+        meta_datatype,
+        max_id_schema,
     )
     load(extracted_variables)
 

@@ -8,6 +8,7 @@ class MetaDisease(BaseModel):
 
     icd10_code: str | None = Field(..., alias="ICD10Code")
     id_type: int = Field(..., alias="IdType")
+    id_schema: int = Field(..., alias="IdSchema")
     reference_def_a: bool = Field(..., alias="ReferenceDefA")
     reference_def_b: bool = Field(..., alias="ReferenceDefB")
     reference_def_c: bool = Field(..., alias="ReferenceDefC")

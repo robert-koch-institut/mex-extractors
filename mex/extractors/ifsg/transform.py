@@ -11,11 +11,13 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     Text,
+    TextLanguage,
 )
 from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
 from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
     MetaCatalogue2Item2Schema,
 )
+from mex.extractors.ifsg.models.meta_datatype import MetaDataType
 from mex.extractors.ifsg.models.meta_disease import MetaDisease
 from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
@@ -53,16 +55,21 @@ def transform_resource_parent_to_mex_resource(
         ],
         description=resource_parent["description"][0]["mappingRules"][0]["setValues"],
         hadPrimarySource=extracted_primary_source.stableTargetId,
+        hasLegalBasis=resource_parent["hasLegalBasis"][0]["mappingRules"][0][
+            "setValues"
+        ],
+        hasPersonalData=resource_parent["hasPersonalData"][0]["mappingRules"][0][
+            "setValues"
+        ],
         identifierInPrimarySource=resource_parent["identifierInPrimarySource"][0][
             "mappingRules"
         ][0]["setValues"],
         keyword=resource_parent["keyword"][0]["mappingRules"][0]["setValues"],
         language=resource_parent["language"][0]["mappingRules"][0]["setValues"],
-        publication=resource_parent["publication"][0]["mappingRules"][0]["setValues"],
+        resourceCreationMethod=resource_parent["resourceCreationMethod"][0][
+            "mappingRules"
+        ][0]["setValues"],
         resourceTypeGeneral=resource_parent["resourceTypeGeneral"][0]["mappingRules"][
-            0
-        ]["setValues"],
-        resourceTypeSpecific=resource_parent["resourceTypeSpecific"][0]["mappingRules"][
             0
         ]["setValues"],
         rights=resource_parent["rights"][0]["mappingRules"][0]["setValues"],
@@ -80,6 +87,7 @@ def transform_resource_state_to_mex_resource(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    meta_disease: list[MetaDisease],
 ) -> list[ExtractedResource]:
     """Transform resource state to mex resource.
 
@@ -89,43 +97,63 @@ def transform_resource_state_to_mex_resource(
         extracted_primary_source: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
+        meta_disease: list of MetaDisease table rows
 
     Returns:
         transform resource state to ExtractedResource list
     """
     bundesland_meldedaten_by_bundesland_id = {
-        value["forValues"][0]: value["setValues"][0]
+        value["forValues"][0]: value["setValues"]
         for value in resource_state["alternativeTitle"][0]["mappingRules"]
     }
+    documentation_by_bundesland_id = {
+        value["forValues"][0]: value["setValues"]
+        for value in resource_state["documentation"][0]["mappingRules"]
+    }
+    keyword = [
+        keyword
+        for keyword in [
+            *resource_state["keyword"][0]["mappingRules"][0]["setValues"],
+            *[
+                Text(value=row.disease_name, language=TextLanguage.DE)
+                for row in meta_disease
+                if row.disease_name
+            ],
+            *[
+                Text(value=row.disease_name_en, language=TextLanguage.EN)
+                for row in meta_disease
+                if row.disease_name_en
+            ],
+            *[row.specimen_name for row in meta_disease if row.specimen_name],
+        ]
+    ]
+
     spatial_by_bundesland_id = None
     if resource_state["spatial"]:
         spatial_by_bundesland_id = {
-            value["forValues"][0]: value["setValues"][0]
+            value["forValues"][0]: value["setValues"]
             for value in resource_state["spatial"][0]["mappingRules"]
         }
     title_by_bundesland_id = {
-        value["forValues"][0]: value["setValues"][0]
+        value["forValues"][0]: value["setValues"]
         for value in resource_state["title"][0]["mappingRules"]
-    }
-
-    publication_by_id_bundesland = {
-        value["forValues"][0]: value["setValues"][0]
-        for value in resource_state["publication"][1]["mappingRules"]
     }
     mex_resource_state: list[ExtractedResource] = []
     for (
         id_bundesland,
         bundesland_meldedaten,
     ) in bundesland_meldedaten_by_bundesland_id.items():
-        publication = resource_state["publication"][0]["mappingRules"][0]["setValues"]
-        if id_bundesland in publication_by_id_bundesland.keys():
-            publication.append(publication_by_id_bundesland[id_bundesland])
         spatial = []
         if (
             spatial_by_bundesland_id
             and id_bundesland in spatial_by_bundesland_id.keys()
         ):
             spatial = spatial_by_bundesland_id[id_bundesland]
+        documentation = (
+            documentation_by_bundesland_id[id_bundesland]
+            if id_bundesland in documentation_by_bundesland_id.keys()
+            else []
+        )
         mex_resource_state.append(
             ExtractedResource(
                 accessRestriction=resource_state["accessRestriction"][0][
@@ -138,16 +166,22 @@ def transform_resource_state_to_mex_resource(
                 contact=unit_stable_target_ids_by_synonym[
                     resource_state["contact"][0]["mappingRules"][0]["forValues"][0]
                 ],
+                documentation=documentation,
                 hadPrimarySource=extracted_primary_source.stableTargetId,
+                hasLegalBasis=resource_state["hasLegalBasis"][0]["mappingRules"][0][
+                    "setValues"
+                ],
+                hasPersonalData=resource_state["hasPersonalData"][0]["mappingRules"][0][
+                    "setValues"
+                ],
                 identifierInPrimarySource=id_bundesland,
                 isPartOf=extracted_ifsg_resource_parent.stableTargetId,
-                keyword=resource_state["keyword"][0]["mappingRules"][0]["setValues"],
+                keyword=keyword,
                 language=resource_state["language"][0]["mappingRules"][0]["setValues"],
-                publication=publication,
-                resourceTypeGeneral=resource_state["resourceTypeGeneral"][0][
+                resourceCreationMethod=resource_state["resourceCreationMethod"][0][
                     "mappingRules"
                 ][0]["setValues"],
-                resourceTypeSpecific=resource_state["resourceTypeSpecific"][0][
+                resourceTypeGeneral=resource_state["resourceTypeGeneral"][0][
                     "mappingRules"
                 ][0]["setValues"],
                 rights=resource_state["rights"][0]["mappingRules"][0]["setValues"],
@@ -168,7 +202,7 @@ def get_instrument_tool_or_apparatus(
     """Calculate instrument_tool_or_apparatus for MetaDisease reference definitions.
 
     Args:
-        meta_disease: MetaDisease
+        meta_disease: list of MetaDisease table rows
         resource_disease: resource_disease default values
 
     Returns:
@@ -212,6 +246,7 @@ def transform_resource_disease_to_mex_resource(
     extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
+    max_id_schema: int,
 ) -> list[ExtractedResource]:
     """Transform resource disease to mex resource.
 
@@ -219,13 +254,14 @@ def transform_resource_disease_to_mex_resource(
         resource_disease: resource_disease default values
         extracted_ifsg_resource_parent: ExtractedResource
         extracted_ifsg_resource_state: ExtractedResource
-        meta_disease: MetaDisease
+        meta_disease: list of MetaDisease table rows
         meta_type: MetaType
         id_type_of_diseases: list of disease related id_types
         extracted_primary_source: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
         extracted_organization_rki: extracted organization for RKI
+        max_id_schema: latest id schema
 
     Returns:
         transform resource disease to ExtractedResource list
@@ -252,6 +288,7 @@ def transform_resource_disease_to_mex_resource(
             code_by_id_type,
             unit_stable_target_ids_by_synonym,
             extracted_organization_rki,
+            max_id_schema,
         )
         for id_type in id_type_of_diseases
     ]
@@ -268,6 +305,7 @@ def transform_resource_disease_to_mex_resource_row(
     code_by_id_type: dict[int, str],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
+    max_id_schema: int,
 ) -> ExtractedResource:
     """Transform resource disease row to mex resource.
 
@@ -283,6 +321,7 @@ def transform_resource_disease_to_mex_resource_row(
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
         extracted_organization_rki: extracted organization for RKI
+        max_id_schema: latest id schema
 
     Returns:
         transform resource disease row to ExtractedResource
@@ -298,15 +337,21 @@ def transform_resource_disease_to_mex_resource_row(
         is_part_of.extend(
             stable_target_id_by_bundesland_id[bundesland_id]
             for bundesland_id in meta_disease_row.in_bundesland.split(",")
+            if bundesland_id in stable_target_id_by_bundesland_id.keys()
         )
+
     keyword = [
-        value
-        for value in [
+        keyword
+        for keyword in [
             meta_disease_row.disease_name,
             meta_disease_row.disease_name_en,
             meta_disease_row.specimen_name,
+            *[
+                rule["setValues"][0]
+                for rule in resource_disease["keyword"][0]["mappingRules"]
+            ],
         ]
-        if value
+        if keyword
     ]
 
     spatial = []
@@ -329,20 +374,25 @@ def transform_resource_disease_to_mex_resource_row(
             resource_disease["contact"][0]["mappingRules"][0]["forValues"][0]
         ],
         hadPrimarySource=extracted_primary_source.stableTargetId,
+        hasLegalBasis=resource_disease["hasLegalBasis"][0]["mappingRules"][0][
+            "setValues"
+        ],
+        hasPersonalData=resource_disease["hasPersonalData"][0]["mappingRules"][0][
+            "setValues"
+        ],
         icd10code=[i for i in icd10code if i],
-        identifierInPrimarySource=str(id_type),
+        identifierInPrimarySource=f"Meta.Disease_{id_type}_{max_id_schema}",
         instrumentToolOrApparatus=instrument_tool_or_apparatus,
         isPartOf=is_part_of,
         keyword=keyword,
         language=resource_disease["language"][0]["mappingRules"][0]["setValues"],
-        publication=resource_disease["publication"][0]["mappingRules"][0]["setValues"],
         publisher=extracted_organization_rki.stableTargetId,
+        resourceCreationMethod=resource_disease["resourceCreationMethod"][0][
+            "mappingRules"
+        ][0]["setValues"],
         resourceTypeGeneral=resource_disease["resourceTypeGeneral"][0]["mappingRules"][
             0
         ]["setValues"],
-        resourceTypeSpecific=resource_disease["resourceTypeSpecific"][0][
-            "mappingRules"
-        ][0]["setValues"],
         rights=resource_disease["rights"][0]["mappingRules"][0]["setValues"],
         spatial=spatial,
         theme=resource_disease["theme"][0]["mappingRules"][0]["setValues"],
@@ -359,6 +409,7 @@ def transform_ifsg_data_to_mex_variable_group(
     extracted_primary_source: ExtractedPrimarySource,
     meta_field: list[MetaField],
     id_types_of_diseases: list[int],
+    max_id_schema: int,
 ) -> list[ExtractedVariableGroup]:
     """Transform ifsg data to mex VariableGroup.
 
@@ -368,6 +419,7 @@ def transform_ifsg_data_to_mex_variable_group(
         extracted_primary_source: ExtractedPrimarySource
         meta_field: MetaField list
         id_types_of_diseases: disease related id_types
+        max_id_schema: latest id schema
 
     Returns:
         transform resource parent to ExtractedResource
@@ -392,7 +444,7 @@ def transform_ifsg_data_to_mex_variable_group(
             hadPrimarySource=extracted_primary_source.stableTargetId,
             identifierInPrimarySource=identifier_in_primary_source,
             containedBy=extracted_ifsg_resource_disease_stable_target_id_by_id_type[
-                identifier_in_primary_source.split("_")[0]
+                f'Meta.Disease_{identifier_in_primary_source.split("_")[0]}_{max_id_schema}'
             ],
             label=label_by_statement_area_group[
                 identifier_in_primary_source.split("_")[1]
@@ -410,6 +462,8 @@ def transform_ifsg_data_to_mex_variables(
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     meta_item: list[MetaItem],
+    meta_datatype: list[MetaDataType],
+    max_id_schema: int,
 ) -> list[ExtractedVariable]:
     """Transform ifsg data to mex Variable.
 
@@ -421,16 +475,19 @@ def transform_ifsg_data_to_mex_variables(
         meta_catalogue2item: MetaCatalogue2Item list
         meta_catalogue2item2schema: MetaCatalogue2Item2Schema list
         meta_item: MetaItem list
+        meta_datatype: MetaDataType list
+        max_id_schema: latest id schema
 
     Returns:
         transform filtered variable to extracted variables
     """
+    data_type_by_id = {row.id_data_type: row.data_type_name for row in meta_datatype}
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group.stableTargetId
         for group in extracted_ifsg_variable_group
     }
     resource_disease_stable_target_id_by_id_type = {
-        int(row.identifierInPrimarySource): row.stableTargetId
+        row.identifierInPrimarySource.split("_")[1]: row.stableTargetId
         for row in extracted_ifsg_resource_disease
     }
     extracted_variables = []
@@ -463,13 +520,14 @@ def transform_ifsg_data_to_mex_variables(
             item_row = item_by_id_item[id_item]
             value_set.append(item_row.item_name)
 
-        used_in = resource_disease_stable_target_id_by_id_type[row.id_type]
+        used_in = resource_disease_stable_target_id_by_id_type[str(row.id_type)]
         extracted_variables.append(
             ExtractedVariable(
                 belongsTo=belongs_to,
                 description=row.gui_tool_tip,
+                dataType=data_type_by_id[row.id_data_type],
                 hadPrimarySource=extracted_primary_sources_ifsg.stableTargetId,
-                identifierInPrimarySource=str(row.id_field),
+                identifierInPrimarySource=f"Meta.Field_{row.id_field}_{max_id_schema}",
                 label=f"{row.gui_text} (berechneter Wert)",
                 usedIn=used_in,
                 valueSet=value_set,
