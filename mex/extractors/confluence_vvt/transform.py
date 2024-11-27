@@ -2,17 +2,93 @@ from collections.abc import Generator, Hashable, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
-from mex.common.types import ActivityType, Identifier
-from mex.extractors.confluence_vvt.models.source import ConfluenceVvtSource
+from mex.common.types import (
+    ActivityType,
+    Identifier,
+    MergedPersonIdentifier,
+    Text,
+    TextLanguage,
+    MergedOrganizationalUnitIdentifier,
+)
+from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
+from mex.extractors.mapping.types import AnyMappingModel
+from mex.extractors.confluence_vvt.extract import (
+    get_involved_persons_from_page,
+    get_contact_from_page,
+    get_responsible_unit_from_page,
+    get_involved_units_from_page,
+)
+from mex.extractors.settings import Settings
 
 
-@watch
-def transform_confluence_vvt_sources_to_extracted_activities(
-    confluence_vvt_sources: Iterable[ConfluenceVvtSource],
+def transform_confluence_vvt_page_to_extracted_activity(
+    page: ConfluenceVvtPage,
     extracted_primary_source: ExtractedPrimarySource,
-    merged_ids_by_query_string: dict[Hashable, list[Identifier]],
-    unit_merged_ids_by_synonym: dict[str, Identifier],
-) -> Generator[ExtractedActivity, None, None]:
+    activity_mapping: AnyMappingModel,
+    merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+) -> ExtractedActivity | None:
+    settings = Settings.get()
+    identifier_in_primary_source = page.get_identifier_in_primary_source()
+    if not identifier_in_primary_source:
+        return None
+
+    contact_merged_ids = [
+        merged_id
+        for contact in get_contact_from_page(page, activity_mapping)
+        for merged_id in merged_ids_by_query_string[contact]
+    ]
+    involved_person_merged_ids = [
+        merged_id
+        for author in get_involved_persons_from_page(page, activity_mapping)
+        for merged_id in merged_ids_by_query_string[author]
+    ]
+    responsible_unit_merged_ids = list(
+        {
+            unit_id
+            for oe in get_responsible_unit_from_page(page, activity_mapping)
+            if (unit_id := unit_merged_ids_by_synonym.get(oe))
+        }
+    )
+    involved_unit_merged_ids = list(
+        {
+            unit_id
+            for oe in get_involved_units_from_page(page, activity_mapping)
+            if (unit_id := unit_merged_ids_by_synonym.get(oe))
+        }
+    )
+
+    return ExtractedActivity(
+        abstract=Text(
+            value="\n".join(
+                page.tables[0]
+                .get_value_by_heading(activity_mapping.abstract[0].fieldInPrimarySource)
+                .cells[0]
+                .get_texts()
+            ),
+            language=TextLanguage.DE,
+        ),
+        activityType=ActivityType["OTHER"],
+        contact=contact_merged_ids
+        or involved_person_merged_ids
+        or responsible_unit_merged_ids,
+        documentation=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
+        identifierInPrimarySource=identifier_in_primary_source,
+        involvedPerson=involved_person_merged_ids,
+        involvedUnit=involved_unit_merged_ids,
+        responsibleUnit=responsible_unit_merged_ids or involved_unit_merged_ids,
+        title=page.title,
+        hadPrimarySource=extracted_primary_source.stableTargetId,
+    )
+
+
+def transform_confluence_vvt_activities_to_extracted_activities(
+    pages: Iterable[ConfluenceVvtPage],
+    extracted_primary_source: ExtractedPrimarySource,
+    activity_mapping: AnyMappingModel,
+    merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+) -> list[ExtractedActivity]:
     """Transform Confluence-vvt sources to extracted activities.
 
     Args:
@@ -24,51 +100,17 @@ def transform_confluence_vvt_sources_to_extracted_activities(
     Returns:
         Generator for ExtractedActivity
     """
-    for source in confluence_vvt_sources:
-        if not source.identifier_in_primary_source:
-            continue
-        contact_merged_ids = [
-            merged_id
-            for author in source.contact
-            for merged_id in merged_ids_by_query_string[author]
-        ]
-        responsible_unit_merged_ids = [
-            unit_id
-            for oe in source.responsible_unit
-            if (unit_id := unit_merged_ids_by_synonym.get(oe))
-        ]
-        involved_person_merged_ids = [
-            merged_id
-            for author in source.involved_person
-            for merged_id in merged_ids_by_query_string[author]
-        ]
-        involved_unit_merged_ids = [
-            unit_id
-            for oe in source.involved_unit
-            if (unit_id := unit_merged_ids_by_synonym.get(oe))
-        ]
-        if not responsible_unit_merged_ids and not involved_unit_merged_ids:
-            continue
+    extracted_activities = []
 
-        if (
-            not contact_merged_ids
-            and not involved_person_merged_ids
-            and not responsible_unit_merged_ids
-        ):
-            continue
-
-        yield ExtractedActivity(
-            abstract=source.abstract,
-            activityType=ActivityType["OTHER"],
-            alternativeTitle=source.alternative_title,
-            contact=contact_merged_ids
-            or involved_person_merged_ids
-            or responsible_unit_merged_ids,
-            documentation=source.documentation,
-            identifierInPrimarySource=";".join(source.identifier_in_primary_source),
-            involvedPerson=involved_person_merged_ids,
-            involvedUnit=involved_unit_merged_ids,
-            responsibleUnit=responsible_unit_merged_ids or involved_unit_merged_ids,
-            title=source.title,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+    for page in pages:
+        extracted_activity = transform_confluence_vvt_page_to_extracted_activity(
+            page,
+            extracted_primary_source,
+            activity_mapping,
+            merged_ids_by_query_string,
+            unit_merged_ids_by_synonym,
         )
+        if extracted_activity:
+            extracted_activities.append(extracted_activity)
+
+    return extracted_activities

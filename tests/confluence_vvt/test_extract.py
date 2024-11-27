@@ -11,23 +11,23 @@ from requests.models import Response
 
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.extract import (
-    fetch_all_data_page_ids,
-    fetch_all_pages_data,
+    fetch_all_vvt_pages_ids,
+    get_page_data_by_id,
 )
 from tests.confluence_vvt.conftest import TEST_DATA_DIR
 
 
 @pytest.mark.integration
-def test_fetch_all_data_page_ids() -> None:
-    page_ids = list(fetch_all_data_page_ids())
+def test_fetch_all_vvt_pages_ids() -> None:
+    page_ids = list(fetch_all_vvt_pages_ids())
     assert all(re.match(r"\d+", id_) for id_ in page_ids)
 
 
 @pytest.mark.integration
-def test_fetch_all_pages_data() -> None:
-    page_ids = list(islice(fetch_all_data_page_ids(), 5))
+def test_get_page_data_by_id() -> None:
+    page_ids = list(islice(fetch_all_vvt_pages_ids(), 5))
 
-    response = list(fetch_all_pages_data(page_ids))
+    response = list(get_page_data_by_id(page_ids))
 
     assert len(page_ids) == len(response)
     assert response[0].identifier == page_ids[0]
@@ -55,7 +55,7 @@ def test_fetch_all_data_page_ids_mocked(
         lambda self: setattr(self, "session", session),
     )
 
-    page_ids = list(fetch_all_data_page_ids())
+    page_ids = list(fetch_all_vvt_pages_ids())
 
     expected = ["0101010101", "0202020202", "0303030303", "0404040404"]
 
@@ -94,7 +94,7 @@ def test_fetch_all_pages_data_mocked(
         "__init__",
         lambda self: setattr(self, "session", session),
     )
-    all_pages_data = list(fetch_all_pages_data([str(expected["identifier"])]))
+    all_pages_data = list(get_page_data_by_id([str(expected["identifier"])]))
 
     assert len(all_pages_data) == 1
     assert all_pages_data[0].model_dump(exclude_none=True) == expected
