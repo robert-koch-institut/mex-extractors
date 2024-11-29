@@ -4,7 +4,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
-    ExtractedVariableGroup,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -16,10 +15,9 @@ from mex.common.types import (
 from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.odk.model import ODKData
 from mex.extractors.odk.transform import (
-    get_variable_groups_from_raw_data,
+    get_table_groups_from_raw_data,
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
-    transform_odk_variable_groups_to_extracted_variable_groups,
 )
 
 
@@ -209,10 +207,10 @@ def test_transform_odk_resources_to_mex_resources(
     ]
 
 
-def test_get_variable_groups_from_raw_data(
+def test_get_table_groups_from_raw_data(
     odk_raw_data: list[ODKData],
 ) -> None:
-    groups = get_variable_groups_from_raw_data(odk_raw_data)
+    groups = get_table_groups_from_raw_data(odk_raw_data)
 
     expected = {
         "gatekeeper": [
@@ -288,51 +286,23 @@ def test_get_variable_groups_from_raw_data(
     assert groups == expected
 
 
-def test_transform_odk_variable_groups_to_extracted_variable_groups(
-    odk_variable_groups: dict[str, list[dict[str, str | float]]],
-    extracted_resources_odk: list[ExtractedResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> None:
-    extracted_variable_groups = (
-        transform_odk_variable_groups_to_extracted_variable_groups(
-            odk_variable_groups,
-            extracted_resources_odk,
-            extracted_primary_sources["odk"],
-        )
-    )
-
-    expected = {
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
-        "hadPrimarySource": extracted_primary_sources["odk"].stableTargetId,
-        "identifierInPrimarySource": "begin_group-gatekeeper",
-        "containedBy": [extracted_resources_odk[0].stableTargetId],
-        "label": [{"value": "gatekeeper"}],
-    }
-    assert extracted_variable_groups[0].model_dump(exclude_defaults=True) == expected
-
-
 def test_transform_odk_data_to_extracted_variables(
     extracted_resources_odk: list[ExtractedResource],
-    extracted_variable_groups_odk: list[ExtractedVariableGroup],
-    odk_variable_groups: dict[str, list[dict[str, str | float]]],
+    odk_table_groups: dict[str, list[dict[str, str | float]]],
     odk_raw_data: list[ODKData],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_variables = transform_odk_data_to_extracted_variables(
         extracted_resources_odk,
-        extracted_variable_groups_odk,
-        odk_variable_groups,
+        odk_table_groups,
         odk_raw_data,
         extracted_primary_sources["odk"],
     )
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "gatekeeper",
+        "identifierInPrimarySource": "selection",
         "stableTargetId": Joker(),
-        "belongsTo": [str(extracted_variable_groups_odk[0].stableTargetId)],
-        "dataType": "begin_group",
         "label": [
             {
                 "value": "Introduction of study to gatekeeper",
@@ -348,9 +318,7 @@ def test_transform_odk_data_to_extracted_variables(
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
         "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "consent_gatekeeper",
-        "belongsTo": [str(extracted_variable_groups_odk[0].stableTargetId)],
-        "dataType": "select_one consent",
+        "identifierInPrimarySource": "selection",
         "label": [
             {"value": "**Verbal consent**"},
             {"value": "**Omaitaverero wokotjinyo**"},

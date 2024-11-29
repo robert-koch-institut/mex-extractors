@@ -28,14 +28,14 @@ def extract_odk_raw_data() -> list[ODKData]:
             sheet_name="choices", na_values=["", " "], keep_default_na=False
         )
         label_choices = get_column_dict_by_pattern(choices_sheet, "label")
-        list_name = choices_sheet["list_name"].to_list()
-
+        list_name_choices = choices_sheet["list_name"].to_list()
+        name_choices = choices_sheet["name"].to_list()
         survey_sheet = xls.parse(
             sheet_name="survey", na_values=["", " "], keep_default_na=False
         )
         label_survey = get_column_dict_by_pattern(survey_sheet, "label")
-        survey_type = survey_sheet["type"].to_list()
-        name = survey_sheet["name"].to_list()
+        type_survey = survey_sheet["type"].to_list()
+        name_survey = survey_sheet["name"].to_list()
         hint = get_column_dict_by_pattern(survey_sheet, "hint")
         raw_data.append(
             ODKData(
@@ -43,9 +43,10 @@ def extract_odk_raw_data() -> list[ODKData]:
                 hint=hint,
                 label_survey=label_survey,
                 label_choices=label_choices,
-                list_name=list_name,
-                name=name,
-                type=survey_type,
+                list_name_choices=list_name_choices,
+                name_choices=name_choices,
+                name_survey=name_survey,
+                type_survey=type_survey,
             )
         )
     return raw_data
