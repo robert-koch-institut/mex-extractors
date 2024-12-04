@@ -28,9 +28,6 @@ from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="ff_projects", deps=["extracted_primary_source_mex"])
@@ -86,17 +83,10 @@ def ff_projects_person_ids_by_query_string(
 
 @asset(group_name="ff_projects")
 def ff_projects_organization_ids_by_query_string(
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
     ff_projects_sources: list[FFProjectsSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
-    wikidata_organizations_by_query = extract_ff_projects_organizations(
-        ff_projects_sources
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_organizations_by_query, extracted_primary_source_wikidata
-    )
+    return extract_ff_projects_organizations(ff_projects_sources)
 
 
 @asset(group_name="ff_projects")

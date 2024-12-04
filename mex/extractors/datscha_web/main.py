@@ -27,9 +27,6 @@ from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="datscha_web", deps=["extracted_primary_source_mex"])
@@ -82,16 +79,9 @@ def datscha_web_person_ids_by_query_string(
 @asset(group_name="datscha_web")
 def datscha_web_organization_ids_by_query_string(
     extracted_datscha_web_items: list[DatschaWebItem],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for Datscha Web from wikidata and group them by query."""
-    wikidata_organizations_by_query = extract_datscha_web_organizations(
-        extracted_datscha_web_items
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_organizations_by_query, extracted_primary_source_wikidata
-    )
+    return extract_datscha_web_organizations(extracted_datscha_web_items)
 
 
 @asset(group_name="datscha_web")

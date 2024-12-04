@@ -1,10 +1,12 @@
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.model import VoxcoVariable
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:
@@ -28,14 +30,14 @@ def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:
 
 def extract_voxco_organizations(
     voxco_resource_mappings: list[AnyMappingModel],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract voxco organization from wikidata.
 
     Args:
         voxco_resource_mappings: voxco resource mapping models
 
     Returns:
-        Dict with organization label and WikidataOrganization
+        Dict with organization label and MergedOrganizationIdentifier
     """
     voxco_resource_organizations = {}
     external_partners = [
@@ -44,8 +46,10 @@ def extract_voxco_organizations(
         if mapping.externalPartner
     ]
     for external_partner in external_partners:
-        if external_partner and (org := search_organization_by_label(external_partner)):
-            voxco_resource_organizations[external_partner] = org
+        if external_partner and (
+            org_id := get_wikidata_extracted_organization_id_by_name(external_partner)
+        ):
+            voxco_resource_organizations[external_partner] = org_id
     return voxco_resource_organizations
 
 

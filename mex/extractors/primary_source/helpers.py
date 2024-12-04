@@ -1,21 +1,25 @@
 from functools import cache
 
+from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.sinks import load
 
 
 @cache
-def get_extracted_primary_source_id_by_name(
+def load_extracted_primary_source_by_name(
     name: str,
-) -> MergedPrimarySourceIdentifier | None:
-    """Use helper function to look up a primary source and return its stableTargetId.
+) -> ExtractedPrimarySource | None:
+    """Use helper function to look up a primary source and to load and return it.
 
-    A primary source is searched by its name and loaded into the configured sink.
-    Also it's stable target id is returned.
+    A primary source is searched by its name and loaded into the configured sink
+    and returned.
+
+    Args:
+        name: name of the primary source
 
     Returns:
-        ExtractedPrimarySource stableTargetId if one matching primary source is found.
+        ExtractedPrimarySource if one matching primary source is found.
         None if multiple matches / no match is found
     """
     extracted_primary_source = get_extracted_primary_source_by_name(name)
@@ -25,4 +29,22 @@ def get_extracted_primary_source_id_by_name(
 
     load([extracted_primary_source])
 
-    return extracted_primary_source.stableTargetId
+    return extracted_primary_source
+
+
+@cache
+def get_extracted_primary_source_id_by_name(
+    name: str,
+) -> MergedPrimarySourceIdentifier | None:
+    """Use helper function to return the stableTargetId of a found primary source .
+
+    Args:
+        name: name of the primary source
+
+    Returns:
+        ExtractedPrimarySource stableTargetId if one matching primary source is found.
+        None if multiple matches / no match is found
+    """
+    if extracted_primary_source := load_extracted_primary_source_by_name(name):
+        return extracted_primary_source.stableTargetId
+    return None

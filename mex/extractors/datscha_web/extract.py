@@ -4,10 +4,12 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.datscha_web.connector import DatschaWebConnector
 from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -52,7 +54,7 @@ def extract_datscha_web_source_contacts(
 
 def extract_datscha_web_organizations(
     datscha_web_items: Iterable[DatschaWebItem],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
     Args:
@@ -62,12 +64,14 @@ def extract_datscha_web_organizations(
         Dict with keys DatschaWebItem.Auftragsverarbeiter,
             DatschaWebItem.Empfaenger_der_Daten_im_Drittstaat, and
             DatschaWebItem.Empfaenger_der_verarbeiteten_uebermittelten_oder_offengelegten_Daten,
-            and values: WikidataOrganization
+            and values: MergedOrganizationIdentifier
     """
     partner_to_org_map = {}
     for item in datscha_web_items:
         for partner in item.get_partners():
             if partner and partner != "None":
-                if organization := search_organization_by_label(partner):
+                if organization := get_wikidata_extracted_organization_id_by_name(
+                    partner
+                ):
                     partner_to_org_map[partner] = organization
     return partner_to_org_map

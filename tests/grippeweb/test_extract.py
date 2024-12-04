@@ -4,6 +4,7 @@ import pytest
 
 from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_organizations,
@@ -80,72 +81,7 @@ def test_extract_grippeweb_organizations(
 ) -> None:
     organizations = extract_grippeweb_organizations(grippeweb_resource_mappings)
     expected = {
-        "identifier": "Q679041",
-        "labels": {
-            "de": {"language": "de", "value": "Robert Koch-Institut"},
-            "en": {"language": "en", "value": "Robert Koch Institute"},
-        },
-        "claims": {
-            "website": [
-                {"mainsnak": {"datavalue": {"value": {"text": "https://www.rki.de/"}}}},
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/DE/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/EN/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-            ],
-            "isni_id": [
-                {"mainsnak": {"datavalue": {"value": {"text": "0000 0001 0940 3744"}}}}
-            ],
-            "ror_id": [{"mainsnak": {"datavalue": {"value": {"text": "01k5qnb77"}}}}],
-            "short_name": [
-                {
-                    "mainsnak": {
-                        "datavalue": {"value": {"text": "RKI", "language": "en"}}
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {"value": {"text": "RKI", "language": "de"}}
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {"value": {"text": "IRK", "language": "fr"}}
-                    }
-                },
-            ],
-        },
-        "aliases": {
-            "de": [
-                {"language": "de", "value": "alias_de_1"},
-                {"language": "de", "value": "alias_de_2"},
-                {"language": "de", "value": "alias_de_3"},
-            ],
-            "en": [
-                {"language": "en", "value": "alias_en_1"},
-                {"language": "en", "value": "alias_en_2"},
-                {"language": "en", "value": "alias_en_3"},
-                {"language": "en", "value": "alias_en_4"},
-            ],
-        },
+        "Robert Koch-Institut": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
+        "org not in wikidata": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
     }
-    assert (
-        organizations["Robert Koch-Institut"].model_dump(
-            exclude_none=True, exclude_defaults=True
-        )
-        == expected
-    )
+    assert organizations == expected

@@ -30,9 +30,6 @@ from mex.extractors.odk.transform import (
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="odk", deps=["extracted_primary_source_mex"])
@@ -66,17 +63,10 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
 @asset(group_name="odk")
 def external_partner_and_publisher_by_label(
     odk_resource_mappings: list[dict[str, Any]],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
-    wikidata_partner_organizations_by_query = (
-        get_external_partner_and_publisher_by_label(
-            transform_mapping_data_to_models(odk_resource_mappings, ExtractedResource)
-        )
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_partner_organizations_by_query, extracted_primary_source_wikidata
+    return get_external_partner_and_publisher_by_label(
+        transform_mapping_data_to_models(odk_resource_mappings, ExtractedResource)
     )
 
 

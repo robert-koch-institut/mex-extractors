@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
@@ -35,11 +35,10 @@ def test_extract_voxco_variables() -> None:
 )
 def test_extract_voxco_organizations(
     voxco_resource_mappings: AnyMappingModel,
-    wikidata_organization: WikidataOrganization,
 ) -> None:
     organizations = extract_voxco_organizations(voxco_resource_mappings)
     assert organizations == {
-        "Robert Koch-Institut": wikidata_organization,
+        "Robert Koch-Institut": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
     }
 
 

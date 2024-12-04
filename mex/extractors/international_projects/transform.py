@@ -258,7 +258,7 @@ def get_or_create_partner_organization(
     for partner_org in partner_organization:
         if wpo := extracted_organizations.get(partner_org):
             final_partner_organizations.append(wpo)
-        else:
+        elif partner_org not in ("None", "Not applicable"):
             extracted_organization = ExtractedOrganization(
                 officialName=[Text(value=partner_org)],
                 identifierInPrimarySource=partner_org,

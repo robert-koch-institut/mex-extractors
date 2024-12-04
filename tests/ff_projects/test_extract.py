@@ -4,8 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from mex.common.types import TemporalEntity
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier, TemporalEntity
 from mex.extractors.ff_projects.extract import (
     extract_ff_projects_organizations,
     extract_ff_projects_sources,
@@ -112,10 +111,10 @@ def test_filter_out_duplicate_source_ids() -> None:
 @pytest.mark.usefixtures(
     "mocked_wikidata",
 )
-def test_extract_ff_projects_organizations(
-    wikidata_organization: WikidataOrganization,
-) -> None:
+def test_extract_ff_projects_organizations() -> None:
     organizations = extract_ff_projects_organizations(
         [next(extract_ff_projects_sources())]
     )
-    assert organizations["Apple"] == wikidata_organization
+    assert organizations["Apple"] == MergedOrganizationIdentifier(
+        "ga6xh6pgMwgq7DC7r6Wjqg"
+    )

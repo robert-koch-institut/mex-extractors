@@ -15,6 +15,8 @@ def test_get_wikidata_extracted_organization_id_by_name(
     monkeypatch: MonkeyPatch,
 ) -> None:
     """Wikidata helper finds "Robert Koch-Institut"."""
+    get_wikidata_extracted_organization_id_by_name.cache_clear()
+
     query_rki = "Robert Koch-Institut"
 
     mocked_load = Mock()
@@ -29,6 +31,8 @@ def test_get_wikidata_extracted_organization_id_by_name(
 @pytest.mark.integration
 def test_get_wikidata_extracted_organization_id_by_name_for_nonsensequery() -> None:
     """Wikidata helper returns None for nonensense query."""
+    get_wikidata_extracted_organization_id_by_name.cache_clear()
+
     query_nonsense = "this should not give a match"
     returned = get_wikidata_extracted_organization_id_by_name(query_nonsense)
 

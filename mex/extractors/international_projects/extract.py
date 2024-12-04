@@ -10,16 +10,18 @@ from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import logger, watch
 from mex.common.types import (
+    MergedOrganizationIdentifier,
     TemporalEntity,
     TemporalEntityPrecision,
     YearMonthDay,
 )
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -148,7 +150,7 @@ def extract_international_projects_project_leaders(
 
 def extract_international_projects_funding_sources(
     international_projects_sources: Iterable[InternationalProjectsSource],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract funding organization from wikidata.
 
     Args:
@@ -161,14 +163,16 @@ def extract_international_projects_funding_sources(
     for source in international_projects_sources:
         if funder_or_commissioner := source.get_funding_sources():
             for org in funder_or_commissioner:
-                if wikidata_org := search_organization_by_label(org):
-                    found_orgs[org] = wikidata_org
+                if wikidata_org_id := get_wikidata_extracted_organization_id_by_name(
+                    org
+                ):
+                    found_orgs[org] = wikidata_org_id
     return found_orgs
 
 
 def extract_international_projects_partner_organizations(
     international_projects_sources: Iterable[InternationalProjectsSource],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract partner organization from wikidata.
 
     Args:
@@ -181,8 +185,10 @@ def extract_international_projects_partner_organizations(
     for source in international_projects_sources:
         if partner_organizations := source.partner_organization:
             for org in partner_organizations:
-                if wikidata_org := search_organization_by_label(org):
-                    found_orgs[org] = wikidata_org
+                if wikidata_org_id := get_wikidata_extracted_organization_id_by_name(
+                    org
+                ):
+                    found_orgs[org] = wikidata_org_id
     return found_orgs
 
 
@@ -214,7 +220,11 @@ def get_clean_organizations_names(organizations_str: str) -> list[str]:
         list of clean organizations names
     """
     organizations_str = (
-        organizations_str.replace(",,", ",").replace("»", "").replace("•", "")
+        organizations_str.replace(",,", ",")
+        .replace("»", "")
+        .replace("•", "")
+        .replace("...", "")
+        .replace("…", "")
     )
     unclean_organizations = organizations_str.split("\n")
     return [

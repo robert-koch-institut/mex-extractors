@@ -5,13 +5,15 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -109,7 +111,7 @@ def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
 
 def extract_synopse_organizations(
     synopse_projects: list[SynopseProject],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
     Args:
@@ -128,7 +130,8 @@ def extract_synopse_organizations(
         }
     )
     return {
-        org_name: org
+        org_name: org_id
         for org_name in synopse_organizations
-        if org_name and (org := search_organization_by_label(org_name))
+        if org_name
+        and (org_id := get_wikidata_extracted_organization_id_by_name(org_name))
     }

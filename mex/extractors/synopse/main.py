@@ -50,9 +50,6 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="synopse")
@@ -186,14 +183,10 @@ def extracted_synopse_contributor_stable_target_ids_by_name(
 
 @asset(group_name="synopse")
 def synopse_organization_ids_by_query_string(
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
     synopse_projects: list[SynopseProject],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
-    wikidata_organizations_by_query = extract_synopse_organizations(synopse_projects)
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_organizations_by_query, extracted_primary_source_wikidata
-    )
+    return extract_synopse_organizations(synopse_projects)
 
 
 @asset(group_name="synopse")

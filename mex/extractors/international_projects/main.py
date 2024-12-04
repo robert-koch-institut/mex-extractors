@@ -29,9 +29,6 @@ from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="international_projects", deps=["extracted_primary_source_mex"])
@@ -76,32 +73,20 @@ def international_projects_person_ids_by_query(
 @asset(group_name="international_projects")
 def international_projects_funding_sources_ids_by_query(
     international_projects_sources: list[InternationalProjectsSource],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract funding sources and return their stable target IDs by query string."""
-    wikidata_funding_sources_by_query = extract_international_projects_funding_sources(
+    return extract_international_projects_funding_sources(
         international_projects_sources
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_funding_sources_by_query, extracted_primary_source_wikidata
     )
 
 
 @asset(group_name="international_projects")
 def international_projects_partner_organization_ids_by_query(
     international_projects_sources: list[InternationalProjectsSource],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
-    wikidata_partner_organizations_by_query = (
-        extract_international_projects_partner_organizations(
-            international_projects_sources
-        )
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_partner_organizations_by_query, extracted_primary_source_wikidata
+    return extract_international_projects_partner_organizations(
+        international_projects_sources
     )
 
 

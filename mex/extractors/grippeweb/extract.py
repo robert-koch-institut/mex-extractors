@@ -3,10 +3,12 @@ from typing import Any
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
 from mex.extractors.mapping.types import AnyMappingModel
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]]:
@@ -71,7 +73,7 @@ def extract_ldap_persons(
 
 def extract_grippeweb_organizations(
     grippeweb_resource_mappings: list[AnyMappingModel],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract grippeweb organization from wikidata.
 
     Args:
@@ -79,15 +81,15 @@ def extract_grippeweb_organizations(
 
     Returns:
         Dict with keys: mapping default values
-            and values: WikidataOrganization
+            and values: MergedOrganizationIdentifier
     """
     organization_by_name = {}
     for resource in grippeweb_resource_mappings:
         if external_partner_dict := resource.externalPartner:
             external_partner = external_partner_dict[0].mappingRules[0].forValues[0]
-            if org := search_organization_by_label(external_partner):
+            if org := get_wikidata_extracted_organization_id_by_name(external_partner):
                 organization_by_name[external_partner] = org
         publisher_name = resource.publisher[0].mappingRules[0].forValues[0]
-        if publisher := search_organization_by_label(publisher_name):
+        if publisher := get_wikidata_extracted_organization_id_by_name(publisher_name):
             organization_by_name[publisher_name] = publisher
     return organization_by_name
