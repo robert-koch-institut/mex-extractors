@@ -2,10 +2,10 @@ from collections.abc import Generator
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
-from mex.common.models import MergedItem
+from mex.common.models import AnyMergedModel
 
 
-def get_merged_items() -> Generator[MergedItem, None, None]:
+def get_merged_items() -> Generator[AnyMergedModel, None, None]:
     """Read merged items from backend."""
     connector = BackendApiConnector.get()
 

@@ -2,12 +2,12 @@ import json
 from collections.abc import Iterable
 
 from mex.common.logging import logger
-from mex.common.models import MergedItem
+from mex.common.models import AnyMergedModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 
 
-def write_merged_items(items: Iterable[MergedItem]) -> None:
+def write_merged_items(items: Iterable[AnyMergedModel]) -> None:
     """Write the incoming items into a new-line delimited JSON file."""
     settings = BaseSettings.get()
     ndjson_path = settings.work_dir / "publisher.ndjson"

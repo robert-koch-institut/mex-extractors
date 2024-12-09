@@ -163,8 +163,8 @@ def test_builder_provider_field_value_error(faker: Faker) -> None:
         faker.field_value(field, identity)
 
 
-def test_builder_provider_extracted_data(faker: Faker) -> None:
-    models = faker.extracted_data(ExtractedContactPoint)
+def test_builder_provider_extracted_items(faker: Faker) -> None:
+    models = faker.extracted_items(ExtractedContactPoint)
     assert models[0].model_dump(exclude_defaults=True) == {
         "email": [
             "salazarmaria@example.com",

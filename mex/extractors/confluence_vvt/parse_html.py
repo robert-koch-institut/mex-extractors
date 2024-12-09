@@ -170,7 +170,7 @@ def get_clean_current_row_all_cols_data(
 def get_interne_vorgangsnummer_from_all_rows_data(
     intnmr_dict: Any | None | list[str],
 ) -> list[str] | Any:
-    """Get Interne Vorgangsnummer from the table extracted data.
+    """Get Interne Vorgangsnummer from the extracted table.
 
     Args:
         intnmr_dict: Extracted dict or list of Interne Vorgangsnummer

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: rename artificial provider function `extracted_data` to `extracted_items`
+- prefer concrete unions over base classes for merged and extracted item typing
+
 ### Deprecated
 
 ### Removed

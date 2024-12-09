@@ -52,7 +52,7 @@ def factories(faker: Faker, identities: IdentityMap) -> Faker:
 def artificial_data(factories: Faker, identities: IdentityMap) -> None:
     """Create artificial data and load the models to the sinks."""
     restore_identities(identities)  # restore state of memory identity provider
-    load(m for c in EXTRACTED_MODEL_CLASSES for m in factories.extracted_data(c))
+    load(m for c in EXTRACTED_MODEL_CLASSES for m in factories.extracted_items(c))
 
 
 @entrypoint(Settings)
