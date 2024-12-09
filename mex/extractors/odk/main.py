@@ -3,10 +3,8 @@ from typing import Any
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
-    ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
-    ExtractedVariableGroup,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
@@ -22,10 +20,8 @@ from mex.extractors.odk.extract import (
 from mex.extractors.odk.model import ODKData
 from mex.extractors.odk.transform import (
     assign_resource_relations,
-    get_variable_groups_from_raw_data,
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
-    transform_odk_variable_groups_to_extracted_variable_groups,
 )
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
@@ -85,7 +81,6 @@ def extracted_resources_odk(
     odk_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
-    extracted_international_projects_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
@@ -93,7 +88,6 @@ def extracted_resources_odk(
         transform_mapping_data_to_models(odk_resource_mappings, ExtractedResource),
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
-        extracted_international_projects_activities,
         extracted_primary_source_mex,
     )
     extracted_resources_odk_linked = assign_resource_relations(
@@ -104,43 +98,14 @@ def extracted_resources_odk(
 
 
 @asset(group_name="odk")
-def odk_variable_groups(
-    odk_raw_data: list[ODKData],
-) -> dict[str, list[dict[str, str]]]:
-    """Transform odk raw data to odk variable groups and return."""
-    return get_variable_groups_from_raw_data(odk_raw_data)
-
-
-@asset(group_name="odk")
-def extracted_variable_groups_odk(
-    extracted_resources_odk: list[ExtractedResource],
-    odk_variable_groups: dict[str, list[dict[str, str]]],
-    extracted_primary_source_odk: ExtractedPrimarySource,
-) -> list[ExtractedVariableGroup]:
-    """Transform odk variable groups to mex variable groups, load to sinks, return."""
-    extracted_variable_groups = (
-        transform_odk_variable_groups_to_extracted_variable_groups(
-            odk_variable_groups, extracted_resources_odk, extracted_primary_source_odk
-        )
-    )
-
-    load(extracted_variable_groups)
-    return extracted_variable_groups
-
-
-@asset(group_name="odk")
 def extracted_variables_odk(
     extracted_resources_odk: list[ExtractedResource],
-    extracted_variable_groups_odk: list[ExtractedVariableGroup],
-    odk_variable_groups: dict[str, list[dict[str, str]]],
     odk_raw_data: list[ODKData],
     extracted_primary_source_odk: ExtractedPrimarySource,
 ) -> None:
     """Transform odk data to mex variables and load to sinks."""
     extracted_variables = transform_odk_data_to_extracted_variables(
         extracted_resources_odk,
-        extracted_variable_groups_odk,
-        odk_variable_groups,
         odk_raw_data,
         extracted_primary_source_odk,
     )

@@ -129,7 +129,7 @@ def test_extract_odk_raw_data() -> None:
                 nan,
             ],
         },
-        "list_name": [
+        "list_name_choices": [
             nan,
             "consent",
             "consent",
@@ -146,7 +146,24 @@ def test_extract_odk_raw_data() -> None:
             "relationship_to_head",
             "relationship_to_head",
         ],
-        "name": [
+        "name_choices": [
+            nan,
+            "consent",
+            "consent",
+            nan,
+            "yes_no",
+            "yes_no",
+            nan,
+            "region",
+            "region",
+            "region",
+            "region",
+            nan,
+            "relationship_to_head",
+            "relationship_to_head",
+            "relationship_to_head",
+        ],
+        "name_survey": [
             "start",
             "username",
             "confirmed_username",
@@ -173,7 +190,7 @@ def test_extract_odk_raw_data() -> None:
             "age_verification",
             "selection",
         ],
-        "type": [
+        "type_survey": [
             "start",
             "username",
             "text",
