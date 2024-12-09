@@ -24,9 +24,6 @@ from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="biospecimen", deps=["extracted_primary_source_mex"])
@@ -72,7 +69,6 @@ def extracted_biospecimen_resources(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     extracted_synopse_activities: list[ExtractedActivity],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = Settings.get()
@@ -80,12 +76,8 @@ def extracted_biospecimen_resources(
         extract_mapping_data(settings.biospecimen.mapping_path / "resource.yaml"),
         ExtractedResource,
     )
-    biospecimen_organizations = extract_biospecimen_organizations(biospecimen_resources)
-    extracted_organizations = (
-        get_merged_organization_id_by_query_with_transform_and_load(
-            biospecimen_organizations, extracted_primary_source_wikidata
-        )
-    )
+    extracted_organizations = extract_biospecimen_organizations(biospecimen_resources)
+
     mex_sources = list(
         transform_biospecimen_resource_to_mex_resource(
             biospecimen_resources,

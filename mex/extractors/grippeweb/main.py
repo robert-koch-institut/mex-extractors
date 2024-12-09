@@ -45,9 +45,6 @@ from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.transform import get_contact_merged_ids_by_emails
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="grippeweb", deps=["extracted_primary_source_mex"])
@@ -148,15 +145,10 @@ def extracted_mex_persons_grippeweb(
 @asset(group_name="grippeweb")
 def grippeweb_organization_ids_by_query_string(
     grippeweb_resource_mappings: list[dict[str, Any]],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for grippeweb from wikidata and group them by query."""
-    wikidata_organizations_by_query = extract_grippeweb_organizations(
+    return extract_grippeweb_organizations(
         transform_mapping_data_to_models(grippeweb_resource_mappings, ExtractedResource)
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        wikidata_organizations_by_query, extracted_primary_source_wikidata
     )
 
 

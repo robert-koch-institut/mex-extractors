@@ -28,7 +28,7 @@ def test_extract_datscha_web_organizations(
 ) -> None:
     monkeypatch.setattr(
         mex.extractors.datscha_web.extract,
-        "search_organization_by_label",
+        "get_wikidata_extracted_organization_id_by_name",
         lambda x: "test",
     )
     result = extract_datscha_web_organizations([datscha_web_item])

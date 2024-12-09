@@ -9,10 +9,12 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson
 from mex.common.logging import watch
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.settings import Settings
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -42,20 +44,24 @@ def extract_biospecimen_contacts_by_email(
 
 def extract_biospecimen_organizations(
     biospecimen_resources: list[BiospecimenResource],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
     Args:
         biospecimen_resources: Iterable of biospecimen resources
 
     Returns:
-        dict with WikidataOrganization by externe partner
+        dict with WikidataOrganization ID by externe partner
     """
     return {
-        resource.externe_partner: org
+        resource.externe_partner: org_id
         for resource in biospecimen_resources
         if resource.externe_partner
-        and (org := search_organization_by_label(resource.externe_partner))
+        and (
+            org_id := get_wikidata_extracted_organization_id_by_name(
+                resource.externe_partner
+            )
+        )
     }
 
 

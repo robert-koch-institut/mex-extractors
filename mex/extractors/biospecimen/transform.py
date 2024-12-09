@@ -49,7 +49,7 @@ def transform_biospecimen_resource_to_mex_resource(
     person_stable_target_id_by_email = {
         str(p.email[0]): Identifier(p.stableTargetId) for p in mex_persons
     }
-    sysnopse_stable_target_id_by_studien_id = {
+    synopse_stable_target_id_by_studien_id = {
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in extracted_synopse_activities
     }
@@ -96,7 +96,7 @@ def transform_biospecimen_resource_to_mex_resource(
                 contact.append(k)
             elif k := unit_stable_target_ids_by_synonym.get(kontakt):
                 contact.append(k)
-        was_generated_by = sysnopse_stable_target_id_by_studien_id.get(
+        was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0], None
         )
         if resource.weiterfuehrende_dokumentation_url_oder_dateipfad:

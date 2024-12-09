@@ -35,9 +35,6 @@ from mex.extractors.voxco.transform import (
     transform_voxco_resource_mappings_to_extracted_resources,
     transform_voxco_variable_mappings_to_extracted_variables,
 )
-from mex.extractors.wikidata.extract import (
-    get_merged_organization_id_by_query_with_transform_and_load,
-)
 
 
 @asset(group_name="voxco", deps=["extracted_primary_source_mex"])
@@ -72,15 +69,10 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
 @asset(group_name="voxco")
 def organization_stable_target_id_by_query_voxco(
     voxco_resource_mappings: list[dict[str, Any]],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract and load voxco organizations and group them by query."""
-    voxco_organizations = extract_voxco_organizations(
+    return extract_voxco_organizations(
         transform_mapping_data_to_models(voxco_resource_mappings, ExtractedResource)
-    )
-
-    return get_merged_organization_id_by_query_with_transform_and_load(
-        voxco_organizations, extracted_primary_source_wikidata
     )
 
 

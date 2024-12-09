@@ -4,11 +4,13 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson
 from mex.common.logging import watch
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.settings import Settings
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -96,19 +98,19 @@ def remove_prefixes_from_name(name: str) -> str:
 
 def extract_blueant_organizations(
     blueant_sources: list[BlueAntSource],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
     Args:
         blueant_sources: Iterable of blueant sources
 
     Returns:
-        Dict with organization label and WikidataOrganization
+        Dict with organization label and WikidataOrganization ID
     """
     return {
-        name: org
+        name: org_id
         for source in blueant_sources
         for name in source.client_names
         if name not in ["Robert Koch-Institut", "RKI"]
-        and (org := search_organization_by_label(name))
+        and (org_id := get_wikidata_extracted_organization_id_by_name(name))
     }

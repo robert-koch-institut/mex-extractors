@@ -11,13 +11,15 @@ from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
 from mex.common.types import (
+    MergedOrganizationIdentifier,
     TemporalEntity,
     TemporalEntityPrecision,
 )
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.settings import Settings
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @watch
@@ -198,22 +200,26 @@ def extract_ff_project_authors(
 
 def extract_ff_projects_organizations(
     ff_projects_sources: Iterable[FFProjectsSource],
-) -> dict[str, WikidataOrganization]:
+) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
     Args:
         ff_projects_sources: Iterable of ff-project sources
 
     Returns:
-        Dict with organization label and WikidataOrganization
+        Dict with organization label and WikidataOrganization ID
     """
     return {
-        zuwendungs_oder_auftraggeber: org
+        zuwendungs_oder_auftraggeber: org_id
         for source in ff_projects_sources
         if source.zuwendungs_oder_auftraggeber
         and source.zuwendungs_oder_auftraggeber != "Sonderforschung"
         for zuwendungs_oder_auftraggeber in source.zuwendungs_oder_auftraggeber.split(
             "/"
         )
-        if (org := search_organization_by_label(zuwendungs_oder_auftraggeber))
+        if (
+            org_id := get_wikidata_extracted_organization_id_by_name(
+                zuwendungs_oder_auftraggeber
+            )
+        )
     }
