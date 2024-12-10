@@ -11,7 +11,7 @@ from faker.providers.python import Provider as PythonFakerProvider
 from pydantic.fields import FieldInfo
 
 from mex.common.identity import Identity
-from mex.common.models import ExtractedData
+from mex.common.models import AnyExtractedModel
 from mex.common.types import (
     TEMPORAL_ENTITY_FORMATS_BY_PRECISION,
     UTC,
@@ -102,8 +102,10 @@ class BuilderProvider(PythonFakerProvider):
             raise RuntimeError(msg)
         return [factory() for _ in range(self.pyint(*self.min_max_for_field(field)))]
 
-    def extracted_data(self, model: type[ExtractedData]) -> list[ExtractedData]:
-        """Get a list of extracted data instances for the given model class."""
+    def extracted_items(
+        self, model: type[AnyExtractedModel]
+    ) -> list[AnyExtractedModel]:
+        """Get a list of extracted items for the given model class."""
         models = []
         for identity in cast(list[Identity], self.generator.identities(model)):
             # manually set identity related fields
@@ -130,7 +132,7 @@ class IdentityProvider(BaseFakerProvider):
         super().__init__(factory)
         self._identities = identities
 
-    def identities(self, model: type[ExtractedData]) -> list[Identity]:
+    def identities(self, model: type[AnyExtractedModel]) -> list[Identity]:
         """Return a list of identities for the given model class."""
         return self._identities[model.__name__.removeprefix("Extracted")]
 

@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - extractors now use wikidata helper function
 
+- BREAKING: rename artificial provider function `extracted_data` to `extracted_items`
+- prefer concrete unions over base classes for merged and extracted item typing
+
 ### Deprecated
 
 ### Removed
@@ -21,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 ## [0.22.0] - 2024-12-10
+
+### Changes
+
+- wrap up ifsg model v3 update
+- wrap up seq-repo model v3 update
 
 ## [0.21.0] - 2024-11-19
 

@@ -1,13 +1,13 @@
 from collections.abc import Generator, Iterable
 
 from mex.common.logging import logger
-from mex.common.models import MergedItem
+from mex.common.models import AnyMergedModel
 from mex.extractors.settings import Settings
 
 
 def filter_merged_items(
-    items: Iterable[MergedItem],
-) -> Generator[MergedItem, None, None]:
+    items: Iterable[AnyMergedModel],
+) -> Generator[AnyMergedModel, None, None]:
     """Filter to be published items by allow list."""
     settings = Settings.get()
 
