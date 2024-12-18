@@ -154,6 +154,10 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `pdm run odk` extracts ODK survey data from excel files
 
+### open-data extractor
+
+- `pdm run open-data` extracts Open Data sources from the Zenodo API
+
 ### organigram extractor
 
 - `pdm run organigram` extracts organizational units from JSON file
