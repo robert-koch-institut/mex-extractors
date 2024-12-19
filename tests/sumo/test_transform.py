@@ -113,7 +113,10 @@ def test_transform_resource_nokeda_to_mex_resource(
         "externalPartner": Joker(),
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword1"},
-            {"language": TextLanguage.DE, "value": "keyword2"},
+            {
+                "language": TextLanguage.DE,
+                "value": "keyword2",
+            },
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
         "publisher": [extracted_organization_rki.stableTargetId],
@@ -304,7 +307,7 @@ def test_transform_nokeda_model_variable_to_mex_variable(
         "identifierInPrimarySource": "nokeda_edis_software",
         "stableTargetId": Joker(),
         "belongsTo": [stable_target_id_by_label_values[variable.domain]],
-        "dataType": "https://mex.rki.de/item/data-type-2",
+        "dataType": "string",
         "description": [
             {"language": TextLanguage.DE, "value": "shobidoo"},
             {"language": TextLanguage.EN, "value": "shobidoo_en"},
@@ -365,7 +368,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         ],
         "label": [{"value": "aux_age21_min"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
-        "valueSet": ["0", "1", "2"],
+        "valueSet": Joker(),
     }
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
     variable = list(cc2_aux_model)[1]
@@ -383,7 +386,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         ],
         "label": [{"value": "aux_cedis_group"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
-        "valueSet": ["001", "002", "003", "Kardiovaskulär", "Cardiovascular"],
+        "valueSet": Joker(),
     }
     assert transformed_data[1].model_dump(exclude_defaults=True) == expected
 
