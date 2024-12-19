@@ -6,6 +6,11 @@ from pytest import MonkeyPatch
 from requests import HTTPError
 
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.confluence_vvt.extract import fetch_all_vvt_pages_ids
+from mex.extractors.confluence_vvt.models import (
+    ConfluenceVvtHeading,
+    ConfluenceVvtValue,
+)
 
 
 @pytest.fixture
@@ -78,3 +83,63 @@ def test_initialization_mocked_server_error(
     response = connector.request("GET", "localhost")
 
     assert response["statusCode"] == 500
+
+
+@pytest.mark.integration
+def test_get_page_by_id() -> None:
+    connector = ConfluenceVvtConnector.get()
+    page_data = connector.get_page_by_id("89780861")
+    assert len(page_data.model_dump()) == 2
+
+    # extract
+    result = {}
+    for table in page_data.tables:
+        complete_row_with_values = []
+        for i, row in enumerate(table.rows):
+            for k, cell in enumerate(row.cells):
+                cells_text = {}
+                if isinstance(cell, ConfluenceVvtHeading):
+                    cells_text["heading"] = cell.text
+                    complete_row_with_values.append(cells_text)
+                    continue
+                if isinstance(cell, ConfluenceVvtValue):
+                    breakpoint()
+                    complete_row_with_values[k] = {
+                        **complete_row_with_values[k],
+                        "values": cell.texts,
+                    }
+                    # cells_text["values"] = cell.texts
+                    # complete_row_with_values[k] = complete_row_with_values[k].update(
+                    #     {"values": cell.texts}
+                    # )
+                    # complete_row_with_values.append(cells_text)
+                    continue
+            result[f"heading_value_pair_row_{i}"] = complete_row_with_values
+            if (i + 1) % 2 == 0:
+                complete_row_with_values.clear()
+    breakpoint()
+
+    # start by mapping rows to values below. do it row loop here.
+
+    all_pages_ids = fetch_all_vvt_pages_ids()
+    # for page_id in all_pages_ids:
+    #     pagedata = connector.get_page_by_id(page_id)
+
+
+nested_dict = {
+    "heading_value_pair_row_1": [
+        {"heading": "Interne nummer", "value": "DS-1234"},
+        {"heading": "heading cell1", "value": "Bear. Wolf"},
+    ],
+    "heading_value_pair_row_2": [
+        {"heading": "second row heading cell 1", "value": "second row value cell 1"},
+        {"heading": "second row heading cell 2", "value": "second row value cell 2"},
+        {"heading": "second row heading cell 3", "value": "second row value cell 3"},
+    ],
+    "heading_value_pair_row_3": [
+        {
+            "heading": "second row heading only cell",
+            "value": "second row value only cell",
+        },
+    ],
+}
