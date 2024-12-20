@@ -3,15 +3,12 @@ from numpy import nan
 
 from mex.common.models import (
     ExtractedResource,
-    ExtractedVariableGroup,
 )
 from mex.common.types import (
     AccessRestriction,
     Language,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPrimarySourceIdentifier,
-    MergedResourceIdentifier,
     Text,
 )
 from mex.extractors.mapping.transform import transform_mapping_data_to_models
@@ -689,7 +686,7 @@ def odk_raw_data() -> list[ODKData]:
                     nan,
                 ],
             },
-            list_name=[
+            list_name_choices=[
                 nan,
                 "consent",
                 "consent",
@@ -706,7 +703,24 @@ def odk_raw_data() -> list[ODKData]:
                 "relationship_to_head",
                 "relationship_to_head",
             ],
-            name=[
+            name_choices=[
+                nan,
+                "consent",
+                "consent",
+                nan,
+                "yes_no",
+                "yes_no",
+                nan,
+                "yes_no_dk_ref",
+                "yes_no_dk_ref",
+                "yes_no_dk_ref",
+                "yes_no_dk_ref",
+                nan,
+                "relationship_to_head",
+                "relationship_to_head",
+                "relationship_to_head",
+            ],
+            name_survey=[
                 "start",
                 "username",
                 "confirmed_username",
@@ -733,7 +747,7 @@ def odk_raw_data() -> list[ODKData]:
                 "age_verification",
                 "selection",
             ],
-            type=[
+            type_survey=[
                 "start",
                 "username",
                 "text",
@@ -761,131 +775,4 @@ def odk_raw_data() -> list[ODKData]:
                 "end_group",
             ],
         )
-    ]
-
-
-@pytest.fixture
-def odk_variable_groups() -> dict[str, list[dict[str, str | float]]]:
-    """Mocked odk variable groups."""
-    return {
-        "gatekeeper": [
-            {
-                "type": "begin_group",
-                "name": "gatekeeper",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Introduction of study to gatekeeper",
-                "label::Otjiherero (hz)": "Introduction of study to gatekeeper",
-                "hint": nan,
-            },
-            {
-                "type": "select_one consent",
-                "name": "consent_gatekeeper",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "**Verbal consent**",
-                "label::Otjiherero (hz)": "**Omaitaverero wokotjinyo**",
-                "hint": nan,
-            },
-            {
-                "type": "select_one yes_no",
-                "name": "consent_basic_questions",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Are you",
-                "label::Otjiherero (hz)": "Ove moyenene okunyamukura omapuriro inga?",
-                "hint": nan,
-            },
-            {
-                "type": "integer",
-                "name": "NR1",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Taken together",
-                "label::Otjiherero (hz)": "Tji wa twa kumwe",
-                "hint": "*(-88 = don't know, -99 = refused to answer)*",
-            },
-            {
-                "type": "integer",
-                "name": "NR2",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "How many",
-                "label::Otjiherero (hz)": "Ovandu vengapi",
-                "hint": "*(-88 = don't know, -99 = refused to answer)*",
-            },
-            {
-                "type": "select_one yes_no",
-                "name": "consent_gatekeeper_2",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Thank you for providing this basic information.",
-                "label::Otjiherero (hz)": "Okuhepa tjinene",
-                "hint": nan,
-            },
-        ],
-        "selection": [
-            {
-                "type": "begin_group",
-                "name": "selection",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Selection of respondent",
-                "label::Otjiherero (hz)": "Selection of respondent",
-                "hint": nan,
-            },
-            {
-                "type": "select_one consent",
-                "name": "consent_respondent",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "**Verbal consent**",
-                "label::Otjiherero (hz)": "**Omaitaverero wokotjinyo**",
-                "hint": nan,
-            },
-            {
-                "type": "select_one yes_no",
-                "name": "age_verification",
-                "file_name": "test_raw_data.xlsx",
-                "label::English (en)": "Are you currently 18 years old or older?",
-                "label::Otjiherero (hz)": "Una ozombura 18 nokombanda?",
-                "hint": nan,
-            },
-        ],
-    }
-
-
-@pytest.fixture
-def extracted_variable_groups_odk() -> list[ExtractedVariableGroup]:
-    """Mocked odk mex variable groups."""
-    return [
-        ExtractedVariableGroup(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(50),
-            identifierInPrimarySource="begin_group-gatekeeper",
-            containedBy=[MergedResourceIdentifier.generate(51)],
-            label=[
-                Text(value="Introduction of study to gatekeeper", language="en"),
-                Text(value="Introduction of study to gatekeeper", language="en"),
-                Text(value="**Verbal consent**", language=None),
-                Text(value="**Omaitaverero wokotjinyo**", language=None),
-                Text(value="Are you", language=None),
-                Text(value="Ove moyenene okunyamukura omapuriro inga?", language=None),
-                Text(value="Taken together", language=None),
-                Text(value="Tji wa twa kumwe", language=None),
-                Text(value="How many", language=None),
-                Text(value="Ovandu vengapi", language=None),
-                Text(
-                    value="Thank you for providing this basic information.",
-                    language="en",
-                ),
-                Text(value="Okuhepa tjinene", language=None),
-            ],
-            entityType="ExtractedVariableGroup",
-        ),
-        ExtractedVariableGroup(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(52),
-            identifierInPrimarySource="begin_group-selection",
-            containedBy=[MergedResourceIdentifier.generate(53)],
-            label=[
-                Text(value="Selection of respondent", language="en"),
-                Text(value="Selection of respondent", language="en"),
-                Text(value="**Verbal consent**", language=None),
-                Text(value="**Omaitaverero wokotjinyo**", language=None),
-                Text(value="Are you currently 18 years old or older?", language="en"),
-                Text(value="Una ozombura 18 nokombanda?", language=None),
-            ],
-            entityType="ExtractedVariableGroup",
-        ),
     ]
