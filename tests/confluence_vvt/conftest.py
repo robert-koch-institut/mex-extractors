@@ -7,6 +7,7 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 from requests.models import Response
+from mex.common.models import ExtractedActivity, ExtractedPrimarySource
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.organigram.extract import (
@@ -18,6 +19,11 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
+from mex.extractors.mapping.extract import extract_mapping_data
+from mex.extractors.mapping.transform import transform_mapping_data_to_model
+from mex.extractors.mapping.types import AnyMappingModel
+from mex.extractors.settings import Settings
+
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -65,4 +71,16 @@ def mocked_confluence_vvt_detailed_page_data(
         ConfluenceVvtConnector,
         "__init__",
         lambda self, _: setattr(self, "session", session),
+    )
+
+
+@pytest.fixture
+def confluence_vvt_activity_mapping() -> AnyMappingModel:
+    """Return confluence-vvt activity mapping from assets."""
+    settings = Settings.get()
+    return transform_mapping_data_to_model(
+        extract_mapping_data(
+            settings.confluence_vvt.template_v1_mapping_path / "activity.yaml"
+        ),
+        ExtractedActivity,
     )
