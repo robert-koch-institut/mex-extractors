@@ -33,46 +33,6 @@ from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
 
 
-def split_off_extended_data_use_variables(
-    synopse_variables: Iterable[SynopseVariable],
-    synopse_overviews: Iterable[SynopseStudyOverview],
-) -> tuple[
-    Generator[SynopseVariable, None, None], Generator[SynopseVariable, None, None]
-]:
-    """Split extended data use variables from regular variables in datensatzuebersicht.
-
-    Args:
-        synopse_variables: iterable of synopse variables
-        synopse_overviews: iterable of synopse overviews
-
-    Returns:
-        Tuple of two Generators for synopse variables
-    """
-    ds_typ_id_in_datensatzuebersicht_by_synopse_id = {
-        s.synopse_id: s.ds_typ_id for s in synopse_overviews
-    }
-    synopse_variable_regular, synopse_variable_extended_data_use = tee(
-        (
-            (
-                not ds_typ_id_in_datensatzuebersicht_by_synopse_id.get(
-                    variable.synopse_id
-                )
-                and variable.int_var
-                and variable.keep_varname
-            ),
-            variable,
-        )
-        for variable in synopse_variables
-    )
-    return (
-        variable for condition, variable in synopse_variable_regular if not condition
-    ), (
-        variable
-        for condition, variable in synopse_variable_extended_data_use
-        if condition
-    )
-
-
 def transform_synopse_studies_into_access_platforms(
     synopse_studies: Iterable[SynopseStudy],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -138,14 +98,8 @@ def transform_overviews_to_resource_lookup(
     }
     resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]] = {}
     for study in study_overviews:
-        if (
-            resource_id := resource_id_by_identifier_in_platform.get(
-                f"{study.studien_id}-{study.ds_typ_id}-{study.titel_datenset}"
-            )
-        ) or (
-            resource_id := resource_id_by_identifier_in_platform.get(
-                f"{study.studien_id}-extended-data-use"
-            )
+        if resource_id := resource_id_by_identifier_in_platform.get(
+            f"{study.studien_id}-{study.ds_typ_id}-{study.titel_datenset}"
         ):
             resource_ids = resource_ids_by_synopse_id.setdefault(study.synopse_id, [])
             resource_ids.append(MergedResourceIdentifier(resource_id))
@@ -277,36 +231,27 @@ def transform_synopse_variables_to_mex_variable_groups(
 def transform_synopse_data_to_mex_resources(
     synopse_studies: Iterable[SynopseStudy],
     synopse_projects: Iterable[SynopseProject],
+    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activities: Iterable[ExtractedActivity],
     extracted_access_platforms: Iterable[ExtractedAccessPlatform],
     extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, Identifier],
     extracted_organization: ExtractedOrganization,
-    created_by_study_id: dict[str, str] | None,
-    description_by_study_id: dict[str, str] | None,
-    documentation_by_study_id: dict[str, Link] | None,
-    keyword_text_by_study_id: dict[str, list[Text]],
     synopse_resource: AnyMappingModel,
-    identifier_in_primary_source_by_study_id: dict[str, str],
-    title_by_study_id: dict[str, Text],
 ) -> Generator[ExtractedResource, None, None]:
     """Transform Synopse Studies to MEx resources.
 
     Args:
         synopse_studies: Iterable of Synopse Studies
         synopse_projects: Iterable of synopse projects
+        synopse_variables_by_study_id: mapping from synopse studie id to the variables
+            with this studie id
         extracted_activities: Iterable of extracted activities
         extracted_access_platforms: Iterable of extracted access platforms
         extracted_primary_source: Extracted report server platform
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_organization: extracted organization
-        created_by_study_id: Creation timestamps by study ID
-        description_by_study_id: Description Text by study ID
-        documentation_by_study_id: Documentation Link by study ID
-        keyword_text_by_study_id: List of keywords by study ID
-        synopse_resource: resource mapping model with default values
-        identifier_in_primary_source_by_study_id: identifierInPrimarySource by study ID
-        title_by_study_id: title by study ID
+        synopse_resource: resource default values
 
     Returns:
         Generator for extracted resources
@@ -323,8 +268,47 @@ def transform_synopse_data_to_mex_resources(
     synopse_studien_art_typ_by_study_ids = {
         p.studien_id: p.studienart_studientyp for p in synopse_projects
     }
-
-    for study in synopse_studies:
+    synopse_studies_gens = tee(synopse_studies, 2)
+    created_by_study_id: dict[str, str | None] = {}
+    description_by_study_id: dict[str, str | None] = {}
+    documentation_by_study_id: dict[str, Link | None] = {}
+    identifier_in_primary_source_by_study_id: dict[str, str] = {}
+    keyword_text_by_study_id: dict[str, list[Text]] = {}
+    title_by_study_id: dict[str, Text] = {}
+    for study in synopse_studies_gens[0]:
+        created_by_study_id[study.studien_id] = study.erstellungs_datum
+        description_by_study_id[study.studien_id] = study.beschreibung
+        synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
+        if not study.dokumentation:
+            documentation = None
+        elif re.match(r"^[a-zA-Z]:\\.*$", study.dokumentation):
+            documentation = Link(url=PureWindowsPath(study.dokumentation).as_uri())
+        elif re.match(r"https?://.*", study.dokumentation):
+            documentation = Link(url=study.dokumentation)
+        else:
+            documentation = None
+        documentation_by_study_id[study.studien_id] = documentation
+        keywords_plain = []
+        if study.schlagworte_themen:
+            keywords_plain += [
+                word for word in re.split(r"\s*,\s*", study.schlagworte_themen)
+            ]
+        if synopse_variables:
+            # add unique values of all textbox 2 entries from variable set for this
+            # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
+            keywords_plain.extend(
+                {re.sub(r"\s\(\d+\)", "", var.unterthema) for var in synopse_variables}
+            )
+        keyword_text = [
+            Text(value=word, language=TextLanguage.DE) for word in keywords_plain
+        ]
+        keyword_text_by_study_id[study.studien_id] = keyword_text
+        identifier_in_primary_source_by_study_id[study.studien_id] = (
+            f"{study.studien_id}-{study.ds_typ_id}-{study.titel_datenset}"
+        )
+        title_by_study_id[study.studien_id] = Text(
+            value=study.titel_datenset, language=TextLanguage("de")
+        )
         access_platform = (
             access_platform_by_identifier_in_primary_source[
                 study.plattform_adresse
@@ -407,166 +391,6 @@ def transform_synopse_data_to_mex_resources(
                 extracted_activity.stableTargetId if extracted_activity else None
             ),
         )
-
-
-@watch
-def transform_synopse_data_regular_to_mex_resources(
-    synopse_studies: Iterable[SynopseStudy],
-    synopse_projects: Iterable[SynopseProject],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
-    extracted_activities: Iterable[ExtractedActivity],
-    extracted_access_platforms: Iterable[ExtractedAccessPlatform],
-    extracted_primary_source: ExtractedPrimarySource,
-    unit_merged_ids_by_synonym: dict[str, Identifier],
-    extracted_organization: ExtractedOrganization,
-    synopse_resource: AnyMappingModel,
-) -> Generator[ExtractedResource, None, None]:
-    """Transform Synopse Studies to MEx resources.
-
-    Args:
-        synopse_studies: Iterable of Synopse Studies
-        synopse_projects: Iterable of synopse projects
-        synopse_variables_by_study_id: mapping from synopse studie id to the variables
-            with this studie id
-        extracted_activities: Iterable of extracted activities
-        extracted_access_platforms: Iterable of extracted access platforms
-        extracted_primary_source: Extracted report server platform
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
-        extracted_organization: extracted organization
-        synopse_resource: resource extended data use default values
-
-    Returns:
-        Generator for extracted resources
-    """
-    synopse_studies_gens = tee(synopse_studies, 2)
-    created_by_study_id: dict[str, str | None] = {}
-    description_by_study_id: dict[str, str | None] = {}
-    documentation_by_study_id: dict[str, Link | None] = {}
-    identifier_in_primary_source_by_study_id: dict[str, str] = {}
-    keyword_text_by_study_id: dict[str, list[Text]] = {}
-    title_by_study_id: dict[str, Text] = {}
-    for study in synopse_studies_gens[0]:
-        created_by_study_id[study.studien_id] = study.erstellungs_datum
-        description_by_study_id[study.studien_id] = study.beschreibung
-        synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
-        if not study.dokumentation:
-            documentation = None
-        elif re.match(r"^[a-zA-Z]:\\.*$", study.dokumentation):
-            documentation = Link(url=PureWindowsPath(study.dokumentation).as_uri())
-        elif re.match(r"https?://.*", study.dokumentation):
-            documentation = Link(url=study.dokumentation)
-        else:
-            documentation = None
-        documentation_by_study_id[study.studien_id] = documentation
-        keywords_plain = []
-        if study.schlagworte_themen:
-            keywords_plain += [
-                word for word in re.split(r"\s*,\s*", study.schlagworte_themen)
-            ]
-        if synopse_variables:
-            # add unique values of all textbox 2 entries from variable set for this
-            # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
-            keywords_plain.extend(
-                {re.sub(r"\s\(\d+\)", "", var.unterthema) for var in synopse_variables}
-            )
-        keyword_text = [
-            Text(value=word, language=TextLanguage.DE) for word in keywords_plain
-        ]
-        keyword_text_by_study_id[study.studien_id] = keyword_text
-        identifier_in_primary_source_by_study_id[study.studien_id] = (
-            f"{study.studien_id}-{study.ds_typ_id}-{study.titel_datenset}"
-        )
-        title_by_study_id[study.studien_id] = Text(
-            value=study.titel_datenset, language=TextLanguage("de")
-        )
-
-    yield from transform_synopse_data_to_mex_resources(
-        synopse_studies_gens[1],
-        synopse_projects,
-        extracted_activities,
-        extracted_access_platforms,
-        extracted_primary_source,
-        unit_merged_ids_by_synonym,
-        extracted_organization,
-        created_by_study_id,
-        description_by_study_id,
-        documentation_by_study_id,
-        keyword_text_by_study_id,
-        synopse_resource,
-        identifier_in_primary_source_by_study_id,
-        title_by_study_id,
-    )
-
-
-@watch
-def transform_synopse_data_extended_data_use_to_mex_resources(
-    synopse_studies: Iterable[SynopseStudy],
-    synopse_projects: Iterable[SynopseProject],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
-    extracted_activities: Iterable[ExtractedActivity],
-    extracted_access_platforms: Iterable[ExtractedAccessPlatform],
-    extracted_primary_source: ExtractedPrimarySource,
-    unit_merged_ids_by_synonym: dict[str, Identifier],
-    extracted_organization: ExtractedOrganization,
-    synopse_resource: AnyMappingModel,
-) -> Generator[ExtractedResource, None, None]:
-    """Transform Synopse Studies to MEx resources.
-
-    Args:
-        synopse_studies: Iterable of Synopse Studies
-        synopse_projects: Iterable of synopse projects
-        synopse_variables_by_study_id: mapping from synopse studie id to the variables
-            with this studie id
-        extracted_activities: Iterable of extracted activities
-        extracted_access_platforms: Iterable of extracted access platforms
-        extracted_primary_source: Extracted report server platform
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
-        extracted_organization: extracted organization
-        synopse_resource: resource default values
-
-    Returns:
-        Generator for extracted resources
-    """
-    identifier_in_primary_source_by_study_id: dict[str, str] = {}
-    synopse_studies_gens = tee(synopse_studies, 2)
-    keyword_text_by_study_id: dict[str, list[Text]] = {}
-    title_by_study_id: dict[str, Text] = {}
-    for study in synopse_studies_gens[0]:
-        synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
-        keywords_plain: list[str] = []
-        if synopse_variables:
-            # add unique values of all textbox 2 entries from variable set for this
-            # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
-            keywords_plain.extend(
-                {re.sub(r"\s\(\d+\)", "", var.unterthema) for var in synopse_variables}
-            )
-        keyword_text = [
-            Text(value=word, language=TextLanguage.DE) for word in keywords_plain
-        ]
-        keyword_text_by_study_id[study.studien_id] = keyword_text
-        identifier_in_primary_source_by_study_id[study.studien_id] = (
-            f"{study.studien_id}-extended-data-use"
-        )
-        title_by_study_id[study.studien_id] = Text(
-            value=f"{study.studie}: Erweiterte Datennutzung",
-            language=TextLanguage("de"),
-        )
-    yield from transform_synopse_data_to_mex_resources(
-        synopse_studies_gens[1],
-        synopse_projects,
-        extracted_activities,
-        extracted_access_platforms,
-        extracted_primary_source,
-        unit_merged_ids_by_synonym,
-        extracted_organization,
-        None,
-        None,
-        None,
-        keyword_text_by_study_id,
-        synopse_resource,
-        identifier_in_primary_source_by_study_id,
-        title_by_study_id,
-    )
 
 
 @watch
@@ -672,12 +496,17 @@ def transform_synopse_project_to_activity(
             pass  # TODO(HS): handle relative paths
     involved_units = [
         merged_id
-        for unit in (synopse_project.interne_partner or "").split(",")
+        for unit in (synopse_project.interne_partner or "").split(" ,")
         if (merged_id := unit_merged_ids_by_synonym.get(unit.strip()))
     ]
-    responsible_unit = unit_merged_ids_by_synonym.get(
-        synopse_project.verantwortliche_oe or ""
-    ) or unit_merged_ids_by_synonym.get("FG21")
+
+    if synopse_project.verantwortliche_oe:
+        responsible_unit = [
+            unit_merged_ids_by_synonym.get(synonym)
+            for synonym in synopse_project.verantwortliche_oe.split(" ,")
+        ]
+    else:
+        responsible_unit = [unit_merged_ids_by_synonym.get("FG21")]
     contact = [
         contact_merged_ids_by_emails[email]
         for email in synopse_project.get_contacts()
@@ -720,7 +549,12 @@ def transform_synopse_project_to_activity(
         ]
     else:
         funder_or_commissioner = []
-    involved_person = contributor_merged_ids_by_name[synopse_project.beitragende]
+    involved_person = []
+    if synopse_project.beitragende:
+        involved_person = [
+            contributor_merged_ids_by_name[name]
+            for name in synopse_project.beitragende.split(" ,")
+        ] or []
     theme = (
         synopse_activity.theme[0].mappingRules[0].setValues
         if synopse_project.studien_id
@@ -744,7 +578,9 @@ def transform_synopse_project_to_activity(
         involvedPerson=involved_person,
         involvedUnit=involved_units,
         responsibleUnit=responsible_unit,
-        shortName=synopse_project.akronym_des_studientitels,
+        shortName=Text(
+            value=synopse_project.akronym_des_studientitels, language=TextLanguage.DE
+        ),
         start=(
             TemporalEntity(synopse_project.projektbeginn)
             if synopse_project.projektbeginn

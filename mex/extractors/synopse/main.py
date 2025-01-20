@@ -41,10 +41,8 @@ from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
 from mex.extractors.synopse.transform import (
-    split_off_extended_data_use_variables,
     transform_overviews_to_resource_lookup,
-    transform_synopse_data_extended_data_use_to_mex_resources,
-    transform_synopse_data_regular_to_mex_resources,
+    transform_synopse_data_to_mex_resources,
     transform_synopse_projects_to_mex_activities,
     transform_synopse_studies_into_access_platforms,
     transform_synopse_variables_to_mex_variable_groups,
@@ -85,19 +83,11 @@ def synopse_variables() -> list[SynopseVariable]:
 
 
 @asset(group_name="synopse")
-def synopse_variables_extended_data_use_by_study_id(
+def synopse_variables_use_by_study_id(
     synopse_variables: list[SynopseVariable],
-    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> dict[int, list[SynopseVariable]]:
-    """Convert Synopse data to synopse_variables_extended_data_use_by_study_id."""
-    (
-        _,
-        variables_extended_data_use,
-    ) = split_off_extended_data_use_variables(
-        synopse_variables, synopse_study_overviews
-    )
-
-    sorted_variables = sorted(variables_extended_data_use, key=lambda v: v.studie_id)
+    """Convert Synopse data to synopse_variables_use_by_study_id."""
+    sorted_variables = sorted(synopse_variables, key=lambda v: v.studie_id)
     return {
         studie_id: list(variables)
         for studie_id, variables in groupby(sorted_variables, key=lambda v: v.studie_id)
@@ -105,39 +95,12 @@ def synopse_variables_extended_data_use_by_study_id(
 
 
 @asset(group_name="synopse")
-def synopse_variables_regular_use_by_study_id(
+def synopse_variables_use_by_thema(
     synopse_variables: list[SynopseVariable],
-    synopse_study_overviews: list[SynopseStudyOverview],
-) -> dict[int, list[SynopseVariable]]:
-    """Convert Synopse data to synopse_variables_regular_use_by_study_id."""
-    (
-        variables_regular,
-        _,
-    ) = split_off_extended_data_use_variables(
-        synopse_variables, synopse_study_overviews
-    )
-    sorted_variables = sorted(variables_regular, key=lambda v: v.studie_id)
-    return {
-        studie_id: list(variables)
-        for studie_id, variables in groupby(sorted_variables, key=lambda v: v.studie_id)
-    }
-
-
-@asset(group_name="synopse")
-def synopse_variables_regular_use_by_thema(
-    synopse_variables: list[SynopseVariable],
-    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> dict[str, list[SynopseVariable]]:
-    """Convert Synopse data to synopse_variables_regular_use_by_thema."""
-    (
-        variables_regular,
-        _,
-    ) = split_off_extended_data_use_variables(
-        synopse_variables, synopse_study_overviews
-    )
-
+    """Convert Synopse data to synopse_variables_use_by_thema."""
     sorted_variables = sorted(
-        variables_regular, key=lambda v: v.thema_und_fragebogenausschnitt
+        synopse_variables, key=lambda v: v.thema_und_fragebogenausschnitt
     )
     return {
         thema: list(variables)
@@ -194,8 +157,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
-    synopse_variables_extended_data_use_by_study_id: dict[int, list[SynopseVariable]],
-    synopse_variables_regular_use_by_study_id: dict[int, list[SynopseVariable]],
+    synopse_variables_use_by_study_id: dict[int, list[SynopseVariable]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_synopse_access_platforms: list[ExtractedAccessPlatform],
     extracted_synopse_activities: list[ExtractedActivity],
@@ -211,53 +173,23 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
         extract_mapping_data(settings.synopse.mapping_path / "resource.yaml"),
         ExtractedResource,
     )
-    transformed_study_data_regular_resources = (
-        transform_synopse_data_regular_to_mex_resources(
-            synopse_studies,
-            synopse_projects,
-            synopse_variables_regular_use_by_study_id,
-            extracted_synopse_activities,
-            extracted_synopse_access_platforms,
-            extracted_primary_source_report_server,
-            unit_stable_target_ids_by_synonym,
-            extracted_organization_rki,
-            synopse_resource,
-        )
+    transformed_study_data_resources = transform_synopse_data_to_mex_resources(
+        synopse_studies,
+        synopse_projects,
+        synopse_variables_use_by_study_id,
+        extracted_synopse_activities,
+        extracted_synopse_access_platforms,
+        extracted_primary_source_report_server,
+        unit_stable_target_ids_by_synonym,
+        extracted_organization_rki,
+        synopse_resource,
     )
-    transformed_study_data_regular_resource_gens = tee(
-        transformed_study_data_regular_resources, 2
-    )
-    load(transformed_study_data_regular_resource_gens[0])
-    settings = Settings.get()
-    synopse_resource_extended_data_use = transform_mapping_data_to_model(
-        extract_mapping_data(
-            settings.synopse.mapping_path / "resource_extended-data-use.yaml"
-        ),
-        ExtractedResource,
-    )
-    transformed_study_data_resources_extended_data_use = (
-        transform_synopse_data_extended_data_use_to_mex_resources(
-            synopse_studies,
-            synopse_projects,
-            synopse_variables_extended_data_use_by_study_id,
-            extracted_synopse_activities,
-            extracted_synopse_access_platforms,
-            extracted_primary_source_report_server,
-            unit_stable_target_ids_by_synonym,
-            extracted_organization_rki,
-            synopse_resource_extended_data_use,
-        )
-    )
-    transformed_study_data_resource_extended_data_use_gens = tee(
-        transformed_study_data_resources_extended_data_use, 2
-    )
-    load(transformed_study_data_resource_extended_data_use_gens[0])
-
+    transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
+    load(transformed_study_data_resource_gens[0])
     return transform_overviews_to_resource_lookup(
         synopse_study_overviews,
         chain(
-            transformed_study_data_regular_resource_gens[1],
-            transformed_study_data_resource_extended_data_use_gens[1],
+            transformed_study_data_resource_gens[1],
         ),
     )
 
@@ -323,7 +255,7 @@ def extracted_synopse_activities(
 
 @asset(group_name="synopse")
 def extracted_synopse_variable_groups(
-    synopse_variables_regular_use_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_use_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
     extracted_synopse_resource_stable_target_ids_by_synopse_id: dict[
         str, list[MergedResourceIdentifier]
@@ -332,7 +264,7 @@ def extracted_synopse_variable_groups(
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_regular_use_by_thema,
+            synopse_variables_use_by_thema,
             extracted_primary_source_report_server,
             extracted_synopse_resource_stable_target_ids_by_synopse_id,
         )
@@ -343,7 +275,7 @@ def extracted_synopse_variable_groups(
 
 @asset(group_name="synopse")
 def extracted_synopse_variables(
-    synopse_variables_regular_use_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_use_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
     extracted_synopse_variable_groups: list[ExtractedVariableGroup],
     extracted_synopse_resource_stable_target_ids_by_synopse_id: dict[
@@ -352,7 +284,7 @@ def extracted_synopse_variables(
 ) -> None:
     """Transforms Synopse data to extracted variables and load result."""
     extracted_variables = transform_synopse_variables_to_mex_variables(
-        synopse_variables_regular_use_by_thema,
+        synopse_variables_use_by_thema,
         extracted_synopse_variable_groups,
         extracted_synopse_resource_stable_target_ids_by_synopse_id,
         extracted_primary_source_report_server,
