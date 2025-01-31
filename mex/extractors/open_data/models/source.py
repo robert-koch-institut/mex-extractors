@@ -6,6 +6,10 @@ class OpenDataCreatorsOrContributors(BaseModel):
 
     name: str | None = None
 
+    def __hash__(self) -> int:
+        """Calculates a hash value to make the object cacheable."""
+        return hash(f"{self.name}")
+
 
 class OpenDataRelateditdentifiers(BaseModel):
     """Model subclass for Zenodo metadata related identifiers."""
@@ -36,7 +40,7 @@ class OpenDataMetadata(BaseModel):
     keywords: list[str] = []
     related_identifiers: list[OpenDataRelateditdentifiers] = []
     language: str | None = None
-    license: OpenDataLicense | None = None
+    license: OpenDataLicense
 
 
 class OpenDataParentResource(BaseModel):
@@ -46,7 +50,7 @@ class OpenDataParentResource(BaseModel):
     id: int
     modified: str | None = None
     conceptdoi: str | None = None
-    metadata: OpenDataMetadata | None = None
+    metadata: OpenDataMetadata
 
 
 class OpenDataResourceVersion(BaseModel):
@@ -56,6 +60,6 @@ class OpenDataResourceVersion(BaseModel):
     conceptrecid: str
     created: str | None = None
     doi_url: str | None = None
-    metadata: OpenDataMetadata | None = None
+    metadata: OpenDataMetadata
     files: list[OpenDataFiles] = []
     modified: str | None = None
