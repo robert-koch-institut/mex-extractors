@@ -6,6 +6,7 @@ from mex.common.logging import logger
 from mex.common.models import ExtractedActivity, ExtractedPrimarySource
 from mex.common.types import (
     ActivityType,
+    Link,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     Text,
@@ -60,6 +61,15 @@ def transform_confluence_vvt_page_to_extracted_activity(
         for contact in get_contact_from_page(page, confluence_vvt_activity_mapping)
         for merged_id in merged_ids_by_query_string[contact]
     ]
+    documentation = [
+        Link(
+            url=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
+            title=confluence_vvt_activity_mapping.documentation[0]
+            .mappingRules[0]
+            .setValues[0]
+            .title,
+        )
+    ]
     involved_person_merged_ids = [
         merged_id
         for author in get_involved_persons_from_page(
@@ -67,12 +77,16 @@ def transform_confluence_vvt_page_to_extracted_activity(
         )
         for merged_id in merged_ids_by_query_string[author]
     ]
+    responsible_unit_strings = get_responsible_unit_from_page(
+        page, confluence_vvt_activity_mapping
+    )
+    for unit in responsible_unit_strings:
+        if "ZV" in unit:  # stopgap: MX-1786
+            return None
     responsible_unit_merged_ids = list(
         {
             unit_id
-            for oe in get_responsible_unit_from_page(
-                page, confluence_vvt_activity_mapping
-            )
+            for oe in responsible_unit_strings
             if (unit_id := unit_merged_ids_by_synonym.get(oe))
         }
     )
@@ -99,7 +113,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
         contact=contact_merged_ids
         or involved_person_merged_ids
         or responsible_unit_merged_ids,
-        documentation=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
+        documentation=documentation,
         identifierInPrimarySource=identifier_in_primary_source,
         involvedPerson=involved_person_merged_ids,
         involvedUnit=involved_unit_merged_ids,

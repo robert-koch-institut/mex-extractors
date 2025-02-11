@@ -5,8 +5,9 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import MergedItemsResponse
+from mex.common.backend_api.models import PaginatedItemsContainer
 from mex.common.models import (
+    AnyMergedModel,
     MergedConsent,
     MergedContactPoint,
     MergedPrimarySource,
@@ -23,7 +24,7 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> None:
         _params: dict[str, str] | None = None,
         **_kwargs: Any,
     ) -> dict[str, Any]:
-        return MergedItemsResponse(
+        return PaginatedItemsContainer[AnyMergedModel](
             total=1,
             items=[
                 MergedPrimarySource(

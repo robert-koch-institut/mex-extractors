@@ -11,13 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to version 0.48.0
+- simplify load function to wrap the Sink.load methods
+- wrap up: confluence-vvt
+
 ### Deprecated
 
 ### Removed
 
+- remove BackendIdentityProvider in favor of mex-common implementation
+- remove ExtractorIdentityProvider in favor of mex-common enum
+- remove identity_provider setting in favor of mex-common version
+
 ### Fixed
 
 ### Security
+
+## [0.25.0] - 2025-01-23
+
+### Changes
+
+- update mex-common to 0.47.0
 
 ## [0.24.1] - 2025-01-21
 

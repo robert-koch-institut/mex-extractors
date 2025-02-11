@@ -98,4 +98,4 @@ def test_transform_confluence_vvt_page_to_extracted_activities(
         unit_merged_ids_by_synonym,
     )
 
-    assert len(extracted_activities) >= 63
+    assert len(extracted_activities) >= 50

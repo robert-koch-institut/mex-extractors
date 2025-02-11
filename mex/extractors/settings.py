@@ -2,7 +2,6 @@ from pydantic import AnyUrl, Field, SecretStr
 from pydantic_core import Url
 
 from mex.common.settings import BaseSettings
-from mex.common.types import IdentityProvider
 from mex.extractors.artificial.settings import ArtificialSettings
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
@@ -18,7 +17,6 @@ from mex.extractors.rdmo.settings import RDMOSettings
 from mex.extractors.seq_repo.settings import SeqRepoSettings
 from mex.extractors.sumo.settings import SumoSettings
 from mex.extractors.synopse.settings import SynopseSettings
-from mex.extractors.types import ExtractorIdentityProvider
 from mex.extractors.voxco.settings import VoxcoSettings
 
 
@@ -50,11 +48,6 @@ class Settings(BaseSettings):
         description="Skip projects conducted before this year",
         validation_alias="MEX_SKIP_YEARS_BEFORE",
     )
-    identity_provider: IdentityProvider | ExtractorIdentityProvider = Field(
-        IdentityProvider.MEMORY,
-        description="Provider to assign stableTargetIds to new model instances.",
-        validation_alias="MEX_IDENTITY_PROVIDER",
-    )  # type: ignore[assignment]
     drop_api_key: SecretStr = Field(
         SecretStr("dummy_admin_key"),
         description="Drop API key with admin access to call all GET endpoints",
