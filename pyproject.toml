@@ -13,7 +13,7 @@ dependencies = [
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
     "faker>=35,<36",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.48.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1760_s3_sinks",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",
@@ -23,6 +23,7 @@ dependencies = [
     "requests-ntlm>=1,<2",
     "requests>=2,<3",
     "xlrd>=2,<3",
+    "boto3>=1.36.17",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13,<1",

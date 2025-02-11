@@ -7,7 +7,7 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPrimarySource,
 )
-from mex.common.models.base.mapping import GenericField
+from mex.common.models.base.mapping import MappingField
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -192,7 +192,7 @@ def transform_international_projects_sources_to_extracted_activities(
 
 
 def get_theme_for_activity_or_topic(
-    theme: list[GenericField],
+    theme: list[MappingField],
     activity1: str | None,
     activity2: str | None,
     topic1: str | None,

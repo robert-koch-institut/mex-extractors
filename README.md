@@ -181,3 +181,7 @@ components of the MEx project are open-sourced under the same license as well.
 ### voxco extractor
 
 - `pdm run voxco` extracts voxco data from voxco JSON files
+
+### publisher
+
+- `pdm run publisher` gets merged items from backend and publishes them into sink
