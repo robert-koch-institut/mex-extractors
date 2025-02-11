@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update mex-common to version 0.48.0
 - simplify load function to wrap the Sink.load methods
+- wrap up: confluence-vvt
 
 ### Deprecated
 
