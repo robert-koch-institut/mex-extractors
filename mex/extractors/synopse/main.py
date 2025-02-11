@@ -1,4 +1,5 @@
 from itertools import chain, groupby, tee
+from typing import Any
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -16,10 +17,8 @@ from mex.common.models import (
     ExtractedResource,
     ExtractedVariableGroup,
 )
-from mex.common.organigram.extract import (
-    get_unit_merged_ids_by_emails,
-)
 from mex.common.types import (
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -27,6 +26,7 @@ from mex.common.types import (
 )
 from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.mapping.transform import transform_mapping_data_to_model
+from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -34,9 +34,9 @@ from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
     extract_study_overviews,
+    extract_synopse_contact,
     extract_synopse_organizations,
     extract_synopse_project_contributors,
-    extract_synopse_resource_contact,
     extract_variables,
 )
 from mex.extractors.synopse.filter import (
@@ -122,14 +122,6 @@ def synopse_variables_by_thema(
 
 
 @asset(group_name="synopse")
-def unit_stable_target_ids_by_emails(
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
-    """Group organizational units by their email addresses."""
-    return get_unit_merged_ids_by_emails(extracted_organizational_units)
-
-
-@asset(group_name="synopse")
 def extracted_synopse_contributor_stable_target_ids_by_name(
     synopse_project_contributors: list[LDAPPersonWithQuery],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -164,6 +156,33 @@ def synopse_organization_ids_by_query_string(
 
 
 @asset(group_name="synopse")
+def synopse_resource() -> dict[str, Any]:
+    """Extract and transform synopse resource default values."""
+    settings = Settings.get()
+    return extract_mapping_data(settings.synopse.mapping_path / "resource.yaml")
+
+
+@asset(group_name="synopse")
+def contact_merged_id_by_query_string(
+    synopse_activity: dict[str, Any],
+    synopse_resource: dict[str, Any],
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+) -> dict[str, MergedContactPointIdentifier]:
+    """Get lookup of ldap functional accounts by email."""
+    synopse_contact = extract_synopse_contact(
+        transform_mapping_data_to_model(synopse_resource, ExtractedResource),
+        transform_mapping_data_to_model(synopse_activity, ExtractedActivity),
+    )
+    return {
+        contact_point.email[0].lower(): contact_point.stableTargetId
+        for contact_point in transform_ldap_actors_to_mex_contact_points(
+            synopse_contact,
+            extracted_primary_source_ldap,
+        )
+    }
+
+
+@asset(group_name="synopse")
 def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
@@ -174,25 +193,13 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     extracted_synopse_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
+    synopse_resource: AnyMappingModel,
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> dict[str, list[MergedResourceIdentifier]]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
     Also transforms Synopse data to extracted resources
     """
-    settings = Settings.get()
-    synopse_resource = transform_mapping_data_to_model(
-        extract_mapping_data(settings.synopse.mapping_path / "resource.yaml"),
-        ExtractedResource,
-    )
-    synopse_resource_contact = extract_synopse_resource_contact(synopse_resource)
-    contact_merged_id_by_query_string = {
-        contact_point.email[0]: contact_point.stableTargetId
-        for contact_point in transform_ldap_actors_to_mex_contact_points(
-            [synopse_resource_contact],
-            extracted_primary_source_ldap,
-        )
-    }
     transformed_study_data_resources = transform_synopse_data_to_mex_resources(
         synopse_studies,
         synopse_projects,
@@ -202,7 +209,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
         extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
-        synopse_resource,
+        transform_mapping_data_to_model(synopse_resource, ExtractedResource),
         contact_merged_id_by_query_string,
     )
     transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
@@ -243,31 +250,34 @@ def extracted_synopse_access_platforms(
 
 
 @asset(group_name="synopse")
+def synopse_activity() -> dict[str, Any]:
+    """Extract and transform synopse activity default values."""
+    settings = Settings.get()
+    return extract_mapping_data(settings.synopse.mapping_path / "activity.yaml")
+
+
+@asset(group_name="synopse")
 def extracted_synopse_activities(
     synopse_projects: list[SynopseProject],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    unit_stable_target_ids_by_emails: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_synopse_contributor_stable_target_ids_by_name: dict[
         str, list[MergedPersonIdentifier]
     ],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    synopse_activity: AnyMappingModel,
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
-    settings = Settings.get()
-    synopse_activity = transform_mapping_data_to_model(
-        extract_mapping_data(settings.synopse.mapping_path / "activity.yaml"),
-        ExtractedActivity,
-    )
     transformed_activities = list(
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_source_report_server,
-            unit_stable_target_ids_by_emails,
             extracted_synopse_contributor_stable_target_ids_by_name,
             unit_stable_target_ids_by_synonym,
-            synopse_activity,
+            transform_mapping_data_to_model(synopse_activity, ExtractedActivity),
             synopse_organization_ids_by_query_string,
+            contact_merged_id_by_query_string,
         )
     )
     load(transformed_activities)

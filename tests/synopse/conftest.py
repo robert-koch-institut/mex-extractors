@@ -215,7 +215,7 @@ def synopse_studies() -> list[SynopseStudy]:
             dokumentation="Z:\\foo\\bar",
             ds_typ_id=17,
             erstellungs_datum="2022",
-            plattform_adresse="Z:\\data",
+            plattform_adresse="S:\\data",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="12345",
@@ -375,7 +375,7 @@ def extracted_access_platforms(
         ExtractedAccessPlatform(
             contact=[Identifier.generate(seed=234)],
             hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="Z:\\data",
+            identifierInPrimarySource="S:\\data",
             landingPage=[Link(url="file:///Z:/data")],
             technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
             title=[Text(value="Z:\\data")],
@@ -586,6 +586,26 @@ def synopse_access_platform() -> AnyMappingModel:
                     "comment": None,
                 }
             ],
+            "landingPage": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "locationInPrimarySource": None,
+                    "examplesInPrimarySource": None,
+                    "mappingRules": [
+                        {
+                            "forValues": ["file:///S:/data"],
+                            "setValues": None,
+                            "rule": "Use value",
+                        },
+                        {
+                            "forValues": ["file:///S:/data"],
+                            "setValues": None,
+                            "rule": "Use value",
+                        },
+                    ],
+                    "comment": None,
+                }
+            ],
             "unitInCharge": [
                 {
                     "fieldInPrimarySource": "n/a",
@@ -615,7 +635,17 @@ def synopse_activity() -> AnyMappingModel:
             "identifierInPrimarySource": [],
             "title": [],
             "responsibleUnit": [],
-            "contact": [],
+            "contact": [
+                {
+                    "fieldInPrimarySource": "n/a",
+                    "mappingRules": [
+                        {
+                            "forValues": ["info@rki.de"],
+                        },
+                    ],
+                    "comment": "Studien und Surveillance",
+                }
+            ],
             "activityType": [
                 {
                     "fieldInPrimarySource": "n/a",

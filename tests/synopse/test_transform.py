@@ -44,26 +44,30 @@ def test_transform_synopse_studies_into_access_platforms(
         "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
     }
     expected_access_platform_one = {
-        "contact": [Identifier.generate(seed=234)],
-        "hadPrimarySource": extracted_primary_sources["report-server"].stableTargetId,
+        "contact": [str(Identifier.generate(seed=234))],
+        "hadPrimarySource": str(
+            extracted_primary_sources["report-server"].stableTargetId
+        ),
         "identifier": Joker(),
-        "identifierInPrimarySource": "Z:\\data",
-        "landingPage": [{"url": "file:///Z:/data"}],
+        "identifierInPrimarySource": "S:\\data",
+        "landingPage": [{"url": "file:///S:/data"}],
         "stableTargetId": Joker(),
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "Z:\\data"}],
-        "unitInCharge": [Identifier.generate(seed=234)],
+        "title": [{"value": "S:\\data"}],
+        "unitInCharge": [str(Identifier.generate(seed=234))],
     }
     expected_access_platform_two = {
-        "contact": [Identifier.generate(seed=234)],
-        "hadPrimarySource": extracted_primary_sources["report-server"].stableTargetId,
+        "contact": [str(Identifier.generate(seed=234))],
+        "hadPrimarySource": str(
+            extracted_primary_sources["report-server"].stableTargetId
+        ),
         "identifier": Joker(),
         "identifierInPrimarySource": "blabli blubb",
         "landingPage": [{"url": "blabli blubb"}],
         "stableTargetId": Joker(),
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "blabli blubb"}],
-        "unitInCharge": [Identifier.generate(seed=234)],
+        "title": [{"value": "S:\\data"}],
+        "unitInCharge": [str(Identifier.generate(seed=234))],
     }
 
     access_platforms = list(
@@ -394,6 +398,12 @@ def test_transform_synopse_data_to_mex_resources(
                 "value": "Monitoring-Studie",
             },
         ],
+        "rights": [
+            {
+                "language": TextLanguage.DE,
+                "value": "Gesundheitsdaten",
+            },
+        ],
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stableTargetId": Joker(),
         "temporal": "2000 - 2013",
@@ -471,11 +481,11 @@ def test_transform_synopse_projects_to_mex_activities(
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_sources["report-server"],
-            contact_merged_ids_by_emails,
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_organization_ids_by_query_string,
+            contact_merged_ids_by_emails,
         )
     )
 

@@ -24,6 +24,12 @@ landingPage:
     - "Path"
     mappingRules:
       - rule: Extract original value for the url property of the link object.
+      - forValues:
+        - https://asd.def
+        setValues:
+        - language: de
+          title: ASD DEF
+          url: https://asd.def
 technicalAccessibility:
   - fieldInPrimarySource: n/a
     mappingRules:

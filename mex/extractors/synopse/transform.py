@@ -58,31 +58,53 @@ def transform_synopse_studies_into_access_platforms(
             if study.plattform_adresse is not None
         }
     ):
-        try:
-            landing_page = Link(url=PureWindowsPath(plattform_adresse).as_uri())
-        except ValueError:
-            landing_page = Link(url=plattform_adresse)
+        if (
+            plattform_adresse
+            == synopse_access_platform.landingPage[0].mappingRules[1].forValues[0]
+        ):
+            landing_page = (
+                synopse_access_platform.landingPage[0].mappingRules[1].setValues[0]
+            )
+        else:
+            try:
+                landing_page = Link(url=PureWindowsPath(plattform_adresse).as_uri())
+            except ValueError:
+                landing_page = Link(url=plattform_adresse)
         if "S:" in plattform_adresse:
             contact = unit_merged_ids_by_synonym[
                 synopse_access_platform.contact[0].mappingRules[0].forValues[0]
             ]
+            technical_accessibility = (
+                synopse_access_platform.technicalAccessibility[0]
+                .mappingRules[0]
+                .setValues
+            )
+            title = plattform_adresse
+            unit_in_charge = unit_merged_ids_by_synonym[
+                synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]
+            ]
+
         elif "https://" in plattform_adresse:
             contact = unit_merged_ids_by_synonym[
                 synopse_access_platform.contact[0].mappingRules[1].forValues[0]
             ]
-
+            technical_accessibility = (
+                synopse_access_platform.technicalAccessibility[0]
+                .mappingRules[1]
+                .setValues
+            )
+            title = synopse_access_platform.title[0].mappingRules[1].setValues[0]
+            unit_in_charge = unit_merged_ids_by_synonym[
+                synopse_access_platform.unitInCharge[0].mappingRules[1].forValues[0]
+            ]
         yield ExtractedAccessPlatform(
             contact=contact,
             hadPrimarySource=extracted_primary_source.stableTargetId,
             identifierInPrimarySource=plattform_adresse,
             landingPage=landing_page,
-            technicalAccessibility=synopse_access_platform.technicalAccessibility[0]
-            .mappingRules[0]
-            .setValues[0],
-            title=plattform_adresse,
-            unitInCharge=unit_merged_ids_by_synonym[
-                synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]
-            ],
+            technicalAccessibility=technical_accessibility,
+            title=title,
+            unitInCharge=unit_in_charge,
         )
 
 
@@ -262,6 +284,7 @@ def transform_synopse_data_to_mex_resources(
         synopse_resource: resource default values
         contact_merged_id_by_query_string: contact person lookup by email
 
+
     Returns:
         Generator for extracted resources
     """
@@ -332,18 +355,15 @@ def transform_synopse_data_to_mex_resources(
         description = description_by_study_id.get(study.studien_id)
         documentation = documentation_by_study_id.get(study.studien_id)
         extracted_activity = extracted_activities_by_study_ids.get(study.studien_id)
-        rights = rights_by_ds_typ_id.get(study.ds_typ_id, [])
+        rights = rights_by_ds_typ_id[str(study.ds_typ_id)]
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues
             if study.studien_id in synopse_resource.theme[0].mappingRules[0].forValues
             else synopse_resource.theme[0].mappingRules[1].setValues
         )
-        if unit := get_unit_in_charge(
-            synopse_projects, unit_merged_ids_by_synonym, study
-        ):
-            unit_in_charge = unit
-        else:
-            continue
+        unit_in_charge = unit_merged_ids_by_synonym[
+            synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]
+        ]
         yield ExtractedResource(
             accessPlatform=access_platform,
             accessRestriction=synopse_resource.accessRestriction[0]
@@ -376,9 +396,9 @@ def transform_synopse_data_to_mex_resources(
             resourceTypeGeneral=synopse_resource.resourceTypeGeneral[0]
             .mappingRules[0]
             .setValues,
-            resourceTypeSpecific=[
-                synopse_studien_art_typ_by_study_ids.get(study.studien_id)
-            ],
+            resourceTypeSpecific=synopse_studien_art_typ_by_study_ids.get(
+                study.studien_id, []
+            ),
             rights=rights,
             spatial=synopse_resource.spatial[0].mappingRules[0].setValues,
             temporal=(
@@ -433,11 +453,11 @@ def get_unit_in_charge(
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
     extracted_primary_source: ExtractedPrimarySource,
-    contact_merged_ids_by_emails: dict[str, Identifier],
     contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
     unit_merged_ids_by_synonym: dict[str, Identifier],
     synopse_activity: AnyMappingModel,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> Generator[ExtractedActivity, None, None]:
     """Transform synopse projects into MEx activities.
 
@@ -449,6 +469,7 @@ def transform_synopse_projects_to_mex_activities(
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
+        contact_merged_id_by_query_string: contact person lookup by email
 
     Returns:
         Generator for extracted activities
@@ -468,11 +489,11 @@ def transform_synopse_projects_to_mex_activities(
         activity = transform_synopse_project_to_activity(
             project,
             extracted_primary_source,
-            contact_merged_ids_by_emails,
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_organization_ids_by_query_string,
+            contact_merged_id_by_query_string,
         )
         if anschlussprojekt:
             anschlussprojekt_by_activity_stable_target_id[activity.stableTargetId] = (
@@ -500,11 +521,11 @@ def transform_synopse_projects_to_mex_activities(
 def transform_synopse_project_to_activity(
     synopse_project: SynopseProject,
     extracted_primary_source: ExtractedPrimarySource,
-    contact_merged_ids_by_emails: dict[str, Identifier],
     contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
     unit_merged_ids_by_synonym: dict[str, Identifier],
     synopse_activity: AnyMappingModel,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Transform a synopse project into a MEx activity.
 
@@ -516,10 +537,14 @@ def transform_synopse_project_to_activity(
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
+        contact_merged_id_by_query_string: contact person lookup by email
 
     Returns:
         extracted activity
     """
+    contact = contact_merged_id_by_query_string[
+        synopse_activity.contact[0].mappingRules[0].forValues[0]
+    ]
     documentation = None
     if projektdokumentation := synopse_project.projektdokumentation:
         try:
@@ -547,11 +572,6 @@ def transform_synopse_project_to_activity(
         ]
     else:
         responsible_unit = [unit_merged_ids_by_synonym["FG21"]]
-    contact = [
-        contact_merged_ids_by_emails[email]
-        for email in synopse_project.get_contacts()
-        if email in contact_merged_ids_by_emails
-    ]
     external_associate = []
     if synopse_project.externe_partner:
         for org in synopse_project.externe_partner.split(", "):

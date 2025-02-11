@@ -7,8 +7,8 @@ from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
     extract_study_overviews,
+    extract_synopse_contact,
     extract_synopse_project_contributors,
-    extract_synopse_resource_contact,
     extract_variables,
 )
 from mex.extractors.synopse.models.project import SynopseProject
@@ -58,11 +58,11 @@ def test_extract_study_data() -> None:
         "beschreibung": "BBCCDD Basiserhebung, Kohorte",
         "dateiformat": "sas,stata",
         "dokumentation": r'"Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation',
-        "ds_typ_id": 15,
+        "ds_typ_id": 17,
         "erstellungs_datum": "2013",
         "lizenz": None,
         "plattform": "Reportserver",
-        "plattform_adresse": "BBCCDD-Basis Variablennamen - XYZ-Reports",
+        "plattform_adresse": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
         "rechte": None,
         "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
         "studie": "BBCCDD",
@@ -84,7 +84,6 @@ def test_extract_projects() -> None:
         "in Deutschland lebenden Lorems gesammelt. Das "
         "Studienprogramm umfasste neben Befragungen auch "
         "Ipsumalysen.",
-        "kontakt": ["fg@example.com"],
         "project_studientitel": "Studie zu Lorem und Ipsum",
         "studien_id": "1122999",
         "studienart_studientyp": "Monitoring-Studie",
@@ -105,16 +104,17 @@ def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_synopse_resource_contact(
+def test_extract_synopse_contact(
     synopse_resource: AnyMappingModel,
+    synopse_activity: AnyMappingModel,
 ) -> None:
-    actor = extract_synopse_resource_contact(synopse_resource)
+    actor = extract_synopse_contact(synopse_resource, synopse_activity)
     expected = {
         "sAMAccountName": "ContactC",
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
         "mail": ["email@email.de", "contactc@rki.de"],
     }
-    assert actor.model_dump(exclude_none=True) == expected
+    assert actor[0].model_dump(exclude_none=True) == expected
 
 
 def test_extract_study_overviews() -> None:

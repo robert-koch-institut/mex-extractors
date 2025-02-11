@@ -19,6 +19,8 @@ contact:
     - abc@rki.de
     - cde@rki.de
     mappingRules:
+      - forValues:
+        - email@email.de
       - rule: Use value and match it using ldap extractor.
 documentation:
   - fieldInPrimarySource: Projektdokumentation
