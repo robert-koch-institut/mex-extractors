@@ -8,6 +8,7 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
 from mex.common.types import (
     AnonymizationPseudonymization,
@@ -17,7 +18,6 @@ from mex.common.types import (
     TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @watch
@@ -28,7 +28,7 @@ def transform_biospecimen_resource_to_mex_resource(
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     extracted_synopse_activities: Iterable[ExtractedActivity],
-    resource_mapping: AnyMappingModel,
+    resource_mapping: ResourceMapping,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> Generator[ExtractedResource, None, None]:
     """Transform Biospecimen resources to extracted resources.
@@ -54,8 +54,9 @@ def transform_biospecimen_resource_to_mex_resource(
         for activity in extracted_synopse_activities
     }
     access_restriction_by_zugriffsbeschraenkung = {
-        rule.forValues[0]: rule.setValues[0]
+        rule.forValues[0]: rule.setValues
         for rule in resource_mapping.accessRestriction[0].mappingRules
+        if rule.forValues and rule.setValues
     }
     for resource in biospecimen_resources:
         if resource.anonymisiert_pseudonymisiert:
@@ -115,7 +116,7 @@ def transform_biospecimen_resource_to_mex_resource(
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
-        if (
+        if resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues and (
             resource.ressourcentyp_allgemein
             in resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues
         ):
@@ -130,7 +131,10 @@ def transform_biospecimen_resource_to_mex_resource(
         unit_in_charge = unit_stable_target_ids_by_synonym.get(
             resource.verantwortliche_fachabteilung
         )
-        if resource_mapping.theme[0].mappingRules[1].forValues in resource.thema:
+        if (
+            resource_mapping.theme[0].mappingRules[1].forValues
+            and resource_mapping.theme[0].mappingRules[1].forValues[0] in resource.thema
+        ):
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
             theme = resource_mapping.theme[0].mappingRules[0].setValues

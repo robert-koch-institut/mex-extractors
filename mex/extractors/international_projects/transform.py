@@ -3,6 +3,7 @@ from typing import cast
 
 from mex.common.logging import watch
 from mex.common.models import (
+    ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPrimarySource,
@@ -20,13 +21,12 @@ from mex.common.types import (
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.sinks import load
 
 
 def transform_international_projects_source_to_extracted_activity(
     source: InternationalProjectsSource,
-    international_projects_activity: AnyMappingModel,
+    international_projects_activity: ActivityMapping,
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
         Hashable, list[MergedPersonIdentifier]
@@ -93,12 +93,12 @@ def transform_international_projects_source_to_extracted_activity(
     activity_type_from_mapping = international_projects_activity.activityType[
         0
     ].mappingRules
-    if source.funding_type == activity_type_from_mapping[0].forValues[0]:
-        activity_type = activity_type_from_mapping[0].setValues[0]
-    elif source.funding_type == activity_type_from_mapping[1].forValues[0]:
-        activity_type = activity_type_from_mapping[1].setValues[0]
+    if source.funding_type == activity_type_from_mapping[0].forValues[0]:  # type: ignore[index]
+        activity_type = activity_type_from_mapping[0].setValues[0]  # type: ignore[index]
+    elif source.funding_type == activity_type_from_mapping[1].forValues[0]:  # type: ignore[index]
+        activity_type = activity_type_from_mapping[1].setValues[0]  # type: ignore[index]
     else:
-        activity_type = activity_type_from_mapping[2].setValues[0]
+        activity_type = activity_type_from_mapping[2].setValues[0]  # type: ignore[index]
 
     theme = international_projects_activity.theme
 
@@ -149,7 +149,7 @@ def transform_international_projects_source_to_extracted_activity(
 @watch
 def transform_international_projects_sources_to_extracted_activities(
     international_projects_sources: Iterable[InternationalProjectsSource],
-    international_projects_activity: AnyMappingModel,
+    international_projects_activity: ActivityMapping,
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
         Hashable, list[MergedPersonIdentifier]
@@ -192,7 +192,7 @@ def transform_international_projects_sources_to_extracted_activities(
 
 
 def get_theme_for_activity_or_topic(
-    theme: list[MappingField],
+    theme: list[MappingField[list[Theme]]],
     activity1: str | None,
     activity2: str | None,
     topic1: str | None,
@@ -220,9 +220,7 @@ def get_theme_for_activity_or_topic(
         for mapping_rule in theme_item.mappingRules:
             if mapping_rule.forValues and mapping_rule.setValues:
                 themes_dict_from_mapping.update(
-                    dict.fromkeys(
-                        mapping_rule.forValues, cast(Theme, mapping_rule.setValues[0])
-                    )
+                    dict.fromkeys(mapping_rule.forValues, mapping_rule.setValues[0])
                 )
 
     def get_theme_or_default(key: str | None) -> Theme:

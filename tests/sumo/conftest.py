@@ -1,12 +1,15 @@
 import pytest
 
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
@@ -18,8 +21,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
 from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
@@ -81,9 +82,9 @@ def organizations_stable_target_ids_by_synonym():
 
 
 @pytest.fixture
-def sumo_resources_feat() -> AnyMappingModel:
+def sumo_resources_feat() -> ResourceMapping:
     """Return feat SumoResource."""
-    return transform_mapping_data_to_model(
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -227,14 +228,13 @@ def sumo_resources_feat() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )
 
 
 @pytest.fixture
-def sumo_resources_nokeda() -> AnyMappingModel:
+def sumo_resources_nokeda() -> ResourceMapping:
     """Return feat SumoResource."""
-    return transform_mapping_data_to_model(
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -462,14 +462,13 @@ def sumo_resources_nokeda() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )
 
 
 @pytest.fixture
-def sumo_access_platform() -> AnyMappingModel:
+def sumo_access_platform() -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
-    return transform_mapping_data_to_model(
+    return AccessPlatformMapping.model_validate(
         {
             "title": [
                 {
@@ -529,7 +528,6 @@ def sumo_access_platform() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedAccessPlatform,
     )
 
 
@@ -548,9 +546,9 @@ def transformed_sumo_access_platform() -> ExtractedAccessPlatform:
 
 
 @pytest.fixture
-def sumo_activity() -> AnyMappingModel:
+def sumo_activity() -> ActivityMapping:
     """Return Sumo Activity."""
-    return transform_mapping_data_to_model(
+    return ActivityMapping.model_validate(
         {
             "hadPrimarySource": [],
             "abstract": [
@@ -729,7 +727,6 @@ def sumo_activity() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedActivity,
     )
 
 

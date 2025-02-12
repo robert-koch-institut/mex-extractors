@@ -4,11 +4,13 @@ import pytest
 
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedPerson,
     ExtractedPrimarySource,
-    ExtractedResource,
+    ResourceMapping,
 )
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
@@ -20,8 +22,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -83,8 +83,8 @@ def seq_repo_latest_sources(
 
 
 @pytest.fixture
-def seq_repo_activity() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def seq_repo_activity() -> ActivityMapping:
+    return ActivityMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -105,13 +105,12 @@ def seq_repo_activity() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedActivity,
     )
 
 
 @pytest.fixture
-def seq_repo_access_platform() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def seq_repo_access_platform() -> AccessPlatformMapping:
+    return AccessPlatformMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [
@@ -209,13 +208,12 @@ def seq_repo_access_platform() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedAccessPlatform,
     )
 
 
 @pytest.fixture
-def seq_repo_resource() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def seq_repo_resource() -> ResourceMapping:
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -381,14 +379,13 @@ def seq_repo_resource() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )
 
 
 @pytest.fixture
 def extracted_mex_access_platform(
     extracted_primary_source_seq_repo: ExtractedPrimarySource,
-    seq_repo_access_platform: AnyMappingModel,
+    seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
@@ -402,7 +399,7 @@ def extracted_mex_access_platform(
 def extracted_mex_activities_dict(
     extracted_primary_source_seq_repo: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
-    seq_repo_activity: AnyMappingModel,
+    seq_repo_activity: ActivityMapping,
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     project_coordinators_merged_ids_by_query_string: dict[

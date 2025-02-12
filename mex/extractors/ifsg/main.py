@@ -6,14 +6,12 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
+    VariableGroupMapping,
 )
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-)
+from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.ifsg.extract import (
-    extract_sql_table,
-)
+from mex.extractors.ifsg.extract import extract_sql_table
 from mex.extractors.ifsg.filter import (
     filter_empty_statement_area_group,
     filter_id_type_of_diseases,
@@ -38,7 +36,6 @@ from mex.extractors.ifsg.transform import (
     transform_resource_state_to_mex_resource,
 )
 from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -170,7 +167,7 @@ def extracted_ifsg_resource_parent(
 ) -> ExtractedResource:
     """Extracted and loaded ifsg resource parent."""
     mex_resource_parent = transform_resource_parent_to_mex_resource(
-        transform_mapping_data_to_model(resource_parent, ExtractedResource),
+        ResourceMapping.model_validate(resource_parent),
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
     )
@@ -190,7 +187,7 @@ def extracted_ifsg_resource_state(
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
-        transform_mapping_data_to_model(resource_state, ExtractedResource),
+        ResourceMapping.model_validate(resource_state),
         extracted_ifsg_resource_parent,
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
@@ -215,7 +212,7 @@ def extracted_ifsg_resource_disease(
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_disease = transform_resource_disease_to_mex_resource(
-        transform_mapping_data_to_model(resource_disease, ExtractedResource),
+        ResourceMapping.model_validate(resource_disease),
         extracted_ifsg_resource_parent,
         extracted_ifsg_resource_state,
         meta_disease,
@@ -240,7 +237,7 @@ def extracted_ifsg_variable_group(
 ) -> list[ExtractedVariableGroup]:
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
-        transform_mapping_data_to_model(ifsg_variable_group, ExtractedVariableGroup),
+        VariableGroupMapping.model_validate(ifsg_variable_group),
         extracted_ifsg_resource_disease,
         extracted_primary_sources_ifsg,
         filtered_empty_statement_area_group,

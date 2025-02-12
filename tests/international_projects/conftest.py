@@ -1,6 +1,10 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedPerson, ExtractedPrimarySource
+from mex.common.models import (
+    ActivityMapping,
+    ExtractedPerson,
+    ExtractedPrimarySource,
+)
 from mex.common.organigram.extract import (
     extract_organigram_units,
     get_unit_merged_ids_by_synonyms,
@@ -14,8 +18,6 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Theme,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @pytest.fixture
@@ -44,8 +46,8 @@ def unit_stable_target_ids_by_synonym(
 
 
 @pytest.fixture
-def international_projects_mapping_activity() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def international_projects_mapping_activity() -> ActivityMapping:
+    return ActivityMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -130,5 +132,4 @@ def international_projects_mapping_activity() -> AnyMappingModel:
                 },
             ],
         },
-        ExtractedActivity,
     )

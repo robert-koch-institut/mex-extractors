@@ -2,9 +2,7 @@ from pathlib import Path
 from typing import Any
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import (
-    transform_ldap_persons_to_mex_persons,
-)
+from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -12,16 +10,14 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-)
+from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_models
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -72,7 +68,7 @@ def organization_stable_target_id_by_query_voxco(
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract and load voxco organizations and group them by query."""
     return extract_voxco_organizations(
-        transform_mapping_data_to_models(voxco_resource_mappings, ExtractedResource)
+        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
 
 
@@ -84,7 +80,7 @@ def extracted_mex_persons_voxco(
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for voxco, transform them and load them to sinks."""
     ldap_persons = extract_ldap_persons_voxco(
-        transform_mapping_data_to_models(voxco_resource_mappings, ExtractedResource)
+        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
     mex_persons = list(
         transform_ldap_persons_to_mex_persons(
@@ -109,7 +105,7 @@ def extracted_voxco_resources(
 ) -> dict[str, ExtractedResource]:
     """Transform mex resources, load to them to the sinks and return."""
     mex_resources = transform_voxco_resource_mappings_to_extracted_resources(
-        transform_mapping_data_to_models(voxco_resource_mappings, ExtractedResource),
+        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings],
         organization_stable_target_id_by_query_voxco,
         extracted_mex_persons_voxco,
         unit_stable_target_ids_by_synonym,

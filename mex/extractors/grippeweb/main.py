@@ -7,13 +7,16 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_to_mex_persons,
 )
 from mex.common.models import (
+    AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
-    ExtractedVariable,
     ExtractedVariableGroup,
+    ResourceMapping,
+    VariableGroupMapping,
+    VariableMapping,
 )
 from mex.common.primary_source.transform import (
     get_primary_sources_by_name,
@@ -37,10 +40,6 @@ from mex.extractors.grippeweb.transform import (
     transform_grippeweb_variable_to_extracted_variables,
 )
 from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import (
-    transform_mapping_data_to_model,
-    transform_mapping_data_to_models,
-)
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -106,7 +105,7 @@ def extracted_mex_functional_units_grippeweb(
 ) -> dict[Email, MergedContactPointIdentifier]:
     """Extract ldap actors for grippeweb from ldap and transform them to contact points and load them to sinks."""  # noqa: E501
     ldap_actors = extract_ldap_actors_for_functional_accounts(
-        transform_mapping_data_to_models(grippeweb_resource_mappings, ExtractedResource)
+        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
     mex_actors_resources = list(
         transform_ldap_actors_to_mex_contact_points(
@@ -126,12 +125,8 @@ def extracted_mex_persons_grippeweb(
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for grippeweb from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
     ldap_persons = extract_ldap_persons(
-        transform_mapping_data_to_models(
-            grippeweb_resource_mappings, ExtractedResource
-        ),
-        transform_mapping_data_to_model(
-            grippeweb_access_platform, ExtractedAccessPlatform
-        ),
+        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
+        AccessPlatformMapping.model_validate(grippeweb_access_platform),
     )
     mex_persons = list(
         transform_ldap_persons_to_mex_persons(
@@ -148,7 +143,7 @@ def grippeweb_organization_ids_by_query_string(
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for grippeweb from wikidata and group them by query."""
     return extract_grippeweb_organizations(
-        transform_mapping_data_to_models(grippeweb_resource_mappings, ExtractedResource)
+        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
 
 
@@ -162,9 +157,7 @@ def extracted_access_platform_grippeweb(
     """Transform Grippeweb mappings to extracted access platform and load to sinks."""
     extracted_access_platform_grippeweb = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
-            transform_mapping_data_to_model(
-                grippeweb_access_platform, ExtractedAccessPlatform
-            ),
+            AccessPlatformMapping.model_validate(grippeweb_access_platform),
             unit_stable_target_ids_by_synonym,
             extracted_primary_source_grippeweb,
             extracted_mex_persons_grippeweb,
@@ -186,9 +179,7 @@ def grippeweb_extracted_resource_dict(
 ) -> dict[str, ExtractedResource]:
     """Transform Grippeweb default values to extracted resources and load to sinks."""
     extracted_resources = transform_grippeweb_resource_mappings_to_extracted_resources(
-        transform_mapping_data_to_models(
-            grippeweb_resource_mappings, ExtractedResource
-        ),
+        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
         unit_stable_target_ids_by_synonym,
         extracted_access_platform_grippeweb,
         extracted_primary_source_grippeweb,
@@ -210,9 +201,7 @@ def grippeweb_extracted_variable_group(
     """Transform Grippeweb values to extracted variable groups and load to sinks."""
     extracted_variable_groups = (
         transform_grippeweb_variable_group_to_extracted_variable_groups(
-            transform_mapping_data_to_model(
-                grippeweb_variable_group, ExtractedVariableGroup
-            ),
+            VariableGroupMapping.model_validate(grippeweb_variable_group),
             grippeweb_columns,
             grippeweb_extracted_resource_dict,
             extracted_primary_source_grippeweb,
@@ -232,7 +221,7 @@ def grippeweb_extracted_variable(
 ) -> None:
     """Transform Grippeweb default values to extracted variables and load to sinks."""
     extracted_variables = transform_grippeweb_variable_to_extracted_variables(
-        transform_mapping_data_to_model(grippeweb_variable, ExtractedVariable),
+        VariableMapping.model_validate(grippeweb_variable),
         grippeweb_extracted_variable_group,
         grippeweb_columns,
         grippeweb_extracted_resource_dict,

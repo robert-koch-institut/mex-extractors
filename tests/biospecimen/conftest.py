@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.models import ExtractedPerson, ExtractedResource
+from mex.common.models import ExtractedPerson, ResourceMapping
 from mex.common.types import (
     AccessRestriction,
     AnonymizationPseudonymization,
@@ -12,8 +12,6 @@ from mex.common.types import (
     Theme,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @pytest.fixture
@@ -71,9 +69,9 @@ def mex_persons() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
-def resource_mapping() -> AnyMappingModel:
+def resource_mapping() -> ResourceMapping:
     """Mock resource mapping."""
-    return transform_mapping_data_to_model(
+    return ResourceMapping.model_validate(
         {
             "accessRestriction": [
                 {
@@ -253,5 +251,4 @@ def resource_mapping() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )

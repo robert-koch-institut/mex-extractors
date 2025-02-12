@@ -5,6 +5,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
+    ResourceMapping,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -12,7 +13,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.voxco.transform import (
     transform_voxco_resource_mappings_to_extracted_resources,
@@ -21,7 +21,7 @@ from mex.extractors.voxco.transform import (
 
 
 def test_transform_voxco_resource_mappings_to_extracted_resources(
-    voxco_resource_mappings: list[AnyMappingModel],
+    voxco_resource_mappings: list[ResourceMapping],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier
     ],

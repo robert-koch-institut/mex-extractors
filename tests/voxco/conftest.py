@@ -3,7 +3,12 @@ from typing import TypeVar
 import pytest
 from pydantic import BaseModel
 
-from mex.common.models import ExtractedActivity, ExtractedPerson, ExtractedResource
+from mex.common.models import (
+    ExtractedActivity,
+    ExtractedPerson,
+    ExtractedResource,
+    ResourceMapping,
+)
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -11,8 +16,6 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_models
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.model import VoxcoVariable
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
@@ -54,9 +57,9 @@ def organization_stable_target_id_by_query_voxco() -> dict[
 
 
 @pytest.fixture
-def voxco_resource_mappings() -> list[AnyMappingModel]:
-    return transform_mapping_data_to_models(
-        [
+def voxco_resource_mappings() -> list[ResourceMapping]:
+    return [
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [
                     {
@@ -609,9 +612,8 @@ def voxco_resource_mappings() -> list[AnyMappingModel]:
                     }
                 ],
             },
-        ],
-        ExtractedResource,
-    )
+        )
+    ]
 
 
 @pytest.fixture

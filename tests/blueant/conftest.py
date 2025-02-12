@@ -1,10 +1,8 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedPerson
+from mex.common.models import ActivityMapping, ExtractedPerson
 from mex.common.types import ActivityType, Identifier, TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @pytest.fixture
@@ -54,9 +52,9 @@ def blueant_source_without_leader() -> BlueAntSource:
 
 
 @pytest.fixture
-def blueant_activity() -> AnyMappingModel:
+def blueant_activity() -> ActivityMapping:
     """Return activity default values."""
-    return transform_mapping_data_to_model(
+    return ActivityMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -107,5 +105,4 @@ def blueant_activity() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedActivity,
     )

@@ -4,18 +4,18 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
+    ResourceMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.odk.model import ODKData
 from mex.extractors.sinks import load
 
 
 def transform_odk_resources_to_mex_resources(
-    odk_resource_mappings: list[AnyMappingModel],
+    odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],
@@ -49,7 +49,9 @@ def transform_odk_resources_to_mex_resources(
         if resource.contributingUnit:
             contributing_unit = [
                 unit_stable_target_ids_by_synonym[synonym]
-                for synonym in resource.contributingUnit[0].mappingRules[0].forValues
+                for synonym in (
+                    resource.contributingUnit[0].mappingRules[0].forValues or []
+                )
             ]
         description = None
         if resource.description:
@@ -60,7 +62,7 @@ def transform_odk_resources_to_mex_resources(
             else []
         )
         identifier_in_primary_source = (
-            resource.identifierInPrimarySource[0].mappingRules[0].setValues[0]
+            resource.identifierInPrimarySource[0].mappingRules[0].setValues[0]  # type: ignore[index]
         )
         if resource.isPartOf:
             is_part_of_list.append(identifier_in_primary_source)
@@ -72,11 +74,11 @@ def transform_odk_resources_to_mex_resources(
             size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
-                resource.wasGeneratedBy[0].mappingRules[0].forValues[0]
+                resource.wasGeneratedBy[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
         )
         external_partner: list[MergedOrganizationIdentifier] = []
-        for partner in resource.externalPartner[0].mappingRules[0].forValues:
+        for partner in resource.externalPartner[0].mappingRules[0].forValues or []:
             if partner in external_partner_and_publisher_by_label:
                 external_partner.append(
                     external_partner_and_publisher_by_label[partner]
@@ -91,15 +93,15 @@ def transform_odk_resources_to_mex_resources(
                 external_partner.append(organization.stableTargetId)
         publisher = [
             partner
-            for name in resource.publisher[0].mappingRules[0].forValues
-            if (partner := external_partner_and_publisher_by_label.get(name))
+            for name in (resource.publisher[0].mappingRules[0].forValues or [])
+            if (partner := external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
         ]
         resources[identifier_in_primary_source] = ExtractedResource(
             identifierInPrimarySource=identifier_in_primary_source,
             accessRestriction=resource.accessRestriction[0].mappingRules[0].setValues,
             alternativeTitle=alternative_title,
             contact=unit_stable_target_ids_by_synonym[
-                resource.contact[0].mappingRules[0].forValues[0]
+                resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ],
             contributingUnit=contributing_unit,
             description=description,
@@ -128,7 +130,7 @@ def transform_odk_resources_to_mex_resources(
             theme=resource.theme[0].mappingRules[0].setValues,
             title=resource.title[0].mappingRules[0].setValues,
             unitInCharge=unit_stable_target_ids_by_synonym[
-                resource.unitInCharge[0].mappingRules[0].forValues[0]
+                resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ],
             wasGeneratedBy=was_generated_by,
         )

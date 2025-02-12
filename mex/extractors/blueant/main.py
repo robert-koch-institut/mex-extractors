@@ -2,7 +2,7 @@ from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
 from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
 from mex.common.models import (
-    ExtractedActivity,
+    ActivityMapping,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -24,7 +24,6 @@ from mex.extractors.blueant.transform import (
 )
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -94,9 +93,8 @@ def extracted_blueant_activities(
 ) -> None:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
-    activity = transform_mapping_data_to_model(
-        extract_mapping_data(settings.blueant.mapping_path / "activity.yaml"),
-        ExtractedActivity,
+    activity = ActivityMapping.model_validate(
+        extract_mapping_data(settings.blueant.mapping_path / "activity.yaml")
     )
 
     extracted_activities = transform_blueant_sources_to_extracted_activities(

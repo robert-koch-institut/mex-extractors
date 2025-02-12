@@ -3,6 +3,8 @@ from itertools import groupby
 import pytest
 
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
@@ -10,6 +12,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -27,8 +30,6 @@ from mex.common.types import (
     TextLanguage,
     Theme,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
@@ -600,9 +601,9 @@ def extracted_variable_groups(
 
 
 @pytest.fixture
-def synopse_access_platform() -> AnyMappingModel:
+def synopse_access_platform() -> AccessPlatformMapping:
     """Return a mapping model with access platform default values."""
-    return transform_mapping_data_to_model(
+    return AccessPlatformMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -652,14 +653,13 @@ def synopse_access_platform() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedAccessPlatform,
     )
 
 
 @pytest.fixture
-def synopse_activity() -> AnyMappingModel:
+def synopse_activity() -> ActivityMapping:
     """Return a mapping model with activity default values."""
-    return transform_mapping_data_to_model(
+    return ActivityMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -689,14 +689,13 @@ def synopse_activity() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedActivity,
     )
 
 
 @pytest.fixture
-def synopse_resource_extended_data_use() -> AnyMappingModel:
+def synopse_resource_extended_data_use() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
-    return transform_mapping_data_to_model(
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -871,14 +870,13 @@ def synopse_resource_extended_data_use() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )
 
 
 @pytest.fixture
-def synopse_resource() -> AnyMappingModel:
+def synopse_resource() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
-    return transform_mapping_data_to_model(
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -1053,5 +1051,4 @@ def synopse_resource() -> AnyMappingModel:
             ],
             "stateOfDataProcessing": [],
         },
-        ExtractedResource,
     )

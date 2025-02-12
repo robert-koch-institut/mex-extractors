@@ -1,17 +1,18 @@
-from typing import TypeVar
 from unittest.mock import MagicMock
 
 import pytest
-from pydantic import BaseModel
 from pytest import MonkeyPatch
 
 from mex.common.models import (
+    AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
-    ExtractedVariable,
     ExtractedVariableGroup,
+    ResourceMapping,
+    VariableGroupMapping,
+    VariableMapping,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -24,13 +25,6 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.extractors.grippeweb.connector import GrippewebConnector
-from mex.extractors.mapping.transform import (
-    transform_mapping_data_to_model,
-    transform_mapping_data_to_models,
-)
-from mex.extractors.mapping.types import AnyMappingModel
-
-ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 @pytest.fixture
@@ -71,8 +65,8 @@ def grippeweb_organization_ids_by_query_string() -> dict[
 
 
 @pytest.fixture
-def grippeweb_access_platform() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def grippeweb_access_platform() -> AccessPlatformMapping:
+    return AccessPlatformMapping.model_validate(
         {
             "hadPrimarySource": [
                 {
@@ -169,14 +163,13 @@ def grippeweb_access_platform() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedAccessPlatform,
     )
 
 
 @pytest.fixture
-def grippeweb_resource_mappings() -> list[AnyMappingModel]:
-    return transform_mapping_data_to_models(
-        [
+def grippeweb_resource_mappings() -> list[ResourceMapping]:
+    return [
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [
                     {
@@ -786,7 +779,9 @@ def grippeweb_resource_mappings() -> list[AnyMappingModel]:
                         "comment": None,
                     }
                 ],
-            },
+            }
+        ),
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [
                     {
@@ -1398,9 +1393,8 @@ def grippeweb_resource_mappings() -> list[AnyMappingModel]:
                     }
                 ],
             },
-        ],
-        ExtractedResource,
-    )
+        ),
+    ]
 
 
 @pytest.fixture
@@ -1463,8 +1457,8 @@ def mocked_grippeweb_sql_tables() -> dict[str, dict[str, list[str | None]]]:
 
 
 @pytest.fixture
-def grippeweb_variable_group() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def grippeweb_variable_group() -> VariableGroupMapping:
+    return VariableGroupMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -1499,13 +1493,12 @@ def grippeweb_variable_group() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedVariableGroup,
     )
 
 
 @pytest.fixture
-def grippeweb_variable() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def grippeweb_variable() -> VariableMapping:
+    return VariableMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -1527,7 +1520,6 @@ def grippeweb_variable() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedVariable,
     )
 
 

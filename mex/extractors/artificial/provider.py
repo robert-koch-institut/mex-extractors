@@ -114,7 +114,7 @@ class BuilderProvider(PythonFakerProvider):
                 "hadPrimarySource": identity.hadPrimarySource,
                 "identifierInPrimarySource": identity.identifierInPrimarySource,
                 "stableTargetId": identity.stableTargetId,
-                "entityType": model.__name__,
+                "entityType": model.entityType,
             }
             # dynamically populate all other fields
             for name, field in model.model_fields.items():
@@ -134,7 +134,7 @@ class IdentityProvider(BaseFakerProvider):
 
     def identities(self, model: type[AnyExtractedModel]) -> list[Identity]:
         """Return a list of identities for the given model class."""
-        return self._identities[model.__name__.removeprefix("Extracted")]
+        return self._identities[model.entityType.removeprefix("Extracted")]
 
     def reference(
         self,

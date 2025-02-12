@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedResource
+from mex.common.models import ExtractedActivity, ExtractedResource, ResourceMapping
 from mex.common.types import (
     AccessRestriction,
     Language,
@@ -9,8 +9,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     Text,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_models
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.odk.model import ODKData
 
 
@@ -94,10 +92,10 @@ def unit_stable_target_ids_by_synonym() -> dict[
 
 
 @pytest.fixture
-def odk_resource_mappings() -> list[AnyMappingModel]:
+def odk_resource_mappings() -> list[ResourceMapping]:
     """Mocked odk resource mappings."""
-    return transform_mapping_data_to_models(
-        [
+    return [
+        ResourceMapping.model_validate(
             {
                 "identifier": [
                     {
@@ -560,9 +558,8 @@ def odk_resource_mappings() -> list[AnyMappingModel]:
                     }
                 ],
             }
-        ],
-        ExtractedResource,
-    )
+        )
+    ]
 
 
 @pytest.fixture

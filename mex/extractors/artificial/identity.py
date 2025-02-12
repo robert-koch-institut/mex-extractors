@@ -65,7 +65,7 @@ def _create_numeric_ids(faker: Faker) -> dict[str, list[int]]:
     offsets = {model: _get_offset_int(model) for model in EXTRACTED_MODEL_CLASSES}
     # calculate numeric ids per model in the calculated quantities
     return {
-        model.__name__.removeprefix("Extracted"): list(
+        model.entityType.removeprefix("Extracted"): list(
             range(offsets[model], offsets[model] + counts[model])
         )
         for model in EXTRACTED_MODEL_CLASSES

@@ -4,6 +4,8 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
+    VariableGroupMapping,
 )
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
@@ -30,11 +32,6 @@ from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
-from mex.extractors.mapping.transform import (
-    transform_mapping_data_to_model,
-    transform_mapping_data_to_models,
-)
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @pytest.fixture
@@ -197,8 +194,8 @@ def meta_field() -> list[MetaField]:
 
 
 @pytest.fixture
-def ifsg_variable_group() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def ifsg_variable_group() -> VariableGroupMapping:
+    return VariableGroupMapping.model_validate(
         {
             "hadPrimarySource": [],
             "identifierInPrimarySource": [],
@@ -275,13 +272,12 @@ def ifsg_variable_group() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedVariableGroup,
     )
 
 
 @pytest.fixture
-def resource_parent() -> AnyMappingModel:
-    return transform_mapping_data_to_model(
+def resource_parent() -> ResourceMapping:
+    return ResourceMapping.model_validate(
         {
             "hadPrimarySource": [],
             "accessRestriction": [
@@ -521,14 +517,13 @@ def resource_parent() -> AnyMappingModel:
                 }
             ],
         },
-        ExtractedResource,
     )
 
 
 @pytest.fixture
-def resource_states() -> list[AnyMappingModel]:
-    return transform_mapping_data_to_models(
-        [
+def resource_states() -> list[ResourceMapping]:
+    return [
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [],
                 "accessRestriction": [
@@ -1083,6 +1078,8 @@ def resource_states() -> list[AnyMappingModel]:
                     }
                 ],
             },
+        ),
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [],
                 "accessRestriction": [
@@ -1636,16 +1633,15 @@ def resource_states() -> list[AnyMappingModel]:
                         ],
                     }
                 ],
-            },
-        ],
-        ExtractedResource,
-    )
+            }
+        ),
+    ]
 
 
 @pytest.fixture
-def resource_diseases() -> list[AnyMappingModel]:
-    return transform_mapping_data_to_models(
-        [
+def resource_diseases() -> list[ResourceMapping]:
+    return [
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [],
                 "accessRestriction": [
@@ -2185,7 +2181,9 @@ def resource_diseases() -> list[AnyMappingModel]:
                         ],
                     }
                 ],
-            },
+            }
+        ),
+        ResourceMapping.model_validate(
             {
                 "hadPrimarySource": [],
                 "accessRestriction": [
@@ -2710,10 +2708,9 @@ def resource_diseases() -> list[AnyMappingModel]:
                         ],
                     }
                 ],
-            },
-        ],
-        ExtractedResource,
-    )
+            }
+        ),
+    ]
 
 
 @pytest.fixture

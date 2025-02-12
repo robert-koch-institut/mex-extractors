@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.models import ExtractedPrimarySource
+from mex.common.models import ActivityMapping, ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -21,7 +21,6 @@ from mex.extractors.confluence_vvt.transform import (
     transform_confluence_vvt_activities_to_extracted_activities,
     transform_confluence_vvt_page_to_extracted_activity,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -30,7 +29,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 def test_transform_confluence_vvt_page_to_extracted_activity(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    confluence_vvt_activity_mapping: AnyMappingModel,
+    confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     expected = {
         "hadPrimarySource": "dhVuI8dsGq7mwtc1xzj3be",
@@ -78,7 +77,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 def test_transform_confluence_vvt_page_to_extracted_activities(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    confluence_vvt_activity_mapping: AnyMappingModel,
+    confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     all_pages = list(get_page_data_by_id(fetch_all_vvt_pages_ids()))
 
