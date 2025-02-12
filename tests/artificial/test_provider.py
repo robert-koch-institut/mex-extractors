@@ -226,7 +226,7 @@ def test_pattern_provider(faker: Faker) -> None:
     assert pattern == "https://ror.org/801609753"
 
     pattern = faker.pattern(
-        "^(((http)|(https))://(dx.)?doi.org/)(10.\\d{4,9}/[-._;()/:A-Z0-9]+)$"
+        "^(((http)|(https))://(dx.)?doi.org/)(10.\\d{4,9}/[-._;()/:A-Za-z0-9]+)$"
     )
     assert pattern == "https://dx.doi.org/10.8242/1948924"
 

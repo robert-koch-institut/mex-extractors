@@ -19,8 +19,9 @@ from mex.extractors.open_data.models.source import (
     OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
+    transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_persons,
-    transform_open_data_resource_to_mex_resource,
+    transform_open_data_resource_version_to_mex_resource,
 )
 from mex.extractors.pipeline import asset
 from mex.extractors.pipeline.base import run_job_in_process
@@ -72,8 +73,8 @@ def extracted_open_data_persons(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_resources(
-    open_data_resource_versions: list[OpenDataResourceVersion],
+def extracted_open_data_parent_resources(
+    open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -86,10 +87,39 @@ def extracted_open_data_resources(
     )
 
     mex_sources = list(
-        transform_open_data_resource_to_mex_resource(
+        transform_open_data_parent_resource_to_mex_resource(
+            open_data_parent_resources,
+            extracted_primary_source_open_data,
+            extracted_open_data_persons,
+            resource_mapping,
+            unit_stable_target_ids_by_synonym,
+        )
+    )
+    load(mex_sources)
+    return mex_sources
+
+
+@asset(group_name="open_data")
+def extracted_open_data_resource_versions(
+    open_data_resource_versions: list[OpenDataResourceVersion],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_open_data_persons: list[ExtractedPerson],
+    extracted_open_data_parent_resources: list[ExtractedResource],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+) -> list[ExtractedResource]:
+    """Transform open data resources to extracted resources and load them to the sinks."""  # noqa: E501
+    settings = Settings.get()
+    resource_mapping = transform_mapping_data_to_model(
+        extract_mapping_data(settings.open_data.mapping_path / "resource.yaml"),
+        ExtractedResource,
+    )
+
+    mex_sources = list(
+        transform_open_data_resource_version_to_mex_resource(
             open_data_resource_versions,
             extracted_primary_source_open_data,
             extracted_open_data_persons,
+            extracted_open_data_parent_resources,
             resource_mapping,
             unit_stable_target_ids_by_synonym,
         )

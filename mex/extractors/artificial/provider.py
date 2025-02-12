@@ -216,7 +216,7 @@ class PatternProvider(BaseFakerProvider):
         r"^https://orcid\.org/[-X0-9]{9,21}$": "https://orcid.org/0000-####-####-###X",
         r"^https://ror\.org/[a-z0-9]{9}$": "https://ror.org/#########",
         r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$": "https://loinc.org/#####-#",
-        r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Z0-9]+)$": "https://dx.doi.org/10.####/#######",
+        r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Za-z0-9]+)$": "https://dx.doi.org/10.####/#######",
     }
     MESH_TO_TEMPLATE = {
         r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$": "http://id.nlm.nih.gov/mesh/{}"

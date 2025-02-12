@@ -36,7 +36,7 @@ def extract_resource_versions(
             yield from connector.get_resource_versions(parent_resource.id)
 
 
-def extract_oldest_record_version(record_id: int) -> OpenDataResourceVersion:
+def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     """Fetch only the oldest version of a parent resource.
 
     Returns:
@@ -44,4 +44,4 @@ def extract_oldest_record_version(record_id: int) -> OpenDataResourceVersion:
     """
     connector = OpenDataConnector()
 
-    return connector.get_oldest_resource_version(record_id)
+    return connector.get_oldest_resource_version_creationdate(record_id)

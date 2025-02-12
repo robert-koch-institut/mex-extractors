@@ -33,7 +33,6 @@ class OpenDataFiles(BaseModel):
 class OpenDataMetadata(BaseModel):
     """Model subclass for Zenodo metadata dict."""
 
-    title: str | None = None
     description: str | None = None
     creators: list[OpenDataCreatorsOrContributors] = []
     contributors: list[OpenDataCreatorsOrContributors] = []
@@ -41,11 +40,13 @@ class OpenDataMetadata(BaseModel):
     related_identifiers: list[OpenDataRelateditdentifiers] = []
     language: str | None = None
     license: OpenDataLicense
+    publication_date: str | None = None
 
 
 class OpenDataParentResource(BaseModel):
     """Model class for a Zenodo record as resource parent."""
 
+    title: str | None = None
     conceptrecid: str
     id: int
     modified: str | None = None
@@ -56,6 +57,7 @@ class OpenDataParentResource(BaseModel):
 class OpenDataResourceVersion(BaseModel):
     """Model class for Versions of a record."""
 
+    title: str | None = None
     id: int
     conceptrecid: str
     created: str | None = None
