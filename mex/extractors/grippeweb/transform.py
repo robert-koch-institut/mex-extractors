@@ -104,10 +104,13 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         contributor = [
-            mex_persons_by_name[
-                f"{name.split(' ')[1]}, {name.split(' ')[0]}"
-            ].stableTargetId
+            person.stableTargetId
             for name in (resource.contributor[0].mappingRules[0].forValues or [])
+            if (
+                person := mex_persons_by_name.get(
+                    f"{name.split(' ')[1]}, {name.split(' ')[0]}"
+                )
+            )
         ]
         created = resource.created[0].mappingRules[0].setValues
         description = resource.description[0].mappingRules[0].setValues
@@ -125,7 +128,7 @@ def transform_grippeweb_resource_mappings_to_dict(
             0
         ].mappingRules[0]
         if set_values := identifier_in_primary_source_mapping_rules.setValues:
-            identifier_in_primary_source = set_values[0]
+            identifier_in_primary_source = set_values
         else:
             identifier_in_primary_source = (
                 identifier_in_primary_source_mapping_rules.forValues[0]  # type: ignore[index]
