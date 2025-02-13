@@ -71,22 +71,6 @@ class Settings(BaseSettings):
         SecretStr("password"),
         description="Kerberos password to authenticate against MSSQL server.",
     )
-    s3_endpoint_url: AnyUrl = Field(
-        AnyUrl("https://s3"),
-        description="The complete URL to use for the constructed client.",
-    )
-    s3_access_key_id: SecretStr = Field(
-        SecretStr("s3_access_key_ID"),
-        description="The access key to use when creating the client.",
-    )
-    s3_secret_access_key: SecretStr = Field(
-        SecretStr("s3_access_key"),
-        description="The secret key to use when creating the client.",
-    )
-    s3_bucket_key: str = Field(
-        "bucket",
-        description="The S3 bucket where to store objects.",
-    )
     artificial: ArtificialSettings = ArtificialSettings()
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
