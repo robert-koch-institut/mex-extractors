@@ -22,8 +22,8 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.grippeweb.connector import GrippewebConnector
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -67,9 +67,7 @@ def grippeweb_organization_ids_by_query_string() -> dict[
 def grippeweb_access_platform() -> AccessPlatformMapping:
     settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        extract_mapping_data(
-            settings.grippeweb.mapping_path / "access-platform_mock.yaml"
-        )
+        load_yaml(settings.grippeweb.mapping_path / "access-platform_mock.yaml")
     )
 
 
@@ -77,10 +75,10 @@ def grippeweb_access_platform() -> AccessPlatformMapping:
 def grippeweb_resource_mappings() -> list[ResourceMapping]:
     settings = Settings.get()
     resource_1 = ResourceMapping.model_validate(
-        extract_mapping_data(settings.grippeweb.mapping_path / "resource_mock1.yaml")
+        load_yaml(settings.grippeweb.mapping_path / "resource_mock1.yaml")
     )
     resource_2 = ResourceMapping.model_validate(
-        extract_mapping_data(settings.grippeweb.mapping_path / "resource_mock2.yaml")
+        load_yaml(settings.grippeweb.mapping_path / "resource_mock2.yaml")
     )
     return [resource_1, resource_2]
 
@@ -148,9 +146,7 @@ def mocked_grippeweb_sql_tables() -> dict[str, dict[str, list[str | None]]]:
 def grippeweb_variable_group() -> VariableGroupMapping:
     settings = Settings.get()
     return VariableGroupMapping.model_validate(
-        extract_mapping_data(
-            settings.grippeweb.mapping_path / "variable-group_mock.yaml"
-        )
+        load_yaml(settings.grippeweb.mapping_path / "variable-group_mock.yaml")
     )
 
 
@@ -158,7 +154,7 @@ def grippeweb_variable_group() -> VariableGroupMapping:
 def grippeweb_variable() -> VariableMapping:
     settings = Settings.get()
     return VariableMapping.model_validate(
-        extract_mapping_data(settings.grippeweb.mapping_path / "variable_mock.yaml")
+        load_yaml(settings.grippeweb.mapping_path / "variable_mock.yaml")
     )
 
 

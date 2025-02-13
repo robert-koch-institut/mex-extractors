@@ -24,7 +24,6 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -56,6 +55,7 @@ from mex.extractors.sumo.transform import (
     transform_sumo_access_platform_to_mex_access_platform,
     transform_sumo_activity_to_extracted_activity,
 )
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="sumo", deps=["extracted_primary_source_mex"])
@@ -80,7 +80,7 @@ def transformed_sumo_access_platform(
     """Transform and load SUMO access platform and related LDAP actors."""
     settings = Settings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "access-platform.yaml"),
+        load_yaml(settings.sumo.mapping_path / "access-platform.yaml"),
     )
     ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
         sumo_access_platform
@@ -144,7 +144,7 @@ def transformed_activity_sumo(
     """Extract, transform and load SUMO activity."""
     settings = Settings.get()
     sumo_activity = ActivityMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "activity.yaml"),
+        load_yaml(settings.sumo.mapping_path / "activity.yaml"),
     )
     transformed_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
@@ -160,14 +160,14 @@ def transformed_activity_sumo(
 def extracted_resources_nokeda_sumo() -> dict[str, Any]:
     """Extract Nokeda Resource from SUMO."""
     settings = Settings.get()
-    return extract_mapping_data(settings.sumo.mapping_path / "resource_nokeda.yaml")
+    return load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
 
 
 @asset(group_name="sumo")
 def extracted_resources_feat_sumo() -> dict[str, Any]:
     """Extract Resource feat from SUMO."""
     settings = Settings.get()
-    return extract_mapping_data(settings.sumo.mapping_path / "resource_feat-model.yaml")
+    return load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
 
 
 @asset(group_name="sumo")

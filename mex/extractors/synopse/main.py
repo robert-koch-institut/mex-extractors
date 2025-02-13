@@ -22,7 +22,6 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedResourceIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -49,6 +48,7 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="synopse")
@@ -207,7 +207,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     """
     settings = Settings.get()
     synopse_resource = ResourceMapping.model_validate(
-        extract_mapping_data(settings.synopse.mapping_path / "resource.yaml"),
+        load_yaml(settings.synopse.mapping_path / "resource.yaml"),
     )
     transformed_study_data_regular_resources = (
         transform_synopse_data_regular_to_mex_resources(
@@ -228,9 +228,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     load(transformed_study_data_regular_resource_gens[0])
     settings = Settings.get()
     synopse_resource_extended_data_use = ResourceMapping.model_validate(
-        extract_mapping_data(
-            settings.synopse.mapping_path / "resource_extended-data-use.yaml"
-        )
+        load_yaml(settings.synopse.mapping_path / "resource_extended-data-use.yaml")
     )
     transformed_study_data_resources_extended_data_use = (
         transform_synopse_data_extended_data_use_to_mex_resources(
@@ -268,7 +266,7 @@ def extracted_synopse_access_platforms(
     """Transform Synopse data to extracted access platforms and load result."""
     settings = Settings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
-        extract_mapping_data(settings.synopse.mapping_path / "access-platform.yaml"),
+        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
     synopse_studies_filtered = filter_and_log_access_platforms(
         synopse_studies, extracted_primary_source_report_server
@@ -299,7 +297,7 @@ def extracted_synopse_activities(
     """Transforms Synopse data to extracted activities and load result."""
     settings = Settings.get()
     synopse_activity = ActivityMapping.model_validate(
-        extract_mapping_data(settings.synopse.mapping_path / "activity.yaml"),
+        load_yaml(settings.synopse.mapping_path / "activity.yaml"),
     )
     transformed_activities = list(
         transform_synopse_projects_to_mex_activities(

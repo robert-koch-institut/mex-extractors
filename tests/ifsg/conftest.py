@@ -30,8 +30,8 @@ from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -197,7 +197,7 @@ def meta_field() -> list[MetaField]:
 def ifsg_variable_group() -> VariableGroupMapping:
     settings = Settings.get()
     return VariableGroupMapping.model_validate(
-        extract_mapping_data(settings.ifsg.mapping_path / "variable-group_mock.yaml")
+        load_yaml(settings.ifsg.mapping_path / "variable-group_mock.yaml")
     )
 
 
@@ -205,7 +205,7 @@ def ifsg_variable_group() -> VariableGroupMapping:
 def resource_parent() -> ResourceMapping:
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.ifsg.mapping_path / "resource_parent_mock.yaml")
+        load_yaml(settings.ifsg.mapping_path / "resource_parent_mock.yaml")
     )
 
 
@@ -214,14 +214,10 @@ def resource_states() -> list[ResourceMapping]:
     settings = Settings.get()
     return [
         ResourceMapping.model_validate(
-            extract_mapping_data(
-                settings.ifsg.mapping_path / "resource_state_1_mock.yaml"
-            )
+            load_yaml(settings.ifsg.mapping_path / "resource_state_1_mock.yaml")
         ),
         ResourceMapping.model_validate(
-            extract_mapping_data(
-                settings.ifsg.mapping_path / "resource_state_2_mock.yaml"
-            )
+            load_yaml(settings.ifsg.mapping_path / "resource_state_2_mock.yaml")
         ),
     ]
 
@@ -231,14 +227,10 @@ def resource_diseases() -> list[ResourceMapping]:
     settings = Settings.get()
     return [
         ResourceMapping.model_validate(
-            extract_mapping_data(
-                settings.ifsg.mapping_path / "resource_disease_1_mock.yaml"
-            )
+            load_yaml(settings.ifsg.mapping_path / "resource_disease_1_mock.yaml")
         ),
         ResourceMapping.model_validate(
-            extract_mapping_data(
-                settings.ifsg.mapping_path / "resource_disease_2_mock.yaml"
-            )
+            load_yaml(settings.ifsg.mapping_path / "resource_disease_2_mock.yaml")
         ),
     ]
 

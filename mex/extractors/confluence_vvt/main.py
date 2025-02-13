@@ -26,10 +26,10 @@ from mex.extractors.confluence_vvt.transform import (
     transform_confluence_vvt_activities_to_extracted_activities,
 )
 from mex.extractors.filters import filter_by_global_rules
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="confluence_vvt")
@@ -63,9 +63,7 @@ def extracted_primary_source_confluence_vvt(
 def confluence_vvt_activity_mapping() -> dict[str, Any]:
     """Return activity mapping."""
     settings = Settings.get()
-    return extract_mapping_data(
-        settings.confluence_vvt.template_v1_mapping_path / "activity.yaml"
-    )
+    return load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
 
 
 @asset(group_name="confluence_vvt")

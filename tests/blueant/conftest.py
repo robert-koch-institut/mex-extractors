@@ -3,8 +3,8 @@ import pytest
 from mex.common.models import ActivityMapping, ExtractedPerson
 from mex.common.types import Identifier, TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -58,5 +58,5 @@ def blueant_activity() -> ActivityMapping:
     """Return activity default values."""
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(settings.blueant.mapping_path / "activity_mock.yaml")
+        load_yaml(settings.blueant.mapping_path / "activity_mock.yaml")
     )

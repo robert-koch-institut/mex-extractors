@@ -7,9 +7,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     Text,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.odk.model import ODKData
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -97,7 +97,7 @@ def odk_resource_mappings() -> list[ResourceMapping]:
     settings = Settings.get()
     return [
         ResourceMapping.model_validate(
-            extract_mapping_data(settings.odk.mapping_path / "resource_mock.yaml")
+            load_yaml(settings.odk.mapping_path / "resource_mock.yaml")
         )
     ]
 

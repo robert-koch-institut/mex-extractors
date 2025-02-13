@@ -21,7 +21,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
@@ -29,6 +28,7 @@ from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -88,7 +88,7 @@ def sumo_resources_feat() -> ResourceMapping:
     """Return feat SumoResource."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "resource_feat_mock.yaml")
+        load_yaml(settings.sumo.mapping_path / "resource_feat_mock.yaml")
     )
 
 
@@ -97,7 +97,7 @@ def sumo_resources_nokeda() -> ResourceMapping:
     """Return feat SumoResource."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
+        load_yaml(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
     )
 
 
@@ -106,7 +106,7 @@ def sumo_access_platform() -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
     settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "access-platform_mock.yaml")
+        load_yaml(settings.sumo.mapping_path / "access-platform_mock.yaml")
     )
 
 
@@ -129,7 +129,7 @@ def sumo_activity() -> ActivityMapping:
     """Return Sumo Activity."""
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(settings.sumo.mapping_path / "activity_mock.yaml")
+        load_yaml(settings.sumo.mapping_path / "activity_mock.yaml")
     )
 
 

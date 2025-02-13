@@ -12,8 +12,8 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -45,7 +45,5 @@ def unit_stable_target_ids_by_synonym(
 def international_projects_mapping_activity() -> ActivityMapping:
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(
-            settings.international_projects.mapping_path / "activity_mock.yaml"
-        )
+        load_yaml(settings.international_projects.mapping_path / "activity_mock.yaml")
     )

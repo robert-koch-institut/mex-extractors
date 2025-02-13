@@ -22,7 +22,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -30,6 +29,7 @@ from mex.extractors.seq_repo.transform import (
     transform_seq_repo_activities_to_extracted_activities,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture(autouse=True)
@@ -88,7 +88,7 @@ def seq_repo_latest_sources(
 def seq_repo_activity() -> ActivityMapping:
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(settings.seq_repo.mapping_path / "activity_mock.yaml")
+        load_yaml(settings.seq_repo.mapping_path / "activity_mock.yaml")
     )
 
 
@@ -96,9 +96,7 @@ def seq_repo_activity() -> ActivityMapping:
 def seq_repo_access_platform() -> AccessPlatformMapping:
     settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        extract_mapping_data(
-            settings.seq_repo.mapping_path / "access-platform_mock.yaml"
-        )
+        load_yaml(settings.seq_repo.mapping_path / "access-platform_mock.yaml")
     )
 
 
@@ -106,7 +104,7 @@ def seq_repo_access_platform() -> AccessPlatformMapping:
 def seq_repo_resource() -> ResourceMapping:
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.seq_repo.mapping_path / "resource_mock.yaml")
+        load_yaml(settings.seq_repo.mapping_path / "resource_mock.yaml")
     )
 
 

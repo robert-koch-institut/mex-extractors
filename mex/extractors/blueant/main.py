@@ -23,10 +23,10 @@ from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
 from mex.extractors.filters import filter_by_global_rules
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="blueant", deps=["extracted_primary_source_mex"])
@@ -94,7 +94,7 @@ def extracted_blueant_activities(
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
-        extract_mapping_data(settings.blueant.mapping_path / "activity.yaml")
+        load_yaml(settings.blueant.mapping_path / "activity.yaml")
     )
 
     extracted_activities = transform_blueant_sources_to_extracted_activities(

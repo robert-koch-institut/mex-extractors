@@ -16,8 +16,8 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.model import VoxcoVariable
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
@@ -63,7 +63,7 @@ def voxco_resource_mappings() -> list[ResourceMapping]:
     settings = Settings.get()
     return [
         ResourceMapping.model_validate(
-            extract_mapping_data(settings.voxco.mapping_path / "resource_mock.yaml")
+            load_yaml(settings.voxco.mapping_path / "resource_mock.yaml")
         )
     ]
 

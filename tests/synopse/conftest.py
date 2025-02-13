@@ -24,7 +24,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -34,6 +33,7 @@ from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_variables_to_mex_variable_groups,
 )
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -601,9 +601,7 @@ def synopse_access_platform() -> AccessPlatformMapping:
     """Return a mapping model with access platform default values."""
     settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        extract_mapping_data(
-            settings.synopse.mapping_path / "access-platform_mock.yaml"
-        )
+        load_yaml(settings.synopse.mapping_path / "access-platform_mock.yaml")
     )
 
 
@@ -612,7 +610,7 @@ def synopse_activity() -> ActivityMapping:
     """Return a mapping model with activity default values."""
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(settings.synopse.mapping_path / "activity_mock.yaml")
+        load_yaml(settings.synopse.mapping_path / "activity_mock.yaml")
     )
 
 
@@ -621,7 +619,7 @@ def synopse_resource_extended_data_use() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(
+        load_yaml(
             settings.synopse.mapping_path / "resource_extended-data-use_mock.yaml"
         )
     )
@@ -632,5 +630,5 @@ def synopse_resource() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.synopse.mapping_path / "resource_mock.yaml")
+        load_yaml(settings.synopse.mapping_path / "resource_mock.yaml")
     )

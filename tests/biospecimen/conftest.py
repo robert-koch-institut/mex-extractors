@@ -5,8 +5,8 @@ from mex.common.types import (
     Identifier,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -68,5 +68,5 @@ def resource_mapping() -> ResourceMapping:
     """Mock resource mapping."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        extract_mapping_data(settings.biospecimen.mapping_path / "resource_mock.yaml")
+        load_yaml(settings.biospecimen.mapping_path / "resource_mock.yaml")
     )
