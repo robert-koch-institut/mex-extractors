@@ -72,7 +72,7 @@ theme:
           - https://mex.rki.de/item/theme-37
         rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
       - forValues:
-          - Non-communciable diseases
+          - Non-communicable diseases
         setValues:
           - https://mex.rki.de/item/theme-36
 title:

@@ -53,7 +53,7 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-37
       - forValues:
-          - Non-communciable diseases
+          - Non-communicable diseases
         setValues:
           - https://mex.rki.de/item/theme-36
 title:
