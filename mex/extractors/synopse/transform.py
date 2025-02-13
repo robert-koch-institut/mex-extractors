@@ -113,7 +113,7 @@ def transform_synopse_studies_into_access_platforms(
             landingPage=landing_page,
             technicalAccessibility=synopse_access_platform.technicalAccessibility[0]
             .mappingRules[0]
-            .setValues[0],  # type: ignore[index]
+            .setValues,
             title=plattform_adresse,
             unitInCharge=unit_merged_ids_by_synonym[
                 synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
