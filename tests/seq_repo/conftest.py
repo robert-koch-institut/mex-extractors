@@ -22,12 +22,14 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_activities_to_extracted_activities,
 )
+from mex.extractors.settings import Settings
 
 
 @pytest.fixture(autouse=True)
@@ -84,301 +86,27 @@ def seq_repo_latest_sources(
 
 @pytest.fixture
 def seq_repo_activity() -> ActivityMapping:
+    settings = Settings.get()
     return ActivityMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "contact": [],
-            "responsibleUnit": [],
-            "title": [],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/theme-11",
-                                "https://mex.rki.de/item/theme-23",
-                            ]
-                        }
-                    ],
-                }
-            ],
-        },
+        extract_mapping_data(settings.seq_repo.mapping_path / "activity_mock.yaml")
     )
 
 
 @pytest.fixture
 def seq_repo_access_platform() -> AccessPlatformMapping:
+    settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["https://dummy.url.com/"],
-                        }
-                    ],
-                }
-            ],
-            "alternativeTitle": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [{"value": "SeqRepo", "language": None}],
-                        }
-                    ],
-                }
-            ],
-            "description": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "value": "This is just a sample description, don't read it.",
-                                    "language": "en",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "endpointType": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/api-type-1"]}
-                    ],
-                }
-            ],
-            "landingPage": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": None,
-                                    "title": None,
-                                    "url": "https://dummy.url.com/",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "technicalAccessibility": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/technical-accessibility-1"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "title": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"value": "Sequence Data Repository", "language": None}
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["FG99"],
-                            "setValues": None,
-                        }
-                    ],
-                }
-            ],
-        },
+        extract_mapping_data(
+            settings.seq_repo.mapping_path / "access-platform_mock.yaml"
+        )
     )
 
 
 @pytest.fixture
 def seq_repo_resource() -> ResourceMapping:
+    settings = Settings.get()
     return ResourceMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "contact": [],
-            "title": [],
-            "unitInCharge": [],
-            "accessRestriction": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/access-restriction-2"]}
-                    ],
-                }
-            ],
-            "accrualPeriodicity": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/frequency-15"]}
-                    ],
-                }
-            ],
-            "anonymizationPseudonymization": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/anonymization-pseudonymization-2"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "description": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"value": "Testbeschreibung", "language": "de"},
-                                {"value": "test description", "language": "en"},
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "keyword": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"value": "fastc", "language": "de"},
-                                {"value": "fastd", "language": "de"},
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "method": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "value": "Next-Generation Sequencing",
-                                    "language": "de",
-                                },
-                                {"value": "NGS", "language": "de"},
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "publisher": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Robert Koch-Institut"],
-                            "setValues": None,
-                        }
-                    ],
-                }
-            ],
-            "resourceCreationMethod": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-creation-method-4"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeGeneral": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-type-general-13"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeSpecific": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"value": "Sequencing Data", "language": "de"},
-                                {"value": "Sequenzdaten", "language": "de"},
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "rights": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "value": "Example content",
-                                    "language": "de",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "stateOfDataProcessing": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/data-processing-state-1"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/theme-11",
-                                "https://mex.rki.de/item/theme-23",
-                            ]
-                        }
-                    ],
-                }
-            ],
-        },
+        extract_mapping_data(settings.seq_repo.mapping_path / "resource_mock.yaml")
     )
 
 

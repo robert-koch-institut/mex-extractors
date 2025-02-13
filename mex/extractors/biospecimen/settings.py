@@ -23,7 +23,7 @@ class BiospecimenSettings(BaseModel):
         description="column name of the biospecimen metadata values",
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/biospecimen"),
+        AssetsPath("mappings/biospecimen"),
         description=(
             "Path to the directory with the biospecimen mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

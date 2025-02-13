@@ -4,7 +4,7 @@ from mex.extractors.mapping.extract import extract_mapping_data
 
 
 def test_get_mapping_model() -> None:
-    mapping_path = AssetsPath("assets/mappings/__final__/odk/access-platform.yaml")
+    mapping_path = AssetsPath("assets/mappings/odk/access-platform.yaml")
 
     raw_mapping_data = extract_mapping_data(mapping_path)
     mapping_model = AccessPlatformMapping.model_validate(raw_mapping_data)
@@ -12,7 +12,6 @@ def test_get_mapping_model() -> None:
     expected = {
         "hadPrimarySource": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
@@ -27,7 +26,6 @@ def test_get_mapping_model() -> None:
         ],
         "identifierInPrimarySource": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
@@ -43,7 +41,6 @@ def test_get_mapping_model() -> None:
         "alternativeTitle": None,
         "contact": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
@@ -63,7 +60,6 @@ def test_get_mapping_model() -> None:
         "landingPage": None,
         "technicalAccessibility": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
@@ -80,7 +76,6 @@ def test_get_mapping_model() -> None:
         ],
         "title": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
@@ -97,7 +92,6 @@ def test_get_mapping_model() -> None:
         ],
         "unitInCharge": [
             {
-                "fieldInPrimarySource": "n/a",
                 "locationInPrimarySource": None,
                 "examplesInPrimarySource": None,
                 "mappingRules": [
