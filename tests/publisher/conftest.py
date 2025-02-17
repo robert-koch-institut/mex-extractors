@@ -5,12 +5,12 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import PaginatedItemsContainer
 from mex.common.models import (
     AnyMergedModel,
     MergedConsent,
     MergedContactPoint,
     MergedPrimarySource,
+    PaginatedItemsContainer,
 )
 
 

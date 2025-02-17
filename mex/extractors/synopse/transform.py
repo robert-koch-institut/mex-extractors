@@ -111,9 +111,9 @@ def transform_synopse_studies_into_access_platforms(
             hadPrimarySource=extracted_primary_source.stableTargetId,
             identifierInPrimarySource=plattform_adresse,
             landingPage=landing_page,
-            technicalAccessibility=synopse_access_platform.technicalAccessibility[0]  # type: ignore[index]
-            .mappingRules[0]  # type: ignore[index]
-            .setValues[0],  # type: ignore[index]
+            technicalAccessibility=synopse_access_platform.technicalAccessibility[0]
+            .mappingRules[0]
+            .setValues,
             title=plattform_adresse,
             unitInCharge=unit_merged_ids_by_synonym[
                 synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]

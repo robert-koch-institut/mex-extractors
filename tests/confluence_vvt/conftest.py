@@ -18,8 +18,8 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -75,7 +75,5 @@ def confluence_vvt_activity_mapping() -> ActivityMapping:
     """Return confluence-vvt activity mapping from assets."""
     settings = Settings.get()
     return ActivityMapping.model_validate(
-        extract_mapping_data(
-            settings.confluence_vvt.template_v1_mapping_path / "activity.yaml"
-        )
+        load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
     )

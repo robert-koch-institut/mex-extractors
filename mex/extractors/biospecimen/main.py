@@ -20,10 +20,10 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="biospecimen", deps=["extracted_primary_source_mex"])
@@ -73,7 +73,7 @@ def extracted_biospecimen_resources(
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
-        extract_mapping_data(settings.biospecimen.mapping_path / "resource.yaml")
+        load_yaml(settings.biospecimen.mapping_path / "resource.yaml")
     )
     extracted_organizations = extract_biospecimen_organizations(biospecimen_resources)
 

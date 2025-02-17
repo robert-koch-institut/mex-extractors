@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - comment: restricted
+    mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - comment: daily
+    mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-15
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+        rule: Match value to using ldap extractor.
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - MF4
+        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Echtzeitdaten der Routinedokumenation
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: en
+            title: Confluence
+            url: https://link.com
+externalPartner:
+  - mappingRules:
+      - forValues:
+          - Register
+        rule: Use value to match with wikidata extractor.
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: keyword1
+      - setValues:
+          - language: de
+            value: keyword2
+meshId:
+  - comment: Emergency Service, Hospital
+    mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D004636
+publication:
+  - mappingRules:
+      - setValues:
+          - dAwHSewECLW7j6YvVXElYZ
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule:
+          Assign 'stable target id' of organization-item with official name as given
+          in forValues.
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-14
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Daten
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value:
+              "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb\
+              \ des RKI zur Nutzung zur Verfügung gestellt werden."
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+stateOfDataProcessing:
+  - comment: "Sekundärdaten"
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-2
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+      - setValues:
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: test_project
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.

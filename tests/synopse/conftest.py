@@ -17,19 +17,14 @@ from mex.common.models import (
 from mex.common.types import (
     AccessRestriction,
     Identifier,
-    Language,
     Link,
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
-    PersonalData,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
-    TechnicalAccessibility,
     TemporalEntity,
     Text,
     TextLanguage,
-    Theme,
 )
+from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
@@ -38,6 +33,7 @@ from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_variables_to_mex_variable_groups,
 )
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -603,452 +599,36 @@ def extracted_variable_groups(
 @pytest.fixture
 def synopse_access_platform() -> AccessPlatformMapping:
     """Return a mapping model with access platform default values."""
+    settings = Settings.get()
     return AccessPlatformMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "technicalAccessibility": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [TechnicalAccessibility["INTERNAL"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": "internal",
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value ",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-        },
+        load_yaml(settings.synopse.mapping_path / "access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
 def synopse_activity() -> ActivityMapping:
     """Return a mapping model with activity default values."""
+    settings = Settings.get()
     return ActivityMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "title": [],
-            "responsibleUnit": [],
-            "contact": [],
-            "activityType": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/activity-type-6"]}
-                    ],
-                    "comment": "Sonstige",
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["7202001", "7202002", "7202003", "7202004"],
-                            "setValues": ["https://mex.rki.de/item/theme-11"],
-                        },
-                        {"setValues": ["https://mex.rki.de/item/theme-36"]},
-                    ],
-                    "comment": "Studien und Surveillance",
-                }
-            ],
-        },
+        load_yaml(settings.synopse.mapping_path / "activity_mock.yaml")
     )
 
 
 @pytest.fixture
 def synopse_resource_extended_data_use() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
+    settings = Settings.get()
     return ResourceMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "title": [],
-            "accessRestriction": [
-                {
-                    "fieldInPrimarySource": "Zugangsbeschraenkung",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": ["restriktiv"],
-                    "mappingRules": [
-                        {
-                            "forValues": ["restriktiv"],
-                            "setValues": [AccessRestriction["RESTRICTED"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "hasPersonalData": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [PersonalData["PERSONAL_DATA"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "StudienID",
-                    "locationInPrimarySource": "projekt_und_studienverwaltung.csv",
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["7202001", "7202002", "7202003", "7202004"],
-                            "setValues": [
-                                Theme[
-                                    "NON_COMMUNICABLE_DISEASES_AND_HEALTH_SURVEILLANCE"
-                                ]
-                            ],
-                            "rule": None,
-                        },
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]
-                            ],
-                            "rule": "For",
-                        },
-                    ],
-                    "comment": None,
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "language": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [Language["GERMAN"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": "Deutsch",
-                }
-            ],
-            "qualityInformation": [],
-            "resourceCreationMethod": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                ResourceCreationMethod["STUDIES_SURVEYS_AND_INTERVIEWS"]
-                            ],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "resourceTypeGeneral": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [ResourceTypeGeneral["DATA_COLLECTION"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "rights": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                {
-                                    "value": "Gesundheitsdaten",
-                                    "language": "de",
-                                }
-                            ],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "spatial": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [{"value": "Deutschland", "language": "de"}],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-        },
+        load_yaml(
+            settings.synopse.mapping_path / "resource_extended-data-use_mock.yaml"
+        )
     )
 
 
 @pytest.fixture
 def synopse_resource() -> ResourceMapping:
     """Return a mapping model with resource extended data use default values."""
+    settings = Settings.get()
     return ResourceMapping.model_validate(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "title": [],
-            "accessRestriction": [
-                {
-                    "fieldInPrimarySource": "Zugangsbeschraenkung",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["restriktiv"],
-                            "setValues": [AccessRestriction["RESTRICTED"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "hasPersonalData": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [PersonalData["PERSONAL_DATA"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value to match with identifer in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "StudienID",
-                    "locationInPrimarySource": "projekt_und_studienverwaltung.csv",
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["7202001", "7202002", "7202003", "7202004"],
-                            "setValues": [
-                                Theme[
-                                    "NON_COMMUNICABLE_DISEASES_AND_HEALTH_SURVEILLANCE"
-                                ]
-                            ],
-                            "rule": None,
-                        },
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]
-                            ],
-                            "rule": 'For all other StudienID set value as mentioned below in "setValues".',
-                        },
-                    ],
-                    "comment": None,
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": ["C1"],
-                            "setValues": None,
-                            "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "language": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [Language["GERMAN"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "resourceCreationMethod": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                ResourceCreationMethod["STUDIES_SURVEYS_AND_INTERVIEWS"]
-                            ],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "resourceTypeGeneral": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [ResourceTypeGeneral["DATA_COLLECTION"]],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "rights": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [
-                                {
-                                    "value": "Gesundheitsdaten",
-                                    "language": "de",
-                                }
-                            ],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "spatial": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": None,
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": [{"value": "Deutschland", "language": "de"}],
-                            "rule": None,
-                        }
-                    ],
-                    "comment": None,
-                }
-            ],
-            "stateOfDataProcessing": [],
-        },
+        load_yaml(settings.synopse.mapping_path / "resource_mock.yaml")
     )

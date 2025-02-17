@@ -8,7 +8,7 @@ class SeqRepoSettings(BaseModel):
     """Settings submodel for the SeqRepo extractor."""
 
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/seq-repo"),
+        AssetsPath("mappings/seq-repo"),
         description=(
             "Path to the directory with the seq-repo mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

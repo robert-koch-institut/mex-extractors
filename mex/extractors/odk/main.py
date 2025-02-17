@@ -13,7 +13,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.odk.extract import (
     extract_odk_raw_data,
     get_external_partner_and_publisher_by_label,
@@ -27,6 +26,7 @@ from mex.extractors.odk.transform import (
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="odk", deps=["extracted_primary_source_mex"])
@@ -52,7 +52,7 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
     """Extract odk resource mappings."""
     settings = Settings.get()
     return [
-        extract_mapping_data(file)
+        load_yaml(file)
         for file in Path(settings.odk.mapping_path).glob("resource_*.yaml")
     ]
 

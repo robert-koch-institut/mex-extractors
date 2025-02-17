@@ -74,8 +74,8 @@ def transform_voxco_resource_mappings_to_extracted_resources(
             )
         else:
             external_partner = None
-        identifier_in_primary_source = (
-            resource.identifierInPrimarySource[0].mappingRules[0].setValues[0]  # type: ignore[index]
+        identifier_in_primary_source: str = (
+            resource.identifierInPrimarySource[0].mappingRules[0].setValues  # type: ignore[assignment]
         )
         if keyword_top_level := resource.keyword:
             keyword = keyword_top_level[0].mappingRules[0].setValues
@@ -104,9 +104,11 @@ def transform_voxco_resource_mappings_to_extracted_resources(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         if wgb := resource.wasGeneratedBy:
-            was_generated_by = international_project_by_identifier_in_primary_source[
-                wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+            was_generated_by = (
+                international_project_by_identifier_in_primary_source.get(
+                    wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                )
+            )
         else:
             was_generated_by = None
         resource_dict[identifier_in_primary_source] = ExtractedResource(

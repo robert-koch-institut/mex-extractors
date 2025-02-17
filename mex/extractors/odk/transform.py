@@ -62,10 +62,10 @@ def transform_odk_resources_to_mex_resources(
             else []
         )
         identifier_in_primary_source = (
-            resource.identifierInPrimarySource[0].mappingRules[0].setValues[0]  # type: ignore[index]
+            resource.identifierInPrimarySource[0].mappingRules[0].setValues
         )
         if resource.isPartOf:
-            is_part_of_list.append(identifier_in_primary_source)
+            is_part_of_list.append(identifier_in_primary_source)  # type: ignore[arg-type]
         method_description = None
         if resource.methodDescription:
             method_description = resource.methodDescription[0].mappingRules[0].setValues
@@ -96,7 +96,7 @@ def transform_odk_resources_to_mex_resources(
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
             if (partner := external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
         ]
-        resources[identifier_in_primary_source] = ExtractedResource(
+        resources[identifier_in_primary_source] = ExtractedResource(  # type: ignore[index]
             identifierInPrimarySource=identifier_in_primary_source,
             accessRestriction=resource.accessRestriction[0].mappingRules[0].setValues,
             alternativeTitle=alternative_title,

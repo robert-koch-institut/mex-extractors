@@ -17,10 +17,10 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
@@ -57,7 +57,7 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
     """Extract voxco resource mappings."""
     settings = Settings.get()
     return [
-        extract_mapping_data(file)
+        load_yaml(file)
         for file in Path(settings.voxco.mapping_path).glob("resource_*.yaml")
     ]
 
