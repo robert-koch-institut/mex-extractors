@@ -1,22 +1,24 @@
 from mex.common.cli import entrypoint
+from mex.common.models import AnyMergedItem, ItemsContainer
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.publisher.extract import get_merged_items
 from mex.extractors.publisher.filter import filter_merged_items
-from mex.extractors.publisher.models import PublisherContainer
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 
 
 @asset(group_name="publisher")
-def extract_and_filter_merged_items() -> PublisherContainer:
+def extract_and_filter_merged_items() -> ItemsContainer[AnyMergedItem]:
     """Get merged items from mex-backend and filter them by allow-list."""
     items = get_merged_items()
     filtered = list(filter_merged_items(items))
-    return PublisherContainer(items=filtered)
+    return ItemsContainer[AnyMergedItem](items=filtered)
 
 
 @asset(group_name="publisher")
-def publish_merged_items(extract_and_filter_merged_items: PublisherContainer) -> None:
+def publish_merged_items(
+    extract_and_filter_merged_items: ItemsContainer[AnyMergedItem],
+) -> None:
     """Write received merged items to configured sink."""
     load(extract_and_filter_merged_items.items)
 
