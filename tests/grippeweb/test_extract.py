@@ -4,6 +4,7 @@ import pytest
 
 from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson
+from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
@@ -11,7 +12,6 @@ from mex.extractors.grippeweb.extract import (
     extract_ldap_actors_for_functional_accounts,
     extract_ldap_persons,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 @pytest.mark.usefixtures("mocked_grippeweb")
@@ -41,7 +41,7 @@ def test_extract_columns_by_table_and_column_name() -> None:
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
 def test_extract_ldap_actors_for_functional_accounts(
-    grippeweb_resource_mappings: list[AnyMappingModel],
+    grippeweb_resource_mappings: list[ResourceMapping],
 ) -> None:
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         grippeweb_resource_mappings
@@ -57,8 +57,8 @@ def test_extract_ldap_actors_for_functional_accounts(
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
 def test_extract_ldap_persons(
-    grippeweb_resource_mappings: list[AnyMappingModel],
-    grippeweb_access_platform: AnyMappingModel,
+    grippeweb_resource_mappings: list[ResourceMapping],
+    grippeweb_access_platform: AccessPlatformMapping,
 ) -> None:
     ldap_persons = extract_ldap_persons(
         grippeweb_resource_mappings, grippeweb_access_platform
@@ -77,7 +77,7 @@ def test_extract_ldap_persons(
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_grippeweb")
 def test_extract_grippeweb_organizations(
-    grippeweb_resource_mappings: list[AnyMappingModel],
+    grippeweb_resource_mappings: list[ResourceMapping],
 ) -> None:
     organizations = extract_grippeweb_organizations(grippeweb_resource_mappings)
     expected = {

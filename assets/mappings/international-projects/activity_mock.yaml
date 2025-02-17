@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - fieldInPrimarySource: Funding type
+    mappingRules:
+      - forValues:
+          - Third party funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-1
+      - forValues:
+          - RKI funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-3
+      - rule:
+          If the values in primary source do not match "Third party funded" or "RKI
+          funded", then match to the following default value in "setValues".
+        setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - mappingRules:
+      - {}
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+responsibleUnit:
+  - mappingRules:
+      - {}
+theme:
+  - fieldInPrimarySource: Activity [1|2 (optional)]
+    mappingRules:
+      - forValues:
+          - Crisis management
+          - Capacity building including trainings
+          - Supporting global governance structures and processes
+          - Conducting research
+        rule:
+          If field is either empty or has another value, set the same value as mentioned
+          above in "setValues".
+        setValues:
+          - https://mex.rki.de/item/theme-37
+  - fieldInPrimarySource: Topic [1|2 (optional)]
+    mappingRules:
+      - forValues:
+          - Public health systems
+          - One Health
+          - Laboratory diagnostics
+        rule:
+          If field is either empty or has another value, set the same value as mentioned
+          above in "setValues".
+        setValues:
+          - https://mex.rki.de/item/theme-37
+      - forValues:
+          - Non-communicable diseases
+        setValues:
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - {}

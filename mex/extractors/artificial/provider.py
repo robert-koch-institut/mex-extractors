@@ -211,7 +211,7 @@ class PatternProvider(BaseFakerProvider):
         r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$": "https://www.wikidata.org/entity/P######",
         r"^https://isni\.org/isni/[X0-9]{16}$": "https://isni.org/isni/################",
         r"^https://viaf\.org/viaf/[0-9]{2,22}$": "https://viaf.org/viaf/#########",
-        r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$": "https://d-nb.info/gnd/3########",
+        r"^https://d-nb\.info/gnd/[-X0-9]{3,10}$": "https://d-nb.info/gnd/3########",
         r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$": "https://gepris.dfg.de/gepris/institution/#######",
         r"^https://orcid\.org/[-X0-9]{9,21}$": "https://orcid.org/0000-####-####-###X",
         r"^https://ror\.org/[a-z0-9]{9}$": "https://ror.org/#########",

@@ -1,12 +1,15 @@
 import pytest
 
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
@@ -18,14 +21,14 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
+from mex.extractors.settings import Settings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
 from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -81,455 +84,29 @@ def organizations_stable_target_ids_by_synonym():
 
 
 @pytest.fixture
-def sumo_resources_feat() -> AnyMappingModel:
+def sumo_resources_feat() -> ResourceMapping:
     """Return feat SumoResource."""
-    return transform_mapping_data_to_model(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "accessRestriction": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/access-restriction-2"]}
-                    ],
-                    "comment": "restricted",
-                }
-            ],
-            "accrualPeriodicity": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/frequency-17"]}
-                    ],
-                    "comment": "irregular",
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["email@email.de"],
-                            "rule": "Use value to match with ldap extractor.",
-                        }
-                    ],
-                }
-            ],
-            "contributingUnit": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["MF4"],
-                            "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                }
-            ],
-            "hasPersonalData": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["https://mex.rki.de/item/personal-data-1"],
-                        }
-                    ],
-                }
-            ],
-            "keyword": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "keyword 1"}]},
-                        {"setValues": [{"language": "de", "value": "keyword 2"}]},
-                    ],
-                }
-            ],
-            "meshId": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["http://id.nlm.nih.gov/mesh/D004636"]}
-                    ],
-                    "comment": "Emergency Service, Hospital",
-                }
-            ],
-            "resourceCreationMethod": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-creation-method-1"
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeGeneral": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-type-general-14"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeSpecific": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"language": "de", "value": "Dummy resource type"}
-                            ]
-                        },
-                        {
-                            "setValues": [
-                                {"language": "en", "value": "Dummy resource type"}
-                            ]
-                        },
-                    ],
-                }
-            ],
-            "spatial": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "Dummy spatial"}]},
-                    ],
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/theme-11"]}
-                    ],
-                }
-            ],
-            "title": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "Syndrome"}]}
-                    ],
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [{"forValues": ["FG 99"]}],
-                }
-            ],
-        },
-        ExtractedResource,
+    settings = Settings.get()
+    return ResourceMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "resource_feat_mock.yaml")
     )
 
 
 @pytest.fixture
-def sumo_resources_nokeda() -> AnyMappingModel:
+def sumo_resources_nokeda() -> ResourceMapping:
     """Return feat SumoResource."""
-    return transform_mapping_data_to_model(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "accessRestriction": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/access-restriction-2"]}
-                    ],
-                    "comment": "restricted",
-                }
-            ],
-            "accrualPeriodicity": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/frequency-15"]}
-                    ],
-                    "comment": "daily",
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["email@email.de"],
-                            "rule": "Match value to using ldap extractor.",
-                        }
-                    ],
-                }
-            ],
-            "contributingUnit": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["MF4"],
-                            "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                }
-            ],
-            "hasPersonalData": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["https://mex.rki.de/item/personal-data-1"],
-                        }
-                    ],
-                }
-            ],
-            "description": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "value": "Echtzeitdaten der Routinedokumenation",
-                                }
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "documentation": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "en",
-                                    "title": "Confluence",
-                                    "url": "https://link.com",
-                                }
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "externalPartner": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Register"],
-                            "rule": "Use value to match with wikidata extractor.",
-                        }
-                    ],
-                }
-            ],
-            "keyword": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "keyword1"}]},
-                        {"setValues": [{"language": "de", "value": "keyword2"}]},
-                    ],
-                }
-            ],
-            "meshId": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["http://id.nlm.nih.gov/mesh/D004636"]}
-                    ],
-                    "comment": "Emergency Service, Hospital",
-                }
-            ],
-            "publication": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [{"setValues": ["dAwHSewECLW7j6YvVXElYZ"]}],
-                }
-            ],
-            "publisher": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Robert Koch-Institut"],
-                            "rule": "Assign 'stable target id' of organization-item with official name as given in forValues.",
-                        }
-                    ],
-                }
-            ],
-            "resourceCreationMethod": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-creation-method-3"
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeGeneral": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/resource-type-general-14"
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "resourceTypeSpecific": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "Daten"}]}
-                    ],
-                }
-            ],
-            "rights": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "value": "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des RKI zur Nutzung zur Verfügung gestellt werden.",
-                                }
-                            ]
-                        }
-                    ],
-                }
-            ],
-            "spatial": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "Deutschland"}]}
-                    ],
-                }
-            ],
-            "stateOfDataProcessing": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/data-processing-state-2"
-                            ]
-                        }
-                    ],
-                    "comment": "Sekundärdaten",
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": ["https://mex.rki.de/item/theme-11"]},
-                        {"setValues": ["https://mex.rki.de/item/theme-36"]},
-                    ],
-                }
-            ],
-            "title": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "test_project"}]}
-                    ],
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["FG99"],
-                            "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                }
-            ],
-        },
-        ExtractedResource,
+    settings = Settings.get()
+    return ResourceMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
     )
 
 
 @pytest.fixture
-def sumo_access_platform() -> AnyMappingModel:
+def sumo_access_platform() -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
-    return transform_mapping_data_to_model(
-        {
-            "title": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"setValues": [{"language": "de", "value": "SUMO Datenbank"}]}
-                    ],
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Roland Resolved"],
-                            "rule": "Match value using ldap extractor.",
-                        }
-                    ],
-                }
-            ],
-            "hadPrimarySource": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [{"rule": "Get sumo primary source id."}],
-                }
-            ],
-            "identifierInPrimarySource": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {"rule": "Use value as it is.", "setValues": ["sumo-db"]}
-                    ],
-                }
-            ],
-            "technicalAccessibility": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/technical-accessibility-1"
-                            ],
-                            "rule": "Match value using ldap extractor.",
-                        }
-                    ],
-                }
-            ],
-            "unitInCharge": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["mf4"],
-                            "rule": "Use value to match with identifier in /raw-data/organigram/organizational-units.json.",
-                        }
-                    ],
-                }
-            ],
-        },
-        ExtractedAccessPlatform,
+    settings = Settings.get()
+    return AccessPlatformMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "access-platform_mock.yaml")
     )
 
 
@@ -548,188 +125,11 @@ def transformed_sumo_access_platform() -> ExtractedAccessPlatform:
 
 
 @pytest.fixture
-def sumo_activity() -> AnyMappingModel:
+def sumo_activity() -> ActivityMapping:
     """Return Sumo Activity."""
-    return transform_mapping_data_to_model(
-        {
-            "hadPrimarySource": [],
-            "abstract": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {"language": "de", "value": "Dummy abstract"}
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "activityType": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["https://mex.rki.de/item/activity-type-3"],
-                        }
-                    ],
-                }
-            ],
-            "contact": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["email@email.de"],
-                        }
-                    ],
-                }
-            ],
-            "documentation": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "title": "SUMO im internen RKI Confluence",
-                                    "url": "https://url.url",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "externalAssociate": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Dummy Associate"],
-                        }
-                    ],
-                }
-            ],
-            "identifierInPrimarySource": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["https://url.url"],
-                        }
-                    ],
-                }
-            ],
-            "involvedUnit": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["mf4"],
-                        }
-                    ],
-                }
-            ],
-            "publication": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Dummy publication"],
-                        },
-                        {
-                            "forValues": ["Dummy publication"],
-                        },
-                    ],
-                }
-            ],
-            "responsibleUnit": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["fg32"],
-                        }
-                    ],
-                }
-            ],
-            "shortName": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [{"language": "de", "value": "SUMO"}],
-                        }
-                    ],
-                }
-            ],
-            "start": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": ["2018-07-01"],
-                        }
-                    ],
-                }
-            ],
-            "succeeds": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "forValues": ["Dummy project"],
-                        }
-                    ],
-                }
-            ],
-            "theme": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                "https://mex.rki.de/item/theme-11",
-                                "https://mex.rki.de/item/theme-36",
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "title": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "value": "SUMO Notaufnahmesurveillance",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-            "website": [
-                {
-                    "fieldInPrimarySource": "n/a",
-                    "mappingRules": [
-                        {
-                            "setValues": [
-                                {
-                                    "language": "de",
-                                    "title": "Surveillance Monitor",
-                                    "url": "https://url.url",
-                                }
-                            ],
-                        }
-                    ],
-                }
-            ],
-        },
-        ExtractedActivity,
+    settings = Settings.get()
+    return ActivityMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "activity_mock.yaml")
     )
 
 

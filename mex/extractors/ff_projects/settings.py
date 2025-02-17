@@ -30,7 +30,7 @@ class FFProjectsSettings(BaseModel):
         description="Skip sources with these clients",
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/ff-projects"),
+        AssetsPath("mappings/ff-projects"),
         description=(
             "Path to the directory with the ff-projects mapping files"
             "values, absolute path or relative to `assets_dir`."

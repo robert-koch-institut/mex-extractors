@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableGroupMapping.json
+
+hadPrimarySource:
+  - mappingRules:
+      - rule: "Assign 'stable target id' of primary source with identifier '...' in /raw-data/primary-sources/primary-sources.json."
+identifierInPrimarySource:
+  - fieldInPrimarySource: IdType
+    locationInPrimarySource: Meta.Field
+    mappingRules:
+      - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
+    comment: "Create variable groups for each IdType. Example: IdType=101 (Adenovirus) has variable groups Clinical and Labor."
+  - fieldInPrimarySource: 'StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
+    locationInPrimarySource: Meta.Field
+    mappingRules:
+      - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
+      - forValues:
+          - "NULL"
+          - "AdditionalAttributes"
+        rule: "See /mappings/../ifsg/variable-group_entity-filter."
+containedBy:
+  - fieldInPrimarySource: 'IdType="[0-9]{0,3}"'
+    locationInPrimarySource: Meta.Field
+    mappingRules:
+      - rule: "Use 'IdType' to find the respective item as described by /mappings/../ifsg/resource_disease. Assign 'stable target id' of the resource."
+label:
+  - fieldInPrimarySource: StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
+    locationInPrimarySource: Meta.Field
+    mappingRules:
+      - forValues:
+          - Epi
+        setValues:
+          - value: Epidemiologische Informationen
+            language: de
+      - forValues:
+          - Technical
+        setValues:
+          - value: Technische Angaben
+            language: de
+      - forValues:
+          - Clinical
+        setValues:
+          - value: Klinische Informationen
+            language: de
+      - forValues:
+          - Outbreak
+        setValues:
+          - value: Informationen zum Ausbruch
+            language: de
+      - forValues:
+          - Patient
+        setValues:
+          - value: Patienteninformationen
+            language: de
+      - forValues:
+          - Event
+        setValues:
+          - value: Informationen zum Ereignis
+            language: de
+      - forValues:
+          - General
+        setValues:
+          - value: Administrative Angaben
+            language: de
+      - forValues:
+          - Labor
+        setValues:
+          - value: Laborinformationen
+            language: de
+      - forValues:
+          - Address
+        setValues:
+          - value: Adressinformationen
+            language: de

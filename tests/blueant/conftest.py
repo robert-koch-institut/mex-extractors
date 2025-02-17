@@ -1,10 +1,10 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedPerson
-from mex.common.types import ActivityType, Identifier, TemporalEntity
+from mex.common.models import ActivityMapping, ExtractedPerson
+from mex.common.types import Identifier, TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
+from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -54,58 +54,9 @@ def blueant_source_without_leader() -> BlueAntSource:
 
 
 @pytest.fixture
-def blueant_activity() -> AnyMappingModel:
+def blueant_activity() -> ActivityMapping:
     """Return activity default values."""
-    return transform_mapping_data_to_model(
-        {
-            "hadPrimarySource": [],
-            "identifierInPrimarySource": [],
-            "contact": [],
-            "responsibleUnit": [],
-            "activityType": [
-                {
-                    "fieldInPrimarySource": "typeId",
-                    "locationInPrimarySource": None,
-                    "examplesInPrimarySource": ["typeId: 18426, text: Standardprojekt"],
-                    "mappingRules": [
-                        {
-                            "forValues": None,
-                            "setValues": None,
-                            "rule": "typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.",
-                        },
-                        {
-                            "forValues": ["03 Drittmittelprojekt"],
-                            "setValues": [ActivityType["THIRD_PARTY_FUNDED_PROJECT"]],
-                            "rule": None,
-                        },
-                        {
-                            "forValues": [
-                                "01 Standardprojekt",
-                                "02 Standardprojekt agil",
-                                "04 Dienstleistung und Support",
-                                "05 Linienprojekt",
-                                "06 internes Projekt",
-                                "08 Organisationsprojekt",
-                                "09 Maßnahme",
-                            ],
-                            "setValues": [ActivityType["INTERNAL_PROJECT_ENDEAVOR"]],
-                            "rule": None,
-                        },
-                        {
-                            "forValues": ["07 Survey"],
-                            "setValues": [ActivityType["OTHER"]],
-                            "rule": None,
-                        },
-                    ],
-                    "comment": None,
-                }
-            ],
-            "title": [
-                {
-                    "fieldInPrimarySource": "",
-                    "mappingRules": [{}, {"forValues": ["text"]}],
-                }
-            ],
-        },
-        ExtractedActivity,
+    settings = Settings.get()
+    return ActivityMapping.model_validate(
+        load_yaml(settings.blueant.mapping_path / "activity_mock.yaml")
     )

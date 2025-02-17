@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - examplesInPrimarySource:
+      - "typeId: 18426, text: Standardprojekt"
+    fieldInPrimarySource: typeId
+    mappingRules:
+      - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
+      - forValues:
+          - 03 Drittmittelprojekt
+        setValues:
+          - https://mex.rki.de/item/activity-type-1
+      - forValues:
+          - 01 Standardprojekt
+          - 02 Standardprojekt agil
+          - 04 Dienstleistung und Support
+          - 05 Linienprojekt
+          - 06 internes Projekt
+          - 08 Organisationsprojekt
+          - 09 Maßnahme
+        setValues:
+          - https://mex.rki.de/item/activity-type-3
+      - forValues:
+          - 07 Survey
+        setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - mappingRules:
+      - {}
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+responsibleUnit:
+  - mappingRules:
+      - {}
+title:
+  - fieldInPrimarySource: ""
+    mappingRules:
+      - {}
+      - forValues:
+          - text

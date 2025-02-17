@@ -1,6 +1,7 @@
 from typing import Any
 
 from mex.common.models import (
+    AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedOrganization,
     ExtractedPerson,
@@ -8,6 +9,9 @@ from mex.common.models import (
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
+    ResourceMapping,
+    VariableGroupMapping,
+    VariableMapping,
 )
 from mex.common.types import (
     Email,
@@ -15,12 +19,11 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.sinks import load
 
 
 def transform_grippeweb_resource_mappings_to_extracted_resources(
-    grippeweb_resource_mappings: list[AnyMappingModel],
+    grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     extracted_primary_source_grippeweb: ExtractedPrimarySource,
@@ -60,7 +63,7 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
 
 
 def transform_grippeweb_resource_mappings_to_dict(
-    grippeweb_resource_mappings: list[AnyMappingModel],
+    grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     extracted_primary_source_grippeweb: ExtractedPrimarySource,
@@ -95,16 +98,19 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.anonymizationPseudonymization[0].mappingRules[0].setValues
         )
         contact = extracted_mex_functional_units_grippeweb[
-            resource.contact[0].mappingRules[0].forValues[0].lower()
+            resource.contact[0].mappingRules[0].forValues[0].lower()  # type: ignore[index]
         ]
         contributing_unit = unit_stable_target_ids_by_synonym[
-            resource.contributingUnit[0].mappingRules[0].forValues[0]
+            resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         contributor = [
-            mex_persons_by_name[
-                f"{name.split(' ')[1]}, {name.split(' ')[0]}"
-            ].stableTargetId
-            for name in resource.contributor[0].mappingRules[0].forValues
+            person.stableTargetId
+            for name in (resource.contributor[0].mappingRules[0].forValues or [])
+            if (
+                person := mex_persons_by_name.get(
+                    f"{name.split(' ')[1]}, {name.split(' ')[0]}"
+                )
+            )
         ]
         created = resource.created[0].mappingRules[0].setValues
         description = resource.description[0].mappingRules[0].setValues
@@ -122,10 +128,10 @@ def transform_grippeweb_resource_mappings_to_dict(
             0
         ].mappingRules[0]
         if set_values := identifier_in_primary_source_mapping_rules.setValues:
-            identifier_in_primary_source = set_values[0]
+            identifier_in_primary_source = set_values
         else:
             identifier_in_primary_source = (
-                identifier_in_primary_source_mapping_rules.forValues[0]
+                identifier_in_primary_source_mapping_rules.forValues[0]  # type: ignore[index]
             )
         keyword = resource.keyword[0].mappingRules[0].setValues
         language = resource.language[0].mappingRules[0].setValues
@@ -135,7 +141,7 @@ def transform_grippeweb_resource_mappings_to_dict(
         min_typical_age = resource.minTypicalAge[0].mappingRules[0].setValues
         population_coverage = resource.populationCoverage[0].mappingRules[0].setValues
         publisher = grippeweb_organization_ids_by_query_string.get(
-            resource.publisher[0].mappingRules[0].forValues[0]
+            resource.publisher[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
 
         resource_creation_method = (
@@ -157,14 +163,14 @@ def transform_grippeweb_resource_mappings_to_dict(
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
         unit_in_charge = unit_stable_target_ids_by_synonym[
-            resource.unitInCharge[0].mappingRules[0].forValues[0]
+            resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         # wasGeneratedField was removed for one resource mapping, but kept for the other
         # only look this field up if it exists in mapping
         was_generated_by = None
         if wgb := resource.wasGeneratedBy:
             was_generated_by = unit_stable_target_ids_by_synonym[
-                wgb[0].mappingRules[0].forValues[0]
+                wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             hasLegalBasis=has_legal_basis,
@@ -208,7 +214,7 @@ def transform_grippeweb_resource_mappings_to_dict(
 
 
 def get_or_create_external_partner(
-    resource: AnyMappingModel,
+    resource: ResourceMapping,
     grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     extracted_primary_source_grippeweb: ExtractedPrimarySource,
 ) -> list[MergedOrganizationIdentifier] | None:
@@ -224,7 +230,7 @@ def get_or_create_external_partner(
         dict extracted grippeweb resource by identifier in primary source
     """
     if external_partner_dict := resource.externalPartner:
-        external_partner_string = external_partner_dict[0].mappingRules[0].forValues[0]
+        external_partner_string = external_partner_dict[0].mappingRules[0].forValues[0]  # type: ignore[index]
         if external_partner_string in resource.model_fields:
             external_partner_identifier = [
                 grippeweb_organization_ids_by_query_string[external_partner_string]
@@ -242,7 +248,7 @@ def get_or_create_external_partner(
 
 
 def transform_grippeweb_access_platform_to_extracted_access_platform(
-    grippeweb_access_platform: AnyMappingModel,
+    grippeweb_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source: ExtractedPrimarySource,
     extracted_mex_persons_grippeweb: list[ExtractedPerson],
@@ -259,7 +265,7 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
         ExtractedAccessPlatform grippeweb
     """
     mex_person_stable_target_id_by_email = {
-        person.email[0]: person.stableTargetId
+        str(person.email[0]): person.stableTargetId
         for person in extracted_mex_persons_grippeweb
     }
     identifier_in_primary_source = (
@@ -268,7 +274,9 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
 
     contact = [
         mex_person_stable_target_id_by_email[email]
-        for email in grippeweb_access_platform.contact[0].mappingRules[0].forValues
+        for email in (
+            grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
+        )
     ]
 
     technical_accessibility = (
@@ -277,7 +285,7 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     title = grippeweb_access_platform.title[0].mappingRules[0].setValues
 
     unit_in_charge = unit_stable_target_ids_by_synonym[
-        grippeweb_access_platform.unitInCharge[0].mappingRules[0].forValues[0]
+        grippeweb_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
     ]
 
     return ExtractedAccessPlatform(
@@ -291,7 +299,7 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
 
 
 def transform_grippeweb_variable_group_to_extracted_variable_groups(
-    grippeweb_variable_group: AnyMappingModel,
+    grippeweb_variable_group: VariableGroupMapping,
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_resource_dict: dict[str, ExtractedResource],
     extracted_primary_source_grippeweb: ExtractedPrimarySource,
@@ -308,7 +316,7 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
         list of extracted variable groups
     """
     label_by_table_name = {
-        mapping_rule.forValues[0]: mapping_rule.setValues
+        mapping_rule.forValues[0]: mapping_rule.setValues  # type: ignore[index]
         for mapping_rule in grippeweb_variable_group.label[0].mappingRules
     }
     return [
@@ -323,7 +331,7 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
 
 
 def transform_grippeweb_variable_to_extracted_variables(
-    grippeweb_variable: AnyMappingModel,
+    grippeweb_variable: VariableMapping,
     grippeweb_extracted_variable_group: list[ExtractedVariableGroup],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_resource_dict: dict[str, ExtractedResource],

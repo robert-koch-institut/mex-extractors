@@ -13,7 +13,7 @@ dependencies = [
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
     "faker>=35,<36",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.48.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.51.0",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",

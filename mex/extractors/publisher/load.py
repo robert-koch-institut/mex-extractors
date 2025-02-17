@@ -19,4 +19,4 @@ def write_merged_items(items: Iterable[AnyMergedModel]) -> None:
             file.write(json.dumps(item, cls=MExEncoder) + "\n")
             logging_counter += 1
 
-    logger.info("%s merged items where written.", logging_counter)
+    logger.info("%s merged items were written.", logging_counter)

@@ -1,7 +1,7 @@
 from collections.abc import Hashable
 from typing import cast
 
-from mex.common.models import ExtractedAccessPlatform
+from mex.common.models import ActivityMapping, ExtractedAccessPlatform
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
@@ -12,14 +12,13 @@ from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 
 
 def test_transform_blueant_sources_to_extracted_activities(
     blueant_source: BlueAntSource,
     blueant_source_without_leader: BlueAntSource,
     extracted_primary_sources: dict[str, ExtractedAccessPlatform],
-    blueant_activity: AnyMappingModel,
+    blueant_activity: ActivityMapping,
 ) -> None:
     stable_target_ids_by_employee_id = {
         "person-567": [
