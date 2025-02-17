@@ -4,7 +4,7 @@ from mex.extractors.publisher.extract import get_merged_items
 from mex.extractors.publisher.filter import filter_merged_items
 from mex.extractors.publisher.models import PublisherContainer
 from mex.extractors.settings import Settings
-from mex.extractors.sinks.base import load
+from mex.extractors.sinks import load
 
 
 @asset(group_name="publisher")
@@ -17,8 +17,8 @@ def extract_and_filter_merged_items() -> PublisherContainer:
 
 @asset(group_name="publisher")
 def publish_merged_items(extract_and_filter_merged_items: PublisherContainer) -> None:
-    """Write received merged items to ndjson file."""
-    load(extract_and_filter_merged_items.items)  # type: ignore[arg-type]
+    """Write received merged items to configured sink."""
+    load(extract_and_filter_merged_items.items)
 
 
 @entrypoint(Settings)

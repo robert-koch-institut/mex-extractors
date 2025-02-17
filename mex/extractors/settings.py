@@ -76,15 +76,15 @@ class Settings(BaseSettings):
         description="The complete URL to use for the constructed client.",
     )
     s3_access_key_id: SecretStr = Field(
-        SecretStr("s3_access_key_ID"),
+        SecretStr("s3_access_key_id"),
         description="The access key to use when creating the client.",
     )
     s3_secret_access_key: SecretStr = Field(
-        SecretStr("s3_access_key"),
+        SecretStr("s3_secret_access_key"),
         description="The secret key to use when creating the client.",
     )
     s3_bucket_key: str = Field(
-        "bucket",
+        "s3_bucket",
         description="The S3 bucket where to store objects.",
     )
     artificial: ArtificialSettings = ArtificialSettings()
