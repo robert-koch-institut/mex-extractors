@@ -12,18 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update mex-common to version 0.51.0
-- simplify load function to wrap the Sink.load methods
-- wrap up: confluence-vvt
-- use proper mapping models
+- use new static mapping models
 - move inline test mappings to `/assets` with suffix `_mock`
 
 ### Deprecated
 
 ### Removed
 
-- remove BackendIdentityProvider in favor of mex-common implementation
-- remove ExtractorIdentityProvider in favor of mex-common enum
-- remove identity_provider setting in favor of mex-common version
 - remove `mex.extractors.mapping` model in favor of `load_yaml` and `model_validate`
 
 ### Fixed
@@ -33,6 +28,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix test mapping indentations
 
 ### Security
+
+## [0.26.0] - 2025-02-13
+
+### Changes
+
+- update mex-common to version 0.48.0
+- simplify load function to wrap the Sink.load methods
+- wrap up: confluence-vvt
+
+### Removed
+
+- remove BackendIdentityProvider in favor of mex-common implementation
+- remove ExtractorIdentityProvider in favor of mex-common enum
+- remove identity_provider setting in favor of mex-common version
 
 ## [0.25.0] - 2025-01-23
 
