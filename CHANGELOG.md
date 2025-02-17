@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to version 0.51.1
 - let `load` function accept rule-sets and merged-items, just like sinks
 - let publisher use `load` function with configurable sinks
 
@@ -31,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to version 0.51.0
 - use new static mapping models
 - move inline test mappings to `/assets` with suffix `_mock`
 
