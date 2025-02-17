@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableGroupMapping.json
+
+containedBy:
+  - mappingRules:
+      - rule: Assign 'stable target id' of item described by mappings/../grippeweb/resource_grippeweb
+hadPrimarySource:
+  - mappingRules:
+      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+identifierInPrimarySource:
+  - fieldInPrimarySource: label of the SQL-table
+    locationInPrimarySource: Tabellen
+    mappingRules:
+      - forValues:
+          - "vActualQuestion"
+        setValues: "vActualQuestion"
+      - forValues:
+          - "vMasterData"
+        setValues: "vMasterData"
+      - forValues:
+          - "vWeeklyResponses"
+        setValues: "vWeeklyResponses"
+label:
+  - fieldInPrimarySource: label of the SQL-table
+    locationInPrimarySource: Tabellen
+    mappingRules:
+      - forValues:
+          - "vActualQuestion"
+        setValues:
+          - language: en
+            value: "Additional Questions"
+      - forValues:
+          - "vMasterDataMEx"
+        setValues:
+          - langauge: en
+            value: "Master Data"
+      - forValues:
+          - "vWeeklyResponsesMEx"
+        setValues:
+          - language: en
+            value: "Weekly Responses"

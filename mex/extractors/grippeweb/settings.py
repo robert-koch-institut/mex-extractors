@@ -8,7 +8,7 @@ class GrippewebSettings(BaseModel):
     """Settings definition for the infection protection act data."""
 
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/grippeweb"),
+        AssetsPath("mappings/grippeweb"),
         description=(
             "Path to the directory with the Grippeweb mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

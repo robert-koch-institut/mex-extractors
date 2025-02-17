@@ -3,13 +3,13 @@ from collections.abc import Generator, Hashable, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import (
+    ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPrimarySource,
 )
 from mex.common.types import Identifier, MergedOrganizationIdentifier
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.sinks import load
 
 
@@ -19,7 +19,7 @@ def transform_blueant_sources_to_extracted_activities(
     primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_employee_id: dict[Hashable, list[Identifier]],
     unit_stable_target_ids_by_synonym: dict[str, Identifier],
-    activity: AnyMappingModel,
+    activity: ActivityMapping,
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
 ) -> Generator[ExtractedActivity, None, None]:
     """Transform Blue Ant sources to ExtractedActivities.
@@ -79,7 +79,7 @@ def transform_blueant_sources_to_extracted_activities(
         source_name = re.sub(
             r"[\d*_]+|[FG\d* ]+[- ]+", "", source.name
         )  # strip according to mapping
-        if source_name not in activity.title[0].mappingRules[1].forValues:
+        if source_name not in (activity.title[0].mappingRules[1].forValues or []):
             title = [source_name]
         else:
             title = []

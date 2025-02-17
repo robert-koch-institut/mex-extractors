@@ -3,22 +3,18 @@ from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-)
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-    MergedPersonIdentifier,
-)
-from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
+from mex.common.primary_source.transform import get_primary_sources_by_name
+from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator,
@@ -33,6 +29,7 @@ from mex.extractors.seq_repo.transform import (
 )
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="seq_repo", deps=["extracted_primary_source_mex"])
@@ -105,9 +102,8 @@ def extracted_activity(
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from Seq-Repo."""
     settings = Settings.get()
-    activity = transform_mapping_data_to_model(
-        extract_mapping_data(settings.seq_repo.mapping_path / "activity.yaml"),
-        ExtractedActivity,
+    activity = ActivityMapping.model_validate(
+        load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
     )
 
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
@@ -129,9 +125,8 @@ def seq_repo_extracted_access_platform(
 ) -> ExtractedAccessPlatform:
     """Extract access platform from Seq-Repo."""
     settings = Settings.get()
-    access_platform = transform_mapping_data_to_model(
-        extract_mapping_data(settings.seq_repo.mapping_path / "access-platform.yaml"),
-        ExtractedAccessPlatform,
+    access_platform = AccessPlatformMapping.model_validate(
+        load_yaml(settings.seq_repo.mapping_path / "access-platform.yaml")
     )
     mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
@@ -160,9 +155,8 @@ def seq_repo_resource(
 ) -> list[ExtractedResource]:
     """Extract resource from Seq-Repo."""
     settings = Settings.get()
-    resource = transform_mapping_data_to_model(
-        extract_mapping_data(settings.seq_repo.mapping_path / "resource.yaml"),
-        ExtractedResource,
+    resource = ResourceMapping.model_validate(
+        load_yaml(settings.seq_repo.mapping_path / "resource.yaml")
     )
 
     mex_resources = transform_seq_repo_resource_to_extracted_resource(

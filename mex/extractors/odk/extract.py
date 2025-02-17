@@ -2,8 +2,8 @@ from pathlib import Path
 
 from pandas import DataFrame, ExcelFile
 
+from mex.common.models import ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.odk.model import ODKData
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
@@ -70,7 +70,7 @@ def get_column_dict_by_pattern(
 
 
 def get_external_partner_and_publisher_by_label(
-    odk_resource_mappings: list[AnyMappingModel],
+    odk_resource_mappings: list[ResourceMapping],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract partner organization from wikidata.
 
@@ -87,7 +87,7 @@ def get_external_partner_and_publisher_by_label(
             resource.publisher[0].mappingRules[0].forValues,
             resource.externalPartner[0].mappingRules[0].forValues,
         ]
-        for value in for_values
+        for value in for_values  # type: ignore[union-attr]
     }
     external_partner_and_publisher_by_label: dict[
         str, MergedOrganizationIdentifier
