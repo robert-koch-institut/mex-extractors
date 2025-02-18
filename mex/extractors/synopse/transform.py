@@ -6,6 +6,8 @@ from typing import cast
 
 from mex.common.logging import watch
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
@@ -13,6 +15,7 @@ from mex.common.models import (
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
+    ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
@@ -26,7 +29,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.sinks import load
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -38,7 +40,7 @@ def transform_synopse_studies_into_access_platforms(
     synopse_studies: Iterable[SynopseStudy],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source: ExtractedPrimarySource,
-    synopse_access_platform: AnyMappingModel,
+    synopse_access_platform: AccessPlatformMapping,
 ) -> Generator[ExtractedAccessPlatform, None, None]:
     """Transform synopse studies into access platforms.
 
@@ -60,10 +62,10 @@ def transform_synopse_studies_into_access_platforms(
     ):
         if (
             plattform_adresse
-            == synopse_access_platform.landingPage[0].mappingRules[1].forValues[0]
+            == synopse_access_platform.landingPage[0].mappingRules[1].forValues[0]  # type: ignore[index]
         ):
             landing_page = (
-                synopse_access_platform.landingPage[0].mappingRules[1].setValues[0]
+                synopse_access_platform.landingPage[0].mappingRules[1].setValues[0]  # type: ignore[index]
             )
         else:
             try:
@@ -72,30 +74,30 @@ def transform_synopse_studies_into_access_platforms(
                 landing_page = Link(url=plattform_adresse)
         if "S:" in plattform_adresse:
             contact = unit_merged_ids_by_synonym[
-                synopse_access_platform.contact[0].mappingRules[0].forValues[0]
+                synopse_access_platform.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
             technical_accessibility = (
                 synopse_access_platform.technicalAccessibility[0]
                 .mappingRules[0]
                 .setValues
             )
-            title = plattform_adresse
+            title = Text(value=plattform_adresse)
             unit_in_charge = unit_merged_ids_by_synonym[
-                synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]
+                synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
 
         elif "https://" in plattform_adresse:
             contact = unit_merged_ids_by_synonym[
-                synopse_access_platform.contact[0].mappingRules[1].forValues[0]
+                synopse_access_platform.contact[0].mappingRules[1].forValues[0]  # type: ignore[index]
             ]
             technical_accessibility = (
                 synopse_access_platform.technicalAccessibility[0]
                 .mappingRules[1]
                 .setValues
             )
-            title = synopse_access_platform.title[0].mappingRules[1].setValues[0]
+            title = synopse_access_platform.title[0].mappingRules[1].setValues[0]  # type: ignore[index]
             unit_in_charge = unit_merged_ids_by_synonym[
-                synopse_access_platform.unitInCharge[0].mappingRules[1].forValues[0]
+                synopse_access_platform.unitInCharge[0].mappingRules[1].forValues[0]  # type: ignore[index]
             ]
         yield ExtractedAccessPlatform(
             contact=contact,
@@ -266,7 +268,7 @@ def transform_synopse_data_to_mex_resources(
     extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, Identifier],
     extracted_organization: ExtractedOrganization,
-    synopse_resource: AnyMappingModel,
+    synopse_resource: ResourceMapping,
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> Generator[ExtractedResource, None, None]:
     """Transform Synopse Studies to MEx resources.
@@ -292,7 +294,7 @@ def transform_synopse_data_to_mex_resources(
         a.identifierInPrimarySource: a for a in extracted_activities
     }
     contact = contact_merged_id_by_query_string[
-        synopse_resource.contact[0].mappingRules[0].forValues[0]
+        synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
     ]
     access_platform_by_identifier_in_primary_source = {
         p.identifierInPrimarySource: p for p in extracted_access_platforms
@@ -307,7 +309,7 @@ def transform_synopse_data_to_mex_resources(
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
     title_by_study_id: dict[str, Text] = {}
     rights_by_ds_typ_id = {
-        rule.forValues[0]: rule.setValues
+        rule.forValues[0]: rule.setValues  # type: ignore[index]
         for rule in synopse_resource.rights[0].mappingRules
     }
     for study in synopse_studies_gens[0]:
@@ -358,11 +360,12 @@ def transform_synopse_data_to_mex_resources(
         rights = rights_by_ds_typ_id[str(study.ds_typ_id)]
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues
-            if study.studien_id in synopse_resource.theme[0].mappingRules[0].forValues
+            if study.studien_id
+            in (synopse_resource.theme[0].mappingRules[0].forValues or ())
             else synopse_resource.theme[0].mappingRules[1].setValues
         )
         unit_in_charge = unit_merged_ids_by_synonym[
-            synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]
+            synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         yield ExtractedResource(
             accessPlatform=access_platform,
@@ -455,7 +458,7 @@ def transform_synopse_projects_to_mex_activities(
     extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
     unit_merged_ids_by_synonym: dict[str, Identifier],
-    synopse_activity: AnyMappingModel,
+    synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> Generator[ExtractedActivity, None, None]:
@@ -523,7 +526,7 @@ def transform_synopse_project_to_activity(
     extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
     unit_merged_ids_by_synonym: dict[str, Identifier],
-    synopse_activity: AnyMappingModel,
+    synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
@@ -543,7 +546,7 @@ def transform_synopse_project_to_activity(
         extracted activity
     """
     contact = contact_merged_id_by_query_string[
-        synopse_activity.contact[0].mappingRules[0].forValues[0]
+        synopse_activity.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
     ]
     documentation = None
     if projektdokumentation := synopse_project.projektdokumentation:
@@ -619,7 +622,7 @@ def transform_synopse_project_to_activity(
     theme = (
         synopse_activity.theme[0].mappingRules[0].setValues
         if synopse_project.studien_id
-        in synopse_activity.theme[0].mappingRules[0].forValues
+        in (synopse_activity.theme[0].mappingRules[0].forValues or ())
         else synopse_activity.theme[0].mappingRules[1].setValues
     )
     return ExtractedActivity(

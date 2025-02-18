@@ -1,0 +1,294 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - comment: restriktiv
+    mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - comment: "unregelmäßig"
+    mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-17
+alternativeTitle:
+  - examplesInPrimarySource:
+      - BAN
+      - BOB
+    fieldInPrimarySource: Code
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - rule: Use value as it is. Do not assign a language.
+contact:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+documentation:
+  - fieldInPrimarySource: InBundesland
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            title: Rheinland-Pfalz
+            url: http://landesrecht.rlp.de/jportal/portal/page/bsrlpprod.psml?doc.id=jlr-IfSGMeldpflVRPpP1%3Ajuris-lr00&showdoccase=1&doc.hl=1&documentnumber=1
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            title: Bayern
+            url: https://www.gesetze-bayern.de/Content/Document/BayMeldePflV/true
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            title: Saarland
+            url: https://www.saarland.de/msgff/DE/portale/gesundheitundpraevention/leistungenabisz/gesundheitsschutz/infektionsschutzgesetz/infektionsschutzgesetz.html
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            title: Berlin
+            url: https://gesetze.berlin.de/bsbe/document/jlr-IfSGMeldpflVBEpP1
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            title: Brandenburg
+            url: https://bravors.brandenburg.de/verordnungen/infkrankmv_2016
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            title: Mecklenburg-Vorpommern
+            url: https://www.landesrecht-mv.de/bsmv/document/jlr-InfSchAGMVrahmen
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            title: Sachsen
+            url: https://www.revosax.sachsen.de/vorschrift/1307-IfSGMeldeVO
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            title: Sachsen-Anhalt
+            url: https://www.landesrecht.sachsen-anhalt.de/bsst/document/jlr-IfSGMeldpflVST2005rahmen
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            title: "Thüringen"
+            url: https://landesrecht.thueringen.de/bsth/document/jlr-IfKrMeldAnpVTHrahmen
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz (IfSG)
+          - language: en
+            value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+identifierInPrimarySource:
+  - examplesInPrimarySource:
+      - "102"
+    fieldInPrimarySource: IdType
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - rule: Use value as it is.
+instrumentToolOrApparatus:
+  - fieldInPrimarySource: ReferenceDef[A|B|C|D|E]="1"
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - A=1
+        setValues:
+          - language: de
+            value: Falldefinition A
+      - forValues:
+          - B=1
+        setValues:
+          - language: de
+            value: Falldefinition B
+      - forValues:
+          - C=1
+        setValues:
+          - language: de
+            value: Falldefinition C
+      - forValues:
+          - D=1
+        setValues:
+          - language: de
+            value: Falldefinition D
+      - forValues:
+          - E=1
+        setValues:
+          - language: de
+            value: Falldefinition E
+isPartOf:
+  - fieldInPrimarySource: IFSGBundesland
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - "0"
+      - rule: Assign 'stable target id' of the item described by /mappings/../ifsg/resource_parent
+  - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - "07"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='07'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "09"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='09'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "10"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='10'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "11"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='11'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "12"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='12'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "13"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='13'
+          as  described by mapping/../ifsg/resource_state
+      - forValues:
+          - "14"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='14'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "15"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='15'
+          as described by mapping/../ifsg/resource_state
+      - forValues:
+          - "16"
+        rule:
+          Assign 'stable target id' of the item with identifierInPrimarySource='16'
+          as described by mapping/../ifsg/resource_state
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz
+      - setValues:
+          - language: de
+            value: Infektionsschutz
+language:
+  - comment: Deutsch
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+publication:
+  - mappingRules:
+      - setValues:
+          - dWW7NdYS7SZVCqzjMI5SSg
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - comment: Public Health Fachdaten
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Meldedaten
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Gesundheitsdaten.
+spatial:
+  - fieldInPrimarySource: IFSGBundesland="0"
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+  - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            value: Rheinland-Pfalz
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            value: Bayern
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            value: Saarland
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            value: Berlin
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            value: Brandenburg
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            value: Mecklenburg-Vorpommern
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            value: Sachsen
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            value: Sachsen-Anhalt
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            value: "Thüringen"
+theme:
+  - comment: Meldewesen, Infektionskrankheiten
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - fieldInPrimarySource: DiseaseName
+    locationInPrimarySource: Meta.Disease
+    mappingRules:
+      - rule:
+          "Construct the title after the following schema: Meldedaten nach Infektionsschutzgesetz
+          (IfSG) zu [DiseaseName]. Assign 'de' as default for the language property
+          of the text object."
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule: Use value to match with identifier from /raw-data/organigram/organizational-units.json.

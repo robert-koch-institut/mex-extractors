@@ -15,7 +15,7 @@ class SumoSettings(BaseModel):
         ),
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/sumo"),
+        AssetsPath("mappings/sumo"),
         description=(
             "Path to the directory with the sumo mapping files containing the default "
             "values, absolute path or relative to `assets_dir`."

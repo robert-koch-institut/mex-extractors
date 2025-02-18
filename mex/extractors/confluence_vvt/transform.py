@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from pydantic import ValidationError
 
 from mex.common.logging import logger
-from mex.common.models import ExtractedActivity, ExtractedPrimarySource
+from mex.common.models import ActivityMapping, ExtractedActivity, ExtractedPrimarySource
 from mex.common.types import (
     ActivityType,
     Link,
@@ -19,14 +19,13 @@ from mex.extractors.confluence_vvt.extract import (
     get_responsible_unit_from_page,
 )
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.settings import Settings
 
 
 def transform_confluence_vvt_page_to_extracted_activity(
     page: ConfluenceVvtPage,
     extracted_primary_source: ExtractedPrimarySource,
-    confluence_vvt_activity_mapping: AnyMappingModel,
+    confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedActivity | None:
@@ -47,14 +46,14 @@ def transform_confluence_vvt_page_to_extracted_activity(
     if not identifier_in_primary_source:
         return None
 
-    abstract = "\n".join(
-        page.tables[0]
-        .get_value_row_by_heading(
-            confluence_vvt_activity_mapping.abstract[0].fieldInPrimarySource
+    if abstract_field := confluence_vvt_activity_mapping.abstract[
+        0
+    ].fieldInPrimarySource:
+        abstract: str | None = "\n".join(
+            page.tables[0].get_value_row_by_heading(abstract_field).cells[0].get_texts()
         )
-        .cells[0]
-        .get_texts()
-    )
+    else:
+        abstract = None
 
     contact_merged_ids = [
         merged_id
@@ -64,7 +63,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
     documentation = [
         Link(
             url=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
-            title=confluence_vvt_activity_mapping.documentation[0]
+            title=confluence_vvt_activity_mapping.documentation[0]  # type: ignore[index]
             .mappingRules[0]
             .setValues[0]
             .title,
@@ -126,7 +125,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
 def transform_confluence_vvt_activities_to_extracted_activities(
     pages: Iterable[ConfluenceVvtPage],
     extracted_primary_source: ExtractedPrimarySource,
-    confluence_vvt_activity_mapping: AnyMappingModel,
+    confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[ExtractedActivity]:

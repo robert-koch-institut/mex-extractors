@@ -15,7 +15,7 @@ class InternationalProjectsSettings(BaseModel):
         ),
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/international-projects"),
+        AssetsPath("mappings/international-projects"),
         description=(
             "Path to the directory with the international-projects mapping files "
             "containing the default values, absolute path or relative to `assets_dir`."

@@ -2,6 +2,7 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -9,7 +10,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.odk.model import ODKData
 from mex.extractors.odk.transform import (
     transform_odk_data_to_extracted_variables,
@@ -18,7 +18,7 @@ from mex.extractors.odk.transform import (
 
 
 def test_transform_odk_resources_to_mex_resources(
-    odk_resource_mappings: list[AnyMappingModel],
+    odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],

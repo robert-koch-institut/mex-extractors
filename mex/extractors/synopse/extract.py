@@ -6,8 +6,8 @@ from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
+from mex.common.models import ActivityMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -95,8 +95,8 @@ def extract_synopse_project_contributors(
 
 
 def extract_synopse_contact(
-    synopse_resource: AnyMappingModel,
-    synopse_activity: AnyMappingModel,
+    synopse_resource: ResourceMapping,
+    synopse_activity: ActivityMapping,
 ) -> list[LDAPActor]:
     """Extract LDAP persons for Synopse project contact.
 
@@ -108,12 +108,14 @@ def extract_synopse_contact(
         contact LDAP persons
     """
     ldap = LDAPConnector.get()
+    contact_list: list[str] = []
+    if synopse_resource.contact[0].mappingRules[0].forValues:
+        contact_list.extend(synopse_resource.contact[0].mappingRules[0].forValues)
+    if synopse_activity.contact[0].mappingRules[0].forValues:
+        contact_list.extend(synopse_activity.contact[0].mappingRules[0].forValues)
     return [
         account
-        for mail in [
-            *synopse_resource.contact[0].mappingRules[0].forValues,
-            *synopse_activity.contact[0].mappingRules[0].forValues,
-        ]
+        for mail in contact_list
         for account in ldap.get_functional_accounts(mail=mail)
     ]
 

@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.extractors.mapping.types import AnyMappingModel
+from mex.common.models import ActivityMapping, ResourceMapping
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
@@ -105,8 +105,8 @@ def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_contact(
-    synopse_resource: AnyMappingModel,
-    synopse_activity: AnyMappingModel,
+    synopse_resource: ResourceMapping,
+    synopse_activity: ActivityMapping,
 ) -> None:
     actor = extract_synopse_contact(synopse_resource, synopse_activity)
     expected = {

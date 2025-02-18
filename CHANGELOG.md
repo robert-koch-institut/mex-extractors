@@ -19,6 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.27.0] - 2025-02-17
+
+### Changes
+
+- update mex-common to version 0.51.0
+- use new static mapping models
+- move inline test mappings to `/assets` with suffix `_mock`
+
+### Removed
+
+- remove `mex.extractors.mapping` model in favor of `load_yaml` and `model_validate`
+
+### Fixed
+
+- fix setValues listyness of test mappings
+- fix test mapping schema path
+- fix test mapping indentations
+
 ## [0.26.0] - 2025-02-13
 
 ### Changes

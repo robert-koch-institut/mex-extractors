@@ -5,17 +5,17 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
+    ResourceMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.model import VoxcoVariable
 
 
 def transform_voxco_resource_mappings_to_extracted_resources(
-    voxco_resource_mappings: list[AnyMappingModel],
+    voxco_resource_mappings: list[ResourceMapping],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -59,22 +59,23 @@ def transform_voxco_resource_mappings_to_extracted_resources(
             alternative_title = at[0].mappingRules[0].setValues
         else:
             alternative_title = None
-        contact = mex_persons_stable_target_id_by_email[
-            resource.contact[0].mappingRules[0].forValues[1]
-        ]
+        if contact_values := resource.contact[0].mappingRules[0].forValues:
+            contact = mex_persons_stable_target_id_by_email[contact_values[1]]  # type: ignore[index]
+        else:
+            contact = None
         if description_top_level := resource.description:
             description = description_top_level[0].mappingRules[0].setValues
         else:
             description = None
 
-        if ep := resource.externalPartner:
+        if (ep := resource.externalPartner) and ep[0].mappingRules[0].forValues:
             external_partner = organization_stable_target_id_by_query_voxco.get(
                 ep[0].mappingRules[0].forValues[0]
             )
         else:
             external_partner = None
-        identifier_in_primary_source = (
-            resource.identifierInPrimarySource[0].mappingRules[0].setValues[0]
+        identifier_in_primary_source: str = (
+            resource.identifierInPrimarySource[0].mappingRules[0].setValues  # type: ignore[assignment]
         )
         if keyword_top_level := resource.keyword:
             keyword = keyword_top_level[0].mappingRules[0].setValues
@@ -100,12 +101,14 @@ def transform_voxco_resource_mappings_to_extracted_resources(
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
         unit_in_charge = unit_stable_target_ids_by_synonym[
-            resource.unitInCharge[0].mappingRules[0].forValues[0]
+            resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         if wgb := resource.wasGeneratedBy:
-            was_generated_by = international_project_by_identifier_in_primary_source[
-                wgb[0].mappingRules[0].forValues[0]
-            ]
+            was_generated_by = (
+                international_project_by_identifier_in_primary_source.get(
+                    wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                )
+            )
         else:
             was_generated_by = None
         resource_dict[identifier_in_primary_source] = ExtractedResource(

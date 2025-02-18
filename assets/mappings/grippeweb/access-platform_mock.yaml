@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - test_person@email.de
+        rule: Match value using ldap extractor
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+          Assign 'stable target id' of primary source with identifier 'grippeweb'
+          in /raw-data/primary-sources/primary-sources.json.
+identifierInPrimarySource:
+  - mappingRules:
+      - rule: use value as indicated.
+        setValues: primary-source
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+title:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: primary-source
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: Match value using organigram extractor.

@@ -1,6 +1,6 @@
 [project]
 name = "mex-extractors"
-version = "0.26.0"
+version = "0.27.0"
 description = "ETL pipelines for the RKI Metadata Exchange."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -12,8 +12,8 @@ dependencies = [
     "dagster-postgres>=0.25,<1",
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
-    "faker>=35,<36",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.48.0",
+    "faker>=36,<37",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.51.0",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",

@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - fieldInPrimarySource: Zugangsbeschraenkung
+    mappingRules:
+      - forValues:
+          - restriktiv
+        setValues: https://mex.rki.de/item/access-restriction-2
+contact:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-2
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+rights:
+  - mappingRules:
+      - forValues:
+          - "17"
+        setValues:
+          - language: de
+            value:
+              Lorem
+      - forValues:
+          - "74"
+        setValues:
+          - language: de
+            value:
+              Ipsum
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+stateOfDataProcessing:
+  - mappingRules:
+      - {}
+theme:
+  - fieldInPrimarySource: StudienID
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    mappingRules:
+      - forValues:
+          - "7202001"
+          - "7202002"
+          - "7202003"
+          - "7202004"
+        setValues:
+          - https://mex.rki.de/item/theme-36
+      - rule: For all other StudienID set value as mentioned below in "setValues".
+        setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - {}
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.

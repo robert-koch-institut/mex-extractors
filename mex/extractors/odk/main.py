@@ -6,14 +6,13 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_models
 from mex.extractors.odk.extract import (
     extract_odk_raw_data,
     get_external_partner_and_publisher_by_label,
@@ -27,6 +26,7 @@ from mex.extractors.odk.transform import (
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="odk", deps=["extracted_primary_source_mex"])
@@ -52,7 +52,7 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
     """Extract odk resource mappings."""
     settings = Settings.get()
     return [
-        extract_mapping_data(file)
+        load_yaml(file)
         for file in Path(settings.odk.mapping_path).glob("resource_*.yaml")
     ]
 
@@ -63,7 +63,7 @@ def external_partner_and_publisher_by_label(
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
     return get_external_partner_and_publisher_by_label(
-        transform_mapping_data_to_models(odk_resource_mappings, ExtractedResource)
+        [ResourceMapping.model_validate(r) for r in odk_resource_mappings]
     )
 
 
@@ -77,7 +77,7 @@ def extracted_resources_odk(
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_odk, is_part_of = transform_odk_resources_to_mex_resources(
-        transform_mapping_data_to_models(odk_resource_mappings, ExtractedResource),
+        [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
         extracted_international_projects_activities,

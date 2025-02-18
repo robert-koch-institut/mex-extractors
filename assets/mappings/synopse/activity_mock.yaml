@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - comment: Sonstige
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - fieldInPrimarySource: Kontakt
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+      - abc@rki.de
+      - cde@rki.de
+    mappingRules:
+      - forValues:
+        - info@rki.de
+      - rule: Use value and match it using ldap extractor.
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+responsibleUnit:
+  - mappingRules:
+      - {}
+theme:
+  - comment: Studien und Surveillance
+    mappingRules:
+      - forValues:
+          - "7202001"
+          - "7202002"
+          - "7202003"
+          - "7202004"
+        setValues:
+          - https://mex.rki.de/item/theme-11
+      - setValues:
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - {}

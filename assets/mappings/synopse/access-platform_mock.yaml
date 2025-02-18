@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: Use value
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+landingPage:
+  - fieldInPrimarySource: PlattformAdresse
+    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    examplesInPrimarySource:
+      - "Path"
+    mappingRules:
+      - rule: Extract original value for the url property of the link object.
+      - forValues:
+        - https://asd.def
+        setValues:
+        - language: de
+          title: ASD DEF
+          url: https://asd.def
+technicalAccessibility:
+  - comment: internal
+    mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: Use value

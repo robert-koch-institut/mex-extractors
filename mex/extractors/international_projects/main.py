@@ -2,6 +2,7 @@ from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
 from mex.common.models import (
+    ActivityMapping,
     ExtractedActivity,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
@@ -24,11 +25,10 @@ from mex.extractors.international_projects.models.source import (
 from mex.extractors.international_projects.transform import (
     transform_international_projects_sources_to_extracted_activities,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="international_projects", deps=["extracted_primary_source_mex"])
@@ -105,11 +105,8 @@ def extracted_international_projects_activities(
 ) -> list[ExtractedActivity]:
     """Transform projects to extracted activities, load and return them."""
     settings = Settings.get()
-    activity = transform_mapping_data_to_model(
-        extract_mapping_data(
-            settings.international_projects.mapping_path / "activity.yaml"
-        ),
-        ExtractedActivity,
+    activity = ActivityMapping.model_validate(
+        load_yaml(settings.international_projects.mapping_path / "activity.yaml")
     )
     mex_sources = list(
         transform_international_projects_sources_to_extracted_activities(

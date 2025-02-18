@@ -9,13 +9,15 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_with_query_to_mex_persons,
 )
 from mex.common.models import (
+    AccessPlatformMapping,
+    ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
-    ExtractedResource,
     ExtractedVariableGroup,
+    ResourceMapping,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -24,9 +26,6 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedResourceIdentifier,
 )
-from mex.extractors.mapping.extract import extract_mapping_data
-from mex.extractors.mapping.transform import transform_mapping_data_to_model
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -55,6 +54,7 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="synopse")
@@ -159,7 +159,7 @@ def synopse_organization_ids_by_query_string(
 def synopse_resource() -> dict[str, Any]:
     """Extract and transform synopse resource default values."""
     settings = Settings.get()
-    return extract_mapping_data(settings.synopse.mapping_path / "resource.yaml")
+    return load_yaml(settings.synopse.mapping_path / "resource.yaml")
 
 
 @asset(group_name="synopse")
@@ -170,8 +170,8 @@ def contact_merged_id_by_query_string(
 ) -> dict[str, MergedContactPointIdentifier]:
     """Get lookup of ldap functional accounts by email."""
     synopse_contact = extract_synopse_contact(
-        transform_mapping_data_to_model(synopse_resource, ExtractedResource),
-        transform_mapping_data_to_model(synopse_activity, ExtractedActivity),
+        ResourceMapping.model_validate(synopse_resource),
+        ActivityMapping.model_validate(synopse_activity),
     )
     return {
         contact_point.email[0].lower(): contact_point.stableTargetId
@@ -193,7 +193,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
     extracted_synopse_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    synopse_resource: AnyMappingModel,
+    synopse_resource: dict[str, Any],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> dict[str, list[MergedResourceIdentifier]]:
     """Get lookup from synopse_id to extracted resource stable target id.
@@ -209,7 +209,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(
         extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
-        transform_mapping_data_to_model(synopse_resource, ExtractedResource),
+        ResourceMapping.model_validate(synopse_resource),
         contact_merged_id_by_query_string,
     )
     transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
@@ -230,9 +230,8 @@ def extracted_synopse_access_platforms(
 ) -> list[ExtractedAccessPlatform]:
     """Transform Synopse data to extracted access platforms and load result."""
     settings = Settings.get()
-    synopse_access_platform = transform_mapping_data_to_model(
-        extract_mapping_data(settings.synopse.mapping_path / "access-platform.yaml"),
-        ExtractedAccessPlatform,
+    synopse_access_platform = AccessPlatformMapping.model_validate(
+        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
     synopse_studies_filtered = filter_and_log_access_platforms(
         synopse_studies, extracted_primary_source_report_server
@@ -253,7 +252,7 @@ def extracted_synopse_access_platforms(
 def synopse_activity() -> dict[str, Any]:
     """Extract and transform synopse activity default values."""
     settings = Settings.get()
-    return extract_mapping_data(settings.synopse.mapping_path / "activity.yaml")
+    return load_yaml(settings.synopse.mapping_path / "activity.yaml")
 
 
 @asset(group_name="synopse")
@@ -265,7 +264,7 @@ def extracted_synopse_activities(
     ],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-    synopse_activity: AnyMappingModel,
+    synopse_activity: dict[str, Any],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
@@ -275,7 +274,7 @@ def extracted_synopse_activities(
             extracted_primary_source_report_server,
             extracted_synopse_contributor_stable_target_ids_by_name,
             unit_stable_target_ids_by_synonym,
-            transform_mapping_data_to_model(synopse_activity, ExtractedActivity),
+            ActivityMapping.model_validate(synopse_activity),
             synopse_organization_ids_by_query_string,
             contact_merged_id_by_query_string,
         )

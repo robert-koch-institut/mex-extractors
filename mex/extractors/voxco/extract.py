@@ -1,8 +1,8 @@
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson
+from mex.common.models import ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.drop import DropApiConnector
-from mex.extractors.mapping.types import AnyMappingModel
 from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -29,7 +29,7 @@ def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:
 
 
 def extract_voxco_organizations(
-    voxco_resource_mappings: list[AnyMappingModel],
+    voxco_resource_mappings: list[ResourceMapping],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract voxco organization from wikidata.
 
@@ -41,7 +41,7 @@ def extract_voxco_organizations(
     """
     voxco_resource_organizations = {}
     external_partners = [
-        mapping.externalPartner[0].mappingRules[0].forValues[0]
+        mapping.externalPartner[0].mappingRules[0].forValues[0]  # type: ignore[index]
         for mapping in voxco_resource_mappings
         if mapping.externalPartner
     ]
@@ -54,7 +54,7 @@ def extract_voxco_organizations(
 
 
 def extract_ldap_persons_voxco(
-    voxco_resource_mappings: list[AnyMappingModel],
+    voxco_resource_mappings: list[ResourceMapping],
 ) -> list[LDAPPerson]:
     """Extract LDAP persons for voxco.
 
@@ -66,6 +66,6 @@ def extract_ldap_persons_voxco(
     """
     ldap = LDAPConnector.get()
     return [
-        ldap.get_person(mail=mapping.contact[0].mappingRules[0].forValues[1])
+        ldap.get_person(mail=mapping.contact[0].mappingRules[0].forValues[1])  # type: ignore[index]
         for mapping in voxco_resource_mappings
     ]
