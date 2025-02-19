@@ -9,6 +9,7 @@ urls = { Repository = "https://github.com/robert-koch-institut/mex-extractors" }
 requires-python = ">=3.11,<3.13"
 dependencies = [
     "beautifulsoup4>=4,<5",
+    "boto3>=1,<2",
     "dagster-postgres>=0.25,<1",
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
@@ -80,6 +81,14 @@ plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = "requests_ntlm.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "boto3.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "botocore.*"
 ignore_missing_imports = true
 
 [tool.pdm]

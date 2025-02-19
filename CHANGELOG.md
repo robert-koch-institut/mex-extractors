@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add s3 sink implementation for use with the publisher
+
 ### Changes
+
+- let `load` function accept rule-sets and merged-items, just like sinks
+- let publisher use `load` function with configurable sinks
 
 ### Deprecated
 
 ### Removed
+
+- remove `PublisherContainer` and `write_merged_items` in favor of generic versions
 
 ### Fixed
 
