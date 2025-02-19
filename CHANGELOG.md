@@ -9,13 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add s3 sink implementation for use with the publisher
+
+### Changes
+
+- let `load` function accept rule-sets and merged-items, just like sinks
+- let publisher use `load` function with configurable sinks
+
+### Deprecated
+
+### Removed
+
+- remove `PublisherContainer` and `write_merged_items` in favor of generic versions
+
+### Fixed
+
+### Security
+
+## [0.27.0] - 2025-02-17
+
 ### Changes
 
 - update mex-common to version 0.51.0
 - use new static mapping models
 - move inline test mappings to `/assets` with suffix `_mock`
-
-### Deprecated
 
 ### Removed
 
@@ -26,8 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix setValues listyness of test mappings
 - fix test mapping schema path
 - fix test mapping indentations
-
-### Security
 
 ## [0.26.0] - 2025-02-13
 
