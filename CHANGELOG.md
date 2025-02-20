@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - remove `PublisherContainer` and `write_merged_items` in favor of generic versions
+- remove `organigram` extractor, it was duplicating `mex.extractors.pipeline.organigram`
 
 ### Fixed
 
