@@ -425,33 +425,6 @@ def transform_synopse_data_to_mex_resources(
         )
 
 
-def get_unit_in_charge(
-    synopse_projects: Iterable[SynopseProject],
-    unit_merged_ids_by_synonym: dict[str, Identifier],
-    study: SynopseStudy,
-) -> Identifier | None:
-    """Get unit_in_charge identifier for synopse study.
-
-    Args:
-        synopse_projects: Iterable of synopse projects
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
-        study: one synopse study
-
-    Returns:
-        unit in charge identifier or None
-    """
-    verantwortliche_oe_by_studien_id = {
-        projekt.studien_id: projekt.verantwortliche_oe
-        for projekt in synopse_projects
-        if projekt.verantwortliche_oe
-    }
-    if (synonym := verantwortliche_oe_by_studien_id.get(study.studien_id)) and (
-        unit := unit_merged_ids_by_synonym.get(synonym)
-    ):
-        return unit
-    return None
-
-
 @watch
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
