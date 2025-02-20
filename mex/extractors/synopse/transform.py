@@ -85,7 +85,6 @@ def transform_synopse_studies_into_access_platforms(
             unit_in_charge = unit_merged_ids_by_synonym[
                 synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
-
         elif "https://" in plattform_adresse:
             contact = unit_merged_ids_by_synonym[
                 synopse_access_platform.contact[0].mappingRules[1].forValues[0]  # type: ignore[index]

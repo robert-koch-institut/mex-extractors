@@ -268,7 +268,7 @@ def synopse_studies() -> list[SynopseStudy]:
             dokumentation="https://asd.def",
             ds_typ_id=16,
             erstellungs_datum="2017",
-            plattform_adresse="noch nicht erstellt",
+            plattform_adresse="https://asd.def",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",

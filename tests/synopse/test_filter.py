@@ -15,7 +15,7 @@ def test_filter_and_log_access_plattforms(
     synopse_studies_filtered = filter_and_log_access_platforms(
         synopse_studies, extracted_primary_sources["report-server"]
     )
-    assert len(list(synopse_studies_filtered)) == 4
+    assert len(list(synopse_studies_filtered)) == 5
 
 
 def test_filter_and_log_synopse_variables(
