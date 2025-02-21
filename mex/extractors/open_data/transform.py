@@ -3,70 +3,201 @@ from collections.abc import Generator, Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.transform import (
+    transform_ldap_actor_to_mex_contact_point,
+    transform_ldap_person_to_mex_person,
+)
 from mex.common.logging import watch
 from mex.common.models import (
+    ConsentMapping,
+    DistributionMapping,
+    ExtractedConsent,
+    ExtractedDistribution,
+    ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
     MergedOrganizationalUnitIdentifier,
+    MIMEType,
 )
-from mex.extractors.mapping.types import AnyMappingModel
-from mex.extractors.open_data.extract import extract_oldest_record_version_creationdate
+from mex.extractors.open_data.extract import (
+    extract_files_for_resource_version,
+    extract_oldest_record_version_creationdate,
+)
 from mex.extractors.open_data.models.source import (
+    MexPersonAndCreationDate,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
 
 
-@watch
 def transform_open_data_persons(
-    open_data_resource_versions: Iterable[OpenDataResourceVersion],
-) -> Generator[LDAPPerson, None, None]:
+    open_data_resource_versions: list[OpenDataResourceVersion],
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> dict[str, MexPersonAndCreationDate]:  #:
     """Extract LDAP persons from open_data resource.
 
     Args:
         open_data_resource_versions: Open Data resource versions
+        extracted_primary_source_ldap: ExtractedPrimarySource
+        extracted_organizational_units: list[ExtractedOrganizationalUnit]
 
     Returns:
-        Generator for LDAP persons
+        dictionary of MexPersonAndCreationDate by name
     """
     ldap = LDAPConnector.get()
-    seen = set()
+    dict_for_extractedconsent: dict[str, MexPersonAndCreationDate] = {}
+    units_by_identifier_in_primary_source = {
+        unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
+    }
     for resource in open_data_resource_versions:
         for person in resource.metadata.creators + resource.metadata.contributors:
-            if person in seen:
+            if resource.created and (
+                person.name in dict_for_extractedconsent
+                and dict_for_extractedconsent[person.name].created > resource.created
+            ):
+                dict_for_extractedconsent[person.name].created = resource.created
                 continue
             try:
-                yield ldap.get_person(displayName=str(person.name))
-                seen.add(person)
+                ldap_person = ldap.get_person(displayName=person.name)
             except MExError:
-                continue
+                try:
+                    ldap_person = ldap.get_person(
+                        mail=(person.name.split(", ")[0] + "*")
+                    )
+                    # names are stored without Umlaut in Zenodo, therefore if the lookup
+                    # fails, try the email, as that also has no Umlauts. But we can't
+                    # use only this attempt because there are e.g. several Fischer M.
+                except MExError:
+                    continue
+            mex_person = transform_ldap_person_to_mex_person(
+                ldap_person,
+                extracted_primary_source_ldap,
+                units_by_identifier_in_primary_source,
+            )
+            dict_for_extractedconsent[person.name] = MexPersonAndCreationDate(
+                mex_person=mex_person,
+                created=resource.created,
+            )
+    return dict_for_extractedconsent
 
 
 @watch
-def transform_open_data_parent_resource_to_mex_resource(
-    open_data_parent_resource: Iterable[OpenDataParentResource],
+def transform_open_data_distributions(
+    open_data_resource_versions: list[OpenDataResourceVersion],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    distribution_mapping: DistributionMapping,
+) -> Generator[ExtractedDistribution, None, None]:
+    """Transform open data resource versions to extracted distributions.
+
+    Args:
+        open_data_resource_versions: open data resource versions
+        extracted_primary_source_open_data: Extracted platform for open data
+        distribution_mapping: resource mapping model with default values
+
+    Returns:
+        Generator for ExtractedDistribution instances
+    """
+    access_restriction = (
+        distribution_mapping.accessRestriction[0].mappingRules[0].setValues
+    )
+    had_primary_source = extracted_primary_source_open_data.stableTargetId
+    for resource in open_data_resource_versions:
+        access_url = resource.doi_url
+        if distribution_mapping.license[0].mappingRules[0].forValues and (
+            str(resource.metadata.license.id)
+            in distribution_mapping.license[0].mappingRules[0].forValues
+        ):
+            ccby_license = distribution_mapping.license[0].mappingRules[0].setValues
+        for file in extract_files_for_resource_version(resource.id):
+            download_url = file.links.self
+            identifier_primary_source = file.file_id
+            issued = file.created
+            media_type = MIMEType.find(str(file.mimetype))
+            modified = file.updated
+            title = file.key
+            yield ExtractedDistribution(
+                accessRestriction=access_restriction,
+                accessURL=access_url,
+                downloadURL=download_url,
+                hadPrimarySource=had_primary_source,
+                identifierInPrimarySource=identifier_primary_source,
+                issued=issued,
+                license=ccby_license,
+                mediaType=media_type,
+                modified=modified,
+                title=title,
+            )
+
+
+def transform_open_data_person_to_mex_consent(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
-    resource_mapping: AnyMappingModel,
+    extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
+    consent_mapping: ConsentMapping,
+) -> Generator[ExtractedConsent, None, None]:
+    """Transform open data persons to extracted consent.
+
+    Args:
+        extracted_primary_source_open_data: Extracted platform for open data
+        extracted_open_data_persons: list of ExtractedPerson
+        consent_mapping: resource mapping model with default values
+        extracted_open_data_persons_and_creation_date: mex persons & file creation date
+
+    Returns:
+        Generator for ExtractedConsent instances
+    """
+    has_consent_status = consent_mapping.hasConsentStatus[0].mappingRules[0].setValues
+    has_consent_type = consent_mapping.hasConsentType[0].mappingRules[0].setValues
+    person_list = list(extracted_open_data_persons_and_creation_date.values())
+    person_filedate_by_person_stabletargetid = dict(
+        zip(
+            [person.mex_person.stableTargetId for person in person_list],
+            [person.created for person in person_list],
+            strict=False,
+        )
+    )
+    for person in extracted_open_data_persons:
+        yield ExtractedConsent(
+            hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
+            hasConsentStatus=has_consent_status,
+            hasConsentType=has_consent_type,
+            hasDataSubject=person.stableTargetId,
+            identifierInPrimarySource=person.stableTargetId + "_consent",
+            isIndicatedAtTime=person_filedate_by_person_stabletargetid[
+                person.stableTargetId
+            ],
+        )
+
+
+@watch
+def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
+    open_data_parent_resource: Iterable[OpenDataParentResource],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+    extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    resource_mapping: ResourceMapping,
 ) -> Generator[ExtractedResource, None, None]:
     """Transform open_data parent resources to extracted resources.
 
     Args:
-        open_data_parent_resource: open data parent versions
+        open_data_parent_resource: open data parent resources
         extracted_primary_source_open_data: Extracted platform for open data
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
+        extracted_primary_source_ldap: ExtractedPrimarySource
         extracted_open_data_persons: list of ExtractedPerson
+        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         resource_mapping: resource mapping model with default values
 
     Returns:
         Generator for ExtractedResource instances
     """
+    ldap = LDAPConnector.get()
     person_stable_target_id_by_name = {
         str(p.fullName[0]): Identifier(p.stableTargetId)
         for p in extracted_open_data_persons
@@ -78,16 +209,19 @@ def transform_open_data_parent_resource_to_mex_resource(
     anonymization_pseudonymization = (
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    contact_open_data = (  # ldap = LDAPConnector.get()
-        "opendatarkidede"  # ldap.get_functional_account(mail="opendata@rki.de")
-    )
+    contact_open_data = [
+        transform_ldap_actor_to_mex_contact_point(
+            ldap.get_functional_account(mail="opendata@rki.de"),
+            extracted_primary_source_ldap,
+        ).stableTargetId
+    ]
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
     )
     theme = resource_mapping.theme[0].mappingRules[0].setValues
     for resource in open_data_parent_resource:
-        contact = [contact_open_data] + [
+        contact = contact_open_data + [
             c
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
@@ -122,9 +256,9 @@ def transform_open_data_parent_resource_to_mex_resource(
             if related_identifiers.relation == "isDocumentedBy"
         ]
         for mapping in resource_mapping.language[0].mappingRules:
-            if resource.metadata.language == mapping.forValues[0]:
-                language = mapping.setValues[0]
-        if (
+            if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
+                language = mapping.setValues
+        if resource_mapping.license[0].mappingRules[0].forValues and (
             resource.metadata.license.id
             in resource_mapping.license[0].mappingRules[0].forValues
         ):
@@ -159,24 +293,29 @@ def transform_open_data_parent_resource_to_mex_resource(
 def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     open_data_resource_versions: Iterable[OpenDataResourceVersion],
     extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     extracted_open_data_parent_resources: list[ExtractedResource],
-    resource_mapping: AnyMappingModel,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_open_data_distribution: list[ExtractedDistribution],
+    resource_mapping: ResourceMapping,
 ) -> Generator[ExtractedResource, None, None]:
     """Transform open_data resources to extracted resources.
 
     Args:
         open_data_resource_versions: open data resource versions
         extracted_primary_source_open_data: Extracted platform for open data
+        extracted_primary_source_ldap: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         extracted_open_data_persons: list of ExtractedPerson
         extracted_open_data_parent_resources: list of ExtractedResources
+        extracted_open_data_distribution: list[ExtractedDistribution
         resource_mapping: resource mapping model with default values
 
     Returns:
         Generator for ExtractedResource instances
     """
+    ldap = LDAPConnector.get()
     person_stable_target_id_by_name = {
         str(p.fullName[0]): Identifier(p.stableTargetId)
         for p in extracted_open_data_persons
@@ -192,8 +331,24 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     anonymization_pseudonymization = (
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    contact_open_data = (  # ldap = LDAPConnector.get()
-        "opendatarkidede"  # ldap.get_functional_account(mail="opendata@rki.de")
+    contact_open_data = [
+        transform_ldap_actor_to_mex_contact_point(
+            ldap.get_functional_account(mail="opendata@rki.de"),
+            extracted_primary_source_ldap,
+        ).stableTargetId
+    ]
+    distribution_by_id = dict(
+        zip(
+            [
+                distribution.identifierInPrimarySource
+                for distribution in extracted_open_data_distribution
+            ],
+            [
+                distribution.stableTargetId
+                for distribution in extracted_open_data_distribution
+            ],
+            strict=False,
+        )
     )
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
@@ -201,7 +356,7 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     )
     theme = resource_mapping.theme[0].mappingRules[0].setValues
     for resource in open_data_resource_versions:
-        contact = [contact_open_data] + [
+        contact = contact_open_data + [
             c
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
@@ -229,12 +384,13 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
                 r"<(?!/?a(?:\s+href)?)[^>]+>", "", str(resource.metadata.description)
             ).strip()
         )  # remove html tags(<p>,</p>,<br>,<em>...) and '/n' but keep <a href> and </a>
+        distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
             related_identifiers.identifier
             for related_identifiers in resource.metadata.related_identifiers
             if related_identifiers.relation == "isDocumentedBy"
         ]
-        if (
+        if resource_mapping.license[0].mappingRules[0].forValues and (
             resource.metadata.license.id
             in resource_mapping.license[0].mappingRules[0].forValues
         ):
@@ -243,8 +399,8 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             resource.conceptrecid
         )
         for mapping in resource_mapping.language[0].mappingRules:
-            if resource.metadata.language == mapping.forValues[0]:
-                language = mapping.setValues[0]
+            if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
+                language = mapping.setValues
         yield ExtractedResource(
             accessRestriction=access_restriction,
             anonymizationPseudonymization=anonymization_pseudonymization,
@@ -253,7 +409,8 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             contributor=contributor,
             created=resource.created,
             creator=creator,
-            description=description,  # distribution=distribution
+            description=description,
+            distribution=distribution,
             documentation=documentation,
             doi=resource.doi_url,
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,

@@ -1,10 +1,12 @@
 from pydantic import BaseModel
 
+from mex.common.models import ExtractedPerson
+
 
 class OpenDataCreatorsOrContributors(BaseModel):
     """Model subclass for Zenodo metadata Creators or Contributors."""
 
-    name: str | None = None
+    name: str
 
     def __hash__(self) -> int:
         """Calculates a hash value to make the object cacheable."""
@@ -18,16 +20,16 @@ class OpenDataRelateditdentifiers(BaseModel):
     relation: str | None = None
 
 
-class OpenDataLicense(BaseModel):
+class OpenDataLicenseOrFile(BaseModel):
     """Model subclass for Zenodo metadata license."""
 
     id: str | None = None
 
 
-class OpenDataFiles(BaseModel):
-    """Model subclass for Zenodo file id."""
+class Links(BaseModel):
+    """Model subclass for Zenodo links."""
 
-    id: str | None = None
+    self: str | None = None
 
 
 class OpenDataMetadata(BaseModel):
@@ -39,7 +41,7 @@ class OpenDataMetadata(BaseModel):
     keywords: list[str] = []
     related_identifiers: list[OpenDataRelateditdentifiers] = []
     language: str | None = None
-    license: OpenDataLicense
+    license: OpenDataLicenseOrFile
     publication_date: str | None = None
 
 
@@ -63,5 +65,23 @@ class OpenDataResourceVersion(BaseModel):
     created: str | None = None
     doi_url: str | None = None
     metadata: OpenDataMetadata
-    files: list[OpenDataFiles] = []
     modified: str | None = None
+    files: list[OpenDataLicenseOrFile]
+
+
+class OpenDataVersionFiles(BaseModel):
+    """Model subclass for Zenodo files."""
+
+    key: str | None = None
+    file_id: str
+    mimetype: str | None = None
+    links: Links
+    created: str | None = None
+    updated: str | None = None
+
+
+class MexPersonAndCreationDate(BaseModel):
+    """Model for helper Dictionary to extract ExtractedPErson and ExtractedConsent."""
+
+    mex_person: ExtractedPerson
+    created: str

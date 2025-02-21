@@ -12,7 +12,7 @@ class OpenDataSettings(BaseModel):
         "robertkochinstitut", description="Zenodo communitiy of rki"
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/open-data"),
+        AssetsPath("mappings/open-data"),
         description=(
             "Path to the directory with the open data mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

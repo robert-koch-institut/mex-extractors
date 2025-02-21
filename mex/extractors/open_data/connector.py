@@ -5,6 +5,7 @@ from mex.common.connector import HTTPConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
+    OpenDataVersionFiles,
 )
 from mex.extractors.settings import Settings
 
@@ -32,10 +33,10 @@ class OpenDataConnector(HTTPConnector):
             "total"
         ]
 
-        limit = 100
+        limit = 41  # limit = 100
         amount_pages = math.ceil(total_records / limit)
 
-        for page in range(1, amount_pages + 1):
+        for page in range(2, amount_pages + 1):  # range=1
             response = self.request(
                 "GET",
                 f"{parents_base_url}size={limit}&page={page}",
@@ -94,3 +95,21 @@ class OpenDataConnector(HTTPConnector):
         item = oldest_record["hits"]["hits"][0]
 
         return OpenDataResourceVersion.model_validate(item).metadata.publication_date
+
+    def get_files_for_resource_version(
+        self, version_id: int
+    ) -> Generator[OpenDataVersionFiles, None, None]:
+        """Load files for each version of a resource by querying the Zenodo API.
+
+        Args:
+            version_id: id of a resource version
+
+        Returns:
+            Zenodo resource version files
+        """
+        files_base_url = f"api/records/{version_id}/files"
+
+        files = self.request("GET", files_base_url)
+
+        for file in files["entries"]:
+            yield OpenDataVersionFiles.model_validate(file)
