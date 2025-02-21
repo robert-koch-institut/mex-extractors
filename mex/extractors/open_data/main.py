@@ -67,7 +67,7 @@ def extracted_open_data_persons_and_creation_date(
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> dict[str, MexPersonAndCreationDate]:
-    """Extract ldap persons and creation date for respective data sets."""
+    """Extract ldap persons and earliest creation date of respective data sets."""
     return transform_open_data_persons(
         open_data_resource_versions,
         extracted_primary_source_ldap,
@@ -79,7 +79,7 @@ def extracted_open_data_persons_and_creation_date(
 def extracted_open_data_persons(
     extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
 ) -> list[ExtractedPerson]:
-    """Extract ldap persons for open data from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
+    """Transform extracted ldap persons to mex persons and load them to sinks."""
     mex_persons = [
         person.mex_person
         for person in list(extracted_open_data_persons_and_creation_date.values())
@@ -94,7 +94,7 @@ def extracted_open_data_distribution(
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_open_data: ExtractedPrimarySource,
 ) -> list[ExtractedDistribution]:
-    """Extract distributions for open data and transform and load them to sinks."""
+    """Extract distributions for open data & transform and load them to sinks."""
     settings = Settings.get()
     distribution_mapping = DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
@@ -119,7 +119,7 @@ def extracted_open_data_parent_resources(
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[ExtractedResource]:
-    """Transform open data resources to extracted resources and load them to the sinks."""  # noqa: E501
+    """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
@@ -149,7 +149,7 @@ def extracted_open_data_resource_versions(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_open_data_distribution: list[ExtractedDistribution],
 ) -> list[ExtractedResource]:
-    """Transform open data resources to extracted resources and load them to the sinks."""  # noqa: E501
+    """Transform resource versions to extracted resources & load them to the sinks."""
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")

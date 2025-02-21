@@ -40,11 +40,15 @@ def transform_open_data_persons(
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> dict[str, MexPersonAndCreationDate]:  #:
-    """Extract LDAP persons from open_data resource.
+    """Extract persons and file creation dates from open_data resource.
+
+    Extract the persons and their respective first creation date of all their files on
+    open data. Lookup the Persons on LDAP and transform them to ExtractedPersons and
+    return them and their first file creation date in a dictionary by name.
 
     Args:
         open_data_resource_versions: Open Data resource versions
-        extracted_primary_source_ldap: ExtractedPrimarySource
+        extracted_primary_source_ldap: ExtractedPrimarySource for ldap
         extracted_organizational_units: list[ExtractedOrganizationalUnit]
 
     Returns:
@@ -71,8 +75,8 @@ def transform_open_data_persons(
                         mail=(person.name.split(", ")[0] + "*")
                     )
                     # names are stored without Umlaut in Zenodo, therefore if the lookup
-                    # fails, try the email, as that also has no Umlauts. But we can't
-                    # use only this attempt because there are e.g. several Fischer M.
+                    # fails, try the email, as that also has no Umlauts. But one can't
+                    # use only this attempt because there are several similar last names
                 except MExError:
                     continue
             mex_person = transform_ldap_person_to_mex_person(
@@ -304,12 +308,12 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
 
     Args:
         open_data_resource_versions: open data resource versions
-        extracted_primary_source_open_data: Extracted platform for open data
-        extracted_primary_source_ldap: ExtractedPrimarySource
+        extracted_primary_source_open_data: ExtractedPrimarySource for open data
+        extracted_primary_source_ldap: ExtractedPrimarySource for ldap
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        extracted_open_data_persons: list of ExtractedPerson
+        extracted_open_data_persons: list of ExtractedPerson for open data
         extracted_open_data_parent_resources: list of ExtractedResources
-        extracted_open_data_distribution: list[ExtractedDistribution
+        extracted_open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
 
     Returns:
