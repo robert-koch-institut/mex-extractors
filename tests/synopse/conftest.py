@@ -30,7 +30,6 @@ from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
 from mex.extractors.synopse.transform import (
-    transform_overviews_to_resource_lookup,
     transform_synopse_variables_to_mex_variable_groups,
 )
 from mex.extractors.utils import load_yaml
@@ -96,7 +95,7 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
             "textbox21": "Angeborene Fehlbildung",
             "textbox24": "KHEfehlb",
             "textbox11": "Text",
-            "IntVar": False,
+            "IntVar": True,
             "KeepVarname": False,
         },
         {  # var 2, missing var label, valInstrument
@@ -112,7 +111,7 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
             "textbox21": None,
             "textbox24": "KHEfiebB",
             "textbox11": "Zahl",
-            "IntVar": False,
+            "IntVar": True,
             "KeepVarname": False,
         },
         {  # var 3, no auspraegung
@@ -205,57 +204,6 @@ def synopse_variables_by_thema(
 
 
 @pytest.fixture
-def synopse_variables_extended_data_use_raw() -> list[
-    dict[str, str | int | float | None]
-]:
-    """Return a list of dicts in the required format for Synopse Variables."""
-    return [
-        {  # variable not in synopse_overviews
-            "textbox49": None,
-            "Originalfrage": None,
-            "StudieID1": "STUDY1",
-            "StudieID2": 12345,
-            "SymopseID": 12345678901111,
-            "textbox51": None,
-            "textbox5": "Gesundheiten (1101)",
-            "textbox2": "Krankheiten allgemein (110100)",
-            "valInstrument": None,
-            "textbox21": "no auspraegung",
-            "textbox24": "no_auspraegung",
-            "IntVar": True,
-            "KeepVarname": True,
-        }
-    ]
-
-
-@pytest.fixture
-def synopse_variables_extended_data_use(
-    synopse_variables_extended_data_use_raw: list[dict[str, str | int]],
-) -> list[SynopseVariable]:
-    """Return a list Synopse Variables."""
-    return [
-        SynopseVariable.model_validate(v)
-        for v in synopse_variables_extended_data_use_raw
-    ]
-
-
-@pytest.fixture
-def synopse_variables_extended_data_use_by_study_id(
-    synopse_variables_extended_data_use: list[SynopseVariable],
-) -> dict[int, list[SynopseVariable]]:
-    """Return a mapping from synopse studie id to the variables with this studie id."""
-    synopse_variables_extended_data_use = sorted(
-        synopse_variables_extended_data_use, key=lambda v: v.studie_id
-    )
-    return {
-        studie_id: list(variables)
-        for studie_id, variables in groupby(
-            synopse_variables_extended_data_use, key=lambda v: v.studie_id
-        )
-    }
-
-
-@pytest.fixture
 def synopse_studies() -> list[SynopseStudy]:
     """Return a list of Synopse Studies."""
     return [
@@ -264,7 +212,7 @@ def synopse_studies() -> list[SynopseStudy]:
             dokumentation="Z:\\foo\\bar",
             ds_typ_id=17,
             erstellungs_datum="2022",
-            plattform_adresse="Z:\\data",
+            plattform_adresse="S:\\data",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="12345",
@@ -320,7 +268,7 @@ def synopse_studies() -> list[SynopseStudy]:
             dokumentation="https://asd.def",
             ds_typ_id=16,
             erstellungs_datum="2017",
-            plattform_adresse="noch nicht erstellt",
+            plattform_adresse="https://asd.def",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",
@@ -330,27 +278,37 @@ def synopse_studies() -> list[SynopseStudy]:
 
 
 @pytest.fixture
-def created_by_study_id(synopse_studies) -> dict[str, str]:
+def created_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
     """Return a lookup from study ID to created string."""
-    return {s.studien_id: s.erstellungs_datum for s in synopse_studies}
+    return {
+        s.studien_id: s.erstellungs_datum
+        for s in synopse_studies
+        if s.erstellungs_datum
+    }
 
 
 @pytest.fixture
-def description_by_study_id(synopse_studies) -> dict[str, str]:
+def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
     """Return a lookup from study ID to description string."""
-    return {s.studien_id: s.beschreibung for s in synopse_studies}
+    return {s.studien_id: s.beschreibung for s in synopse_studies if s.beschreibung}
 
 
 @pytest.fixture
-def documentation_by_study_id(synopse_studies) -> dict[str, Link]:
+def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
-    return {s.studien_id: s.dokumentation for s in synopse_studies}
+    return {s.studien_id: s.dokumentation for s in synopse_studies if s.dokumentation}
 
 
 @pytest.fixture
-def keyword_text_by_study_id(synopse_studies) -> dict[str, list[Text]]:
+def keyword_text_by_study_id(
+    synopse_studies: list[SynopseStudy],
+) -> dict[str, list[Text]]:
     """Return a lookup from study ID to list of keyword Text."""
-    return {s.studien_id: s.schlagworte_themen for s in synopse_studies}
+    return {
+        s.studien_id: s.schlagworte_themen
+        for s in synopse_studies
+        if s.schlagworte_themen
+    }
 
 
 @pytest.fixture
@@ -377,6 +335,7 @@ def synopse_projects() -> list[SynopseProject]:
             anschlussprojekt="BBCCDD",
             beitragende="Carla Contact",
             beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
+            externe_partner="Testpartner",
             project_studientitel="Studie zu Lorem und Ipsum",
             kontakt=["info@rki.de"],
             projektbeginn=1999,
@@ -387,7 +346,7 @@ def synopse_projects() -> list[SynopseProject]:
             projektende=2000,
             studien_id="12345",
             studienart_studientyp="Monitoring-Studie",
-            verantwortliche_oe="FG 99",
+            verantwortliche_oe="C1",
         ),
         SynopseProject(
             akronym_des_studientitels="BBCCDD",
@@ -403,7 +362,7 @@ def synopse_projects() -> list[SynopseProject]:
             projektende=2000,
             studien_id="12346",
             studienart_studientyp="Monitoring-Studie",
-            verantwortliche_oe="FG 99",
+            verantwortliche_oe="C1",
         ),
     ]
 
@@ -423,7 +382,7 @@ def extracted_access_platforms(
         ExtractedAccessPlatform(
             contact=[Identifier.generate(seed=234)],
             hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="Z:\\data",
+            identifierInPrimarySource="S:\\data",
             landingPage=[Link(url="file:///Z:/data")],
             technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
             title=[Text(value="Z:\\data")],
@@ -570,14 +529,15 @@ def synopse_overviews() -> list[SynopseStudyOverview]:
 
 
 @pytest.fixture
-def resource_ids_by_synopse_id(
-    extracted_resources: list[ExtractedResource],
-    synopse_overviews: list[SynopseStudyOverview],
-) -> dict[str, list[MergedResourceIdentifier]]:
+def resource_ids_by_synopse_id() -> dict[str, list[MergedResourceIdentifier]]:
     """Return a lookup from study ID to list of resource IDs."""
-    return transform_overviews_to_resource_lookup(
-        synopse_overviews, extracted_resources
-    )
+    return {
+        "1": [MergedResourceIdentifier.generate(seed=42)],
+        "2": [MergedResourceIdentifier.generate(seed=43)],
+        "3": [MergedResourceIdentifier.generate(seed=42)],
+        "4": [MergedResourceIdentifier.generate(seed=42)],
+        "5": [MergedResourceIdentifier.generate(seed=45)],
+    }
 
 
 @pytest.fixture
@@ -615,19 +575,8 @@ def synopse_activity() -> ActivityMapping:
 
 
 @pytest.fixture
-def synopse_resource_extended_data_use() -> ResourceMapping:
-    """Return a mapping model with resource extended data use default values."""
-    settings = Settings.get()
-    return ResourceMapping.model_validate(
-        load_yaml(
-            settings.synopse.mapping_path / "resource_extended-data-use_mock.yaml"
-        )
-    )
-
-
-@pytest.fixture
 def synopse_resource() -> ResourceMapping:
-    """Return a mapping model with resource extended data use default values."""
+    """Return a mapping model with resource default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "resource_mock.yaml")

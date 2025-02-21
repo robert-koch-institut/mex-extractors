@@ -6,8 +6,15 @@ activityType:
       - setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
-  - mappingRules:
-      - {}
+  - fieldInPrimarySource: Kontakt
+    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    examplesInPrimarySource:
+      - abc@rki.de
+      - cde@rki.de
+    mappingRules:
+      - forValues:
+        - info@rki.de
+      - rule: Use value and match it using ldap extractor.
 hadPrimarySource:
   - mappingRules:
       - {}

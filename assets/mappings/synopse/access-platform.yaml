@@ -22,6 +22,12 @@ landingPage:
       - "Path"
     mappingRules:
       - rule: Extract original value for the url property of the link object.
+      - forValues:
+        - https://asd.def
+        setValues:
+        - language: de
+          title: ASD DEF
+          url: https://asd.def
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1

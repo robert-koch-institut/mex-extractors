@@ -34,9 +34,18 @@ resourceTypeGeneral:
           - https://mex.rki.de/item/resource-type-general-13
 rights:
   - mappingRules:
-      - setValues:
+      - forValues:
+          - "17"
+        setValues:
           - language: de
-            value: Gesundheitsdaten
+            value:
+              Lorem
+      - forValues:
+          - "74"
+        setValues:
+          - language: de
+            value:
+              Ipsum
 spatial:
   - mappingRules:
       - setValues:
