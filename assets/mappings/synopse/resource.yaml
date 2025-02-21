@@ -16,7 +16,7 @@ accessRestriction:
 contact:
   - mappingRules:
       - forValues:
-          - C1
+          - email@email.de
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 contributingUnit:
   - fieldInPrimarySource: Partner_intern
@@ -134,9 +134,18 @@ resourceTypeSpecific:
           in the field 'StudienArtTyp'. Extract value as it is. Assign 'de' as default language for text field.
 rights:
   - mappingRules:
-      - setValues:
+      - forValues:
+          - "17"
+        setValues:
           - language: de
-            value: "Gesundheitsdaten"
+            value:
+              Lorem
+      - forValues:
+          - "74"
+        setValues:
+          - language: de
+            value:
+              Ipsum
 spatial:
   - mappingRules:
       - setValues:

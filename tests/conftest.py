@@ -50,7 +50,7 @@ def mocked_ldap(monkeypatch: MonkeyPatch) -> None:
             sAMAccountName="ContactC",
             objectGUID=UUID(int=4, version=4),
             mail=["email@email.de", "contactc@rki.de"],
-        )
+        ),
     ]
     monkeypatch.setattr(
         LDAPConnector,
