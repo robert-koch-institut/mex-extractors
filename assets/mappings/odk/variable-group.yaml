@@ -5,12 +5,12 @@ hadPrimarySource:
       - rule: "Assign 'stable target id'"
 identifierInPrimarySource:
   - fieldInPrimarySource: IdType
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Construct identifier"
     comment: "Create variable groups "
   - fieldInPrimarySource: "Statement"
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Construct identifier"
       - forValues:
@@ -19,12 +19,12 @@ identifierInPrimarySource:
         rule: "See /mappings/."
 containedBy:
   - fieldInPrimarySource: "IdType"
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Use 'IdType'."
 label:
   - fieldInPrimarySource: Statement
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - Epi

@@ -7,7 +7,7 @@ activityType:
           - https://mex.rki.de/item/activity-type-6
 contact:
   - fieldInPrimarySource: Kontakt
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - abc@rki.de
       - cde@rki.de

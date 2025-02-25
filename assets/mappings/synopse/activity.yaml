@@ -2,7 +2,7 @@
 
 abstract:
   - fieldInPrimarySource: BeschreibungStudie
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "Mit"
     mappingRules:
@@ -13,7 +13,7 @@ activityType:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
   - fieldInPrimarySource: Kontakt
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - abc@rki.de
       - cde@rki.de
@@ -23,14 +23,14 @@ contact:
       - rule: Use value and match it using ldap extractor.
 documentation:
   - fieldInPrimarySource: Projektdokumentation
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "path"
     mappingRules:
       - rule: "Use the path."
 end:
   - fieldInPrimarySource: Projektende
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "2003"
       - "2009"
@@ -38,7 +38,7 @@ end:
       - rule: Extract original value.
 externalAssociate:
   - fieldInPrimarySource: Partner_extern
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Bundesinstituts für Risikobewertung, Karlsruher Institut für Technologie, Uniklinik Hamburg Eppendorf
       - USUMA GmbH
@@ -48,7 +48,7 @@ externalAssociate:
           Use ', ' as marker to separate organizations.
 funderOrCommissioner:
   - fieldInPrimarySource: Auftraggeber
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Bundesministerium für Gesundheit (BMG)
     mappingRules:
@@ -61,7 +61,7 @@ hadPrimarySource:
       - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
   - fieldInPrimarySource: StudienID
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "1120141"
       - "1219981"
@@ -69,7 +69,7 @@ identifierInPrimarySource:
       - rule: Extract original value.
 involvedPerson:
   - fieldInPrimarySource: Beitragende
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Jane Doe
       - Dr. Jane Doe
@@ -77,21 +77,21 @@ involvedPerson:
       - rule: Use value to match using ldap extractor.
 involvedUnit:
   - fieldInPrimarySource: Partner_intern
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - C1
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 responsibleUnit:
   - fieldInPrimarySource: VerantwortlicheOE
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - C1
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json. If unit unit cannot be resolved, set to fg21.
 shortName:
   - fieldInPrimarySource: Studie
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - KiGGS
       - KiGGS Welle 2
@@ -99,7 +99,7 @@ shortName:
       - rule: Extract original value.
 start:
   - fieldInPrimarySource: Projektbeginn
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "2003"
       - "2009"
@@ -107,7 +107,7 @@ start:
       - rule: Extract original value.
 succeeds:
   - fieldInPrimarySource: Anschlussprojekt
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - KiGGS-Basiserhebung
     mappingRules:
@@ -116,7 +116,7 @@ succeeds:
           (We want to have `StudienID` inside the field).
 theme:
   - fieldInPrimarySource: StudienID
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "7202001"
@@ -130,7 +130,7 @@ theme:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
 title:
   - fieldInPrimarySource: ProjektStudientitel
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Studie zur Gesundheit von Kindern und Jugendlichen in Deutschland
         Welle 2

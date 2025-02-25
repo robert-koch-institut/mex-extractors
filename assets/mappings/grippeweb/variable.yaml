@@ -20,7 +20,7 @@ usedIn:
       - rule: Assign 'stable target id' of item described by mappings/../grippeweb/resource_grippeweb
 valueSet:
   - fieldInPrimarySource: GuidTeilnehmer
-    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "NULL"
       - "Diverse"

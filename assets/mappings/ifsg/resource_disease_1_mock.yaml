@@ -13,7 +13,7 @@ alternativeTitle:
       - BAN
       - BOB
     fieldInPrimarySource: Code
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is. Do not assign a language.
 contact:
@@ -23,7 +23,7 @@ contact:
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 documentation:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -96,19 +96,19 @@ icd10code:
   - examplesInPrimarySource:
       - A22
     fieldInPrimarySource: ICD10Code
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 identifierInPrimarySource:
   - examplesInPrimarySource:
       - "102"
     fieldInPrimarySource: IdType
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is.
 instrumentToolOrApparatus:
   - fieldInPrimarySource: ReferenceDef[A|B|C|D|E]="1"
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - A=1
@@ -137,13 +137,13 @@ instrumentToolOrApparatus:
             value: Falldefinition E
 isPartOf:
   - fieldInPrimarySource: IFSGBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
       - rule: Assign 'stable target id' of the item described by /mappings/../ifsg/resource_parent
   - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -228,13 +228,13 @@ rights:
             value: Gesundheitsdaten.
 spatial:
   - fieldInPrimarySource: IFSGBundesland="0"
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - setValues:
           - language: de
             value: Deutschland
   - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -288,7 +288,7 @@ theme:
           - https://mex.rki.de/item/theme-11
 title:
   - fieldInPrimarySource: DiseaseName
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - rule:
           "Construct the title after the following schema: Meldedaten nach Infektionsschutzgesetz

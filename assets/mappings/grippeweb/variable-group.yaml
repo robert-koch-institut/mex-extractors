@@ -8,7 +8,7 @@ hadPrimarySource:
       - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
   - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "vActualQuestion"
@@ -21,7 +21,7 @@ identifierInPrimarySource:
         setValues: "vWeeklyResponses"
 label:
   - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "vActualQuestion"

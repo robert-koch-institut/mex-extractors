@@ -10,7 +10,7 @@ accrualPeriodicity:
     comment: unregelmäßig
 alternativeTitle:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -28,7 +28,7 @@ contact:
           - "FG99"
 documentation:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -99,7 +99,7 @@ hadPrimarySource:
       - rule: "Assign 'stable target id'"
 identifierInPrimarySource:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -186,7 +186,7 @@ rights:
             value: "Gesundheitsdaten."
 spatial:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -275,7 +275,7 @@ theme:
     comment: Meldewesen, Infektionskrankheiten
 title:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"

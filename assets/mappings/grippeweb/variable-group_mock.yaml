@@ -11,7 +11,7 @@ identifierInPrimarySource:
       - {}
 label:
   - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - vActualQuestion

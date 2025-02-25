@@ -10,7 +10,7 @@ accrualPeriodicity:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -28,7 +28,7 @@ contact:
           - FG99
 documentation:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -99,7 +99,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -175,7 +175,7 @@ publication:
           - doEmEPh37WX17yOu5OdwT9
           - dKPEq3pATRUAhtVzXKhPx6
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -210,7 +210,7 @@ rights:
             value: Gesundheitsdaten.
 spatial:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -299,7 +299,7 @@ theme:
           - https://mex.rki.de/item/theme-11
 title:
   - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"

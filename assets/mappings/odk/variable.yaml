@@ -2,12 +2,12 @@
 
 belongsTo:
   - fieldInPrimarySource: "Statement"
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Use Statement"
 dataType:
   - fieldInPrimarySource: "IdData"
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0" #DummyType
@@ -21,7 +21,7 @@ dataType:
         setValues: https://mex.rki.de/item/data-type-1 #integer
 description:
   - fieldInPrimarySource: GuiToolTip
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "Körpertemperatur"
     mappingRules:
@@ -31,18 +31,18 @@ hadPrimarySource:
       - rule: "Assign stable target id."
 identifierInPrimarySource:
   - fieldInPrimarySource: IdField
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "102100"
     mappingRules:
       - rule: Use value as it is.
 label:
   - fieldInPrimarySource: GuiText
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Assign 'de'."
   - fieldInPrimarySource: IdFieldType
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
@@ -51,15 +51,15 @@ label:
     comment: "In some cases!"
 usedIn:
   - fieldInPrimarySource: IdType
-    locationInPrimarySource: Field
+    locationInPrimarySource:
     mappingRules:
       - rule: "Identify the IdType "
 valueSet:
   - fieldInPrimarySource: ItemName
-    locationInPrimarySource: Item
+    locationInPrimarySource:
     mappingRules:
       - rule: SELECT IdField
   - fieldInPrimarySource: ItemNameEn
-    locationInPrimarySource: Item
+    locationInPrimarySource:
     mappingRules:
       - rule: "SELECT IdField"

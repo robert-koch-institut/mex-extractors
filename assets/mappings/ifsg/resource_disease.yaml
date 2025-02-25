@@ -10,7 +10,7 @@ accrualPeriodicity:
     comment: unregelmäßig
 alternativeTitle:
   - fieldInPrimarySource: Code
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "BAN"
       - "BOB"
@@ -26,21 +26,21 @@ hadPrimarySource:
       - rule: "Assign 'stable target id'"
 icd10code:
   - fieldInPrimarySource: ICD10Code
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     examplesInPrimarySource:
       - A22
     mappingRules:
       - rule: Use value as it is.
 identifierInPrimarySource:
   - fieldInPrimarySource: IdType
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "102"
     mappingRules:
       - rule: Use value as it is.
 instrumentToolOrApparatus:
   - fieldInPrimarySource: 'ReferenceDef[A|B|C|D|E]="1"'
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "A=1"
@@ -69,13 +69,13 @@ instrumentToolOrApparatus:
             value: Falldefinition E
 isPartOf:
   - fieldInPrimarySource: IFSGBundesland
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
       - rule: "Assign 'stable target id'"
   - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -137,13 +137,13 @@ rights:
             value: "Gesundheitsdaten."
 spatial:
   - fieldInPrimarySource: 'IFSGBundesland="0"'
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - setValues:
           - language: de
             value: "Deutschland"
   - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -197,7 +197,7 @@ theme:
     comment: Meldewesen, Infektionskrankheiten
 title:
   - fieldInPrimarySource: DiseaseName
-    locationInPrimarySource: Meta.Disease
+    locationInPrimarySource:
     mappingRules:
       - rule: "Construct the title "
 unitInCharge:

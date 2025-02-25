@@ -56,7 +56,7 @@ stateOfDataProcessing:
       - {}
 theme:
   - fieldInPrimarySource: StudienID
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "7202001"

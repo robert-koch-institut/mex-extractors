@@ -16,7 +16,7 @@ identifierInPrimarySource:
       - {}
 landingPage:
   - fieldInPrimarySource: PlattformAdresse
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "Path"
     mappingRules:

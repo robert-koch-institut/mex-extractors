@@ -2,7 +2,7 @@
 
 accessPlatform:
   - fieldInPrimarySource: PlattformAdresse
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     mappingRules:
       - rule:
           Assign 'stable target id' of access platform with the identifierInPrimarySource from
@@ -20,18 +20,18 @@ contact:
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 contributingUnit:
   - fieldInPrimarySource: Partner_intern
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - FG23
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Partner_intern' given in projekt_und_studienverwaltung.csv. Use value to match with identifier in /raw-data/organigram/organizational-units.json.
   - fieldInPrimarySource: VerantwortlicheOE
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'VerantwortlicheOE' given in projekt_und_studienverwaltung.csv. Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 contributor:
   - fieldInPrimarySource: Beitragende
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Jane Doe
       - Dr. Jane Doe
@@ -39,7 +39,7 @@ contributor:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Beitragende' in 'projekt_und_studienverwaltung.csv'. Use value to match using ldap extractor.
 created:
   - fieldInPrimarySource: ErstellungsDatum
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "2022"
       - "2015"
@@ -47,7 +47,7 @@ created:
       - rule: Extract original value.
 description:
   - fieldInPrimarySource: Beschreibung
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - KiGGS Basiserhebung, vollständiger Datensatz, Querschnitt
       - KiGGS Welle 1, KiGGS-Kohorte, Telefon,
@@ -55,14 +55,14 @@ description:
       - rule: Assign 'de' as default for language property of the text object.
 documentation:
   - fieldInPrimarySource: Dokumentation
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - path
     mappingRules:
       - rule: Use value to match with url property of the link object.
 hasLegalBasis:
   - fieldInPrimarySource: Rechte
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Die GEDA-Studie wurde auf Grundlage der geltenden Datenschutzgrundverordnung
         (DSGVO) und des Bundesdatenschutzgesetzes (BDSG) vorab durch die Behördliche Datenschutzbeauftragte
@@ -77,12 +77,12 @@ hadPrimarySource:
       - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
   - fieldInPrimarySource: StudienID + DStypID + Titel_Datenset
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     mappingRules:
       - rule: Join the values given in each field using '-' as separator, e.g. '1120091-15-KiGGS1'.
 keyword:
   - fieldInPrimarySource: SchlagworteThemen
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Alter und Geschlecht, Familiäre Belastungen, Lebensqualität, Personenangaben,
         Psychische Krankh./Auffälligkeiten, Rauchen, Schutzfaktoren, Soziodemografie,
@@ -92,7 +92,7 @@ keyword:
           "Extract each text separated by comma ',' as separate value, e.g. Alter
           und Geschlecht, Familiäre Belastungen. Assign 'de' as default for the langauge property of the text object."
   - fieldInPrimarySource: textbox2
-    locationInPrimarySource: variablenuebersicht.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - Depression (13101)
     mappingRules:
@@ -103,7 +103,7 @@ language:
           - https://mex.rki.de/item/language-1 # German
 publication:
   - fieldInPrimarySource: Version
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "1"
       - "26"
@@ -127,7 +127,7 @@ resourceTypeGeneral:
           - https://mex.rki.de/item/resource-type-general-13 # Data collection
 resourceTypeSpecific:
   - fieldInPrimarySource: StudienArtTyp
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     mappingRules:
       - rule:
           Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then look
@@ -153,7 +153,7 @@ spatial:
             value: Deutschland
 temporal:
   - fieldInPrimarySource: Projektbeginn + Projektende
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "2009"
       - "2012"
@@ -161,7 +161,7 @@ temporal:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then construct the value by merging the two field into one, following the format 'YYYY - YYYY'. 'Projektbeginn' must be the first and 'Projektende' the second value.
 theme:
   - fieldInPrimarySource: StudienID
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "7202001"
@@ -175,7 +175,7 @@ theme:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
   - fieldInPrimarySource: Titel_Datenset
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - KiGGS_QS
       - KiGGS1
@@ -188,7 +188,7 @@ unitInCharge:
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 wasGeneratedBy:
   - fieldInPrimarySource: StudienID
-    locationInPrimarySource: variablenuebersicht.csv
+    locationInPrimarySource:
     examplesInPrimarySource:
       - "1120031"
       - "1120091"
