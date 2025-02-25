@@ -62,8 +62,6 @@ resourceCreationMethod:
           - https://mex.rki.de/item/resource-creation-method-2
           - https://mex.rki.de/item/resource-creation-method-4
 resourceTypeGeneral:
-  - examplesInPrimarySource:
-      - Bioproben
     fieldInPrimarySource: Ressourcentyp, allgemein
     mappingRules:
       - forValues:
@@ -71,9 +69,6 @@ resourceTypeGeneral:
         setValues:
           - https://mex.rki.de/item/resource-type-general-2
 theme:
-  - examplesInPrimarySource:
-      - Gesundheitsberichterstattung
-      - Labor
     fieldInPrimarySource: Thema
     mappingRules:
       - rule:

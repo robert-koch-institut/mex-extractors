@@ -17,8 +17,6 @@ identifierInPrimarySource:
 landingPage:
   - fieldInPrimarySource: PlattformAdresse
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Path"
     mappingRules:
       - rule: Extract original value for the url property of the link object.
       - forValues:

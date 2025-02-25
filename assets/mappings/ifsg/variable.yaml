@@ -44,8 +44,6 @@ dataType:
 description:
   - fieldInPrimarySource: GuiToolTip
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Körpertemperatur größer oder gleich 38,5 Grad Celsius"
     mappingRules:
       - rule: "Assign 'de' as default for the language property of the text object."
 hadPrimarySource:
@@ -54,17 +52,11 @@ hadPrimarySource:
 identifierInPrimarySource:
   - fieldInPrimarySource: IdField
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "102100"
     mappingRules:
       - rule: Use value as it is.
 label:
   - fieldInPrimarySource: GuiText
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Krankheitsform (berechnet)"
-      - "hämorragischer Verlauf"
-      - "Krankheitsform"
     mappingRules:
       - rule: "Assign 'de' as default for the language property of the text object."
   - fieldInPrimarySource: IdFieldType
@@ -83,10 +75,6 @@ usedIn:
 valueSet:
   - fieldInPrimarySource: ItemName
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Milzbrandsepsis"
-      - "Hautmilzbrand"
-      - "Lungenmilzbrand"
     mappingRules:
       - rule:
           SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.

@@ -2,8 +2,6 @@
 
 activityType:
   - fieldInPrimarySource: typeId
-    examplesInPrimarySource:
-      - "typeId: 12345, text: Standardprojekt"
     mappingRules:
       - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
       - forValues:
@@ -26,21 +24,15 @@ activityType:
           - https://mex.rki.de/item/activity-type-6
 contact:
   - fieldInPrimarySource: projectLeaderId (personnelNumber)
-    examplesInPrimarySource:
-      - "projectLeaderId: 12345, personnelNumber: 12345"
     mappingRules:
       - rule: projectLeaderId resolved to personnelNumber using api endpoint human/persons, resolved to LDAP GUID using LDAP connector. If not resolvable use departmentId.resolved
     comment: LDAP-resolved fields only contain actor UUIDs. ActorID type is set to UUID-only.
 end:
   - fieldInPrimarySource: end
-    examplesInPrimarySource:
-      - "02.02.2023"
     mappingRules:
       - rule: Filter according to rules for all extractors /mappings/__all__/activity.
 funderOrCommissioner:
   - fieldInPrimarySource: clientId
-    examplesInPrimarySource:
-      - "clientId: 12345, customer.text:"
     mappingRules:
       - rule:
           list of clients.clientId, resolved to list of customer.text using api endpoint /masterdata/customers/{clientId}.
@@ -53,8 +45,6 @@ hadPrimarySource:
       - rule: Assign 'stable target id' of primary source with identifier 'blueant' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
   - fieldInPrimarySource: number
-    examplesInPrimarySource:
-      - "12345"
     mappingRules:
       - rule: Extract original value.
     comment:
@@ -62,8 +52,6 @@ identifierInPrimarySource:
       from the system MACH. MACH Nr. schema: \\d{4}-\\d{4}(/TP \\d+)?"
 involvedPerson:
   - fieldInPrimarySource: projectLeaderId
-    examplesInPrimarySource:
-      - "projectLeaderId: 12345, personnelNumber: 12345"
     mappingRules:
       - rule:
           "If projectLeaderId is resolvable: projectLeaderId resolved to LDAP GUID.
@@ -71,25 +59,14 @@ involvedPerson:
           type is set to UUID-only"
 responsibleUnit:
   - fieldInPrimarySource: departmentId
-    examplesInPrimarySource:
-      - "departmentId: 12345, text: ZV4.3 Zentrale Dienste und
-        Fachanwendungen (h)"
     mappingRules:
       - rule: departmentId, resolved to text using api endpoint masterdata/departments/{departmentId}. Filter according to rules for all extractors /mappings/__all__/activity.
 start:
   - fieldInPrimarySource: start
-    examplesInPrimarySource:
-      - "23.08.2021"
     mappingRules:
       - rule: Filter according to rules for all extractors /mappings/__all__/activity.
 title:
   - fieldInPrimarySource: name
-    examplesInPrimarySource:
-      - MaMoDar
-      - _LIMS-Beschafffung über Covid-Mittel
-      - 2_LIMS Architektur aufstellen
-      - 9_LIMS Meta Datenbank aufstellen
-      - 7_LIMS Steuerung- Stakeholder-Kreis
     mappingRules:
       - rule: Delete underscore (_) and number_ if used as prefix in a label
       - forValues:

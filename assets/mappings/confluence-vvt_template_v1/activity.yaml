@@ -2,13 +2,9 @@
 
 abstract:
   - fieldInPrimarySource: Ausführliche Beschreibung des Verfahrens / der Verarbeitung / der Studie
-    examplesInPrimarySource:
-      - "Digitalisierung ."
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
   - fieldInPrimarySource: Zwecke des Vorhabens
-    examplesInPrimarySource:
-      - "Der Zweck."
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 activityType:
@@ -17,8 +13,6 @@ activityType:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
-    examplesInPrimarySource:
-      - Dr. Jane Doe
     mappingRules:
       - rule:
           If there is no match for the person using ldap extractor, then use the organizational unit given in `Verantwortliche(r)
@@ -48,18 +42,12 @@ identifierInPrimarySource:
       - rule: Extract original value.
 involvedPerson:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
-    examplesInPrimarySource:
-      - Dr. Jane Doe
     mappingRules:
       - rule: Match person using ldap extractor. If person does not match skip/leave empty.
   - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen
-    examplesInPrimarySource:
-      - Dr. Janet Doe
     mappingRules:
       - rule: Match person using ldap extractor. If person does not match skip/leave empty.
   - fieldInPrimarySource: Mitarbeitende
-    examplesInPrimarySource:
-      - Dr. Jack Dont
     mappingRules:
       - rule: Match person using ldap extractor. If person does not match skip/leave empty.
 involvedUnit:

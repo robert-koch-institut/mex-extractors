@@ -9,9 +9,6 @@ accrualPeriodicity:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
-  - examplesInPrimarySource:
-      - BAN
-      - BOB
     fieldInPrimarySource: Code
     locationInPrimarySource:
     mappingRules:
@@ -93,8 +90,6 @@ hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
-  - examplesInPrimarySource:
-      - "102"
     fieldInPrimarySource: IdType
     locationInPrimarySource:
     mappingRules:

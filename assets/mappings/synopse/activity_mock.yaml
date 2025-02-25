@@ -8,9 +8,6 @@ activityType:
 contact:
   - fieldInPrimarySource: Kontakt
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - abc@rki.de
-      - cde@rki.de
     mappingRules:
       - forValues:
         - info@rki.de

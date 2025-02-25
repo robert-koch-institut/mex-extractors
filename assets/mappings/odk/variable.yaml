@@ -22,8 +22,6 @@ dataType:
 description:
   - fieldInPrimarySource: GuiToolTip
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Körpertemperatur"
     mappingRules:
       - rule: "Assign 'de'."
 hadPrimarySource:
@@ -32,8 +30,6 @@ hadPrimarySource:
 identifierInPrimarySource:
   - fieldInPrimarySource: IdField
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "102100"
     mappingRules:
       - rule: Use value as it is.
 label:

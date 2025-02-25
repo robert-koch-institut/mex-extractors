@@ -21,9 +21,5 @@ usedIn:
 valueSet:
   - fieldInPrimarySource: GuidTeilnehmer
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "NULL"
-      - "Diverse"
-      - "Female"
     mappingRules:
       - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]

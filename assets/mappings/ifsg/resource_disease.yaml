@@ -11,9 +11,6 @@ accrualPeriodicity:
 alternativeTitle:
   - fieldInPrimarySource: Code
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "BAN"
-      - "BOB"
     mappingRules:
       - rule: Use value as it is. Do not assign a language.
 contact:
@@ -27,15 +24,11 @@ hadPrimarySource:
 icd10code:
   - fieldInPrimarySource: ICD10Code
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - A22
     mappingRules:
       - rule: Use value as it is.
 identifierInPrimarySource:
   - fieldInPrimarySource: IdType
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "102"
     mappingRules:
       - rule: Use value as it is.
 instrumentToolOrApparatus:

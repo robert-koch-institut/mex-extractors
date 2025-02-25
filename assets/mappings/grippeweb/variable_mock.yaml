@@ -13,10 +13,6 @@ usedIn:
   - mappingRules:
       - {}
 valueSet:
-  - examplesInPrimarySource:
-      - "NULL"
-      - Diverse
-      - Female
     fieldInPrimarySource: Id
     locationInPrimarySource:
     mappingRules:

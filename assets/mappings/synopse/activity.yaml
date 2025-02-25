@@ -3,8 +3,6 @@
 abstract:
   - fieldInPrimarySource: BeschreibungStudie
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "Mit"
     mappingRules:
       - rule: Assign 'de' as default for language property of the text object.
 activityType:
@@ -14,9 +12,6 @@ activityType:
 contact:
   - fieldInPrimarySource: Kontakt
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - abc@rki.de
-      - cde@rki.de
     mappingRules:
       - forValues:
         - email@email.de
@@ -24,24 +19,16 @@ contact:
 documentation:
   - fieldInPrimarySource: Projektdokumentation
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "path"
     mappingRules:
       - rule: "Use the path."
 end:
   - fieldInPrimarySource: Projektende
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "2003"
-      - "2009"
     mappingRules:
       - rule: Extract original value.
 externalAssociate:
   - fieldInPrimarySource: Partner_extern
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - Bundesinstituts für Risikobewertung, Karlsruher Institut für Technologie, Uniklinik Hamburg Eppendorf
-      - USUMA GmbH
     mappingRules:
       - rule:
           Match values using wikidata extractor. If wikidata match fails (no match), create new organization.
@@ -49,8 +36,6 @@ externalAssociate:
 funderOrCommissioner:
   - fieldInPrimarySource: Auftraggeber
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - Bundesministerium für Gesundheit (BMG)
     mappingRules:
       - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
       - forValues:
@@ -62,54 +47,36 @@ hadPrimarySource:
 identifierInPrimarySource:
   - fieldInPrimarySource: StudienID
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "1120141"
-      - "1219981"
     mappingRules:
       - rule: Extract original value.
 involvedPerson:
   - fieldInPrimarySource: Beitragende
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - Jane Doe
-      - Dr. Jane Doe
     mappingRules:
       - rule: Use value to match using ldap extractor.
 involvedUnit:
   - fieldInPrimarySource: Partner_intern
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - C1
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 responsibleUnit:
   - fieldInPrimarySource: VerantwortlicheOE
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - C1
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json. If unit unit cannot be resolved, set to fg21.
 shortName:
   - fieldInPrimarySource: Studie
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - KiGGS
-      - KiGGS Welle 2
     mappingRules:
       - rule: Extract original value.
 start:
   - fieldInPrimarySource: Projektbeginn
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - "2003"
-      - "2009"
     mappingRules:
       - rule: Extract original value.
 succeeds:
   - fieldInPrimarySource: Anschlussprojekt
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - KiGGS-Basiserhebung
     mappingRules:
       - rule:
           match with the field `Studie` OR skip this until FG 21 updates the data.
@@ -131,9 +98,6 @@ theme:
 title:
   - fieldInPrimarySource: ProjektStudientitel
     locationInPrimarySource:
-    examplesInPrimarySource:
-      - Studie zur Gesundheit von Kindern und Jugendlichen in Deutschland
-        Welle 2
     mappingRules:
       - rule:
           Assign 'de' as default for the language property of the text object. If no value is given in field 'ProjektStudientitel' extract value from field

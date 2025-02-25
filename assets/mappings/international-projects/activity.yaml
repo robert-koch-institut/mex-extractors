@@ -18,8 +18,6 @@ activityType:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
   - fieldInPrimarySource: Project lead (person)
-    examplesInPrimarySource:
-      - Doe, Jane
     mappingRules:
       - forValues:
           - ZIG-GS
@@ -29,23 +27,13 @@ hadPrimarySource:
       - rule: "Assign 'stable target id' of primary source with identifier 'international-projects' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
   - fieldInPrimarySource: RKI internal project number (e.g. 1368-2022)
-    examplesInPrimarySource:
-      - 1368-2022
     mappingRules:
       - rule: Extract original value. Not applicable for all projects.
   - fieldInPrimarySource: Project Abbreviation
-    examplesInPrimarySource:
-      - ABCM
-      - ACGSL
-      - BoCO-19
     mappingRules:
       - rule: Only use this field, if no value is applicable in the fieldInPrimarySource 'RKI internal project number'.
 responsibleUnit:
   - fieldInPrimarySource: Project lead (RKI unit)
-    examplesInPrimarySource:
-      - ZIG1
-      - ZIG2
-      - FG37
     mappingRules:
       - rule: Match value with identifier in /raw-data/organigram/organizational-units.json.
       - forValues:
@@ -77,8 +65,5 @@ theme:
           - https://mex.rki.de/item/theme-36
 title:
   - fieldInPrimarySource: Full project name (as in application or officially amended later)
-    examplesInPrimarySource:
-      - "Strengthening of the collaboration between GOARN and PAE, Nigeria Centre for Disease Control: Capacity Development for Preparedness
-        and Response for Infectious Diseases"
     mappingRules:
       - rule: Extract original value. Assign 'en' as default for language property of the text object.
