@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: Funding type
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Third party funded
@@ -17,7 +17,7 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
-  - fieldInPrimarySource: Project lead (person)
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - ZIG-GS
@@ -26,21 +26,21 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id' of primary source with identifier 'international-projects' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
-  - fieldInPrimarySource: RKI internal project number (e.g. 1368-2022)
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value. Not applicable for all projects.
-  - fieldInPrimarySource: Project Abbreviation
+      - rule:
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Only use this field, if no value is applicable in the fieldInPrimarySource 'RKI internal project number'.
+      - rule:
 responsibleUnit:
-  - fieldInPrimarySource: Project lead (RKI unit)
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match value with identifier in /raw-data/organigram/organizational-units.json.
       - forValues:
           - ZIG-GS
         rule: Match with identifier 'zig' in /raw-data/organigram/organizational-units.json.
 theme:
-  - fieldInPrimarySource: Activity [1|2 (optional)]
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Crisis management
@@ -50,7 +50,7 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-37
         rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
-  - fieldInPrimarySource: Topic [1|2 (optional)]
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Public health systems
@@ -64,6 +64,6 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-36
 title:
-  - fieldInPrimarySource: Full project name (as in application or officially amended later)
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value. Assign 'en' as default for language property of the text object.

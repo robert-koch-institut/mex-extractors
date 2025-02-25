@@ -15,7 +15,7 @@ identifierInPrimarySource:
   - mappingRules:
       - {}
 landingPage:
-  - fieldInPrimarySource: PlattformAdresse
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value for the url property of the link object.

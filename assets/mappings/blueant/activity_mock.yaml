@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-    fieldInPrimarySource: typeId
+  - fieldInPrimarySource:
     mappingRules:
       - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
       - forValues:
@@ -35,7 +35,7 @@ responsibleUnit:
   - mappingRules:
       - {}
 title:
-  - fieldInPrimarySource: ""
+  - fieldInPrimarySource:
     mappingRules:
       - {}
       - forValues:

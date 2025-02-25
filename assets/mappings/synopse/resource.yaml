@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessPlatform:
-  - fieldInPrimarySource: PlattformAdresse
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
           Assign 'stable target id' of access platform with the identifierInPrimarySource from
           column 'PlattformAdresse'.
 accessRestriction:
-  - fieldInPrimarySource: Zugangsbeschraenkung
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - "restriktiv"
@@ -19,36 +19,36 @@ contact:
           - email@email.de
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 contributingUnit:
-  - fieldInPrimarySource: Partner_intern
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Partner_intern' given in projekt_und_studienverwaltung.csv. Use value to match with identifier in /raw-data/organigram/organizational-units.json.
-  - fieldInPrimarySource: VerantwortlicheOE
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'VerantwortlicheOE' given in projekt_und_studienverwaltung.csv. Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 contributor:
-  - fieldInPrimarySource: Beitragende
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then use the field 'Beitragende' in 'projekt_und_studienverwaltung.csv'. Use value to match using ldap extractor.
 created:
-  - fieldInPrimarySource: ErstellungsDatum
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 description:
-  - fieldInPrimarySource: Beschreibung
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default for language property of the text object.
 documentation:
-  - fieldInPrimarySource: Dokumentation
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value to match with url property of the link object.
 hasLegalBasis:
-  - fieldInPrimarySource: Rechte
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default for langauge property of the text object.
@@ -59,18 +59,18 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
-  - fieldInPrimarySource: StudienID + DStypID + Titel_Datenset
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Join the values given in each field using '-' as separator, e.g. '1120091-15-KiGGS1'.
 keyword:
-  - fieldInPrimarySource: SchlagworteThemen
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
           "Extract each text separated by comma ',' as separate value, e.g. Alter
           und Geschlecht, Familiäre Belastungen. Assign 'de' as default for the langauge property of the text object."
-  - fieldInPrimarySource: textbox2
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'variablenuebersicht.csv'.Only extract the text and delete the number, e.g. for example it would be 'Depression'.
@@ -79,7 +79,7 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
 publication:
-  - fieldInPrimarySource: Version
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: If value starts with "DOI:" then search the doi field of the bibliographic resources. Assign stableTargetId of the matching bibliographic resource item.
@@ -98,7 +98,7 @@ resourceTypeGeneral:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-13 # Data collection
 resourceTypeSpecific:
-  - fieldInPrimarySource: StudienArtTyp
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
@@ -124,12 +124,12 @@ spatial:
           - language: de
             value: Deutschland
 temporal:
-  - fieldInPrimarySource: Projektbeginn + Projektende
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use the field 'StudienID' to identify the correct study in 'projekt_und_studienverwaltung.csv'. Then construct the value by merging the two field into one, following the format 'YYYY - YYYY'. 'Projektbeginn' must be the first and 'Projektende' the second value.
 theme:
-  - fieldInPrimarySource: StudienID
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -143,7 +143,7 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
-  - fieldInPrimarySource: Titel_Datenset
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default for the language property of the text object.
@@ -153,7 +153,7 @@ unitInCharge:
           - C1
         rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 wasGeneratedBy:
-  - fieldInPrimarySource: StudienID
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Use 'StudienID' in 'variablenuebersicht.csv' to identify the study. Match with 'identifierInPrimarySource' from the respective activity."

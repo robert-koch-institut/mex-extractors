@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: RKI-AZ
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - "1364"
@@ -19,46 +19,46 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
-  - fieldInPrimarySource: Projektleiter
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
           Match person using ldap extractor. If the value does not match, use the organizational unit
           given in the field 'RKI-OE'.
 end:
-  - fieldInPrimarySource: Laufzeit bis
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 funderOrCommissioner:
-  - fieldInPrimarySource: Zuwendungs-/Auftraggeber
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match value using wikidata extractor.
       - forValues:
           - Sonderforschung
         rule: Skip extraction of value. (Still extract the activity!)
 fundingProgram:
-  - fieldInPrimarySource: Förderprogr.(FP7, H2020 etc.) ab 08/2015
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 hadPrimarySource:
   - mappingRules:
       - rule: Assign 'stable target id' of primary source with identifier 'ff-project' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - fieldInPrimarySource: lfd. Nr.
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 involvedPerson:
-  - fieldInPrimarySource: Projektleiter
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match person using ldap extractor. If the value does not match, use the organizational unit given in the field 'RKI-OE'.
 responsibleUnit:
-  - fieldInPrimarySource: RKI-OE
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match value using organigram extractor.
 start:
-  - fieldInPrimarySource: Laufzeit von
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 title:
-  - fieldInPrimarySource: Thema des Projekts
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.

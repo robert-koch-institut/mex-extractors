@@ -30,14 +30,14 @@ externalAssociate:
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
       - rule: Do not use wikidata extractor! Do not extract persons.
-  - fieldInPrimarySource: ggfs. Auftragsverarbeiter nach Art. 28 DSGVO
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Use wikidata extractor to match organizations. Ignore persons.
 hadPrimarySource:
   - mappingRules:
       - rule: Assign 'stable target id' of primary source with identifier 'confluence-vvt' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - fieldInPrimarySource: Interne Vorgangsnummer (Datenschutz)
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 involvedPerson:
@@ -72,6 +72,6 @@ responsibleUnit:
     mappingRules:
       - rule: Match unit using organigram extractor.
 title:
-  - fieldInPrimarySource: Confluence page name / head title
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Use the name of the Confluence page or the name in the header of the page.

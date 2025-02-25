@@ -16,4 +16,4 @@ valueSet:
     fieldInPrimarySource: Id
     locationInPrimarySource:
     mappingRules:
-      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+      - rule:

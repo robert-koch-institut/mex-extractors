@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
 
 belongsTo:
-  - fieldInPrimarySource: 'StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
@@ -13,7 +13,7 @@ belongsTo:
           INNER JOIN Meta.Schema2Field AS SF ON SF.IdSchema = (SELECT MAX (IdSchema) FROM Meta.Schema2Field)
           "
 dataType:
-  - fieldInPrimarySource: 'IdDataType="0|1|2|3|4|5|6|7|8|9|10|11|20|21|22"'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -42,7 +42,7 @@ dataType:
           - "8" #Boolean
         setValues: https://mex.rki.de/item/data-type-3 #boolean
 description:
-  - fieldInPrimarySource: GuiToolTip
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Assign 'de' as default for the language property of the text object."
@@ -50,16 +50,16 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
-  - fieldInPrimarySource: IdField
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is.
 label:
-  - fieldInPrimarySource: GuiText
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Assign 'de' as default for the language property of the text object."
-  - fieldInPrimarySource: IdFieldType
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -68,18 +68,18 @@ label:
         rule: "Add the following suffix to each value: '[GuiText] (berechneter Wert)', e.g. Krankheitsform (berechnet) (berechneter Wert), hämorragischer Verlauf (berechneter Wert)."
     comment: "In some cases the suffix '(berechnet)' is already stated in the original GuiText. But in some cases it is also missing. Should we add a suffix or not? Let's discuss!"
 usedIn:
-  - fieldInPrimarySource: IdType
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Identify the IdType of the field. The IdType is the identifierInPrimarySource of item described by mappings/../ifsg/resource_disease"
 valueSet:
-  - fieldInPrimarySource: ItemName
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
           SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.
           You get a list of items. For each item use IdItem to find out the name of the item by SELECT IdItem, ItemName FROM Meta.Item
-  - fieldInPrimarySource: ItemNameEn
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:

@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
 
 belongsTo:
-  - fieldInPrimarySource: "Statement"
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Use Statement"
 dataType:
-  - fieldInPrimarySource: "IdData"
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -20,7 +20,7 @@ dataType:
           - "21" #Bigint
         setValues: https://mex.rki.de/item/data-type-1 #integer
 description:
-  - fieldInPrimarySource: GuiToolTip
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Assign 'de'."
@@ -28,16 +28,16 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign stable target id."
 identifierInPrimarySource:
-  - fieldInPrimarySource: IdField
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is.
 label:
-  - fieldInPrimarySource: GuiText
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Assign 'de'."
-  - fieldInPrimarySource: IdFieldType
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -46,16 +46,16 @@ label:
         rule: "Add the following."
     comment: "In some cases!"
 usedIn:
-  - fieldInPrimarySource: IdType
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Identify the IdType "
 valueSet:
-  - fieldInPrimarySource: ItemName
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: SELECT IdField
-  - fieldInPrimarySource: ItemNameEn
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "SELECT IdField"

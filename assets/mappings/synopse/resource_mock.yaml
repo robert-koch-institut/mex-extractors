@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - fieldInPrimarySource: Zugangsbeschraenkung
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - restriktiv
@@ -55,7 +55,7 @@ stateOfDataProcessing:
   - mappingRules:
       - {}
 theme:
-  - fieldInPrimarySource: StudienID
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:

@@ -10,7 +10,7 @@ identifierInPrimarySource:
   - mappingRules:
       - {}
 label:
-  - fieldInPrimarySource: label of the SQL-table
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:

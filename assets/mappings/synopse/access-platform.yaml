@@ -9,12 +9,12 @@ hadPrimarySource:
   - mappingRules:
       - rule: Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - fieldInPrimarySource: PlattformAdresse
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 landingPage:
-  - fieldInPrimarySource: PlattformAdresse
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value for the url property of the link object.
@@ -29,7 +29,7 @@ technicalAccessibility:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
     comment: internal
 title:
-  - fieldInPrimarySource: PlattformAdresse
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.

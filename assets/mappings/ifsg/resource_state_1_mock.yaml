@@ -9,7 +9,7 @@ accrualPeriodicity:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -27,7 +27,7 @@ contact:
       - forValues:
           - FG99
 documentation:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -98,7 +98,7 @@ hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -174,7 +174,7 @@ publication:
           - bLsPRdhb0Xy7JLpBGLsw7o
           - doEmEPh37WX17yOu5OdwT9
           - dKPEq3pATRUAhtVzXKhPx6
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -209,7 +209,7 @@ rights:
           - language: de
             value: Gesundheitsdaten.
 spatial:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -298,7 +298,7 @@ theme:
       - setValues:
           - https://mex.rki.de/item/theme-11
 title:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:

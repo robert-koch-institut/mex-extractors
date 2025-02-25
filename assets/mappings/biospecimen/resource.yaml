@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - fieldInPrimarySource: Zugriffsbeschränkung
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - offen
@@ -10,11 +10,11 @@ accessRestriction:
           - restriktiv
         setValues: https://mex.rki.de/item/access-restriction-2
 alternativeTitle:
-  - fieldInPrimarySource: alternativer Titel
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for language property of the text object.
 anonymizationPseudonymization:
-  - fieldInPrimarySource: anonymisiert / pseudonymisiert
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - anonymisiert
@@ -34,30 +34,30 @@ conformsTo:
       - setValues:
           - LOINC
 contact:
-  - fieldInPrimarySource: Kontakt
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match with respective person.
 contributingUnit:
-  - fieldInPrimarySource: mitwirkende Fachabteilung
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match with respective unit by using the organigram extractor.
 contributor:
-  - fieldInPrimarySource: Mitwirkende Personen
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match with respective person by using the ldap extractor.
 description:
-  - fieldInPrimarySource: Beschreibung
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for language property of the text object.
 documentation:
-  - fieldInPrimarySource: weiterführende Dokumentation, Titel
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Use value for the title property of the link object. Assign 'de' as default value for the language property.
-  - fieldInPrimarySource: weiterführende Dokumentation, URL oder Dateipfad
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Use value for url property of the link object.
 externalPartner:
-  - fieldInPrimarySource: externe Partner
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
 hadPrimarySource:
@@ -75,11 +75,11 @@ identifierInPrimarySource:
     mappingRules:
       - rule: Use the name of the file as identifierInPrimarySource.
 instrumentToolOrApparatus:
-  - fieldInPrimarySource: Tools, Instrumente oder Apparate
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 keyword:
-  - fieldInPrimarySource: Schlagworte
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 language:
@@ -87,26 +87,26 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
 loincId:
-  - fieldInPrimarySource: ID LOINC
+  - fieldInPrimarySource:
     mappingRules:
       - rule: To every value add the prefix 'https://loinc.org/'. e.g. 'https://loinc.org/94563-4'.
 meshId:
-  - fieldInPrimarySource: ID MeSH-Begriff
+  - fieldInPrimarySource:
     mappingRules:
       - rule: To every value add the prefix 'http://id.nlm.nih.gov/mesh/'. e.g. 'http://id.nlm.nih.gov/mesh/D044967'.
 method:
-  - fieldInPrimarySource: Methode(n)
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 methodDescription:
-  - fieldInPrimarySource: Methodenbeschreibung
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 publication:
-  - fieldInPrimarySource: Verwandte Publikation, Titel
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
-  - fieldInPrimarySource: Verwandte Publikation, DOI
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
 publisher:
@@ -118,34 +118,34 @@ resourceCreationMethod:
           - https://mex.rki.de/item/resource-creation-method-2 # Studies, surveys and interviews
           - https://mex.rki.de/item/resource-creation-method-4 # Laboratory tests
 resourceTypeGeneral:
-  - fieldInPrimarySource: Ressourcentyp, allgemein
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Bioproben
         setValues:
           - https://mex.rki.de/item/resource-type-general-2 # Samples
 resourceTypeSpecific:
-  - fieldInPrimarySource: Ressourcentyp, speziell
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 rights:
-  - fieldInPrimarySource: Rechte
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 sizeOfDataBasis:
-  - fieldInPrimarySource: Vorhandene Anzahl der Proben
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract numbers as string.
 spatial:
-  - fieldInPrimarySource: räumlicher Bezug
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 temporal:
-  - fieldInPrimarySource: zeitlicher Bezug
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract as a string.
 theme:
-  - fieldInPrimarySource: Thema
+  - fieldInPrimarySource:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
@@ -155,15 +155,15 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
-  - fieldInPrimarySource: offizieller Titel der Probensammlung
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default value for the language property of the text object.
 unitInCharge:
-  - fieldInPrimarySource: verantwortliche Fachabteilung
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Match with respective unit by using the organigram extractor.
 wasGeneratedBy:
-  - fieldInPrimarySource: Studienbezug
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
           value given in this field matches with the field StudienID of the activity we extract from Metadata Synopse (Reportserver). Use the value to identify the

@@ -9,7 +9,7 @@ accrualPeriodicity:
       - setValues: https://mex.rki.de/item/frequency-17
     comment: unregelmäßig
 alternativeTitle:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -27,7 +27,7 @@ contact:
       - forValues:
           - "FG99"
 documentation:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -98,7 +98,7 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id'"
 identifierInPrimarySource:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -185,7 +185,7 @@ rights:
           - language: de
             value: "Gesundheitsdaten."
 spatial:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -274,7 +274,7 @@ theme:
           - https://mex.rki.de/item/theme-11
     comment: Meldewesen, Infektionskrankheiten
 title:
-  - fieldInPrimarySource: InBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:

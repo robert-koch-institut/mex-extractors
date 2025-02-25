@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: typeId
+  - fieldInPrimarySource:
     mappingRules:
       - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
       - forValues:
@@ -23,16 +23,16 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
-  - fieldInPrimarySource: projectLeaderId (personnelNumber)
+  - fieldInPrimarySource:
     mappingRules:
       - rule: projectLeaderId resolved to personnelNumber using api endpoint human/persons, resolved to LDAP GUID using LDAP connector. If not resolvable use departmentId.resolved
     comment: LDAP-resolved fields only contain actor UUIDs. ActorID type is set to UUID-only.
 end:
-  - fieldInPrimarySource: end
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Filter according to rules for all extractors /mappings/__all__/activity.
 funderOrCommissioner:
-  - fieldInPrimarySource: clientId
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
           list of clients.clientId, resolved to list of customer.text using api endpoint /masterdata/customers/{clientId}.
@@ -44,29 +44,29 @@ hadPrimarySource:
   - mappingRules:
       - rule: Assign 'stable target id' of primary source with identifier 'blueant' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - fieldInPrimarySource: number
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Extract original value.
     comment:
       "If project is a Drittmittelprojekt, then the Projektnummer is a number
       from the system MACH. MACH Nr. schema: \\d{4}-\\d{4}(/TP \\d+)?"
 involvedPerson:
-  - fieldInPrimarySource: projectLeaderId
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
           "If projectLeaderId is resolvable: projectLeaderId resolved to LDAP GUID.
           if not: leave unset. LDAP-resolved fields only contain actor UUIDs. ActorID
           type is set to UUID-only"
 responsibleUnit:
-  - fieldInPrimarySource: departmentId
+  - fieldInPrimarySource:
     mappingRules:
       - rule: departmentId, resolved to text using api endpoint masterdata/departments/{departmentId}. Filter according to rules for all extractors /mappings/__all__/activity.
 start:
-  - fieldInPrimarySource: start
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Filter according to rules for all extractors /mappings/__all__/activity.
 title:
-  - fieldInPrimarySource: name
+  - fieldInPrimarySource:
     mappingRules:
       - rule: Delete underscore (_) and number_ if used as prefix in a label
       - forValues:

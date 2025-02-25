@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: Funding type
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Third party funded
@@ -29,7 +29,7 @@ responsibleUnit:
   - mappingRules:
       - {}
 theme:
-  - fieldInPrimarySource: Activity [1|2 (optional)]
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Crisis management
@@ -41,7 +41,7 @@ theme:
           above in "setValues".
         setValues:
           - https://mex.rki.de/item/theme-37
-  - fieldInPrimarySource: Topic [1|2 (optional)]
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Public health systems

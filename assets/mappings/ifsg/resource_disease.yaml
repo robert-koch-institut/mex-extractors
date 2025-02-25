@@ -9,7 +9,7 @@ accrualPeriodicity:
       - setValues: https://mex.rki.de/item/frequency-17
     comment: unregelmäßig
 alternativeTitle:
-  - fieldInPrimarySource: Code
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is. Do not assign a language.
@@ -22,17 +22,17 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id'"
 icd10code:
-  - fieldInPrimarySource: ICD10Code
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is.
 identifierInPrimarySource:
-  - fieldInPrimarySource: IdType
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value as it is.
 instrumentToolOrApparatus:
-  - fieldInPrimarySource: 'ReferenceDef[A|B|C|D|E]="1"'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -61,13 +61,13 @@ instrumentToolOrApparatus:
           - language: de
             value: Falldefinition E
 isPartOf:
-  - fieldInPrimarySource: IFSGBundesland
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
       - rule: "Assign 'stable target id'"
-  - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -129,13 +129,13 @@ rights:
           - language: de
             value: "Gesundheitsdaten."
 spatial:
-  - fieldInPrimarySource: 'IFSGBundesland="0"'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - setValues:
           - language: de
             value: "Deutschland"
-  - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -189,7 +189,7 @@ theme:
           - https://mex.rki.de/item/theme-11
     comment: Meldewesen, Infektionskrankheiten
 title:
-  - fieldInPrimarySource: DiseaseName
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Construct the title "

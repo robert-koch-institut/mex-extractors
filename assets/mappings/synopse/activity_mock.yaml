@@ -6,7 +6,7 @@ activityType:
       - setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
-  - fieldInPrimarySource: Kontakt
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:

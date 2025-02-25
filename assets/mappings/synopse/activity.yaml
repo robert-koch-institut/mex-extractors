@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 abstract:
-  - fieldInPrimarySource: BeschreibungStudie
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Assign 'de' as default for language property of the text object.
@@ -10,31 +10,31 @@ activityType:
       - setValues:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
-  - fieldInPrimarySource: Kontakt
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
         - email@email.de
       - rule: Use value and match it using ldap extractor.
 documentation:
-  - fieldInPrimarySource: Projektdokumentation
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: "Use the path."
 end:
-  - fieldInPrimarySource: Projektende
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 externalAssociate:
-  - fieldInPrimarySource: Partner_extern
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
           Match values using wikidata extractor. If wikidata match fails (no match), create new organization.
           Use ', ' as marker to separate organizations.
 funderOrCommissioner:
-  - fieldInPrimarySource: Auftraggeber
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
@@ -45,44 +45,44 @@ hadPrimarySource:
   - mappingRules:
       - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
 identifierInPrimarySource:
-  - fieldInPrimarySource: StudienID
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 involvedPerson:
-  - fieldInPrimarySource: Beitragende
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value to match using ldap extractor.
 involvedUnit:
-  - fieldInPrimarySource: Partner_intern
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
 responsibleUnit:
-  - fieldInPrimarySource: VerantwortlicheOE
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json. If unit unit cannot be resolved, set to fg21.
 shortName:
-  - fieldInPrimarySource: Studie
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 start:
-  - fieldInPrimarySource: Projektbeginn
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule: Extract original value.
 succeeds:
-  - fieldInPrimarySource: Anschlussprojekt
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
           match with the field `Studie` OR skip this until FG 21 updates the data.
           (We want to have `StudienID` inside the field).
 theme:
-  - fieldInPrimarySource: StudienID
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
@@ -96,7 +96,7 @@ theme:
         setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
 title:
-  - fieldInPrimarySource: ProjektStudientitel
+  - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
