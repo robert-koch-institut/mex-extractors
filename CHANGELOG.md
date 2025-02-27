@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - let `load` function accept rule-sets and merged-items, just like sinks
 - let publisher use `load` function with configurable sinks
 - wrap up synopse
+- update mex-common dependency to 0.53
 
 ### Deprecated
 
