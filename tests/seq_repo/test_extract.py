@@ -20,7 +20,7 @@ def test_extract_sources() -> None:
         "sequencing_date": "2023-08-07",
         "lims_sample_id": "test-sample-id",
         "sequencing_platform": "TEST",
-        "species": "Severe acute respiratory syndrome coronavirus 2",
+        "species": "virus XYZ",
         "project_name": "FG99-ABC-123",
         "customer_sample_name": "test-customer-name-1",
         "project_id": "TEST-ID",
