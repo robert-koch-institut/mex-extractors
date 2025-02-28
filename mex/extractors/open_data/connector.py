@@ -33,10 +33,10 @@ class OpenDataConnector(HTTPConnector):
             "total"
         ]
 
-        limit = 100
+        limit = 100  # limit = 41
         amount_pages = math.ceil(total_records / limit)
 
-        for page in range(1, amount_pages + 1):
+        for page in range(1, amount_pages + 1):  # range=2
             response = self.request(
                 "GET",
                 f"{parents_base_url}size={limit}&page={page}",
@@ -94,7 +94,11 @@ class OpenDataConnector(HTTPConnector):
 
         item = oldest_record["hits"]["hits"][0]
 
-        return OpenDataResourceVersion.model_validate(item).metadata.publication_date
+        if oldest_record["hits"]["hits"][0]["metadata"]["publication_date"]:
+            return OpenDataResourceVersion.model_validate(
+                item
+            ).metadata.publication_date
+        return None
 
     def get_files_for_resource_version(
         self, version_id: int
