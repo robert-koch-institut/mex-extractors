@@ -2,26 +2,26 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier '...' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
+      - rule:
     comment: "Create variable groups for each IdType. Example: IdType=101 (Adenovirus) has variable groups Clinical and Labor."
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Construct identifier according to following schema: IdType_StatementAreaGroup, e.g. 101_Clinical."
+      - rule:
       - forValues:
           - "NULL"
           - "AdditionalAttributes"
-        rule: "See /mappings/../ifsg/variable-group_entity-filter."
+      - rule:
 containedBy:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Use 'IdType' to find the respective item as described by /mappings/../ifsg/resource_disease. Assign 'stable target id' of the resource."
+      - rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:

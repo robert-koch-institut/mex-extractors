@@ -27,38 +27,38 @@ contact:
 end:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 funderOrCommissioner:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using wikidata extractor.
+      - rule:
       - forValues:
           - Sonderforschung
-        rule: Skip extraction of value. (Still extract the activity!)
+      - rule:
 fundingProgram:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'ff-project' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 involvedPerson:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match person using ldap extractor. If the value does not match, use the organizational unit given in the field 'RKI-OE'.
+      - rule:
 responsibleUnit:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using organigram extractor.
+      - rule:
 start:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:

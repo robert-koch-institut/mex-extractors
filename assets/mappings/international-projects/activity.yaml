@@ -21,10 +21,10 @@ contact:
     mappingRules:
       - forValues:
           - ZIG-GS
-        rule: Match value with identifier "zig" in /raw-data/organigram/organizational-units.json
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'international-projects' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
@@ -35,35 +35,21 @@ identifierInPrimarySource:
 responsibleUnit:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
       - forValues:
           - ZIG-GS
-        rule: Match with identifier 'zig' in /raw-data/organigram/organizational-units.json.
+      - rule:
 theme:
   - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
       - forValues:
-          - Crisis management
-          - Capacity building including trainings
-          - Supporting global governance structures and processes
-          - Conducting research
+          - Infection prevention and control
         setValues:
-          - https://mex.rki.de/item/theme-37
-        rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
-  - fieldInPrimarySource:
-    mappingRules:
-      - forValues:
-          - Public health systems
-          - One Health
-          - Laboratory diagnostics
-        setValues:
-          - https://mex.rki.de/item/theme-37
-        rule: If field is either empty or has another value, set the same value as mentioned above in "setValues".
-      - forValues:
-          - Non-communicable diseases
-        setValues:
-          - https://mex.rki.de/item/theme-36
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value. Assign 'en' as default for language property of the text object.
+      - rule:

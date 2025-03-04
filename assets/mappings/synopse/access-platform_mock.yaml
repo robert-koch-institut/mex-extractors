@@ -1,13 +1,15 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
 
 contact:
-  - mappingRules:
-      - forValues:
-          - C1
-        rule: Use value
-      - forValues:
-          - C1
-        rule: Use value
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+    - forValues:
+      - C1
+      rule:
+    - forValues:
+      - C1
+      rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -18,7 +20,7 @@ landingPage:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value for the url property of the link object.
+      - rule:
       - forValues:
         - https://asd.def
         setValues:
@@ -32,16 +34,18 @@ technicalAccessibility:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
 title:
     mappingRules:
-      - rule: rule 1
-      - rule: rule 2
+      - rule:
+      - rule:
         setValues:
         - language: de
           value: test title
 unitInCharge:
-  - mappingRules:
-      - forValues:
-          - C1
-        rule: Use value
-      - forValues:
-          - C1
-        rule: Use value
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+    - forValues:
+      - C1
+      rule:
+    - forValues:
+      - C1
+      rule:

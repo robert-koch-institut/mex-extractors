@@ -3,7 +3,7 @@
 activityType:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
+      - rule:
       - forValues:
           - 03 Drittmittelprojekt
         setValues:
@@ -25,12 +25,12 @@ activityType:
 contact:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: projectLeaderId resolved to personnelNumber using api endpoint human/persons, resolved to LDAP GUID using LDAP connector. If not resolvable use departmentId.resolved
+      - rule:
     comment: LDAP-resolved fields only contain actor UUIDs. ActorID type is set to UUID-only.
 end:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Filter according to rules for all extractors /mappings/__all__/activity.
+      - rule:
 funderOrCommissioner:
   - fieldInPrimarySource:
     mappingRules:
@@ -39,14 +39,14 @@ funderOrCommissioner:
           Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
       - forValues:
           - Robert Koch-Institut
-        rule: Value must be ignored and not matched with wikidata extractor
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'blueant' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
     comment:
       "If project is a Drittmittelprojekt, then the Projektnummer is a number
       from the system MACH. MACH Nr. schema: \\d{4}-\\d{4}(/TP \\d+)?"
@@ -60,16 +60,16 @@ involvedPerson:
 responsibleUnit:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: departmentId, resolved to text using api endpoint masterdata/departments/{departmentId}. Filter according to rules for all extractors /mappings/__all__/activity.
+      - rule:
 start:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Filter according to rules for all extractors /mappings/__all__/activity.
+      - rule:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Delete underscore (_) and number_ if used as prefix in a label
+      - rule:
       - forValues:
           - Hochzeit
           - text
-        rule: Skip extraction.
+      - rule:

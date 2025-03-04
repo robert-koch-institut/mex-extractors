@@ -12,7 +12,7 @@ accessRestriction:
 alternativeTitle:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for language property of the text object.
+      - rule:
 anonymizationPseudonymization:
   - fieldInPrimarySource:
     mappingRules:
@@ -36,33 +36,33 @@ conformsTo:
 contact:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective person.
+      - rule:
 contributingUnit:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective unit by using the organigram extractor.
+      - rule:
 contributor:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective person by using the ldap extractor.
+      - rule:
 description:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for language property of the text object.
+      - rule:
 documentation:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value for the title property of the link object. Assign 'de' as default value for the language property.
+      - rule:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value for url property of the link object.
+      - rule:
 externalPartner:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'biospecimen' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
@@ -73,15 +73,15 @@ hasLegalBasis:
             value: DSGVO
 identifierInPrimarySource:
     mappingRules:
-      - rule: Use the name of the file as identifierInPrimarySource.
+      - rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 keyword:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 language:
   - mappingRules:
       - setValues:
@@ -89,29 +89,29 @@ language:
 loincId:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: To every value add the prefix 'https://loinc.org/'. e.g. 'https://loinc.org/94563-4'.
+      - rule:
 meshId:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: To every value add the prefix 'http://id.nlm.nih.gov/mesh/'. e.g. 'http://id.nlm.nih.gov/mesh/D044967'.
+      - rule:
 method:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 methodDescription:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 publication:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
+      - rule:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
+      - rule:
 publisher:
   - mappingRules:
-      - rule: Set the 'stable target id' the organization-item named 'Robert Koch-Institut' as default value.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -127,29 +127,29 @@ resourceTypeGeneral:
 resourceTypeSpecific:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 rights:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 sizeOfDataBasis:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract numbers as string.
+      - rule:
 spatial:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 temporal:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract as a string.
+      - rule:
 theme:
   - fieldInPrimarySource:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
-        rule: Set the value given in setValues as default for all values given in the primary source. Except the the value mentioned below in forValues.
+      - rule:
       - forValues:
           - Infektionskrankheiten
         setValues:
@@ -157,11 +157,11 @@ theme:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 unitInCharge:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective unit by using the organigram extractor.
+      - rule:
 wasGeneratedBy:
   - fieldInPrimarySource:
     mappingRules:

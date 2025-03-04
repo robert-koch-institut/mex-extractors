@@ -4,14 +4,14 @@ belongsTo:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Use Statement"
+      - rule:
 dataType:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0" #DummyType
-        rule: skip, do not set a datatype
+      - rule:
       - forValues:
           - "1" #GUID
         setValues: https://mex.rki.de/item/data-type-2 #string
@@ -23,39 +23,39 @@ description:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de'."
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign stable target id."
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de'."
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
           - "4"
-        rule: "Add the following."
+      - rule:
     comment: "In some cases!"
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Identify the IdType "
+      - rule:
 valueSet:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: SELECT IdField
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "SELECT IdField"
+      - rule:

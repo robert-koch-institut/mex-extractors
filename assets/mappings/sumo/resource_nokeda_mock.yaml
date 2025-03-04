@@ -12,12 +12,12 @@ contact:
   - mappingRules:
       - forValues:
           - email@email.de
-        rule: Match value to using ldap extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - MF4
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 description:
   - mappingRules:
       - setValues:
@@ -33,7 +33,7 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Register
-        rule: Use value to match with wikidata extractor.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -64,7 +64,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule:
+      - rule:
           Assign 'stable target id' of organization-item with official name as given
           in forValues.
 resourceCreationMethod:
@@ -112,4 +112,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:

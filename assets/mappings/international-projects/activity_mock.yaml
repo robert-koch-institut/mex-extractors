@@ -30,32 +30,14 @@ responsibleUnit:
       - {}
 theme:
   - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
       - forValues:
-          - Crisis management
-          - Capacity building including trainings
-          - Supporting global governance structures and processes
-          - Conducting research
-        rule:
-          If field is either empty or has another value, set the same value as mentioned
-          above in "setValues".
+          - Infection prevention and control
         setValues:
-          - https://mex.rki.de/item/theme-37
-  - fieldInPrimarySource:
-    mappingRules:
-      - forValues:
-          - Public health systems
-          - One Health
-          - Laboratory diagnostics
-        rule:
-          If field is either empty or has another value, set the same value as mentioned
-          above in "setValues".
-        setValues:
-          - https://mex.rki.de/item/theme-37
-      - forValues:
-          - Non-communicable diseases
-        setValues:
-          - https://mex.rki.de/item/theme-36
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
   - mappingRules:
       - {}

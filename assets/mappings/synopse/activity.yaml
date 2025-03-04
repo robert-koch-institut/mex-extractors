@@ -4,7 +4,7 @@ abstract:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default for language property of the text object.
+      - rule:
 activityType:
   - mappingRules:
       - setValues:
@@ -15,17 +15,17 @@ contact:
     mappingRules:
       - forValues:
         - email@email.de
-      - rule: Use value and match it using ldap extractor.
+      - rule:
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Use the path."
+      - rule:
 end:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 externalAssociate:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -37,43 +37,43 @@ funderOrCommissioner:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
+      - rule:
       - forValues:
           - Bundesministerium für Gesundheit (BMG)
-        rule: Ignore '(BMG)' in wikidata search string to find a match.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 involvedPerson:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value to match using ldap extractor.
+      - rule:
 involvedUnit:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 responsibleUnit:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json. If unit unit cannot be resolved, set to fg21.
+      - rule:
 shortName:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 start:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 succeeds:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -92,7 +92,7 @@ theme:
           - "7202004"
         setValues:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
-      - rule: For all other StudienID set value as mentioned below in "setValues".
+      - rule:
         setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
 title:

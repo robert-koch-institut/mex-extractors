@@ -4,11 +4,11 @@ contact:
   - mappingRules:
       - forValues:
           - Roland Resolved
-        rule: Match value using ldap extractor.
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "sumo-db"
-        rule: Use value as it is.
+      - rule:
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
@@ -22,7 +22,7 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - Abteilung
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'nokeda' in /raw-data/primary-sources/primary-sources.json."
+      - rule:

@@ -12,12 +12,12 @@ contact:
   - mappingRules:
       - forValues:
           - email@email.de
-        rule: Use value to match with ldap extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - MF4
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}

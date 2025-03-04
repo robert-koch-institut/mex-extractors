@@ -19,17 +19,17 @@ contact:
 end:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 funderOrCommissioner:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using wikidata extractor.
+      - rule:
       - forValues:
           - Sonderforschung
 fundingProgram:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -38,7 +38,7 @@ hadPrimarySource:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 involvedPerson:
   - fieldInPrimarySource:
     mappingRules:
@@ -48,12 +48,12 @@ involvedPerson:
 responsibleUnit:
     fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using organigram extractor.
+      - rule:
 start:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:

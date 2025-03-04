@@ -3,10 +3,10 @@
 abstract:
   - fieldInPrimarySource: Ausführliche Beschreibung des Verfahrens / der Verarbeitung / der Studie
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
   - fieldInPrimarySource: Zwecke des Vorhabens
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 activityType:
   - mappingRules:
       - setValues:
@@ -22,56 +22,56 @@ documentation:
       - setValues:
           - url: https://test.rki.local/*
             title: Eintrag im Verzeichnis der Verarbeitungstätigkeiten des RKI
-        rule: Use the stable id of the confluence page of the VVT entry as value for the url in the link object.
+      - rule:
 externalAssociate:
   - fieldInPrimarySource:
       ggfs. gemeinsam Verantwortliche(r) nach Art. 26 DSGVO (Nennung
       der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
-      - rule: Do not use wikidata extractor! Do not extract persons.
+      - rule:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Use wikidata extractor to match organizations. Ignore persons.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'confluence-vvt' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 involvedPerson:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
     mappingRules:
-      - rule: Match person using ldap extractor. If person does not match skip/leave empty.
+      - rule:
   - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen
     mappingRules:
-      - rule: Match person using ldap extractor. If person does not match skip/leave empty.
+      - rule:
   - fieldInPrimarySource: Mitarbeitende
     mappingRules:
-      - rule: Match person using ldap extractor. If person does not match skip/leave empty.
+      - rule:
 involvedUnit:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
     mappingRules:
-      - rule: Match unit using organigram extractor.
+      - rule:
   - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen | OE
     mappingRules:
-      - rule: Match unit using organigram extractor.
+      - rule:
   - fieldInPrimarySource: Mitarbeitende | OE
     mappingRules:
-      - rule: Match unit using organigram extractor.
+      - rule:
   - fieldInPrimarySource:
       ggfs. gemeinsam Verantwortliche(r) nach Art. 26 DSGVO (Nennung
       der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
-      - rule: Match the unit using organigram extractor.
+      - rule:
     comment: Sometimes the field contains RKI units. In a lot of cases, units will be impossible to match because there is a lot of surrounding text.
 responsibleUnit:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
     mappingRules:
-      - rule: Match unit using organigram extractor.
+      - rule:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: Use the name of the Confluence page or the name in the header of the page.
+      - rule:

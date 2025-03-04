@@ -96,7 +96,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id'"
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -151,7 +151,7 @@ identifierInPrimarySource:
         setValues: "16"
 isPartOf:
   - mappingRules:
-      - rule: Use the 'stable target id'
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -361,4 +361,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "FG99"
-        rule: Use value.
+      - rule:

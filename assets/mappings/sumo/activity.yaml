@@ -25,7 +25,7 @@ externalAssociate:
           - C1
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source.
+      - rule:
 
 identifierInPrimarySource:
   - mappingRules:

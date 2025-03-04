@@ -10,7 +10,7 @@ contact:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -65,7 +65,7 @@ theme:
           - "7202004"
         setValues:
           - https://mex.rki.de/item/theme-36
-      - rule: For all other StudienID set value as mentioned below in "setValues".
+      - rule:
         setValues:
           - https://mex.rki.de/item/theme-11
 title:
@@ -75,4 +75,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:

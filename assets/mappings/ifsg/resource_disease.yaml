@@ -12,25 +12,25 @@ alternativeTitle:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is. Do not assign a language.
+      - rule:
 contact:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id'"
+      - rule:
 icd10code:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -66,37 +66,37 @@ isPartOf:
     mappingRules:
       - forValues:
           - "0"
-      - rule: "Assign 'stable target id'"
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "09"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "10"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "11"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "12"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "13"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "14"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "15"
-        rule: "Assign 'stable target id'"
+      - rule:
       - forValues:
           - "16"
-        rule: "Assign 'stable target id'"
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -112,7 +112,7 @@ language:
     comment: Deutsch
 publisher:
   - mappingRules:
-      - rule: "Set a default"
+      - rule:
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
@@ -192,9 +192,9 @@ title:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Construct the title "
+      - rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - "FG99"
-        rule: Use value.
+      - rule:

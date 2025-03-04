@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mappings/../grippeweb/access-platform
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
@@ -17,17 +17,17 @@ contact:
   - mappingRules:
       - forValues:
           - "contactc@rki.de"
-        rule: Match value by using ldap extract extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match value with identifier using organigram extractor.
+      - rule:
 contributor:
   - mappingRules:
       - forValues:
           - "Roland Resolved"
-        rule: Match values using ldap extractor.
+      - rule:
 created:
   - mappingRules:
       - setValues: "2011"
@@ -52,7 +52,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 icd10code:
   - mappingRules:
       - setValues:
@@ -60,7 +60,7 @@ icd10code:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb
-        rule: Use value as indicated.
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -96,12 +96,12 @@ publication:
   - mappingRules:
       - forValues:
           - "study"
-        rule: Skip extraction. Add the bibliographic resources with the editor.
+      - rule:
 publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Match value with organization item using wikidata extractor.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -148,9 +148,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match value using organigram extractor.
+      - rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with corresponding identifierInPrimarySource
+      - rule:

@@ -3,7 +3,7 @@
 activityType:
   - fieldInPrimarySource:
     mappingRules:
-      - rule: typeId resolved to text using api endpoint masterdata/projects/types/{typeId}.
+      - rule:
       - forValues:
           - 03 Drittmittelprojekt
         setValues:

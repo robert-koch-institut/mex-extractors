@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule: assign 'stable target id' of item described by mapping/grippeweb/access-platform
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
@@ -17,17 +17,17 @@ contact:
   - mappingRules:
       - forValues:
           - "contactc@rki.de"
-        rule: Match value using ldap extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match identifier using organigram extractor.
+      - rule:
 contributor:
   - mappingRules:
       - forValues:
           - "Roland Resolved"
-        rule: Match values using ldap extractor.
+      - rule:
 created:
   - mappingRules:
       - setValues: "2020"
@@ -52,7 +52,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 icd10code:
   - mappingRules:
       - setValues:
@@ -62,7 +62,7 @@ identifierInPrimarySource:
       - setValues: grippeweb-plus
 isPartOf:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mapping/../grippeweb/resource_grippeweb
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -101,12 +101,12 @@ publication:
   - mappingRules:
       - forValues:
           - "study"
-        rule: Skip extraction. Add the bibliographic resources with the editor.
+      - rule:
 publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Match value with organization item using wikidata extractor.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -156,4 +156,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match value using organigram extractor.
+      - rule:

@@ -2,26 +2,26 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id'"
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Construct identifier"
+      - rule:
     comment: "Create variable groups "
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Construct identifier"
+      - rule:
       - forValues:
           - "NULL"
           - "AdditionalAttributes"
-        rule: "See /mappings/."
+      - rule:
 containedBy:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Use 'IdType'."
+      - rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:

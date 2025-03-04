@@ -17,7 +17,7 @@ contact:
   - mappingRules:
       - forValues:
           - "FG99"
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 description:
   - mappingRules:
       - setValues:
@@ -35,11 +35,11 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id'"
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: ifsg-parent
-        rule: Use value as indicated.
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -90,4 +90,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "FG99"
-        rule: Use value.
+      - rule:

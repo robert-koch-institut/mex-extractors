@@ -11,7 +11,7 @@ contact:
     mappingRules:
       - forValues:
         - info@rki.de
-      - rule: Use value and match it using ldap extractor.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}

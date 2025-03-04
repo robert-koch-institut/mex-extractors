@@ -20,7 +20,7 @@ dataType:
           - "0" #DummyType
           - "20" #Float
           - "22" #varBinary
-        rule: skip, do not set a datatype
+      - rule:
       - forValues:
           - "1" #GUID
           - "4" #String10
@@ -45,33 +45,33 @@ description:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de' as default for the language property of the text object."
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de' as default for the language property of the text object."
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
           - "4"
-        rule: "Add the following suffix to each value: '[GuiText] (berechneter Wert)', e.g. Krankheitsform (berechnet) (berechneter Wert), hämorragischer Verlauf (berechneter Wert)."
+      - rule:
     comment: "In some cases the suffix '(berechnet)' is already stated in the original GuiText. But in some cases it is also missing. Should we add a suffix or not? Let's discuss!"
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: "Identify the IdType of the field. The IdType is the identifierInPrimarySource of item described by mappings/../ifsg/resource_disease"
+      - rule:
 valueSet:
   - fieldInPrimarySource:
     locationInPrimarySource:

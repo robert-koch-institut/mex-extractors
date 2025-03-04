@@ -12,12 +12,12 @@ alternativeTitle:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is. Do not assign a language.
+      - rule:
 contact:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -93,12 +93,12 @@ icd10code:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -134,53 +134,53 @@ isPartOf:
     mappingRules:
       - forValues:
           - "0"
-      - rule: Assign 'stable target id' of the item described by /mappings/../ifsg/resource_parent
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='07'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "09"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='09'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "10"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='10'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "11"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='11'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "12"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='12'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "13"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='13'
           as  described by mapping/../ifsg/resource_state
       - forValues:
           - "14"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='14'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "15"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='15'
           as described by mapping/../ifsg/resource_state
       - forValues:
           - "16"
-        rule:
+      - rule:
           Assign 'stable target id' of the item with identifierInPrimarySource='16'
           as described by mapping/../ifsg/resource_state
 keyword:
@@ -291,4 +291,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier from /raw-data/organigram/organizational-units.json.
+      - rule:
