@@ -7,10 +7,11 @@ from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
+    OpenDataVersionFiles,
 )
 
 
-def create_mocked_parent_repsonse() -> dict:
+def create_mocked_parent_response() -> dict:
     return {
         "hits": {
             "hits": [
@@ -47,7 +48,7 @@ def create_mocked_parent_repsonse() -> dict:
     }
 
 
-def create_mocked_version_repsonse() -> dict:
+def create_mocked_version_response() -> dict:
     return {
         "hits": {
             "hits": [
@@ -79,7 +80,6 @@ def create_mocked_version_repsonse() -> dict:
                         "license": {"id": "no license"},
                         "publication_date": "2022",
                     },
-                    "conceptdoi": "12.3456/zenodo.7890",
                     "files": [],
                 },
                 {
@@ -109,9 +109,17 @@ def create_mocked_file_response() -> dict:
 
 
 @pytest.fixture
+def mocked_parent_resource() -> list[OpenDataParentResource]:
+    mocked_parent_response = create_mocked_parent_response()
+    return [
+        OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
+    ]
+
+
+@pytest.fixture
 def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     """Mock the Open data connector to return dummy resources."""
-    mocked_parent_response = create_mocked_parent_repsonse()
+    mocked_parent_response = create_mocked_parent_response()
     parent_resources = (
         OpenDataParentResource.model_validate(
             mocked_parent_response["hits"]["hits"][0]
@@ -125,19 +133,36 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
         OpenDataConnector, "get_parent_resources", lambda _: iter(parent_resources)
     )
 
-    mocked_version_repsonse = create_mocked_version_repsonse()
+    mocked_version_response = create_mocked_version_response()
     resource_versions = (
         OpenDataResourceVersion.model_validate(
-            mocked_version_repsonse["hits"]["hits"][0]
+            mocked_version_response["hits"]["hits"][0]
         ),
         OpenDataResourceVersion.model_validate(
-            mocked_version_repsonse["hits"]["hits"][1]
+            mocked_version_response["hits"]["hits"][1]
         ),
     )
     monkeypatch.setattr(
         OpenDataConnector,
         "get_resource_versions",
         lambda self, _: iter(resource_versions),
+    )
+
+    monkeypatch.setattr(
+        OpenDataConnector,
+        "get_oldest_resource_version_creationdate",
+        lambda self, _: "2021",
+    )
+
+    mocked_file_response = create_mocked_file_response()
+    version_files = (
+        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][0]),
+        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][1]),
+    )
+    monkeypatch.setattr(
+        OpenDataConnector,
+        "get_files_for_resource_version",
+        lambda self, _: version_files,
     )
 
     def __init__(self: OpenDataConnector) -> None:

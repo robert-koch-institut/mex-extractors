@@ -12,8 +12,8 @@ from mex.extractors.open_data.models.source import (
 )
 from tests.open_data.mocked_open_data import (
     create_mocked_file_response,
-    create_mocked_parent_repsonse,
-    create_mocked_version_repsonse,
+    create_mocked_parent_response,
+    create_mocked_version_response,
 )
 
 
@@ -33,7 +33,7 @@ def mocked_open_data_connector(monkeypatch: MonkeyPatch) -> MagicMock:
 
 def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> None:
     # get mock responses
-    dummy_parents = create_mocked_parent_repsonse()
+    dummy_parents = create_mocked_parent_response()
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=dummy_parents)
@@ -54,7 +54,7 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
 
 def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) -> None:
     # Create mock responses
-    dummy_versions = create_mocked_version_repsonse()
+    dummy_versions = create_mocked_version_response()
 
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
@@ -78,7 +78,7 @@ def test_get_oldest_resource_version_creationdate(
     mocked_open_data_connector: OpenDataConnector,
 ) -> None:
     # Create mock responses
-    dummy_versions = create_mocked_version_repsonse()
+    dummy_versions = create_mocked_version_response()
 
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
