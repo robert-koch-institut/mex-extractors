@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.28.0] - 2025-03-05
+
+### Added
+
 - add s3 sink implementation for use with the publisher
 
 ### Changes
@@ -18,16 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - wrap up synopse
 - update mex-common dependency to 0.53
 
-### Deprecated
-
 ### Removed
 
 - remove `PublisherContainer` and `write_merged_items` in favor of generic versions
 - remove `organigram` extractor, it was duplicating `mex.extractors.pipeline.organigram`
-
-### Fixed
-
-### Security
 
 ## [0.27.0] - 2025-02-17
 
