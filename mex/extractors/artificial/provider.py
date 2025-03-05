@@ -206,17 +206,16 @@ class TextProvider(PythonFakerProvider):
 class PatternProvider(BaseFakerProvider):
     """Faker provider to create strings matching given patterns."""
 
-    # TODO(ND): Try to avoid hardcoding the numerify patterns
-    REGEX_TO_NUMERIFY = {
-        r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$": "https://www.wikidata.org/entity/P######",
-        r"^https://isni\.org/isni/[X0-9]{16}$": "https://isni.org/isni/################",
-        r"^https://viaf\.org/viaf/[0-9]{2,22}$": "https://viaf.org/viaf/#########",
-        r"^https://d-nb\.info/gnd/[-X0-9]{3,10}$": "https://d-nb.info/gnd/3########",
-        r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$": "https://gepris.dfg.de/gepris/institution/#######",
-        r"^https://orcid\.org/[-X0-9]{9,21}$": "https://orcid.org/0000-####-####-###X",
-        r"^https://ror\.org/[a-z0-9]{9}$": "https://ror.org/#########",
-        r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$": "https://loinc.org/#####-#",
-        r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Za-z0-9]+)$": "https://dx.doi.org/10.####/#######",
+    KEY_TO_NUMERIFY = {
+        "wikidata": "https://www.wikidata.org/entity/P######",
+        "isni": "https://isni.org/isni/################",
+        "viaf": "https://viaf.org/viaf/#########",
+        "d-nb": "https://d-nb.info/gnd/3########",
+        "gepris": "https://gepris.dfg.de/gepris/institution/#######",
+        "orcid": "https://orcid.org/0000-####-####-###X",
+        "ror": "https://ror.org/#########",
+        "loinc": "https://loinc.org/#####-#",
+        "doi": "https://dx.doi.org/10.####/#######",
     }
     MESH_TO_TEMPLATE = {
         r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$": "http://id.nlm.nih.gov/mesh/{}"
@@ -235,4 +234,8 @@ class PatternProvider(BaseFakerProvider):
         """Return a randomized string matching the given pattern."""
         if template := self.MESH_TO_TEMPLATE.get(regex):
             return template.format(self.random_element(self._mesh_ids))
-        return self.numerify(self.REGEX_TO_NUMERIFY[str(regex)])
+        for key, value in self.KEY_TO_NUMERIFY.items():
+            if key in str(regex):
+                return self.numerify(value)
+        msg = f"Cannot numerify regex {regex}"
+        raise KeyError(msg)
