@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - fieldInPrimarySource: "Zugriffsbeschänkung"
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - offen
@@ -13,7 +13,7 @@ accrualPeriodicity:
   - mappingRules:
       - {}
 anonymizationPseudonymization:
-  - fieldInPrimarySource: anonymisiert / pseudonymisiert
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - anonymisiert
@@ -62,23 +62,16 @@ resourceCreationMethod:
           - https://mex.rki.de/item/resource-creation-method-2
           - https://mex.rki.de/item/resource-creation-method-4
 resourceTypeGeneral:
-  - examplesInPrimarySource:
-      - Bioproben
-    fieldInPrimarySource: Ressourcentyp, allgemein
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Bioproben
         setValues:
           - https://mex.rki.de/item/resource-type-general-2
 theme:
-  - examplesInPrimarySource:
-      - Gesundheitsberichterstattung
-      - Labor
-    fieldInPrimarySource: Thema
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
-          Set the value given in setValues as default for all values given in the
-          primary source. Except the the value mentioned below in forValues.
         setValues:
           - https://mex.rki.de/item/theme-36
       - forValues:

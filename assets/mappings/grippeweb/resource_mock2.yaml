@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mappings/../grippeweb/access-platform
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -20,17 +20,17 @@ contact:
   - mappingRules:
       - forValues:
           - contactc@rki.de
-        rule: Match value by using ldap extract extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with identifier using organigram extractor.
+      - rule:
 contributor:
   - mappingRules:
       - forValues:
           - Carla Contact
-        rule: Match values using ldap extractor.
+      - rule:
 created:
   - mappingRules:
       - setValues: "2011"
@@ -55,12 +55,10 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Use value
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - rule:
-          Assign 'stable target id' of primary source with identifier 'grippeweb'
-          in /raw-data/primary-sources/primary-sources.json.
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -75,7 +73,7 @@ icd10code:
           - J00-J99
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Use value as indicated.
+      - rule:
         setValues: grippeweb
 instrumentToolOrApparatus:
   - mappingRules:
@@ -130,7 +128,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Match value with organization item using wikidata extractor.
+      - rule:
 qualityInformation:
   - mappingRules:
       - {}
@@ -180,4 +178,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value using organigram extractor.
+      - rule:

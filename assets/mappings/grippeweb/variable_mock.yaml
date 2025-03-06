@@ -13,11 +13,7 @@ usedIn:
   - mappingRules:
       - {}
 valueSet:
-  - examplesInPrimarySource:
-      - "NULL"
-      - Diverse
-      - Female
     fieldInPrimarySource: Id
-    locationInPrimarySource: vActualQuestion
+    locationInPrimarySource:
     mappingRules:
-      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+      - rule:

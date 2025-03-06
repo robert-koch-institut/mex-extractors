@@ -4,17 +4,17 @@ contact:
   - mappingRules:
       - forValues:
           - Roland Resolved
-        rule: Match value using ldap extractor.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Get sumo primary source id.
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Use value as it is.
+      - rule:
         setValues: sumo-db
 technicalAccessibility:
   - mappingRules:
-      - rule: Match value using ldap extractor.
+      - rule:
         setValues: https://mex.rki.de/item/technical-accessibility-1
 title:
   - mappingRules:
@@ -25,4 +25,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - mf4
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:

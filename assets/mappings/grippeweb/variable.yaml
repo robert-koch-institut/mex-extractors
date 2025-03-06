@@ -1,29 +1,25 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
 
 belongsTo:
-  - fieldInPrimarySource: SQL-table
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Use identifierInPrimarySource of the corresponding variable group. Assign stableTargetId of the variable-group item.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource: label of the column
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value as given.
+      - rule:
 label:
-  - fieldInPrimarySource: label of the column
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 usedIn:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mappings/../grippeweb/resource_grippeweb
+      - rule:
 valueSet:
   - fieldInPrimarySource: GuidTeilnehmer
-    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
-    examplesInPrimarySource:
-      - "NULL"
-      - "Diverse"
-      - "Female"
+    locationInPrimarySource:
     mappingRules:
-      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+      - rule:

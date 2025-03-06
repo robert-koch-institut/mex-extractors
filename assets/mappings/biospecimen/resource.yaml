@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - fieldInPrimarySource: Zugriffsbeschränkung
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - offen
@@ -10,13 +10,11 @@ accessRestriction:
           - restriktiv
         setValues: https://mex.rki.de/item/access-restriction-2
 alternativeTitle:
-  - fieldInPrimarySource: alternativer Titel
-    examplesInPrimarySource:
-      - Urinproben
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for language property of the text object.
+      - rule:
 anonymizationPseudonymization:
-  - fieldInPrimarySource: anonymisiert / pseudonymisiert
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - anonymisiert
@@ -36,49 +34,35 @@ conformsTo:
       - setValues:
           - LOINC
 contact:
-  - fieldInPrimarySource: Kontakt
-    examplesInPrimarySource:
-      - FG 42
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective person.
+      - rule:
 contributingUnit:
-  - fieldInPrimarySource: mitwirkende Fachabteilung
-    examplesInPrimarySource:
-      - FG 42
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective unit by using the organigram extractor.
+      - rule:
 contributor:
-  - fieldInPrimarySource: Mitwirkende Personen
-    examplesInPrimarySource:
-      - KRobert@rki.de
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match with respective person by using the ldap extractor.
+      - rule:
 description:
-  - fieldInPrimarySource: Beschreibung
-    examplesInPrimarySource:
-      - Bioproben (Pro Teilnehmenden) 1 Serumröhrchen 8,5 mL, BD Serum Vacutainer
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for language property of the text object.
+      - rule:
 documentation:
-  - fieldInPrimarySource: weiterführende Dokumentation, Titel
-    examplesInPrimarySource:
-      - Seite auf der RKI-Homepage
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value for the title property of the link object. Assign 'de' as default value for the language property.
-  - fieldInPrimarySource: weiterführende Dokumentation, URL oder Dateipfad
-    examplesInPrimarySource:
-      - https://www.rki.de/DE/Content/Gesundheitsmonitoring/Studien/Degs/bgs98/bgs98_node.html
+      - rule:
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Use value for url property of the link object.
+      - rule:
 externalPartner:
-  - fieldInPrimarySource: externe Partner
-    examplesInPrimarySource:
-      - Paul Ehrlich Institut
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'biospecimen' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
@@ -88,142 +72,97 @@ hasLegalBasis:
           - language: de
             value: DSGVO
 identifierInPrimarySource:
-  - examplesInPrimarySource:
-      - Bioproben_BGS98_1219981
     mappingRules:
-      - rule: Use the name of the file as identifierInPrimarySource.
+      - rule:
 instrumentToolOrApparatus:
-  - fieldInPrimarySource: Tools, Instrumente oder Apparate
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 keyword:
-  - fieldInPrimarySource: Schlagworte
-    examplesInPrimarySource:
-      - "seroepidemiologische Beobachtungsstudie"
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
 loincId:
-  - fieldInPrimarySource: ID LOINC
-    examplesInPrimarySource:
-      - 94563-4
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: To every value add the prefix 'https://loinc.org/'. e.g. 'https://loinc.org/94563-4'.
+      - rule:
 meshId:
-  - fieldInPrimarySource: ID MeSH-Begriff
-    examplesInPrimarySource:
-      - D044967
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: To every value add the prefix 'http://id.nlm.nih.gov/mesh/'. e.g. 'http://id.nlm.nih.gov/mesh/D044967'.
+      - rule:
 method:
-  - fieldInPrimarySource: Methode(n)
-    examplesInPrimarySource:
-      - Präanalytik
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 methodDescription:
-  - fieldInPrimarySource: Methodenbeschreibung
-    examplesInPrimarySource:
-      - "venös, im Sitzen (in Ausnahmefällen auch im Liegen);"
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 publication:
-  - fieldInPrimarySource: Verwandte Publikation, Titel
-    examplesInPrimarySource:
-      - Schwerpunktheft zum Bundes-Gesundheitssurvey 1998 (Das Gesundheitswesen, Dezember 1999, Sonderheft 2)
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
-  - fieldInPrimarySource: Verwandte Publikation, DOI
-    examplesInPrimarySource:
-      - https://webgate.ec.europa.eu/chafea_pdb/assets/files/pdb/20092301/20092301_d08-02_en_ps.pdf
-      - https://doi.org/10.3389/fped.2022.989456
+      - rule:
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Skip extraction. Match values with bibliographic resource items manually using the MEx editor.
+      - rule:
 publisher:
   - mappingRules:
-      - rule: Set the 'stable target id' the organization-item named 'Robert Koch-Institut' as default value.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-creation-method-2 # Studies, surveys and interviews
           - https://mex.rki.de/item/resource-creation-method-4 # Laboratory tests
 resourceTypeGeneral:
-  - fieldInPrimarySource: Ressourcentyp, allgemein
-    examplesInPrimarySource:
-      - Bioproben
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Bioproben
         setValues:
           - https://mex.rki.de/item/resource-type-general-2 # Samples
 resourceTypeSpecific:
-  - fieldInPrimarySource: Ressourcentyp, speziell
-    examplesInPrimarySource:
-      - Serum
-      - Rachenabstrich
-      - Trockenblut
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 rights:
-  - fieldInPrimarySource: Rechte
-    examplesInPrimarySource:
-      - "Daten unterliegen rechtlichen Beschränkungen im Rahmen der DSGVO"
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 sizeOfDataBasis:
-  - fieldInPrimarySource: Vorhandene Anzahl der Proben
-    examplesInPrimarySource:
-      - "959"
-      - "3323 (Stand: 03/23)"
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract numbers as string.
+      - rule:
 spatial:
-  - fieldInPrimarySource: räumlicher Bezug
-    examplesInPrimarySource:
-      - Deutschland
-      - Kupferzell
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
+      - rule:
 temporal:
-  - fieldInPrimarySource: zeitlicher Bezug
-    examplesInPrimarySource:
-      - 2021-09 bis 2021-10
-      - 2020-10 bis 2021-06
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract as a string.
+      - rule:
 theme:
-  - fieldInPrimarySource: Thema
-    examplesInPrimarySource:
-      - Gesundheitsberichterstattung
-      - Labor
+  - fieldInPrimarySource:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
-        rule: Set the value given in setValues as default for all values given in the primary source. Except the the value mentioned below in forValues.
+      - rule:
       - forValues:
           - Infektionskrankheiten
         setValues:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
-  - fieldInPrimarySource: offizieller Titel der Probensammlung
-    examplesInPrimarySource:
-      - Serumproben zu CORONA-MONITORING lokal (CoMolo)
-    mappingRules:
-      - rule: Assign 'de' as default value for the language property of the text object.
-unitInCharge:
-  - fieldInPrimarySource: verantwortliche Fachabteilung
-    examplesInPrimarySource:
-      - FG 42
-    mappingRules:
-      - rule: Match with respective unit by using the organigram extractor.
-wasGeneratedBy:
-  - fieldInPrimarySource: Studienbezug
-    examplesInPrimarySource:
-      - "7202001"
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
-          value given in this field matches with the field StudienID of the activity we extract from Metadata Synopse (Reportserver). Use the value to identify the
-          corresponding activity item by using the field identifierInPrimarySource of synopse/activity.
+unitInCharge:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+wasGeneratedBy:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:

@@ -2,13 +2,13 @@
 
 containedBy:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mappings/../grippeweb/resource_grippeweb
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "vActualQuestion"
@@ -20,8 +20,8 @@ identifierInPrimarySource:
           - "vWeeklyResponses"
         setValues: "vWeeklyResponses"
 label:
-  - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "vActualQuestion"
@@ -31,7 +31,7 @@ label:
       - forValues:
           - "vMasterDataMEx"
         setValues:
-          - langauge: en
+          - language: en
             value: "Master Data"
       - forValues:
           - "vWeeklyResponsesMEx"
