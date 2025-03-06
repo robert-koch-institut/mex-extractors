@@ -11,13 +11,13 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-1
       - forValues:
-          - "1360" # nationale Auftragsforschung
-          - "1361" # internationale Auftragsforschung
-          - "1363" # sonstige internationale Vorhaben
-          - "1362" # Sonderforschungsprojekte (keine DRM)
-          - "1369" # 1369 – NRZ/KL (keine DRM); NRZ = Nationale Referenzzentren / KL = Konsiliarlabore
+          - "1360"
+          - "1361"
+          - "1363"
+          - "1362"
+          - "1369"
         setValues:
-          - https://mex.rki.de/item/activity-type-6 # Other
+          - https://mex.rki.de/item/activity-type-6
 contact:
   - fieldInPrimarySource:
     mappingRules:
