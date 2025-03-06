@@ -31,7 +31,7 @@ label:
       - forValues:
           - "vMasterDataMEx"
         setValues:
-          - langauge: en
+          - language: en
             value: "Master Data"
       - forValues:
           - "vWeeklyResponsesMEx"
