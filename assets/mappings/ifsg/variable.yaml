@@ -5,13 +5,6 @@ belongsTo:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          "Use 'StatementAreaGroup' to identify the respective variable-group item described by /mappings/../ifsg/variable-group.
-          This is an example query, where you will get all variables (IdField) and their variable groups (StatementAreaGroup), that are applicable for MAX IdSchema.
-          SELECT DISTINCT
-          SF.IdSchema, F.IdField, F.StatementAreaGroup
-          FROM    Meta.Field AS F
-          INNER JOIN Meta.Schema2Field AS SF ON SF.IdSchema = (SELECT MAX (IdSchema) FROM Meta.Schema2Field)
-          "
 dataType:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -77,23 +70,7 @@ valueSet:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.
-          You get a list of items. For each item use IdItem to find out the name of the item by SELECT IdItem, ItemName FROM Meta.Item
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          'SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.
-          You get a list of items. For each item use IdItem to find out the name of the item by SELECT IdItem, ItemNameEn FROM Meta.Catalogue2Item. Only extract Items that belong to fields that are applicable for MAX IdSchema.
-          Example query for this:
-          SELECT  DISTINCT
-          SF.IdSchema, I.IdItem, I.ItemName, I.ItemNameEN
-          FROM    Meta.Field AS F
-          INNER JOIN Meta.Catalogue2Item AS CI ON F.IdCatalogue = CI.IdCatalogue
-          INNER JOIN Meta.Item AS I ON CI.IdItem = I.IdItem
-          INNER JOIN Meta.Catalogue2Item2Schema AS CIS ON CI.IdCatalogue2Item = CIS.IdCatalogue2Item
-          INNER JOIN Meta.Schema2Field AS SF ON
-          SF.IdSchema = (SELECT MAX (IdSchema)
-          FROM Meta.Schema2Field)
-          ORDER BY I.IdItem
-          '

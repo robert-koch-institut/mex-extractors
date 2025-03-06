@@ -35,8 +35,6 @@ funderOrCommissioner:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-          list of clients.clientId, resolved to list of customer.text using api endpoint /masterdata/customers/{clientId}.
-          Match values using wikidata extractor. If wikidata match fails (no match), create new organization with value as officialName.
       - forValues:
           - Robert Koch-Institut
       - rule:
@@ -54,9 +52,6 @@ involvedPerson:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-          "If projectLeaderId is resolvable: projectLeaderId resolved to LDAP GUID.
-          if not: leave unset. LDAP-resolved fields only contain actor UUIDs. ActorID
-          type is set to UUID-only"
 responsibleUnit:
   - fieldInPrimarySource:
     mappingRules:

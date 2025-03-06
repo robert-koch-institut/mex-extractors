@@ -65,8 +65,6 @@ publisher:
       - forValues:
           - Robert Koch-Institut
       - rule:
-          Assign 'stable target id' of organization-item with official name as given
-          in forValues.
 resourceCreationMethod:
   - mappingRules:
       - setValues:

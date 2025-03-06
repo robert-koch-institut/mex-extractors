@@ -22,8 +22,6 @@ contact:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-          Match person using ldap extractor. If the value does not match, use the organizational unit
-          given in the field 'RKI-OE'.
 end:
   - fieldInPrimarySource:
     mappingRules:

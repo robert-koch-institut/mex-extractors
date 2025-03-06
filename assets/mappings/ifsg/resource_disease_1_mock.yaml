@@ -141,48 +141,30 @@ isPartOf:
       - forValues:
           - "07"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='07'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "09"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='09'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "10"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='10'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "11"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='11'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "12"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='12'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "13"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='13'
-          as  described by mapping/../ifsg/resource_state
       - forValues:
           - "14"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='14'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "15"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='15'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "16"
       - rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='16'
-          as described by mapping/../ifsg/resource_state
 keyword:
   - mappingRules:
       - setValues:
@@ -284,9 +266,6 @@ title:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          "Construct the title after the following schema: Meldedaten nach Infektionsschutzgesetz
-          (IfSG) zu [DiseaseName]. Assign 'de' as default for the language property
-          of the text object."
 unitInCharge:
   - mappingRules:
       - forValues:

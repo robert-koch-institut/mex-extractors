@@ -72,8 +72,6 @@ theme:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-          Set the value given in setValues as default for all values given in the
-          primary source. Except the the value mentioned below in forValues.
         setValues:
           - https://mex.rki.de/item/theme-36
       - forValues:

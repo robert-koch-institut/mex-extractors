@@ -12,8 +12,6 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-3
       - rule:
-          If the values in primary source do not match "Third party funded" or "RKI
-          funded", then match to the following default value in "setValues".
         setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:

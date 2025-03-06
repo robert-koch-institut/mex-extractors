@@ -166,5 +166,3 @@ wasGeneratedBy:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-          value given in this field matches with the field StudienID of the activity we extract from Metadata Synopse (Reportserver). Use the value to identify the
-          corresponding activity item by using the field identifierInPrimarySource of synopse/activity.

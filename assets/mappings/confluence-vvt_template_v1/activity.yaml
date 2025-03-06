@@ -15,8 +15,6 @@ contact:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
     mappingRules:
       - rule:
-          If there is no match for the person using ldap extractor, then use the organizational unit given in `Verantwortliche(r)
-          StudienleiterIn` and use unit as contact. Match the unit using organigram extractor.
 documentation:
   - mappingRules:
       - setValues:

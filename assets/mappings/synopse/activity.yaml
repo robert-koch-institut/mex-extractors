@@ -31,8 +31,6 @@ externalAssociate:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          Match values using wikidata extractor. If wikidata match fails (no match), create new organization.
-          Use ', ' as marker to separate organizations.
 funderOrCommissioner:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -79,8 +77,6 @@ succeeds:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          match with the field `Studie` OR skip this until FG 21 updates the data.
-          (We want to have `StudienID` inside the field).
 theme:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -100,5 +96,3 @@ title:
     locationInPrimarySource:
     mappingRules:
       - rule:
-          Assign 'de' as default for the language property of the text object. If no value is given in field 'ProjektStudientitel' extract value from field
-          'Studie'. Extract value only, if field 'ProjektStudientitel' is empty.

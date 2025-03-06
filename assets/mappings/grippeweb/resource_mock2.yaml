@@ -59,8 +59,6 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
-          Assign 'stable target id' of primary source with identifier 'grippeweb'
-          in /raw-data/primary-sources/primary-sources.json.
 hasLegalBasis:
   - mappingRules:
       - setValues:
