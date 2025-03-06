@@ -46,8 +46,6 @@ hasLegalBasis:
             value: Informed consent
 identifierInPrimarySource:
   - comment:
-      identifierInPrimarySource also for the corresponding activity extracted
-      from international projects
     mappingRules:
       - rule:
         setValues: test_raw_data

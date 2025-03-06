@@ -64,7 +64,7 @@ involvedUnit:
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
       - rule:
-    comment: Sometimes the field contains RKI units. In a lot of cases, units will be impossible to match because there is a lot of surrounding text.
+    comment:
 responsibleUnit:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
     mappingRules:

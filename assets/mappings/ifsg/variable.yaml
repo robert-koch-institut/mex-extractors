@@ -59,7 +59,7 @@ label:
           - "3"
           - "4"
       - rule:
-    comment: "In some cases the suffix '(berechnet)' is already stated in the original GuiText. But in some cases it is also missing. Should we add a suffix or not? Let's discuss!"
+    comment:
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:

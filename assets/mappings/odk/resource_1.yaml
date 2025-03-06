@@ -7,7 +7,7 @@ identifierInPrimarySource:
   - mappingRules:
       - setValues: BCHW_ZIG2_FG37_main_questionnaire_01052021
       - rule:
-    comment: identifierInPrimarySource also for the corresponding activity extracted from international projects
+    comment:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -20,7 +20,7 @@ alternativeTitle:
           - value: sit
             language: de
       - rule:
-    comment: null
+    comment:
 contact:
   - mappingRules:
       - forValues:
@@ -68,7 +68,7 @@ meshId:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D000086382 #COVID-19
       - rule:
-    comment: null
+    comment:
 method:
   - mappingRules:
       - setValues:
@@ -114,7 +114,7 @@ sizeOfDataBasis:
   - mappingRules:
       - setValues: et dolore
       - rule:
-    comment: null
+    comment:
 spatial:
   - mappingRules:
       - setValues:
@@ -123,12 +123,12 @@ spatial:
           - value: magna
             language: en
       - rule:
-    comment: null
+    comment:
 temporal:
   - mappingRules:
       - setValues: 2021-07-27 - 2021-12-31
       - rule:
-    comment: null
+    comment:
 theme:
   - mappingRules:
       - setValues:

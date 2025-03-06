@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - comment: restriktiv
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
-  - comment: "unregelmäßig"
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
@@ -164,7 +164,7 @@ keyword:
           - language: de
             value: Infektionsschutz
 language:
-  - comment: Deutsch
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
@@ -194,7 +194,7 @@ resourceCreationMethod:
       - setValues:
           - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
-  - comment: Public Health Fachdaten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-13
@@ -293,7 +293,7 @@ spatial:
           - language: de
             value: "Thüringen"
 theme:
-  - comment: Meldewesen, Infektionskrankheiten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11

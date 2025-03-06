@@ -8,7 +8,7 @@ identifierInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - rule:
-    comment: "Create variable groups "
+    comment:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:

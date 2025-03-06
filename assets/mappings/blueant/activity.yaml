@@ -26,7 +26,7 @@ contact:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-    comment: LDAP-resolved fields only contain actor UUIDs. ActorID type is set to UUID-only.
+    comment:
 end:
   - fieldInPrimarySource:
     mappingRules:
@@ -46,8 +46,6 @@ identifierInPrimarySource:
     mappingRules:
       - rule:
     comment:
-      "If project is a Drittmittelprojekt, then the Projektnummer is a number
-      from the system MACH. MACH Nr. schema: \\d{4}-\\d{4}(/TP \\d+)?"
 involvedPerson:
   - fieldInPrimarySource:
     mappingRules:

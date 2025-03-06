@@ -79,7 +79,7 @@ publication:
     locationInPrimarySource:
     mappingRules:
       - rule:
-    comment: Exclude from extraction until we have a workflow. Preferably we do this this manually with the MEx editor.
+    comment:
 publisher:
   - mappingRules:
       - forValues:

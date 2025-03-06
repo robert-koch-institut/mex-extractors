@@ -66,7 +66,7 @@ keyword:
           - language: de
             value: Surveillance
 language:
-  - comment: Deutsch
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
@@ -127,7 +127,7 @@ spatial:
           - language: de
             value: Deutschland
 stateOfDataProcessing:
-  - comment: Rohdaten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-1

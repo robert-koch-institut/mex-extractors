@@ -48,7 +48,7 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-2
       - rule:
-    comment: Add https://mex.rki.de/item/language-3
+    comment:
 meshId:
   - mappingRules:
       - setValues:
@@ -113,7 +113,7 @@ title:
           - value: kasd
             language: en
       - rule:
-    comment: n/a
+    comment:
 unitInCharge:
   - mappingRules:
       - forValues:

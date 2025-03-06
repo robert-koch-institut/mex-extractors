@@ -72,7 +72,7 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
-    comment: Deutsch
+    comment:
 meshId:
   - mappingRules:
       - setValues:
@@ -139,7 +139,7 @@ stateOfDataProcessing:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-1
-    comment: Rohdaten
+    comment:
 temporal:
   - mappingRules:
       - setValues: "seit 2020"

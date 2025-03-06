@@ -44,7 +44,7 @@ label:
           - "3"
           - "4"
       - rule:
-    comment: "In some cases!"
+    comment:
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:

@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - comment: restricted
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
-  - comment: irregular
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 contact:
@@ -36,7 +36,7 @@ keyword:
           - language: de
             value: keyword 2
 meshId:
-  - comment: Emergency Service, Hospital
+  - comment:
     mappingRules:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D004636

@@ -12,7 +12,7 @@ identifierInPrimarySource:
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
-    comment: internal
+    comment:
 title:
   - mappingRules:
       - setValues:

@@ -3,11 +3,11 @@
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
-    comment: restriktiv
+    comment:
 accrualPeriodicity:
   - mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
-    comment: unregelmäßig
+    comment:
 alternativeTitle:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -164,7 +164,7 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
-    comment: Deutsch
+    comment:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -173,7 +173,7 @@ resourceTypeGeneral:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-13
-    comment: Public Health Fachdaten
+    comment:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
@@ -272,7 +272,7 @@ theme:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
-    comment: Meldewesen, Infektionskrankheiten
+    comment:
 title:
   - fieldInPrimarySource:
     locationInPrimarySource:

@@ -28,7 +28,7 @@ landingPage:
           title: ASD DEF
           url: https://asd.def
 technicalAccessibility:
-  - comment: internal
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
       - setValues: https://mex.rki.de/item/technical-accessibility-1
