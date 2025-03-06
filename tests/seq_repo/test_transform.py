@@ -15,7 +15,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
-    YearMonthDay,
 )
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -89,7 +88,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(
     ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    activity = extracted_mex_activities_dict["TEST-ID"]
     expected_resource = {
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "test-sample-id.TEST",
