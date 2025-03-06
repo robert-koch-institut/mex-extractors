@@ -1,12 +1,21 @@
+from collections.abc import Iterable
 from unittest.mock import MagicMock
+from uuid import UUID
 
 import pytest
 import requests
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
+from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.types import Email
 from mex.extractors.drop import DropApiConnector
-from mex.extractors.seq_repo.extract import extract_sources
+from mex.extractors.seq_repo.extract import (
+    extract_source_project_coordinator,
+    extract_sources,
+)
+from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
+from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 @pytest.mark.usefixtures(
@@ -44,3 +53,63 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 
     with pytest.raises(MExError, match="Expected exactly one seq-repo file"):
         list(extract_sources())
+
+
+@pytest.mark.usefixtures("mocked_ldap")
+def test_extract_source_project_coordinator(
+    seq_repo_sources: Iterable[SeqRepoSource],
+) -> None:
+    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
+    project_coordinators = list(
+        extract_source_project_coordinator(seq_repo_sources_dict)
+    )
+    assert project_coordinators == [
+        LDAPPersonWithQuery(
+            person=LDAPPerson(
+                sAMAccountName=None,
+                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                mail=[Email("test_person@email.de")],
+                company=None,
+                department="PARENT-UNIT",
+                departmentNumber=None,
+                displayName="Resolved, Roland",
+                employeeID="42",
+                givenName=["Roland"],
+                ou=[],
+                sn="Resolved",
+            ),
+            query="max",
+        ),
+        LDAPPersonWithQuery(
+            person=LDAPPerson(
+                sAMAccountName=None,
+                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                mail=[Email("test_person@email.de")],
+                company=None,
+                department="PARENT-UNIT",
+                departmentNumber=None,
+                displayName="Resolved, Roland",
+                employeeID="42",
+                givenName=["Roland"],
+                ou=[],
+                sn="Resolved",
+            ),
+            query="mustermann",
+        ),
+        LDAPPersonWithQuery(
+            person=LDAPPerson(
+                sAMAccountName=None,
+                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                mail=[Email("test_person@email.de")],
+                company=None,
+                department="PARENT-UNIT",
+                departmentNumber=None,
+                displayName="Resolved, Roland",
+                employeeID="42",
+                givenName=["Roland"],
+                ou=[],
+                sn="Resolved",
+            ),
+            query="yee-haw",
+        ),
+    ]
