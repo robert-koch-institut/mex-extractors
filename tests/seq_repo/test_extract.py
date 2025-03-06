@@ -96,20 +96,4 @@ def test_extract_source_project_coordinator(
             ),
             query="mustermann",
         ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName=None,
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=[Email("test_person@email.de")],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber=None,
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
-            ),
-            query="yee-haw",
-        ),
     ]
