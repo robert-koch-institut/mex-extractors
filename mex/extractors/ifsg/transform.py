@@ -357,7 +357,9 @@ def transform_resource_disease_to_mex_resource_row(
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
         icd10code=[i for i in icd10code if i],
-        identifierInPrimarySource=f"{meta_disease_row.id_type}_{meta_disease_row.id_schema}",
+        identifierInPrimarySource=(
+            f"resource_disease_{meta_disease_row.id_type}_{meta_disease_row.id_schema}"
+        ),
         instrumentToolOrApparatus=instrument_tool_or_apparatus,
         isPartOf=is_part_of,
         keyword=keyword,
@@ -511,7 +513,7 @@ def transform_ifsg_data_to_mex_variables(
                 description=row.gui_tool_tip,
                 dataType=data_type_by_id[row.id_data_type],
                 hadPrimarySource=extracted_primary_sources_ifsg.stableTargetId,
-                identifierInPrimarySource=f"{row.id_field}_{id_schema}",
+                identifierInPrimarySource=f"variable_{row.id_field}_{id_schema}",
                 label=f"{row.gui_text} (berechneter Wert)",
                 usedIn=used_in,
                 valueSet=value_set,
