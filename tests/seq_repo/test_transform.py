@@ -39,24 +39,26 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     ],
 ) -> None:
     expected = {
-        "hadPrimarySource": str(extracted_primary_source_seq_repo.stableTargetId),
+        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "TEST-ID",
         "contact": [
-            str(project_coordinators_merged_ids_by_query_string["max"][0]),
-            str(project_coordinators_merged_ids_by_query_string["mustermann"][0]),
+            "d6Lni0XPiEQM5jILEBOYxO",
+            "e0Rxxm9WvnMqPLZ44UduNx",
+            "d6Lni0XPiEQM5jILEBOYxO",
         ],
+        "responsibleUnit": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "title": [{"value": "FG99-ABC-123", "language": "de"}],
         "involvedPerson": [
-            str(project_coordinators_merged_ids_by_query_string["max"][0]),
-            str(project_coordinators_merged_ids_by_query_string["mustermann"][0]),
+            "d6Lni0XPiEQM5jILEBOYxO",
+            "e0Rxxm9WvnMqPLZ44UduNx",
+            "d6Lni0XPiEQM5jILEBOYxO",
         ],
-        "responsibleUnit": [str(unit_stable_target_ids_by_synonym["FG99"])],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
         ],
-        "title": [{"value": "FG99-ABC-123", "language": TextLanguage.DE}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "egRPPkE5jnd2jOgr4hosz1",
+        "stableTargetId": "fPqFxu76FLQjVxUDSJpb0z",
     }
     extracted_mex_activities = list(
         transform_seq_repo_activities_to_extracted_activities(
@@ -89,70 +91,60 @@ def test_transform_seq_repo_resource_to_extracted_resource(
 ) -> None:
     activity = extracted_mex_activities_dict["TEST-ID"]
     expected_resource = {
-        "accessPlatform": [str(extracted_mex_access_platform.stableTargetId)],
-        "hadPrimarySource": str(extracted_primary_source_seq_repo.stableTargetId),
+        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "test-sample-id.TEST",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "anonymizationPseudonymization": [
-            "https://mex.rki.de/item/anonymization-pseudonymization-2"
-        ],
+        "created": "2023-08-07",
+        "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
         "contact": [
-            str(project_coordinators_merged_ids_by_query_string["max"][0]),
-            str(project_coordinators_merged_ids_by_query_string["mustermann"][0]),
+            "d6Lni0XPiEQM5jILEBOYxO",
+            "e0Rxxm9WvnMqPLZ44UduNx",
+            "d6Lni0XPiEQM5jILEBOYxO",
         ],
-        "contributingUnit": [str(unit_stable_target_ids_by_synonym["FG99"])],
-        "created": YearMonthDay("2023-08-07"),
-        "description": [
-            {"language": TextLanguage.DE, "value": "Testbeschreibung"},
-            {"language": TextLanguage.EN, "value": "test description"},
-        ],
-        "instrumentToolOrApparatus": [{"value": "TEST"}],
-        "keyword": [
-            {
-                "value": "fastc",
-                "language": TextLanguage.DE,
-            },
-            {
-                "value": "fastd",
-                "language": TextLanguage.DE,
-            },
-            {
-                "value": "Severe acute respiratory syndrome coronavirus 2",
-                "language": TextLanguage.EN,
-            },
-        ],
-        "method": [
-            {"value": "Next-Generation Sequencing", "language": TextLanguage.DE},
-            {"value": "NGS", "language": TextLanguage.DE},
-        ],
-        "publisher": [str(extracted_organization_rki.stableTargetId)],
-        "resourceCreationMethod": [
-            "https://mex.rki.de/item/resource-creation-method-4"
-        ],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
-        "resourceTypeSpecific": [
-            {"value": "Sequencing Data", "language": TextLanguage.DE},
-            {"value": "Sequenzdaten", "language": TextLanguage.DE},
-        ],
-        "rights": [{"value": "Example content", "language": TextLanguage.DE}],
-        "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [
+            {"value": "FG99-ABC-123 sample test-customer-name-1", "language": "en"}
+        ],
+        "unitInCharge": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
+        "anonymizationPseudonymization": [
+            "https://mex.rki.de/item/anonymization-pseudonymization-2"
+        ],
+        "contributingUnit": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "description": [
+            {"value": "Testbeschreibung", "language": "de"},
+            {"value": "test description", "language": "en"},
+        ],
+        "instrumentToolOrApparatus": [{"value": "TEST"}],
+        "keyword": [
+            {"value": "fastc", "language": "de"},
+            {"value": "fastd", "language": "de"},
             {
-                "value": "FG99-ABC-123 sample test-customer-name-1",
-                "language": TextLanguage.EN,
-            }
+                "value": "Severe acute respiratory syndrome coronavirus 2",
+                "language": "en",
+            },
         ],
-        "unitInCharge": [
-            str(unit_stable_target_ids_by_synonym["FG99"]),
+        "method": [
+            {"value": "Next-Generation Sequencing", "language": "de"},
+            {"value": "NGS", "language": "de"},
         ],
-        "wasGeneratedBy": str(activity.stableTargetId),
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-4"
+        ],
+        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
+        "resourceTypeSpecific": [
+            {"value": "Sequencing Data", "language": "de"},
+            {"value": "Sequenzdaten", "language": "de"},
+        ],
+        "rights": [{"value": "Example content", "language": "de"}],
+        "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
+        "identifier": "cYmhNKAP5uCRwuspCYccyc",
+        "stableTargetId": "cca31cXT1dWCdf3hUeO1PR",
     }
 
     mex_resources = transform_seq_repo_resource_to_extracted_resource(
