@@ -51,7 +51,7 @@ shortName:
 start:
   - mappingRules:
       - setValues:
-          - 2018-07-01
+          - "2018-07-01"
 succeeds:
   - mappingRules:
       - forValues:

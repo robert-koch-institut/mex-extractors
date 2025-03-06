@@ -33,7 +33,7 @@ technicalAccessibility:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
       - setValues: https://mex.rki.de/item/technical-accessibility-1
 title:
-    mappingRules:
+  - mappingRules:
       - rule:
       - rule:
         setValues:
