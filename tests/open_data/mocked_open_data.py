@@ -1,24 +1,13 @@
-from unittest.mock import MagicMock
-
-import pytest
-from pytest import MonkeyPatch
-
-from mex.extractors.open_data.connector import OpenDataConnector
-from mex.extractors.open_data.models.source import (
-    OpenDataParentResource,
-    OpenDataResourceVersion,
-    OpenDataVersionFiles,
-)
-
-
 def create_mocked_parent_response() -> dict:
     return {
         "hits": {
             "hits": [
                 {
+                    "title": "Dumdidumdidum",
                     "id": 1001,
                     "conceptrecid": "Eins",
                     "metadata": {
+                        "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
                         "license": {"id": "cc-by-4.0"},
                         "contributors": [{"name": "Muster, Maxi"}],
                     },
@@ -28,13 +17,13 @@ def create_mocked_parent_response() -> dict:
                     "conceptrecid": "Zwei",
                     "id": 2002,
                     "metadata": {
-                        "description": "<p> This is a test</p> <br>/n<a href> and </a>",
                         "creators": [{"name": "Muster, Maxi"}],
                         "license": {"id": "no license"},
                     },
                     "conceptdoi": "12.3456/zenodo.7890",
                 },
                 {
+                    "title": "lorem",
                     "id": 3003,
                     "conceptrecid": "three",
                     "metadata": {
@@ -53,6 +42,7 @@ def create_mocked_version_response() -> dict:
         "hits": {
             "hits": [
                 {
+                    "title": "Dumdidumdidum",
                     "id": 1001,
                     "conceptrecid": "Eins",
                     "metadata": {
@@ -70,7 +60,8 @@ def create_mocked_version_response() -> dict:
                         ],
                         "publication_date": "2021",
                     },
-                    "files": [{"id": "file 1"}, {"id": "file 2"}, {"id": "file 3"}],
+                    "created": "2021-01-01T01:01:01.111111+00:00",
+                    "files": [{"id": "file_test_id"}],
                 },
                 {
                     "title": "Ladidadida",
@@ -79,10 +70,16 @@ def create_mocked_version_response() -> dict:
                     "metadata": {
                         "license": {"id": "no license"},
                         "publication_date": "2022",
+                        "creators": [
+                            {"name": "Muster, Maxi"},
+                            {"name": "Pattern, Pepa"},
+                        ],
                     },
+                    "created": "2022-02-02T02:02:02.222222+00:00",
                     "files": [],
                 },
                 {
+                    "title": "Dideldideldei",
                     "id": 1003,
                     "conceptrecid": "Eins",
                     "metadata": {
@@ -90,7 +87,8 @@ def create_mocked_version_response() -> dict:
                         "creators": [{"name": "Pattern, Pepa"}],
                         "publication_date": "2023",
                     },
-                    "files": [{"id": "A"}],
+                    "created": "2023-03-03T03:03:03.333333+00:00",
+                    "files": [{"id": "file 1"}, {"id": "file 2"}, {"id": "file 3"}],
                 },
             ],
             "total": 201,
@@ -106,67 +104,3 @@ def create_mocked_file_response() -> dict:
             {"file_id": "file 3", "key": "more text", "links": {"self": "jklm.no"}},
         ],
     }
-
-
-@pytest.fixture
-def mocked_parent_resource() -> list[OpenDataParentResource]:
-    mocked_parent_response = create_mocked_parent_response()
-    return [
-        OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
-    ]
-
-
-@pytest.fixture
-def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
-    """Mock the Open data connector to return dummy resources."""
-    mocked_parent_response = create_mocked_parent_response()
-    parent_resources = (
-        OpenDataParentResource.model_validate(
-            mocked_parent_response["hits"]["hits"][0]
-        ),
-        OpenDataParentResource.model_validate(
-            mocked_parent_response["hits"]["hits"][1]
-        ),
-    )
-
-    monkeypatch.setattr(
-        OpenDataConnector, "get_parent_resources", lambda _: iter(parent_resources)
-    )
-
-    mocked_version_response = create_mocked_version_response()
-    resource_versions = (
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][0]
-        ),
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][1]
-        ),
-    )
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_resource_versions",
-        lambda self, _: iter(resource_versions),
-    )
-
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_oldest_resource_version_creationdate",
-        lambda self, _: "2021",
-    )
-
-    mocked_file_response = create_mocked_file_response()
-    version_files = (
-        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][0]),
-        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][1]),
-    )
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_files_for_resource_version",
-        lambda self, _: version_files,
-    )
-
-    def __init__(self: OpenDataConnector) -> None:
-        self.session = MagicMock()
-        self.url = "https://mock-opendata"
-
-    monkeypatch.setattr(OpenDataConnector, "__init__", __init__)

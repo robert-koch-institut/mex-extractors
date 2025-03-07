@@ -1,9 +1,15 @@
 from mex.common.cli import entrypoint
+from mex.common.ldap.connector import LDAPConnector
+from mex.common.ldap.transform import (
+    transform_ldap_actor_to_mex_contact_point,
+)
 from mex.common.models import (
     ConsentMapping,
     DistributionMapping,
     ExtractedConsent,
+    ExtractedContactPoint,
     ExtractedDistribution,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
@@ -90,6 +96,23 @@ def extracted_open_data_persons(
 
 
 @asset(group_name="open_data")
+def open_data_contact_point(
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+) -> list[ExtractedContactPoint]:
+    """Convert opendata email address to contact point and load to sink."""
+    ldap = LDAPConnector.get()
+    contact_point = [
+        transform_ldap_actor_to_mex_contact_point(
+            ldap.get_functional_account(mail="opendata@rki.de"),
+            extracted_primary_source_ldap,
+        )
+    ]
+
+    load(contact_point)
+    return contact_point
+
+
+@asset(group_name="open_data")
 def extracted_open_data_distribution(
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -112,12 +135,13 @@ def extracted_open_data_distribution(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_parent_resources(
+def extracted_open_data_parent_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_organization_rki: ExtractedOrganization,
+    open_data_contact_point: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
@@ -129,10 +153,11 @@ def extracted_open_data_parent_resources(
         transform_open_data_parent_resource_to_mex_resource(
             open_data_parent_resources,
             extracted_primary_source_open_data,
-            extracted_primary_source_ldap,
             extracted_open_data_persons,
             unit_stable_target_ids_by_synonym,
             resource_mapping,
+            extracted_organization_rki,
+            open_data_contact_point,
         )
     )
     load(mex_sources)
@@ -143,11 +168,12 @@ def extracted_open_data_parent_resources(
 def extracted_open_data_resource_versions(  # noqa: PLR0913
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     extracted_open_data_parent_resources: list[ExtractedResource],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_open_data_distribution: list[ExtractedDistribution],
+    extracted_organization_rki: ExtractedOrganization,
+    open_data_contact_point: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
     """Transform resource versions to extracted resources & load them to the sinks."""
     settings = Settings.get()
@@ -159,12 +185,13 @@ def extracted_open_data_resource_versions(  # noqa: PLR0913
         transform_open_data_resource_version_to_mex_resource(
             open_data_resource_versions,
             extracted_primary_source_open_data,
-            extracted_primary_source_ldap,
             extracted_open_data_persons,
             extracted_open_data_parent_resources,
             unit_stable_target_ids_by_synonym,
             extracted_open_data_distribution,
             resource_mapping,
+            extracted_organization_rki,
+            open_data_contact_point,
         )
     )
     load(mex_sources)

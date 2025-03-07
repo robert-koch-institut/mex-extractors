@@ -33,10 +33,10 @@ class OpenDataConnector(HTTPConnector):
             "total"
         ]
 
-        limit = 100  # limit = 41
+        limit = 41  # limit = 100
         amount_pages = math.ceil(total_records / limit)
 
-        for page in range(1, amount_pages + 1):  # range=2
+        for page in range(2, amount_pages + 1):  # range=1
             response = self.request(
                 "GET",
                 f"{parents_base_url}size={limit}&page={page}",

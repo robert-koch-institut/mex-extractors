@@ -4,7 +4,6 @@ from collections.abc import Generator, Iterable
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
-    transform_ldap_actor_to_mex_contact_point,
     transform_ldap_person_to_mex_person,
 )
 from mex.common.logging import watch
@@ -12,7 +11,9 @@ from mex.common.models import (
     ConsentMapping,
     DistributionMapping,
     ExtractedConsent,
+    ExtractedContactPoint,
     ExtractedDistribution,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
@@ -183,25 +184,26 @@ def transform_open_data_person_to_mex_consent(
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: Iterable[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     resource_mapping: ResourceMapping,
+    extracted_organization_rki: ExtractedOrganization,
+    open_data_contact_point: list[ExtractedContactPoint],
 ) -> Generator[ExtractedResource, None, None]:
     """Transform open_data parent resources to extracted resources.
 
     Args:
         open_data_parent_resource: open data parent resources
         extracted_primary_source_open_data: Extracted platform for open data
-        extracted_primary_source_ldap: ExtractedPrimarySource
         extracted_open_data_persons: list of ExtractedPerson
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         resource_mapping: resource mapping model with default values
+        extracted_organization_rki: ExtractedOrganization
+        open_data_contact_point: list[ExtractedContactPoint]
 
     Returns:
         Generator for ExtractedResource instances
     """
-    ldap = LDAPConnector.get()
     person_stable_target_id_by_name = {
         str(p.fullName[0]): Identifier(p.stableTargetId)
         for p in extracted_open_data_persons
@@ -213,12 +215,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     anonymization_pseudonymization = (
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    contact_open_data = [
-        transform_ldap_actor_to_mex_contact_point(
-            ldap.get_functional_account(mail="opendata@rki.de"),
-            extracted_primary_source_ldap,
-        ).stableTargetId
-    ]
+    contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
@@ -249,16 +246,20 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        description = (
-            re.sub(
-                r"<(?!/?a(?:\s+href)?)[^>]+>", "", str(resource.metadata.description)
+        if resource.metadata.description:
+            # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
+            description = re.sub(
+                r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
             ).strip()
-        )  # remove html tags(<p>,</p>,<br>,<em>...) and '/n' but keep <a href> and </a>
+        else:
+            description = None
         documentation = [
             related_identifiers.identifier
             for related_identifiers in resource.metadata.related_identifiers
             if related_identifiers.relation == "isDocumentedBy"
         ]
+        doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
+        language = None
         for mapping in resource_mapping.language[0].mappingRules:
             if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
                 language = mapping.setValues
@@ -277,7 +278,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             creator=creator,
             description=description,
             documentation=documentation,
-            doi=f"https://doi.org/{resource.conceptdoi}",
+            doi=doi,
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
             hasPersonalData=has_personal_data,
             identifierInPrimarySource=str(resource.conceptrecid),
@@ -285,7 +286,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             language=language,
             license=ccby_license,
             modified=resource.modified,
-            publisher=unit_stable_target_ids_by_synonym.get("rki"),
+            publisher=extracted_organization_rki.stableTargetId,
             resourceTypeGeneral=resource_type_general,
             theme=theme,
             title=resource.title,
@@ -297,29 +298,30 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     open_data_resource_versions: Iterable[OpenDataResourceVersion],
     extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     extracted_open_data_parent_resources: list[ExtractedResource],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
+    extracted_organization_rki: ExtractedOrganization,
+    open_data_contact_point: list[ExtractedContactPoint],
 ) -> Generator[ExtractedResource, None, None]:
     """Transform open_data resources to extracted resources.
 
     Args:
         open_data_resource_versions: open data resource versions
         extracted_primary_source_open_data: ExtractedPrimarySource for open data
-        extracted_primary_source_ldap: ExtractedPrimarySource for ldap
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         extracted_open_data_persons: list of ExtractedPerson for open data
         extracted_open_data_parent_resources: list of ExtractedResources
         extracted_open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
+        extracted_organization_rki: ExtractedOrganization
+        open_data_contact_point: list[ExtractedContactPoint]
 
     Returns:
         Generator for ExtractedResource instances
     """
-    ldap = LDAPConnector.get()
     person_stable_target_id_by_name = {
         str(p.fullName[0]): Identifier(p.stableTargetId)
         for p in extracted_open_data_persons
@@ -335,12 +337,7 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     anonymization_pseudonymization = (
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    contact_open_data = [
-        transform_ldap_actor_to_mex_contact_point(
-            ldap.get_functional_account(mail="opendata@rki.de"),
-            extracted_primary_source_ldap,
-        ).stableTargetId
-    ]
+    contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
     distribution_by_id = dict(
         zip(
             [
@@ -383,11 +380,13 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        description = (
-            re.sub(
-                r"<(?!/?a(?:\s+href)?)[^>]+>", "", str(resource.metadata.description)
+        if resource.metadata.description:
+            # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
+            description = re.sub(
+                r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
             ).strip()
-        )  # remove html tags(<p>,</p>,<br>,<em>...) and '/n' but keep <a href> and </a>
+        else:
+            description = None
         distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
             related_identifiers.identifier
@@ -402,6 +401,7 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
         is_part_of = parent_resource_stable_target_ids_by_conceptrecid.get(
             resource.conceptrecid
         )
+        language = None
         for mapping in resource_mapping.language[0].mappingRules:
             if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
                 language = mapping.setValues
@@ -425,7 +425,7 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             isPartOf=is_part_of,
             keyword=resource.metadata.keywords,
             language=language,
-            publisher=unit_stable_target_ids_by_synonym.get("rki"),
+            publisher=extracted_organization_rki.stableTargetId,
             resourceTypeGeneral=resource_type_general,
             theme=theme,
             title=resource.title,

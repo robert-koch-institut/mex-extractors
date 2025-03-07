@@ -43,9 +43,9 @@ def test_extract_parent_resources_mocked() -> None:
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_extract_resource_versions_mocked(
-    mocked_parent_resource: Iterable[OpenDataParentResource],
+    mocked_parent_resource_reponse: Iterable[OpenDataParentResource],
 ) -> None:
-    open_data_sources = list(extract_resource_versions(mocked_parent_resource))
+    open_data_sources = list(extract_resource_versions(mocked_parent_resource_reponse))
 
     assert isinstance(open_data_sources, Iterable)
 
@@ -84,10 +84,10 @@ def test_extract_resource_versions_mocked(
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_extract_oldest_record_version_creationdate(
-    mocked_parent_resource: Iterable[OpenDataParentResource],
+    mocked_parent_resource_reponse: Iterable[OpenDataParentResource],
 ) -> None:
     open_data_source_date = extract_oldest_record_version_creationdate(
-        mocked_parent_resource
+        mocked_parent_resource_reponse
     )
 
     assert isinstance(open_data_source_date, str)
