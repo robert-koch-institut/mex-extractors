@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix ambiguous identifierInPrimarySources for ifsg variables and disease-resources
+- fix contact-point for synopse not being loaded correctly
 
 ### Security
 
