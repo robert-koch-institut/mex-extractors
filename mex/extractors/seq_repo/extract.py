@@ -42,8 +42,6 @@ def extract_source_project_coordinator(
     for value in seq_repo_sources.values():
         names = value.project_coordinators
         for name in names:
-            if not name:
-                continue
             if name in seen:
                 continue
             seen.add(name)

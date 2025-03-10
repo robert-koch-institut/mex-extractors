@@ -1,23 +1,23 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - comment: restricted
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
-  - comment: daily
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-15
 contact:
   - mappingRules:
       - forValues:
           - email@email.de
-        rule: Match value to using ldap extractor.
+      - rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - MF4
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 description:
   - mappingRules:
       - setValues:
@@ -33,7 +33,7 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Register
-        rule: Use value to match with wikidata extractor.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -52,7 +52,7 @@ keyword:
           - language: de
             value: keyword2
 meshId:
-  - comment: Emergency Service, Hospital
+  - comment:
     mappingRules:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D004636
@@ -64,9 +64,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule:
-          Assign 'stable target id' of organization-item with official name as given
-          in forValues.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -93,7 +91,7 @@ spatial:
           - language: de
             value: Deutschland
 stateOfDataProcessing:
-  - comment: "Sekundärdaten"
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-2
@@ -112,4 +110,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:

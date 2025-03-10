@@ -34,10 +34,10 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'nokeda'
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Assign field 'title' value of resource nokeda model as identifierInPrimarySource
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -57,7 +57,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Assign 'stable target id' of organization-item with official name as given in forValues.
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

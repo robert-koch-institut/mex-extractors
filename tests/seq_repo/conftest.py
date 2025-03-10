@@ -53,7 +53,7 @@ def extracted_primary_source_seq_repo() -> ExtractedPrimarySource:
 def seq_repo_sources() -> list[SeqRepoSource]:
     return [
         SeqRepoSource(
-            project_coordinators=["max", "mustermann", "yee-haw"],
+            project_coordinators=["max", "mustermann", "max"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
