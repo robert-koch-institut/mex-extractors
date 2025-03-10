@@ -72,7 +72,7 @@ hasLegalBasis:
           - language: de
             value: DSGVO
 identifierInPrimarySource:
-    mappingRules:
+    - mappingRules:
       - rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
