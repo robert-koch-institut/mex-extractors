@@ -40,7 +40,7 @@ involvedPerson:
     mappingRules:
       - rule:
 responsibleUnit:
-    fieldInPrimarySource:
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
 start:
