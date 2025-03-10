@@ -13,7 +13,7 @@ usedIn:
   - mappingRules:
       - {}
 valueSet:
-    fieldInPrimarySource: Id
+  - fieldInPrimarySource: Id
     locationInPrimarySource:
     mappingRules:
       - rule:
