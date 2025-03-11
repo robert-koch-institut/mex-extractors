@@ -8,7 +8,7 @@ contact:
   - mappingRules:
       - forValues:
           - fg99
-        rule: Hmm, where are the rules?
+        rule:
 description:
   - mappingRules:
       - setValues:
@@ -19,7 +19,7 @@ endpointType:
       - setValues: https://mex.rki.de/item/api-type-1
 hadPrimarySource:
   - mappingRules:
-      - rule: "dummy rule"
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://dummy.url.com/
@@ -38,4 +38,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - fg99
-        rule: dummy rule
+        rule:

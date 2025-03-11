@@ -10,8 +10,8 @@ identifierInPrimarySource:
   - mappingRules:
       - {}
 label:
-  - fieldInPrimarySource: label of the SQL-table
-    locationInPrimarySource: Tabellen
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - vActualQuestion

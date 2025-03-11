@@ -1,10 +1,10 @@
 StudienID,SynopseID,Varname,KeepVarname,KeepPUF,intVar,Titel_Datenset,Beschreibung,SchlagworteThemen,Dateiformat,ErstellungsDatum,Version,Rechte,Lizenz,Zugangsbeschraenkung,Plattform,PlattformAdresse,Dokumentation,DStypID,Datensatztyp
-1234567,405,age,True,False,False,BBCCDD,"BBCCDD Basiserhebung, Kohorte","BBCCDD Basiserhebung, Kohorte","sas,stata",2012,V26,,,restriktiv,Reportserver,S:BBCCDD-Basis Variablennamen - XYZ-Reports,"""Y:\DATA\BBCCDD\Dokumentation",15,Kohorte
-1234567,405,age,True,False,False,BBCCDD,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",17,ABT99_DS
-1234567,406,age_w1,True,False,False,BBCCDD_00,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",17,ABT99_DS
-1122999,406,age_w1,True,False,False,BBCCDD1,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",15,ABT99_DS
-1144444,406,age_w1,True,False,False,BBCCDD2,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",1,ABT99_DS
-1229999,406,age_w1,True,False,False,EEFFGG,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",999,ABT99_DS
-1229999,503,age_w1,True,False,False,EEFFGG,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",999,ABT99_DS
-1229999,507,age_w1,True,False,False,EEFFGG,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",999,ABT99_DS
-1229999,508,age_w1,True,False,False,EEFFGG,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten, Untersuchungsteil","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Y:\DATA\BBCCDD\Dokumentation",999,ABT99_DS
+1234567,405,,,,,BBCCDD,,,,,,,,,,,,15,
+1234567,405,,,,,BBCCDD,,,,,,,,,,,,17,
+1234567,406,,,,,BBCCDD_00,,,,,,,,,,,,17,
+1122999,406,,,,,BBCCDD1,,,,,,,,,,,,15,
+1144444,406,,,,,BBCCDD2,,,,,,,,,,,,1,
+1229999,406,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,503,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,507,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,508,,,,,EEFFGG,,,,,,,,,,,,999,

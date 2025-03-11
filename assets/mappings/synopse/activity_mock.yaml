@@ -1,20 +1,17 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - comment: Sonstige
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
-  - fieldInPrimarySource: Kontakt
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
-    examplesInPrimarySource:
-      - abc@rki.de
-      - cde@rki.de
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
         - info@rki.de
-      - rule: Use value and match it using ldap extractor.
+        rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -25,7 +22,7 @@ responsibleUnit:
   - mappingRules:
       - {}
 theme:
-  - comment: Studien und Surveillance
+  - comment:
     mappingRules:
       - forValues:
           - "7202001"

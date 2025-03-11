@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: Funding type
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - Third party funded
@@ -12,8 +12,6 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-3
       - rule:
-          If the values in primary source do not match "Third party funded" or "RKI
-          funded", then match to the following default value in "setValues".
         setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
@@ -29,33 +27,15 @@ responsibleUnit:
   - mappingRules:
       - {}
 theme:
-  - fieldInPrimarySource: Activity [1|2 (optional)]
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
       - forValues:
-          - Crisis management
-          - Capacity building including trainings
-          - Supporting global governance structures and processes
-          - Conducting research
-        rule:
-          If field is either empty or has another value, set the same value as mentioned
-          above in "setValues".
+          - Infection prevention and control
         setValues:
-          - https://mex.rki.de/item/theme-37
-  - fieldInPrimarySource: Topic [1|2 (optional)]
-    mappingRules:
-      - forValues:
-          - Public health systems
-          - One Health
-          - Laboratory diagnostics
-        rule:
-          If field is either empty or has another value, set the same value as mentioned
-          above in "setValues".
-        setValues:
-          - https://mex.rki.de/item/theme-37
-      - forValues:
-          - Non-communicable diseases
-        setValues:
-          - https://mex.rki.de/item/theme-36
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
 title:
   - mappingRules:
       - {}

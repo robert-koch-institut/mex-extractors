@@ -30,53 +30,43 @@ def test_parse_single_item_html() -> None:
         )
     expected_details = {
         "item_id": 39,
-        "Bezeichnung der Verarbeitungstätigkeit": '"Qualitätssicherung Gesundheitsstudie"',
-        "Version": "1.0",
-        "Kurzbeschreibung": "Datenqualitätsanalysen",
-        "Zentrale Stelle für die Verarbeitung": "Abteilung Team",
-        "Zweckbestimmung der Datenverarbeitung": (
-            "Im Interesse steht, ob die Untersuchungen und Befragungen der "
-            "Teilnehmenden der Gesundheitsstudie vollständig durchgeführt wurden und "
-            "alle zu erwartenden Daten vorliegen."
-        ),
-        "Rechtsgrundlage": "Es besteht mit dem Projektträger der Gesundheitsstudie ein Vertrag.",
-        "Herkunft der Daten": "Die Daten werden in den Studienzentren erhoben.",
-        "Betroffene Personen": "Die Teilnehmenden kommen aus den Studienregionen.",
-        "Daten oder Datenkategorien": "Studien-/ Gesundheitsdaten (Alter, Geschlecht, Untersuchungsvariablen).",
-        "Löschfrist der Daten": "Laut Vorgaben sind die Daten nach Erhalt zu löschen.",
-        "Zugriffsberechtigte": "Die Mitarbeitenden der externen Qualitätssicherung in der Abteilung.",
-        "Gemeinsames/Verbundenes Verfahren": "nein",
-        "Abrufverfahren": "nein",
-        "Verantwortlicher für das Abrufverfahren": "None",
-        "EU-Verfahren": "nein",
-        "Auftragsverarbeitung (Art.\xa028\xa0DSGVO)": "nein",
-        "Auftragsverarbeiter": "None",
-        "Datenverarbeitung (Übermittlung/Offenlegung)": "nein",
-        "Art der verarbeiteten (übermittelten/offengelegten) Daten": "None",
-        "Datenübermittlung in Drittstaat": "nein",
-        "Name des Drittstaats": "None",
-        "Empfänger der Daten im Drittstaat": "None",
-        "Hard- und Software": (
-            "Datenspeicherung, Analysen, Ergebnisberichte erfolgen an den "
-            "Dienstrechnern."
-        ),
-        "Schutzmaßnahmen (Art.\xa032\xa0DSGVO)": "Siehe DS-Fragenkatalog",
-        "Zugriffskontrolle": "Siehe DS-Fragenkatalog",
-        "Weitergabekontrolle": "Siehe DS-Fragenkatalog",
-        "Eingabekontrolle": "Siehe DS-Fragenkatalog",
-        "Auftragskontrolle": "Siehe DS-Fragenkatalog",
-        "Verfügbarkeitskontrolle": "Siehe DS-Fragenkatalog",
-        "Trennungsgebot": "Siehe DS-Fragenkatalog",
-        "Datenschutz-Folgenabschätzung (Art.\xa035\xa0DSGVO)": (
-            "Do voluptate amet labore fugiat enim commodo ea pariatur cillum "
-            "incididunt occaecat."
-        ),
-        "Besteht die Verarbeitung aus mehreren Dateien/Datenbanken": "nein",
-        "Beschreibung der Verarbeitungstätigkeit (Dateien)": "None",
-        "Auskunftsperson": "Max Mustermann",
-        "Bemerkungen": "Team QS ist direkt der Abteilung zugeordnet.",
-        "Aufnahme-/Änderungsdatum": "01.01.2019",
-        "Erfassername": "Mustermann, Moritz",
+        "Bezeichnung der Verarbeitungstätigkeit": '"Lorem Ipsum"',
+        "Version": '"Lorem Ipsum"',
+        "Kurzbeschreibung": '"Lorem Ipsum"',
+        "Zentrale Stelle für die Verarbeitung": '"Lorem Ipsum"',
+        "Zweckbestimmung der Datenverarbeitung": '"Lorem Ipsum"',
+        "Rechtsgrundlage": '"Lorem Ipsum"',
+        "Herkunft der Daten": '"Lorem Ipsum"',
+        "Betroffene Personen": '"Lorem Ipsum"',
+        "Daten oder Datenkategorien": '"Lorem Ipsum"',
+        "Löschfrist der Daten": '"Lorem Ipsum"',
+        "Zugriffsberechtigte": '"Lorem Ipsum"',
+        "Gemeinsames/Verbundenes Verfahren": '"Lorem Ipsum"',
+        "Abrufverfahren": '"Lorem Ipsum"',
+        "Verantwortlicher für das Abrufverfahren": '"Lorem Ipsum"',
+        "EU-Verfahren": '"Lorem Ipsum"',
+        "Auftragsverarbeitung (Art.\xa028\xa0DSGVO)": '"Lorem Ipsum"',
+        "Auftragsverarbeiter": '"Lorem Ipsum"',
+        "Datenverarbeitung (Übermittlung/Offenlegung)": '"Lorem Ipsum"',
+        "Art der verarbeiteten (übermittelten/offengelegten) Daten": '"Lorem Ipsum"',
+        "Datenübermittlung in Drittstaat": '"Lorem Ipsum"',
+        "Name des Drittstaats": '"Lorem Ipsum"',
+        "Empfänger der Daten im Drittstaat": '"Lorem Ipsum"',
+        "Hard- und Software": '"Lorem Ipsum"',
+        "Schutzmaßnahmen (Art.\xa032\xa0DSGVO)": '"Lorem Ipsum"',
+        "Zugriffskontrolle": '"Lorem Ipsum"',
+        "Weitergabekontrolle": '"Lorem Ipsum"',
+        "Eingabekontrolle": '"Lorem Ipsum"',
+        "Auftragskontrolle": '"Lorem Ipsum"',
+        "Verfügbarkeitskontrolle": '"Lorem Ipsum"',
+        "Trennungsgebot": '"Lorem Ipsum"',
+        "Datenschutz-Folgenabschätzung (Art.\xa035\xa0DSGVO)": '"Lorem Ipsum"',
+        "Besteht die Verarbeitung aus mehreren Dateien/Datenbanken": '"Lorem Ipsum"',
+        "Beschreibung der Verarbeitungstätigkeit (Dateien)": '"Lorem Ipsum"',
+        "Auskunftsperson": '"Lorem Ipsum"',
+        "Bemerkungen": '"Lorem Ipsum"',
+        "Aufnahme-/Änderungsdatum": '"Lorem Ipsum"',
+        "Erfassername": '"Lorem Ipsum"',
     }
     assert (
         details.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
@@ -92,9 +82,9 @@ def test_parse_single_entry_minimal() -> None:
         )
     expected_details = {
         "item_id": 39,
-        "Bezeichnung der Verarbeitungstätigkeit": '"Qualitätssicherung Gesundheitsstudie"',
-        "Version": "1.0",
-        "Kurzbeschreibung": "Datenqualitätsanalysen",
+        "Bezeichnung der Verarbeitungstätigkeit": '"Lorem Ipsum"',
+        "Version": '"Lorem Ipsum"',
+        "Kurzbeschreibung": '"Lorem Ipsum"',
     }
     assert (
         details.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)

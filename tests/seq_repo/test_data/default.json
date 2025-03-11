@@ -13,7 +13,7 @@
         "sequenced-sample-id": "SEQ-123",
         "sequencing-date": "2023-08-07",
         "sequencing-platform": "TEST",
-        "species": "Severe acute respiratory syndrome coronavirus 2"
+        "species": "virus XYZ"
     },
     {
         "customer-org-unit-id": "FG99",

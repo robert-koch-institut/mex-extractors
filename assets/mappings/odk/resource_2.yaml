@@ -2,31 +2,31 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id'
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: test_raw_data
-        rule: Set value as indicated.
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
-        rule: Set value as indicated.
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value
+        rule:
 description:
   - mappingRules:
       - setValues:
           - value: voluptua
             language: en
-        rule: Set value as indicated.
+        rule:
 externalPartner:
   - mappingRules:
       - forValues:
           - At
-        rule: Use values
+        rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -36,24 +36,24 @@ hasLegalBasis:
             value: Informierte Einwilligung
 isPartOf:
   - mappingRules:
-      - rule: Assign stableTargetId
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
           - value: vero eos
             language: en
-        rule: Set values as indicated.
+        rule:
 language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-2
-        rule: Set values as indicated.
-    comment: Add https://mex.rki.de/item/language-3
+        rule:
+    comment:
 meshId:
   - mappingRules:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D000086382 #COVID-19
-        rule: Set values as indicated.
+        rule:
 method:
   - mappingRules:
       - setValues:
@@ -61,12 +61,12 @@ method:
             language: en
           - value: et justo
             language: de
-        rule: Set values as indicated.
+        rule:
 publisher:
   - mappingRules:
       - forValues:
           - duo dolores
-        rule: Use value to match with wikidata extractor.
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -75,7 +75,7 @@ resourceTypeGeneral:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-15
-        rule: Set value as indicated.
+        rule:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
@@ -88,23 +88,23 @@ rights:
       - setValues:
           - value: et ea rebum
             language: de
-        rule: Set value as indicated.
+        rule:
 spatial:
   - mappingRules:
       - setValues:
           - value: Stet
             language: en
-        rule: Set values as indicated.
+        rule:
 temporal:
   - mappingRules:
       - setValues: 2021-05-01 - 2021-12-31
-        rule: Set values as indicated.
+        rule:
 theme:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-37
-        rule: Set values as indicated.
+        rule:
 title:
   - mappingRules:
       - setValues:
@@ -112,15 +112,15 @@ title:
             language: en
           - value: kasd
             language: en
-        rule: Set values as indicated.
-    comment: n/a
+        rule:
+    comment:
 unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with corresponding identifier using organigram extractor.
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 0000-1005
-        rule: Use value to match with identifierInPrimarySource in international projects. Assign stableTargetId of the matching item.
+        rule:

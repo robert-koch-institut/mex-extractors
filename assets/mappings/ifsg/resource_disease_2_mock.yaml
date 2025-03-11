@@ -1,29 +1,26 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - comment: restriktiv
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
-  - comment: "unregelmäßig"
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
-  - examplesInPrimarySource:
-      - BAN
-      - BOB
-    fieldInPrimarySource: Code
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is. Do not assign a language.
+      - rule:
 contact:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+        rule:
 documentation:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -93,15 +90,13 @@ hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
-  - examplesInPrimarySource:
-      - "102"
-    fieldInPrimarySource: IdType
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 instrumentToolOrApparatus:
-  - fieldInPrimarySource: ReferenceDef[A|B|C|D|E]="1"
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - A=1
@@ -129,60 +124,42 @@ instrumentToolOrApparatus:
           - language: de
             value: Falldefinition E
 isPartOf:
-  - fieldInPrimarySource: IFSGBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
-      - rule: Assign 'stable target id' of the item described by /mappings/../ifsg/resource_parent
-  - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
-    locationInPrimarySource: Meta.Disease
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='07'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "09"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='09'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "10"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='10'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "11"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='11'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "12"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='12'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "13"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='13'
-          as  described by mapping/../ifsg/resource_state
       - forValues:
           - "14"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='14'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "15"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='15'
-          as described by mapping/../ifsg/resource_state
       - forValues:
           - "16"
         rule:
-          Assign 'stable target id' of the item with identifierInPrimarySource='16'
-          as described by mapping/../ifsg/resource_state
 keyword:
   - mappingRules:
       - setValues:
@@ -192,7 +169,7 @@ keyword:
           - language: de
             value: Infektionsschutz
 language:
-  - comment: Deutsch
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
@@ -205,7 +182,7 @@ resourceCreationMethod:
       - setValues:
           - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
-  - comment: Public Health Fachdaten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-13
@@ -220,14 +197,14 @@ rights:
           - language: de
             value: Gesundheitsdaten.
 spatial:
-  - fieldInPrimarySource: IFSGBundesland="0"
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - setValues:
           - language: de
             value: Deutschland
-  - fieldInPrimarySource: IFSGBundesland="1" and InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -275,20 +252,17 @@ spatial:
           - language: de
             value: "Thüringen"
 theme:
-  - comment: Meldewesen, Infektionskrankheiten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
 title:
-  - fieldInPrimarySource: DiseaseName
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - rule:
-          "Construct the title after the following schema: Meldedaten nach Infektionsschutzgesetz
-          (IfSG) zu [DiseaseName]. Assign 'de' as default for the language property
-          of the text object."
 unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier from /raw-data/organigram/organizational-units.json.
+        rule:

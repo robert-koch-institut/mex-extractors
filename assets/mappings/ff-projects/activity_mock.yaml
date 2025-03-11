@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
 
 activityType:
-  - fieldInPrimarySource: RKI-AZ
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - "1364"
@@ -11,80 +11,43 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-1
 contact:
-  - examplesInPrimarySource:
-      - Doe
-      - "Müller-Schmidt"
-    fieldInPrimarySource: Projektleiter
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
-          Match person using ldap extractor. If the value does not match, use the
-          organizational unit given in the field 'RKI-OE'.
 end:
-  - examplesInPrimarySource:
-      - 31.12.2020
-    fieldInPrimarySource: Laufzeit bis
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 funderOrCommissioner:
-  - examplesInPrimarySource:
-      - EC
-      - DFG
-      - G-BA
-      - SV Frankfurt
-      - "Charité"
-    fieldInPrimarySource: Zuwendungs-/Auftraggeber
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using wikidata extractor.
+      - rule:
       - forValues:
           - Sonderforschung
 fundingProgram:
-  - examplesInPrimarySource:
-      - H2020
-    fieldInPrimarySource: "Förderprogr.(FP7, H2020 etc.) ab 08/2015"
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - rule:
-          Assign 'stable target id' of primary source with identifier 'ff-project'
-          in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - examplesInPrimarySource:
-      - "1632"
-      - 1754/XX
-    fieldInPrimarySource: lfd. Nr.
-    mappingRules:
-      - rule: Extract original value.
-involvedPerson:
-  - examplesInPrimarySource:
-      - Doe
-      - "Müller-Schmidt"
-    fieldInPrimarySource: Projektleiter
+  - fieldInPrimarySource:
     mappingRules:
       - rule:
-          Match person using ldap extractor. If the value does not match, use the
-          organizational unit given in the field 'RKI-OE'.
+involvedPerson:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 responsibleUnit:
-  - examplesInPrimarySource:
-      - "Präs"
-      - GGBS
-      - FG 24
-      - NG 4
-      - P 3
-    fieldInPrimarySource: RKI-OE
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Match value using organigram extractor.
+      - rule:
 start:
-  - examplesInPrimarySource:
-      - 01.06.2017
-    fieldInPrimarySource: Laufzeit von
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 title:
-  - examplesInPrimarySource:
-      - EuroBioTox
-      - Genetische Anpassung von nicht typhoiden Salmonellen im Human- und Tierreservior
-        in sup-Sahara Afrika
-    fieldInPrimarySource: Thema des Projekts
+  - fieldInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:

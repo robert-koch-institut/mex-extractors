@@ -4,24 +4,20 @@ contact:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'report-server' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource: PlattformAdresse
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
-    examplesInPrimarySource:
-      - "Path"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 landingPage:
-  - fieldInPrimarySource: PlattformAdresse
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
-    examplesInPrimarySource:
-      - "Path"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value for the url property of the link object.
+      - rule:
       - forValues:
         - https://asd.def
         setValues:
@@ -31,16 +27,14 @@ landingPage:
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
-    comment: internal
+    comment:
 title:
-  - fieldInPrimarySource: PlattformAdresse
-    locationInPrimarySource: metadaten_zu_datensaetzen.csv
-    examplesInPrimarySource:
-      - "Path"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Extract original value.
+      - rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
