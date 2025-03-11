@@ -7,10 +7,10 @@ contact:
         rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
         setValues: primary-source
 technicalAccessibility:
   - mappingRules:

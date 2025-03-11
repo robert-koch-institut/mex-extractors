@@ -3,23 +3,23 @@
 belongsTo:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 label:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 usedIn:
   - mappingRules:
-        rule:
+      - rule:
 valueSet:
   - fieldInPrimarySource: GuidTeilnehmer
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:

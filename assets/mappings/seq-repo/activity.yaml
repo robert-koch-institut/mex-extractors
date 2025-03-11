@@ -12,7 +12,7 @@ theme:
           - https://mex.rki.de/item/theme-23
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://dummy.url.com/

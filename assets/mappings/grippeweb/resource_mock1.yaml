@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-        rule:
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -55,7 +55,7 @@ externalPartner:
         rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -76,7 +76,7 @@ instrumentToolOrApparatus:
       - {}
 isPartOf:
   - mappingRules:
-        rule:
+      - rule:
 keyword:
   - mappingRules:
       - setValues:

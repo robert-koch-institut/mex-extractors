@@ -2,7 +2,7 @@
 
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: BCHW_ZIG2_FG37_main_questionnaire_01052021

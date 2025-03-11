@@ -3,10 +3,10 @@
 abstract:
   - fieldInPrimarySource: Ausführliche Beschreibung des Verfahrens / der Verarbeitung / der Studie
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource: Zwecke des Vorhabens
     mappingRules:
-        rule:
+      - rule:
 activityType:
   - mappingRules:
       - setValues:
@@ -14,7 +14,7 @@ activityType:
 contact:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
     mappingRules:
-        rule:
+      - rule:
 documentation:
   - mappingRules:
       - setValues:
@@ -27,49 +27,49 @@ externalAssociate:
       der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 involvedPerson:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource: Mitarbeitende
     mappingRules:
-        rule:
+      - rule:
 involvedUnit:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen | OE
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource: Mitarbeitende | OE
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource:
       ggfs. gemeinsam Verantwortliche(r) nach Art. 26 DSGVO (Nennung
       der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
       dortigen Studienleiters / der dortigen Studienleiterin)
     mappingRules:
-        rule:
+      - rule:
     comment:
 responsibleUnit:
   - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
     mappingRules:
-        rule:
+      - rule:
 title:
   - fieldInPrimarySource:
     mappingRules:
-        rule:
+      - rule:

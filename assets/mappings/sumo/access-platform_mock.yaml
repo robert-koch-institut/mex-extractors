@@ -7,14 +7,14 @@ contact:
         rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
         setValues: sumo-db
 technicalAccessibility:
   - mappingRules:
-        rule:
+      - rule:
         setValues: https://mex.rki.de/item/technical-accessibility-1
 title:
   - mappingRules:

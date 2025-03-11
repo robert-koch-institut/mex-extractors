@@ -12,7 +12,7 @@ alternativeTitle:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 contact:
   - mappingRules:
       - forValues:
@@ -93,7 +93,7 @@ identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -260,7 +260,7 @@ title:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 unitInCharge:
   - mappingRules:
       - forValues:

@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-        rule:
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -58,7 +58,7 @@ externalPartner:
         rule:
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -73,7 +73,7 @@ icd10code:
           - J00-J99
 identifierInPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
         setValues: grippeweb
 instrumentToolOrApparatus:
   - mappingRules:

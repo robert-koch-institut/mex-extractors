@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-        rule:
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
@@ -52,7 +52,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 icd10code:
   - mappingRules:
       - setValues:

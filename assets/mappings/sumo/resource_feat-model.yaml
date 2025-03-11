@@ -19,7 +19,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "Dummy"

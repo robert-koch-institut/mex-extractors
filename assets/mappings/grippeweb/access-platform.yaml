@@ -2,7 +2,7 @@
 
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "primary-source"

@@ -38,7 +38,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
         setValues: ifsg-parent
 instrumentToolOrApparatus:
   - mappingRules:

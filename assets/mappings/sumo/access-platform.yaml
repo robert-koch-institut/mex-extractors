@@ -2,7 +2,7 @@
 
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 contact:
   - mappingRules:
       - forValues:

@@ -19,7 +19,7 @@ endpointType:
       - setValues: https://mex.rki.de/item/api-type-1
 hadPrimarySource:
   - mappingRules:
-        rule:
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://dummy.url.com/

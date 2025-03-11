@@ -154,7 +154,7 @@ instrumentToolOrApparatus:
       - {}
 isPartOf:
   - mappingRules:
-        rule:
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
