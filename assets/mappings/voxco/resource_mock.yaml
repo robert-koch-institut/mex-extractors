@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule:
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -18,17 +18,17 @@ contact:
       - forValues:
           - Person Test
           - test_person@email.de
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 contributor:
   - mappingRules:
       - forValues:
           - Carla Contact
-      - rule:
+        rule:
 created:
   - mappingRules:
       - setValues: "2020"
@@ -49,7 +49,7 @@ externalPartner:
           - Robert Koch-Institut
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 icd10code:
   - mappingRules:
       - setValues:
@@ -59,7 +59,7 @@ identifierInPrimarySource:
       - setValues: voxco-plus
 isPartOf:
   - mappingRules:
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -94,7 +94,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 qualityInformation:
   - mappingRules:
       - setValues:
@@ -147,9 +147,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 2022-006
-      - rule:
+        rule:

@@ -12,25 +12,25 @@ alternativeTitle:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - FG99
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 icd10code:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -66,37 +66,37 @@ isPartOf:
     mappingRules:
       - forValues:
           - "0"
-      - rule:
+        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
-      - rule:
+        rule:
       - forValues:
           - "09"
-      - rule:
+        rule:
       - forValues:
           - "10"
-      - rule:
+        rule:
       - forValues:
           - "11"
-      - rule:
+        rule:
       - forValues:
           - "12"
-      - rule:
+        rule:
       - forValues:
           - "13"
-      - rule:
+        rule:
       - forValues:
           - "14"
-      - rule:
+        rule:
       - forValues:
           - "15"
-      - rule:
+        rule:
       - forValues:
           - "16"
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -112,7 +112,7 @@ language:
     comment:
 publisher:
   - mappingRules:
-      - rule:
+        rule:
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
@@ -192,9 +192,9 @@ title:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - "FG99"
-      - rule:
+        rule:

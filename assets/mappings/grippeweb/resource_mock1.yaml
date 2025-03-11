@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule:
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -17,17 +17,17 @@ contact:
   - mappingRules:
       - forValues:
           - contactc@rki.de
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 contributor:
   - mappingRules:
       - forValues:
           - Carla Contact
-      - rule:
+        rule:
 created:
   - mappingRules:
       - setValues: "2020"
@@ -52,10 +52,10 @@ externalPartner:
   - mappingRules:
       - forValues:
           - org not in wikidata
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -76,7 +76,7 @@ instrumentToolOrApparatus:
       - {}
 isPartOf:
   - mappingRules:
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -118,7 +118,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -166,9 +166,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:

@@ -2,11 +2,11 @@
 
 accessRestriction:
   - mappingRules:
-      - rule:
+        rule:
         setValues: https://mex.rki.de/item/access-restriction-2
 alternativeTitle:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: dolor
@@ -16,15 +16,15 @@ contact:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 description:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: amet
@@ -34,24 +34,24 @@ externalPartner:
           - consetetur
           - invidunt
           - sadipscing
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 hasLegalBasis:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: Informed consent
 identifierInPrimarySource:
   - comment:
     mappingRules:
-      - rule:
+        rule:
         setValues: test_raw_data
 keyword:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - value: elitr
           - language: en
@@ -60,17 +60,17 @@ keyword:
             value: diam
 language:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - https://mex.rki.de/item/language-2
 meshId:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - http://id.nlm.nih.gov/mesh/D000086382
 method:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: nonumy
@@ -78,7 +78,7 @@ method:
             value: eirmod
 methodDescription:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: tempor
@@ -87,36 +87,36 @@ publisher:
       - forValues:
           - invidunt
           - consetetur
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - https://mex.rki.de/item/resource-creation-method-2
 resourceTypeGeneral:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - https://mex.rki.de/item/resource-type-general-15
 resourceTypeSpecific:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: tempor
 rights:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: de
             value: ut labore
 sizeOfDataBasis:
   - mappingRules:
-      - rule:
+        rule:
         setValues: et dolore
 spatial:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: de
             value: magna
@@ -124,17 +124,17 @@ spatial:
             value: magna
 temporal:
   - mappingRules:
-      - rule:
+        rule:
         setValues: 2021-07-27 - 2021-12-31
 theme:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-37
 title:
   - mappingRules:
-      - rule:
+        rule:
         setValues:
           - language: en
             value: aliquyam
@@ -144,9 +144,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 0000-1000
-      - rule:
+        rule:

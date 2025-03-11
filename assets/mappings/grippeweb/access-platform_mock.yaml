@@ -4,13 +4,13 @@ contact:
   - mappingRules:
       - forValues:
           - test_person@email.de
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
         setValues: primary-source
 technicalAccessibility:
   - mappingRules:
@@ -24,4 +24,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:

@@ -25,7 +25,7 @@ externalAssociate:
           - C1
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 
 identifierInPrimarySource:
   - mappingRules:

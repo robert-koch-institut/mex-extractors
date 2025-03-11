@@ -12,12 +12,12 @@ contact:
   - mappingRules:
       - forValues:
           - email@email.de
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - MF4
-      - rule:
+        rule:
 description:
   - mappingRules:
       - setValues:
@@ -33,7 +33,7 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Register
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -64,7 +64,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -110,4 +110,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-      - rule:
+        rule:

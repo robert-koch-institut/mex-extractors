@@ -2,10 +2,10 @@
 
 containedBy:
   - mappingRules:
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:

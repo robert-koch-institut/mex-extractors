@@ -14,7 +14,7 @@ contact:
   - mappingRules:
       - forValues:
           - email@email.de
-      - rule:
+        rule:
 description:
   - mappingRules:
       - setValues:
@@ -38,7 +38,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Dummy Publisher
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -70,7 +70,7 @@ theme:
           - https://mex.rki.de/item/theme-23
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://dummy.url.com/

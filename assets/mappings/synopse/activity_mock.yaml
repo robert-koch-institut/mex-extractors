@@ -11,7 +11,7 @@ contact:
     mappingRules:
       - forValues:
         - info@rki.de
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
       - {}

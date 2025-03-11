@@ -2,16 +2,16 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - Roland Resolved
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "sumo-db"
-      - rule:
+        rule:
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1
@@ -25,4 +25,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - Abteilung
-      - rule:
+        rule:

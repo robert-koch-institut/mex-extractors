@@ -17,7 +17,7 @@ contact:
   - mappingRules:
       - forValues:
           - FG99
-      - rule:
+        rule:
 description:
   - mappingRules:
       - setValues:
@@ -38,7 +38,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
         setValues: ifsg-parent
 instrumentToolOrApparatus:
   - mappingRules:
@@ -105,4 +105,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-      - rule:
+        rule:

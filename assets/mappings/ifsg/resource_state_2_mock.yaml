@@ -154,7 +154,7 @@ instrumentToolOrApparatus:
       - {}
 isPartOf:
   - mappingRules:
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -385,4 +385,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-      - rule:
+        rule:

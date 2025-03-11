@@ -2,16 +2,16 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: BCHW_ZIG2_FG37_main_questionnaire_01052021
-      - rule:
+        rule:
     comment:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
-      - rule:
+        rule:
 alternativeTitle:
   - mappingRules:
       - setValues:
@@ -19,30 +19,30 @@ alternativeTitle:
             language: en
           - value: sit
             language: de
-      - rule:
+        rule:
     comment:
 contact:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 description:
   - mappingRules:
       - setValues:
           - value: amet
             language: en
-      - rule:
+        rule:
 externalPartner:
   - mappingRules:
       - forValues:
           - "consetetur"
           - " sadipscing  "
-      - rule:
+        rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -57,17 +57,17 @@ keyword:
           - value: sed
           - value: diam
             language: en
-      - rule:
+        rule:
 language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-2
-      - rule:
+        rule:
 meshId:
   - mappingRules:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D000086382 #COVID-19
-      - rule:
+        rule:
     comment:
 method:
   - mappingRules:
@@ -76,18 +76,18 @@ method:
             language: en
           - value: eirmod
             language: de
-      - rule:
+        rule:
 methodDescription:
   - mappingRules:
       - setValues:
           - value: tempor
             language: en
-      - rule:
+        rule:
 publisher:
   - mappingRules:
       - forValues:
           - invidunt
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -96,7 +96,7 @@ resourceTypeGeneral:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-15
-      - rule:
+        rule:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
@@ -109,11 +109,11 @@ rights:
       - setValues:
           - value: "ut labore"
             language: de
-      - rule:
+        rule:
 sizeOfDataBasis:
   - mappingRules:
       - setValues: et dolore
-      - rule:
+        rule:
     comment:
 spatial:
   - mappingRules:
@@ -122,19 +122,19 @@ spatial:
             language: de
           - value: magna
             language: en
-      - rule:
+        rule:
     comment:
 temporal:
   - mappingRules:
       - setValues: 2021-07-27 - 2021-12-31
-      - rule:
+        rule:
     comment:
 theme:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-37
-      - rule:
+        rule:
 title:
   - mappingRules:
       - setValues:
@@ -142,14 +142,14 @@ title:
             language: en
           - value: erat
             language: de
-      - rule:
+        rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 0000-1000
-      - rule:
+        rule:

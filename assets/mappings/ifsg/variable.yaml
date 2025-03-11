@@ -4,7 +4,7 @@ belongsTo:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 dataType:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -13,7 +13,7 @@ dataType:
           - "0"
           - "20"
           - "22"
-      - rule:
+        rule:
       - forValues:
           - "1"
           - "4"
@@ -38,39 +38,39 @@ description:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
           - "4"
-      - rule:
+        rule:
     comment:
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 valueSet:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+        rule:

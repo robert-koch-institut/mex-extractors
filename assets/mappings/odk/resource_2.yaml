@@ -2,31 +2,31 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: test_raw_data
-      - rule:
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
-      - rule:
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 description:
   - mappingRules:
       - setValues:
           - value: voluptua
             language: en
-      - rule:
+        rule:
 externalPartner:
   - mappingRules:
       - forValues:
           - At
-      - rule:
+        rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -36,24 +36,24 @@ hasLegalBasis:
             value: Informierte Einwilligung
 isPartOf:
   - mappingRules:
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
           - value: vero eos
             language: en
-      - rule:
+        rule:
 language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-2
-      - rule:
+        rule:
     comment:
 meshId:
   - mappingRules:
       - setValues:
           - http://id.nlm.nih.gov/mesh/D000086382 #COVID-19
-      - rule:
+        rule:
 method:
   - mappingRules:
       - setValues:
@@ -61,12 +61,12 @@ method:
             language: en
           - value: et justo
             language: de
-      - rule:
+        rule:
 publisher:
   - mappingRules:
       - forValues:
           - duo dolores
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -75,7 +75,7 @@ resourceTypeGeneral:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-15
-      - rule:
+        rule:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
@@ -88,23 +88,23 @@ rights:
       - setValues:
           - value: et ea rebum
             language: de
-      - rule:
+        rule:
 spatial:
   - mappingRules:
       - setValues:
           - value: Stet
             language: en
-      - rule:
+        rule:
 temporal:
   - mappingRules:
       - setValues: 2021-05-01 - 2021-12-31
-      - rule:
+        rule:
 theme:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-37
-      - rule:
+        rule:
 title:
   - mappingRules:
       - setValues:
@@ -112,15 +112,15 @@ title:
             language: en
           - value: kasd
             language: en
-      - rule:
+        rule:
     comment:
 unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 0000-1005
-      - rule:
+        rule:

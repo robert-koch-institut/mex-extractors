@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule:
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -20,17 +20,17 @@ contact:
   - mappingRules:
       - forValues:
           - contactc@rki.de
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:
 contributor:
   - mappingRules:
       - forValues:
           - Carla Contact
-      - rule:
+        rule:
 created:
   - mappingRules:
       - setValues: "2011"
@@ -55,10 +55,10 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -73,7 +73,7 @@ icd10code:
           - J00-J99
 identifierInPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
         setValues: grippeweb
 instrumentToolOrApparatus:
   - mappingRules:
@@ -128,7 +128,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 qualityInformation:
   - mappingRules:
       - {}
@@ -178,4 +178,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:

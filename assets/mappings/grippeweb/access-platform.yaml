@@ -2,16 +2,16 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "primary-source"
-      - rule:
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - "test_person@email.de"
-      - rule:
+        rule:
 technicalAccessibility:
   - mappingRules:
       - setValues: "https://mex.rki.de/item/technical-accessibility-1" #internal
@@ -23,4 +23,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-      - rule:
+        rule:

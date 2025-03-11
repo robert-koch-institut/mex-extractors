@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule:
+        rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
@@ -17,17 +17,17 @@ contact:
   - mappingRules:
       - forValues:
           - "contactc@rki.de"
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - "C1"
-      - rule:
+        rule:
 contributor:
   - mappingRules:
       - forValues:
           - "Roland Resolved"
-      - rule:
+        rule:
 created:
   - mappingRules:
       - setValues: "2011"
@@ -52,7 +52,7 @@ hasPersonalData:
       - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 icd10code:
   - mappingRules:
       - setValues:
@@ -60,7 +60,7 @@ icd10code:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb
-      - rule:
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -96,12 +96,12 @@ publication:
   - mappingRules:
       - forValues:
           - "study"
-      - rule:
+        rule:
 publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -148,9 +148,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-      - rule:
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
+        rule:

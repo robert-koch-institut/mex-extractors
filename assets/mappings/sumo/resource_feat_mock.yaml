@@ -12,12 +12,12 @@ contact:
   - mappingRules:
       - forValues:
           - email@email.de
-      - rule:
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - MF4
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
       - {}

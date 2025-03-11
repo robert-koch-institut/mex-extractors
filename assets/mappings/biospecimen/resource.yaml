@@ -12,7 +12,7 @@ accessRestriction:
 alternativeTitle:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 anonymizationPseudonymization:
   - fieldInPrimarySource:
     mappingRules:
@@ -36,33 +36,33 @@ conformsTo:
 contact:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 contributingUnit:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 contributor:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 description:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 documentation:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 externalPartner:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule:
+        rule:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
@@ -73,15 +73,15 @@ hasLegalBasis:
             value: DSGVO
 identifierInPrimarySource:
     - mappingRules:
-      - rule:
+        rule:
 instrumentToolOrApparatus:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 keyword:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 language:
   - mappingRules:
       - setValues:
@@ -89,29 +89,29 @@ language:
 loincId:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 meshId:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 method:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 methodDescription:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 publication:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 publisher:
   - mappingRules:
-      - rule:
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -127,29 +127,29 @@ resourceTypeGeneral:
 resourceTypeSpecific:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 rights:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 sizeOfDataBasis:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 spatial:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 temporal:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 theme:
   - fieldInPrimarySource:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
-      - rule:
+        rule:
       - forValues:
           - Infektionskrankheiten
         setValues:
@@ -157,12 +157,12 @@ theme:
 title:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 unitInCharge:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
 wasGeneratedBy:
   - fieldInPrimarySource:
     mappingRules:
-      - rule:
+        rule:
