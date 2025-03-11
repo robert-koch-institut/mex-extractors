@@ -139,7 +139,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_contact_point: ExtractedContactPoint,
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        "mf4": Identifier.generate(seed=999),
+        "C1": Identifier.generate(seed=999),
         "XY": Identifier.generate(seed=959),
     }
 
@@ -193,7 +193,7 @@ def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_contact_point: ExtractedContactPoint,
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        "mf4": Identifier.generate(seed=999),
+        "C1": Identifier.generate(seed=999),
         "XY": Identifier.generate(seed=959),
     }
 

@@ -20,7 +20,7 @@ def create_mocked_parent_response() -> dict:
                         "creators": [{"name": "Muster, Maxi"}],
                         "license": {"id": "no license"},
                     },
-                    "conceptdoi": "12.3456/zenodo.7890",
+                    "conceptdoi": "10.3456/zenodo.7890",
                 },
                 {
                     "title": "lorem",

@@ -38,7 +38,7 @@ def test_extract_parent_resources_mocked() -> None:
             "creators": [{"name": "Muster, Maxi"}],
             "license": {"id": "no license"},
         },
-        "conceptdoi": "12.3456/zenodo.7890",
+        "conceptdoi": "10.3456/zenodo.7890",
     }
 
 

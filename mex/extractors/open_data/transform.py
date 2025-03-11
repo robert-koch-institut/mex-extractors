@@ -268,6 +268,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             in resource_mapping.license[0].mappingRules[0].forValues
         ):
             ccby_license = resource_mapping.license[0].mappingRules[0].setValues
+        if resource_mapping.unitInCharge[0].mappingRules[0].forValues:
+            unit_in_charge = unit_stable_target_ids_by_synonym.get(
+                resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+            )
+        else:
+            unit_in_charge = None
         yield ExtractedResource(
             accessRestriction=access_restriction,
             anonymizationPseudonymization=anonymization_pseudonymization,
@@ -290,7 +296,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             resourceTypeGeneral=resource_type_general,
             theme=theme,
             title=resource.title,
-            unitInCharge=unit_stable_target_ids_by_synonym.get("mf4"),
+            unitInCharge=unit_in_charge,
         )
 
 
@@ -405,6 +411,12 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
         for mapping in resource_mapping.language[0].mappingRules:
             if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
                 language = mapping.setValues
+        if resource_mapping.unitInCharge[0].mappingRules[0].forValues:
+            unit_in_charge = unit_stable_target_ids_by_synonym.get(
+                resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+            )
+        else:
+            unit_in_charge = None
         yield ExtractedResource(
             accessRestriction=access_restriction,
             anonymizationPseudonymization=anonymization_pseudonymization,
@@ -429,5 +441,5 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             resourceTypeGeneral=resource_type_general,
             theme=theme,
             title=resource.title,
-            unitInCharge=unit_stable_target_ids_by_synonym.get("mf4"),
+            unitInCharge=unit_in_charge,
         )

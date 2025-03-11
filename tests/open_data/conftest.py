@@ -111,7 +111,7 @@ def mocked_open_data_consent_mapping() -> ConsentMapping:
     """Return consent default values."""
     settings = Settings.get()
     return ConsentMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "consent_mock.yaml")
+        load_yaml(settings.open_data.mapping_path / "consent.yaml")
     )
 
 
@@ -120,7 +120,7 @@ def mocked_open_data_distribution_mapping() -> DistributionMapping:
     """Return distribution default values."""
     settings = Settings.get()
     return DistributionMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "distribution_mock.yaml")
+        load_yaml(settings.open_data.mapping_path / "distribution.yaml")
     )
 
 
@@ -129,7 +129,7 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     """Return parent resource default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource_parent_mock.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource_parent.yaml")
     )
 
 
@@ -138,7 +138,7 @@ def mocked_open_data_resource_version_mapping() -> ResourceMapping:
     """Return resource default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource_mock.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
 
 
