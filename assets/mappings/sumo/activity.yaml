@@ -25,8 +25,7 @@ externalAssociate:
           - C1
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source.
-
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://url.url
@@ -51,7 +50,7 @@ shortName:
 start:
   - mappingRules:
       - setValues:
-          - 2018-07-01
+          - "2018-07-01"
 succeeds:
   - mappingRules:
       - forValues:

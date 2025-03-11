@@ -2,7 +2,7 @@
 
 accessPlatform:
   - mappingRules:
-      - rule: assign 'stable target id' of item described by mapping/voxco/access-platform
+      - rule:
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
@@ -18,17 +18,17 @@ contact:
       - forValues:
           - Person Test
           - test_person@email.de
-        rule: Match value using ldap extractor.
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match identifier using organigram extractor.
+        rule:
 contributor:
   - mappingRules:
       - forValues:
           - Carla Contact
-        rule: Match values using ldap extractor.
+        rule:
 created:
   - mappingRules:
       - setValues: "2020"
@@ -49,7 +49,7 @@ externalPartner:
           - Robert Koch-Institut
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id' of primary source with identifier 'voxco' in /raw-data/primary-sources/primary-sources.json.
+      - rule:
 icd10code:
   - mappingRules:
       - setValues:
@@ -59,14 +59,14 @@ identifierInPrimarySource:
       - setValues: voxco-plus
 isPartOf:
   - mappingRules:
-      - rule: Assign 'stable target id' of item described by mapping/../voxco/resource_voxco
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
           - language: de
             value: Surveillance
 language:
-  - comment: Deutsch
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
@@ -94,7 +94,7 @@ publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule: Match value with organization item using wikidata extractor.
+        rule:
 qualityInformation:
   - mappingRules:
       - setValues:
@@ -127,7 +127,7 @@ spatial:
           - language: de
             value: Deutschland
 stateOfDataProcessing:
-  - comment: Rohdaten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-1
@@ -147,9 +147,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value using organigram extractor.
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 2022-006
-        rule: Match value with corresponding identifierInPrimarySource.
+        rule:

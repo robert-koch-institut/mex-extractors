@@ -40,21 +40,21 @@ def test_extract_odk_raw_data() -> None:
         "label_choices": {
             "label::English (en)": [
                 nan,
-                "I AGREE with the above statements and wish to take part in the survey",
-                "I do NOT AGREE to take part in the survey",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
+                "Lorem Ipsum",
                 nan,
-                "Yes",
-                "No",
-                nan,
-                "Yes",
-                "No",
-                "Don't know",
-                nan,
-                nan,
-                "Head of household",
-                "Wife, husband, partner",
-                nan,
-            ],
+            ]
         },
         "label_survey": {
             "label::English (en)": [
@@ -83,7 +83,7 @@ def test_extract_odk_raw_data() -> None:
                 "*(Interviewer: No more adult household members. End of interview.)*",
                 "Are you currently 18 years old or older?",
                 "Selection of respondent",
-            ],
+            ]
         },
         "list_name_choices": [
             nan,

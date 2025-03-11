@@ -10,8 +10,8 @@ identifierInPrimarySource:
   - mappingRules:
       - {}
 label:
-  - fieldInPrimarySource: StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
-    locationInPrimarySource: Meta.Field
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - Epi

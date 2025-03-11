@@ -1,111 +1,76 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
 
 belongsTo:
-  - fieldInPrimarySource: 'StatementAreaGroup="Epi|Technical|Clinical|Outbreak|Patient|AdditionalAttributes|NULL|Event|General|Labor|Address"'
-    locationInPrimarySource: Meta.Field
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule:
-          "Use 'StatementAreaGroup' to identify the respective variable-group item described by /mappings/../ifsg/variable-group.
-          This is an example query, where you will get all variables (IdField) and their variable groups (StatementAreaGroup), that are applicable for MAX IdSchema.
-          SELECT DISTINCT
-          SF.IdSchema, F.IdField, F.StatementAreaGroup
-          FROM    Meta.Field AS F
-          INNER JOIN Meta.Schema2Field AS SF ON SF.IdSchema = (SELECT MAX (IdSchema) FROM Meta.Schema2Field)
-          "
+        rule:
 dataType:
-  - fieldInPrimarySource: 'IdDataType="0|1|2|3|4|5|6|7|8|9|10|11|20|21|22"'
-    locationInPrimarySource: Meta.Field
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
-          - "0" #DummyType
-          - "20" #Float
-          - "22" #varBinary
-        rule: skip, do not set a datatype
+          - "0"
+          - "20"
+          - "22"
+        rule:
       - forValues:
-          - "1" #GUID
-          - "4" #String10
-          - "5" #String50
-          - "6" #String255
-          - "7" #StringMax
-          - "9" #Status -> Catalogue
-          - "10" # StringSite
-          - "11" #Lookup -> Catalogue
-        setValues: https://mex.rki.de/item/data-type-2 #string
+          - "1"
+          - "4"
+          - "5"
+          - "6"
+          - "7"
+          - "9"
+          - "10"
+          - "11"
+        setValues: https://mex.rki.de/item/data-type-2
       - forValues:
-          - "2" #Int
-          - "21" #Bigint
-        setValues: https://mex.rki.de/item/data-type-1 #integer
+          - "2"
+          - "21"
+        setValues: https://mex.rki.de/item/data-type-1
       - forValues:
-          - "3" #DateTime
-        setValues: https://mex.rki.de/item/data-type-4 #datetime
+          - "3"
+        setValues: https://mex.rki.de/item/data-type-4
       - forValues:
-          - "8" #Boolean
-        setValues: https://mex.rki.de/item/data-type-3 #boolean
+          - "8"
+        setValues: https://mex.rki.de/item/data-type-3
 description:
-  - fieldInPrimarySource: GuiToolTip
-    locationInPrimarySource: Meta.Field
-    examplesInPrimarySource:
-      - "Körpertemperatur größer oder gleich 38,5 Grad Celsius"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de' as default for the language property of the text object."
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'ifsg' in /raw-data/primary-sources/primary-sources.json."
+        rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource: IdField
-    locationInPrimarySource: Meta.Field
-    examplesInPrimarySource:
-      - "102100"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+        rule:
 label:
-  - fieldInPrimarySource: GuiText
-    locationInPrimarySource: Meta.Field
-    examplesInPrimarySource:
-      - "Krankheitsform (berechnet)"
-      - "hämorragischer Verlauf"
-      - "Krankheitsform"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: "Assign 'de' as default for the language property of the text object."
-  - fieldInPrimarySource: IdFieldType
-    locationInPrimarySource: Meta.Field
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
           - "4"
-        rule: "Add the following suffix to each value: '[GuiText] (berechneter Wert)', e.g. Krankheitsform (berechnet) (berechneter Wert), hämorragischer Verlauf (berechneter Wert)."
-    comment: "In some cases the suffix '(berechnet)' is already stated in the original GuiText. But in some cases it is also missing. Should we add a suffix or not? Let's discuss!"
+        rule:
+    comment:
 usedIn:
-  - fieldInPrimarySource: IdType
-    locationInPrimarySource: Meta.Field
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: "Identify the IdType of the field. The IdType is the identifierInPrimarySource of item described by mappings/../ifsg/resource_disease"
+        rule:
 valueSet:
-  - fieldInPrimarySource: ItemName
-    locationInPrimarySource: Meta.Item
-    examplesInPrimarySource:
-      - "Milzbrandsepsis"
-      - "Hautmilzbrand"
-      - "Lungenmilzbrand"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule:
-          SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.
-          You get a list of items. For each item use IdItem to find out the name of the item by SELECT IdItem, ItemName FROM Meta.Item
-  - fieldInPrimarySource: ItemNameEn
-    locationInPrimarySource: Meta.Item
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule:
-          'SELECT IdField, IdCatalogue FROM Meta.Field. Use value of IdCatalogue to query the items of the catalog by SELECT IdCatalogue="value", IdItem FROM Meta.Catalogue2Item.
-          You get a list of items. For each item use IdItem to find out the name of the item by SELECT IdItem, ItemNameEn FROM Meta.Catalogue2Item. Only extract Items that belong to fields that are applicable for MAX IdSchema.
-          Example query for this:
-          SELECT  DISTINCT
-          SF.IdSchema, I.IdItem, I.ItemName, I.ItemNameEN
-          FROM    Meta.Field AS F
-          INNER JOIN Meta.Catalogue2Item AS CI ON F.IdCatalogue = CI.IdCatalogue
-          INNER JOIN Meta.Item AS I ON CI.IdItem = I.IdItem
-          INNER JOIN Meta.Catalogue2Item2Schema AS CIS ON CI.IdCatalogue2Item = CIS.IdCatalogue2Item
-          INNER JOIN Meta.Schema2Field AS SF ON
-          SF.IdSchema = (SELECT MAX (IdSchema)
-          FROM Meta.Schema2Field)
-          ORDER BY I.IdItem
-          '
+        rule:

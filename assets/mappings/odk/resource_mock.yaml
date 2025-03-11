@@ -2,11 +2,11 @@
 
 accessRestriction:
   - mappingRules:
-      - rule: Use value as it is.
+      - rule:
         setValues: https://mex.rki.de/item/access-restriction-2
 alternativeTitle:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - language: en
             value: dolor
@@ -16,15 +16,15 @@ contact:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with corresponding identifier using organigram extractor.
+        rule:
 contributingUnit:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with corresponding identifier using organigram extractor.
+        rule:
 description:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - language: en
             value: amet
@@ -34,26 +34,24 @@ externalPartner:
           - consetetur
           - invidunt
           - sadipscing
-        rule: Use value
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign 'stable target id'
+      - rule:
 hasLegalBasis:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - language: en
             value: Informed consent
 identifierInPrimarySource:
   - comment:
-      identifierInPrimarySource also for the corresponding activity extracted
-      from international projects
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
         setValues: test_raw_data
 keyword:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - value: elitr
           - language: en
@@ -62,17 +60,17 @@ keyword:
             value: diam
 language:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - https://mex.rki.de/item/language-2
 meshId:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - http://id.nlm.nih.gov/mesh/D000086382
 method:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - language: en
             value: nonumy
@@ -80,7 +78,7 @@ method:
             value: eirmod
 methodDescription:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - language: en
             value: tempor
@@ -89,36 +87,36 @@ publisher:
       - forValues:
           - invidunt
           - consetetur
-        rule: Use value to match with wikidata extractor.
+        rule:
 resourceCreationMethod:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - https://mex.rki.de/item/resource-creation-method-2
 resourceTypeGeneral:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - https://mex.rki.de/item/resource-type-general-15
 resourceTypeSpecific:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - language: en
             value: tempor
 rights:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues:
           - language: de
             value: ut labore
 sizeOfDataBasis:
   - mappingRules:
-      - rule: Set value as indicated
+      - rule:
         setValues: et dolore
 spatial:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - language: de
             value: magna
@@ -126,17 +124,17 @@ spatial:
             value: magna
 temporal:
   - mappingRules:
-      - rule: Set value as indicated.
+      - rule:
         setValues: 2021-07-27 - 2021-12-31
 theme:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-37
 title:
   - mappingRules:
-      - rule: Set values as indicated.
+      - rule:
         setValues:
           - language: en
             value: aliquyam
@@ -146,9 +144,9 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Match value with corresponding identifier using organigram extractor.
+        rule:
 wasGeneratedBy:
   - mappingRules:
       - forValues:
           - 0000-1000
-        rule: Use value
+        rule:

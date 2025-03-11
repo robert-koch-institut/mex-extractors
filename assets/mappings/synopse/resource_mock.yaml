@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - fieldInPrimarySource: Zugangsbeschraenkung
+  - fieldInPrimarySource:
     mappingRules:
       - forValues:
           - restriktiv
@@ -10,7 +10,7 @@ contact:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:
 hadPrimarySource:
   - mappingRules:
       - {}
@@ -55,8 +55,8 @@ stateOfDataProcessing:
   - mappingRules:
       - {}
 theme:
-  - fieldInPrimarySource: StudienID
-    locationInPrimarySource: projekt_und_studienverwaltung.csv
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "7202001"
@@ -65,7 +65,7 @@ theme:
           - "7202004"
         setValues:
           - https://mex.rki.de/item/theme-36
-      - rule: For all other StudienID set value as mentioned below in "setValues".
+      - rule:
         setValues:
           - https://mex.rki.de/item/theme-11
 title:
@@ -75,4 +75,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+      - rule:

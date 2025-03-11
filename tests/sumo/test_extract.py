@@ -84,12 +84,12 @@ def test_extract_cc2_aux_valuesets() -> None:
 
 def test_extract_cc2_feat_projection() -> None:
     expected = Cc2FeatProjection(
-        feature_domain="feat_syndrome",
-        feature_subdomain="RSV",
         feature_abbr="1",
-        feature_name_en="respiratory syncytial virus, specific",
-        feature_name_de="Respiratorisches Syncytial-Virus, spezifisch",
-        feature_description="specific RSV-ICD-10 codes",
+        feature_description="Lorem Ipsum",
+        feature_domain="feat_syndrome",
+        feature_name_en="Lorem Ipsum",
+        feature_name_de="Lorem Ipsum",
+        feature_subdomain="RSV",
     )
     extracted = list(extract_cc2_feat_projection())
     assert len(extracted) == 3

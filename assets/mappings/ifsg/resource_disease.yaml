@@ -3,44 +3,37 @@
 accessRestriction:
   - mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
-    comment: restriktiv
+    comment:
 accrualPeriodicity:
   - mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
-    comment: unregelmäßig
+    comment:
 alternativeTitle:
-  - fieldInPrimarySource: Code
-    locationInPrimarySource: Meta.Disease
-    examplesInPrimarySource:
-      - "BAN"
-      - "BOB"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is. Do not assign a language.
+      - rule:
 contact:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+        rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id'"
+      - rule:
 icd10code:
-  - fieldInPrimarySource: ICD10Code
-    locationInPrimarySource: Meta.Disease
-    examplesInPrimarySource:
-      - A22
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource: IdType
-    locationInPrimarySource: Meta.Disease
-    examplesInPrimarySource:
-      - "102"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: Use value as it is.
+      - rule:
 instrumentToolOrApparatus:
-  - fieldInPrimarySource: 'ReferenceDef[A|B|C|D|E]="1"'
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "A=1"
@@ -68,42 +61,42 @@ instrumentToolOrApparatus:
           - language: de
             value: Falldefinition E
 isPartOf:
-  - fieldInPrimarySource: IFSGBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
-      - rule: "Assign 'stable target id'"
-  - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
-    locationInPrimarySource: Meta.Disease
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "09"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "10"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "11"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "12"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "13"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "14"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "15"
-        rule: "Assign 'stable target id'"
+        rule:
       - forValues:
           - "16"
-        rule: "Assign 'stable target id'"
+        rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -116,15 +109,15 @@ language:
   - mappingRules:
       - setValues:
           - "https://mex.rki.de/item/language-1"
-    comment: Deutsch
+    comment:
 publisher:
   - mappingRules:
-      - rule: "Set a default"
+      - rule:
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
           - "https://mex.rki.de/item/resource-type-general-13"
-    comment: Public Health Fachdaten
+    comment:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
@@ -136,14 +129,14 @@ rights:
           - language: de
             value: "Gesundheitsdaten."
 spatial:
-  - fieldInPrimarySource: 'IFSGBundesland="0"'
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - setValues:
           - language: de
             value: "Deutschland"
-  - fieldInPrimarySource: 'IFSGBundesland="1" and InBundesland'
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -194,14 +187,14 @@ theme:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
-    comment: Meldewesen, Infektionskrankheiten
+    comment:
 title:
-  - fieldInPrimarySource: DiseaseName
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - rule: "Construct the title "
+      - rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - "FG99"
-        rule: Use value.
+        rule:

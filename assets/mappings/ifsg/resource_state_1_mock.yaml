@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
 accessRestriction:
-  - comment: restriktiv
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
-  - comment: "unregelmäßig"
+  - comment:
     mappingRules:
       - setValues: https://mex.rki.de/item/frequency-17
 alternativeTitle:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -27,8 +27,8 @@ contact:
       - forValues:
           - FG99
 documentation:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "07"
@@ -98,8 +98,8 @@ hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
 identifierInPrimarySource:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -154,7 +154,7 @@ instrumentToolOrApparatus:
       - {}
 isPartOf:
   - mappingRules:
-      - rule: Use the 'stable target id' of item described by mapping/../ifsg/resource_parent
+      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -164,7 +164,7 @@ keyword:
           - language: de
             value: Infektionsschutz
 language:
-  - comment: Deutsch
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
@@ -174,8 +174,8 @@ publication:
           - bLsPRdhb0Xy7JLpBGLsw7o
           - doEmEPh37WX17yOu5OdwT9
           - dKPEq3pATRUAhtVzXKhPx6
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -194,7 +194,7 @@ resourceCreationMethod:
       - setValues:
           - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
-  - comment: Public Health Fachdaten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/resource-type-general-13
@@ -209,8 +209,8 @@ rights:
           - language: de
             value: Gesundheitsdaten.
 spatial:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -293,13 +293,13 @@ spatial:
           - language: de
             value: "Thüringen"
 theme:
-  - comment: Meldewesen, Infektionskrankheiten
+  - comment:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/theme-11
 title:
-  - fieldInPrimarySource: InBundesland
-    locationInPrimarySource: Meta.Disease
+  - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
       - forValues:
           - "01"
@@ -385,4 +385,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - FG99
-        rule: Use value to match with identifier in /raw-data/organigram/organizational-units.json.
+        rule:

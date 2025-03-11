@@ -2,16 +2,16 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: "Assign 'stable target id' of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json."
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: "primary-source"
-        rule: use value as indicated.
+        rule:
 contact:
   - mappingRules:
       - forValues:
           - "test_person@email.de"
-        rule: Match value using ldap extractor
+        rule:
 technicalAccessibility:
   - mappingRules:
       - setValues: "https://mex.rki.de/item/technical-accessibility-1" #internal
@@ -23,4 +23,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match value using organigram extractor.
+        rule:
