@@ -227,14 +227,19 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        contributing_unit = [
-            unit_id
-            for person in resource.metadata.contributors + resource.metadata.creators
-            if (
-                unit_list := unit_stable_target_ids_by_person_name.get(str(person.name))
-            )
-            for unit_id in unit_list
-        ]
+        contributing_unit = list(
+            {
+                unit_id
+                for person in resource.metadata.contributors
+                + resource.metadata.creators
+                if (
+                    unit_list := unit_stable_target_ids_by_person_name.get(
+                        str(person.name)
+                    )
+                )
+                for unit_id in unit_list
+            }
+        )
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -368,14 +373,19 @@ def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        contributing_unit = [
-            unit_id
-            for person in resource.metadata.contributors + resource.metadata.creators
-            if (
-                unit_list := unit_stable_target_ids_by_person_name.get(str(person.name))
-            )
-            for unit_id in unit_list
-        ]
+        contributing_unit = list(
+            {
+                unit_id
+                for person in resource.metadata.contributors
+                + resource.metadata.creators
+                if (
+                    unit_list := unit_stable_target_ids_by_person_name.get(
+                        str(person.name)
+                    )
+                )
+                for unit_id in unit_list
+            }
+        )
         contributor = [
             c
             for person in resource.metadata.contributors
