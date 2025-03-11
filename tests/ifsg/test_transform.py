@@ -189,7 +189,7 @@ def test_transform_resource_disease_to_mex_resource(
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
-        "identifierInPrimarySource": "101_1",
+        "identifierInPrimarySource": "resource_disease_101_1",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
@@ -305,7 +305,7 @@ def test_transform_ifsg_data_to_mex_variable(
         "identifier": Joker(),
         "hadPrimarySource": str(extracted_primary_sources_ifsg.stableTargetId),
         "dataType": "DummyType",
-        "identifierInPrimarySource": "1_10",
+        "identifierInPrimarySource": "variable_1_10",
         "stableTargetId": Joker(),
         "belongsTo": [str(extracted_ifsg_variable_group[0].stableTargetId)],
         "description": [{"value": "lokaler"}],

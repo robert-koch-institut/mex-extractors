@@ -173,12 +173,16 @@ def contact_merged_id_by_query_string(
         ResourceMapping.model_validate(synopse_resource),
         ActivityMapping.model_validate(synopse_activity),
     )
-    return {
-        contact_point.email[0].lower(): contact_point.stableTargetId
-        for contact_point in transform_ldap_actors_to_mex_contact_points(
+    contact_points = list(
+        transform_ldap_actors_to_mex_contact_points(
             synopse_contact,
             extracted_primary_source_ldap,
         )
+    )
+    load(contact_points)
+    return {
+        contact_point.email[0].lower(): contact_point.stableTargetId
+        for contact_point in contact_points
     }
 
 
