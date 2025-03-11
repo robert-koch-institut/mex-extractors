@@ -4,6 +4,8 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.models import (
+    ConsentMapping,
+    DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedPerson,
@@ -39,7 +41,7 @@ def mocked_parent_resource_reponse() -> list[OpenDataParentResource]:
 
 
 @pytest.fixture
-def mocked_extracted_parent_resource() -> list[OpenDataParentResource]:
+def mocked_extracted_parent_resource() -> list[ExtractedResource]:
     return [
         ExtractedResource(
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
@@ -54,16 +56,12 @@ def mocked_extracted_parent_resource() -> list[OpenDataParentResource]:
 
 
 @pytest.fixture
-def mocked_resource_version() -> list[OpenDataResourceVersion]:
+def mocked_open_data_resource_version() -> list[OpenDataResourceVersion]:
     mocked_resource_version = create_mocked_version_response()
     return [
         OpenDataResourceVersion.model_validate(
             mocked_resource_version["hits"]["hits"][0]
         )
-    ]
-    return [
-        OpenDataResourceVersion.model_validate(version)
-        for version in mocked_resource_version["hits"]["hits"]
     ]
 
 
@@ -83,7 +81,7 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
-def mocked_contact_point() -> list[ExtractedContactPoint]:
+def mocked_open_data_contact_point() -> list[ExtractedContactPoint]:
     """Mock the opendata contact point."""
     return [
         ExtractedContactPoint(
@@ -109,20 +107,38 @@ def mocked_open_data_distribution() -> list[ExtractedDistribution]:
 
 
 @pytest.fixture
+def mocked_open_data_consent_mapping() -> ConsentMapping:
+    """Return consent default values."""
+    settings = Settings.get()
+    return ConsentMapping.model_validate(
+        load_yaml(settings.open_data.mapping_path / "consent_mock.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_open_data_distribution_mapping() -> DistributionMapping:
+    """Return distribution default values."""
+    settings = Settings.get()
+    return DistributionMapping.model_validate(
+        load_yaml(settings.open_data.mapping_path / "distribution_mock.yaml")
+    )
+
+
+@pytest.fixture
 def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
-    """Return activity default values."""
+    """Return parent resource default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource_parent.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource_parent_mock.yaml")
     )
 
 
 @pytest.fixture
 def mocked_open_data_resource_version_mapping() -> ResourceMapping:
-    """Return activity default values."""
+    """Return resource default values."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource_mock.yaml")
     )
 
 
@@ -167,7 +183,6 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     mocked_file_response = create_mocked_file_response()
     version_files = (
         OpenDataVersionFiles.model_validate(mocked_file_response["entries"][0]),
-        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][1]),
     )
     monkeypatch.setattr(
         OpenDataConnector,

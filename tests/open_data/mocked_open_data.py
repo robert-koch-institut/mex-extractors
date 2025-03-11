@@ -99,8 +99,11 @@ def create_mocked_version_response() -> dict:
 def create_mocked_file_response() -> dict:
     return {
         "entries": [
-            {"file_id": "file 1", "key": "some text", "links": {"self": "www.fge.hi"}},
-            {"file_id": "file 2", "links": {"self": "www.abc.de"}},
-            {"file_id": "file 3", "key": "more text", "links": {"self": "jklm.no"}},
+            {
+                "file_id": "file_test_id",
+                "key": "some text",
+                "links": {"self": "www.efg.hi"},
+                "created": "2021-01-01T01:01:01.111111+00:00",
+            },
         ],
     }

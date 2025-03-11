@@ -32,7 +32,6 @@ def mocked_open_data_connector(monkeypatch: MonkeyPatch) -> MagicMock:
 
 
 def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> None:
-    # get mock responses
     dummy_parents = create_mocked_parent_response()
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
@@ -53,7 +52,6 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
 
 
 def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) -> None:
-    # Create mock responses
     dummy_versions = create_mocked_version_response()
 
     mocked_response = Mock(spec=requests.Response)
@@ -112,6 +110,4 @@ def test_get_files_for_resource_version(
     )  # 1x connector initializing, 1x retrieving entries (no pagination here)
     assert results == [
         OpenDataVersionFiles.model_validate(dummy_versions["entries"][0]),
-        OpenDataVersionFiles.model_validate(dummy_versions["entries"][1]),
-        OpenDataVersionFiles.model_validate(dummy_versions["entries"][2]),
     ]

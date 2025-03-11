@@ -40,7 +40,7 @@ def transform_open_data_persons(
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> dict[str, MexPersonAndCreationDate]:  #:
+) -> dict[str, MexPersonAndCreationDate]:
     """Extract persons and file creation dates from open_data resource.
 
     Extract the persons and their respective first creation date of all their files on

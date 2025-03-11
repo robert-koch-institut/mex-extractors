@@ -1,6 +1,8 @@
 import pytest
 
 from mex.common.models import (
+    ConsentMapping,
+    DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
@@ -9,19 +11,122 @@ from mex.common.models import (
     ExtractedResource,
     ResourceMapping,
 )
+from mex.common.organigram.extract import extract_organigram_units
+from mex.common.organigram.transform import (
+    transform_organigram_units_to_organizational_units,
+)
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     TextLanguage,
 )
 from mex.extractors.open_data.models.source import (
+    MexPersonAndCreationDate,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
+    transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
+    transform_open_data_person_to_mex_consent,
+    transform_open_data_persons,
     transform_open_data_resource_version_to_mex_resource,
 )
+
+
+@pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
+def test_transform_open_data_persons(
+    mocked_open_data_resource_version: OpenDataResourceVersion,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> None:
+    extracted_organigram_units = transform_organigram_units_to_organizational_units(
+        extract_organigram_units(), extracted_primary_sources["organigram"]
+    )
+    results = transform_open_data_persons(
+        mocked_open_data_resource_version,
+        extracted_primary_sources["ldap"],
+        extracted_organigram_units,
+    )
+
+    assert results == {
+        "Muster, Maxi": MexPersonAndCreationDate(
+            mex_person=ExtractedPerson(
+                hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+                identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
+                email=["test_person@email.de"],
+                familyName=["Resolved"],
+                fullName=["Resolved, Roland"],
+                givenName=["Roland"],
+                memberOf=["hIiJpZXVppHvoyeP0QtAoS"],
+            ),
+            created="2021-01-01T01:01:01.111111+00:00",
+        )
+    }
+
+
+@pytest.mark.usefixtures("mocked_open_data")
+def test_transform_open_data_distributions(
+    mocked_open_data_resource_version: OpenDataResourceVersion,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    mocked_open_data_distribution_mapping: DistributionMapping,
+) -> None:
+    mex_distribution = list(
+        transform_open_data_distributions(
+            mocked_open_data_resource_version,
+            extracted_primary_sources["open-data"],
+            mocked_open_data_distribution_mapping,
+        )
+    )
+
+    assert mex_distribution[0].model_dump(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "identifierInPrimarySource": "file_test_id",
+        "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
+        "issued": "2021-01-01T01:01:01Z",
+        "license": "https://mex.rki.de/item/license-1",
+        "title": [{"value": "some text"}],
+        "downloadURL": [{"url": "www.efg.hi"}],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+
+
+@pytest.mark.usefixtures("mocked_open_data")
+def test_transform_open_data_person_to_mex_consent(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    mocked_open_data_persons: list[ExtractedPerson],
+    mocked_open_data_consent_mapping: ConsentMapping,
+) -> None:
+    mocked_open_data_persons_and_creation_date = {
+        "Muster, Maxi": MexPersonAndCreationDate(
+            mex_person=ExtractedPerson(
+                hadPrimarySource=Identifier.generate(seed=42),
+                identifierInPrimarySource="test_id",
+            ),
+            created="2021-01-01T01:01:01.111111+00:00",
+        )
+    }
+    mex_consent_result = list(
+        transform_open_data_person_to_mex_consent(
+            extracted_primary_sources["open-data"],
+            mocked_open_data_persons,
+            mocked_open_data_persons_and_creation_date,
+            mocked_open_data_consent_mapping,
+        )
+    )
+
+    assert mex_consent_result[0].model_dump(
+        exclude_none=True, exclude_defaults=True
+    ) == {
+        "hadPrimarySource": extracted_primary_sources["open-data"].stableTargetId,
+        "identifierInPrimarySource": f"{mocked_open_data_persons[0].stableTargetId}_consent",
+        "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
+        "hasDataSubject": str(mocked_open_data_persons[0].stableTargetId),
+        "isIndicatedAtTime": "2021-01-01T01:01:01Z",
+        "hasConsentType": "https://mex.rki.de/item/consent-type-1",
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
@@ -31,7 +136,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
-    mocked_contact_point: ExtractedContactPoint,
+    mocked_open_data_contact_point: ExtractedContactPoint,
 ) -> None:
     unit_stable_target_ids_by_synonym = {
         "mf4": Identifier.generate(seed=999),
@@ -46,7 +151,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             unit_stable_target_ids_by_synonym,
             mocked_open_data_parent_resource_mapping,
             extracted_organization_rki,
-            mocked_contact_point,
+            mocked_open_data_contact_point,
         )
     )
 
@@ -58,7 +163,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "created": "2021",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
-        "contact": [str(mocked_contact_point[0].stableTargetId)],
+        "contact": [str(mocked_open_data_contact_point[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": [str(Identifier.generate(seed=999))],
@@ -78,14 +183,14 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
 def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
-    mocked_resource_version: OpenDataResourceVersion,
+    mocked_open_data_resource_version: OpenDataResourceVersion,
     mocked_extracted_parent_resource: list[ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_distribution: list[ExtractedDistribution],
     mocked_open_data_resource_version_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
-    mocked_contact_point: ExtractedContactPoint,
+    mocked_open_data_contact_point: ExtractedContactPoint,
 ) -> None:
     unit_stable_target_ids_by_synonym = {
         "mf4": Identifier.generate(seed=999),
@@ -94,7 +199,7 @@ def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
 
     mex_sources = list(
         transform_open_data_resource_version_to_mex_resource(
-            mocked_resource_version,
+            mocked_open_data_resource_version,
             extracted_primary_sources["open-data"],
             mocked_open_data_persons,
             mocked_extracted_parent_resource,
@@ -102,7 +207,7 @@ def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
             mocked_open_data_distribution,
             mocked_open_data_resource_version_mapping,
             extracted_organization_rki,
-            mocked_contact_point,
+            mocked_open_data_contact_point,
         )
     )
 
@@ -115,7 +220,7 @@ def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
         "created": "2021-01-01T01:01:01Z",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
-        "contact": [str(mocked_contact_point[0].stableTargetId)],
+        "contact": [str(mocked_open_data_contact_point[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": [str(Identifier.generate(seed=999))],
