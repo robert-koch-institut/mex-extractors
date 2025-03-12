@@ -1,7 +1,4 @@
-from unittest.mock import MagicMock
-
 import pytest
-from pytest import MonkeyPatch
 
 from mex.common.models import (
     ConsentMapping,
@@ -17,16 +14,13 @@ from mex.common.types import (
     Identifier,
     MergedOrganizationalUnitIdentifier,
 )
-from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
-    OpenDataVersionFiles,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 from tests.open_data.mocked_open_data import (
-    create_mocked_file_response,
     create_mocked_parent_response,
     create_mocked_version_response,
 )
@@ -140,58 +134,3 @@ def mocked_open_data_resource_version_mapping() -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
-
-
-@pytest.fixture
-def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
-    """Mock the Open data connector to return dummy resources."""
-    mocked_parent_response = create_mocked_parent_response()
-    parent_resources = (
-        OpenDataParentResource.model_validate(
-            mocked_parent_response["hits"]["hits"][0]
-        ),
-        OpenDataParentResource.model_validate(
-            mocked_parent_response["hits"]["hits"][1]
-        ),
-    )
-
-    monkeypatch.setattr(
-        OpenDataConnector, "get_parent_resources", lambda _: iter(parent_resources)
-    )
-
-    mocked_version_response = create_mocked_version_response()
-    resource_versions = (
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][0]
-        ),
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][1]
-        ),
-    )
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_resource_versions",
-        lambda self, _: iter(resource_versions),
-    )
-
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_oldest_resource_version_creationdate",
-        lambda self, _: "2021",
-    )
-
-    mocked_file_response = create_mocked_file_response()
-    version_files = (
-        OpenDataVersionFiles.model_validate(mocked_file_response["entries"][0]),
-    )
-    monkeypatch.setattr(
-        OpenDataConnector,
-        "get_files_for_resource_version",
-        lambda self, _: version_files,
-    )
-
-    def __init__(self: OpenDataConnector) -> None:
-        self.session = MagicMock()
-        self.url = "https://mock-opendata"
-
-    monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
