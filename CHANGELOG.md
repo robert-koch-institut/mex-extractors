@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update test mappings
 - update seq-repo, odk, datscha-web, sumo, synopse test data
+- simplify tests by using settings fixture
 
 ### Deprecated
 
