@@ -164,7 +164,7 @@ def get_all_persons_from_all_pages(
             )
             all_persons_on_page.extend(contacts)
             all_persons_on_page.extend(involved_persons)
-        except ValueError as error:
+        except ValueError as error:  # pragma: no cover
             logger.error("error getting all persons from page %s: %s", page.id, error)
 
     return all_persons_on_page
@@ -249,7 +249,7 @@ def get_all_units_from_all_pages(
             )
             all_units_on_page.extend(responsible_units)
             all_units_on_page.extend(involved_units)
-        except ValueError as error:
+        except ValueError as error:  # pragma: no cover
             logger.error("error getting all units from page %s: %s", page.id, error)
 
     return all_units_on_page

@@ -92,9 +92,8 @@ def unit_stable_target_ids_by_synonym() -> dict[
 
 
 @pytest.fixture
-def odk_resource_mappings() -> list[ResourceMapping]:
+def odk_resource_mappings(settings: Settings) -> list[ResourceMapping]:
     """Mocked odk resource mappings."""
-    settings = Settings.get()
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.odk.mapping_path / "resource_mock.yaml")
