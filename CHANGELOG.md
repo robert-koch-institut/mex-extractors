@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.29.0] - 2025-03-13
+
+### Added
+
 - add settings for wikidata mapping
 
 ### Changes
@@ -18,15 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update seq-repo, odk, datscha-web, sumo, synopse test data
 - simplify tests by using settings fixture
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - ignore and log errors while getting vvt persons or units
-
-### Security
 
 ## [0.28.2] - 2025-03-07
 
