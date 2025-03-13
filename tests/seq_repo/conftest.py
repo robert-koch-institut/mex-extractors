@@ -85,24 +85,21 @@ def seq_repo_latest_sources(
 
 
 @pytest.fixture
-def seq_repo_activity() -> ActivityMapping:
-    settings = Settings.get()
+def seq_repo_activity(settings: Settings) -> ActivityMapping:
     return ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity_mock.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_access_platform() -> AccessPlatformMapping:
-    settings = Settings.get()
+def seq_repo_access_platform(settings: Settings) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_resource() -> ResourceMapping:
-    settings = Settings.get()
+def seq_repo_resource(settings: Settings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "resource_mock.yaml")
     )

@@ -557,27 +557,24 @@ def extracted_variable_groups(
 
 
 @pytest.fixture
-def synopse_access_platform() -> AccessPlatformMapping:
+def synopse_access_platform(settings: Settings) -> AccessPlatformMapping:
     """Return a mapping model with access platform default values."""
-    settings = Settings.get()
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
-def synopse_activity() -> ActivityMapping:
+def synopse_activity(settings: Settings) -> ActivityMapping:
     """Return a mapping model with activity default values."""
-    settings = Settings.get()
     return ActivityMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "activity_mock.yaml")
     )
 
 
 @pytest.fixture
-def synopse_resource() -> ResourceMapping:
+def synopse_resource(settings: Settings) -> ResourceMapping:
     """Return a mapping model with resource default values."""
-    settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "resource_mock.yaml")
     )

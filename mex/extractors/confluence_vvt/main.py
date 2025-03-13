@@ -10,9 +10,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-)
+from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
 from mex.extractors.confluence_vvt.extract import (
     extract_confluence_vvt_authors,

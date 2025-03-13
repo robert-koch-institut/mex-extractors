@@ -54,9 +54,8 @@ def blueant_source_without_leader() -> BlueAntSource:
 
 
 @pytest.fixture
-def blueant_activity() -> ActivityMapping:
+def blueant_activity(settings: Settings) -> ActivityMapping:
     """Return activity default values."""
-    settings = Settings.get()
     return ActivityMapping.model_validate(
         load_yaml(settings.blueant.mapping_path / "activity_mock.yaml")
     )

@@ -71,9 +71,8 @@ def mocked_confluence_vvt_detailed_page_data(
 
 
 @pytest.fixture
-def confluence_vvt_activity_mapping() -> ActivityMapping:
+def confluence_vvt_activity_mapping(settings: Settings) -> ActivityMapping:
     """Return confluence-vvt activity mapping from assets."""
-    settings = Settings.get()
     return ActivityMapping.model_validate(
         load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
     )

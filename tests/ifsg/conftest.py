@@ -194,24 +194,21 @@ def meta_field() -> list[MetaField]:
 
 
 @pytest.fixture
-def ifsg_variable_group() -> VariableGroupMapping:
-    settings = Settings.get()
+def ifsg_variable_group(settings: Settings) -> VariableGroupMapping:
     return VariableGroupMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "variable-group_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_parent() -> ResourceMapping:
-    settings = Settings.get()
+def resource_parent(settings: Settings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "resource_parent_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_states() -> list[ResourceMapping]:
-    settings = Settings.get()
+def resource_states(settings: Settings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_state_1_mock.yaml")
@@ -223,8 +220,7 @@ def resource_states() -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def resource_diseases() -> list[ResourceMapping]:
-    settings = Settings.get()
+def resource_diseases(settings: Settings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_disease_1_mock.yaml")

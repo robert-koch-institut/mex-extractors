@@ -59,8 +59,7 @@ def organization_stable_target_id_by_query_voxco() -> dict[
 
 
 @pytest.fixture
-def voxco_resource_mappings() -> list[ResourceMapping]:
-    settings = Settings.get()
+def voxco_resource_mappings(settings: Settings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.voxco.mapping_path / "resource_mock.yaml")
