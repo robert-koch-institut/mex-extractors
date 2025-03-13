@@ -9,10 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add settings for wikidata mapping
+
 ### Changes
 
 - update test mappings
 - update seqrepo, odk, datschaweb, sumo, synopse test data
+- switch out wikidata query by names with query by id
 
 ### Deprecated
 
