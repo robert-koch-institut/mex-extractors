@@ -26,7 +26,7 @@ from mex.common.types import (
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
-    extract_files_for_resource_version,
+    extract_files_for_parent_resource,
     extract_oldest_record_version_creationdate,
 )
 from mex.extractors.open_data.models.source import (
@@ -94,14 +94,14 @@ def transform_open_data_persons(
 
 @watch
 def transform_open_data_distributions(
-    open_data_resource_versions: list[OpenDataResourceVersion],
+    open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
     distribution_mapping: DistributionMapping,
 ) -> Generator[ExtractedDistribution, None, None]:
     """Transform open data resource versions to extracted distributions.
 
     Args:
-        open_data_resource_versions: open data resource versions
+        open_data_parent_resources: open data parent resource
         extracted_primary_source_open_data: Extracted platform for open data
         distribution_mapping: resource mapping model with default values
 
@@ -112,14 +112,14 @@ def transform_open_data_distributions(
         distribution_mapping.accessRestriction[0].mappingRules[0].setValues
     )
     had_primary_source = extracted_primary_source_open_data.stableTargetId
-    for resource in open_data_resource_versions:
-        access_url = resource.doi_url
+    for resource in open_data_parent_resources:
+        access_url = resource.conceptdoi
         if distribution_mapping.license[0].mappingRules[0].forValues and (
             str(resource.metadata.license.id)
             in distribution_mapping.license[0].mappingRules[0].forValues
         ):
             ccby_license = distribution_mapping.license[0].mappingRules[0].setValues
-        for file in extract_files_for_resource_version(resource.id):
+        for file in extract_files_for_parent_resource(resource.id):
             download_url = file.links.self
             identifier_primary_source = file.file_id
             issued = file.created
@@ -186,6 +186,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     open_data_contact_point: list[ExtractedContactPoint],
@@ -197,6 +198,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         extracted_primary_source_open_data: Extracted platform for open data
         extracted_open_data_persons: list of ExtractedPerson
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
+        extracted_open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
         open_data_contact_point: list[ExtractedContactPoint]
@@ -216,6 +218,19 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
+    distribution_by_id = dict(
+        zip(
+            [
+                distribution.identifierInPrimarySource
+                for distribution in extracted_open_data_distribution
+            ],
+            [
+                distribution.stableTargetId
+                for distribution in extracted_open_data_distribution
+            ],
+            strict=False,
+        )
+    )
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
@@ -258,6 +273,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             ).strip()
         else:
             description = None
+        distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
             related_identifiers.identifier
             for related_identifiers in resource.metadata.related_identifiers
@@ -288,6 +304,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             created=created,
             creator=creator,
             description=description,
+            distribution=distribution,
             documentation=documentation,
             doi=doi,
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
@@ -297,156 +314,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             language=language,
             license=ccby_license,
             modified=resource.modified,
-            publisher=extracted_organization_rki.stableTargetId,
-            resourceTypeGeneral=resource_type_general,
-            theme=theme,
-            title=resource.title,
-            unitInCharge=unit_in_charge,
-        )
-
-
-@watch
-def transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
-    open_data_resource_versions: Iterable[OpenDataResourceVersion],
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_persons: list[ExtractedPerson],
-    extracted_open_data_parent_resources: list[ExtractedResource],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_open_data_distribution: list[ExtractedDistribution],
-    resource_mapping: ResourceMapping,
-    extracted_organization_rki: ExtractedOrganization,
-    open_data_contact_point: list[ExtractedContactPoint],
-) -> Generator[ExtractedResource, None, None]:
-    """Transform open_data resources to extracted resources.
-
-    Args:
-        open_data_resource_versions: open data resource versions
-        extracted_primary_source_open_data: ExtractedPrimarySource for open data
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        extracted_open_data_persons: list of ExtractedPerson for open data
-        extracted_open_data_parent_resources: list of ExtractedResources
-        extracted_open_data_distribution: list of Extracted open data Distributions
-        resource_mapping: resource mapping model with default values
-        extracted_organization_rki: ExtractedOrganization
-        open_data_contact_point: list[ExtractedContactPoint]
-
-    Returns:
-        Generator for ExtractedResource instances
-    """
-    person_stable_target_id_by_name = {
-        str(p.fullName[0]): Identifier(p.stableTargetId)
-        for p in extracted_open_data_persons
-    }
-    unit_stable_target_ids_by_person_name = {
-        p.fullName[0]: p.memberOf for p in extracted_open_data_persons
-    }
-    parent_resource_stable_target_ids_by_conceptrecid = {
-        r.identifierInPrimarySource: Identifier(r.stableTargetId)
-        for r in extracted_open_data_parent_resources
-    }
-    access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
-    anonymization_pseudonymization = (
-        resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
-    )
-    contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
-    distribution_by_id = dict(
-        zip(
-            [
-                distribution.identifierInPrimarySource
-                for distribution in extracted_open_data_distribution
-            ],
-            [
-                distribution.stableTargetId
-                for distribution in extracted_open_data_distribution
-            ],
-            strict=False,
-        )
-    )
-    has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
-    resource_type_general = (
-        resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
-    )
-    theme = resource_mapping.theme[0].mappingRules[0].setValues
-    for resource in open_data_resource_versions:
-        contact = contact_open_data + [
-            c
-            for person in resource.metadata.creators
-            if (c := person_stable_target_id_by_name.get(str(person.name)))
-        ]
-        contributing_unit = list(
-            {
-                unit_id
-                for person in resource.metadata.contributors
-                + resource.metadata.creators
-                if (
-                    unit_list := unit_stable_target_ids_by_person_name.get(
-                        str(person.name)
-                    )
-                )
-                for unit_id in unit_list
-            }
-        )
-        contributor = [
-            c
-            for person in resource.metadata.contributors
-            if (c := person_stable_target_id_by_name.get(str(person.name)))
-        ]
-        creator = [
-            c
-            for person in resource.metadata.creators
-            if (c := person_stable_target_id_by_name.get(str(person.name)))
-        ]
-        if resource.metadata.description:
-            # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
-            description = re.sub(
-                r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
-            ).strip()
-        else:
-            description = None
-        distribution = [distribution_by_id[str(file.id)] for file in resource.files]
-        documentation = [
-            related_identifiers.identifier
-            for related_identifiers in resource.metadata.related_identifiers
-            if related_identifiers.relation == "isDocumentedBy"
-        ]
-        if resource_mapping.license[0].mappingRules[0].forValues and (
-            resource.metadata.license.id
-            in resource_mapping.license[0].mappingRules[0].forValues
-        ):
-            ccby_license = resource_mapping.license[0].mappingRules[0].setValues
-        is_part_of = parent_resource_stable_target_ids_by_conceptrecid.get(
-            resource.conceptrecid
-        )
-        language = None
-        for mapping in resource_mapping.language[0].mappingRules:
-            if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
-                language = mapping.setValues
-        if resource_mapping.unitInCharge[0].mappingRules[0].forValues:
-            unit_in_charge = unit_stable_target_ids_by_synonym.get(
-                resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
-            )
-        else:
-            unit_in_charge = None
-        yield ExtractedResource(
-            accessRestriction=access_restriction,
-            anonymizationPseudonymization=anonymization_pseudonymization,
-            contact=contact,
-            contributingUnit=contributing_unit,
-            contributor=contributor,
-            created=resource.created,
-            creator=creator,
-            description=description,
-            distribution=distribution,
-            documentation=documentation,
-            doi=resource.doi_url,
-            hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
-            hasPersonalData=has_personal_data,
-            identifierInPrimarySource=str(resource.id),
-            license=ccby_license,
-            modified=resource.modified,
-            isPartOf=is_part_of,
-            keyword=resource.metadata.keywords,
-            language=language,
             publisher=extracted_organization_rki.stableTargetId,
             resourceTypeGeneral=resource_type_general,
             theme=theme,

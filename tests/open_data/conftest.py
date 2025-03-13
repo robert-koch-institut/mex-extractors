@@ -6,13 +6,11 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedPerson,
-    ExtractedResource,
     MergedPrimarySourceIdentifier,
     ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
-    MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
@@ -27,25 +25,10 @@ from tests.open_data.mocked_open_data import (
 
 
 @pytest.fixture
-def mocked_parent_resource_reponse() -> list[OpenDataParentResource]:
+def mocked_open_data_parent_resource() -> list[OpenDataParentResource]:
     mocked_parent_response = create_mocked_parent_response()
     return [
         OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
-    ]
-
-
-@pytest.fixture
-def mocked_extracted_parent_resource() -> list[ExtractedResource]:
-    return [
-        ExtractedResource(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="Eins",
-            accessRestriction="https://mex.rki.de/item/access-restriction-2",
-            contact=[Identifier.generate(seed=42)],
-            theme=["https://mex.rki.de/item/theme-1"],
-            title="Dumdidumdidum",
-            unitInCharge=[MergedOrganizationalUnitIdentifier.generate(seed=42)],
-        )
     ]
 
 
@@ -124,13 +107,4 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource_parent.yaml")
-    )
-
-
-@pytest.fixture
-def mocked_open_data_resource_version_mapping() -> ResourceMapping:
-    """Return resource default values."""
-    settings = Settings.get()
-    return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )

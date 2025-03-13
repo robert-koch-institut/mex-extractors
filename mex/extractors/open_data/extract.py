@@ -48,7 +48,7 @@ def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     return connector.get_oldest_resource_version_creationdate(record_id)
 
 
-def extract_files_for_resource_version(
+def extract_files_for_parent_resource(
     version_id: int,
 ) -> Generator[OpenDataVersionFiles, None, None]:
     """Fetch all files of a version resource.

@@ -8,7 +8,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     ExtractedPrimarySource,
-    ExtractedResource,
     ResourceMapping,
 )
 from mex.common.organigram.extract import extract_organigram_units
@@ -30,7 +29,6 @@ from mex.extractors.open_data.transform import (
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
-    transform_open_data_resource_version_to_mex_resource,
 )
 
 
@@ -66,13 +64,13 @@ def test_transform_open_data_persons(
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_distributions(
-    mocked_open_data_resource_version: OpenDataResourceVersion,
+    mocked_open_data_parent_resource: OpenDataParentResource,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_distribution_mapping: DistributionMapping,
 ) -> None:
     mex_distribution = list(
         transform_open_data_distributions(
-            mocked_open_data_resource_version,
+            mocked_open_data_parent_resource,
             extracted_primary_sources["open-data"],
             mocked_open_data_distribution_mapping,
         )
@@ -80,6 +78,7 @@ def test_transform_open_data_distributions(
 
     assert mex_distribution[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "accessURL": [{"url": "10.3456/zenodo.7890"}],
         "identifierInPrimarySource": "file_test_id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
         "issued": "2021-01-01T01:01:01Z",
@@ -131,12 +130,13 @@ def test_transform_open_data_person_to_mex_consent(
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
 def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
-    mocked_parent_resource_reponse: OpenDataParentResource,
+    mocked_open_data_parent_resource: OpenDataParentResource,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     mocked_open_data_contact_point: ExtractedContactPoint,
+    mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
         "C1": Identifier.generate(seed=999),
@@ -145,10 +145,11 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
     mex_sources = list(
         transform_open_data_parent_resource_to_mex_resource(
-            mocked_parent_resource_reponse,
+            mocked_open_data_parent_resource,
             extracted_primary_sources["open-data"],
             mocked_open_data_persons,
             unit_stable_target_ids_by_synonym,
+            mocked_open_data_distribution,
             mocked_open_data_parent_resource_mapping,
             extracted_organization_rki,
             mocked_open_data_contact_point,
@@ -174,61 +175,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}
         ],
-        "publisher": [str(extracted_organization_rki.stableTargetId)],
-        "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
-    }
-
-
-@pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
-def test_transform_open_data_resource_version_to_mex_resource(  # noqa: PLR0913
-    mocked_open_data_resource_version: OpenDataResourceVersion,
-    mocked_extracted_parent_resource: list[ExtractedResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    mocked_open_data_persons: list[ExtractedPerson],
-    mocked_open_data_distribution: list[ExtractedDistribution],
-    mocked_open_data_resource_version_mapping: ResourceMapping,
-    extracted_organization_rki: ExtractedOrganization,
-    mocked_open_data_contact_point: ExtractedContactPoint,
-) -> None:
-    unit_stable_target_ids_by_synonym = {
-        "C1": Identifier.generate(seed=999),
-        "XY": Identifier.generate(seed=959),
-    }
-
-    mex_sources = list(
-        transform_open_data_resource_version_to_mex_resource(
-            mocked_open_data_resource_version,
-            extracted_primary_sources["open-data"],
-            mocked_open_data_persons,
-            mocked_extracted_parent_resource,
-            unit_stable_target_ids_by_synonym,
-            mocked_open_data_distribution,
-            mocked_open_data_resource_version_mapping,
-            extracted_organization_rki,
-            mocked_open_data_contact_point,
-        )
-    )
-
-    assert len(mex_sources) == 1
-    assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": str(extracted_primary_sources["open-data"].stableTargetId),
-        "identifierInPrimarySource": "1001",
-        "isPartOf": [mocked_extracted_parent_resource[0].stableTargetId],
-        "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
-        "created": "2021-01-01T01:01:01Z",
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
-        "license": "https://mex.rki.de/item/license-1",
-        "contact": [str(mocked_open_data_contact_point[0].stableTargetId)],
-        "theme": ["https://mex.rki.de/item/theme-1"],
-        "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": [str(Identifier.generate(seed=999))],
-        "anonymizationPseudonymization": [
-            "https://mex.rki.de/item/anonymization-pseudonymization-1"
-        ],
-        "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
-        "documentation": [{"url": "should be transformed"}],
+        "doi": "https://doi.org/10.3456/zenodo.7890",
         "distribution": [str(mocked_open_data_distribution[0].stableTargetId)],
         "publisher": [str(extracted_organization_rki.stableTargetId)],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],

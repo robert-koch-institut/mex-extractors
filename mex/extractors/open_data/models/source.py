@@ -48,25 +48,21 @@ class OpenDataMetadata(BaseModel):
 class OpenDataParentResource(BaseModel):
     """Model class for a Zenodo record as resource parent."""
 
-    title: str | None = None
-    conceptrecid: str
-    id: int
     modified: str | None = None
+    id: int
+    conceptrecid: str
     conceptdoi: str | None = None
     metadata: OpenDataMetadata
+    title: str | None = None
+    files: list[OpenDataLicenseOrFile]
 
 
 class OpenDataResourceVersion(BaseModel):
     """Model class for Versions of a record."""
 
-    title: str | None = None
-    id: int
-    conceptrecid: str
     created: str | None = None
-    doi_url: str | None = None
+    id: int
     metadata: OpenDataMetadata
-    modified: str | None = None
-    files: list[OpenDataLicenseOrFile]
 
 
 class OpenDataVersionFiles(BaseModel):
