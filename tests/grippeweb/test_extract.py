@@ -82,6 +82,5 @@ def test_extract_grippeweb_organizations(
     organizations = extract_grippeweb_organizations(grippeweb_resource_mappings)
     expected = {
         "Robert Koch-Institut": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
-        "org not in wikidata": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
     }
     assert organizations == expected
