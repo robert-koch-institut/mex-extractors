@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../__schema__/OrganizationMapping.json
+
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        - Robert Koch-Institut
+        setValues: http://www.wikidata.org/entity/Q679041
+officialName:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:

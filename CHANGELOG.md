@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add settings for wikidata mapping
+
 ### Changes
 
 - update test mappings
+- switch out wikidata query by names with query by id
 - update seq-repo, odk, datscha-web, sumo, synopse test data
 - simplify tests by using settings fixture
 - quickfix publisher to always push to S3 (will become outdated by MX-1808)
