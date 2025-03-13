@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update test mappings
 - update seqrepo, odk, datschaweb, sumo, synopse test data
+- quickfix publisher to always push to S3 (will become outdated by MX-1808)
 
 ### Deprecated
 
