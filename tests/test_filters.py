@@ -83,9 +83,8 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
     ]
 
 
-def test_filters_skips_partners_mocked() -> None:
+def test_filters_skips_partners_mocked(settings: Settings) -> None:
     """Test global filter for skipping partners."""
-    settings = Settings.get()
     settings.skip_partners = ["Schmiedecke OHG", "Test GmbH"]
     settings.skip_units = ["filler"]
     settings.skip_years_before = 1900
@@ -94,9 +93,8 @@ def test_filters_skips_partners_mocked() -> None:
     assert len(sources) == 4
 
 
-def test_filters_skips_units_mocked() -> None:
+def test_filters_skips_units_mocked(settings: Settings) -> None:
     """Test global filter for skipping units."""
-    settings = Settings.get()
     settings.skip_partners = ["filler"]
     settings.skip_units = ["FG99"]
     settings.skip_years_before = 1900
@@ -105,9 +103,8 @@ def test_filters_skips_units_mocked() -> None:
     assert len(sources) == 4
 
 
-def test_filters_skips_years_mocked() -> None:
+def test_filters_skips_years_mocked(settings: Settings) -> None:
     """Test global filter for skipping years before."""
-    settings = Settings.get()
     settings.skip_partners = ["filler"]
     settings.skip_units = ["filler"]
     settings.skip_years_before = 2020

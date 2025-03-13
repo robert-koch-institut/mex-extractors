@@ -64,9 +64,8 @@ def mex_persons() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
-def resource_mapping() -> ResourceMapping:
+def resource_mapping(settings: Settings) -> ResourceMapping:
     """Mock resource mapping."""
-    settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.biospecimen.mapping_path / "resource_mock.yaml")
     )

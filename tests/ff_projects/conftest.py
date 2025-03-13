@@ -20,9 +20,8 @@ def extracted_person() -> ExtractedPerson:
 
 
 @pytest.fixture
-def ff_projects_activity() -> ActivityMapping:
+def ff_projects_activity(settings: Settings) -> ActivityMapping:
     """Return FF Projects mapping default values."""
-    settings = Settings.get()
     return ActivityMapping.model_validate(
         load_yaml(settings.ff_projects.mapping_path / "activity_mock.yaml")
     )

@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update test mappings
-- update seqrepo, odk, datschaweb, sumo, synopse test data
+- update seq-repo, odk, datscha-web, sumo, synopse test data
+- simplify tests by using settings fixture
 - quickfix publisher to always push to S3 (will become outdated by MX-1808)
 
 ### Deprecated
@@ -20,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- ignore and log errors while getting vvt persons or units
 
 ### Security
 

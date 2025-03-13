@@ -5,7 +5,7 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
+from mex.common.logging import logger, watch
 from mex.common.models import ActivityMapping
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
@@ -157,12 +157,15 @@ def get_all_persons_from_all_pages(
     """
     all_persons_on_page = []
     for page in pages:
-        contacts = get_contact_from_page(page, confluence_vvt_activity_mapping)
-        involved_persons = get_involved_persons_from_page(
-            page, confluence_vvt_activity_mapping
-        )
-        all_persons_on_page.extend(contacts)
-        all_persons_on_page.extend(involved_persons)
+        try:
+            contacts = get_contact_from_page(page, confluence_vvt_activity_mapping)
+            involved_persons = get_involved_persons_from_page(
+                page, confluence_vvt_activity_mapping
+            )
+            all_persons_on_page.extend(contacts)
+            all_persons_on_page.extend(involved_persons)
+        except ValueError as error:  # pragma: no cover
+            logger.error("error getting all persons from page %s: %s", page.id, error)
 
     return all_persons_on_page
 
@@ -237,13 +240,16 @@ def get_all_units_from_all_pages(
     """
     all_units_on_page = []
     for page in pages:
-        responsible_units = get_responsible_unit_from_page(
-            page, confluence_vvt_activity_mapping
-        )
-        involved_units = get_involved_units_from_page(
-            page, confluence_vvt_activity_mapping
-        )
-        all_units_on_page.extend(responsible_units)
-        all_units_on_page.extend(involved_units)
+        try:
+            responsible_units = get_responsible_unit_from_page(
+                page, confluence_vvt_activity_mapping
+            )
+            involved_units = get_involved_units_from_page(
+                page, confluence_vvt_activity_mapping
+            )
+            all_units_on_page.extend(responsible_units)
+            all_units_on_page.extend(involved_units)
+        except ValueError as error:  # pragma: no cover
+            logger.error("error getting all units from page %s: %s", page.id, error)
 
     return all_units_on_page

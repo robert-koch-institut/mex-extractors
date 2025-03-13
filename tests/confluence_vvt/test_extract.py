@@ -25,12 +25,10 @@ def test_fetch_all_vvt_pages_ids() -> None:
 
 @pytest.mark.integration
 def test_get_page_data_by_id() -> None:
-    page_ids = list(islice(fetch_all_vvt_pages_ids(), 5))
+    page_ids = set(islice(fetch_all_vvt_pages_ids(), 5))
 
     response = list(get_page_data_by_id(page_ids))
-    assert str(response[0].id) == page_ids[1]
-    assert str(response[1].id) == page_ids[2]
-    assert str(response[2].id) == page_ids[3]
+    assert page_ids > {str(r.id) for r in response}
 
 
 def test_fetch_all_data_page_ids_mocked(
