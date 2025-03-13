@@ -47,9 +47,10 @@ def get_wikidata_organization_ids_by_label() -> dict[str, str]:
         load_yaml(settings.wikidata.mapping_path / "organization.yaml")
     )
     return {
-        rule.forValues[0]: rule.setValues
+        value: rule.setValues
         for rule in organization_mapping.identifierInPrimarySource[0].mappingRules
         if rule.setValues and rule.forValues
+        for value in rule.forValues
     }
 
 
