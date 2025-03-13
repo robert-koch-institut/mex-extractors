@@ -115,6 +115,6 @@ def test_extract_ff_projects_organizations() -> None:
     organizations = extract_ff_projects_organizations(
         [next(extract_ff_projects_sources())]
     )
-    assert organizations["Apple"] == MergedOrganizationIdentifier(
+    assert organizations["Robert Koch-Institut"] == MergedOrganizationIdentifier(
         "ga6xh6pgMwgq7DC7r6Wjqg"
     )
