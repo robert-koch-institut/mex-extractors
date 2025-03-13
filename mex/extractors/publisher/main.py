@@ -1,3 +1,5 @@
+from collections import deque
+
 from mex.common.cli import entrypoint
 from mex.common.models import AnyMergedModel, ItemsContainer
 from mex.extractors.pipeline import asset, run_job_in_process
@@ -21,7 +23,7 @@ def publish_merged_items(
 ) -> None:
     """Write received merged items to configured sink."""
     s3 = S3Sink.get()
-    s3.load(extract_and_filter_merged_items.items)
+    deque(s3.load(extract_and_filter_merged_items.items), maxlen=0)
 
 
 @entrypoint(Settings)
