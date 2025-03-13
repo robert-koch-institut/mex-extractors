@@ -84,27 +84,24 @@ def organizations_stable_target_ids_by_synonym():
 
 
 @pytest.fixture
-def sumo_resources_feat() -> ResourceMapping:
+def sumo_resources_feat(settings: Settings) -> ResourceMapping:
     """Return feat SumoResource."""
-    settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "resource_feat_mock.yaml")
     )
 
 
 @pytest.fixture
-def sumo_resources_nokeda() -> ResourceMapping:
+def sumo_resources_nokeda(settings: Settings) -> ResourceMapping:
     """Return feat SumoResource."""
-    settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
     )
 
 
 @pytest.fixture
-def sumo_access_platform() -> AccessPlatformMapping:
+def sumo_access_platform(settings: Settings) -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
-    settings = Settings.get()
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "access-platform_mock.yaml")
     )
@@ -125,9 +122,8 @@ def transformed_sumo_access_platform() -> ExtractedAccessPlatform:
 
 
 @pytest.fixture
-def sumo_activity() -> ActivityMapping:
+def sumo_activity(settings: Settings) -> ActivityMapping:
     """Return Sumo Activity."""
-    settings = Settings.get()
     return ActivityMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "activity_mock.yaml")
     )

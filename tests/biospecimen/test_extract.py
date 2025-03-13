@@ -116,8 +116,7 @@ def test_get_clean_string(series: Series, expected_clean_string: str) -> None:
     assert clean_string == expected_clean_string
 
 
-def test_get_year_from_zeitlicher_bezug() -> None:
-    settings = Settings.get()
+def test_get_year_from_zeitlicher_bezug(settings: Settings) -> None:
     key_col = settings.biospecimen.key_col
     val_col = settings.biospecimen.val_col
 
