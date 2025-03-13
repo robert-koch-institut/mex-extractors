@@ -15,6 +15,7 @@ from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
 
+@cache
 def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization | None:
     """Get and load a wikidata item details by its ID.
 
@@ -40,6 +41,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     return None
 
 
+@cache
 def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     """Extract and transform synopse resource default values."""
     settings = Settings.get()
