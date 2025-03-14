@@ -1,14 +1,13 @@
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 
-from mex.common.logging import watch
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
+    OpenDataVersionFiles,
 )
 
 
-@watch
 def extract_parent_resources() -> Generator[OpenDataParentResource, None, None]:
     """Load Open Data resources by querying the Zenodo API.
 
@@ -23,8 +22,9 @@ def extract_parent_resources() -> Generator[OpenDataParentResource, None, None]:
     yield from connector.get_parent_resources()
 
 
-@watch
-def extract_resource_versions() -> Generator[OpenDataResourceVersion, None, None]:
+def extract_resource_versions(
+    open_data_parent_resources: Iterable[OpenDataParentResource],
+) -> Generator[OpenDataResourceVersion, None, None]:
     """Fetch all the versions of a parent resource.
 
     Returns:
@@ -32,12 +32,12 @@ def extract_resource_versions() -> Generator[OpenDataResourceVersion, None, None
     """
     connector = OpenDataConnector()
 
-    for parent_resource in extract_parent_resources():
+    for parent_resource in open_data_parent_resources:
         if parent_resource.id:
             yield from connector.get_resource_versions(parent_resource.id)
 
 
-def extract_oldest_record_version(record_id: int) -> OpenDataResourceVersion:
+def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     """Fetch only the oldest version of a parent resource.
 
     Returns:
@@ -45,4 +45,17 @@ def extract_oldest_record_version(record_id: int) -> OpenDataResourceVersion:
     """
     connector = OpenDataConnector()
 
-    return connector.get_oldest_resource_version(record_id)
+    return connector.get_oldest_resource_version_creationdate(record_id)
+
+
+def extract_files_for_parent_resource(
+    version_id: int,
+) -> Generator[OpenDataVersionFiles, None, None]:
+    """Fetch all files of a version resource.
+
+    Returns:
+        OpenDataVersionFiles
+    """
+    connector = OpenDataConnector()
+
+    yield from connector.get_files_for_resource_version(version_id)
