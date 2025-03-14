@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- provide wikidata extractor with wikidata id instead of url
+
 ### Security
 
 ## [0.29.0] - 2025-03-13

@@ -25,7 +25,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     Returns:
         extracted organization if found in wikidata
     """
-    wikidata_organization = _get_organization_details(wikidata_id)
+    wikidata_organization = _get_organization_details(wikidata_id.split("/")[-1])
     wikidata_primary_source = load_extracted_primary_source_by_name("wikidata")
     if not wikidata_primary_source:
         msg = "Primary source for wikidata not found"
