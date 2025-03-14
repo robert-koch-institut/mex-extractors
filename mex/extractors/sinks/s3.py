@@ -1,6 +1,5 @@
 import json
 from collections.abc import Generator, Iterable
-from io import BytesIO
 from typing import TypeVar
 
 import boto3
@@ -39,7 +38,7 @@ class S3Sink(BaseSink):
         self.client.close()
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
-        """Write the incoming items as a new-line delimited JSON file into S3.
+        """Write the incoming items as an NDJSON file and load that to S3.
 
         Args:
             items: Iterable of any kind of items
@@ -49,17 +48,20 @@ class S3Sink(BaseSink):
         """
         settings = Settings.get()
         total_count = 0
-        with BytesIO() as buffer:
+        with open(
+            settings.work_dir / "publisher.ndjson", encoding="utf-8", mode="w"
+        ) as fh:
             for chunk in grouper(self.CHUNK_SIZE, items):
                 for item in chunk:
                     if item is None:
                         continue
                     dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
-                    buffer.write(f"{dumped_json}\n".encode())
+                    fh.write(f"{dumped_json}\n")
                     total_count += 1
                     yield item
+        with open(settings.work_dir / "publisher.ndjson", mode="rb") as fh:
             self.client.put_object(
-                Body=buffer,
+                Body=fh,
                 Bucket=settings.s3_bucket_key,
                 Key="publisher.ndjson",
             )
