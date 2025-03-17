@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- expand publisher filter to not push MergedPersons
+
 ### Deprecated
 
 ### Removed
