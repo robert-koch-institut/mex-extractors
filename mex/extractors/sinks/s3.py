@@ -1,5 +1,6 @@
 import json
 from collections.abc import Generator, Iterable
+from io import BytesIO
 from typing import TypeVar
 
 import boto3
@@ -48,21 +49,19 @@ class S3Sink(BaseSink):
         """
         settings = Settings.get()
         total_count = 0
-        with open(
-            settings.work_dir / "publisher.ndjson", encoding="utf-8", mode="w"
-        ) as fh:
-            for chunk in grouper(self.CHUNK_SIZE, items):
-                for item in chunk:
-                    if item is None:
-                        continue
-                    dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
-                    fh.write(f"{dumped_json}\n")
-                    total_count += 1
-                    yield item
-        with open(settings.work_dir / "publisher.ndjson", mode="rb") as fh:
-            self.client.put_object(
-                Body=fh,
-                Bucket=settings.s3_bucket_key,
-                Key="publisher.ndjson",
-            )
+        buffer = BytesIO()
+        for chunk in grouper(self.CHUNK_SIZE, items):
+            for item in chunk:
+                if item is None:
+                    continue
+                dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
+                buffer.write(f"{dumped_json}\n".encode())
+                total_count += 1
+        buffer.seek(0)
+        self.client.put_object(
+            Body=buffer,
+            Bucket=settings.s3_bucket_key,
+            Key="publisher.ndjson",
+        )
         logger.info("%s - written %s items", type(self).__name__, total_count)
+        yield from items
