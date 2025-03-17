@@ -57,7 +57,7 @@ class S3Sink(BaseSink):
                 dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
                 buffer.write(f"{dumped_json}\n".encode())
                 total_count += 1
-        buffer.seek(0)
+        buffer.seek(0)  # Reset buffer pointer before uploading
         self.client.put_object(
             Body=buffer,
             Bucket=settings.s3_bucket_key,

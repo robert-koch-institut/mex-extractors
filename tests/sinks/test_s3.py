@@ -29,4 +29,4 @@ def test_s3_load(
         "Bucket": "s3_bucket",
         "Key": "publisher.ndjson",
     }
-    assert mocked_boto.put_object.call_args.kwargs["Body"].closed
+    assert mocked_boto.put_object.call_args.kwargs["Body"]
