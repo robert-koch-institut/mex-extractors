@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.29.1] - 2025-03-14
+
+### Fixed
+
+- provide wikidata extractor with wikidata id instead of url
+
+## [0.29.0] - 2025-03-13
+
+### Added
+
 - add settings for wikidata mapping
 
 ### Changes
@@ -20,15 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - quickfix publisher to always write an ndjson and upload it to S3
   (will become outdated by MX-1808)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - ignore and log errors while getting vvt persons or units
-
-### Security
 
 ## [0.28.2] - 2025-03-07
 
