@@ -39,7 +39,7 @@ class S3Sink(BaseSink):
         self.client.close()
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
-        """Write the incoming items as an NDJSON file and load that to S3.
+        """Write the incoming items as an NDJSON directly to S3.
 
         Args:
             items: Iterable of any kind of items
