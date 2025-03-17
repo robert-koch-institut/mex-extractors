@@ -11,7 +11,6 @@ from mex.common.ldap.models.person import LDAPPerson
 from mex.common.models import ExtractedOrganization
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.settings import Settings
-from mex.extractors.sinks.s3 import S3Sink
 
 pytest_plugins = (
     "mex.common.testing.plugin",
@@ -77,12 +76,3 @@ def mocked_ldap(monkeypatch: MonkeyPatch) -> None:
         "get_persons",
         lambda *_, **__: iter(persons),
     )
-
-
-@pytest.fixture
-def mocked_boto(monkeypatch: MonkeyPatch) -> MagicMock:
-    mocked_client = MagicMock()
-    monkeypatch.setattr(
-        S3Sink, "__init__", lambda self: setattr(self, "client", mocked_client)
-    )
-    return mocked_client
