@@ -1,20 +1,8 @@
 from unittest.mock import MagicMock
 
-import pytest
-from pytest import MonkeyPatch
-
 from mex.common.models import ExtractedOrganization
 from mex.common.testing import Joker
 from mex.extractors.sinks.s3 import S3Sink
-
-
-@pytest.fixture
-def mocked_boto(monkeypatch: MonkeyPatch) -> MagicMock:
-    mocked_client = MagicMock()
-    monkeypatch.setattr(
-        S3Sink, "__init__", lambda self: setattr(self, "client", mocked_client)
-    )
-    return mocked_client
 
 
 def test_s3_load(
