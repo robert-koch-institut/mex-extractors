@@ -11,7 +11,8 @@ from mex.extractors.sinks.s3 import S3Sink
 @asset(group_name="publisher")
 def extract_and_filter_merged_items() -> ItemsContainer[AnyMergedModel]:
     """Get merged items from mex-backend and filter them by allow-list."""
-    return ItemsContainer[AnyMergedModel](items=get_merged_items())
+    merged_items = list(get_merged_items())
+    return ItemsContainer[AnyMergedModel](items=merged_items)
 
 
 @asset(group_name="publisher")
