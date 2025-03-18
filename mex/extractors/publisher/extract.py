@@ -20,7 +20,7 @@ def get_merged_items() -> Generator[AnyMergedModel, None, None]:
 
     allowlist_for_merged_items_to_extract = [
         item
-        for item in list(MERGED_MODEL_CLASSES_BY_NAME.keys())
+        for item in MERGED_MODEL_CLASSES_BY_NAME
         if item not in settings.skip_merged_items
     ]
 
