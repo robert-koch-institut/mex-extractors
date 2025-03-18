@@ -42,8 +42,7 @@ def unit_stable_target_ids_by_synonym(
 
 
 @pytest.fixture
-def international_projects_mapping_activity() -> ActivityMapping:
-    settings = Settings.get()
+def international_projects_mapping_activity(settings: Settings) -> ActivityMapping:
     return ActivityMapping.model_validate(
         load_yaml(settings.international_projects.mapping_path / "activity_mock.yaml")
     )

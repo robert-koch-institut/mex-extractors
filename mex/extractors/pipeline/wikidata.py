@@ -1,33 +1,21 @@
 from mex.common.exceptions import MExError
-from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
-from mex.common.wikidata.extract import search_organization_by_label
-from mex.common.wikidata.models.organization import WikidataOrganization
-from mex.common.wikidata.transform import (
-    transform_wikidata_organizations_to_extracted_organizations,
+from mex.common.models import (
+    ExtractedOrganization,
 )
 from mex.extractors.pipeline import asset
-from mex.extractors.sinks import load
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_organization_by_id,
+    get_wikidata_organization_ids_by_label,
+)
 
 
 @asset(group_name="default")
-def wikidata_organization_rki() -> WikidataOrganization:
-    """Extract WikidataOrganization for Robert Koch-Institut."""
-    if org := search_organization_by_label("Robert Koch-Institut"):
-        return org
-    msg = "RKI not found on wikidata, cannot proceed."
+def extracted_organization_rki() -> ExtractedOrganization:
+    """Extracts and Transforms RKI organization and loads result."""
+    wikidata_organization_ids_by_label = get_wikidata_organization_ids_by_label()
+    if (rki_id := wikidata_organization_ids_by_label.get("Robert Koch-Institut")) and (
+        extracted_organization_rki := get_wikidata_organization_by_id(rki_id)
+    ):
+        return extracted_organization_rki
+    msg = f"Robert Koch-Institut with ID {rki_id} not found in wikidata"
     raise MExError(msg)
-
-
-@asset(group_name="default")
-def extracted_organization_rki(
-    wikidata_organization_rki: WikidataOrganization,
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
-) -> ExtractedOrganization:
-    """Transforms RKI organization data to extracted organizations and load result."""
-    extracted_organization_rki = list(
-        transform_wikidata_organizations_to_extracted_organizations(
-            [wikidata_organization_rki], extracted_primary_source_wikidata
-        )
-    )
-    load(extracted_organization_rki)
-    return extracted_organization_rki[0]

@@ -11,9 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update test mappings
-- update seqrepo, odk, datschaweb, sumo, synopse test data
-
 ### Deprecated
 
 ### Removed
@@ -21,6 +18,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.30.0] - 2025-03-18
+
+### Changes
+
+- output settings as job metadata
+- update mex-common to 0.54.3
+- expand publisher filter to not push MergedPersons
+- quickfix publisher to always write an ndjson directly to S3
+  (will become outdated by MX-1808)
+
+## [0.29.1] - 2025-03-14
+
+### Fixed
+
+- provide wikidata extractor with wikidata id instead of url
+
+## [0.29.0] - 2025-03-13
+
+### Added
+
+- add settings for wikidata mapping
+
+### Changes
+
+- update test mappings
+- switch out wikidata query by names with query by id
+- update seq-repo, odk, datscha-web, sumo, synopse test data
+- simplify tests by using settings fixture
+
+### Fixed
+
+- ignore and log errors while getting vvt persons or units
 
 ## [0.28.2] - 2025-03-07
 
