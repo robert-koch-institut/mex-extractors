@@ -36,5 +36,5 @@ def get_merged_items() -> Generator[AnyMergedModel, None, None]:
             logging_counter += 1
             yield item
         logger.info(
-            "%s of %s merged items where extracted.", logging_counter, total_item_number
+            "%s of %s merged items were extracted.", logging_counter, total_item_number
         )
