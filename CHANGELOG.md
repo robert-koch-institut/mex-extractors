@@ -11,12 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- output settings as job metadata
-- update mex-common to 0.54.3
-- expand publisher filter to not push MergedPersons
-- quickfix publisher to always write an ndjson directly to S3
-  (will become outdated by MX-1808)
-
 ### Deprecated
 
 ### Removed
@@ -24,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.30.0] - 2025-03-18
+
+### Changes
+
+- output settings as job metadata
+- update mex-common to 0.54.3
+- expand publisher filter to not push MergedPersons
+- quickfix publisher to always write an ndjson directly to S3
+  (will become outdated by MX-1808)
 
 ## [0.29.1] - 2025-03-14
 
