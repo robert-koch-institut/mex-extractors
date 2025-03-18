@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- quickfix publisher to always write an ndjson directly to S3
+  (will become outdated by MX-1808)
+
 ### Deprecated
 
 ### Removed

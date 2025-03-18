@@ -22,4 +22,4 @@ def filter_merged_items(
             total_items += 1
             yield item
 
-    logger.info("%s of %s merged items where filtered out.", skipped_items, total_items)
+    logger.info("%s of %s merged items were filtered out.", skipped_items, total_items)
