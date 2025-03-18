@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- output settings as job metadata
+- update mex-common to 0.54.3
 - quickfix publisher to always write an ndjson directly to S3
   (will become outdated by MX-1808)
 
