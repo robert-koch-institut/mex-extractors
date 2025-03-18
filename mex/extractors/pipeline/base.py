@@ -7,6 +7,7 @@ from dagster import (
     DefaultScheduleStatus,
     Definitions,
     FilesystemIOManager,
+    MetadataValue,
     ScheduleDefinition,
     define_asset_job,
     load_assets_from_package_module,
@@ -37,8 +38,13 @@ def load_job_definitions() -> Definitions:
     group_names = {
         group for asset in assets for group in asset.group_names_by_key.values()
     }
+    settings_md = MetadataValue.md(f"```json\n{settings.model_dump_json(indent=4)}```")
     jobs = [
-        define_asset_job(group_name, AssetSelection.groups(group_name).upstream())
+        define_asset_job(
+            group_name,
+            AssetSelection.groups(group_name).upstream(),
+            metadata={"settings": settings_md},
+        )
         for group_name in group_names
         if group_name not in ["default", *settings.skip_extractors]
     ]
@@ -59,5 +65,8 @@ def load_job_definitions() -> Definitions:
         )
     )
     return Definitions(
-        assets=assets, jobs=jobs, resources=resources, schedules=schedules
+        assets=assets,
+        jobs=jobs,
+        resources=resources,
+        schedules=schedules,
     )
