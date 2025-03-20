@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated mex-common dependency to 0.54.4
+
 ### Deprecated
 
 ### Removed
