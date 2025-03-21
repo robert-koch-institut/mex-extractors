@@ -14,10 +14,14 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    PersonMapping,
     ResourceMapping,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
-from mex.common.types import MergedOrganizationalUnitIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+)
 from mex.extractors.open_data.extract import (
     extract_parent_resources,
     extract_resource_versions,
@@ -38,6 +42,9 @@ from mex.extractors.pipeline.base import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @asset(group_name="open_data")
@@ -67,16 +74,63 @@ def extracted_primary_source_open_data(
 
 
 @asset(group_name="open_data")
+def extracted_open_data_organizations(
+    open_data_parent_resources: list[OpenDataParentResource],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+) -> dict[str | None, MergedOrganizationIdentifier]:
+    """Search wikidata Ids or create own ids for affiliations.
+
+    Args:
+        open_data_parent_resources: Iterable of OpenDataParentResource
+        extracted_primary_source_open_data: stabletargetID of OsenData PrimarySource
+
+    Returns:
+        dict with ID by affiliation name
+    """
+    affiliation_dict = {}
+    for resource in open_data_parent_resources:
+        person_list = resource.metadata.contributors + resource.metadata.creators
+        for person in person_list:
+            if person.affiliation not in affiliation_dict:
+                org_id = get_wikidata_extracted_organization_id_by_name(
+                    person.affiliation
+                )
+                if org_id:
+                    affiliation_dict[person.affiliation] = org_id
+                elif person.affiliation:
+                    extracted_organization = ExtractedOrganization(
+                        officialName=person.affiliation,
+                        identifierInPrimarySource=person.affiliation,
+                        hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
+                    )
+                    load([extracted_organization])
+                    affiliation_dict[person.affiliation] = (
+                        extracted_organization.stableTargetId
+                    )
+
+    return affiliation_dict
+
+
+@asset(group_name="open_data")
 def extracted_open_data_persons_and_creation_date(
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_ldap: ExtractedPrimarySource,
+    extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> dict[str, MexPersonAndCreationDate]:
     """Extract ldap persons and earliest creation date of respective data sets."""
+    settings = Settings.get()
+    person_mapping = PersonMapping.model_validate(
+        load_yaml(settings.open_data.mapping_path / "person.yaml")
+    )
     return transform_open_data_persons(
         open_data_resource_versions,
         extracted_primary_source_ldap,
+        extracted_primary_source_open_data,
         extracted_organizational_units,
+        person_mapping,
+        extracted_open_data_organizations,
     )
 
 
@@ -146,7 +200,7 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource_parent.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
 
     mex_sources = list(

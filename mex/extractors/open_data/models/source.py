@@ -7,6 +7,8 @@ class OpenDataCreatorsOrContributors(BaseModel):
     """Model subclass for Zenodo metadata Creators or Contributors."""
 
     name: str
+    affiliation: str | None = None
+    orcid: str | None = None
 
     def __hash__(self) -> int:
         """Calculates a hash value to make the object cacheable."""

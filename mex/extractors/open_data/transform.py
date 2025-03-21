@@ -18,11 +18,15 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    PersonMapping,
     ResourceMapping,
 )
 from mex.common.types import (
-    Identifier,
+    Link,
     MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
@@ -31,15 +35,54 @@ from mex.extractors.open_data.extract import (
 )
 from mex.extractors.open_data.models.source import (
     MexPersonAndCreationDate,
+    OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
 
 
-def transform_open_data_persons(
+def transform_open_data_persons_not_in_ldap(
+    person: OpenDataCreatorsOrContributors,
+    open_data_primary_source_id: MergedPrimarySourceIdentifier,
+    ignore_affiliation: list[str],
+    extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+) -> ExtractedPerson:
+    """Create ExtractedPersons for persons not matched with ldap.
+
+    Args:
+        person: list[OpenDataCreatorsOrContributors],
+        open_data_primary_source_id: istableTargetId of open data primary source,
+        ignore_affiliation: list of strings of affiliations not to be extracted
+        extracted_open_data_organizations: dictionary with ID by affiliation name
+
+    Returns:
+        ExtractedPerson
+    """
+    if person.affiliation:
+        affiliation = (
+            extracted_open_data_organizations[person.affiliation]
+            if person.affiliation not in ignore_affiliation
+            else None
+        )
+    else:
+        affiliation = None
+
+    return ExtractedPerson(
+        affiliation=affiliation,
+        hadPrimarySource=open_data_primary_source_id,
+        identifierInPrimarySource=person.name,
+        fullName=person.name,
+        orcidId=person.orcid,
+    )
+
+
+def transform_open_data_persons(  # noqa: PLR0913
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_ldap: ExtractedPrimarySource,
+    extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    person_mapping: PersonMapping,
+    extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> dict[str, MexPersonAndCreationDate]:
     """Extract persons and file creation dates from open_data resource.
 
@@ -50,7 +93,10 @@ def transform_open_data_persons(
     Args:
         open_data_resource_versions: Open Data resource versions
         extracted_primary_source_ldap: ExtractedPrimarySource for ldap
+        extracted_primary_source_open_data: ExtractedPrimarySource for open data
         extracted_organizational_units: list[ExtractedOrganizationalUnit]
+        person_mapping: PersonMapping,
+        extracted_open_data_organizations: dictionary with ID by affiliation name
 
     Returns:
         dictionary of MexPersonAndCreationDate by name
@@ -60,8 +106,11 @@ def transform_open_data_persons(
     units_by_identifier_in_primary_source = {
         unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
     }
+    open_data_primary_source_id = extracted_primary_source_open_data.stableTargetId
+    ignore_affiliation = person_mapping.affiliation[0].mappingRules[1].forValues or []
     for resource in open_data_resource_versions:
         for person in resource.metadata.creators + resource.metadata.contributors:
+            person.orcid = f"https://orcid.org/{person.orcid}" if person.orcid else None
             if resource.created and (
                 person.name in dict_for_extractedconsent
                 and dict_for_extractedconsent[person.name].created > resource.created
@@ -69,22 +118,32 @@ def transform_open_data_persons(
                 dict_for_extractedconsent[person.name].created = resource.created
                 continue
             try:
-                ldap_person = ldap.get_person(displayName=person.name)
+                person_item = ldap.get_person(displayName=person.name)
             except MExError:
                 try:
-                    ldap_person = ldap.get_person(
+                    person_item = ldap.get_person(
                         mail=(person.name.split(", ")[0] + "*")
                     )
                     # names are stored without Umlaut in Zenodo, therefore if the lookup
                     # fails, try the email, as that also has no Umlauts. But one can't
                     # use only this attempt because there are several similar last names
                 except MExError:
-                    continue
-            mex_person = transform_ldap_person_to_mex_person(
-                ldap_person,
-                extracted_primary_source_ldap,
-                units_by_identifier_in_primary_source,
-            )
+                    person_item = None
+            if person_item:
+                mex_person = transform_ldap_person_to_mex_person(
+                    person_item,
+                    extracted_primary_source_ldap,
+                    units_by_identifier_in_primary_source,
+                )
+                if person.orcid:
+                    mex_person.orcidId = [person.orcid]
+            else:
+                mex_person = transform_open_data_persons_not_in_ldap(
+                    person,
+                    open_data_primary_source_id,
+                    ignore_affiliation,
+                    extracted_open_data_organizations,
+                )
             dict_for_extractedconsent[person.name] = MexPersonAndCreationDate(
                 mex_person=mex_person,
                 created=resource.created,
@@ -113,14 +172,14 @@ def transform_open_data_distributions(
     )
     had_primary_source = extracted_primary_source_open_data.stableTargetId
     for resource in open_data_parent_resources:
-        access_url = resource.conceptdoi
+        access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
         if distribution_mapping.license[0].mappingRules[0].forValues and (
             str(resource.metadata.license.id)
             in distribution_mapping.license[0].mappingRules[0].forValues
         ):
             ccby_license = distribution_mapping.license[0].mappingRules[0].setValues
         for file in extract_files_for_parent_resource(resource.id):
-            download_url = file.links.self
+            download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
             issued = file.created
             media_type = MIMEType.find(str(file.mimetype))
@@ -207,7 +266,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         Generator for ExtractedResource instances
     """
     person_stable_target_id_by_name = {
-        str(p.fullName[0]): Identifier(p.stableTargetId)
+        str(p.fullName[0]): MergedPersonIdentifier(p.stableTargetId)
         for p in extracted_open_data_persons
     }
     unit_stable_target_ids_by_person_name = {
@@ -275,11 +334,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             description = None
         distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
-            related_identifiers.identifier
+            Link(url=related_identifiers.identifier)
             for related_identifiers in resource.metadata.related_identifiers
             if related_identifiers.relation == "isDocumentedBy"
         ]
-        doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
+        doi = f"https://doi.org/{resource.conceptdoi}"
         language = None
         for mapping in resource_mapping.language[0].mappingRules:
             if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
