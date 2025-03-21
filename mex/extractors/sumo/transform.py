@@ -243,7 +243,7 @@ def transform_resource_nokeda_to_mex_resource(
     )
 
 
-@watch
+@watch()
 def transform_nokeda_aux_variable_to_mex_variable_group(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     extracted_primary_source: ExtractedPrimarySource,
@@ -277,7 +277,7 @@ def transform_nokeda_aux_variable_to_mex_variable_group(
             )
 
 
-@watch
+@watch()
 def transform_model_nokeda_variable_to_mex_variable_group(
     extracted_cc1_data_model_nokeda: Iterable[Cc1DataModelNoKeda],
     extracted_primary_source: ExtractedPrimarySource,
@@ -310,7 +310,7 @@ def transform_model_nokeda_variable_to_mex_variable_group(
             )
 
 
-@watch
+@watch()
 def transform_feat_variable_to_mex_variable_group(
     extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     extracted_primary_source: ExtractedPrimarySource,
@@ -342,7 +342,7 @@ def transform_feat_variable_to_mex_variable_group(
             )
 
 
-@watch
+@watch()
 def transform_nokeda_model_variable_to_mex_variable(
     extracted_cc1_data_model_nokeda: Iterable[Cc1DataModelNoKeda],
     extracted_cc1_data_valuesets: Iterable[Cc1DataValuesets],
@@ -394,7 +394,7 @@ def transform_nokeda_model_variable_to_mex_variable(
         )
 
 
-@watch
+@watch()
 def transform_nokeda_aux_variable_to_mex_variable(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     extracted_cc2_aux_mapping: Iterable[Cc2AuxMapping],
@@ -449,7 +449,7 @@ def transform_nokeda_aux_variable_to_mex_variable(
         )
 
 
-@watch
+@watch()
 def transform_feat_projection_variable_to_mex_variable(
     extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     mex_variable_groups_feat: Iterable[ExtractedVariableGroup],

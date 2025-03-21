@@ -22,7 +22,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
     """Extract FF Projects sources by loading data from MS-Excel file.
 
@@ -170,7 +170,7 @@ def get_clean_names(name: str) -> str:
     return name.strip()
 
 
-@watch
+@watch()
 def extract_ff_project_authors(
     ff_projects_sources: Iterable[FFProjectsSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:

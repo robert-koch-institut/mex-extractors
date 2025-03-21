@@ -18,7 +18,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_variables() -> Generator[SynopseVariable, None, None]:
     """Extract variables from `variablenuebersicht` report.
 
@@ -36,7 +36,7 @@ def extract_variables() -> Generator[SynopseVariable, None, None]:
     )
 
 
-@watch
+@watch()
 def extract_study_data() -> Generator[SynopseStudy, None, None]:
     """Extract study data from `metadaten_zu_datensaetzen` report.
 
@@ -51,7 +51,7 @@ def extract_study_data() -> Generator[SynopseStudy, None, None]:
     yield from parse_csv(settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy)
 
 
-@watch
+@watch()
 def extract_projects() -> Generator[SynopseProject, None, None]:
     """Extract projects from `projekt_und_studienverwaltung` report.
 
@@ -69,7 +69,7 @@ def extract_projects() -> Generator[SynopseProject, None, None]:
     )
 
 
-@watch
+@watch()
 def extract_synopse_project_contributors(
     synopse_projects: Iterable[SynopseProject],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -120,7 +120,7 @@ def extract_synopse_contact(
     ]
 
 
-@watch
+@watch()
 def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
     """Extract projects from `datensatzuebersicht` report.
 

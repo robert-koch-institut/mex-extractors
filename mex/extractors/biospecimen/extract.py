@@ -17,7 +17,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_biospecimen_contacts_by_email(
     biospecimen_resource: Iterable[BiospecimenResource],
 ) -> Generator[LDAPPerson, None, None]:
@@ -65,7 +65,7 @@ def extract_biospecimen_organizations(
     }
 
 
-@watch
+@watch()
 def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None]:
     """Extract Biospecimen resources by loading data from MS-Excel file.
 

@@ -146,7 +146,7 @@ def transform_international_projects_source_to_extracted_activity(
     )
 
 
-@watch
+@watch()
 def transform_international_projects_sources_to_extracted_activities(
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,

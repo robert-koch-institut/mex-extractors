@@ -25,7 +25,7 @@ def extract_sources() -> Generator[SeqRepoSource, None, None]:
         yield SeqRepoSource.model_validate(item)
 
 
-@watch
+@watch()
 def extract_source_project_coordinator(
     seq_repo_sources: dict[str, SeqRepoSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:

@@ -6,17 +6,23 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPrimarySource,
 )
-from mex.common.types import Identifier, MergedOrganizationIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.sinks import load
 
 
-@watch
+@watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     primary_source: ExtractedPrimarySource,
-    person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    person_stable_target_ids_by_query_string: dict[
+        Hashable, list[MergedOrganizationalUnitIdentifier]
+    ],
+    unit_stable_target_ids_by_synonym: dict[str, MergedPersonIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

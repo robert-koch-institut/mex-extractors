@@ -8,17 +8,23 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPrimarySource,
 )
-from mex.common.types import Identifier, MergedOrganizationIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.sinks import load
 
 
-@watch
+@watch()
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     primary_source: ExtractedPrimarySource,
-    person_stable_target_ids_by_employee_id: dict[Hashable, list[Identifier]],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    person_stable_target_ids_by_employee_id: dict[
+        Hashable, list[MergedPersonIdentifier]
+    ],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     activity: ActivityMapping,
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
 ) -> Generator[ExtractedActivity, None, None]:

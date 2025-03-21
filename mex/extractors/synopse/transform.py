@@ -24,6 +24,7 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     MergedResourceIdentifier,
     TemporalEntity,
     Text,
@@ -138,7 +139,7 @@ def transform_overviews_to_resource_lookup(
     return resource_ids_by_synopse_id
 
 
-@watch
+@watch()
 def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     variables: Iterable[SynopseVariable],
     belongs_to: ExtractedVariableGroup,
@@ -185,11 +186,11 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         )
 
 
-@watch
+@watch()
 def transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     variable_groups: Iterable[ExtractedVariableGroup],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
     extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform Synopse Variable Sets to MEx datums.
@@ -209,7 +210,9 @@ def transform_synopse_variables_to_mex_variables(
         group.identifierInPrimarySource: group for group in variable_groups
     }
     for thema, variables in synopse_variables_by_thema.items():
-        belongs_to = variable_group_by_identifier_in_primary_source.get(thema)
+        if thema not in variable_group_by_identifier_in_primary_source:
+            continue
+        belongs_to = variable_group_by_identifier_in_primary_source[thema]
         yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501
             variables,
             belongs_to,
@@ -218,11 +221,11 @@ def transform_synopse_variables_to_mex_variables(
         )
 
 
-@watch
+@watch()
 def transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source: ExtractedPrimarySource,
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
 ) -> Generator[ExtractedVariableGroup, None, None]:
     """Transform Synopse Variable Sets to MEx Variable Groups.
 
@@ -257,7 +260,7 @@ def transform_synopse_variables_to_mex_variable_groups(
             )
 
 
-@watch
+@watch()
 def transform_synopse_data_to_mex_resources(
     synopse_studies: Iterable[SynopseStudy],
     synopse_projects: Iterable[SynopseProject],
@@ -265,7 +268,7 @@ def transform_synopse_data_to_mex_resources(
     extracted_activities: Iterable[ExtractedActivity],
     extracted_access_platforms: Iterable[ExtractedAccessPlatform],
     extracted_primary_source: ExtractedPrimarySource,
-    unit_merged_ids_by_synonym: dict[str, Identifier],
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
@@ -424,12 +427,12 @@ def transform_synopse_data_to_mex_resources(
         )
 
 
-@watch
+@watch()
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
     extracted_primary_source: ExtractedPrimarySource,
-    contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
-    unit_merged_ids_by_synonym: dict[str, Identifier],
+    contributor_merged_ids_by_name: dict[Hashable, list[MergedPersonIdentifier]],
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
