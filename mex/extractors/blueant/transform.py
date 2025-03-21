@@ -75,9 +75,10 @@ def transform_blueant_sources_to_extracted_activities(
             continue
 
         # get contact employee or fallback to unit
-        contact = person_stable_target_ids_by_employee_id.get(
-            source.projectLeaderEmployeeId, department_id  # type: ignore[arg-type]
-        )
+        if ple_id := source.projectLeaderEmployeeId:
+            contact = person_stable_target_ids_by_employee_id[ple_id]
+        if not contact and department_id:
+            contact = department_id  # type: ignore[assignment]
 
         source_name = re.sub(
             r"[\d*_]+|[FG\d* ]+[- ]+", "", source.name
