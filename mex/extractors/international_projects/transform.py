@@ -152,7 +152,7 @@ def transform_international_projects_sources_to_extracted_activities(
     international_projects_activity: ActivityMapping,
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
-        Hashable, list[MergedPersonIdentifier]
+        str, list[MergedPersonIdentifier]
     ],
     unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],

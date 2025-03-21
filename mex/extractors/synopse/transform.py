@@ -143,7 +143,7 @@ def transform_overviews_to_resource_lookup(
 def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     variables: Iterable[SynopseVariable],
     belongs_to: ExtractedVariableGroup,
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
     extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform Synopse Variables to MEx datums.
@@ -431,7 +431,7 @@ def transform_synopse_data_to_mex_resources(
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
     extracted_primary_source: ExtractedPrimarySource,
-    contributor_merged_ids_by_name: dict[Hashable, list[MergedPersonIdentifier]],
+    contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
@@ -499,8 +499,8 @@ def transform_synopse_projects_to_mex_activities(
 def transform_synopse_project_to_activity(
     synopse_project: SynopseProject,
     extracted_primary_source: ExtractedPrimarySource,
-    contributor_merged_ids_by_name: dict[Hashable, list[Identifier]],
-    unit_merged_ids_by_synonym: dict[str, Identifier],
+    contributor_merged_ids_by_name: dict[Hashable, list[MergedPersonIdentifier]],
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],

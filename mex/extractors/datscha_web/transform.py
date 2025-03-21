@@ -1,4 +1,5 @@
 from collections.abc import Generator, Hashable, Iterable
+from typing import Annotated
 
 from mex.common.logging import watch
 from mex.common.models import (
@@ -10,19 +11,28 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedContactPointIdentifier,
+    Identifier
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.sinks import load
+from pydantic import AfterValidator
 
+AnyContactIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier
+    | MergedPersonIdentifier
+    | MergedContactPointIdentifier,
+    AfterValidator(Identifier),
+]
 
 @watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[
-        Hashable, list[MergedOrganizationalUnitIdentifier]
+        str, list[MergedOrganizationalUnitIdentifier]
     ],
-    unit_stable_target_ids_by_synonym: dict[str, MergedPersonIdentifier],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -60,6 +70,7 @@ def transform_datscha_web_items_to_mex_activities(
         involved_person = person_stable_target_ids_by_query_string[
             datscha_web_item.auskunftsperson
         ]
+        contact : list[AnyContactIdentifier]
         if involved_person:
             contact = involved_person
         else:
