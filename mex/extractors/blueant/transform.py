@@ -76,10 +76,10 @@ def transform_blueant_sources_to_extracted_activities(
 
         # get contact employee or fallback to unit
         contact = person_stable_target_ids_by_employee_id.get(
-            source.projectLeaderEmployeeId
+            source.projectLeaderEmployeeId  # type: ignore[arg-type]
         )
         if not contact and department_id:
-            contact.append(department_id)
+            contact.append(department_id)  # type: ignore[union-attr,arg-type]
         source_name = re.sub(
             r"[\d*_]+|[FG\d* ]+[- ]+", "", source.name
         )  # strip according to mapping
@@ -93,7 +93,7 @@ def transform_blueant_sources_to_extracted_activities(
             activityType=activity_type,
             contact=contact,
             involvedPerson=person_stable_target_ids_by_employee_id.get(
-                source.projectLeaderEmployeeId
+                source.projectLeaderEmployeeId  # type: ignore[arg-type]
             ),
             hadPrimarySource=primary_source.stableTargetId,
             responsibleUnit=department_id,

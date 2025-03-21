@@ -59,9 +59,9 @@ def transform_datscha_web_items_to_mex_activities(
             datscha_web_item.auskunftsperson  # type: ignore[index]
         ]
         if involved_person:
-            contact: list[MergedPersonIdentifier] = involved_person  # type: ignore[assignment]
+            contact: list[MergedPersonIdentifier] = involved_person
         else:
-            contact: list[MergedOrganizationalUnitIdentifier] = responsible_unit
+            contact: list[MergedOrganizationalUnitIdentifier] = responsible_unit  # type: ignore[no-redef]
 
         external_associate: list[MergedOrganizationIdentifier] = []
         for partner in datscha_web_item.get_partners():
