@@ -12,7 +12,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_datscha_web_items() -> Generator[DatschaWebItem, None, None]:
     """Load datscha source items by scraping datscha-web pages.
 
@@ -25,7 +25,7 @@ def extract_datscha_web_items() -> Generator[DatschaWebItem, None, None]:
         yield item
 
 
-@watch
+@watch()
 def extract_datscha_web_source_contacts(
     datscha_web_items: Iterable[DatschaWebItem],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
