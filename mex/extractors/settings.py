@@ -30,7 +30,7 @@ class Settings(BaseSettings):
         validation_alias="MEX_SKIP_EXTRACTORS",
     )
     skip_merged_items: list[str] = Field(
-        ["MergedPrimarySource", "MergedConsent"],
+        ["MergedPrimarySource", "MergedConsent", "MergedPerson"],
         description="Skip merged items with these types",
         validation_alias="MEX_SKIP_MERGED_ITEMS",
     )

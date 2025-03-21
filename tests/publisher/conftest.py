@@ -1,4 +1,3 @@
-import pathlib
 from typing import Any
 
 import pytest
@@ -52,8 +51,3 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> None:
         ).model_dump()
 
     monkeypatch.setattr(BackendApiConnector, "request", mocked_request)
-
-
-@pytest.fixture(scope="session")
-def ndjson_path(tmp_path_factory) -> pathlib.Path:
-    return tmp_path_factory.mktemp("test") / "publisher.ndjson"

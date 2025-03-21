@@ -39,7 +39,7 @@ class S3Sink(BaseSink):
         self.client.close()
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
-        """Write the incoming items as a new-line delimited JSON file into S3.
+        """Write the incoming items as an NDJSON directly to S3.
 
         Args:
             items: Iterable of any kind of items
@@ -57,10 +57,11 @@ class S3Sink(BaseSink):
                     dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
                     buffer.write(f"{dumped_json}\n".encode())
                     total_count += 1
-                    yield item
+            buffer.seek(0)  # Reset buffer pointer before uploading
             self.client.put_object(
                 Body=buffer,
                 Bucket=settings.s3_bucket_key,
                 Key="publisher.ndjson",
             )
         logger.info("%s - written %s items", type(self).__name__, total_count)
+        yield from items

@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1c3898460ad524fc440f7d291695a96b675efb215aef84a6ab0888f2c9448369"
+content_hash = "sha256:ec25e1b31fc6dc0fbe23a3ac27d03847422600bf6042038bc5114c20c1e10bf2"
 
 [[metadata.targets]]
 requires_python = ">=3.11,<3.13"
@@ -592,7 +592,7 @@ files = [
 
 [[package]]
 name = "faker"
-version = "36.2.3"
+version = "37.0.2"
 requires_python = ">=3.9"
 summary = "Faker is a Python package that generates fake data for you."
 groups = ["default"]
@@ -600,8 +600,8 @@ dependencies = [
     "tzdata",
 ]
 files = [
-    {file = "Faker-36.2.3-py3-none-any.whl", hash = "sha256:7ca995d65ec08d013f3c1230da7f628cb2c169a77e89cd265d7a59f443f0febd"},
-    {file = "faker-36.2.3.tar.gz", hash = "sha256:1ed2d7a9c3a5657fc11a4298e8cf19f71d83740560d4ed0895b30399d482d538"},
+    {file = "faker-37.0.2-py3-none-any.whl", hash = "sha256:8955706c56c28099585e9e2b6f814eb0a3a227eb36a2ee3eb9ab577c4764eacc"},
+    {file = "faker-37.0.2.tar.gz", hash = "sha256:948bd27706478d3aa0b6f9f58b9f25207098f6ca79852c7b49c44a8ced2bc59b"},
 ]
 
 [[package]]
