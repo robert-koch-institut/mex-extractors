@@ -1,5 +1,4 @@
-from collections.abc import Generator, Hashable, Iterable
-from typing import Annotated
+from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import (
@@ -11,27 +10,16 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedContactPointIdentifier,
-    Identifier
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.sinks import load
-from pydantic import AfterValidator
 
-AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
-    AfterValidator(Identifier),
-]
 
 @watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     primary_source: ExtractedPrimarySource,
-    person_stable_target_ids_by_query_string: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
+    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -68,13 +56,12 @@ def transform_datscha_web_items_to_mex_activities(
         ]
         # lookup actors
         involved_person = person_stable_target_ids_by_query_string[
-            datscha_web_item.auskunftsperson
+            datscha_web_item.auskunftsperson  # type: ignore[index]
         ]
-        contact : list[AnyContactIdentifier]
         if involved_person:
-            contact = involved_person
+            contact: list[MergedPersonIdentifier] = involved_person  # type: ignore[assignment]
         else:
-            contact = responsible_unit
+            contact: list[MergedOrganizationalUnitIdentifier] = responsible_unit
 
         external_associate: list[MergedOrganizationIdentifier] = []
         for partner in datscha_web_item.get_partners():

@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Hashable, Iterable
+from collections.abc import Generator, Iterable
 from itertools import groupby, tee
 from pathlib import PureWindowsPath
 from typing import cast
@@ -499,7 +499,7 @@ def transform_synopse_projects_to_mex_activities(
 def transform_synopse_project_to_activity(
     synopse_project: SynopseProject,
     extracted_primary_source: ExtractedPrimarySource,
-    contributor_merged_ids_by_name: dict[Hashable, list[MergedPersonIdentifier]],
+    contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],

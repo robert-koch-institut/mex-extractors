@@ -1,6 +1,5 @@
 import re
-from collections.abc import Generator, Hashable, Iterable
-from typing import Annotated
+from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import (
@@ -12,25 +11,17 @@ from mex.common.models import (
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPersonIdentifier,MergedContactPointIdentifier,Identifier
+    MergedPersonIdentifier,
 )
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.sinks import load
-from pydantic import AfterValidator
 
-AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
-    AfterValidator(Identifier),
-]
+
 @watch()
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     primary_source: ExtractedPrimarySource,
-    person_stable_target_ids_by_employee_id: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     activity: ActivityMapping,
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
@@ -84,8 +75,8 @@ def transform_blueant_sources_to_extracted_activities(
             continue
 
         # get contact employee or fallback to unit
-        contact: list[AnyContactIdentifier] = (
-            person_stable_target_ids_by_employee_id[source.projectLeaderEmployeeId]
+        contact = person_stable_target_ids_by_employee_id.get(
+            source.projectLeaderEmployeeId
         )
         if not contact and department_id:
             contact.append(department_id)
@@ -101,9 +92,9 @@ def transform_blueant_sources_to_extracted_activities(
             start=source.start,
             activityType=activity_type,
             contact=contact,
-            involvedPerson=person_stable_target_ids_by_employee_id[
+            involvedPerson=person_stable_target_ids_by_employee_id.get(
                 source.projectLeaderEmployeeId
-            ],
+            ),
             hadPrimarySource=primary_source.stableTargetId,
             responsibleUnit=department_id,
             funderOrCommissioner=funder_or_commissioner,
