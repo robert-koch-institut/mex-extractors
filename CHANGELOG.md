@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.30.1] - 2025-03-20
+
+### Changes
+
+- updated mex-common dependency to 0.54.4
+
 ## [0.30.0] - 2025-03-18
 
 ### Changes
