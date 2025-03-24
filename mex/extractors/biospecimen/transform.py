@@ -14,17 +14,18 @@ from mex.common.types import (
     AnonymizationPseudonymization,
     Identifier,
     Link,
+    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
-@watch
+@watch()
 def transform_biospecimen_resource_to_mex_resource(
     biospecimen_resources: Iterable[BiospecimenResource],
     extracted_primary_source_biospecimen: ExtractedPrimarySource,
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     extracted_synopse_activities: Iterable[ExtractedActivity],

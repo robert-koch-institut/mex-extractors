@@ -8,7 +8,7 @@ from mex.extractors.open_data.models.source import (
 )
 
 
-@watch
+@watch()
 def extract_parent_resources() -> Generator[OpenDataParentResource, None, None]:
     """Load Open Data resources by querying the Zenodo API.
 
@@ -23,7 +23,7 @@ def extract_parent_resources() -> Generator[OpenDataParentResource, None, None]:
     yield from connector.get_parent_resources()
 
 
-@watch
+@watch()
 def extract_resource_versions() -> Generator[OpenDataResourceVersion, None, None]:
     """Fetch all the versions of a parent resource.
 

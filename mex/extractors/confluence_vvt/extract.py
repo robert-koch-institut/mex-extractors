@@ -12,7 +12,7 @@ from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 from mex.extractors.settings import Settings
 
 
-@watch
+@watch()
 def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
     """Fetch all the ids for data pages.
 
@@ -48,7 +48,7 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         raise MExError("Pagination limit reached to fetch all data pages list")
 
 
-@watch
+@watch()
 def get_page_data_by_id(
     page_ids: Iterable[str],
 ) -> Generator[ConfluenceVvtPage, None, None]:

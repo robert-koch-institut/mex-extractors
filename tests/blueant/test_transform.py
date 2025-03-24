@@ -56,12 +56,11 @@ def test_transform_blueant_sources_to_extracted_activities(
         "stableTargetId": Joker(),
     }
     assert mex_sources[1].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "contact": ["bFQoRhcVH5DH3n"],
+        "contact": ["bFQoRhcVH5DHV1"],
         "funderOrCommissioner": [str(MergedOrganizationIdentifier.generate(seed=42))],
         "responsibleUnit": ["bFQoRhcVH5DH3n"],
         "identifier": Joker(),
         "identifierInPrimarySource": "00255",
-        "involvedPerson": ["bFQoRhcVH5DH3n"],
         "title": [{"value": "Prototype Moon Lander", "language": TextLanguage.EN}],
         "start": ["2018-08-09"],
         "hadPrimarySource": str(extracted_primary_sources["blueant"].stableTargetId),

@@ -24,7 +24,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_international_projects_sources() -> Generator[
     InternationalProjectsSource, None, None
 ]:
@@ -117,7 +117,7 @@ def extract_international_projects_source(
     )
 
 
-@watch
+@watch()
 def extract_international_projects_project_leaders(
     international_projects_sources: Iterable[InternationalProjectsSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
