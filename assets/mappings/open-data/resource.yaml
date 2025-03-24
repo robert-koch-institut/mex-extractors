@@ -9,16 +9,16 @@ anonymizationPseudonymization:
           - https://mex.rki.de/item/anonymization-pseudonymization-1 # anonymized
 contact:
   - mappingRules:
-      - rule: See.
+      - rule: Match.
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign
+      - rule: Assign.
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-2 #No personal data
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Extract original value.
+      - rule: Extract.
 license:
   - mappingRules:
       - forValues:

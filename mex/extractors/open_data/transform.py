@@ -6,7 +6,6 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_person_to_mex_person,
 )
-from mex.common.logging import watch
 from mex.common.models import (
     ConsentMapping,
     DistributionMapping,
@@ -26,7 +25,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedPrimarySourceIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
@@ -41,17 +39,18 @@ from mex.extractors.open_data.models.source import (
 )
 
 
+# @watch()
 def transform_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
-    open_data_primary_source_id: MergedPrimarySourceIdentifier,
+    extracted_primary_source_open_data: ExtractedPrimarySource,
     ignore_affiliation: list[str],
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> ExtractedPerson:
-    """Create ExtractedPersons for persons not matched with ldap.
+    """Create ExtractedPerson for a person not matched with ldap.
 
     Args:
         person: list[OpenDataCreatorsOrContributors],
-        open_data_primary_source_id: istableTargetId of open data primary source,
+        extracted_primary_source_open_data: open data primary source,
         ignore_affiliation: list of strings of affiliations not to be extracted
         extracted_open_data_organizations: dictionary with ID by affiliation name
 
@@ -69,13 +68,14 @@ def transform_open_data_persons_not_in_ldap(
 
     return ExtractedPerson(
         affiliation=affiliation,
-        hadPrimarySource=open_data_primary_source_id,
+        hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
         identifierInPrimarySource=person.name,
         fullName=person.name,
         orcidId=person.orcid,
     )
 
 
+# @watch()
 def transform_open_data_persons(  # noqa: PLR0913
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_ldap: ExtractedPrimarySource,
@@ -106,7 +106,6 @@ def transform_open_data_persons(  # noqa: PLR0913
     units_by_identifier_in_primary_source = {
         unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
     }
-    open_data_primary_source_id = extracted_primary_source_open_data.stableTargetId
     ignore_affiliation = person_mapping.affiliation[0].mappingRules[1].forValues or []
     for resource in open_data_resource_versions:
         for person in resource.metadata.creators + resource.metadata.contributors:
@@ -140,7 +139,7 @@ def transform_open_data_persons(  # noqa: PLR0913
             else:
                 mex_person = transform_open_data_persons_not_in_ldap(
                     person,
-                    open_data_primary_source_id,
+                    extracted_primary_source_open_data,
                     ignore_affiliation,
                     extracted_open_data_organizations,
                 )
@@ -151,7 +150,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     return dict_for_extractedconsent
 
 
-@watch()
+# @watch()
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -199,6 +198,7 @@ def transform_open_data_distributions(
             )
 
 
+# @watch
 def transform_open_data_person_to_mex_consent(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
@@ -239,7 +239,7 @@ def transform_open_data_person_to_mex_consent(
         )
 
 
-@watch()
+# @watch()
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: Iterable[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -338,7 +338,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for related_identifiers in resource.metadata.related_identifiers
             if related_identifiers.relation == "isDocumentedBy"
         ]
-        doi = f"https://doi.org/{resource.conceptdoi}"
+        doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
         language = None
         for mapping in resource_mapping.language[0].mappingRules:
             if mapping.forValues and resource.metadata.language == mapping.forValues[0]:

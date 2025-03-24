@@ -47,7 +47,6 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
     assert results == 2 * [
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][0]),
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][1]),
-        OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][2]),
     ]
 
 
@@ -68,7 +67,6 @@ def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) ->
     assert results == 3 * [
         OpenDataResourceVersion.model_validate(dummy_versions["hits"]["hits"][0]),
         OpenDataResourceVersion.model_validate(dummy_versions["hits"]["hits"][1]),
-        OpenDataResourceVersion.model_validate(dummy_versions["hits"]["hits"][2]),
     ]
 
 

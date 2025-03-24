@@ -7,12 +7,14 @@ from mex.common.models import (
     ExtractedDistribution,
     ExtractedPerson,
     MergedPrimarySourceIdentifier,
+    PersonMapping,
     ResourceMapping,
 )
 from mex.common.types import (
     Identifier,
 )
 from mex.extractors.open_data.models.source import (
+    OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
@@ -58,6 +60,28 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
+def mocked_open_data_creator_with_affiliation_to_ignore() -> (
+    OpenDataCreatorsOrContributors
+):
+    """Mock an open data person (creator or contributor)."""
+    mocked_parent_response = create_mocked_parent_response()
+    return OpenDataCreatorsOrContributors.model_validate(
+        mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][0]
+    )
+
+
+@pytest.fixture
+def mocked_open_data_creator_with_processed_affiliation() -> (
+    OpenDataCreatorsOrContributors
+):
+    """Mock an open data person (creator or contributor)."""
+    mocked_parent_response = create_mocked_parent_response()
+    return OpenDataCreatorsOrContributors.model_validate(
+        mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
+    )
+
+
+@pytest.fixture
 def mocked_open_data_contact_point() -> list[ExtractedContactPoint]:
     """Mock the opendata contact point."""
     return [
@@ -85,7 +109,7 @@ def mocked_open_data_distribution() -> list[ExtractedDistribution]:
 
 @pytest.fixture
 def mocked_open_data_consent_mapping() -> ConsentMapping:
-    """Return consent default values."""
+    """Return consent mapping."""
     settings = Settings.get()
     return ConsentMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "consent.yaml")
@@ -94,7 +118,7 @@ def mocked_open_data_consent_mapping() -> ConsentMapping:
 
 @pytest.fixture
 def mocked_open_data_distribution_mapping() -> DistributionMapping:
-    """Return distribution default values."""
+    """Return distribution mapping."""
     settings = Settings.get()
     return DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
@@ -103,8 +127,17 @@ def mocked_open_data_distribution_mapping() -> DistributionMapping:
 
 @pytest.fixture
 def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
-    """Return parent resource default values."""
+    """Return parent resource mapping."""
     settings = Settings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource_parent.yaml")
+        load_yaml(settings.open_data.mapping_path / "resource.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_person_mapping() -> PersonMapping:
+    """Return person mapping."""
+    settings = Settings.get()
+    return PersonMapping.model_validate(
+        load_yaml(settings.open_data.mapping_path / "person.yaml")
     )

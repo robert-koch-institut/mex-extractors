@@ -23,7 +23,9 @@ def create_mocked_parent_response() -> dict:
                     "metadata": {
                         "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
                         "license": {"id": "cc-by-4.0"},
-                        "contributors": [{"name": "Muster, Maxi"}],
+                        "contributors": [
+                            {"name": "Muster, Maxi", "orcid": "1234567890"}
+                        ],
                     },
                     "files": [{"id": "file_test_id"}],
                 },
@@ -32,20 +34,21 @@ def create_mocked_parent_response() -> dict:
                     "conceptrecid": "Zwei",
                     "id": 2002,
                     "metadata": {
-                        "creators": [{"name": "Muster, Maxi"}],
+                        "creators": [
+                            {
+                                "name": "Muster, Maxi",
+                                "affiliation": "RKI",
+                                "orcid": "1234567890",
+                            },
+                            {
+                                "name": "Pattern, Peppa",
+                                "affiliation": "Universität",
+                                "orcid": "9876543210",
+                            },
+                        ],
                         "license": {"id": "no license"},
                     },
                     "files": [],
-                },
-                {
-                    "title": "lorem",
-                    "id": 3003,
-                    "conceptrecid": "three",
-                    "metadata": {
-                        "license": {"id": "cc-by-4.0"},
-                        "creators": [{"name": "Pattern, Pepa"}],
-                    },
-                    "files": [{"id": "file 1"}, {"id": "file 2"}, {"id": "file 3"}],
                 },
             ],
             "total": 200,
@@ -63,7 +66,13 @@ def create_mocked_version_response() -> dict:
                     "conceptrecid": "Eins",
                     "metadata": {
                         "license": {"id": "cc-by-4.0"},
-                        "contributors": [{"name": "Muster, Maxi"}],
+                        "contributors": [
+                            {
+                                "name": "Muster, Maxi",
+                                "affiliation": "RKI",
+                                "orcid": "1234567890",
+                            },
+                        ],
                         "related_identifiers": [
                             {
                                 "identifier": "should be transformed",
@@ -87,21 +96,10 @@ def create_mocked_version_response() -> dict:
                         "publication_date": "2022",
                         "creators": [
                             {"name": "Muster, Maxi"},
-                            {"name": "Pattern, Pepa"},
+                            {"name": "Pattern, Peppa"},
                         ],
                     },
                     "created": "2022-02-02T02:02:02.222222+00:00",
-                },
-                {
-                    "title": "Dideldideldei",
-                    "id": 1003,
-                    "conceptrecid": "Eins",
-                    "metadata": {
-                        "license": {"id": "cc-by-4.0"},
-                        "creators": [{"name": "Pattern, Pepa"}],
-                        "publication_date": "2023",
-                    },
-                    "created": "2023-03-03T03:03:03.333333+00:00",
                 },
             ],
             "total": 201,

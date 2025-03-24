@@ -28,7 +28,7 @@ def test_extract_parent_resources_mocked() -> None:
         "metadata": {
             "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
             "license": {"id": "cc-by-4.0"},
-            "contributors": [{"name": "Muster, Maxi"}],
+            "contributors": [{"name": "Muster, Maxi", "orcid": "1234567890"}],
         },
         "files": [{"id": "file_test_id"}],
     }
@@ -37,7 +37,18 @@ def test_extract_parent_resources_mocked() -> None:
         "conceptrecid": "Zwei",
         "id": 2002,
         "metadata": {
-            "creators": [{"name": "Muster, Maxi"}],
+            "creators": [
+                {
+                    "name": "Muster, Maxi",
+                    "affiliation": "RKI",
+                    "orcid": "1234567890",
+                },
+                {
+                    "name": "Pattern, Peppa",
+                    "affiliation": "Universität",
+                    "orcid": "9876543210",
+                },
+            ],
             "license": {"id": "no license"},
         },
         "files": [],
@@ -59,7 +70,9 @@ def test_extract_resource_versions_mocked(
         "id": 1001,
         "metadata": {
             "license": {"id": "cc-by-4.0"},
-            "contributors": [{"name": "Muster, Maxi"}],
+            "contributors": [
+                {"affiliation": "RKI", "name": "Muster, Maxi", "orcid": "1234567890"}
+            ],
             "related_identifiers": [
                 {
                     "identifier": "should be transformed",
@@ -81,7 +94,7 @@ def test_extract_resource_versions_mocked(
             "publication_date": "2022",
             "creators": [
                 {"name": "Muster, Maxi"},
-                {"name": "Pattern, Pepa"},
+                {"name": "Pattern, Peppa"},
             ],
         },
         "created": "2022-02-02T02:02:02.222222+00:00",

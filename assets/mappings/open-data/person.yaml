@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../__schema__/PersonMapping.json
+
+affiliation:
+  - mappingRules:
+      - rule: assign.
+      - forValues:
+          - Robert Koch Institute
+          - Robert Koch-Institut
+hadPrimarySource:
+  - mappingRules:
+      - rule: Assign.
+identifierInPrimarySource:
+  - mappingRules:
+      - rule: Extract.

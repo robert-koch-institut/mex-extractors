@@ -8,6 +8,7 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     ExtractedPrimarySource,
+    PersonMapping,
     ResourceMapping,
 )
 from mex.common.organigram.extract import extract_organigram_units
@@ -17,10 +18,12 @@ from mex.common.organigram.transform import (
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
+    MergedOrganizationIdentifier,
     TextLanguage,
 )
 from mex.extractors.open_data.models.source import (
     MexPersonAndCreationDate,
+    OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
@@ -29,21 +32,82 @@ from mex.extractors.open_data.transform import (
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
+    transform_open_data_persons_not_in_ldap,
 )
+
+
+# @pytest.mark.usefixtures("mocked_open_data")
+def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
+    mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> None:
+    ignore_affiliation = ["RKI", "Robert Koch-Institut"]
+    extracted_open_data_organizations = {
+        "Universität": MergedOrganizationIdentifier("loremipsumdolor")
+    }
+    mocked_open_data_creator_with_processed_affiliation.orcid = (
+        f"https://orcid.org/{mocked_open_data_creator_with_processed_affiliation.orcid}"
+    )
+
+    results = transform_open_data_persons_not_in_ldap(
+        mocked_open_data_creator_with_processed_affiliation,
+        extracted_primary_sources["open-data"],
+        ignore_affiliation,
+        extracted_open_data_organizations,
+    )
+    assert results == ExtractedPerson(
+        hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
+        identifierInPrimarySource="Pattern, Peppa",
+        fullName="Pattern, Peppa",
+        affiliation="loremipsumdolor",
+        orcidId="https://orcid.org/9876543210",
+    )
+
+
+# @pytest.mark.usefixtures("mocked_open_data")
+def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
+    mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> None:
+    ignore_affiliation = ["RKI", "Robert Koch-Institut"]
+    extracted_open_data_organizations = {
+        "Universität": MergedOrganizationIdentifier("loremipsumdolor")
+    }
+    mocked_open_data_creator_with_affiliation_to_ignore.orcid = (
+        f"https://orcid.org/{mocked_open_data_creator_with_affiliation_to_ignore.orcid}"
+    )
+    results = transform_open_data_persons_not_in_ldap(
+        mocked_open_data_creator_with_affiliation_to_ignore,
+        extracted_primary_sources["open-data"],
+        ignore_affiliation,
+        extracted_open_data_organizations,
+    )
+    assert results == ExtractedPerson(
+        hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
+        identifierInPrimarySource="Muster, Maxi",
+        fullName="Muster, Maxi",
+        affiliation=None,
+        orcidId="https://orcid.org/1234567890",
+    )
 
 
 @pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
 def test_transform_open_data_persons(
     mocked_open_data_resource_version: OpenDataResourceVersion,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    mocked_person_mapping: PersonMapping,
 ) -> None:
-    extracted_organigram_units = transform_organigram_units_to_organizational_units(
+    extracted_organizational_units = transform_organigram_units_to_organizational_units(
         extract_organigram_units(), extracted_primary_sources["organigram"]
     )
+    extracted_open_data_organizations = {}
     results = transform_open_data_persons(
         mocked_open_data_resource_version,
         extracted_primary_sources["ldap"],
-        extracted_organigram_units,
+        extracted_primary_sources["open-data"],
+        extracted_organizational_units,
+        mocked_person_mapping,
+        extracted_open_data_organizations,
     )
 
     assert results == {
@@ -51,14 +115,18 @@ def test_transform_open_data_persons(
             mex_person=ExtractedPerson(
                 hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
                 identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
+                affiliation=[],
                 email=["test_person@email.de"],
                 familyName=["Resolved"],
                 fullName=["Resolved, Roland"],
                 givenName=["Roland"],
                 memberOf=["hIiJpZXVppHvoyeP0QtAoS"],
+                orcidId=["https://orcid.org/1234567890"],
+                identifier=Joker(),
+                stableTargetId=Joker(),
             ),
             created="2021-01-01T01:01:01.111111+00:00",
-        )
+        ),
     }
 
 
@@ -78,7 +146,7 @@ def test_transform_open_data_distributions(
 
     assert mex_distribution[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
-        "accessURL": [{"url": "10.3456/zenodo.7890"}],
+        "accessURL": [{"url": "https://doi.org/10.3456/zenodo.7890"}],
         "identifierInPrimarySource": "file_test_id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
         "issued": "2021-01-01T01:01:01Z",
