@@ -1,4 +1,4 @@
-from collections.abc import Generator, Hashable, Iterable
+from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import (
@@ -6,17 +6,21 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPrimarySource,
 )
-from mex.common.types import Identifier, MergedOrganizationIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.sinks import load
 
 
-@watch
+@watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     primary_source: ExtractedPrimarySource,
-    person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -52,12 +56,12 @@ def transform_datscha_web_items_to_mex_activities(
         ]
         # lookup actors
         involved_person = person_stable_target_ids_by_query_string[
-            datscha_web_item.auskunftsperson
+            datscha_web_item.auskunftsperson  # type: ignore[index]
         ]
         if involved_person:
-            contact = involved_person
+            contact: list[MergedPersonIdentifier] = involved_person
         else:
-            contact = responsible_unit
+            contact: list[MergedOrganizationalUnitIdentifier] = responsible_unit  # type: ignore[no-redef]
 
         external_associate: list[MergedOrganizationIdentifier] = []
         for partner in datscha_web_item.get_partners():

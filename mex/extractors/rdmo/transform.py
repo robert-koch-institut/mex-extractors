@@ -6,7 +6,7 @@ from mex.common.types import TemporalEntity
 from mex.extractors.rdmo.models.source import RDMOSource
 
 
-@watch
+@watch()
 def transform_rdmo_sources_to_extracted_activities(
     rdmo_sources: Iterable[RDMOSource],
     primary_source: ExtractedPrimarySource,

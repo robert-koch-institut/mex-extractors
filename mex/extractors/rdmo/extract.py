@@ -8,7 +8,7 @@ from mex.extractors.rdmo.connector import RDMOConnector
 from mex.extractors.rdmo.models.source import RDMOSource
 
 
-@watch
+@watch()
 def extract_rdmo_sources() -> Generator[RDMOSource, None, None]:
     """Load RDMO sources by querying the RDMO API.
 
@@ -21,7 +21,7 @@ def extract_rdmo_sources() -> Generator[RDMOSource, None, None]:
         yield source
 
 
-@watch
+@watch()
 def extract_rdmo_source_contacts(
     rdmo_sources: Iterable[RDMOSource],
 ) -> Generator[LDAPPerson, None, None]:

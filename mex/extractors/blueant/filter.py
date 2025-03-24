@@ -8,7 +8,7 @@ from mex.extractors.logging import log_filter
 from mex.extractors.settings import Settings
 
 
-@watch
+@watch()
 def filter_and_log_blueant_sources(
     sources: Generator[BlueAntSource, None, None], primary_source_id: Identifier
 ) -> Generator[BlueAntSource, None, None]:

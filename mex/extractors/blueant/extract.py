@@ -13,7 +13,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch
+@watch()
 def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
     """Load Blue Ant sources from Blue Ant API.
 
@@ -49,7 +49,7 @@ def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
         )
 
 
-@watch
+@watch()
 def extract_blueant_project_leaders(
     blueant_sources: Iterable[BlueAntSource],
 ) -> Generator[LDAPPerson, None, None]:

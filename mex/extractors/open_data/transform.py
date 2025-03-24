@@ -151,7 +151,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     return dict_for_extractedconsent
 
 
-@watch
+@watch()
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -239,7 +239,7 @@ def transform_open_data_person_to_mex_consent(
         )
 
 
-@watch
+@watch()
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: Iterable[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
