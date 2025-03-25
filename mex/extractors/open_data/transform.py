@@ -57,14 +57,7 @@ def transform_open_data_persons_not_in_ldap(
     Returns:
         ExtractedPerson
     """
-    if person.affiliation:
-        affiliation = (
-            extracted_open_data_organizations[person.affiliation]
-            if person.affiliation not in ignore_affiliation
-            else None
-        )
-    else:
-        affiliation = None
+    affiliation = extracted_open_data_organizations[person.affiliation] if (person.affiliation and person.affiliation not in ignore_affiliation) else None
 
     return ExtractedPerson(
         affiliation=affiliation,
