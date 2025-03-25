@@ -36,7 +36,7 @@ from mex.extractors.utils import load_yaml
 def extracted_primary_source_seq_repo(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
-    """Load and return Seq-Repo primary source."""
+    """Load and return seq-repo primary source."""
     (extracted_primary_source,) = get_primary_sources_by_name(
         extracted_primary_sources, "seq-repo"
     )
@@ -47,7 +47,7 @@ def extracted_primary_source_seq_repo(
 
 @asset(group_name="seq_repo")
 def seq_repo_source() -> list[SeqRepoSource]:
-    """Extract sources from Seq-Repo."""
+    """Extract sources from seq-repo."""
     return list(extract_sources())
 
 
@@ -55,7 +55,7 @@ def seq_repo_source() -> list[SeqRepoSource]:
 def seq_repo_latest_source(
     seq_repo_source: list[SeqRepoSource],
 ) -> dict[str, SeqRepoSource]:
-    """Filter latest sources from Seq-Repo source."""
+    """Filter latest sources from seq-repo source."""
     return filter_sources_on_latest_sequencing_date(seq_repo_source)
 
 
@@ -100,7 +100,7 @@ def extracted_activity(
         str, list[MergedPersonIdentifier]
     ],
 ) -> dict[str, ExtractedActivity]:
-    """Extract activities from Seq-Repo."""
+    """Extract activities from seq-repo."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
@@ -123,7 +123,7 @@ def seq_repo_extracted_access_platform(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_seq_repo: ExtractedPrimarySource,
 ) -> ExtractedAccessPlatform:
-    """Extract access platform from Seq-Repo."""
+    """Extract access platform from seq-repo."""
     settings = Settings.get()
     access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "access-platform.yaml")
@@ -153,13 +153,13 @@ def seq_repo_resource(
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_seq_repo: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
-    """Extract resource from Seq-Repo."""
+    """Extract resources from seq-repo."""
     settings = Settings.get()
     resource = ResourceMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "resource.yaml")
     )
 
-    mex_resources = transform_seq_repo_resource_to_extracted_resource(
+    return transform_seq_repo_resource_to_extracted_resource(
         seq_repo_latest_source,
         extracted_activity,
         seq_repo_extracted_access_platform,
@@ -171,9 +171,11 @@ def seq_repo_resource(
         extracted_primary_source_seq_repo,
     )
 
-    load(mex_resources)
 
-    return mex_resources
+@asset(group_name="seq_repo")
+def load_seq_repo_resource(seq_repo_resource: list[ExtractedResource]) -> None:
+    """Load seq-repo resources."""
+    load(seq_repo_resource)
 
 
 @entrypoint(Settings)
