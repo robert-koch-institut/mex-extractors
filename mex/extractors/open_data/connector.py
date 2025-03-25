@@ -79,7 +79,7 @@ class OpenDataConnector(HTTPConnector):
             for item in response["hits"]["hits"]:
                 yield OpenDataResourceVersion.model_validate(item)
 
-    def get_oldest_resource_version_creationdate(self, resource_id: int) -> str | None:
+    def get_oldest_resource_version_creation_date(self, resource_id: int) -> str | None:
         """Load oldest (first) version of a resource by querying the Zenodo API.
 
         Args:
