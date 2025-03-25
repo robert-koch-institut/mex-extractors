@@ -115,5 +115,5 @@ class OpenDataConnector(HTTPConnector):
 
         files = self.request("GET", files_base_url)
 
-        for file in files["entries"]:
+       return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
             yield OpenDataVersionFiles.model_validate(file)
