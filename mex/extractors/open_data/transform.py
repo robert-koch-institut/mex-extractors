@@ -165,11 +165,8 @@ def transform_open_data_distributions(
     had_primary_source = extracted_primary_source_open_data.stableTargetId
     for resource in open_data_parent_resources:
         access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
-        if distribution_mapping.license[0].mappingRules[0].forValues and (
-            str(resource.metadata.license.id)
-            in distribution_mapping.license[0].mappingRules[0].forValues
-        ):
-            ccby_license = distribution_mapping.license[0].mappingRules[0].setValues
+            ccby_license = distribution_mapping.license[0].mappingRules[0].setValues if str(resource.metadata.license.id)
+            in distribution_mapping.license[0].mappingRules[0].forValues else None
         for file in extract_files_for_parent_resource(resource.id):
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
