@@ -267,19 +267,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
-    distribution_by_id = dict(
-        zip(
-            [
-                distribution.identifierInPrimarySource
-                for distribution in extracted_open_data_distribution
-            ],
-            [
-                distribution.stableTargetId
-                for distribution in extracted_open_data_distribution
-            ],
-            strict=False,
-        )
-    )
+    distribution_by_id = {
+                distribution.identifierInPrimarySource: distribution.stableTargetId
+                for distribution in extracted_open_data_distribution}
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
