@@ -2,7 +2,7 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign.
+      - rule: 
 hasConsentStatus:
   - mappingRules:
       - setValues: https://mex.rki.de/item/consent-status-2 # Valid for Processing
