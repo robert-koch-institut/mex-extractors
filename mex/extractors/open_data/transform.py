@@ -155,7 +155,7 @@ def transform_open_data_distributions(
     """Transform open data resource versions to extracted distributions.
 
     Args:
-        open_data_parent_resources: open data parent resource
+        open_data_parent_resources: list of open data parent resource
         extracted_primary_source_open_data: Extracted platform for open data
         distribution_mapping: resource mapping model with default values
 
