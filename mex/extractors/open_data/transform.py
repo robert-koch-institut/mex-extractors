@@ -330,9 +330,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         ]
         doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
         language = None
-        for mapping in resource_mapping.language[0].mappingRules:
-            if mapping.forValues and resource.metadata.language == mapping.forValues[0]:
-                language = mapping.setValues
+        language = language_by_keyword[resource.metadata.language]
         if resource_mapping.license[0].mappingRules[0].forValues and (
             resource.metadata.license.id
             in resource_mapping.license[0].mappingRules[0].forValues
