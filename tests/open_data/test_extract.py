@@ -116,7 +116,7 @@ def test_extract_oldest_record_version_creationdate(
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_extract_files_for_parent_resource() -> None:
-    open_data_source_files = list(extract_files_for_parent_resource(1001))
+    open_data_source_files = extract_files_for_parent_resource(1001)
 
     assert isinstance(open_data_source_files, Iterable)
 

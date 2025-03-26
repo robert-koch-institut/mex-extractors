@@ -9,16 +9,16 @@ anonymizationPseudonymization:
           - https://mex.rki.de/item/anonymization-pseudonymization-1 # anonymized
 contact:
   - mappingRules:
-      - rule: Match.
+      - rule:
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign.
+      - rule:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-2 #No personal data
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Extract.
+      - rule:
 license:
   - mappingRules:
       - forValues:
@@ -44,9 +44,9 @@ theme:
           - https://mex.rki.de/item/theme-1 # Public Health
 title:
   - mappingRules:
-      - rule: Extract.
+      - rule:
 unitInCharge:
   - mappingRules:
       - forValues:
           - "C1"
-        rule: Match.
+        rule:

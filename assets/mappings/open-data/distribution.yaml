@@ -5,13 +5,13 @@ accessRestriction:
       - setValues: https://mex.rki.de/item/access-restriction-1 # open
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign.
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Extract.
+      - rule:
 issued:
   - mappingRules:
-      - rule: Extract.
+      - rule:
 license:
   - mappingRules:
       - forValues:
@@ -19,4 +19,4 @@ license:
         setValues: https://mex.rki.de/item/license-1 # Creative Commons Attribution 4.0 International
 title:
   - mappingRules:
-      - rule: Extract.
+      - rule:

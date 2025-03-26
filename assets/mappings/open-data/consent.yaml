@@ -2,7 +2,7 @@
 
 hadPrimarySource:
   - mappingRules:
-      - rule: 
+      - rule:
 hasConsentStatus:
   - mappingRules:
       - setValues: https://mex.rki.de/item/consent-status-2 # Valid for Processing
@@ -11,10 +11,10 @@ hasConsentType:
       - setValues: https://mex.rki.de/item/consent-type-1 # Implied Consent
 hasDataSubject:
   - mappingRules:
-      - rule: Assign.
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Use.
+      - rule:
 isIndicatedAtTime:
   - mappingRules:
-      - rule: Extract.
+      - rule:

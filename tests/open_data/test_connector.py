@@ -70,7 +70,7 @@ def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) ->
     ]
 
 
-def test_get_oldest_resource_version_creationdate(
+def test_get_oldest_resource_version_creation_date(
     mocked_open_data_connector: OpenDataConnector,
 ) -> None:
     # Create mock responses
@@ -82,7 +82,7 @@ def test_get_oldest_resource_version_creationdate(
     mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
 
     connector = OpenDataConnector.get()
-    results = connector.get_oldest_resource_version_creationdate(1003)
+    results = connector.get_oldest_resource_version_creation_date(1003)
 
     assert (
         mocked_open_data_connector.request.call_count == 2
@@ -101,7 +101,7 @@ def test_get_files_for_resource_version(
     mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
 
     connector = OpenDataConnector.get()
-    results = list(connector.get_files_for_resource_version(1001))
+    results = connector.get_files_for_resource_version(1001)
 
     assert (
         mocked_open_data_connector.request.call_count == 2

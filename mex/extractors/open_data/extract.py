@@ -47,12 +47,12 @@ def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     """
     connector = OpenDataConnector()
 
-    return connector.get_oldest_resource_version_creationdate(record_id)
+    return connector.get_oldest_resource_version_creation_date(record_id)
 
 
 def extract_files_for_parent_resource(
     version_id: int,
-) -> Generator[OpenDataVersionFiles, None, None]:
+) -> list[OpenDataVersionFiles]:
     """Fetch all files of a version resource.
 
     Returns:
@@ -60,4 +60,4 @@ def extract_files_for_parent_resource(
     """
     connector = OpenDataConnector()
 
-    yield from connector.get_files_for_resource_version(version_id)
+    return connector.get_files_for_resource_version(version_id)

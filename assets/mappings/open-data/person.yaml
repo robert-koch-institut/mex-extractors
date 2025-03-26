@@ -2,13 +2,13 @@
 
 affiliation:
   - mappingRules:
-      - rule: assign.
+      - rule:
       - forValues:
           - Robert Koch Institute
           - Robert Koch-Institut
 hadPrimarySource:
   - mappingRules:
-      - rule: Assign.
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
-      - rule: Extract.
+      - rule:

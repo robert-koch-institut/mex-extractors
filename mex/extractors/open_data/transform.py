@@ -57,7 +57,11 @@ def transform_open_data_persons_not_in_ldap(
     Returns:
         ExtractedPerson
     """
-    affiliation = extracted_open_data_organizations[person.affiliation] if (person.affiliation and person.affiliation not in ignore_affiliation) else None
+    affiliation = (
+        extracted_open_data_organizations[person.affiliation]
+        if (person.affiliation and person.affiliation not in ignore_affiliation)
+        else None
+    )
 
     return ExtractedPerson(
         affiliation=affiliation,
@@ -165,8 +169,13 @@ def transform_open_data_distributions(
     had_primary_source = extracted_primary_source_open_data.stableTargetId
     for resource in open_data_parent_resources:
         access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
-            ccby_license = distribution_mapping.license[0].mappingRules[0].setValues if str(resource.metadata.license.id)
-            in distribution_mapping.license[0].mappingRules[0].forValues else None
+        ccby_license = (
+            distribution_mapping.license[0].mappingRules[0].setValues
+            if distribution_mapping.license[0].mappingRules[0].forValues
+            and str(resource.metadata.license.id)
+            in distribution_mapping.license[0].mappingRules[0].forValues
+            else None
+        )
         for file in extract_files_for_parent_resource(resource.id):
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
@@ -268,8 +277,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     )
     contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
     distribution_by_id = {
-                distribution.identifierInPrimarySource: distribution.stableTargetId
-                for distribution in extracted_open_data_distribution}
+        distribution.identifierInPrimarySource: distribution.stableTargetId
+        for distribution in extracted_open_data_distribution
+    }
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
     resource_type_general = (
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues

@@ -154,7 +154,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
 
     monkeypatch.setattr(
         OpenDataConnector,
-        "get_oldest_resource_version_creationdate",
+        "get_oldest_resource_version_creation_date",
         lambda self, _: "2021",
     )
 

@@ -102,7 +102,7 @@ class OpenDataConnector(HTTPConnector):
 
     def get_files_for_resource_version(
         self, version_id: int
-    ) -> Generator[OpenDataVersionFiles, None, None]:
+    ) -> list[OpenDataVersionFiles]:
         """Load files for each version of a resource by querying the Zenodo API.
 
         Args:
@@ -115,5 +115,4 @@ class OpenDataConnector(HTTPConnector):
 
         files = self.request("GET", files_base_url)
 
-       return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
-            yield OpenDataVersionFiles.model_validate(file)
+        return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
