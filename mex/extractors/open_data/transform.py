@@ -315,13 +315,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        if resource.metadata.description:
-            # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
-            description = re.sub(
+        # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
+        description = re.sub(
                 r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
-            ).strip()
-        else:
-            description = None
+            ).strip() if resource.metadata.description else None
         distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
             Link(url=related_identifiers.identifier)
