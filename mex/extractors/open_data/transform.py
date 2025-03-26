@@ -77,7 +77,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     person_mapping: PersonMapping,
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
-) -> dict[str, MexPersonAndCreationDate]:
+) -> dict[MergedPersonIdentifier, MexPersonAndCreationDate]:
     """Extract persons and file creation dates from open_data resource.
 
     Extract the persons and their respective first creation date of all their files on
@@ -93,7 +93,7 @@ def transform_open_data_persons(  # noqa: PLR0913
         extracted_open_data_organizations: dictionary with ID by affiliation name
 
     Returns:
-        dictionary of MexPersonAndCreationDate by name
+        dictionary of MexPersonAndCreationDate by stableTargetId of MergedPerson
     """
     ldap = LDAPConnector.get()
     dict_for_extractedconsent: dict[str, MexPersonAndCreationDate] = {}
@@ -140,7 +140,11 @@ def transform_open_data_persons(  # noqa: PLR0913
                 mex_person=mex_person,
                 created=resource.created,
             )
-    return dict_for_extractedconsent
+    # now, instead of name, use stabletargetId of Person as key
+    return {
+        dict_for_extractedconsent[key].mex_person.stableTargetId: value
+        for key, value in dict_for_extractedconsent.items()
+    }
 
 
 def transform_open_data_distributions(
@@ -199,7 +203,9 @@ def transform_open_data_distributions(
 def transform_open_data_person_to_mex_consent(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
-    extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
+    extracted_open_data_persons_and_creation_date: dict[
+        MergedPersonIdentifier, MexPersonAndCreationDate
+    ],
     consent_mapping: ConsentMapping,
 ) -> list[ExtractedConsent]:
     """Transform open data persons to extracted consent.
@@ -215,14 +221,7 @@ def transform_open_data_person_to_mex_consent(
     """
     has_consent_status = consent_mapping.hasConsentStatus[0].mappingRules[0].setValues
     has_consent_type = consent_mapping.hasConsentType[0].mappingRules[0].setValues
-    person_list = list(extracted_open_data_persons_and_creation_date.values())
-    person_filedate_by_person_stabletargetid = dict(
-        zip(
-            [person.mex_person.stableTargetId for person in person_list],
-            [person.created for person in person_list],
-            strict=False,
-        )
-    )
+
     return [
         ExtractedConsent(
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
@@ -230,9 +229,9 @@ def transform_open_data_person_to_mex_consent(
             hasConsentType=has_consent_type,
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=person.stableTargetId + "_consent",
-            isIndicatedAtTime=person_filedate_by_person_stabletargetid[
+            isIndicatedAtTime=extracted_open_data_persons_and_creation_date[
                 person.stableTargetId
-            ],
+            ].created,
         )
         for person in extracted_open_data_persons
     ]

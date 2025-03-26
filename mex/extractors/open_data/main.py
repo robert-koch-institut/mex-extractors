@@ -21,6 +21,7 @@ from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.open_data.extract import (
     extract_parent_resources,
@@ -132,7 +133,7 @@ def extracted_open_data_persons_and_creation_date(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
-) -> dict[str, MexPersonAndCreationDate]:
+) -> dict[MergedPersonIdentifier, MexPersonAndCreationDate]:
     """Extract ldap persons and earliest creation date of respective data sets.
 
     Args:
@@ -140,10 +141,10 @@ def extracted_open_data_persons_and_creation_date(
         extracted_primary_source_ldap: ExtractedPrimarySource,
         extracted_primary_source_open_data: ExtractedPrimarySource,
         extracted_organizational_units: list[ExtractedOrganizationalUnit],
-        extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+        extracted_open_data_organizations: dict,
 
     Returns:
-        dictionary of Extracted Persons and resource creation date by name
+        dictionary of Extracted Persons and resource creation date by stableTargetId
     """
     settings = Settings.get()
     person_mapping = PersonMapping.model_validate(
@@ -161,7 +162,9 @@ def extracted_open_data_persons_and_creation_date(
 
 @asset(group_name="open_data")
 def extracted_open_data_persons(
-    extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
+    extracted_open_data_persons_and_creation_date: dict[
+        MergedPersonIdentifier, MexPersonAndCreationDate
+    ],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons from dict and load them to sinks.
 
@@ -280,7 +283,9 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
 def extracted_open_data_consent(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
-    extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
+    extracted_open_data_persons_and_creation_date: dict[
+        MergedPersonIdentifier, MexPersonAndCreationDate
+    ],
 ) -> list[ExtractedConsent]:
     """Transform open data persons to extracted consents and load them to the sinks.
 

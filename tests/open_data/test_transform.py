@@ -111,7 +111,7 @@ def test_transform_open_data_persons(
     )
 
     assert results == {
-        "Muster, Maxi": MexPersonAndCreationDate(
+        "eXA2Qj5pKmI7HXIgcVqCfz": MexPersonAndCreationDate(
             mex_person=ExtractedPerson(
                 hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
                 identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
@@ -163,7 +163,7 @@ def test_transform_open_data_person_to_mex_consent(
     mocked_open_data_consent_mapping: ConsentMapping,
 ) -> None:
     mocked_open_data_persons_and_creation_date = {
-        "Muster, Maxi": MexPersonAndCreationDate(
+        "gFSLUMiYD46I4aJemrjzfb": MexPersonAndCreationDate(
             mex_person=ExtractedPerson(
                 hadPrimarySource=Identifier.generate(seed=42),
                 identifierInPrimarySource="test_id",
