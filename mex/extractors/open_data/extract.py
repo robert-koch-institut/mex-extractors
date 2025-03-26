@@ -29,6 +29,9 @@ def extract_resource_versions(
 ) -> Generator[OpenDataResourceVersion, None, None]:
     """Fetch all the versions of a parent resource.
 
+    Args:
+        open_data_parent_resources: Open Data rarent resource
+
     Returns:
         Generator for OpenDataResourceVersion items
     """
@@ -42,6 +45,9 @@ def extract_resource_versions(
 def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     """Fetch only the oldest version of a parent resource.
 
+    Args:
+        record_id: id of record version as integer
+
     Returns:
         OpenDataResourceVersion
     """
@@ -54,6 +60,9 @@ def extract_files_for_parent_resource(
     version_id: int,
 ) -> list[OpenDataVersionFiles]:
     """Fetch all files of a version resource.
+
+    Args:
+        version_id: id of record version as integer
 
     Returns:
         OpenDataVersionFiles

@@ -131,8 +131,7 @@ def transform_open_data_persons(  # noqa: PLR0913
                     extracted_primary_source_ldap,
                     units_by_identifier_in_primary_source,
                 )
-                if person.orcid:
-                    mex_person.orcidId = [person.orcid]
+                mex_person.orcidId = [person.orcid] if person.orcid else []
             else:
                 mex_person = transform_open_data_persons_not_in_ldap(
                     person,
@@ -285,8 +284,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
     )
     theme = resource_mapping.theme[0].mappingRules[0].setValues
+    language_by_keyword = {
+        rule.forValues[0]: rule.setValues[0]
+        for rule in resource_mapping.language[0].mappingRules
+        if rule.forValues and rule.setValues
+    }
     for resource in open_data_parent_resource:
-        contact = contact_open_data + creator
         contributing_unit = list(
             {
                 unit_id
@@ -311,10 +314,15 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.creators
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
+        contact = contact_open_data + creator
         # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
-        description = re.sub(
+        description = (
+            re.sub(
                 r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
-            ).strip() if resource.metadata.description else None
+            ).strip()
+            if resource.metadata.description
+            else None
+        )
         distribution = [distribution_by_id[str(file.id)] for file in resource.files]
         documentation = [
             Link(url=related_identifiers.identifier)
@@ -322,18 +330,25 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             if related_identifiers.relation == "isDocumentedBy"
         ]
         doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
-        language = None
-        language = language_by_keyword[resource.metadata.language]
-        ccby_license = resource_mapping.license[0].mappingRules[0].setValues if (
-            resource.metadata.license.id
+        language = (
+            language_by_keyword[resource.metadata.language]
+            if resource.metadata.language
+            else None
+        )
+        ccby_license = (
+            resource_mapping.license[0].mappingRules[0].setValues
+            if resource_mapping.license[0].mappingRules[0].forValues
+            and str(resource.metadata.license.id)
             in resource_mapping.license[0].mappingRules[0].forValues
-        ) else None
-        if resource_mapping.unitInCharge[0].mappingRules[0].forValues:
-            unit_in_charge = unit_stable_target_ids_by_synonym.get(
+            else None
+        )
+        unit_in_charge = (
+            unit_stable_target_ids_by_synonym.get(
                 resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
             )
-        else:
-            unit_in_charge = None
+            if resource_mapping.unitInCharge[0].mappingRules[0].forValues
+            else None
+        )
         yield ExtractedResource(
             accessRestriction=access_restriction,
             anonymizationPseudonymization=anonymization_pseudonymization,

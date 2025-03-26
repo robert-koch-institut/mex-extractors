@@ -57,7 +57,14 @@ def open_data_parent_resources() -> list[OpenDataParentResource]:
 def open_data_resource_versions(
     open_data_parent_resources: list[OpenDataParentResource],
 ) -> list[OpenDataResourceVersion]:
-    """Extract all versions of the parent resources from Zenodo."""
+    """Extract all versions of the parent resources from Zenodo.
+
+    Args:
+        open_data_parent_resources: list of parent resources
+
+    Returns:
+        List of Open Data Resource Versions
+    """
     return list(extract_resource_versions(open_data_parent_resources))
 
 
@@ -65,7 +72,14 @@ def open_data_resource_versions(
 def extracted_primary_source_open_data(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
-    """Load and return open data primary source and load it to sinks."""
+    """Load and return open data primary source and load it to sinks.
+
+    Args:
+        extracted_primary_sources: list of extracted primary sources
+
+    Returns:
+        ExtractedPrimarySource for open Data
+    """
     (extracted_primary_source_open_data,) = get_primary_sources_by_name(
         extracted_primary_sources, "open-data"
     )
@@ -119,7 +133,18 @@ def extracted_open_data_persons_and_creation_date(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> dict[str, MexPersonAndCreationDate]:
-    """Extract ldap persons and earliest creation date of respective data sets."""
+    """Extract ldap persons and earliest creation date of respective data sets.
+
+    Args:
+        open_data_resource_versions: list[OpenDataResourceVersion],
+        extracted_primary_source_ldap: ExtractedPrimarySource,
+        extracted_primary_source_open_data: ExtractedPrimarySource,
+        extracted_organizational_units: list[ExtractedOrganizationalUnit],
+        extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+
+    Returns:
+        dictionary of Extracted Persons and resource creation date by name
+    """
     settings = Settings.get()
     person_mapping = PersonMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "person.yaml")
@@ -138,7 +163,14 @@ def extracted_open_data_persons_and_creation_date(
 def extracted_open_data_persons(
     extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
 ) -> list[ExtractedPerson]:
-    """Transform extracted ldap persons to mex persons and load them to sinks."""
+    """Get Extracted persons from dict and load them to sinks.
+
+    Args:
+        extracted_open_data_persons_and_creation_date: dict
+
+    Returns:
+        list of extracted persons
+    """
     mex_persons = [
         person.mex_person
         for person in list(extracted_open_data_persons_and_creation_date.values())
@@ -152,7 +184,14 @@ def extracted_open_data_persons(
 def open_data_contact_point(
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> list[ExtractedContactPoint]:
-    """Convert opendata email address to contact point and load to sink."""
+    """Convert opendata email address to contact point and load to sink.
+
+    Args:
+        extracted_primary_source_ldap: extracted primary source for ldap
+
+    Returns:
+        list of extracted contact points
+    """
     ldap = LDAPConnector.get()
     contact_point = [
         transform_ldap_actor_to_mex_contact_point(
@@ -170,7 +209,15 @@ def extracted_open_data_distribution(
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
 ) -> list[ExtractedDistribution]:
-    """Extract distributions for open data & transform and load them to sinks."""
+    """Extract distributions for open data & transform and load them to sinks.
+
+    Args:
+        open_data_parent_resources: list[OpenDataParentResource],
+        extracted_primary_source_open_data: ExtractedPrimarySource,
+
+    Returns:
+        list of extracted distributions
+    """
     settings = Settings.get()
     distribution_mapping = DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
@@ -197,7 +244,20 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
     extracted_organization_rki: ExtractedOrganization,
     open_data_contact_point: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
-    """Transform parent resources to extracted resources & load them to the sinks."""
+    """Transform parent resources to extracted resources & load them to the sinks.
+
+    Args:
+        open_data_parent_resources: list[OpenDataParentResource],
+        extracted_primary_source_open_data: ExtractedPrimarySource,
+        extracted_open_data_persons: list[ExtractedPerson],
+        unit_stable_target_ids_by_synonym: dict
+        extracted_open_data_distribution: list[ExtractedDistribution],
+        extracted_organization_rki: ExtractedOrganization,
+        open_data_contact_point: list[ExtractedContactPoint],
+
+    Returns:
+        list of extracted resources
+    """
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
@@ -225,7 +285,16 @@ def extracted_open_data_consent(
     extracted_open_data_persons: list[ExtractedPerson],
     extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
 ) -> list[ExtractedConsent]:
-    """Transform open data persons to extracted consents and load them to the sinks."""
+    """Transform open data persons to extracted consents and load them to the sinks.
+
+    Args:
+        extracted_primary_source_open_data: ExtractedPrimarySource,
+        extracted_open_data_persons: list[ExtractedPerson],
+        extracted_open_data_persons_and_creation_date: dict
+
+    Returns:
+        list of extracted constens
+    """
     settings = Settings.get()
     consent_mapping = ConsentMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "consent.yaml")
