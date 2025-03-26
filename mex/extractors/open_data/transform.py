@@ -286,11 +286,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     )
     theme = resource_mapping.theme[0].mappingRules[0].setValues
     for resource in open_data_parent_resource:
-        contact = contact_open_data + [
-            c
-            for person in resource.metadata.creators
-            if (c := person_stable_target_id_by_name.get(str(person.name)))
-        ]
+        contact = contact_open_data + creator
         contributing_unit = list(
             {
                 unit_id
