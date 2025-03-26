@@ -331,11 +331,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         doi = f"https://doi.org/{resource.conceptdoi}" if resource.conceptdoi else None
         language = None
         language = language_by_keyword[resource.metadata.language]
-        if resource_mapping.license[0].mappingRules[0].forValues and (
+        ccby_license = resource_mapping.license[0].mappingRules[0].setValues if (
             resource.metadata.license.id
             in resource_mapping.license[0].mappingRules[0].forValues
-        ):
-            ccby_license = resource_mapping.license[0].mappingRules[0].setValues
+        ) else None
         if resource_mapping.unitInCharge[0].mappingRules[0].forValues:
             unit_in_charge = unit_stable_target_ids_by_synonym.get(
                 resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
