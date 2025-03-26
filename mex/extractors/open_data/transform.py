@@ -1,5 +1,4 @@
 import re
-from collections.abc import Generator, Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
@@ -39,7 +38,6 @@ from mex.extractors.open_data.models.source import (
 )
 
 
-# @watch()
 def transform_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -72,7 +70,6 @@ def transform_open_data_persons_not_in_ldap(
     )
 
 
-# @watch()
 def transform_open_data_persons(  # noqa: PLR0913
     open_data_resource_versions: list[OpenDataResourceVersion],
     extracted_primary_source_ldap: ExtractedPrimarySource,
@@ -146,22 +143,22 @@ def transform_open_data_persons(  # noqa: PLR0913
     return dict_for_extractedconsent
 
 
-# @watch()
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
     distribution_mapping: DistributionMapping,
-) -> Generator[ExtractedDistribution, None, None]:
+) -> list[ExtractedDistribution]:
     """Transform open data resource versions to extracted distributions.
 
     Args:
-        open_data_parent_resources: list of open data parent resource
+        open_data_parent_resources: list of open data parent resources
         extracted_primary_source_open_data: Extracted platform for open data
         distribution_mapping: resource mapping model with default values
 
     Returns:
-        Generator for ExtractedDistribution instances
+        List of ExtractedDistribution instances
     """
+    extracted_distributions = []
     access_restriction = (
         distribution_mapping.accessRestriction[0].mappingRules[0].setValues
     )
@@ -182,27 +179,29 @@ def transform_open_data_distributions(
             media_type = MIMEType.find(str(file.mimetype))
             modified = file.updated
             title = file.key
-            yield ExtractedDistribution(
-                accessRestriction=access_restriction,
-                accessURL=access_url,
-                downloadURL=download_url,
-                hadPrimarySource=had_primary_source,
-                identifierInPrimarySource=identifier_primary_source,
-                issued=issued,
-                license=ccby_license,
-                mediaType=media_type,
-                modified=modified,
-                title=title,
+            extracted_distributions.append(
+                ExtractedDistribution(
+                    accessRestriction=access_restriction,
+                    accessURL=access_url,
+                    downloadURL=download_url,
+                    hadPrimarySource=had_primary_source,
+                    identifierInPrimarySource=identifier_primary_source,
+                    issued=issued,
+                    license=ccby_license,
+                    mediaType=media_type,
+                    modified=modified,
+                    title=title,
+                )
             )
+    return extracted_distributions
 
 
-# @watch
 def transform_open_data_person_to_mex_consent(
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     extracted_open_data_persons_and_creation_date: dict[str, MexPersonAndCreationDate],
     consent_mapping: ConsentMapping,
-) -> Generator[ExtractedConsent, None, None]:
+) -> list[ExtractedConsent]:
     """Transform open data persons to extracted consent.
 
     Args:
@@ -212,7 +211,7 @@ def transform_open_data_person_to_mex_consent(
         extracted_open_data_persons_and_creation_date: mex persons & file creation date
 
     Returns:
-        Generator for ExtractedConsent instances
+        List of ExtractedConsent instances
     """
     has_consent_status = consent_mapping.hasConsentStatus[0].mappingRules[0].setValues
     has_consent_type = consent_mapping.hasConsentType[0].mappingRules[0].setValues
@@ -224,7 +223,8 @@ def transform_open_data_person_to_mex_consent(
             strict=False,
         )
     )
-        return [ExtractedConsent(
+    return [
+        ExtractedConsent(
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
             hasConsentStatus=has_consent_status,
             hasConsentType=has_consent_type,
@@ -233,12 +233,13 @@ def transform_open_data_person_to_mex_consent(
             isIndicatedAtTime=person_filedate_by_person_stabletargetid[
                 person.stableTargetId
             ],
-        ) for person in extracted_open_data_persons]
+        )
+        for person in extracted_open_data_persons
+    ]
 
 
-# @watch()
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
-    open_data_parent_resource: Iterable[OpenDataParentResource],
+    open_data_parent_resource: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -246,7 +247,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     open_data_contact_point: list[ExtractedContactPoint],
-) -> Generator[ExtractedResource, None, None]:
+) -> list[ExtractedResource]:
     """Transform open_data parent resources to extracted resources.
 
     Args:
@@ -260,8 +261,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         open_data_contact_point: list[ExtractedContactPoint]
 
     Returns:
-        Generator for ExtractedResource instances
+        list of ExtractedResource instances
     """
+    extracted_resource = []
+
     person_stable_target_id_by_name = {
         str(p.fullName[0]): MergedPersonIdentifier(p.stableTargetId)
         for p in extracted_open_data_persons
@@ -348,28 +351,31 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             if resource_mapping.unitInCharge[0].mappingRules[0].forValues
             else None
         )
-        yield ExtractedResource(
-            accessRestriction=access_restriction,
-            anonymizationPseudonymization=anonymization_pseudonymization,
-            contact=contact,
-            contributingUnit=contributing_unit,
-            contributor=contributor,
-            created=created,
-            creator=creator,
-            description=description,
-            distribution=distribution,
-            documentation=documentation,
-            doi=doi,
-            hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
-            hasPersonalData=has_personal_data,
-            identifierInPrimarySource=str(resource.conceptrecid),
-            keyword=resource.metadata.keywords,
-            language=language,
-            license=ccby_license,
-            modified=resource.modified,
-            publisher=extracted_organization_rki.stableTargetId,
-            resourceTypeGeneral=resource_type_general,
-            theme=theme,
-            title=resource.title,
-            unitInCharge=unit_in_charge,
+        extracted_resource.append(
+            ExtractedResource(
+                accessRestriction=access_restriction,
+                anonymizationPseudonymization=anonymization_pseudonymization,
+                contact=contact,
+                contributingUnit=contributing_unit,
+                contributor=contributor,
+                created=created,
+                creator=creator,
+                description=description,
+                distribution=distribution,
+                documentation=documentation,
+                doi=doi,
+                hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
+                hasPersonalData=has_personal_data,
+                identifierInPrimarySource=str(resource.conceptrecid),
+                keyword=resource.metadata.keywords,
+                language=language,
+                license=ccby_license,
+                modified=resource.modified,
+                publisher=extracted_organization_rki.stableTargetId,
+                resourceTypeGeneral=resource_type_general,
+                theme=theme,
+                title=resource.title,
+                unitInCharge=unit_in_charge,
+            )
         )
+    return extracted_resource

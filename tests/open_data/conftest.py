@@ -95,7 +95,7 @@ def mocked_open_data_contact_point() -> list[ExtractedContactPoint]:
 
 @pytest.fixture
 def mocked_open_data_distribution() -> list[ExtractedDistribution]:
-    """Mock an extracted person."""
+    """Mock an extracted distribution."""
     return [
         ExtractedDistribution(
             hadPrimarySource=Identifier.generate(seed=42),

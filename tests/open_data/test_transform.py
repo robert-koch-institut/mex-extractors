@@ -136,12 +136,10 @@ def test_transform_open_data_distributions(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_distribution_mapping: DistributionMapping,
 ) -> None:
-    mex_distribution = list(
-        transform_open_data_distributions(
-            mocked_open_data_parent_resource,
-            extracted_primary_sources["open-data"],
-            mocked_open_data_distribution_mapping,
-        )
+    mex_distribution = transform_open_data_distributions(
+        mocked_open_data_parent_resource,
+        extracted_primary_sources["open-data"],
+        mocked_open_data_distribution_mapping,
     )
 
     assert mex_distribution[0].model_dump(exclude_none=True, exclude_defaults=True) == {

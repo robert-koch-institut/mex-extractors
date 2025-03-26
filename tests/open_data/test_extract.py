@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 import pytest
 
 from mex.extractors.open_data.extract import (
@@ -17,10 +15,9 @@ from mex.extractors.open_data.models.source import (
 def test_extract_parent_resources_mocked() -> None:
     open_data_sources = extract_parent_resources()
 
-    assert isinstance(open_data_sources, Iterable)
-    first_item, second_item = tuple(open_data_sources)
+    assert isinstance(open_data_sources, list)
 
-    assert first_item.model_dump(exclude_defaults=True) == {
+    assert open_data_sources[0].model_dump(exclude_defaults=True) == {
         "title": "Dumdidumdidum",
         "id": 1001,
         "conceptdoi": "10.3456/zenodo.7890",
@@ -32,7 +29,7 @@ def test_extract_parent_resources_mocked() -> None:
         },
         "files": [{"id": "file_test_id"}],
     }
-    assert second_item.model_dump(exclude_defaults=True) == {
+    assert open_data_sources[1].model_dump(exclude_defaults=True) == {
         "title": "This is a test",
         "conceptrecid": "Zwei",
         "id": 2002,
@@ -57,13 +54,13 @@ def test_extract_parent_resources_mocked() -> None:
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_extract_resource_versions_mocked(
-    mocked_open_data_parent_resource: Iterable[OpenDataParentResource],
+    mocked_open_data_parent_resource: list[OpenDataParentResource],
 ) -> None:
     open_data_sources = list(
         extract_resource_versions(mocked_open_data_parent_resource)
     )
 
-    assert isinstance(open_data_sources, Iterable)
+    assert isinstance(open_data_sources, list)
 
     assert len(open_data_sources) == 2
     assert open_data_sources[0].model_dump(exclude_defaults=True) == {
@@ -103,7 +100,7 @@ def test_extract_resource_versions_mocked(
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_extract_oldest_record_version_creationdate(
-    mocked_open_data_parent_resource: Iterable[OpenDataParentResource],
+    mocked_open_data_parent_resource: list[OpenDataParentResource],
 ) -> None:
     open_data_source_date = extract_oldest_record_version_creationdate(
         mocked_open_data_parent_resource
@@ -118,7 +115,7 @@ def test_extract_oldest_record_version_creationdate(
 def test_extract_files_for_parent_resource() -> None:
     open_data_source_files = extract_files_for_parent_resource(1001)
 
-    assert isinstance(open_data_source_files, Iterable)
+    assert isinstance(open_data_source_files, list)
 
     assert open_data_source_files[0].model_dump(exclude_defaults=True) == {
         "file_id": "file_test_id",

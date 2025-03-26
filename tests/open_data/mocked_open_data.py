@@ -124,32 +124,29 @@ def create_mocked_file_response() -> dict:
 def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     """Mock the Open data connector to return dummy resources."""
     mocked_parent_response = create_mocked_parent_response()
-    parent_resources = (
+    parent_resources = [
         OpenDataParentResource.model_validate(
             mocked_parent_response["hits"]["hits"][0]
         ),
         OpenDataParentResource.model_validate(
             mocked_parent_response["hits"]["hits"][1]
         ),
-    )
-
+    ]
     monkeypatch.setattr(
-        OpenDataConnector, "get_parent_resources", lambda _: iter(parent_resources)
+        OpenDataConnector, "get_parent_resources", lambda _: parent_resources
     )
 
     mocked_version_response = create_mocked_version_response()
-    resource_versions = (
+    resource_versions = [
         OpenDataResourceVersion.model_validate(
             mocked_version_response["hits"]["hits"][0]
         ),
         OpenDataResourceVersion.model_validate(
             mocked_version_response["hits"]["hits"][1]
         ),
-    )
+    ]
     monkeypatch.setattr(
-        OpenDataConnector,
-        "get_resource_versions",
-        lambda self, _: iter(resource_versions),
+        OpenDataConnector, "get_resource_versions", lambda self, _: resource_versions
     )
 
     monkeypatch.setattr(
@@ -159,9 +156,9 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     )
 
     mocked_file_response = create_mocked_file_response()
-    version_files = (
+    version_files = [
         OpenDataVersionFiles.model_validate(mocked_file_response["entries"][0]),
-    )
+    ]
     monkeypatch.setattr(
         OpenDataConnector,
         "get_files_for_resource_version",

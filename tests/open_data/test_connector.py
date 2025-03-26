@@ -39,7 +39,7 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
     mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
 
     connector = OpenDataConnector.get()
-    results = list(connector.get_parent_resources())
+    results = connector.get_parent_resources()
 
     assert (
         mocked_open_data_connector.request.call_count == 4
@@ -59,7 +59,7 @@ def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) ->
     mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
 
     connector = OpenDataConnector.get()
-    results = list(connector.get_resource_versions(1))
+    results = connector.get_resource_versions(1)
 
     assert (
         mocked_open_data_connector.request.call_count == 5

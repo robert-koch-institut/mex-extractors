@@ -50,7 +50,7 @@ from mex.extractors.wikidata.helpers import (
 @asset(group_name="open_data")
 def open_data_parent_resources() -> list[OpenDataParentResource]:
     """Extract open data parent resources from Zenodo."""
-    return list(extract_parent_resources())
+    return extract_parent_resources()
 
 
 @asset(group_name="open_data")
@@ -65,7 +65,7 @@ def open_data_resource_versions(
     Returns:
         List of Open Data Resource Versions
     """
-    return list(extract_resource_versions(open_data_parent_resources))
+    return extract_resource_versions(open_data_parent_resources)
 
 
 @asset(group_name="open_data", deps=["extracted_primary_source_mex"])
@@ -95,7 +95,7 @@ def extracted_open_data_organizations(
     """Search wikidata Ids or create own ids for affiliations.
 
     Args:
-        open_data_parent_resources: Iterable of OpenDataParentResource
+        open_data_parent_resources: list of OpenDataParentResource
         extracted_primary_source_open_data: stabletargetID of OpenData PrimarySource
 
     Returns:
@@ -222,12 +222,10 @@ def extracted_open_data_distribution(
     distribution_mapping = DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
     )
-    mex_distributions = list(
-        transform_open_data_distributions(
-            open_data_parent_resources,
-            extracted_primary_source_open_data,
-            distribution_mapping,
-        )
+    mex_distributions = transform_open_data_distributions(
+        open_data_parent_resources,
+        extracted_primary_source_open_data,
+        distribution_mapping,
     )
 
     load(mex_distributions)
@@ -263,18 +261,17 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
 
-    mex_sources = list(
-        transform_open_data_parent_resource_to_mex_resource(
-            open_data_parent_resources,
-            extracted_primary_source_open_data,
-            extracted_open_data_persons,
-            unit_stable_target_ids_by_synonym,
-            extracted_open_data_distribution,
-            resource_mapping,
-            extracted_organization_rki,
-            open_data_contact_point,
-        )
+    mex_sources = transform_open_data_parent_resource_to_mex_resource(
+        open_data_parent_resources,
+        extracted_primary_source_open_data,
+        extracted_open_data_persons,
+        unit_stable_target_ids_by_synonym,
+        extracted_open_data_distribution,
+        resource_mapping,
+        extracted_organization_rki,
+        open_data_contact_point,
     )
+
     load(mex_sources)
     return mex_sources
 
@@ -293,21 +290,20 @@ def extracted_open_data_consent(
         extracted_open_data_persons_and_creation_date: dict
 
     Returns:
-        list of extracted constens
+        list of extracted consents
     """
     settings = Settings.get()
     consent_mapping = ConsentMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "consent.yaml")
     )
 
-    mex_consents = list(
-        transform_open_data_person_to_mex_consent(
-            extracted_primary_source_open_data,
-            extracted_open_data_persons,
-            extracted_open_data_persons_and_creation_date,
-            consent_mapping,
-        )
+    mex_consents = transform_open_data_person_to_mex_consent(
+        extracted_primary_source_open_data,
+        extracted_open_data_persons,
+        extracted_open_data_persons_and_creation_date,
+        consent_mapping,
     )
+
     load(mex_consents)
     return mex_consents
 
