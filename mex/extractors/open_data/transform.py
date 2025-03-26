@@ -224,8 +224,7 @@ def transform_open_data_person_to_mex_consent(
             strict=False,
         )
     )
-    for person in extracted_open_data_persons:
-        yield ExtractedConsent(
+        return [ExtractedConsent(
             hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
             hasConsentStatus=has_consent_status,
             hasConsentType=has_consent_type,
@@ -234,7 +233,7 @@ def transform_open_data_person_to_mex_consent(
             isIndicatedAtTime=person_filedate_by_person_stabletargetid[
                 person.stableTargetId
             ],
-        )
+        ) for person in extracted_open_data_persons]
 
 
 # @watch()
