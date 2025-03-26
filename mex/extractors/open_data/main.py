@@ -82,7 +82,7 @@ def extracted_open_data_organizations(
 
     Args:
         open_data_parent_resources: Iterable of OpenDataParentResource
-        extracted_primary_source_open_data: stabletargetID of OsenData PrimarySource
+        extracted_primary_source_open_data: stabletargetID of OpenData PrimarySource
 
     Returns:
         dict with ID by affiliation name
