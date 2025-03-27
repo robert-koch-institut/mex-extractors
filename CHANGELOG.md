@@ -17,7 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- removed RDMO unused extractor
+
 ### Fixed
+
+- exclude skipped extractor from `all_extractors` job
 
 ### Security
 
