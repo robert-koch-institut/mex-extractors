@@ -13,7 +13,6 @@ from mex.extractors.ifsg.settings import IFSGSettings
 from mex.extractors.international_projects.settings import InternationalProjectsSettings
 from mex.extractors.odk.settings import ODKSettings
 from mex.extractors.open_data.settings import OpenDataSettings
-from mex.extractors.rdmo.settings import RDMOSettings
 from mex.extractors.seq_repo.settings import SeqRepoSettings
 from mex.extractors.sumo.settings import SumoSettings
 from mex.extractors.synopse.settings import SynopseSettings
@@ -101,7 +100,6 @@ class Settings(BaseSettings):
     )
     odk: ODKSettings = ODKSettings()
     open_data: OpenDataSettings = OpenDataSettings()
-    rdmo: RDMOSettings = RDMOSettings()
     seq_repo: SeqRepoSettings = SeqRepoSettings()
     sumo: SumoSettings = SumoSettings()
     voxco: VoxcoSettings = VoxcoSettings()
