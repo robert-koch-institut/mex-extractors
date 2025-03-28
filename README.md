@@ -158,10 +158,6 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `pdm run open-data` extracts Open Data sources from the Zenodo API
 
-### rdmo extractor
-
-- `pdm run rdmo` extracts sources from RDMO using its REST API
-
 ### seq-repo extractor
 
 - `pdm run seq-repo` extracts sources from seq-repo JSON file
