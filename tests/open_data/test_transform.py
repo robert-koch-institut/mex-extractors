@@ -6,14 +6,10 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
+    ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
-    PersonMapping,
     ResourceMapping,
-)
-from mex.common.organigram.extract import extract_organigram_units
-from mex.common.organigram.transform import (
-    transform_organigram_units_to_organizational_units,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -28,58 +24,65 @@ from mex.extractors.open_data.models.source import (
     OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
+    get_mex_person,
+    lookup_person_in_ldap_and_transfom,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
+    transform_open_data_person_affiliations_to_organisations,
     transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
 )
 
 
-# @pytest.mark.usefixtures("mocked_open_data")
-def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
+def test_transform_open_data_person_affiliations_to_organisations(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
-    ignore_affiliation = ["RKI", "Robert Koch-Institut"]
-    extracted_open_data_organizations = {
-        "Universität": MergedOrganizationIdentifier("loremipsumdolor")
-    }
-    mocked_open_data_creator_with_processed_affiliation.orcid = (
-        f"https://orcid.org/{mocked_open_data_creator_with_processed_affiliation.orcid}"
+    results = transform_open_data_person_affiliations_to_organisations(
+        [mocked_open_data_creator_with_processed_affiliation],
+        extracted_primary_sources["open-data"],
     )
+    assert results == {"Universität": Joker()}
+
+
+def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
+    mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_organization_rki: ExtractedOrganization,
+) -> None:
+    extracted_open_data_organizations = {
+        "Universität": MergedOrganizationIdentifier.generate(seed=354)
+    }
 
     results = transform_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_processed_affiliation,
         extracted_primary_sources["open-data"],
-        ignore_affiliation,
+        extracted_organization_rki,
         extracted_open_data_organizations,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
         identifierInPrimarySource="Pattern, Peppa",
         fullName="Pattern, Peppa",
-        affiliation="loremipsumdolor",
+        affiliation=MergedOrganizationIdentifier.generate(seed=354),
         orcidId="https://orcid.org/9876543210",
     )
 
 
-# @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    ignore_affiliation = ["RKI", "Robert Koch-Institut"]
     extracted_open_data_organizations = {
-        "Universität": MergedOrganizationIdentifier("loremipsumdolor")
+        "Universität": MergedOrganizationIdentifier.generate(seed=354),
+        "RKI": extracted_organization_rki.stableTargetId,
     }
-    mocked_open_data_creator_with_affiliation_to_ignore.orcid = (
-        f"https://orcid.org/{mocked_open_data_creator_with_affiliation_to_ignore.orcid}"
-    )
     results = transform_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_affiliation_to_ignore,
         extracted_primary_sources["open-data"],
-        ignore_affiliation,
+        extracted_organization_rki,
         extracted_open_data_organizations,
     )
     assert results == ExtractedPerson(
@@ -91,23 +94,87 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     )
 
 
+@pytest.mark.usefixtures("mocked_ldap")
+def test_lookup_person_in_ldap_and_transfom(
+    mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+) -> None:
+    results = lookup_person_in_ldap_and_transfom(
+        mocked_open_data_creator_with_affiliation_to_ignore,
+        extracted_primary_sources["ldap"],
+        mocked_units_by_identifier_in_primary_source,
+    )
+    assert results == ExtractedPerson(
+        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+        identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
+        affiliation=[],
+        email=["test_person@email.de"],
+        familyName=["Resolved"],
+        fullName=["Resolved, Roland"],
+        givenName=["Roland"],
+        memberOf="hIiJpZXVppHvoyeP0QtAoS",
+        orcidId=["https://orcid.org/1234567890"],
+        identifier=Joker(),
+        stableTargetId=Joker(),
+    )
+
+
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_mex_person(
+    mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    extracted_organization_rki: ExtractedOrganization,
+) -> None:
+    extracted_open_data_organizations = {
+        "Universität": MergedOrganizationIdentifier.generate(seed=354)
+    }
+    results = get_mex_person(
+        mocked_open_data_creator_with_affiliation_to_ignore,
+        extracted_primary_sources["ldap"],
+        mocked_units_by_identifier_in_primary_source,
+        extracted_primary_sources["open-data"],
+        extracted_organization_rki,
+        extracted_open_data_organizations,
+    )
+
+    assert results == ExtractedPerson(
+        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+        identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
+        affiliation=[],
+        email=["test_person@email.de"],
+        familyName=["Resolved"],
+        fullName=["Resolved, Roland"],
+        givenName=["Roland"],
+        memberOf="hIiJpZXVppHvoyeP0QtAoS",
+        orcidId=["https://orcid.org/1234567890"],
+        identifier=Joker(),
+        stableTargetId=Joker(),
+    )
+
+
 @pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
 def test_transform_open_data_persons(
     mocked_open_data_resource_version: OpenDataResourceVersion,
+    mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    mocked_person_mapping: PersonMapping,
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_organizational_units = transform_organigram_units_to_organizational_units(
-        extract_organigram_units(), extracted_primary_sources["organigram"]
-    )
     extracted_open_data_organizations = {}
     results = transform_open_data_persons(
         mocked_open_data_resource_version,
+        [mocked_open_data_creator_with_affiliation_to_ignore],
         extracted_primary_sources["ldap"],
         extracted_primary_sources["open-data"],
-        extracted_organizational_units,
-        mocked_person_mapping,
+        mocked_extracted_organizational_units,
         extracted_open_data_organizations,
+        extracted_organization_rki,
     )
 
     assert results == {

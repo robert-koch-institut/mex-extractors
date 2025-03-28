@@ -5,10 +5,16 @@ from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
+    ExtractedOrganizationalUnit,
     ExtractedPerson,
+    ExtractedPrimarySource,
     MergedPrimarySourceIdentifier,
     PersonMapping,
     ResourceMapping,
+)
+from mex.common.organigram.extract import extract_organigram_units
+from mex.common.organigram.transform import (
+    transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import (
     Identifier,
@@ -65,9 +71,11 @@ def mocked_open_data_creator_with_affiliation_to_ignore() -> (
 ):
     """Mock an open data person (creator or contributor)."""
     mocked_parent_response = create_mocked_parent_response()
-    return OpenDataCreatorsOrContributors.model_validate(
+    person = OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][0]
     )
+    person.orcid = f"https://orcid.org/{person.orcid}"
+    return person
 
 
 @pytest.fixture
@@ -76,9 +84,11 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
 ):
     """Mock an open data person (creator or contributor)."""
     mocked_parent_response = create_mocked_parent_response()
-    return OpenDataCreatorsOrContributors.model_validate(
+    person = OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
     )
+    person.orcid = f"https://orcid.org/{person.orcid}"
+    return person
 
 
 @pytest.fixture
@@ -141,3 +151,23 @@ def mocked_person_mapping() -> PersonMapping:
     return PersonMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "person.yaml")
     )
+
+
+@pytest.fixture
+def mocked_extracted_organizational_units(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> list[ExtractedOrganizationalUnit]:
+    return transform_organigram_units_to_organizational_units(
+        extract_organigram_units(),
+        extracted_primary_sources["organigram"],
+    )
+
+
+@pytest.fixture
+def mocked_units_by_identifier_in_primary_source(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> dict[str, ExtractedOrganizationalUnit]:
+    return {
+        unit.identifierInPrimarySource: unit
+        for unit in mocked_extracted_organizational_units
+    }

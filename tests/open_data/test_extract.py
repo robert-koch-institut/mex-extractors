@@ -3,10 +3,12 @@ import pytest
 from mex.extractors.open_data.extract import (
     extract_files_for_parent_resource,
     extract_oldest_record_version_creationdate,
+    extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
     extract_resource_versions,
 )
 from mex.extractors.open_data.models.source import (
+    OpenDataCreatorsOrContributors,
     OpenDataParentResource,
 )
 
@@ -123,3 +125,17 @@ def test_extract_files_for_parent_resource() -> None:
         "links": {"self": "www.efg.hi"},
         "created": "2021-01-01T01:01:01.111111+00:00",
     }
+
+
+def test_extract_open_data_persons_from_open_data_parent_resources(
+    mocked_open_data_parent_resource: list[OpenDataParentResource],
+) -> None:
+    results = extract_open_data_persons_from_open_data_parent_resources(
+        mocked_open_data_parent_resource
+    )
+    assert results == [
+        OpenDataCreatorsOrContributors(
+            name="Muster, Maxi",
+            orcid="1234567890",
+        )
+    ]

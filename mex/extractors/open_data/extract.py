@@ -1,5 +1,6 @@
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
+    OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataResourceVersion,
     OpenDataVersionFiles,
@@ -68,3 +69,23 @@ def extract_files_for_parent_resource(
     connector = OpenDataConnector()
 
     return connector.get_files_for_resource_version(version_id)
+
+
+def extract_open_data_persons_from_open_data_parent_resources(
+    open_data_parent_resource: list[OpenDataParentResource],
+) -> list[OpenDataCreatorsOrContributors]:
+    """Extract unique open Data persons from open data parent resources.
+
+    Args:
+        open_data_parent_resource: open data parent resource
+
+    Resturns:
+        list of extracted open data persons (creators or contributors)
+    """
+    return list(
+        {
+            person
+            for resource in open_data_parent_resource
+            for person in (resource.metadata.creators + resource.metadata.contributors)
+        }
+    )

@@ -16,7 +16,6 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
-    PersonMapping,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -36,12 +35,49 @@ from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
+from mex.extractors.sinks import load
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
+
+
+def transform_open_data_person_affiliations_to_organisations(
+    extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+) -> dict[str, MergedOrganizationIdentifier]:
+    """Search wikidata or create own organisations, load to sink and create dictionary.
+
+    Args:
+        extracted_open_data_creators_contributors: list of creators and contributors
+        extracted_primary_source_open_data: extracted Primary source for Open Data
+
+    Returns:
+        list of Extracted Organization Ids by affiliation name
+    """
+    unique_affiliations = {
+        person.affiliation
+        for person in extracted_open_data_creators_contributors
+        if person.affiliation
+    }
+    affiliation_dict: dict[str, MergedOrganizationIdentifier] = {}
+    for affiliation in unique_affiliations:
+        if org_id := get_wikidata_extracted_organization_id_by_name(affiliation):
+            affiliation_dict[affiliation] = org_id
+        else:
+            extracted_organization = ExtractedOrganization(
+                officialName=affiliation,
+                identifierInPrimarySource=affiliation,
+                hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
+            )
+            load([extracted_organization])
+            affiliation_dict[affiliation] = extracted_organization.stableTargetId
+    return affiliation_dict
 
 
 def transform_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_open_data: ExtractedPrimarySource,
-    ignore_affiliation: list[str],
+    extracted_organization_rki: ExtractedOrganization,
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> ExtractedPerson:
     """Create ExtractedPerson for a person not matched with ldap.
@@ -49,7 +85,7 @@ def transform_open_data_persons_not_in_ldap(
     Args:
         person: list[OpenDataCreatorsOrContributors],
         extracted_primary_source_open_data: open data primary source,
-        ignore_affiliation: list of strings of affiliations not to be extracted
+        extracted_organization_rki: ExtractedOrganization of RKI,
         extracted_open_data_organizations: dictionary with ID by affiliation name
 
     Returns:
@@ -57,7 +93,11 @@ def transform_open_data_persons_not_in_ldap(
     """
     affiliation = (
         extracted_open_data_organizations[person.affiliation]
-        if (person.affiliation and person.affiliation not in ignore_affiliation)
+        if (
+            person.affiliation
+            and extracted_open_data_organizations[person.affiliation]
+            != extracted_organization_rki.stableTargetId
+        )
         else None
     )
 
@@ -70,13 +110,87 @@ def transform_open_data_persons_not_in_ldap(
     )
 
 
+def lookup_person_in_ldap_and_transfom(
+    person: OpenDataCreatorsOrContributors,
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+    units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
+) -> ExtractedPerson | None:
+    """Lookup person in ldap.
+
+    Args:
+        person: Open Data person (Creator Or Contributor),
+        extracted_primary_source_ldap: primary Source for ldap
+        units_by_identifier_in_primary_source: dict of primary sources by ID
+
+    Returns:
+        ExtractedPerson if matched or None if match fails
+    """
+    ldap = LDAPConnector.get()
+    try:
+        ldap_person = ldap.get_person(displayName=person.name)
+    except MExError:
+        try:
+            ldap_person = ldap.get_person(mail=(person.name.split(", ")[0] + "*"))
+            # names are stored without Umlaut in Zenodo, therefore if the lookup
+            # fails, try the email, as that also has no Umlauts. But one can't
+            # use only this attempt because there are several similar last names
+        except MExError:
+            ldap_person = None
+
+    if ldap_person:
+        mex_person = transform_ldap_person_to_mex_person(
+            ldap_person,
+            extracted_primary_source_ldap,
+            units_by_identifier_in_primary_source,
+        )
+        mex_person.orcidId = [person.orcid] if person.orcid else []
+        return mex_person
+    return None
+
+
+def get_mex_person(  # noqa: PLR0913
+    person: OpenDataCreatorsOrContributors,
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+    units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
+    extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+) -> ExtractedPerson:
+    """Lookup person in ldap or create ExtractedPerson if match fails.
+
+    Args:
+        person: list[OpenDataCreatorsOrContributors],
+        extracted_primary_source_ldap: primary Source for ldap
+        units_by_identifier_in_primary_source: dict of primary sources by ID
+        extracted_primary_source_open_data: open data primary source,
+        extracted_organization_rki: ExtractedOrganization of RKI,
+        extracted_open_data_organizations: dictionary with ID by affiliation name
+
+    Returns:
+        ExtractedPerson
+    """
+    mex_person = lookup_person_in_ldap_and_transfom(
+        person, extracted_primary_source_ldap, units_by_identifier_in_primary_source
+    )
+
+    if not mex_person:
+        mex_person = transform_open_data_persons_not_in_ldap(
+            person,
+            extracted_primary_source_open_data,
+            extracted_organization_rki,
+            extracted_open_data_organizations,
+        )
+    return mex_person
+
+
 def transform_open_data_persons(  # noqa: PLR0913
     open_data_resource_versions: list[OpenDataResourceVersion],
+    extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_primary_source_open_data: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    person_mapping: PersonMapping,
     extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[MergedPersonIdentifier, MexPersonAndCreationDate]:
     """Extract persons and file creation dates from open_data resource.
 
@@ -86,60 +200,48 @@ def transform_open_data_persons(  # noqa: PLR0913
 
     Args:
         open_data_resource_versions: Open Data resource versions
+        extracted_open_data_creators_contributors: unique persons from parent resources
         extracted_primary_source_ldap: ExtractedPrimarySource for ldap
         extracted_primary_source_open_data: ExtractedPrimarySource for open data
         extracted_organizational_units: list[ExtractedOrganizationalUnit]
-        person_mapping: PersonMapping,
         extracted_open_data_organizations: dictionary with ID by affiliation name
+        extracted_organization_rki: ExtractedOrganization of RKI,
 
     Returns:
         dictionary of MexPersonAndCreationDate by stableTargetId of MergedPerson
     """
-    ldap = LDAPConnector.get()
     dict_for_extractedconsent: dict[str, MexPersonAndCreationDate] = {}
     units_by_identifier_in_primary_source = {
         unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
     }
-    ignore_affiliation = person_mapping.affiliation[0].mappingRules[1].forValues or []
+    relevant_persons_by_name = {
+        person.name: person for person in extracted_open_data_creators_contributors
+    }
     for resource in open_data_resource_versions:
-        for person in resource.metadata.creators + resource.metadata.contributors:
-            person.orcid = f"https://orcid.org/{person.orcid}" if person.orcid else None
-            if resource.created and (
-                person.name in dict_for_extractedconsent
-                and dict_for_extractedconsent[person.name].created > resource.created
-            ):
-                dict_for_extractedconsent[person.name].created = resource.created
-                continue
-            try:
-                person_item = ldap.get_person(displayName=person.name)
-            except MExError:
-                try:
-                    person_item = ldap.get_person(
-                        mail=(person.name.split(", ")[0] + "*")
-                    )
-                    # names are stored without Umlaut in Zenodo, therefore if the lookup
-                    # fails, try the email, as that also has no Umlauts. But one can't
-                    # use only this attempt because there are several similar last names
-                except MExError:
-                    person_item = None
-            if person_item:
-                mex_person = transform_ldap_person_to_mex_person(
-                    person_item,
+        for person in resource.metadata.contributors + resource.metadata.creators:
+            if person.name in relevant_persons_by_name:
+                if resource.created and (
+                    person.name in dict_for_extractedconsent
+                    and dict_for_extractedconsent[person.name].created
+                    > resource.created
+                ):
+                    dict_for_extractedconsent[person.name].created = resource.created
+                    continue
+                person.orcid = (
+                    f"https://orcid.org/{person.orcid}" if person.orcid else None
+                )
+                mex_person = get_mex_person(
+                    person,
                     extracted_primary_source_ldap,
                     units_by_identifier_in_primary_source,
-                )
-                mex_person.orcidId = [person.orcid] if person.orcid else []
-            else:
-                mex_person = transform_open_data_persons_not_in_ldap(
-                    person,
                     extracted_primary_source_open_data,
-                    ignore_affiliation,
+                    extracted_organization_rki,
                     extracted_open_data_organizations,
                 )
-            dict_for_extractedconsent[person.name] = MexPersonAndCreationDate(
-                mex_person=mex_person,
-                created=resource.created,
-            )
+                dict_for_extractedconsent[person.name] = MexPersonAndCreationDate(
+                    mex_person=mex_person,
+                    created=resource.created,
+                )
     # now, instead of name, use stabletargetId of Person as key
     return {
         dict_for_extractedconsent[key].mex_person.stableTargetId: value
