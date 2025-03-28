@@ -1,10 +1,18 @@
 from pydantic import BaseModel
 
+from mex.common.models import ExtractedPerson
+
 
 class OpenDataCreatorsOrContributors(BaseModel):
     """Model subclass for Zenodo metadata Creators or Contributors."""
 
-    name: str | None = None
+    name: str
+    affiliation: str | None = None
+    orcid: str | None = None
+
+    def __hash__(self) -> int:
+        """Calculates a hash value to make the object cacheable."""
+        return hash(f"{self.name}")
 
 
 class OpenDataRelateditdentifiers(BaseModel):
@@ -14,48 +22,64 @@ class OpenDataRelateditdentifiers(BaseModel):
     relation: str | None = None
 
 
-class OpenDataLicense(BaseModel):
+class OpenDataLicenseOrFile(BaseModel):
     """Model subclass for Zenodo metadata license."""
 
     id: str | None = None
 
 
-class OpenDataFiles(BaseModel):
-    """Model subclass for Zenodo file id."""
+class Links(BaseModel):
+    """Model subclass for Zenodo links."""
 
-    id: str | None = None
+    self: str | None = None
 
 
 class OpenDataMetadata(BaseModel):
     """Model subclass for Zenodo metadata dict."""
 
-    title: str | None = None
     description: str | None = None
     creators: list[OpenDataCreatorsOrContributors] = []
     contributors: list[OpenDataCreatorsOrContributors] = []
     keywords: list[str] = []
     related_identifiers: list[OpenDataRelateditdentifiers] = []
     language: str | None = None
-    license: OpenDataLicense | None = None
+    license: OpenDataLicenseOrFile
+    publication_date: str | None = None
 
 
 class OpenDataParentResource(BaseModel):
     """Model class for a Zenodo record as resource parent."""
 
-    conceptrecid: str
-    id: int
     modified: str | None = None
+    id: int
+    conceptrecid: str
     conceptdoi: str | None = None
-    metadata: OpenDataMetadata | None = None
+    metadata: OpenDataMetadata
+    title: str | None = None
+    files: list[OpenDataLicenseOrFile]
 
 
 class OpenDataResourceVersion(BaseModel):
     """Model class for Versions of a record."""
 
-    id: int
-    conceptrecid: str
     created: str | None = None
-    doi_url: str | None = None
-    metadata: OpenDataMetadata | None = None
-    files: list[OpenDataFiles] = []
-    modified: str | None = None
+    id: int
+    metadata: OpenDataMetadata
+
+
+class OpenDataVersionFiles(BaseModel):
+    """Model subclass for Zenodo files."""
+
+    key: str | None = None
+    file_id: str
+    mimetype: str | None = None
+    links: Links
+    created: str | None = None
+    updated: str | None = None
+
+
+class MexPersonAndCreationDate(BaseModel):
+    """Model for helper Dictionary to extract ExtractedPErson and ExtractedConsent."""
+
+    mex_person: ExtractedPerson
+    created: str

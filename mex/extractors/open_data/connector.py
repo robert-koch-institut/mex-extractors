@@ -1,10 +1,10 @@
 import math
-from collections.abc import Generator
 
 from mex.common.connector import HTTPConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
+    OpenDataVersionFiles,
 )
 from mex.extractors.settings import Settings
 
@@ -18,34 +18,33 @@ class OpenDataConnector(HTTPConnector):
         self.url = settings.open_data.url
         self.community_rki = settings.open_data.community_rki
 
-    def get_parent_resources(self) -> Generator[OpenDataParentResource, None, None]:
+    def get_parent_resources(self) -> list[OpenDataParentResource]:
         """Load parent resources by querying the Zenodo API.
 
         Gets the parent resources (~ latest version) of all the resources of the
         configured Zenodo community.
 
         Returns:
-            Generator for parent resources
+            list of parent resources
         """
         parents_base_url = f"api/communities/{self.community_rki}/records?"
-        total_records = self.request("GET", parents_base_url, {"size": 1})["hits"][
+        total_records = self.request("GET", f"{parents_base_url}size=1")["hits"][
             "total"
         ]
 
         limit = 100
         amount_pages = math.ceil(total_records / limit)
 
-        for page in range(1, amount_pages + 1):
-            response = self.request(
-                "GET", parents_base_url, {"size": limit, "page": page}
-            )
+        return [
+            OpenDataParentResource.model_validate(item)
+            for page in range(1, amount_pages + 1)
+            for item in self.request(
+                "GET",
+                f"{parents_base_url}size={limit}&page={page}",
+            )["hits"]["hits"]
+        ]
 
-            for item in response["hits"]["hits"]:
-                yield OpenDataParentResource.model_validate(item)
-
-    def get_resource_versions(
-        self, resource_id: int
-    ) -> Generator[OpenDataResourceVersion, None, None]:
+    def get_resource_versions(self, resource_id: int) -> list[OpenDataResourceVersion]:
         """Load versions of different parent resources by querying the Zenodo API.
 
         For a specific parent resource get all the versions of this resource.
@@ -57,28 +56,27 @@ class OpenDataConnector(HTTPConnector):
             resource_id: id of any resource version
 
         Returns:
-            Generator for Zenodo resource versions
+            list of Zenodo resource versions
         """
         versions_base_url = f"api/records/{resource_id}/versions?"
 
-        total_records = self.request("GET", versions_base_url, {"size": 1})["hits"][
+        total_records = self.request("GET", f"{versions_base_url}size=1")["hits"][
             "total"
         ]
 
         limit = 100
         amount_pages = math.ceil(total_records / limit)
 
-        for page in range(1, amount_pages + 1):
-            response = self.request(
+        return [
+            OpenDataResourceVersion.model_validate(item)
+            for page in range(1, amount_pages + 1)
+            for item in self.request(
                 "GET",
-                versions_base_url,
-                {"size": limit, "page": page},
-            )
+                f"{versions_base_url}size={limit}&page={page}",
+            )["hits"]["hits"]
+        ]
 
-            for item in response["hits"]["hits"]:
-                yield OpenDataResourceVersion.model_validate(item)
-
-    def get_oldest_resource_version(self, resource_id: int) -> OpenDataResourceVersion:
+    def get_oldest_resource_version_creation_date(self, resource_id: int) -> str | None:
         """Load oldest (first) version of a resource by querying the Zenodo API.
 
         Args:
@@ -89,10 +87,29 @@ class OpenDataConnector(HTTPConnector):
         """
         versions_base_url = f"api/records/{resource_id}/versions?"
 
-        oldest_record = self.request(
-            "GET", versions_base_url, {"size": 1, "sort": "oldest"}
-        )
+        oldest_record = self.request("GET", f"{versions_base_url}size=1&sort=oldest")
 
         item = oldest_record["hits"]["hits"][0]
 
-        return OpenDataResourceVersion.model_validate(item)
+        if oldest_record["hits"]["hits"][0]["metadata"]["publication_date"]:
+            return OpenDataResourceVersion.model_validate(
+                item
+            ).metadata.publication_date
+        return None
+
+    def get_files_for_resource_version(
+        self, version_id: int
+    ) -> list[OpenDataVersionFiles]:
+        """Load files for each version of a resource by querying the Zenodo API.
+
+        Args:
+            version_id: id of a resource version
+
+        Returns:
+            Zenodo resource version files
+        """
+        files_base_url = f"api/records/{version_id}/files"
+
+        files = self.request("GET", files_base_url)
+
+        return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
