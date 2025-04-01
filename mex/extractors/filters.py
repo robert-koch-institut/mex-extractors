@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from typing import TypeVar
 
 from mex.common.types import Identifier
@@ -13,11 +13,7 @@ RawDataT = TypeVar("RawDataT", bound=BaseRawData)
 def filter_by_global_rules(
     primary_source_id: Identifier,
     items: Iterable[RawDataT],
-) -> Generator[
-    RawDataT,
-    None,
-    None,
-]:
+) -> list[RawDataT,]:
     """Filter out items according to global filter rules, build filtered Generator.
 
     Args:
@@ -25,6 +21,7 @@ def filter_by_global_rules(
         items: items, source or resource to be filtered
     """
     settings = Settings.get()
+    filtered_items: list[RawDataT] = []
     for item in items:
         identifier_in_primary_source = item.get_identifier_in_primary_source()
         partners = item.get_partners()
@@ -57,4 +54,5 @@ def filter_by_global_rules(
                 "before settings.skip_years_before",
             )
             continue
-        yield item
+        filtered_items.append(item)
+    return filtered_items

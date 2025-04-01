@@ -17,9 +17,11 @@ from mex.extractors.ff_projects.extract import (
     extract_ff_project_authors,
     extract_ff_projects_organizations,
     extract_ff_projects_sources,
+)
+from mex.extractors.ff_projects.filter import (
+    filter_and_log_ff_projects_sources,
     filter_out_duplicate_source_ids,
 )
-from mex.extractors.ff_projects.filter import filter_and_log_ff_projects_sources
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.ff_projects.transform import (
     transform_ff_projects_source_to_extracted_activity,
@@ -51,12 +53,11 @@ def ff_projects_sources(
     """Extract FF Projects sources and filter out invalid items."""
     ff_projects_sources = extract_ff_projects_sources()
     ff_projects_sources = filter_out_duplicate_source_ids(ff_projects_sources)
-    ff_projects_sources = filter_and_log_ff_projects_sources(
+    return filter_and_log_ff_projects_sources(
         ff_projects_sources,
         extracted_primary_source_ff_projects.stableTargetId,
         unit_stable_target_ids_by_synonym,
     )
-    return list(ff_projects_sources)
 
 
 @asset(group_name="ff_projects")

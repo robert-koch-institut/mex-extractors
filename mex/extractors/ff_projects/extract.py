@@ -133,25 +133,6 @@ def extract_ff_projects_source(row: "pd.Series[Any]") -> FFProjectsSource | None
     )
 
 
-def filter_out_duplicate_source_ids(
-    sources: Iterable[FFProjectsSource],
-) -> Generator[FFProjectsSource, None, None]:
-    """Remove duplicate `lfd_nr`s from the given sources.
-
-    Args:
-        sources: Iterable of FF Projects sources
-
-    Returns:
-        Filtered FF Projects sources
-    """
-    sources = list(sources)
-    lfd_nrs = [source.lfd_nr for source in sources]
-
-    for source in sources:
-        if lfd_nrs.count(source.lfd_nr) == 1:
-            yield source
-
-
 @cache
 def get_clean_names(name: str) -> str:
     """Clean name from unwanted characters and numerals.
