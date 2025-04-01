@@ -52,9 +52,9 @@ def ff_projects_sources(
 ) -> list[FFProjectsSource]:
     """Extract FF Projects sources and filter out invalid items."""
     ff_projects_sources = extract_ff_projects_sources()
-    ff_projects_sources = filter_out_duplicate_source_ids(ff_projects_sources)
+    filtered_sources = filter_out_duplicate_source_ids(ff_projects_sources)
     return filter_and_log_ff_projects_sources(
-        ff_projects_sources,
+        filtered_sources,
         extracted_primary_source_ff_projects.stableTargetId,
         unit_stable_target_ids_by_synonym,
     )
