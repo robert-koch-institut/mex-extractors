@@ -140,7 +140,7 @@ def filter_and_log_ff_projects_source(
 
 def filter_out_duplicate_source_ids(
     sources: Iterable[FFProjectsSource],
-) -> Generator[FFProjectsSource, None, None]:
+) -> list[FFProjectsSource]:
     """Remove duplicate `lfd_nr`s from the given sources.
 
     Args:
@@ -151,7 +151,4 @@ def filter_out_duplicate_source_ids(
     """
     sources = list(sources)
     lfd_nrs = [source.lfd_nr for source in sources]
-
-    for source in sources:
-        if lfd_nrs.count(source.lfd_nr) == 1:
-            yield source
+    return [source for source in sources if lfd_nrs.count(source.lfd_nr) == 1]
