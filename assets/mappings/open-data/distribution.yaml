@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../__schema__/DistributionMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-1 # open
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - rule:
+issued:
+  - mappingRules:
+      - rule:
+license:
+  - mappingRules:
+      - forValues:
+          - cc-by-4.0
+        setValues: https://mex.rki.de/item/license-1 # Creative Commons Attribution 4.0 International
+title:
+  - mappingRules:
+      - rule:
