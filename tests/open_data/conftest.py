@@ -71,11 +71,9 @@ def mocked_open_data_creator_with_affiliation_to_ignore() -> (
 ):
     """Mock an open data person (creator or contributor)."""
     mocked_parent_response = create_mocked_parent_response()
-    person = OpenDataCreatorsOrContributors.model_validate(
+    return OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][0]
     )
-    person.orcid = f"https://orcid.org/{person.orcid}"
-    return person
 
 
 @pytest.fixture
@@ -84,11 +82,9 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
 ):
     """Mock an open data person (creator or contributor)."""
     mocked_parent_response = create_mocked_parent_response()
-    person = OpenDataCreatorsOrContributors.model_validate(
+    return OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
     )
-    person.orcid = f"https://orcid.org/{person.orcid}"
-    return person
 
 
 @pytest.fixture

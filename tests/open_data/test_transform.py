@@ -15,16 +15,15 @@ from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     TextLanguage,
 )
 from mex.extractors.open_data.models.source import (
-    MexPersonAndCreationDate,
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
-    get_mex_person,
     lookup_person_in_ldap_and_transfom,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
@@ -32,6 +31,7 @@ from mex.extractors.open_data.transform import (
     transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
+    transform_persons_and_creation_date,
 )
 
 
@@ -63,10 +63,10 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
-        identifierInPrimarySource="Pattern, Peppa",
-        fullName="Pattern, Peppa",
+        identifierInPrimarySource="Resolved, Roland",
+        fullName="Resolved, Roland",
         affiliation=MergedOrganizationIdentifier.generate(seed=354),
-        orcidId="https://orcid.org/9876543210",
+        orcidId=[],
     )
 
 
@@ -90,7 +90,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
         identifierInPrimarySource="Muster, Maxi",
         fullName="Muster, Maxi",
         affiliation=None,
-        orcidId="https://orcid.org/1234567890",
+        orcidId=[],
     )
 
 
@@ -116,85 +116,63 @@ def test_lookup_person_in_ldap_and_transfom(
         fullName=["Resolved, Roland"],
         givenName=["Roland"],
         memberOf="hIiJpZXVppHvoyeP0QtAoS",
-        orcidId=["https://orcid.org/1234567890"],
+        orcidId=[],
         identifier=Joker(),
         stableTargetId=Joker(),
     )
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_get_mex_person(
-    mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    mocked_units_by_identifier_in_primary_source: dict[
-        str, ExtractedOrganizationalUnit
-    ],
-    extracted_organization_rki: ExtractedOrganization,
-) -> None:
-    extracted_open_data_organizations = {
-        "Universität": MergedOrganizationIdentifier.generate(seed=354)
-    }
-    results = get_mex_person(
-        mocked_open_data_creator_with_affiliation_to_ignore,
-        extracted_primary_sources["ldap"],
-        mocked_units_by_identifier_in_primary_source,
-        extracted_primary_sources["open-data"],
-        extracted_organization_rki,
-        extracted_open_data_organizations,
-    )
-
-    assert results == ExtractedPerson(
-        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
-        identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
-        affiliation=[],
-        email=["test_person@email.de"],
-        familyName=["Resolved"],
-        fullName=["Resolved, Roland"],
-        givenName=["Roland"],
-        memberOf="hIiJpZXVppHvoyeP0QtAoS",
-        orcidId=["https://orcid.org/1234567890"],
-        identifier=Joker(),
-        stableTargetId=Joker(),
-    )
-
-
-@pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
 def test_transform_open_data_persons(
-    mocked_open_data_resource_version: OpenDataResourceVersion,
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_open_data_organizations = {}
+    extracted_open_data_organizations = {
+        "Universität": MergedOrganizationIdentifier.generate(seed=354)
+    }
     results = transform_open_data_persons(
-        mocked_open_data_resource_version,
         [mocked_open_data_creator_with_affiliation_to_ignore],
         extracted_primary_sources["ldap"],
         extracted_primary_sources["open-data"],
         mocked_extracted_organizational_units,
-        extracted_open_data_organizations,
         extracted_organization_rki,
+        extracted_open_data_organizations,
     )
 
-    assert results == {
-        "eXA2Qj5pKmI7HXIgcVqCfz": MexPersonAndCreationDate(
-            mex_person=ExtractedPerson(
-                hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
-                identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
-                affiliation=[],
-                email=["test_person@email.de"],
-                familyName=["Resolved"],
-                fullName=["Resolved, Roland"],
-                givenName=["Roland"],
-                memberOf=["hIiJpZXVppHvoyeP0QtAoS"],
-                orcidId=["https://orcid.org/1234567890"],
-                identifier=Joker(),
-                stableTargetId=Joker(),
-            ),
-            created="2021-01-01T01:01:01.111111+00:00",
-        ),
-    }
+    assert results == [
+        ExtractedPerson(
+            hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+            identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
+            affiliation=[],
+            email=["test_person@email.de"],
+            familyName=["Resolved"],
+            fullName=["Resolved, Roland"],
+            givenName=["Roland"],
+            memberOf="hIiJpZXVppHvoyeP0QtAoS",
+            orcidId=["https://orcid.org/1234567890"],
+            identifier=Joker(),
+            stableTargetId=Joker(),
+        )
+    ]
+
+
+@pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
+def test_transform_persons_and_creation_date(
+    mocked_open_data_resource_version: list[OpenDataResourceVersion],
+    mocked_open_data_persons: list[ExtractedPerson],
+) -> None:
+    results = transform_persons_and_creation_date(
+        mocked_open_data_resource_version,
+        mocked_open_data_persons,
+    )
+
+    key, value = next(iter(results.items()))
+
+    assert len(results) == 1
+    assert value == "2021-01-01T01:01:01.111111+00:00"
+    assert isinstance(key, MergedPersonIdentifier)
 
 
 @pytest.mark.usefixtures("mocked_open_data")
@@ -230,13 +208,7 @@ def test_transform_open_data_person_to_mex_consent(
     mocked_open_data_consent_mapping: ConsentMapping,
 ) -> None:
     mocked_open_data_persons_and_creation_date = {
-        "gFSLUMiYD46I4aJemrjzfb": MexPersonAndCreationDate(
-            mex_person=ExtractedPerson(
-                hadPrimarySource=Identifier.generate(seed=42),
-                identifierInPrimarySource="test_id",
-            ),
-            created="2021-01-01T01:01:01.111111+00:00",
-        )
+        mocked_open_data_persons[0].stableTargetId: "2021-01-01T01:01:01.111111+00:00"
     }
     mex_consent_result = list(
         transform_open_data_person_to_mex_consent(

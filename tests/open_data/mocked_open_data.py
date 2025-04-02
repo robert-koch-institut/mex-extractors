@@ -41,7 +41,7 @@ def create_mocked_parent_response() -> dict:
                                 "orcid": "1234567890",
                             },
                             {
-                                "name": "Pattern, Peppa",
+                                "name": "Resolved, Roland",
                                 "affiliation": "Universität",
                                 "orcid": "9876543210",
                             },
@@ -96,7 +96,7 @@ def create_mocked_version_response() -> dict:
                         "publication_date": "2022",
                         "creators": [
                             {"name": "Muster, Maxi"},
-                            {"name": "Pattern, Peppa"},
+                            {"name": "Resolved, Roland"},
                         ],
                     },
                     "created": "2022-02-02T02:02:02.222222+00:00",

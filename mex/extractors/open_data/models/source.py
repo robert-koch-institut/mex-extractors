@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from mex.common.models import ExtractedPerson
-
 
 class OpenDataCreatorsOrContributors(BaseModel):
     """Model subclass for Zenodo metadata Creators or Contributors."""
@@ -76,10 +74,3 @@ class OpenDataVersionFiles(BaseModel):
     links: Links
     created: str | None = None
     updated: str | None = None
-
-
-class MexPersonAndCreationDate(BaseModel):
-    """Model for helper Dictionary to extract ExtractedPErson and ExtractedConsent."""
-
-    mex_person: ExtractedPerson
-    created: str

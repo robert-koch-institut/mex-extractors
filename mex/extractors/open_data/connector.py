@@ -91,7 +91,7 @@ class OpenDataConnector(HTTPConnector):
 
         item = oldest_record["hits"]["hits"][0]
 
-        if oldest_record["hits"]["hits"][0]["metadata"]["publication_date"]:
+        if item["metadata"]["publication_date"]:
             return OpenDataResourceVersion.model_validate(
                 item
             ).metadata.publication_date
