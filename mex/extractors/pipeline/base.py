@@ -1,4 +1,3 @@
-from datetime import UTC, datetime
 from typing import TYPE_CHECKING, cast
 
 from dagster import (
@@ -38,38 +37,75 @@ def run_job_in_process(group_name: str = "default") -> "ExecutionResult":
     return job.execute_in_process()
 
 
-def create_monitor_jobs_sensor(group_names: list[str]) -> SensorDefinition:
-    """Wrapper to be apple to pass group_names variable."""
+def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefinition:
+    """Wrapper to be able to pass group_names variable."""
 
     @sensor(
         job_name="publisher",
         default_status=DefaultSensorStatus.RUNNING,
-        minimum_interval_seconds=1800,  # 30 min
+        minimum_interval_seconds=3600,  # 60 min
     )
     def monitor_jobs_sensor(
-        context: SensorEvaluationContext,  # noqa: ARG001
+        context: SensorEvaluationContext,
     ) -> RunRequest | SkipReason:
         """Sensor to monitor the completion of all extractors and trigger publisher."""
         instance = DagsterInstance.get()
-        today = datetime.now(tz=UTC).strftime("%Y-%m-%d")  # to use as run_key
+        last_run_time_publisher = context.cursor or "1970-01-01T00:00:00+00:00"
+        latest_start_time_extractors = last_run_time_publisher
+        completed = True
 
-        for group in group_names:
+        for group in extractor_group_names:
             runs = instance.get_runs(
                 filters=RunsFilter(
                     job_name=group,
-                    statuses=[DagsterRunStatus.SUCCESS, DagsterRunStatus.FAILURE],
+                    statuses=[
+                        DagsterRunStatus.SUCCESS,
+                        DagsterRunStatus.FAILURE,
+                        DagsterRunStatus.CANCELED,
+                    ],
                 )
             )
 
-            if not any(
-                run.status in {DagsterRunStatus.SUCCESS, DagsterRunStatus.FAILURE}
-                for run in runs
-            ):
-                return SkipReason(f"No completed runs for job group '{group}' yet.")
+            recent_run = max(
+                (
+                    run
+                    for run in runs
+                    if ".dagster/scheduled_execution_time" in run.tags
+                    and run.tags[".dagster/scheduled_execution_time"]
+                    > last_run_time_publisher
+                ),
+                key=lambda run: run.tags[".dagster/scheduled_execution_time"],
+                default=None,
+            )
 
-        # All jobs have completed at least once (success or failure),
-        # trigger the final job
-        return RunRequest(run_key=today, run_config={})
+            # Update completed flag based on whether a recent run was found
+            if recent_run is None or recent_run.status not in [
+                DagsterRunStatus.SUCCESS,
+                DagsterRunStatus.FAILURE,
+                DagsterRunStatus.CANCELED,
+            ]:
+                completed = False
+                return SkipReason(f"No complete run for job group '{group}' yet.")
+
+            # Update the latest extractor start time if the current run is newer
+            if (
+                recent_run
+                and recent_run.tags[".dagster/scheduled_execution_time"]
+                > latest_start_time_extractors
+            ):
+                latest_start_time_extractors = recent_run.tags[
+                    ".dagster/scheduled_execution_time"
+                ]
+
+        if completed:
+            # Update the cursor to the latest extractor start time
+            context.update_cursor(latest_start_time_extractors)
+            return RunRequest(
+                run_key=latest_start_time_extractors,
+                run_config={},
+            )
+
+        return SkipReason("No publisher run for other reasons.")
 
     return monitor_jobs_sensor
 
@@ -82,8 +118,11 @@ def load_job_definitions() -> Definitions:
 
     resources = {"io_manager": FilesystemIOManager()}
     assets = cast("Sequence[AssetsDefinition]", load_assets_from_package_module(mex))
-    group_names = {
-        group for asset in assets for group in asset.group_names_by_key.values()
+    extractor_group_names = {
+        group
+        for asset in assets
+        for group in asset.group_names_by_key.values()
+        if group not in ["default", "publisher", *settings.skip_extractors]
     }
     settings_md = MetadataValue.md(f"```json\n{settings.model_dump_json(indent=4)}```")
     jobs = [
@@ -92,8 +131,7 @@ def load_job_definitions() -> Definitions:
             AssetSelection.groups(group_name).upstream(),
             metadata={"settings": settings_md},
         )
-        for group_name in group_names
-        if group_name not in ["default", *settings.skip_extractors]
+        for group_name in extractor_group_names
     ]
 
     schedules = [
@@ -105,23 +143,25 @@ def load_job_definitions() -> Definitions:
         for job in jobs
     ]
 
-    # Define the extra job
-    publisher_job = define_asset_job(
-        "publisher",
-        AssetSelection.groups("publisher").upstream(),
-    )
-    jobs.append(publisher_job)
-
-    sensor = create_monitor_jobs_sensor(list(group_names))
-
     jobs.append(
         define_asset_job(
             "all_extractors",
             AssetSelection.groups(
-                *(group_name for group_name in group_names)
+                *(group_name for group_name in extractor_group_names)
             ).upstream(),
+            metadata={"settings": settings_md},
         )
     )
+
+    # Define the extra publisher job
+    publisher_job = define_asset_job(
+        "publisher",
+        AssetSelection.groups("publisher").upstream(),
+        metadata={"settings": settings_md},
+    )
+    jobs.append(publisher_job)
+
+    sensor = create_monitor_jobs_sensor(list(extractor_group_names))
 
     return Definitions(
         assets=assets,

@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
 
     skip_extractors: list[str] = Field(
-        ["publisher"],
+        [],
         description="Skip execution of these extractors in dagster",
         validation_alias="MEX_SKIP_EXTRACTORS",
     )
@@ -39,7 +39,7 @@ class Settings(BaseSettings):
         validation_alias="MEX_SKIP_PARTNERS",
     )
     skip_units: list[str] = Field(
-        ["IT", "PRAES", "ZV"],
+        [],
         description="Skip projects with these responsible units",
         validation_alias="MEX_SKIP_UNITS",
     )
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
         validation_alias="MEX_DROP_API_URL",
     )
     schedule: str = Field(
-        "51 07 * * *",
+        "0 0 * * *",
         description="A valid cron string defining when to run extractor jobs",
         validation_alias="MEX_SCHEDULE",
     )
