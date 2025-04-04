@@ -338,12 +338,12 @@ def synopse_projects() -> list[SynopseProject]:
             externe_partner="Testpartner",
             project_studientitel="Studie zu Lorem und Ipsum",
             kontakt=["info@rki.de"],
-            projektbeginn=1999,
+            projektbeginn="1999",
             projektdokumentation="""Z:\\Projekte\\Dokumentation
 
 - Fragebogen
 - Labor""",
-            projektende=2000,
+            projektende="2000",
             studien_id="12345",
             studienart_studientyp="Monitoring-Studie",
             verantwortliche_oe="C1",
@@ -354,12 +354,12 @@ def synopse_projects() -> list[SynopseProject]:
             beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
             project_studientitel="Studie zu Lorem und Ipsum",
             kontakt=["info@rki.de"],
-            projektbeginn=1999,
+            projektbeginn="1999",
             projektdokumentation="""Z:\\Projekte\\Dokumentation
 
 - Fragebogen
 - Labor""",
-            projektende=2000,
+            projektende="2000",
             studien_id="12346",
             studienart_studientyp="Monitoring-Studie",
             verantwortliche_oe="C1",

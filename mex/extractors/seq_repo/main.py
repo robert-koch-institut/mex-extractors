@@ -54,9 +54,12 @@ def seq_repo_source() -> list[SeqRepoSource]:
 @asset(group_name="seq_repo")
 def seq_repo_latest_source(
     seq_repo_source: list[SeqRepoSource],
+    extracted_primary_source_seq_repo: ExtractedPrimarySource,
 ) -> dict[str, SeqRepoSource]:
     """Filter latest sources from seq-repo source."""
-    return filter_sources_on_latest_sequencing_date(seq_repo_source)
+    return filter_sources_on_latest_sequencing_date(
+        seq_repo_source, extracted_primary_source_seq_repo
+    )
 
 
 @asset(group_name="seq_repo")
