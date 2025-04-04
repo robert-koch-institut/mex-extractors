@@ -39,7 +39,7 @@ class Settings(BaseSettings):
         validation_alias="MEX_SKIP_PARTNERS",
     )
     skip_units: list[str] = Field(
-        ["IT", "PRAES", "ZV"],
+        [],
         description="Skip projects with these responsible units",
         validation_alias="MEX_SKIP_UNITS",
     )
