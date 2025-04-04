@@ -26,7 +26,6 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedResourceIdentifier,
 )
-from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.pipeline import asset, run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -59,13 +58,9 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="synopse")
-def synopse_projects(
-    extracted_primary_source_report_server: ExtractedPrimarySource,
-) -> list[SynopseProject]:
+def synopse_projects() -> list[SynopseProject]:
     """Extract projects from Synopse."""
-    return filter_by_global_rules(
-        extracted_primary_source_report_server.stableTargetId, extract_projects()
-    )
+    return list(extract_projects())
 
 
 @asset(group_name="synopse")
