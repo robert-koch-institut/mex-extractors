@@ -54,6 +54,22 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
         latest_start_time_extractors = last_run_time_publisher
         completed = True
 
+        actual_running = instance.get_runs(
+            filters=RunsFilter(
+                statuses=[
+                    DagsterRunStatus.STARTING,
+                    DagsterRunStatus.STARTED,
+                    DagsterRunStatus.CANCELING,
+                    DagsterRunStatus.QUEUED,
+                    DagsterRunStatus.NOT_STARTED,
+                ],
+            )
+        )
+        if actual_running:
+            return SkipReason(
+                "No publishing because extractors are running at the moment."
+            )
+
         for group in extractor_group_names:
             runs = instance.get_runs(
                 filters=RunsFilter(
