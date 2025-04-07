@@ -43,7 +43,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
 
 @cache
 def get_wikidata_organization_ids_by_label() -> dict[str, str]:
-    """Extract and transform synopse resource default values."""
+    """Extract dict of already defined wikidata ids by labels."""
     settings = Settings.get()
     organization_mapping = OrganizationMapping.model_validate(
         load_yaml(settings.wikidata.mapping_path / "organization.yaml")
