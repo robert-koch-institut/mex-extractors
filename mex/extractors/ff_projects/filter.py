@@ -1,8 +1,9 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.types import Identifier, MergedOrganizationalUnitIdentifier
 from mex.common.utils import any_contains_any, contains_any
 from mex.extractors.ff_projects.models.source import FFProjectsSource
+from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.logging import log_filter
 from mex.extractors.settings import Settings
 
@@ -11,7 +12,7 @@ def filter_and_log_ff_projects_sources(
     sources: Iterable[FFProjectsSource],
     primary_source_id: Identifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-) -> Generator[FFProjectsSource, None, None]:
+) -> list[FFProjectsSource]:
     """Filter FF Projects sources and log filtered sources.
 
     Args:
@@ -20,13 +21,19 @@ def filter_and_log_ff_projects_sources(
         unit_stable_target_ids_by_synonym: Unit IDs grouped by synonyms
 
     Returns:
-        Generator for filtered FF Projects sources
+       List of filtered FF Projects sources
     """
-    for source in sources:
+    sources_filtered_by_global_rules = filter_by_global_rules(
+        primary_source_id,
+        sources,
+    )
+    return [
+        source
+        for source in sources_filtered_by_global_rules
         if filter_and_log_ff_projects_source(
             source, primary_source_id, unit_stable_target_ids_by_synonym
-        ):
-            yield source
+        )
+    ]
 
 
 def filter_and_log_ff_projects_source(
@@ -129,3 +136,19 @@ def filter_and_log_ff_projects_source(
         return False
 
     return True
+
+
+def filter_out_duplicate_source_ids(
+    sources: Iterable[FFProjectsSource],
+) -> list[FFProjectsSource]:
+    """Remove duplicate `lfd_nr`s from the given sources.
+
+    Args:
+        sources: Iterable of FF Projects sources
+
+    Returns:
+        Filtered FF Projects sources
+    """
+    sources = list(sources)
+    lfd_nrs = [source.lfd_nr for source in sources]
+    return [source for source in sources if lfd_nrs.count(source.lfd_nr) == 1]

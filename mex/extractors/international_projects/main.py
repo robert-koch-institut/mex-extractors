@@ -13,6 +13,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.international_projects.extract import (
     extract_international_projects_funding_sources,
     extract_international_projects_partner_organizations,
@@ -44,9 +45,14 @@ def extracted_primary_source_international_projects(
 
 
 @asset(group_name="international_projects")
-def international_projects_sources() -> list[InternationalProjectsSource]:
+def international_projects_sources(
+    extracted_primary_source_international_projects: ExtractedPrimarySource,
+) -> list[InternationalProjectsSource]:
     """Extract from international project sources."""
-    return list(extract_international_projects_sources())
+    return filter_by_global_rules(
+        extracted_primary_source_international_projects.stableTargetId,
+        extract_international_projects_sources(),
+    )
 
 
 @asset(group_name="international_projects")
