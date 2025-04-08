@@ -8,7 +8,6 @@ from mex.common.types import MergedOrganizationIdentifier, TemporalEntity
 from mex.extractors.ff_projects.extract import (
     extract_ff_projects_organizations,
     extract_ff_projects_sources,
-    filter_out_duplicate_source_ids,
     get_clean_names,
     get_optional_string_from_cell,
     get_string_from_cell,
@@ -92,20 +91,6 @@ def test_get_optional_string_from_cell() -> None:
     cell_value = ""
     string = get_optional_string_from_cell(cell_value)
     assert string is None
-
-
-def test_filter_out_duplicate_source_ids() -> None:
-    ff_proj_liste_sources = list(extract_ff_projects_sources())
-
-    assert len(ff_proj_liste_sources) == 21
-    unfiltered_ids = [s.lfd_nr for s in ff_proj_liste_sources]
-    assert unfiltered_ids.count("20") == 2
-
-    filtered = list(filter_out_duplicate_source_ids(ff_proj_liste_sources))
-
-    assert len(filtered) == 19
-    filtered_ids = [s.lfd_nr for s in filtered]
-    assert filtered_ids.count("20") == 0
 
 
 @pytest.mark.usefixtures(

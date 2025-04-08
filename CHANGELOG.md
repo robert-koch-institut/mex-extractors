@@ -14,12 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - split seq-repo load function into new asset
+- apply all activity filters to all extractors(except synopse) with activities
+- refactor filter functionality to filter module
 
 ### Deprecated
 
 ### Removed
 
 - removed RDMO unused extractor
+- BREAKING: remove all activity filter rules from settings
 
 ### Fixed
 

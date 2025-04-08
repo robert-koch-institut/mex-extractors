@@ -3,7 +3,6 @@ from collections.abc import Generator, Sequence
 from mex.common.types import Identifier, TemporalEntity
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.models import BaseRawData
-from mex.extractors.settings import Settings
 
 
 class MockedBaseRawData(BaseRawData):
@@ -50,7 +49,7 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
         ),
         MockedBaseRawData(
             item_id="2",
-            partner=["Schmiedecke OHG"],
+            partner=["Erika Mustermann"],
             start_year=TemporalEntity(2020),
             end_year=TemporalEntity(2021),
             unit="permitted unit",
@@ -83,31 +82,22 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
     ]
 
 
-def test_filters_skips_partners_mocked(settings: Settings) -> None:
+def test_filters_skips_partners_mocked() -> None:
     """Test global filter for skipping partners."""
-    settings.skip_partners = ["Schmiedecke OHG", "Test GmbH"]
-    settings.skip_units = ["filler"]
-    settings.skip_years_before = 1900
     source_gen = mocked_base_raw_data_source()
     sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
-    assert len(sources) == 4
+    assert len(sources) == 3
 
 
-def test_filters_skips_units_mocked(settings: Settings) -> None:
+def test_filters_skips_units_mocked() -> None:
     """Test global filter for skipping units."""
-    settings.skip_partners = ["filler"]
-    settings.skip_units = ["FG99"]
-    settings.skip_years_before = 1900
     source_gen = mocked_base_raw_data_source()
     sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
-    assert len(sources) == 4
+    assert len(sources) == 3
 
 
-def test_filters_skips_years_mocked(settings: Settings) -> None:
+def test_filters_skips_years_mocked() -> None:
     """Test global filter for skipping years before."""
-    settings.skip_partners = ["filler"]
-    settings.skip_units = ["filler"]
-    settings.skip_years_before = 2020
     source_gen = mocked_base_raw_data_source()
     sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
     assert len(sources) == 3

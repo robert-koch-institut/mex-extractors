@@ -8,6 +8,7 @@ from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Email
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.extract import (
@@ -58,8 +59,11 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
+    extracted_primary_source_seq_repo: ExtractedPrimarySource,
 ) -> None:
-    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
+    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(
+        seq_repo_sources, extracted_primary_source_seq_repo
+    )
     project_coordinators = list(
         extract_source_project_coordinator(seq_repo_sources_dict)
     )

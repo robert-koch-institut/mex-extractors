@@ -24,14 +24,11 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch()
-def extract_international_projects_sources() -> Generator[
-    InternationalProjectsSource, None, None
-]:
+def extract_international_projects_sources() -> list[InternationalProjectsSource]:
     """Extract international projects sources by loading data from MS-Excel file.
 
     Returns:
-        Generator for international projects sources
+        list for international projects sources
     """
     settings = Settings.get()
     # silence openpyxl warning:
@@ -50,9 +47,11 @@ def extract_international_projects_sources() -> Generator[
             header=0,
             sheet_name="Projects",
         )
-    for row in df.iterrows():
-        if source := extract_international_projects_source(row[1]):
-            yield source
+    return [
+        source
+        for row in df.iterrows()
+        if (source := extract_international_projects_source(row[1]))
+    ]
 
 
 def extract_international_projects_source(

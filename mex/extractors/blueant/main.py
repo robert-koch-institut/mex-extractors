@@ -50,10 +50,9 @@ def blueant_sources(
     sources = filter_and_log_blueant_sources(
         sources, extracted_primary_source_blueant.stableTargetId
     )
-    sources = filter_by_global_rules(
+    return filter_by_global_rules(
         extracted_primary_source_blueant.stableTargetId, sources
     )
-    return list(sources)
 
 
 @asset(group_name="blueant")
