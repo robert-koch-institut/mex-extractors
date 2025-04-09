@@ -160,7 +160,7 @@ def transform_open_data_persons(  # noqa: PLR0913
         unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
     }
 
-    extracted_persons: list[ExtractedPerson] = []
+    extracted_persons: dict[MergedPersonIdentifier, ExtractedPerson] = {}
 
     for person in extracted_open_data_creators_contributors:
         extracted_person = lookup_person_in_ldap_and_transfom(
@@ -172,11 +172,14 @@ def transform_open_data_persons(  # noqa: PLR0913
             extracted_open_data_organizations,
         )
 
-        extracted_person.orcidId = (
-            [f"https://orcid.org/{person.orcid}"] if person.orcid else []
-        )
-        extracted_persons.append(extracted_person)
-    return extracted_persons
+        if extracted_person.stableTargetId not in extracted_persons:
+            extracted_persons[extracted_person.stableTargetId] = extracted_person
+
+        if person.orcid:
+            extracted_persons[extracted_person.stableTargetId].orcidId = [
+                f"https://orcid.org/{person.orcid}"
+            ]
+    return list(extracted_persons.values())
 
 
 def transform_persons_and_creation_date(
