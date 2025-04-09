@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class EndnoteRecord(BaseModel):
-    """Model class for endnote type entities."""
+    """Model class for endnote record type entities."""
 
     abstract: str | None
     authors: list[str]

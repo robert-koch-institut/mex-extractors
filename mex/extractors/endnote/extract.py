@@ -8,10 +8,10 @@ from mex.extractors.settings import Settings
 
 
 def extract_endnote_records() -> list[EndnoteRecord]:
-    """Extract Seq Repo sources by loading data from source json file.
+    """Extract endnote records by loading data from XML files.
 
     Returns:
-        Generator for Seq Repo resources
+        list of endnote records
     """
     settings = Settings.get()
     files: list[ET.ElementTree] = []
