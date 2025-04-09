@@ -134,6 +134,10 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `pdm run datscha-web` extracts sources from the datscha web app
 
+### endnote extractor
+
+- `pdm run endnote` extracts from endnote XML files
+
 ### ff-projects extractor
 
 - `pdm run ff-projects` extracts sources from the FF Projects excel file
