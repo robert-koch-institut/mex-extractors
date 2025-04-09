@@ -1,5 +1,5 @@
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPPerson
 from mex.common.models import ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.drop import DropApiConnector

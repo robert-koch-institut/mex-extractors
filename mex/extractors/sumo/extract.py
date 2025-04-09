@@ -4,8 +4,7 @@ import numpy as np
 from pandas import ExcelFile
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPActor, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.settings import Settings

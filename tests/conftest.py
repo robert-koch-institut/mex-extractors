@@ -6,8 +6,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPActor, LDAPPerson
 from mex.common.models import ExtractedOrganization
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.settings import Settings
