@@ -8,6 +8,7 @@ from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
 from mex.extractors.datscha_web.settings import DatschaWebSettings
+from mex.extractors.endnote.settings import EndnoteSettings
 from mex.extractors.ff_projects.settings import FFProjectsSettings
 from mex.extractors.grippeweb.settings import GrippewebSettings
 from mex.extractors.ifsg.settings import IFSGSettings
@@ -86,6 +87,7 @@ class Settings(BaseSettings):
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
     datscha_web: DatschaWebSettings = DatschaWebSettings()
+    endnote: EndnoteSettings = EndnoteSettings()
     ff_projects: FFProjectsSettings = FFProjectsSettings()
     grippeweb: GrippewebSettings = GrippewebSettings()
     ifsg: IFSGSettings = IFSGSettings()

@@ -1,7 +1,7 @@
 from collections.abc import Generator, Iterable
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier

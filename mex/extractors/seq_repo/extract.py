@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.logging import watch
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.model import (

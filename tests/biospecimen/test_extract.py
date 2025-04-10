@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pandas import Series
 
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPPerson
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_resources,

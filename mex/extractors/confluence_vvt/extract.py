@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import logger, watch
 from mex.common.models import ActivityMapping
