@@ -109,15 +109,12 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
                     ".dagster/scheduled_execution_time"
                 ]
 
-        if completed:
-            # Update the cursor to the latest extractor start time
-            context.update_cursor(latest_start_time_extractors)
-            return RunRequest(
-                run_key=latest_start_time_extractors,
-                run_config={},
-            )
-
-        return SkipReason("No publisher run for other reasons.")
+        # Update the cursor to the latest extractor start time
+        context.update_cursor(latest_start_time_extractors)
+        return RunRequest(
+            run_key=latest_start_time_extractors,
+            run_config={},
+        )
 
     return monitor_jobs_sensor
 
