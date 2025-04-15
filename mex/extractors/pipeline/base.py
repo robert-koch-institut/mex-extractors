@@ -82,7 +82,7 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
                 )
             )
 
-            recent_run = max(
+            freshest_unpublished_run = max(
                 (
                     run
                     for run in runs
