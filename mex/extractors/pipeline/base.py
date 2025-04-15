@@ -95,11 +95,7 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
             )
 
             # Update completed flag based on whether a recent run was found
-            if recent_run is None or recent_run.status not in [
-                DagsterRunStatus.SUCCESS,
-                DagsterRunStatus.FAILURE,
-                DagsterRunStatus.CANCELED,
-            ]:
+            if recent_run is None:
                 completed = False
                 return SkipReason(f"No complete run for job group '{group}' yet.")
 
