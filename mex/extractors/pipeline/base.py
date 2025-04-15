@@ -43,7 +43,7 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
     @sensor(
         job_name="publisher",
         default_status=DefaultSensorStatus.RUNNING,
-        minimum_interval_seconds=3600,  # 60 min
+        minimum_interval_seconds=60*60,
     )
     def monitor_jobs_sensor(
         context: SensorEvaluationContext,
