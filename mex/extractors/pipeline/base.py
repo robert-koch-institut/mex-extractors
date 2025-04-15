@@ -43,17 +43,19 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
     @sensor(
         job_name="publisher",
         default_status=DefaultSensorStatus.RUNNING,
-        minimum_interval_seconds=60*60,
+        minimum_interval_seconds=60 * 60,
     )
     def monitor_jobs_sensor(
         context: SensorEvaluationContext,
     ) -> RunRequest | SkipReason:
         """Sensor to monitor the completion of all extractors and trigger publisher."""
         instance = DagsterInstance.get()
-        last_run_time_publisher = context.cursor or "1970-01-01T00:00:00+00:00"
-        latest_start_time_extractors = last_run_time_publisher
+        newest_publisher_run_ts = float(
+            context.cursor or "0"
+        )  # Unix time notation. 0 equals 1970-01-01 00:00
+        newest_extractor_run_ts = newest_publisher_run_ts
 
-        if instance.get_runs(
+        if instance.get_run_records(
             filters=RunsFilter(
                 statuses=[
                     DagsterRunStatus.STARTING,
@@ -69,7 +71,7 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
             )
 
         for group in extractor_group_names:
-            runs = instance.get_runs(
+            runs = instance.get_run_records(
                 filters=RunsFilter(
                     job_name=group,
                     statuses=[
@@ -80,36 +82,28 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
                 )
             )
 
-            freshest_unpublished_run = max(
+            newest_unpublished_run_ts = max(
                 (
-                    run
+                    run.end_time  # given in unix time notation
                     for run in runs
-                    if ".dagster/scheduled_execution_time" in run.tags
-                    and run.tags[".dagster/scheduled_execution_time"]
-                    > last_run_time_publisher
+                    if run.end_time and run.end_time > newest_publisher_run_ts
                 ),
-                key=lambda run: run.tags[".dagster/scheduled_execution_time"],
                 default=None,
             )
 
             # Update completed flag based on whether a recent run was found
-            if recent_run is None:
+            if newest_unpublished_run_ts is None:
                 return SkipReason(f"No complete run for job group '{group}' yet.")
 
             # Update the latest extractor start time if the current run is newer
-            if (
-                recent_run
-                and recent_run.tags[".dagster/scheduled_execution_time"]
-                > latest_start_time_extractors
-            ):
-                latest_start_time_extractors = recent_run.tags[
-                    ".dagster/scheduled_execution_time"
-                ]
+            newest_extractor_run_ts = max(
+                newest_extractor_run_ts, newest_unpublished_run_ts
+            )
 
         # Update the cursor to the latest extractor start time
-        context.update_cursor(latest_start_time_extractors)
+        context.update_cursor(str(newest_extractor_run_ts))
         return RunRequest(
-            run_key=latest_start_time_extractors,
+            run_key=str(newest_extractor_run_ts),
             run_config={},
         )
 
@@ -152,9 +146,7 @@ def load_job_definitions() -> Definitions:
     jobs.append(
         define_asset_job(
             "all_extractors",
-            AssetSelection.groups(
-                *extractor_group_names
-            ).upstream(),
+            AssetSelection.groups(*extractor_group_names).upstream(),
             metadata={"settings": settings_md},
         )
     )

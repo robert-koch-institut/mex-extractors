@@ -16,9 +16,9 @@ from mex.extractors.pipeline.base import (
 
 def test_monitor_skip_if_jobs_are_running():
     with instance_for_test() as test_instance:
-        # First get_runs returns a "running" job
+        # First get_run_records returns a running job
         running_job = MagicMock()
-        test_instance.get_runs = MagicMock(
+        test_instance.get_run_records = MagicMock(
             side_effect=[
                 [running_job],  # Other jobs are still running
             ]
@@ -26,7 +26,7 @@ def test_monitor_skip_if_jobs_are_running():
 
         with patch.object(DagsterInstance, "get", return_value=test_instance):
             context = build_sensor_context(
-                cursor="2024-01-01T00:00:00+00:00",
+                cursor="1700000000",
                 instance=test_instance,
             )
 
@@ -41,7 +41,7 @@ def test_monitor_skip_if_jobs_are_running():
 
 def test_monitor_skip_if_no_complete_runs():
     with instance_for_test() as test_instance:
-        test_instance.get_runs = MagicMock(
+        test_instance.get_run_records = MagicMock(
             side_effect=[
                 [],  # No running jobs
                 [],  # No finished extractor runs
@@ -50,7 +50,7 @@ def test_monitor_skip_if_no_complete_runs():
 
         with patch.object(DagsterInstance, "get", return_value=test_instance):
             context = build_sensor_context(
-                cursor="2024-01-01T00:00:00+00:00",
+                cursor="1700000000",
                 instance=test_instance,
             )
 
@@ -66,13 +66,11 @@ def test_monitor_skip_if_no_complete_runs():
 
 def test_monitor_triggers_if_all_jobs_finished():
     with instance_for_test() as test_instance:
-        mock_run = MagicMock()
+        mock_run = MagicMock()  # mock example extractor job
         mock_run.status = DagsterRunStatus.SUCCESS
-        mock_run.tags = {
-            ".dagster/scheduled_execution_time": "2024-01-02T00:00:00+00:00"
-        }
+        mock_run.end_time = 1700000007
 
-        test_instance.get_runs = MagicMock(
+        test_instance.get_run_records = MagicMock(
             side_effect=[
                 [],  # No jobs running
                 [mock_run],  # Completed extractor job since last publisher run
@@ -81,7 +79,7 @@ def test_monitor_triggers_if_all_jobs_finished():
 
         with patch.object(DagsterInstance, "get", return_value=test_instance):
             context = build_sensor_context(
-                cursor="2024-01-01T00:00:00+00:00",  # last publisher run
+                cursor="1700000000",  # last publisher run
                 instance=test_instance,
             )
 
@@ -89,18 +87,16 @@ def test_monitor_triggers_if_all_jobs_finished():
             result = sensor(context)
 
             assert isinstance(result, RunRequest)
-            assert result.run_key == "2024-01-02T00:00:00+00:00"
+            assert result.run_key == "1700000007"
 
 
 def test_monitor_skips_for_old_runs():
     with instance_for_test() as test_instance:
-        mock_run = MagicMock()
+        mock_run = MagicMock()  # mock example extractor job
         mock_run.status = DagsterRunStatus.SUCCESS
-        mock_run.tags = {
-            ".dagster/scheduled_execution_time": "1970-01-01T00:00:00+00:00"
-        }
+        mock_run.end_time = 0
 
-        test_instance.get_runs = MagicMock(
+        test_instance.get_run_records = MagicMock(
             side_effect=[
                 [],  # No jobs running
                 [mock_run],  # Completed extractor job from 1970
@@ -109,7 +105,7 @@ def test_monitor_skips_for_old_runs():
 
         with patch.object(DagsterInstance, "get", return_value=test_instance):
             context = build_sensor_context(
-                cursor="2024-01-01T00:00:00+00:00",  # last publisher run
+                cursor="1700000000",  # last publisher run
                 instance=test_instance,
             )
 
