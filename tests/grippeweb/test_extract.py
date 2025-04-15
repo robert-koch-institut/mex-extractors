@@ -2,8 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPActor, LDAPPerson
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (

@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,

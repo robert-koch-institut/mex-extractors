@@ -13,11 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.32.0] - 2025-04-14
+
+### Added
+
+- extract from endnote xml files
+
+### Changes
+
 - split seq-repo load function into new asset
 - apply all activity filters to all extractors(except synopse) with activities
 - refactor filter functionality to filter module
-
-### Deprecated
 
 ### Removed
 
@@ -27,8 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - exclude skipped extractor from `all_extractors` job
-
-### Security
 
 ## [0.31.0] - 2025-03-24
 

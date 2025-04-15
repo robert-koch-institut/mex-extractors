@@ -1,8 +1,7 @@
 from typing import Any
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPActor, LDAPPerson
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector

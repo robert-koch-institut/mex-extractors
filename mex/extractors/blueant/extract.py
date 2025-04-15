@@ -2,7 +2,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPPerson
 from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.blueant.connector import BlueAntConnector
