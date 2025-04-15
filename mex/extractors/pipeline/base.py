@@ -52,7 +52,6 @@ def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefini
         instance = DagsterInstance.get()
         last_run_time_publisher = context.cursor or "1970-01-01T00:00:00+00:00"
         latest_start_time_extractors = last_run_time_publisher
-        completed = True
 
         if instance.get_runs(
             filters=RunsFilter(
