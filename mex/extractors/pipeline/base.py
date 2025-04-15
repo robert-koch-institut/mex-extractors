@@ -163,7 +163,7 @@ def load_job_definitions() -> Definitions:
         define_asset_job(
             "all_extractors",
             AssetSelection.groups(
-                *(group_name for group_name in extractor_group_names)
+                *extractor_group_names
             ).upstream(),
             metadata={"settings": settings_md},
         )
