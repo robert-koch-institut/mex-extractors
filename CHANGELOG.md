@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to 0.58.0 with reconfigured request timeout
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.32.1] - 2025-04-16
+
+### Changes
+
+- update mex-common to 0.58.0 with reconfigured request timeout
 
 ## [0.32.0] - 2025-04-14
 
