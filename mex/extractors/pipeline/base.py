@@ -13,7 +13,6 @@ from dagster import (
     RunRequest,
     RunsFilter,
     ScheduleDefinition,
-    SensorDefinition,
     SensorEvaluationContext,
     SkipReason,
     define_asset_job,
@@ -37,77 +36,69 @@ def run_job_in_process(group_name: str = "default") -> "ExecutionResult":
     return job.execute_in_process()
 
 
-def create_monitor_jobs_sensor(extractor_group_names: list[str]) -> SensorDefinition:
-    """Wrapper to be able to pass group_names variable."""
+@sensor(
+    job_name="publisher",
+    default_status=DefaultSensorStatus.RUNNING,
+    minimum_interval_seconds=60 * 60,
+)
+def monitor_jobs_sensor(
+    context: SensorEvaluationContext,  # noqa: ARG001
+) -> RunRequest | SkipReason:
+    """Sensor to monitor the completion of all extractors and trigger publisher."""
+    instance = DagsterInstance.get()
 
-    @sensor(
-        job_name="publisher",
-        default_status=DefaultSensorStatus.RUNNING,
-        minimum_interval_seconds=60 * 60,
-    )
-    def monitor_jobs_sensor(
-        context: SensorEvaluationContext,
-    ) -> RunRequest | SkipReason:
-        """Sensor to monitor the completion of all extractors and trigger publisher."""
-        instance = DagsterInstance.get()
-        newest_publisher_run_ts = float(
-            context.cursor or "0"
-        )  # Unix time notation. 0 equals 1970-01-01 00:00
-        newest_extractor_run_ts = newest_publisher_run_ts
-
-        if instance.get_run_records(
-            filters=RunsFilter(
-                statuses=[
-                    DagsterRunStatus.STARTING,
-                    DagsterRunStatus.STARTED,
-                    DagsterRunStatus.CANCELING,
-                    DagsterRunStatus.QUEUED,
-                    DagsterRunStatus.NOT_STARTED,
-                ],
-            )
-        ):
-            return SkipReason(
-                "No publishing because other jobs are running at the moment."
-            )
-
-        for group in extractor_group_names:
-            runs = instance.get_run_records(
-                filters=RunsFilter(
-                    job_name=group,
-                    statuses=[
-                        DagsterRunStatus.SUCCESS,
-                        DagsterRunStatus.FAILURE,
-                        DagsterRunStatus.CANCELED,
-                    ],
-                )
-            )
-
-            newest_unpublished_run_ts = max(
-                (
-                    run.end_time  # given in unix time notation
-                    for run in runs
-                    if run.end_time and run.end_time > newest_publisher_run_ts
-                ),
-                default=None,
-            )
-
-            # Update completed flag based on whether a recent run was found
-            if newest_unpublished_run_ts is None:
-                return SkipReason(f"No complete run for job group '{group}' yet.")
-
-            # Update the latest extractor start time if the current run is newer
-            newest_extractor_run_ts = max(
-                newest_extractor_run_ts, newest_unpublished_run_ts
-            )
-
-        # Update the cursor to the latest extractor start time
-        context.update_cursor(str(newest_extractor_run_ts))
-        return RunRequest(
-            run_key=str(newest_extractor_run_ts),
-            run_config={},
+    if instance.get_run_records(
+        filters=RunsFilter(
+            statuses=[
+                DagsterRunStatus.STARTING,
+                DagsterRunStatus.STARTED,
+                DagsterRunStatus.CANCELING,
+                DagsterRunStatus.QUEUED,
+                DagsterRunStatus.NOT_STARTED,
+            ],
         )
+    ):
+        return SkipReason("No publishing because jobs are running at the moment.")
 
-    return monitor_jobs_sensor
+    publisher_runs = instance.get_run_records(
+        filters=RunsFilter(
+            statuses=[DagsterRunStatus.SUCCESS],
+            tags={"status": "publish"},
+        )
+    )
+
+    newest_publisher_run_ts = max(
+        (
+            run.end_time  # given in unix time notation
+            for run in publisher_runs
+            if run.end_time
+        ),
+        default=0.0,  # unix time notation for 1970
+    )
+
+    extractor_runs = instance.get_run_records(
+        filters=RunsFilter(
+            statuses=[DagsterRunStatus.SUCCESS],
+            tags={"status": "extract"},
+        )
+    )
+
+    newest_unpublished_extractor_run_ts = max(
+        (
+            run.end_time
+            for run in extractor_runs
+            if run.end_time and run.end_time > newest_publisher_run_ts
+        ),
+        default=None,
+    )
+
+    if newest_unpublished_extractor_run_ts is None:
+        return SkipReason("No complete unpublished run for any extractor job yet.")
+
+    return RunRequest(
+        run_key=str(newest_unpublished_extractor_run_ts),
+        run_config={},
+    )
 
 
 def load_job_definitions() -> Definitions:
@@ -130,6 +121,7 @@ def load_job_definitions() -> Definitions:
             group_name,
             AssetSelection.groups(group_name).upstream(),
             metadata={"settings": settings_md},
+            tags={"status": "extract"},
         )
         for group_name in extractor_group_names
     ]
@@ -148,6 +140,7 @@ def load_job_definitions() -> Definitions:
             "all_extractors",
             AssetSelection.groups(*extractor_group_names).upstream(),
             metadata={"settings": settings_md},
+            tags={"status": "extract"},
         )
     )
 
@@ -156,15 +149,14 @@ def load_job_definitions() -> Definitions:
         "publisher",
         AssetSelection.groups("publisher").upstream(),
         metadata={"settings": settings_md},
+        tags={"status": "publish"},
     )
     jobs.append(publisher_job)
-
-    sensor = create_monitor_jobs_sensor(list(extractor_group_names))
 
     return Definitions(
         assets=assets,
         jobs=jobs,
         resources=resources,
         schedules=schedules,
-        sensors=[sensor],
+        sensors=[monitor_jobs_sensor],
     )
