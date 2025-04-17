@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to 0.58.1 to log sink errors
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.32.2] - 2025-04-17
+
+### Changes
+
+- update mex-common to 0.58.1 to log sink errors
 
 ## [0.32.1] - 2025-04-16
 
