@@ -83,16 +83,16 @@ def monitor_jobs_sensor(
         )
     )
 
-    newest_unpublished_extractor_run_ts = max(
+    newest_extractor_run_ts = max(
         (
             run.end_time
             for run in extractor_runs
-            if run.end_time and run.end_time > newest_publisher_run_ts
+            if run.end_time
         ),
-        default=None,
+        default=0.0,
     )
 
-    if newest_unpublished_extractor_run_ts is None:
+    if newest_publisher_run_ts > newest_extractor_run_ts:
         return SkipReason("No complete unpublished run for any extractor job yet.")
 
     return RunRequest(
