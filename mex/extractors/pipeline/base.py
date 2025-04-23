@@ -39,7 +39,7 @@ def run_job_in_process(group_name: str = "default") -> "ExecutionResult":
 @sensor(
     job_name="publisher",
     default_status=DefaultSensorStatus.RUNNING,
-    minimum_interval_seconds=60 * 60,
+    minimum_interval_seconds=60 * 5,
 )
 def monitor_jobs_sensor(
     context: SensorEvaluationContext,  # noqa: ARG001
@@ -63,7 +63,7 @@ def monitor_jobs_sensor(
     publisher_runs = instance.get_run_records(
         filters=RunsFilter(
             statuses=[DagsterRunStatus.SUCCESS],
-            tags={"status": "publish"},
+            tags={"job_category": "publisher"},
         )
     )
 
@@ -79,16 +79,12 @@ def monitor_jobs_sensor(
     extractor_runs = instance.get_run_records(
         filters=RunsFilter(
             statuses=[DagsterRunStatus.SUCCESS],
-            tags={"status": "extract"},
+            tags={"job_category": "extractor"},
         )
     )
 
     newest_extractor_run_ts = max(
-        (
-            run.end_time
-            for run in extractor_runs
-            if run.end_time
-        ),
+        (run.end_time for run in extractor_runs if run.end_time),
         default=0.0,
     )
 
@@ -96,7 +92,7 @@ def monitor_jobs_sensor(
         return SkipReason("No complete unpublished run for any extractor job yet.")
 
     return RunRequest(
-        run_key=str(newest_unpublished_extractor_run_ts),
+        run_key=str(newest_extractor_run_ts),
         run_config={},
     )
 
@@ -121,7 +117,7 @@ def load_job_definitions() -> Definitions:
             group_name,
             AssetSelection.groups(group_name).upstream(),
             metadata={"settings": settings_md},
-            tags={"status": "extract"},
+            tags={"job_category": "extractor"},
         )
         for group_name in extractor_group_names
     ]
@@ -140,7 +136,7 @@ def load_job_definitions() -> Definitions:
             "all_extractors",
             AssetSelection.groups(*extractor_group_names).upstream(),
             metadata={"settings": settings_md},
-            tags={"status": "extract"},
+            tags={"job_category": "extractor"},
         )
     )
 
@@ -149,7 +145,7 @@ def load_job_definitions() -> Definitions:
         "publisher",
         AssetSelection.groups("publisher").upstream(),
         metadata={"settings": settings_md},
-        tags={"status": "publish"},
+        tags={"job_category": "publisher"},
     )
     jobs.append(publisher_job)
 
