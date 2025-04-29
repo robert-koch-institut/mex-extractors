@@ -1,18 +1,17 @@
-import pytest
+from mex.common.models import (
+    BibliographicResourceMapping,
+    ConsentMapping,
+    ExtractedPerson,
+    ExtractedPrimarySource,
+)
+from mex.common.testing import Joker
+from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
     extract_endnote_consents,
     extract_endnote_persons_by_person_string,
 )
-from mex.common.models import (
-    ExtractedPrimarySource,
-    BibliographicResourceMapping,
-    ExtractedPerson,
-    ConsentMapping,
-)
-from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.common.testing import Joker
 
 
 def test_extract_endnote_persons_by_person_string(
