@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update mex-common to 0.59.1 reducing generator calls and unsafe caching
+- remove linting exceptions from toml and fix or skip lines directly
 
 ### Deprecated
 
