@@ -88,7 +88,9 @@ def extract_synopse_project_contributors(
             continue
         seen.add(names)
         for name in analyse_person_string(names):
-            persons = ldap.get_persons(name.surname, name.given_name, limit=2)
+            persons = ldap.get_persons(
+                surname=name.surname, given_name=name.given_name, limit=2
+            )
             if len(persons) == 1 and persons[0].objectGUID:
                 yield LDAPPersonWithQuery(person=persons[0], query=names)
 

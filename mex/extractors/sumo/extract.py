@@ -148,7 +148,9 @@ def extract_ldap_contact_points_by_emails(
     """
     ldap = LDAPConnector.get()
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
-    return (actor for email in emails for actor in ldap.get_functional_accounts(email))
+    return (
+        actor for mail in emails for actor in ldap.get_functional_accounts(mail=mail)
+    )
 
 
 def extract_ldap_contact_points_by_name(
