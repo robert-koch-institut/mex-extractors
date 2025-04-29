@@ -42,7 +42,8 @@ def parse_single_item_html(html_data: str, item_url: str) -> DatschaWebItem:
 
     item_id_match = re.search(r".*\?.*vavs_id=(\d+).*", item_url)
     if item_id_match is None:
-        raise MExError(f"Malformed item url missing vavs_id: {item_url}")
+        msg = f"Malformed item url missing vavs_id: {item_url}"
+        raise MExError(msg)
     details["item_id"] = int(item_id_match.groups()[0])
 
     soup = BeautifulSoup(html_data, "html.parser")
@@ -71,15 +72,17 @@ def parse_detail_block(detail_block: Tag) -> tuple[str, str]:
     value = detail_block.find("div", {"class": "input_feld"})
 
     if not isinstance(key, Tag):
-        raise MExError(
+        msg = (
             f"Missing div tag of class 'input_vorgabe' in detail_block:\n"
             f"{detail_block.prettify()}"
         )
+        raise MExError(msg)
     if not isinstance(value, Tag):
-        raise MExError(
+        msg = (
             f"Missing div tag of class 'input_feld' in detail_block.\n"
             f"{detail_block.prettify()}"
         )
+        raise MExError(msg)
 
     key_clean = str(key.string).rstrip(":")
     value_clean = " ".join(str(value.string).split())
@@ -98,9 +101,10 @@ def parse_unit_loz(bs4_object: BeautifulSoup) -> tuple[str, list[str]]:
     """
     table = bs4_object.find("table", {"id": "loz"})
     if not isinstance(table, Tag):
-        raise MExError(
+        msg = (
             f"Missing table with ID 'loz' in single item html.\n{bs4_object.prettify()}"
         )
+        raise MExError(msg)
     column_headers = table.find_all("th")
     key = str(column_headers[0].string)
     value = [str(c.string) for c in column_headers[1:]]

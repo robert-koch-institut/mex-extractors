@@ -66,7 +66,7 @@ def test_get_contact_merged_ids_by_names(
     }
 
 
-def test_transform_resource_nokeda_to_mex_resource(
+def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     sumo_resources_nokeda: ResourceMapping,
@@ -145,7 +145,7 @@ def test_transform_resource_nokeda_to_mex_resource(
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
 
-def test_transform_resource_feat_model_to_mex_resource(
+def test_transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     sumo_resources_feat: ResourceMapping,
@@ -333,7 +333,7 @@ def test_transform_nokeda_model_variable_to_mex_variable(
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
 
 
-def test_transform_nokeda_aux_variable_to_mex_variable(
+def test_transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mex_resources_nokeda: ExtractedResource,
     mex_variable_groups_nokeda_aux: list[ExtractedVariableGroup],
@@ -410,7 +410,7 @@ def test_transform_feat_projection_variable_to_mex_variable(
         "stableTargetId": Joker(),
         "belongsTo": [
             stable_target_id_by_label_values[
-                " ".join([variable.feature_domain, variable.feature_subdomain]) or ""
+                f"{variable.feature_domain} {variable.feature_subdomain}" or ""
             ]
         ],
         "description": [{"value": "specific RSV-ICD-10 codes"}],

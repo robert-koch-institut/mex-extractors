@@ -45,7 +45,8 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         for item in results:
             yield item["id"]
     else:
-        raise MExError("Pagination limit reached to fetch all data pages list")
+        msg = "Pagination limit reached to fetch all data pages list"
+        raise MExError(msg)
 
 
 @watch()

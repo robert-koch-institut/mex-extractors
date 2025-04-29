@@ -40,7 +40,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
             message="Data Validation extension is not supported and will be removed",
             category=UserWarning,
         )
-        df = pd.read_excel(
+        international_projects_excel = pd.read_excel(
             settings.international_projects.file_path,
             keep_default_na=False,
             parse_dates=True,
@@ -49,7 +49,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
         )
     return [
         source
-        for row in df.iterrows()
+        for row in international_projects_excel.iterrows()
         if (source := extract_international_projects_source(row[1]))
     ]
 

@@ -31,9 +31,16 @@ def extract_cc1_data_valuesets() -> Generator[Cc1DataValuesets, None, None]:
     for sheet_name in excel_file.sheet_names:
         data_valuesets = excel_file.parse(sheet_name=sheet_name)
         for _, row in data_valuesets.iterrows():
-            row.replace(to_replace=np.nan, value=None, inplace=True)
-            row.replace(regex=r"^\s*$", value=None, inplace=True)
-            yield Cc1DataValuesets(**row, sheet_name=sheet_name)
+            yield Cc1DataValuesets(
+                **row.replace(
+                    to_replace=np.nan,
+                    value=None,
+                ).replace(
+                    regex=r"^\s*$",
+                    value=None,
+                ),
+                sheet_name=sheet_name,
+            )
 
 
 def extract_cc1_data_model_nokeda() -> Generator[Cc1DataModelNoKeda, None, None]:

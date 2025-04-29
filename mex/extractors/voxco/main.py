@@ -92,7 +92,7 @@ def extracted_mex_persons_voxco(
 
 
 @asset(group_name="voxco")
-def extracted_voxco_resources(
+def extracted_voxco_resources(  # noqa: PLR0913
     voxco_resource_mappings: list[dict[str, Any]],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier

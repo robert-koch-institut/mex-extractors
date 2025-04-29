@@ -60,7 +60,7 @@ def extracted_mex_persons(
 
 
 @asset(group_name="biospecimen")
-def extracted_biospecimen_resources(
+def extracted_biospecimen_resources(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
     extracted_primary_source_biospecimen: ExtractedPrimarySource,
     extracted_mex_persons: list[ExtractedPerson],

@@ -45,7 +45,7 @@ def parse_data_html_page(
     """
     soup = BeautifulSoup(html, "html.parser")
     table = soup.find_all("table", {"class": "confluenceTable"})
-    if len(table) < 2:
+    if len(table) < 2:  # noqa: PLR2004
         return None
     trs_table1 = table[0].find_all("tr")
     trs_table2 = table[1].find_all("tr")

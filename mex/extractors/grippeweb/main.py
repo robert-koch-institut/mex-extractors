@@ -166,7 +166,7 @@ def extracted_access_platform_grippeweb(
 
 
 @asset(group_name="grippeweb")
-def grippeweb_extracted_resource_dict(
+def grippeweb_extracted_resource_dict(  # noqa: PLR0913
     grippeweb_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_access_platform_grippeweb: ExtractedAccessPlatform,

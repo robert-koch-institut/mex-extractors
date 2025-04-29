@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Dagster sensor to run Publisher after other extractor jobs
+- Dagster sensor to run publisher after other extractor jobs
 
 ### Changes
 
-- update mex-common to 0.59.0 reducing generator calls and unsafe caching
+- update mex-common to 0.59.1 reducing generator calls and unsafe caching
 
 ### Deprecated
 
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to 0.58.2 to increase BackendApiSink timeout t0 90s(from 30s)
+- update mex-common to 0.58.2 to increase BackendApiSink timeout to 90s
 
 ## [0.32.2] - 2025-04-17
 

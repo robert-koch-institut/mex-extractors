@@ -15,7 +15,7 @@ dependencies = [
     "dagster>=1,<2",
     "defusedxml>=0.7,<1",
     "faker>=37,<38",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.59.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.59.1",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",
@@ -193,27 +193,6 @@ select = ["ALL"]
     "S101",     # Allow use of `assert` in tests
     "SLF",      # Allow private member access
 ]
-"mex/extractors/biospecimen/**" = ["PD003", "PLR0913", "PTH207"]
-"mex/extractors/blueant/**" = ["PLR0913", "PLR2004"]
-"mex/extractors/confluence_vvt/**" = ["EM101", "PLR2004"]
-"mex/extractors/datscha_web/**" = ["EM102", "PLR2004"]
-"mex/extractors/ff_projects/**" = ["EM101", "PD901", "PLR0911", "PLR0913"]
-"mex/extractors/grippeweb/**" = ["PLR0913"]
-"mex/extractors/ifsg/**" = ["C403", "C416", "PLR0913", "PLR1714", "PLR2004"]
-"mex/extractors/international_projects/**" = ["C414", "PD901", "PLR0913"]
-"mex/extractors/seq_repo/**" = ["DTZ007", "EM102", "PLR0913", "SIM102"]
-"mex/extractors/sumo/**" = ["FLY002", "PD002", "PLR0913"]
-"mex/extractors/synopse/**" = ["C416", "EM101", "PLR0913"]
-"mex/extractors/voxco/**" = ["PLR0912", "PLR0913"]
-"tests/biospecimen/**" = ["PLR0913"]
-"tests/ff_projects/**" = ["DTZ001"]
-"tests/grippeweb/**" = ["PLR0913"]
-"tests/ifsg/**" = ["DTZ001", "PLR0913"]
-"tests/seq_repo/**" = ["PLR0913"]
-"tests/sumo/**" = ["FLY002", "PLR0913"]
-"tests/synopse/**" = ["C408", "C419", "PLR0913"]
-"tests/voxco/**" = ["PLR0913"]
-"tests/wikidata/**" = ["INP001", "INP001"]
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
 "reflex" = "rx"

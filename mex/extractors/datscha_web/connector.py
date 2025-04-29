@@ -9,6 +9,8 @@ from mex.extractors.datscha_web.parse_html import (
 )
 from mex.extractors.settings import Settings
 
+MAX_ITEMS_TO_FETCH = 999
+
 
 class DatschaWebConnector(HTTPConnector):
     """Connector class to handle credentials and parsing of datscha web registry."""
@@ -32,10 +34,11 @@ class DatschaWebConnector(HTTPConnector):
             urljoin(self.url, "login.php"), data=credentials, timeout=1
         )
         if response.url != urljoin(self.url, "verzeichnis.php"):
-            raise MExError(
+            msg = (
                 f"Datscha web login failed. Did you provide correct credentials for "
                 f"{list(map(str.upper, credentials.keys()))}?"
             )
+            raise MExError(msg)
 
     def get_item_urls(self) -> list[str]:
         """Accumulate datscha item URLs by scraping the page `verzeichnis.php`.
@@ -46,7 +49,7 @@ class DatschaWebConnector(HTTPConnector):
         form_data = {
             "navigation": "anzeigen",
             "start": "1",
-            "anzahl_ds": "999",
+            "anzahl_ds": str(MAX_ITEMS_TO_FETCH),
             "suche_bezeichnung": "",
             "suche_kategorien_id": "0",
             "suche_stand": "",
@@ -55,9 +58,10 @@ class DatschaWebConnector(HTTPConnector):
             urljoin(self.url, "verzeichnis.php"), data=form_data, timeout=1
         )
         item_urls = parse_item_urls_from_overview_html(response.text, self.url)
-        if items_found := len(item_urls) >= 999:
+        if items_found := len(item_urls) >= MAX_ITEMS_TO_FETCH:
             # TODO(ND): we need to implement pagination if we ever run into this.
-            raise MExError(f"Found more items than I am able to handle: {items_found}")
+            msg = f"Found more items than I am able to handle: {items_found}"
+            raise MExError(msg)
         return item_urls
 
     def get_item(self, item_url: str) -> DatschaWebItem:

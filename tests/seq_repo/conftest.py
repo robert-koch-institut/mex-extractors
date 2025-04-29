@@ -120,7 +120,7 @@ def extracted_mex_access_platform(
 
 
 @pytest.fixture
-def extracted_mex_activities_dict(
+def extracted_mex_activities_dict(  # noqa: PLR0913
     extracted_primary_source_seq_repo: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,

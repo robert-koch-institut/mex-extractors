@@ -183,7 +183,7 @@ def contact_merged_id_by_query_string(
 
 
 @asset(group_name="synopse")
-def extracted_synopse_resource_stable_target_ids_by_synopse_id(
+def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
@@ -256,7 +256,7 @@ def synopse_activity() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def extracted_synopse_activities(
+def extracted_synopse_activities(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     extracted_primary_source_report_server: ExtractedPrimarySource,
     extracted_synopse_contributor_stable_target_ids_by_name: dict[

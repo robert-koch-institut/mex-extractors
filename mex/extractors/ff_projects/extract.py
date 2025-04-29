@@ -34,12 +34,12 @@ def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
         Generator for FF Projects sources
     """
     settings = Settings.get()
-    df = pd.read_excel(
+    ff_projects_excel = pd.read_excel(
         settings.ff_projects.file_path,
         keep_default_na=False,
         parse_dates=True,
     )
-    for row in df.iterrows():
+    for row in ff_projects_excel.iterrows():
         if source := extract_ff_projects_source(row[1]):
             yield source
 

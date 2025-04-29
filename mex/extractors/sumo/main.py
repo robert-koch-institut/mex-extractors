@@ -190,7 +190,7 @@ def extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 
 @asset(group_name="sumo")
-def transformed_resource_nokeda_sumo(
+def transformed_resource_nokeda_sumo(  # noqa: PLR0913
     extracted_resources_nokeda_sumo: dict[str, Any],
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -214,7 +214,7 @@ def transformed_resource_nokeda_sumo(
 
 
 @asset(group_name="sumo")
-def transformed_resource_feat_sumo(
+def transformed_resource_feat_sumo(  # noqa: PLR0913
     extracted_resources_feat_sumo: dict[str, Any],
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],

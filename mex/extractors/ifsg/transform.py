@@ -228,7 +228,7 @@ def get_instrument_tool_or_apparatus(
     return instrument_tool_or_apparatus
 
 
-def transform_resource_disease_to_mex_resource(
+def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     resource_disease: ResourceMapping,
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_ifsg_resource_state: list[ExtractedResource],
@@ -282,7 +282,7 @@ def transform_resource_disease_to_mex_resource(
     ]
 
 
-def transform_resource_disease_to_mex_resource_row(
+def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
     meta_disease_row: MetaDisease,
     resource_disease: ResourceMapping,
     extracted_ifsg_resource_parent: ExtractedResource,
@@ -401,13 +401,11 @@ def transform_ifsg_data_to_mex_variable_group(
     Returns:
         transform resource parent to ExtractedResource
     """
-    identifier_in_primary_source_unique_list = set(
-        [
-            f"{row.id_type}_{row.statement_area_group}"
-            for row in meta_field
-            if row.id_type in id_types_of_diseases
-        ]
-    )
+    identifier_in_primary_source_unique_list = {
+        f"{row.id_type}_{row.statement_area_group}"
+        for row in meta_field
+        if row.id_type in id_types_of_diseases
+    }
     contained_by_by_id_type = {
         str(id_type): [
             row.stableTargetId
@@ -435,7 +433,7 @@ def transform_ifsg_data_to_mex_variable_group(
     ]
 
 
-def transform_ifsg_data_to_mex_variables(
+def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
     filtered_variables: list[MetaField],
     extracted_ifsg_resource_disease: list[ExtractedResource],
     extracted_ifsg_variable_group: list[ExtractedVariableGroup],

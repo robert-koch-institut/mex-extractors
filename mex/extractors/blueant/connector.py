@@ -2,6 +2,8 @@ from collections.abc import Generator
 from typing import Any
 from urllib.parse import urljoin
 
+import requests
+
 from mex.common.connector import HTTPConnector
 from mex.common.exceptions import MExError
 from mex.extractors.blueant.models.person import BlueAntPerson, BlueAntPersonResponse
@@ -36,7 +38,10 @@ class BlueAntConnector(HTTPConnector):
             Parsed JSON body of the response
         """
         response = self.request("GET", relative_url)
-        if response.get("status", {}).get("code", 200) >= 400:
+        if (
+            response.get("status", {}).get("code", requests.codes["ok"])
+            >= requests.codes["bad"]
+        ):
             raise MExError(response)
         return response
 
