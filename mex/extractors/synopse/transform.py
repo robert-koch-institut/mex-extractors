@@ -489,7 +489,7 @@ def transform_synopse_projects_to_mex_activities(
         ):
             activity.succeeds = [
                 cast(
-                    MergedActivityIdentifier,
+                    "MergedActivityIdentifier",
                     activity_stable_target_id_by_short_name[anschlussprojekt],
                 )
             ]

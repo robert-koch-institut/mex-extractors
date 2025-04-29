@@ -170,7 +170,7 @@ def transform_biospecimen_resource_to_mex_resource(
             rights=resource.rechte,
             sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
             spatial=resource.raeumlicher_bezug,
-            temporal=cast(list[TemporalEntity | str], resource.zeitlicher_bezug),
+            temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
             theme=theme,
             title=resource.offizieller_titel_der_probensammlung,
             unitInCharge=unit_in_charge,

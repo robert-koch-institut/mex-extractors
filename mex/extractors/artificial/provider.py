@@ -107,7 +107,7 @@ class BuilderProvider(PythonFakerProvider):
     ) -> list[AnyExtractedModel]:
         """Get a list of extracted items for the given model class."""
         models = []
-        for identity in cast(list[Identity], self.generator.identities(model)):
+        for identity in cast("list[Identity]", self.generator.identities(model)):
             # manually set identity related fields
             payload: dict[str, Any] = {
                 "identifier": identity.identifier,

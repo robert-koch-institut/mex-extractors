@@ -208,7 +208,7 @@ def get_theme_for_activity_or_topic(
     """
     themes_dict_from_mapping: dict[str, Theme] = {}
     default_theme_from_mapping = cast(
-        list[Theme],
+        "list[Theme]",
         theme[0].mappingRules[0].setValues,
     )[0]
 
