@@ -1,13 +1,10 @@
 from itertools import pairwise
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from faker import Faker
 
 from mex.common.identity import get_provider
-from mex.common.identity.memory import MemoryIdentityProvider
-from mex.common.models import (
-    EXTRACTED_MODEL_CLASSES,
-)
+from mex.common.models import EXTRACTED_MODEL_CLASSES
 from mex.common.testing import Joker
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.artificial.identity import (
@@ -18,6 +15,9 @@ from mex.extractors.artificial.identity import (
 )
 from mex.extractors.settings import Settings
 
+if TYPE_CHECKING:
+    from mex.common.identity.memory import MemoryIdentityProvider
+
 
 def test_restore_identities() -> None:
     # assign a new dummy identity
@@ -27,7 +27,7 @@ def test_restore_identities() -> None:
     )
 
     # trash the current provider (simulating what happens between dagster assets)
-    cast(MemoryIdentityProvider, identity_provider)._database.clear()
+    cast("MemoryIdentityProvider", identity_provider)._database.clear()
 
     # try to restore the identity map
     restore_identities({"dummy": [dummy_identity]})

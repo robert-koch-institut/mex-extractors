@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from functools import cache
 from typing import Any
 from urllib.parse import urljoin
 
@@ -24,7 +23,6 @@ class BlueAntConnector(HTTPConnector):
         api_key = settings.blueant.api_key.get_secret_value()
         self.session.headers["Authorization"] = f"Bearer {api_key}"
 
-    @cache  # noqa: B019
     def _get_json_from_api(self, relative_url: str) -> dict[str, Any]:
         """Get json from blueant api.
 

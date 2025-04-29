@@ -45,6 +45,6 @@ def extract_source_project_coordinator(
             if name in seen:
                 continue
             seen.add(name)
-            persons = list(ldap.get_persons(mail=f"{name}@rki.de"))
+            persons = ldap.get_persons(mail=f"{name}@rki.de", limit=2)
             if len(persons) == 1 and persons[0].objectGUID:
                 yield LDAPPersonWithQuery(person=persons[0], query=name)

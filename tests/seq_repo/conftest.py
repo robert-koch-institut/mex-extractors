@@ -40,12 +40,10 @@ def extracted_primary_source_seq_repo() -> ExtractedPrimarySource:
             seed_primary_sources
         )
     )
-
     (extracted_primary_source_seq_repo,) = get_primary_sources_by_name(
         extracted_primary_sources,
         "seq-repo",
     )
-
     return extracted_primary_source_seq_repo
 
 

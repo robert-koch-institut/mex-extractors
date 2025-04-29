@@ -131,12 +131,10 @@ def extracted_synopse_contributor_stable_target_ids_by_name(
 
     Also transforms Synopse data to extracted persons
     """
-    transformed_project_contributors = list(
-        transform_ldap_persons_with_query_to_mex_persons(
-            synopse_project_contributors,
-            extracted_primary_source_ldap,
-            extracted_organizational_units,
-        )
+    transformed_project_contributors = transform_ldap_persons_with_query_to_mex_persons(
+        synopse_project_contributors,
+        extracted_primary_source_ldap,
+        extracted_organizational_units,
     )
     load(transformed_project_contributors)
     return get_merged_ids_by_query_string(  # only works after contributors are loaded
@@ -173,11 +171,9 @@ def contact_merged_id_by_query_string(
         ResourceMapping.model_validate(synopse_resource),
         ActivityMapping.model_validate(synopse_activity),
     )
-    contact_points = list(
-        transform_ldap_actors_to_mex_contact_points(
-            synopse_contact,
-            extracted_primary_source_ldap,
-        )
+    contact_points = transform_ldap_actors_to_mex_contact_points(
+        synopse_contact,
+        extracted_primary_source_ldap,
     )
     load(contact_points)
     return {

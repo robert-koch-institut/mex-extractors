@@ -35,9 +35,8 @@ def extract_ldap_actors_for_functional_accounts(
         list of LDAP actors
     """
     ldap = LDAPConnector.get()
-
     return [
-        next(ldap.get_functional_accounts(mail))
+        ldap.get_functional_account(mail)
         for mapping in grippeweb_resource_mappings
         for mail in (mapping.contact[0].mappingRules[0].forValues or [])
     ]

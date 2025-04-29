@@ -82,10 +82,10 @@ def extracted_mex_persons_voxco(
     ldap_persons = extract_ldap_persons_voxco(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
-    mex_persons = list(
-        transform_ldap_persons_to_mex_persons(
-            ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
-        )
+    mex_persons = transform_ldap_persons_to_mex_persons(
+        ldap_persons,
+        extracted_primary_source_ldap,
+        extracted_organizational_units,
     )
     load(mex_persons)
     return mex_persons

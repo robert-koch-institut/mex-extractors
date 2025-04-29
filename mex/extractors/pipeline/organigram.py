@@ -17,11 +17,9 @@ def extracted_organizational_units(
 ) -> list[ExtractedOrganizationalUnit]:
     """Extract organizational units."""
     organigram_units = extract_organigram_units()
-    mex_organizational_units = list(
-        transform_organigram_units_to_organizational_units(
-            organigram_units,
-            extracted_primary_source_organigram,
-        )
+    mex_organizational_units = transform_organigram_units_to_organizational_units(
+        organigram_units,
+        extracted_primary_source_organigram,
     )
     load(mex_organizational_units)
     return mex_organizational_units

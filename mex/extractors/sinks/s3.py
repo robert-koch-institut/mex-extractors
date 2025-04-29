@@ -7,7 +7,7 @@ import boto3
 from botocore.client import Config
 
 from mex.common.logging import logger
-from mex.common.models.base.model import BaseModel
+from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper

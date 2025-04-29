@@ -238,7 +238,7 @@ def get_verantwortlichen(
     names = []
     oes = []
 
-    if field_data := cast(dict[str, str], all_rows_data.get(field_name)):
+    if field_data := cast("dict[str, str]", all_rows_data.get(field_name)):
         for name, oe in zip_longest(
             field_data[field_name],
             field_data["OE"],

@@ -52,10 +52,8 @@ def extracted_mex_persons(
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for biospecimen from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
     ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
-    mex_persons = list(
-        transform_ldap_persons_to_mex_persons(
-            ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
-        )
+    mex_persons = transform_ldap_persons_to_mex_persons(
+        ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
     )
     load(mex_persons)
     return mex_persons

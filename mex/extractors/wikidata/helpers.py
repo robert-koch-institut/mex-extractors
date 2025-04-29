@@ -1,11 +1,9 @@
-from functools import cache
+from functools import lru_cache
 
 from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganization, OrganizationMapping
 from mex.common.types import MergedOrganizationIdentifier
-from mex.common.wikidata.extract import (
-    get_wikidata_organization,
-)
+from mex.common.wikidata.extract import get_wikidata_organization
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
 )
@@ -15,7 +13,6 @@ from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
 
-@cache
 def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization | None:
     """Get and load a wikidata item details by its ID.
 
@@ -30,18 +27,16 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     if not wikidata_primary_source:
         msg = "Primary source for wikidata not found"
         raise MExError(msg)
-    if (
-        extracted_organization
-        := transform_wikidata_organization_to_extracted_organization(
-            wikidata_organization, wikidata_primary_source
-        )
-    ):
+    extracted_organization = transform_wikidata_organization_to_extracted_organization(
+        wikidata_organization, wikidata_primary_source
+    )
+    if extracted_organization:
         load([extracted_organization])
         return extracted_organization
     return None
 
 
-@cache
+@lru_cache(maxsize=1)
 def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     """Extract dict of already defined wikidata ids by labels."""
     settings = Settings.get()
@@ -56,7 +51,6 @@ def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     }
 
 
-@cache
 def get_wikidata_extracted_organization_id_by_name(
     name: str,
 ) -> MergedOrganizationIdentifier | None:
