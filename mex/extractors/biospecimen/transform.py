@@ -22,7 +22,7 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
 @watch()
-def transform_biospecimen_resource_to_mex_resource(
+def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
     extracted_primary_source_biospecimen: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],

@@ -20,7 +20,7 @@ from mex.extractors.voxco.transform import (
 )
 
 
-def test_transform_voxco_resource_mappings_to_extracted_resources(
+def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0913
     voxco_resource_mappings: list[ResourceMapping],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier

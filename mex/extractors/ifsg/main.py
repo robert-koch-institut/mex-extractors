@@ -199,7 +199,7 @@ def extracted_ifsg_resource_state(
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_resource_disease(
+def extracted_ifsg_resource_disease(  # noqa: PLR0913
     resource_disease: dict[str, Any],
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_ifsg_resource_state: list[ExtractedResource],
@@ -249,7 +249,7 @@ def extracted_ifsg_variable_group(
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_variable(
+def extracted_ifsg_variable(  # noqa: PLR0913
     filtered_variables: list[MetaField],
     extracted_ifsg_resource_disease: list[ExtractedResource],
     extracted_ifsg_variable_group: list[ExtractedVariableGroup],

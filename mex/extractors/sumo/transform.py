@@ -69,7 +69,7 @@ def get_contact_merged_ids_by_names(
     }
 
 
-def transform_resource_feat_model_to_mex_resource(
+def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
     sumo_resource_feat: ResourceMapping,
     extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -142,7 +142,7 @@ def transform_resource_feat_model_to_mex_resource(
     )
 
 
-def transform_resource_nokeda_to_mex_resource(
+def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     sumo_resource_nokeda: ResourceMapping,
     extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -329,8 +329,8 @@ def transform_feat_variable_to_mex_variable_group(
     contained_by = mex_resource_feat.stableTargetId
     used_identifier_in_primary_source = set()
     for variable in extracted_cc2_feat_projection:
-        identifier_in_primary_source = " ".join(
-            [variable.feature_domain, variable.feature_subdomain]
+        identifier_in_primary_source = (
+            f"{variable.feature_domain} {variable.feature_subdomain}"
         )
         if identifier_in_primary_source not in used_identifier_in_primary_source:
             used_identifier_in_primary_source.add(identifier_in_primary_source)
@@ -395,7 +395,7 @@ def transform_nokeda_model_variable_to_mex_variable(
 
 
 @watch()
-def transform_nokeda_aux_variable_to_mex_variable(
+def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     extracted_cc2_aux_mapping: Iterable[Cc2AuxMapping],
     extracted_cc2_aux_valuesets: Iterable[Cc2AuxValuesets],
@@ -474,16 +474,13 @@ def transform_feat_projection_variable_to_mex_variable(
     for variable in extracted_cc2_feat_projection:
         yield ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[
-                " ".join([variable.feature_domain, variable.feature_subdomain]) or ""
+                f"{variable.feature_domain} {variable.feature_subdomain}" or ""
             ],
             description=Text(value=variable.feature_description),
             hadPrimarySource=extracted_primary_source.stableTargetId,
-            identifierInPrimarySource=" ".join(
-                [
-                    variable.feature_domain,
-                    variable.feature_subdomain,
-                    variable.feature_abbr,
-                ]
+            identifierInPrimarySource=(
+                f"{variable.feature_domain} {variable.feature_subdomain} "
+                f"{variable.feature_abbr}"
             ),
             label=[
                 Text(value=variable.feature_name_de, language=TextLanguage.DE),

@@ -59,7 +59,7 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     )
 
 
-def test_transform_grippeweb_resource_mappings_to_dict(
+def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
@@ -151,7 +151,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
     )
 
 
-def test_transform_grippeweb_resource_mappings_to_extracted_resources(
+def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR0913
     grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,

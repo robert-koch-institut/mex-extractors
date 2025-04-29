@@ -18,7 +18,7 @@ from mex.extractors.sinks import load
 
 
 @watch()
-def transform_blueant_sources_to_extracted_activities(
+def transform_blueant_sources_to_extracted_activities(  # noqa: PLR0913
     blueant_sources: Iterable[BlueAntSource],
     primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],

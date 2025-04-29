@@ -6,9 +6,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-)
+from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
