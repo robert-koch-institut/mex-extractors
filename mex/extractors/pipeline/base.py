@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from dagster import (
-    AssetsDefinition,
     AssetSelection,
     DefaultScheduleStatus,
     Definitions,
@@ -9,14 +8,13 @@ from dagster import (
     MetadataValue,
     ScheduleDefinition,
     define_asset_job,
+    load_asset_checks_from_package_module,
     load_assets_from_package_module,
 )
 
 from mex.extractors.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Sequence
-
     from dagster._core.execution.execution_result import ExecutionResult
 
 
@@ -35,7 +33,9 @@ def load_job_definitions() -> Definitions:
     settings = Settings.get()
 
     resources = {"io_manager": FilesystemIOManager()}
-    assets = cast("Sequence[AssetsDefinition]", load_assets_from_package_module(mex))
+    assets = load_assets_from_package_module(mex)
+    asset_checks = load_asset_checks_from_package_module(mex)
+
     group_names = {
         group for asset in assets for group in asset.group_names_by_key.values()
     }
@@ -71,6 +71,7 @@ def load_job_definitions() -> Definitions:
     )
     return Definitions(
         assets=assets,
+        asset_checks=asset_checks,
         jobs=jobs,
         resources=resources,
         schedules=schedules,

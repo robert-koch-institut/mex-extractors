@@ -67,14 +67,61 @@ if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable
 
     _AssetFn = TypeVar("_AssetFn")
+    _AssetCheckFn = TypeVar("_AssetCheckFn")
+
+    class AssetCheckResult:
+        """Class for Assets Sanity Checks."""
+
+    class AssetCheckSeverity:
+        """Severity level for an AssetCheckResult.
+
+        WARN: a potential issue with the asset
+        ERROR: a definite issue with the asset
+        """
+
+    class AssetKey:
+        """Class for setting a key for an asset."""
+
+    class Output:
+        """Class for output infos about an asset."""
+
+    class EventRecordsFilter:
+        """Class for output infos about an asset."""
+
+    class DagsterEventType:
+        """Class for output infos about an asset."""
 
     def asset(**_: Any) -> Callable[[_AssetFn], _AssetFn]:
         """Create a definition for how to compute an asset."""
         ...
 
+    def asset_check(**_: Any) -> Callable[[_AssetCheckFn], _AssetCheckFn]:
+        """Create a definition for sanity checks for an assett."""
+        ...
+
 else:
-    from dagster import asset
+    from dagster import (
+        AssetCheckResult,
+        AssetCheckSeverity,
+        AssetKey,
+        DagsterEventType,
+        EventRecordsFilter,
+        Output,
+        asset,
+        asset_check,
+    )
 
 from mex.extractors.pipeline.base import load_job_definitions, run_job_in_process
 
-__all__ = ("asset", "load_job_definitions", "run_job_in_process")
+__all__ = (
+    "AssetCheckResult",
+    "AssetCheckSeverity",
+    "AssetKey",
+    "DagsterEventType",
+    "EventRecordsFilter",
+    "Output",
+    "asset",
+    "asset_check",
+    "load_job_definitions",
+    "run_job_in_process",
+)

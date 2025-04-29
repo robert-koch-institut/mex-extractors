@@ -56,6 +56,10 @@ test*.png
 cover/
 pytestdebug.log
 
+#dagster
+.tmp_dagster_home_*
+storage/
+
 # Translations
 *.mo
 *.pot
