@@ -45,7 +45,7 @@ def parse_data_html_page(
     """
     soup = BeautifulSoup(html, "html.parser")
     table = soup.find_all("table", {"class": "confluenceTable"})
-    if len(table) < 2:
+    if len(table) < 2:  # noqa: PLR2004
         return None
     trs_table1 = table[0].find_all("tr")
     trs_table2 = table[1].find_all("tr")
@@ -238,7 +238,7 @@ def get_verantwortlichen(
     names = []
     oes = []
 
-    if field_data := cast(dict[str, str], all_rows_data.get(field_name)):
+    if field_data := cast("dict[str, str]", all_rows_data.get(field_name)):
         for name, oe in zip_longest(
             field_data[field_name],
             field_data["OE"],

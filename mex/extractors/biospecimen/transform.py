@@ -22,7 +22,7 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
 @watch()
-def transform_biospecimen_resource_to_mex_resource(
+def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
     extracted_primary_source_biospecimen: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -170,7 +170,7 @@ def transform_biospecimen_resource_to_mex_resource(
             rights=resource.rechte,
             sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
             spatial=resource.raeumlicher_bezug,
-            temporal=cast(list[TemporalEntity | str], resource.zeitlicher_bezug),
+            temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
             theme=theme,
             title=resource.offizieller_titel_der_probensammlung,
             unitInCharge=unit_in_charge,

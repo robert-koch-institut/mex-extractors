@@ -10,7 +10,7 @@ from mex.common.types import (
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 
 
-def transform_ff_projects_source_to_extracted_activity(
+def transform_ff_projects_source_to_extracted_activity(  # noqa: PLR0913
     ff_projects_source: FFProjectsSource,
     extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
@@ -41,7 +41,8 @@ def transform_ff_projects_source_to_extracted_activity(
             if oe in unit_stable_target_id_by_synonym
         ]
     else:
-        raise MExError("missing unit should have been filtered out")
+        msg = "missing unit should have been filtered out"
+        raise MExError(msg)
 
     project_lead = [
         sti

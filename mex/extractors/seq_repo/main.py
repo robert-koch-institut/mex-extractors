@@ -144,7 +144,7 @@ def seq_repo_extracted_access_platform(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_resource(
+def seq_repo_resource(  # noqa: PLR0913
     seq_repo_latest_source: dict[str, SeqRepoSource],
     extracted_activity: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,

@@ -97,7 +97,7 @@ def international_projects_partner_organization_ids_by_query(
 
 
 @asset(group_name="international_projects")
-def extracted_international_projects_activities(
+def extracted_international_projects_activities(  # noqa: PLR0913
     international_projects_sources: list[InternationalProjectsSource],
     extracted_primary_source_international_projects: ExtractedPrimarySource,
     international_projects_person_ids_by_query: dict[str, list[MergedPersonIdentifier]],

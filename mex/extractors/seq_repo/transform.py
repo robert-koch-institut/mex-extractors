@@ -17,7 +17,7 @@ from mex.common.types import (
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 
-def transform_seq_repo_activities_to_extracted_activities(
+def transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
@@ -74,7 +74,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     return unique_activities
 
 
-def transform_seq_repo_resource_to_extracted_resource(
+def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
@@ -265,7 +265,7 @@ def get_resolved_project_coordinators_and_units(
 
         for query in seq_repo_source_resolved_project_coordinators:
             query_ldap: LDAPPersonWithQuery = query
-            if (sam_account_name := query_ldap.person.sAMAccountName) and (
+            if (sam_account_name := query_ldap.person.sAMAccountName) and (  # noqa: SIM102
                 department_number := query_ldap.person.departmentNumber
             ):
                 if sam_account_name.lower() == pc.lower():

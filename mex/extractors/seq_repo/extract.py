@@ -19,7 +19,8 @@ def extract_sources() -> Generator[SeqRepoSource, None, None]:
     connector = DropApiConnector.get()
     files = connector.list_files("seq-repo")
     if len(files) != 1:
-        raise MExError(f"Expected exactly one seq-repo file, got {len(files)}")
+        msg = f"Expected exactly one seq-repo file, got {len(files)}"
+        raise MExError(msg)
     data = connector.get_file("seq-repo", files[0])
     for item in data:
         yield SeqRepoSource.model_validate(item)
@@ -45,6 +46,6 @@ def extract_source_project_coordinator(
             if name in seen:
                 continue
             seen.add(name)
-            persons = list(ldap.get_persons(mail=f"{name}@rki.de"))
+            persons = ldap.get_persons(mail=f"{name}@rki.de", limit=2)
             if len(persons) == 1 and persons[0].objectGUID:
                 yield LDAPPersonWithQuery(person=persons[0], query=name)

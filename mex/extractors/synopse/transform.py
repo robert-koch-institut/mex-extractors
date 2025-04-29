@@ -261,7 +261,7 @@ def transform_synopse_variables_to_mex_variable_groups(
 
 
 @watch()
-def transform_synopse_data_to_mex_resources(
+def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_studies: Iterable[SynopseStudy],
     synopse_projects: Iterable[SynopseProject],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
@@ -329,9 +329,7 @@ def transform_synopse_data_to_mex_resources(
         documentation_by_study_id[study.studien_id] = documentation
         keywords_plain = []
         if study.schlagworte_themen:
-            keywords_plain += [
-                word for word in re.split(r"\s*,\s*", study.schlagworte_themen)
-            ]
+            keywords_plain += list(re.split(r"\s*,\s*", study.schlagworte_themen))
         if synopse_variables:
             # add unique values of all textbox 2 entries from variable set for this
             # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
@@ -428,7 +426,7 @@ def transform_synopse_data_to_mex_resources(
 
 
 @watch()
-def transform_synopse_projects_to_mex_activities(
+def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     synopse_projects: Iterable[SynopseProject],
     extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
@@ -489,14 +487,14 @@ def transform_synopse_projects_to_mex_activities(
         ):
             activity.succeeds = [
                 cast(
-                    MergedActivityIdentifier,
+                    "MergedActivityIdentifier",
                     activity_stable_target_id_by_short_name[anschlussprojekt],
                 )
             ]
     yield from activities
 
 
-def transform_synopse_project_to_activity(
+def transform_synopse_project_to_activity(  # noqa: PLR0913
     synopse_project: SynopseProject,
     extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],

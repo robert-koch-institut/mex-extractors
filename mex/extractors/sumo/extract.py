@@ -31,9 +31,16 @@ def extract_cc1_data_valuesets() -> Generator[Cc1DataValuesets, None, None]:
     for sheet_name in excel_file.sheet_names:
         data_valuesets = excel_file.parse(sheet_name=sheet_name)
         for _, row in data_valuesets.iterrows():
-            row.replace(to_replace=np.nan, value=None, inplace=True)
-            row.replace(regex=r"^\s*$", value=None, inplace=True)
-            yield Cc1DataValuesets(**row, sheet_name=sheet_name)
+            yield Cc1DataValuesets(
+                **row.replace(
+                    to_replace=np.nan,
+                    value=None,
+                ).replace(
+                    regex=r"^\s*$",
+                    value=None,
+                ),
+                sheet_name=sheet_name,
+            )
 
 
 def extract_cc1_data_model_nokeda() -> Generator[Cc1DataModelNoKeda, None, None]:
@@ -146,11 +153,10 @@ def extract_ldap_contact_points_by_emails(
     Returns:
         Iterable of ldap actors
     """
-    connector = LDAPConnector.get()
-
+    ldap = LDAPConnector.get()
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
     return (
-        actor for email in emails for actor in connector.get_functional_accounts(email)
+        actor for mail in emails for actor in ldap.get_functional_accounts(mail=mail)
     )
 
 
@@ -165,16 +171,14 @@ def extract_ldap_contact_points_by_name(
     Returns:
         Iterable of ldap persons with query
     """
-    connector = LDAPConnector.get()
+    ldap = LDAPConnector.get()
     names = sumo_access_platform.contact[0].mappingRules[0].forValues or []
     split_names = [
         split_name for name in names for split_name in analyse_person_string(name)
     ]
     for split_name in split_names:
-        persons = list(
-            connector.get_persons(
-                surname=split_name.surname, given_name=split_name.given_name
-            )
+        persons = ldap.get_persons(
+            surname=split_name.surname, given_name=split_name.given_name, limit=2
         )
         if len(persons) == 1 and persons[0].objectGUID:
             yield LDAPPersonWithQuery(person=persons[0], query=names)

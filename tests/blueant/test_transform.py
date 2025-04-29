@@ -1,17 +1,15 @@
-from collections.abc import Hashable
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.models import ActivityMapping, ExtractedAccessPlatform
 from mex.common.testing import Joker
-from mex.common.types import (
-    Identifier,
-    MergedOrganizationIdentifier,
-    TextLanguage,
-)
+from mex.common.types import Identifier, MergedOrganizationIdentifier, TextLanguage
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable
 
 
 def test_transform_blueant_sources_to_extracted_activities(
@@ -36,7 +34,7 @@ def test_transform_blueant_sources_to_extracted_activities(
         transform_blueant_sources_to_extracted_activities(
             [blueant_source, blueant_source_without_leader],
             extracted_primary_sources["blueant"],
-            cast(dict[Hashable, list[Identifier]], stable_target_ids_by_employee_id),
+            cast("dict[Hashable, list[Identifier]]", stable_target_ids_by_employee_id),
             unit_stable_target_ids_by_synonym,
             blueant_activity,
             {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},

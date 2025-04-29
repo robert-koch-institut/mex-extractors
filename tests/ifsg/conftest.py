@@ -239,12 +239,10 @@ def extracted_primary_sources_ifsg() -> ExtractedPrimarySource:
             seed_primary_sources
         )
     )
-
     (extracted_primary_source,) = get_primary_sources_by_name(
         extracted_primary_sources,
         "ifsg",
     )
-
     return extracted_primary_source
 
 

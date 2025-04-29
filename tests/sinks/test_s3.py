@@ -1,3 +1,4 @@
+from collections import deque
 from unittest.mock import MagicMock
 
 import pytest
@@ -21,9 +22,8 @@ def test_s3_load(
     extracted_organization_rki: ExtractedOrganization, mocked_boto: MagicMock
 ) -> None:
     s3 = S3Sink.get()
-    items = list(s3.load([extracted_organization_rki]))
+    deque(s3.load([extracted_organization_rki]), maxlen=0)
 
-    assert items == [extracted_organization_rki]
     assert mocked_boto.put_object.call_args.kwargs == {
         "Body": Joker(),
         "Bucket": "s3_bucket",

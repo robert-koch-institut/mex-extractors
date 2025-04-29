@@ -1,12 +1,9 @@
-from functools import cache
-
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.sinks import load
 
 
-@cache
 def load_extracted_primary_source_by_name(
     name: str,
 ) -> ExtractedPrimarySource | None:
@@ -32,7 +29,6 @@ def load_extracted_primary_source_by_name(
     return extracted_primary_source
 
 
-@cache
 def get_extracted_primary_source_id_by_name(
     name: str,
 ) -> MergedPrimarySourceIdentifier | None:

@@ -9,15 +9,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- extract and transform from endnote xml files
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.33.0] - 2025-04-29
+
+### Added
+
+- Dagster sensor to run publisher after other extractor jobs
+
+### Changes
+
+- update mex-common to 0.59.1 reducing generator calls and unsafe caching
+- remove linting exceptions from toml and fix or skip lines directly
+
+## [0.32.3] - 2025-04-22
+
+### Changes
+
+- update mex-common to 0.58.2 to increase BackendApiSink timeout to 90s
+
+## [0.32.2] - 2025-04-17
+
+### Changes
+
+- update mex-common to 0.58.1 to log sink errors
+
+## [0.32.1] - 2025-04-16
+
+### Changes
+
+- update mex-common to 0.58.0 with reconfigured request timeout
+
+## [0.32.0] - 2025-04-14
+
+### Added
+
+- extract from endnote xml files
 
 ### Changes
 
 - split seq-repo load function into new asset
 - apply all activity filters to all extractors(except synopse) with activities
 - refactor filter functionality to filter module
-
-### Deprecated
 
 ### Removed
 
@@ -27,8 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - exclude skipped extractor from `all_extractors` job
-
-### Security
 
 ## [0.31.0] - 2025-03-24
 

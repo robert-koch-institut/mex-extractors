@@ -59,5 +59,5 @@ def filter_variables(
     return [
         row
         for row in filtered_variables
-        if row.to_transport != 0 or row.id_field_type == 3 or row.id_field_type == 4
+        if row.to_transport != 0 or row.id_field_type in {3, 4}
     ]

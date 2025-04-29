@@ -85,12 +85,10 @@ def transformed_sumo_access_platform(
     ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
         sumo_access_platform
     )
-    mex_actors_access_platform = list(
-        transform_ldap_persons_with_query_to_mex_persons(
-            ldap_contact_points_access_platform,
-            extracted_primary_source_ldap,
-            extracted_organizational_units,
-        )
+    mex_actors_access_platform = transform_ldap_persons_with_query_to_mex_persons(
+        ldap_contact_points_access_platform,
+        extracted_primary_source_ldap,
+        extracted_organizational_units,
     )
     load(mex_actors_access_platform)
 
@@ -126,10 +124,8 @@ def contact_merged_ids_by_emails_sumo(
             ]
         )
     )
-    mex_actors_resources = list(
-        transform_ldap_actors_to_mex_contact_points(
-            ldap_contact_points_resources, extracted_primary_source_ldap
-        )
+    mex_actors_resources = transform_ldap_actors_to_mex_contact_points(
+        ldap_contact_points_resources, extracted_primary_source_ldap
     )
     load(mex_actors_resources)
     return get_contact_merged_ids_by_emails(mex_actors_resources)
@@ -194,7 +190,7 @@ def extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 
 @asset(group_name="sumo")
-def transformed_resource_nokeda_sumo(
+def transformed_resource_nokeda_sumo(  # noqa: PLR0913
     extracted_resources_nokeda_sumo: dict[str, Any],
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -218,7 +214,7 @@ def transformed_resource_nokeda_sumo(
 
 
 @asset(group_name="sumo")
-def transformed_resource_feat_sumo(
+def transformed_resource_feat_sumo(  # noqa: PLR0913
     extracted_resources_feat_sumo: dict[str, Any],
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],

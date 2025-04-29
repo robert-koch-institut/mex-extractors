@@ -40,7 +40,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
             message="Data Validation extension is not supported and will be removed",
             category=UserWarning,
         )
-        df = pd.read_excel(
+        international_projects_excel = pd.read_excel(
             settings.international_projects.file_path,
             keep_default_na=False,
             parse_dates=True,
@@ -49,7 +49,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
         )
     return [
         source
-        for row in df.iterrows()
+        for row in international_projects_excel.iterrows()
         if (source := extract_international_projects_source(row[1]))
     ]
 
@@ -140,8 +140,10 @@ def extract_international_projects_project_leaders(
                 continue
             seen.add(name)
             for analysed_name in analyse_person_string(name):
-                persons = list(
-                    ldap.get_persons(analysed_name.surname, analysed_name.given_name)
+                persons = ldap.get_persons(
+                    surname=analysed_name.surname,
+                    given_name=analysed_name.given_name,
+                    limit=2,
                 )
                 if len(persons) == 1 and persons[0].objectGUID:
                     yield LDAPPersonWithQuery(person=persons[0], query=name)
