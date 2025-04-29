@@ -1,6 +1,8 @@
 from typing import Any, cast
 from urllib.parse import urljoin
 
+from requests import Response
+
 from mex.common.connector import HTTPConnector
 from mex.extractors.settings import Settings
 
@@ -43,16 +45,31 @@ class DropApiConnector(HTTPConnector):
         )
 
     def get_file(self, x_system: str, file_id: str) -> dict[str, Any]:
-        """Get the content of a file from the x_system.
+        """Get the content of a JSON file from the x_system.
 
         Args:
             x_system: name of the x_system
             file_id: name of the file
 
         Returns:
-            content of the file
+            content of the JSON file
         """
         return self.request(
+            method="GET",
+            endpoint=f"/{x_system}/{file_id}",
+        )
+
+    def get_raw_file(self, x_system: str, file_id: str) -> Response:
+        """Get the raw content of a file from the x_system.
+
+        Args:
+            x_system: name of the x_system
+            file_id: name of the file
+
+        Returns:
+            raw content of the file
+        """
+        return self.request_raw(
             method="GET",
             endpoint=f"/{x_system}/{file_id}",
         )

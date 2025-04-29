@@ -1,17 +1,23 @@
+import pytest
+
 from mex.extractors.endnote.extract import extract_endnote_records
 
 
+@pytest.mark.usefixtures(
+    "mocked_drop",
+)
 def test_extract_endnote_records() -> None:
     records = extract_endnote_records()
     expected = {
         "abstract": "abstract.",
         "authors": ["Mustermann, E.", "Mustermann, F."],
         "call_num": "call-num",
+        "custom3": "journal",
         "custom4": "C1",
-        "custom6": "C6",
+        "custom6": "Closed Access",
         "database": "1890-Converted.enl",
         "edition": "1890/01/01",
-        "electronic_resource_num": "12.3456/qad.0000000000000789",
+        "electronic_resource_num": "10.3456/qad.00",
         "isbn": "1234-5678",
         "keyword": ["keyword 1", "keyword 2"],
         "language": "eng",

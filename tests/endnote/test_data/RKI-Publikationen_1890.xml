@@ -93,14 +93,17 @@
 					</url>
 				</related-urls>
 			</urls>
+			<custom3>
+				<style>journal</style>
+			</custom3>
 			<custom4>
 				<style>C1</style>
 			</custom4>
 			<custom6>
-				<style>C6</style>
+				<style>Closed Access</style>
 			</custom6>
 			<electronic-resource-num>
-				<style>12.3456/qad.0000000000000789</style>
+				<style>10.3456/qad.00</style>
 			</electronic-resource-num>
 			<language>
 				<style>eng</style>
