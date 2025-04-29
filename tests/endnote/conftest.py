@@ -36,7 +36,7 @@ def endnote_records() -> list[EndnoteRecord]:
                 "rec_number": "1",
                 "ref_type": "Journal Article",
                 "related_urls": ["https://www.rki.de"],
-                "secondary_authors": ["Mustermann, G."],
+                "secondary_authors": ["Erika Mustermann"],
                 "secondary_title": "secondary test title",
                 "tertiary_authors": ["Mustermann, I."],
                 "title": "test title",
@@ -81,7 +81,7 @@ def extracted_endnote_persons_by_person_string(
                 "memberOf": ["hIiJpZXVppHvoyeP0QtAoS"],
             }
         ),
-        "Mustermann, G.": ExtractedPerson.model_validate(
+        "Erika Mustermann": ExtractedPerson.model_validate(
             {
                 "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
                 "identifierInPrimarySource": "00000000-0000-4000-8000-000000000001",
