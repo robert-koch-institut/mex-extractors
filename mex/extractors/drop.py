@@ -38,7 +38,7 @@ class DropApiConnector(HTTPConnector):
             endpoint=f"/{x_system}",
         )
         return cast(
-            list[str],
+            "list[str]",
             response_json["entity-types"],
         )
 
