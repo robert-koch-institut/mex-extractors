@@ -17,21 +17,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - enabled @asset_checks and additional usage of dagster's context an more features
 
 
-### Changes
+- Dagster sensor to run Publisher after other extractor jobs
 
-- split seq-repo load function into new asset
+### Changes
 
 ### Deprecated
 
 ### Removed
 
+### Fixed
+
+### Security
+
+## [0.32.3] - 2025-04-22
+
+### Changes
+
+- update mex-common to 0.58.2 to increase BackendApiSink timeout t0 90s(from 30s)
+
+## [0.32.2] - 2025-04-17
+
+### Changes
+
+- update mex-common to 0.58.1 to log sink errors
+
+## [0.32.1] - 2025-04-16
+
+### Changes
+
+- update mex-common to 0.58.0 with reconfigured request timeout
+
+## [0.32.0] - 2025-04-14
+
+### Added
+
+- extract from endnote xml files
+
+### Changes
+
+- split seq-repo load function into new asset
+- apply all activity filters to all extractors(except synopse) with activities
+- refactor filter functionality to filter module
+
+### Removed
+
 - removed RDMO unused extractor
+- BREAKING: remove all activity filter rules from settings
 
 ### Fixed
 
 - exclude skipped extractor from `all_extractors` job
-
-### Security
 
 ## [0.31.0] - 2025-03-24
 

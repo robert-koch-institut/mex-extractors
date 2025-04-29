@@ -1,6 +1,6 @@
 [project]
 name = "mex-extractors"
-version = "0.31.0"
+version = "0.32.3"
 description = "ETL pipelines for the RKI Metadata Exchange."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -13,8 +13,9 @@ dependencies = [
     "dagster-postgres>=0.25,<1",
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
+    "defusedxml>=0.7,<1",
     "faker>=37,<38",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.55.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.58.2",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",
@@ -36,6 +37,7 @@ optional-dependencies.dev = [
     "ruff>=0.9,<1",
     "sphinx>=8,<9",
     "types-beautifulsoup4>=4,<5",
+    "types-defusedxml>=0.7,<1",
     "types-pytz>=2025,<2026",
     "types-pyyaml>=6,<7",
     "types-requests>=2,<3",
@@ -48,6 +50,7 @@ biospecimen = "mex.extractors.biospecimen.main:run"
 blueant = "mex.extractors.blueant.main:run"
 confluence-vvt = "mex.extractors.confluence_vvt.main:run"
 datscha-web = "mex.extractors.datscha_web.main:run"
+endnote = "mex.extractors.endnote.main:run"
 ff-projects = "mex.extractors.ff_projects.main:run"
 grippeweb = "mex.extractors.grippeweb.main:run"
 ifsg = "mex.extractors.ifsg.main:run"
@@ -222,5 +225,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.4.3"]
+requires = ["pdm-backend==2.4.4"]
 build-backend = "pdm.backend"

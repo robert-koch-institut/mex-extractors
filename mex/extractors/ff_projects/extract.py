@@ -7,7 +7,7 @@ from typing import Any
 import pandas as pd
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
 from mex.common.types import (
@@ -131,25 +131,6 @@ def extract_ff_projects_source(row: "pd.Series[Any]") -> FFProjectsSource | None
         zuwendungs_oder_auftraggeber=zuwendungs_oder_auftraggeber,
         lfd_nr=lfd_nr,
     )
-
-
-def filter_out_duplicate_source_ids(
-    sources: Iterable[FFProjectsSource],
-) -> Generator[FFProjectsSource, None, None]:
-    """Remove duplicate `lfd_nr`s from the given sources.
-
-    Args:
-        sources: Iterable of FF Projects sources
-
-    Returns:
-        Filtered FF Projects sources
-    """
-    sources = list(sources)
-    lfd_nrs = [source.lfd_nr for source in sources]
-
-    for source in sources:
-        if lfd_nrs.count(source.lfd_nr) == 1:
-            yield source
 
 
 @cache

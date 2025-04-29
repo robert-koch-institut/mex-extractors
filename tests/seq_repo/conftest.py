@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -80,8 +80,11 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 @pytest.fixture
 def seq_repo_latest_sources(
     seq_repo_sources: list[SeqRepoSource],
+    extracted_primary_source_seq_repo: ExtractedPrimarySource,
 ) -> dict[str, SeqRepoSource]:
-    return filter_sources_on_latest_sequencing_date(seq_repo_sources)
+    return filter_sources_on_latest_sequencing_date(
+        seq_repo_sources, extracted_primary_source_seq_repo
+    )
 
 
 @pytest.fixture

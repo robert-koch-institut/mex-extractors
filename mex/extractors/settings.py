@@ -2,11 +2,13 @@ from pydantic import AnyUrl, Field, SecretStr
 from pydantic_core import Url
 
 from mex.common.settings import BaseSettings
+from mex.common.types import AssetsPath
 from mex.extractors.artificial.settings import ArtificialSettings
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
 from mex.extractors.datscha_web.settings import DatschaWebSettings
+from mex.extractors.endnote.settings import EndnoteSettings
 from mex.extractors.ff_projects.settings import FFProjectsSettings
 from mex.extractors.grippeweb.settings import GrippewebSettings
 from mex.extractors.ifsg.settings import IFSGSettings
@@ -23,6 +25,14 @@ from mex.extractors.wikidata.settings import WikidataSettings
 class Settings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
 
+    all_filter_mapping_path: AssetsPath = Field(
+        AssetsPath("mappings/__all__"),
+        description=(
+            "Path to the directory with the biospecimen mapping files containing the "
+            "default values, absolute path or relative to `assets_dir`."
+        ),
+    )
+
     skip_extractors: list[str] = Field(
         [],
         description="Skip execution of these extractors in dagster",
@@ -32,21 +42,6 @@ class Settings(BaseSettings):
         ["MergedPrimarySource", "MergedConsent", "MergedPerson"],
         description="Skip merged items with these types",
         validation_alias="MEX_SKIP_MERGED_ITEMS",
-    )
-    skip_partners: list[str] = Field(
-        ["test"],
-        description="Skip projects with these external partners",
-        validation_alias="MEX_SKIP_PARTNERS",
-    )
-    skip_units: list[str] = Field(
-        ["IT", "PRAES", "ZV"],
-        description="Skip projects with these responsible units",
-        validation_alias="MEX_SKIP_UNITS",
-    )
-    skip_years_before: int = Field(
-        1970,
-        description="Skip projects conducted before this year",
-        validation_alias="MEX_SKIP_YEARS_BEFORE",
     )
     drop_api_key: SecretStr = Field(
         SecretStr("dummy_admin_key"),
@@ -92,6 +87,7 @@ class Settings(BaseSettings):
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
     datscha_web: DatschaWebSettings = DatschaWebSettings()
+    endnote: EndnoteSettings = EndnoteSettings()
     ff_projects: FFProjectsSettings = FFProjectsSettings()
     grippeweb: GrippewebSettings = GrippewebSettings()
     ifsg: IFSGSettings = IFSGSettings()

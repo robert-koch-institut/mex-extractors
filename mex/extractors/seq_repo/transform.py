@@ -1,4 +1,4 @@
-from mex.common.ldap.models.person import LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
