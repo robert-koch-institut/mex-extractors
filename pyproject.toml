@@ -15,7 +15,7 @@ dependencies = [
     "dagster>=1,<2",
     "defusedxml>=0.7,<1",
     "faker>=37,<38",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1846-fix-caching",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.59.0",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
     "pandas>=2,<3",
