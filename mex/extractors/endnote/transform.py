@@ -242,12 +242,16 @@ def extract_endnote_bibliographic_resource(
             else None
         )
         publisher: list[MergedOrganizationIdentifier] = []
-        if publisher_org := get_wikidata_extracted_organization_id_by_name(
-            record.publisher
+        if record.publisher and (
+            publisher_org := get_wikidata_extracted_organization_id_by_name(
+                record.publisher
+            )
         ):
             publisher.append(publisher_org)
-        if publisher_org := get_wikidata_extracted_organization_id_by_name(
-            record.custom3
+        if record.custom3 and (
+            publisher_org := get_wikidata_extracted_organization_id_by_name(
+                record.custom3
+            )
         ):
             publisher.append(publisher_org)
         repository_url = record.related_urls[0]
