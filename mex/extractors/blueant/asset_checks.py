@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.pipeline import (
     AssetCheckExecutionContext,
@@ -39,7 +41,7 @@ def asset2_get_blueant_organizations_names(
     context: AssetExecutionContext,
     asset1_get_blueant_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> list[str]:
-    """Test asset 2 following directly after passedful run of asset1_get_blueant_organizations(). Takes output of asset1 as input."""
+    """Test asset follows directly after succesfull run of asset1."""
     organization_names = list(asset1_get_blueant_organizations.keys())
     context.add_asset_metadata(metadata={"num_items": len(organization_names)})
     return organization_names
@@ -47,7 +49,7 @@ def asset2_get_blueant_organizations_names(
 
 @asset(group_name="blueant")
 def asset_1_num_items(context: AssetExecutionContext) -> int | None:
-    """Check as an individual and independent asset for accessing and checking details of previous runs from asset1_get_blueant_organizations()."""
+    """Individual and independent asset for checking details of previous runs."""
     instance = context.instance
     event = instance.get_latest_materialization_event(
         AssetKey("asset1_get_blueant_organizations")
@@ -105,13 +107,13 @@ def check_asset1_metadata(context: AssetCheckExecutionContext) -> AssetCheckResu
 
 @asset_check(asset="asset1_get_blueant_organizations", blocking=True)
 def check_num_items_threshold(context: AssetCheckExecutionContext) -> AssetCheckResult:
-    """Check for asset1_get_blueant_organizations() whether computed asset reaches a certain threshold. If not error will be thrown and following assets wont be executed."""
+    """Check for asset1_get_blueant_organizations() a certain threshold."""
     event = context.instance.get_latest_materialization_event(
         AssetKey("asset1_get_blueant_organizations")
     )
     num_items = event.asset_materialization.metadata["num_items"].value
 
-    passed = num_items >= 5
+    passed = num_items >= 5  # noqa: PLR2004
 
     return AssetCheckResult(
         passed=passed,
@@ -124,7 +126,7 @@ def check_num_items_threshold(context: AssetCheckExecutionContext) -> AssetCheck
 def check_asset1_num_items_last_5_avg(
     context: AssetCheckExecutionContext,
 ) -> AssetCheckResult:
-    """Checking the avg of last 5 materilizations of asset1_get_blueant_organizations(). If it fails, following assets will be stopped."""
+    """Checking the avg of last 5 materilizations of asset1. Stops pipeline if Error."""
     events = context.instance.get_event_records(
         EventRecordsFilter(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
@@ -144,7 +146,7 @@ def check_asset1_num_items_last_5_avg(
     else:
         avg_num_items = 0
 
-    passed = avg_num_items >= 5
+    passed = avg_num_items >= 5  # noqa: PLR2004
 
     return AssetCheckResult(
         passed=passed,
