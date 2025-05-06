@@ -122,7 +122,7 @@ def get_values(
     """
     if resource is not None:
         field_values = resource.loc[resource[key_col] == field_name][val_col]
-        if all(field_values.isnull()):
+        if all(field_values.isnull()):  # noqa: PD003
             return None
         return get_clean_string(field_values)
     return None

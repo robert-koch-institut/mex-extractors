@@ -82,17 +82,17 @@ def extracted_mex_persons_voxco(
     ldap_persons = extract_ldap_persons_voxco(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
-    mex_persons = list(
-        transform_ldap_persons_to_mex_persons(
-            ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
-        )
+    mex_persons = transform_ldap_persons_to_mex_persons(
+        ldap_persons,
+        extracted_primary_source_ldap,
+        extracted_organizational_units,
     )
     load(mex_persons)
     return mex_persons
 
 
 @asset(group_name="voxco")
-def extracted_voxco_resources(
+def extracted_voxco_resources(  # noqa: PLR0913
     voxco_resource_mappings: list[dict[str, Any]],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier

@@ -1,7 +1,8 @@
 from collections.abc import Generator
-from functools import cache
 from typing import Any
 from urllib.parse import urljoin
+
+import requests
 
 from mex.common.connector import HTTPConnector
 from mex.common.exceptions import MExError
@@ -24,7 +25,6 @@ class BlueAntConnector(HTTPConnector):
         api_key = settings.blueant.api_key.get_secret_value()
         self.session.headers["Authorization"] = f"Bearer {api_key}"
 
-    @cache  # noqa: B019
     def _get_json_from_api(self, relative_url: str) -> dict[str, Any]:
         """Get json from blueant api.
 
@@ -38,7 +38,10 @@ class BlueAntConnector(HTTPConnector):
             Parsed JSON body of the response
         """
         response = self.request("GET", relative_url)
-        if response.get("status", {}).get("code", 200) >= 400:
+        if (
+            response.get("status", {}).get("code", requests.codes["ok"])
+            >= requests.codes["bad"]
+        ):
             raise MExError(response)
         return response
 

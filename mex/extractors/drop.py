@@ -33,14 +33,8 @@ class DropApiConnector(HTTPConnector):
         Returns:
             list of available filenames for the x_system
         """
-        response_json = self.request(
-            method="GET",
-            endpoint=f"/{x_system}",
-        )
-        return cast(
-            list[str],
-            response_json["entity-types"],
-        )
+        response_json = self.request(method="GET", endpoint=f"/{x_system}")
+        return cast("list[str]", response_json["entity-types"])
 
     def get_file(self, x_system: str, file_id: str) -> dict[str, Any]:
         """Get the content of a file from the x_system.
@@ -52,7 +46,4 @@ class DropApiConnector(HTTPConnector):
         Returns:
             content of the file
         """
-        return self.request(
-            method="GET",
-            endpoint=f"/{x_system}/{file_id}",
-        )
+        return self.request(method="GET", endpoint=f"/{x_system}/{file_id}")

@@ -7,8 +7,8 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPrimarySource,
+    MappingField,
 )
-from mex.common.models.base.mapping import MappingField
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -24,7 +24,7 @@ from mex.extractors.international_projects.models.source import (
 from mex.extractors.sinks import load
 
 
-def transform_international_projects_source_to_extracted_activity(
+def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0913
     source: InternationalProjectsSource,
     international_projects_activity: ActivityMapping,
     extracted_primary_source: ExtractedPrimarySource,
@@ -145,7 +145,7 @@ def transform_international_projects_source_to_extracted_activity(
 
 
 @watch()
-def transform_international_projects_sources_to_extracted_activities(
+def transform_international_projects_sources_to_extracted_activities(  # noqa: PLR0913
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
     extracted_primary_source: ExtractedPrimarySource,
@@ -208,7 +208,7 @@ def get_theme_for_activity_or_topic(
     """
     themes_dict_from_mapping: dict[str, Theme] = {}
     default_theme_from_mapping = cast(
-        list[Theme],
+        "list[Theme]",
         theme[0].mappingRules[0].setValues,
     )[0]
 
@@ -230,7 +230,7 @@ def get_theme_for_activity_or_topic(
     theme_set.add(get_theme_or_default(topic1))
     theme_set.add(get_theme_or_default(topic2))
 
-    return sorted(list(theme_set), key=lambda x: x.name)
+    return sorted(theme_set, key=lambda x: x.name)
 
 
 def get_or_create_partner_organization(

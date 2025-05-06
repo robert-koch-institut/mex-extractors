@@ -17,8 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - enabled @asset_checks and additional usage of dagster's context an more features
 
 
-- Dagster sensor to run Publisher after other extractor jobs
-
 ### Changes
 
 ### Deprecated
@@ -29,11 +27,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.33.0] - 2025-04-29
+
+### Added
+
+- Dagster sensor to run publisher after other extractor jobs
+
+### Changes
+
+- update mex-common to 0.59.1 reducing generator calls and unsafe caching
+- remove linting exceptions from toml and fix or skip lines directly
+
 ## [0.32.3] - 2025-04-22
 
 ### Changes
 
-- update mex-common to 0.58.2 to increase BackendApiSink timeout t0 90s(from 30s)
+- update mex-common to 0.58.2 to increase BackendApiSink timeout to 90s
 
 ## [0.32.2] - 2025-04-17
 

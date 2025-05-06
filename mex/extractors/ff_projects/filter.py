@@ -36,7 +36,7 @@ def filter_and_log_ff_projects_sources(
     ]
 
 
-def filter_and_log_ff_projects_source(
+def filter_and_log_ff_projects_source(  # noqa: PLR0911
     source: FFProjectsSource,
     primary_source_id: Identifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],

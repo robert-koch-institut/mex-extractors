@@ -16,8 +16,6 @@ def test_load_extracted_primary_source_by_name(
     monkeypatch: MonkeyPatch,
 ) -> None:
     """Helper finds "Wikidata" and loads, returns None for nonsense query."""
-    load_extracted_primary_source_by_name.cache_clear()
-
     query_wiki = "wikidata"
     query_nonsense = "this should give None"
 

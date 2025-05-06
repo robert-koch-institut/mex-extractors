@@ -205,7 +205,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": "1",
-        "label": [dict(language=TextLanguage("de"), value="Angeborene Fehlbildung")],
+        "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
         "stableTargetId": Joker(),
         "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["3"]],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
@@ -314,7 +314,7 @@ def test_transform_synopse_variables_to_mex_variables(
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": "1",
-        "label": [dict(language=TextLanguage("de"), value="Angeborene Fehlbildung")],
+        "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
         "stableTargetId": Joker(),
         "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["1"]],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
@@ -339,7 +339,7 @@ def test_transform_synopse_variables_to_mex_variables(
     }
 
 
-def test_transform_synopse_data_to_mex_resources(
+def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],

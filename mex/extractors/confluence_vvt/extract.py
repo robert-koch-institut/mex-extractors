@@ -45,7 +45,8 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         for item in results:
             yield item["id"]
     else:
-        raise MExError("Pagination limit reached to fetch all data pages list")
+        msg = "Pagination limit reached to fetch all data pages list"
+        raise MExError(msg)
 
 
 @watch()
@@ -90,7 +91,9 @@ def extract_confluence_vvt_authors(
             continue
         seen.add(author)
         for name in analyse_person_string(author):
-            persons = list(ldap.get_persons(name.surname, name.given_name))
+            persons = ldap.get_persons(
+                surname=name.surname, given_name=name.given_name, limit=2
+            )
             if len(persons) == 1 and persons[0].objectGUID:
                 ldap_persons.append(
                     LDAPPersonWithQuery(person=persons[0], query=author)

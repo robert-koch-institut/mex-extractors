@@ -162,7 +162,7 @@ def test_get_instrument_tool_or_apparatus(
     ]
 
 
-def test_transform_resource_disease_to_mex_resource(
+def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     resource_diseases: list[ResourceMapping],
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_ifsg_resource_state: list[ExtractedResource],
@@ -278,7 +278,7 @@ def test_transform_ifsg_data_to_mex_variable_group(
     assert extracted_variable_group[0].model_dump(exclude_defaults=True) == expected
 
 
-def test_transform_ifsg_data_to_mex_variable(
+def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
     meta_field: list[MetaField],
     extracted_ifsg_resource_disease: list[ExtractedResource],
     extracted_ifsg_variable_group: list[ExtractedVariableGroup],

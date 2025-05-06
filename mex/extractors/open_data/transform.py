@@ -2,9 +2,7 @@ import re
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import (
-    transform_ldap_person_to_mex_person,
-)
+from mex.common.ldap.transform import transform_ldap_person_to_mex_person
 from mex.common.models import (
     ConsentMapping,
     DistributionMapping,
