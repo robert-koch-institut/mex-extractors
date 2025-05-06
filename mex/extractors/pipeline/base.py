@@ -16,6 +16,7 @@ from dagster import (
     SensorEvaluationContext,
     SkipReason,
     define_asset_job,
+    load_asset_checks_from_package_module,
     load_assets_from_package_module,
     sensor,
 )
@@ -105,6 +106,8 @@ def load_job_definitions() -> Definitions:
 
     resources = {"io_manager": FilesystemIOManager()}
     assets = cast("Sequence[AssetsDefinition]", load_assets_from_package_module(mex))
+    asset_checks = load_asset_checks_from_package_module(mex)
+
     extractor_group_names = {
         group
         for asset in assets
@@ -151,6 +154,7 @@ def load_job_definitions() -> Definitions:
 
     return Definitions(
         assets=assets,
+        asset_checks=asset_checks,
         jobs=jobs,
         resources=resources,
         schedules=schedules,
