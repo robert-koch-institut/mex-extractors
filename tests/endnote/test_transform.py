@@ -7,7 +7,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
 )
 from mex.common.testing import Joker
-from mex.common.types import MergedOrganizationalUnitIdentifier
+from mex.common.types import MergedOrganizationalUnitIdentifier, TextLanguage
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
@@ -62,6 +62,7 @@ def test_extract_endnote_consents(
 @pytest.mark.parametrize(
     ("electronic_resource_num", "expected_doi"),
     [
+        ("https://edoc.rki.de/handle/abc", None),
         ("https://doi.org/10.3456/qad.00", "https://doi.org/10.3456/qad.00"),
         ("10.3456/qad.00", "https://doi.org/10.3456/qad.00"),
         ("abcdef", None),
@@ -94,7 +95,7 @@ def test_extract_endnote_bibliographic_resource(
     )
 
     assert bibliographic_resources[0].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources["endnote"].stableTargetId),
         "identifierInPrimarySource": "1890-Converted.enl\\n1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "doi": "https://doi.org/10.3456/qad.00",
@@ -105,19 +106,23 @@ def test_extract_endnote_bibliographic_resource(
         "repositoryURL": {"url": "https://www.rki.de"},
         "volume": "5",
         "creator": ["ccSc9u7Kjps1nNBxTw7y3l"],
-        "title": [{"value": "test title", "language": "en"}],
-        "abstract": [{"value": "abstract.", "language": "en"}],
+        "title": [{"value": "test title", "language": TextLanguage.EN}],
+        "titleOfSeries": [
+            {"value": "full-title", "language": TextLanguage.EN},
+            {"value": "secondary test title", "language": TextLanguage.EN},
+        ],
+        "abstract": [{"value": "abstract.", "language": TextLanguage.EN}],
         "bibliographicResourceType": [
-            "https://mex.rki.de/item/bibliographic-resource-type-7"
+            "https://mex.rki.de/item/bibliographic-resource-type-2"
         ],
         "contributingUnit": ["bFQoRhcVH5DHU8"],
         "editor": ["ccSc9u7Kjps1nNBxTw7y3l"],
         "editorOfSeries": ["ccSc9u7Kjps1nNBxTw7y3l"],
         "isbnIssn": ["1234-5678"],
-        "journal": [{"value": "Journal Article full-title", "language": "en"}],
+        "journal": [{"value": "Book Section full-title", "language": TextLanguage.EN}],
         "keyword": [
-            {"value": "keyword 1", "language": "en"},
-            {"value": "keyword 2", "language": "en"},
+            {"value": "keyword 1", "language": TextLanguage.EN},
+            {"value": "keyword 2", "language": TextLanguage.EN},
         ],
         "language": ["https://mex.rki.de/item/language-2"],
         "identifier": Joker(),

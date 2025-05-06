@@ -278,13 +278,12 @@ def extract_endnote_bibliographic_resource(
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.tertiary_authors
         ]
-        try:
-            issued = [
-                TemporalEntity(f"{pub_date} {record.year}")
-                for pub_date in record.pub_dates
-            ]
-        except:  # noqa: E722
-            issued = []
+        issued: list[TemporalEntity] = []
+        for pub_date in record.pub_dates:
+            try:
+                issued.append(TemporalEntity(f"{pub_date} {record.year}"))
+            except:  # noqa: E722, S112
+                continue
 
         journal = [
             Text(value=f"{record.ref_type} {periodical}", language=text_language)

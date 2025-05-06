@@ -17,7 +17,7 @@ def endnote_records() -> list[EndnoteRecord]:
         EndnoteRecord.model_validate(
             {
                 "abstract": "abstract.",
-                "authors": ["Mustermann, J."],
+                "authors": ["Mustermann, J.", "Mustermann,, K."],
                 "call_num": "https://www.rki.de",
                 "custom3": "Robert-Koch Institut",
                 "custom4": "C1",
@@ -31,10 +31,10 @@ def endnote_records() -> list[EndnoteRecord]:
                 "number": "6",
                 "pages": "3-4",
                 "periodical": ["full-title"],
-                "pub_dates": ["Jan 1"],
-                "publisher": "publisher",
+                "pub_dates": ["Jan 1", "Mar\rApr 1"],
+                "publisher": "Robert-Koch Institut",
                 "rec_number": "1",
-                "ref_type": "Journal Article",
+                "ref_type": "Book Section",
                 "related_urls": ["https://www.rki.de"],
                 "secondary_authors": ["Erika Mustermann"],
                 "secondary_title": "secondary test title",
