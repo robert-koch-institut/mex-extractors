@@ -1,18 +1,21 @@
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.pipeline import (
+    AssetCheckExecutionContext,
     AssetCheckResult,
     AssetCheckSeverity,
+    AssetExecutionContext,
     AssetKey,
     DagsterEventType,
     EventRecordsFilter,
-    Output,
     asset,
     asset_check,
 )
 
 
 @asset(group_name="blueant")
-def asset1_get_blueant_organizations() -> Output:
+def asset1_get_blueant_organizations(
+    context: AssetExecutionContext,
+) -> dict[str, MergedOrganizationIdentifier]:
     """Returns blueant organizations."""
     data = {
         "Gemeinsamer Bundesausschuss": MergedOrganizationIdentifier(
@@ -27,24 +30,27 @@ def asset1_get_blueant_organizations() -> Output:
         ),
         "WHO Europe": MergedOrganizationIdentifier("eBof6ItMwgNiqxgHuk6ZxP"),
     }
-    return Output(value=data, metadata={"num_items": len(data)})
+    context.add_asset_metadata(metadata={"num_items": len(data)})
+    return data
 
 
 @asset(group_name="blueant")
-def asset2_get_blueant_organizations_names(asset1_get_blueant_organizations: dict):
-    """Test asset 2 following directly after successful run of asset1_get_blueant_organizations(). Takes output of asset1 as input."""
+def asset2_get_blueant_organizations_names(
+    context: AssetExecutionContext,
+    asset1_get_blueant_organizations: dict[str, MergedOrganizationIdentifier],
+) -> list[str]:
+    """Test asset 2 following directly after passedful run of asset1_get_blueant_organizations(). Takes output of asset1 as input."""
     organization_names = list(asset1_get_blueant_organizations.keys())
-    return Output(
-        value=organization_names, metadata={"num_items": len(organization_names)}
-    )
+    context.add_asset_metadata(metadata={"num_items": len(organization_names)})
+    return organization_names
 
 
 @asset(group_name="blueant")
-def asset_1_num_items(context):
+def asset_1_num_items(context: AssetExecutionContext) -> int | None:
     """Check as an individual and independent asset for accessing and checking details of previous runs from asset1_get_blueant_organizations()."""
     instance = context.instance
     event = instance.get_latest_materialization_event(
-        AssetKey(["asset1_get_blueant_organizations"])
+        AssetKey("asset1_get_blueant_organizations")
     )
 
     if event is None:
@@ -62,7 +68,9 @@ def asset_1_num_items(context):
 
 
 @asset_check(asset="asset1_get_blueant_organizations")
-def check_asset1_organization_name(asset1: dict) -> AssetCheckResult:
+def check_asset1_organization_name(
+    asset1: dict[str, MergedOrganizationIdentifier],
+) -> AssetCheckResult:
     """Checks whether the returned organization names are correct."""
     expected_keys = {
         "Gemeinsamer Bundesausschuss",
@@ -76,10 +84,10 @@ def check_asset1_organization_name(asset1: dict) -> AssetCheckResult:
 
 
 @asset_check(asset="asset1_get_blueant_organizations")
-def check_asset1_metadata(context) -> AssetCheckResult:
+def check_asset1_metadata(context: AssetCheckExecutionContext) -> AssetCheckResult:
     """Check for asset1_get_blueant_organizations() metadata values."""
     event = context.instance.get_latest_materialization_event(
-        AssetKey(["asset1_get_blueant_organizations"])
+        AssetKey("asset1_get_blueant_organizations")
     )
     previous_value = event.asset_materialization.metadata["num_items"].value
     current_value = 5
@@ -96,10 +104,10 @@ def check_asset1_metadata(context) -> AssetCheckResult:
 
 
 @asset_check(asset="asset1_get_blueant_organizations", blocking=True)
-def check_num_items_threshold(context) -> AssetCheckResult:
+def check_num_items_threshold(context: AssetCheckExecutionContext) -> AssetCheckResult:
     """Check for asset1_get_blueant_organizations() whether computed asset reaches a certain threshold. If not error will be thrown and following assets wont be executed."""
     event = context.instance.get_latest_materialization_event(
-        AssetKey(["asset1_get_blueant_organizations"])
+        AssetKey("asset1_get_blueant_organizations")
     )
     num_items = event.asset_materialization.metadata["num_items"].value
 
@@ -113,12 +121,14 @@ def check_num_items_threshold(context) -> AssetCheckResult:
 
 
 @asset_check(asset="asset1_get_blueant_organizations", blocking=True)
-def check_asset1_num_items_last_5_avg(context) -> AssetCheckResult:
+def check_asset1_num_items_last_5_avg(
+    context: AssetCheckExecutionContext,
+) -> AssetCheckResult:
     """Checking the avg of last 5 materilizations of asset1_get_blueant_organizations(). If it fails, following assets will be stopped."""
     events = context.instance.get_event_records(
         EventRecordsFilter(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
-            asset_key=AssetKey(["asset1_get_blueant_organizations"]),
+            asset_key=AssetKey("asset1_get_blueant_organizations"),
         ),
         limit=5,
     )

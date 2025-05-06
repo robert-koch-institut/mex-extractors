@@ -69,6 +69,12 @@ if TYPE_CHECKING:  # pragma: no cover
     _AssetFn = TypeVar("_AssetFn")
     _AssetCheckFn = TypeVar("_AssetCheckFn")
 
+    class AssetExecutionContext:
+        """Class for Asset Annotation Context."""
+
+    class AssetCheckExecutionContext:
+        """Class for Asset Check Annotation Context."""
+
     class AssetCheckResult:
         """Class for Assets Sanity Checks."""
 
@@ -81,9 +87,6 @@ if TYPE_CHECKING:  # pragma: no cover
 
     class AssetKey:
         """Class for setting a key for an asset."""
-
-    class Output:
-        """Class for output infos about an asset."""
 
     class EventRecordsFilter:
         """Class for output infos about an asset."""
@@ -101,12 +104,13 @@ if TYPE_CHECKING:  # pragma: no cover
 
 else:
     from dagster import (
+        AssetCheckExecutionContext,
         AssetCheckResult,
         AssetCheckSeverity,
+        AssetExecutionContext,
         AssetKey,
         DagsterEventType,
         EventRecordsFilter,
-        Output,
         asset,
         asset_check,
     )
@@ -114,12 +118,13 @@ else:
 from mex.extractors.pipeline.base import load_job_definitions, run_job_in_process
 
 __all__ = (
+    "AssetCheckExecutionContext",
     "AssetCheckResult",
     "AssetCheckSeverity",
+    "AssetExecutionContext",
     "AssetKey",
     "DagsterEventType",
     "EventRecordsFilter",
-    "Output",
     "asset",
     "asset_check",
     "load_job_definitions",
