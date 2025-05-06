@@ -2,6 +2,8 @@ import re
 import time
 from datetime import datetime
 
+from pydantic import TypeAdapter
+
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
@@ -10,8 +12,10 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
 )
+from mex.common.models.bibliographic_resource import DoiStr
 from mex.common.types import (
     UTC,
+    Language,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TemporalEntity,
@@ -50,13 +54,19 @@ def extract_endnote_persons_by_person_string(
     extracted_persons: dict[str, ExtractedPerson] = {}
     for person in unique_persons:
         if "," in person:
-            family_name, given_name = person.split(",")
-            extracted_persons[person] = ExtractedPerson(
-                identifierInPrimarySource=person,
-                hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
-                familyName=family_name,
-                givenName=given_name,
-            )
+            if len(split_name := person.split(",")) == 2 and split_name[1] not in [  # noqa: PLR2004
+                "",
+                " ",
+            ]:
+                family_name, given_name = split_name
+                extracted_persons[person] = ExtractedPerson(
+                    identifierInPrimarySource=person,
+                    hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
+                    familyName=family_name,
+                    givenName=given_name,
+                )
+            else:
+                continue
         else:
             extracted_persons[person] = ExtractedPerson(
                 identifierInPrimarySource=person,
@@ -97,6 +107,39 @@ def extract_endnote_consents(
         )
         for person in extracted_endnote_persons
     ]
+
+
+def get_doi(
+    electronic_resource_num: str | None,
+    endnote_bibliographic_resource: BibliographicResourceMapping,
+) -> str | None:
+    """Extract doi string and validate.
+
+    Args:
+        electronic_resource_num: list of electronic resource num string
+        endnote_bibliographic_resource: bibliographic resource mapping
+
+
+    Returns:
+        doi string or None
+    """
+    doi_adapter = TypeAdapter(DoiStr)
+    if doi_string := electronic_resource_num:
+        if (
+            for_value := endnote_bibliographic_resource.doi[0]  # type: ignore[index]
+            .mappingRules[1]
+            .forValues[0]
+        ) and doi_string.startswith(for_value):
+            doi = None
+        elif doi_string.startswith("10."):
+            doi = f"https://doi.org/{doi_string}"
+        else:
+            doi = doi_string
+        try:
+            doi_adapter.validate_python(doi)
+        except:  # noqa: E722
+            return None
+    return doi
 
 
 def extract_endnote_bibliographic_resource(
@@ -178,40 +221,54 @@ def extract_endnote_bibliographic_resource(
             for for_value in rule.forValues
         }
     )
-    alternate_identifier: list[str] = []
     bibliographical_resources: list[ExtractedBibliographicResource] = []
     for record in endnote_records:
-        language = language_by_language_field[record.language]
-        text_language = language.name[:2].lower()
+        language = (
+            language_by_language_field[record.language]
+            if record.language and record.language in language_by_language_field
+            else None
+        )
+        text_language = "en" if language == Language["ENGLISH"] else "de"
+        abstract = (
+            [Text(value=record.abstract, language=text_language)]
+            if record.abstract
+            else []
+        )
         access_restriction = (
             access_restriction_by_custom6[record.custom6]
-            if record.custom6
+            if record.custom6 and record.custom6 in access_restriction_by_custom6
             else access_restriction_by_custom6["default"]
         )
-        if ern_for_value in (ern := record.electronic_resource_num):
-            alternate_identifier.append(ern.replace(ern_for_value, ern_set_value))
-        if cn_for_value in (cn := record.call_num):
-            alternate_identifier.append(cn.replace(cn_for_value, cn_set_value))
-        contributing_unit = [
-            unit_stable_target_ids_by_synonym[unit]
-            for unit in record.custom4.split(";")
-            if record.custom4
+        alternate_identifier_ern = (
+            ern.replace(ern_for_value, ern_set_value)
+            if (ern := record.electronic_resource_num) and ern_for_value in ern
+            else None
+        )
+        alternate_identifier_cn = (
+            cn.replace(cn_for_value, cn_set_value)
+            if record.call_num and cn_for_value in (cn := record.call_num)
+            else None
+        )
+        alternate_identifier = [
+            aid for aid in [alternate_identifier_ern, alternate_identifier_cn] if aid
         ]
+        contributing_unit = (
+            [
+                unit_stable_target_ids_by_synonym[unit.strip()]
+                for unit in record.custom4.split(";")
+                if unit.strip() in unit_stable_target_ids_by_synonym
+            ]
+            if record.custom4
+            else []
+        )
         creator = [
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.authors
+            if author in extracted_endnote_persons_by_person_string
         ]
-        doi_string = record.electronic_resource_num
-        if (
-            for_value := endnote_bibliographic_resource.doi[0]  # type: ignore[index]
-            .mappingRules[1]
-            .forValues[0]
-        ) and doi_string.startswith(for_value):
-            doi = None
-        elif doi_string.startswith("10."):
-            doi = f"https://doi.org/{doi_string}"
-        else:
-            doi = doi_string
+        if len(creator) == 0:
+            continue
+        doi = get_doi(record.electronic_resource_num, endnote_bibliographic_resource)
         editor = [
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.secondary_authors
@@ -220,20 +277,26 @@ def extract_endnote_bibliographic_resource(
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.tertiary_authors
         ]
-        issued = [
-            TemporalEntity(f"{pub_date} {record.year}") for pub_date in record.pub_dates
-        ]
+        try:
+            issued = [
+                TemporalEntity(f"{pub_date} {record.year}")
+                for pub_date in record.pub_dates
+            ]
+        except:  # noqa: E722
+            issued = []
 
-        journal = Text(
-            value=f"{record.ref_type} {record.periodical}", language=text_language
-        )
+        journal = [
+            Text(value=f"{record.ref_type} {periodical}", language=text_language)
+            for periodical in record.periodical
+        ]
 
         keyword = [
             Text(value=keyword, language=text_language) for keyword in record.keyword
         ]
         pages = (
             record.pages
-            if (
+            if record.pages
+            and (
                 for_value := endnote_bibliographic_resource.pages[0]  # type: ignore[index]
                 .mappingRules[0]
                 .forValues[0]
@@ -254,21 +317,28 @@ def extract_endnote_bibliographic_resource(
             )
         ):
             publisher.append(publisher_org)
-        repository_url = record.related_urls[0]
+        repository_url = record.related_urls[0] if record.related_urls else []
         title_of_series = []
         if record.ref_type == "Book Section":
-            title_of_series = [
-                Text(value=record.periodical, language=text_language),
-                Text(value=record.secondary_title, language=text_language),
-            ]
+            if record.periodical:
+                title_of_series.extend(
+                    [
+                        Text(value=title, language=text_language)
+                        for title in record.periodical
+                    ]
+                )
+            if record.secondary_title:
+                title_of_series.append(
+                    Text(value=record.secondary_title, language=text_language),
+                )
         bibliographical_resources.append(
             ExtractedBibliographicResource(
-                abstract=Text(value=record.abstract, language=text_language),
+                abstract=abstract,
                 accessRestriction=access_restriction,
                 alternateIdentifier=alternate_identifier,
-                bibliographicResourceType=bibliographical_resource_type_by_ref_type[
-                    record.ref_type
-                ],
+                bibliographicResourceType=bibliographical_resource_type_by_ref_type.get(
+                    record.ref_type, []
+                ),
                 contributingUnit=contributing_unit,
                 creator=creator,
                 doi=doi,

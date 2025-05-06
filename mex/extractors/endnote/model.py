@@ -6,18 +6,18 @@ class EndnoteRecord(BaseModel):
 
     abstract: str | None
     authors: list[str]
-    call_num: str
+    call_num: str | None
     custom3: str | None
-    custom4: str
+    custom4: str | None
     custom6: str | None
     database: str | None
     edition: str | None
-    electronic_resource_num: str
+    electronic_resource_num: str | None
     isbn: str | None
     keyword: list[str]
-    language: str
+    language: str | None
     number: str | None
-    pages: str
+    pages: str | None
     periodical: list[str]
     pub_dates: list[str]
     publisher: str | None
