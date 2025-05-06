@@ -124,14 +124,15 @@ def get_doi(
         doi string or None
     """
     doi_adapter = TypeAdapter(DoiStr)
+    doi = None
     if doi_string := electronic_resource_num:
         if (
             for_value := endnote_bibliographic_resource.doi[0]  # type: ignore[index]
             .mappingRules[1]
             .forValues[0]
         ) and doi_string.startswith(for_value):
-            doi = None
-        elif doi_string.startswith("10."):
+            return doi
+        if doi_string.startswith("10."):
             doi = f"https://doi.org/{doi_string}"
         else:
             doi = doi_string

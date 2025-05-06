@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
@@ -11,6 +13,7 @@ from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
     extract_endnote_consents,
     extract_endnote_persons_by_person_string,
+    get_doi,
 )
 
 
@@ -54,6 +57,25 @@ def test_extract_endnote_consents(
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
+
+
+@pytest.mark.parametrize(
+    ("electronic_resource_num", "expected_doi"),
+    [
+        ("https://doi.org/10.3456/qad.00", "https://doi.org/10.3456/qad.00"),
+        ("10.3456/qad.00", "https://doi.org/10.3456/qad.00"),
+        ("abcdef", None),
+        (None, None),
+    ],
+)
+def test_get_doi(
+    electronic_resource_num: str | None,
+    expected_doi: str | None,
+    endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
+) -> None:
+    doi = get_doi(electronic_resource_num, endnote_bibliographic_resource_mapping)
+
+    assert doi == expected_doi
 
 
 def test_extract_endnote_bibliographic_resource(
