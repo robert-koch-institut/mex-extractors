@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from enum import Enum
 from functools import partial
+from pathlib import Path
 from typing import Any, cast, get_args, get_origin
 
 from annotated_types import MaxLen, MinLen
@@ -127,7 +128,7 @@ class BuilderProvider(PythonFakerProvider):
 class IdentityProvider(BaseFakerProvider):
     """Faker provider that creates identities and helps with referencing them."""
 
-    def __init__(self, factory: Any, identities: IdentityMap) -> None:
+    def __init__(self, factory: Any, identities: IdentityMap) -> None:  # noqa: ANN401
         """Create and persist identities for all entity types."""
         super().__init__(factory)
         self._identities = identities
@@ -221,11 +222,11 @@ class PatternProvider(BaseFakerProvider):
         r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$": "http://id.nlm.nih.gov/mesh/{}"
     }
 
-    def __init__(self, factory: Any) -> None:
+    def __init__(self, factory: Any) -> None:  # noqa: ANN401
         """Initialize the provider by loading the contents of the `mesh_file`."""
         super().__init__(factory)
         settings = Settings.get()
-        with open(str(settings.artificial.mesh_file), mode="br") as fh:
+        with Path(str(settings.artificial.mesh_file)).open(mode="br") as fh:
             self._mesh_ids = re.findall(
                 r"UI = (D[0-9]+)", fh.read().decode(errors="ignore")
             )

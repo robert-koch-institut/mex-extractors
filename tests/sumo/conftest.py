@@ -68,13 +68,15 @@ def unit_merged_ids_by_synonym() -> dict[str, MergedOrganizationalUnitIdentifier
 
 
 @pytest.fixture
-def contact_merged_ids_by_emails():
+def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
     """Return dummy merged ids for units for testing."""
     return {"email@email.de": MergedContactPointIdentifier.generate(seed=51)}
 
 
 @pytest.fixture
-def organizations_stable_target_ids_by_synonym():
+def organizations_stable_target_ids_by_synonym() -> dict[
+    str, MergedOrganizationalUnitIdentifier
+]:
     """Return dummy merged ids for units for testing."""
     return {
         "Register": MergedOrganizationalUnitIdentifier.generate(seed=60),

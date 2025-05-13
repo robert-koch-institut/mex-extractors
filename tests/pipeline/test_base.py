@@ -13,7 +13,7 @@ from mex.extractors.pipeline.base import (
 )
 
 
-def test_monitor_skip_if_jobs_are_running():
+def test_monitor_skip_if_jobs_are_running() -> None:
     publisher_run = MagicMock(end_time=1000)  # unix time notation
     extractor_run = MagicMock(end_time=1100)  # newer than publisher
 
@@ -42,7 +42,7 @@ def test_monitor_skip_if_jobs_are_running():
             )
 
 
-def test_monitor_skip_if_no_complete_run():
+def test_monitor_skip_if_no_complete_run() -> None:
     publisher_run = MagicMock(end_time=1000)
     extractor_run = MagicMock(end_time=900)  # older than publisher
 
@@ -67,7 +67,7 @@ def test_monitor_skip_if_no_complete_run():
             )
 
 
-def test_monitor_triggers_if_new_jobs_finished():
+def test_monitor_triggers_if_new_jobs_finished() -> None:
     publisher_run = MagicMock(end_time=1000)
     extractor_run = MagicMock(end_time=1100)  # newer than publisher
 

@@ -36,8 +36,8 @@ def test_fetch_all_data_page_ids_mocked(
 ) -> None:
     # first response with mocked test data
     response1 = Mock(spec=Response, status_code=200)
-    with open(TEST_DATA_DIR / "fetch_all_data_page_ids.json") as f:
-        response1.json.return_value = json.load(f)
+    with (TEST_DATA_DIR / "fetch_all_data_page_ids.json").open() as fh:
+        response1.json.return_value = json.load(fh)
 
     # second response with empty data
     response2 = Mock(spec=Response, status_code=200)
