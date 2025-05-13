@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - switch `asset` decorator over to dagster for proper typing
+- update mex-common to 0.60.0
 
 ### Deprecated
 
