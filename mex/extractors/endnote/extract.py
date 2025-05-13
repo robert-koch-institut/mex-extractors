@@ -16,8 +16,8 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     settings = Settings.get()
     files: list[ET.ElementTree] = []
     for file in Path(settings.endnote.raw_data_path).glob("*.xml"):
-        with open(file, encoding="utf-8") as f:
-            files.append(defused_ET.parse(f))
+        with file.open(encoding="utf-8") as fh:
+            files.append(defused_ET.parse(fh))
     return [
         EndnoteRecord.model_validate(
             {

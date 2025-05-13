@@ -137,7 +137,9 @@ def test_builder_provider_inner_type_and_pattern(faker: Faker) -> None:
     ],
 )
 def test_builder_provider_field_value(
-    faker: Faker, annotation: Any, expected: Any
+    faker: Faker,
+    annotation: Any,  # noqa: ANN401
+    expected: Any,  # noqa: ANN401
 ) -> None:
     field = FieldInfo.from_annotation(annotation)
     identity = Mock(stableTargetId="baaiaaaaaaaboi")
