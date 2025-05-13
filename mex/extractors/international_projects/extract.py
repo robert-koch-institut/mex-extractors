@@ -1,6 +1,7 @@
 import re
 import warnings
 from collections.abc import Generator, Iterable
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
@@ -194,7 +195,7 @@ def extract_international_projects_partner_organizations(
 
 
 def get_temporal_entity_from_cell(
-    cell_value: Any,
+    cell_value: int | str | datetime,
 ) -> TemporalEntity | YearMonthDay | None:
     """Try to extract a temporal_entity from a cell.
 
