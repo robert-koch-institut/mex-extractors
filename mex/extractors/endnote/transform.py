@@ -221,12 +221,7 @@ def extract_endnote_bibliographic_resource(
     )
     bibliographical_resources: list[ExtractedBibliographicResource] = []
     for record in endnote_records:
-        language = (
-            language_by_language_field[record.language]
-            if record.language and record.language in language_by_language_field
-            else None
-        )
-        text_language = "en" if language == Language["ENGLISH"] else "de"
+        text_language = language_by_language_field.get(record.language, TextLanguage.EN)
         abstract = (
             [Text(value=record.abstract, language=text_language)]
             if record.abstract
