@@ -14,19 +14,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- switch `asset` decorator over to dagster for proper typing
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [0.34.0] - 2025-05-13
+
+### Added
+
+- enabled scanning for asset_checks for dagster definitions
+
+### Changes
+
+- switch `asset` decorator over to dagster for proper typing
+- update mex-common to 0.60.0
+
+### Fixed
+
 - always load parent before child
 - ifsg keyword extraction
 - voxco variable lookup
-
-### Security
 
 ## [0.33.0] - 2025-04-29
 
