@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ifsg keyword extraction
+- voxco variable lookup
+
 ### Security
 
 ## [0.33.0] - 2025-04-29
