@@ -11,7 +11,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     Text,
-    TextLanguage,
 )
 from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
 from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
@@ -82,7 +81,6 @@ def transform_resource_state_to_mex_resource(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    meta_disease: list[MetaDisease],
 ) -> list[ExtractedResource]:
     """Transform resource state to mex resource.
 
@@ -105,27 +103,7 @@ def transform_resource_state_to_mex_resource(
         value.forValues[0]: value.setValues  # type: ignore[index]
         for value in resource_state.documentation[0].mappingRules
     }
-    keyword = sorted(
-        set(
-            (resource_state.keyword[0].mappingRules[0].setValues or [])
-            + [
-                Text(value=row.disease_name, language=TextLanguage.DE)
-                for row in meta_disease
-                if row.disease_name
-            ]
-            + [
-                Text(value=row.disease_name_en, language=TextLanguage.EN)
-                for row in meta_disease
-                if row.disease_name_en
-            ]
-            + [
-                Text(value=row.specimen_name, language=TextLanguage.DE)
-                for row in meta_disease
-                if row.specimen_name
-            ]
-        ),
-        key=lambda x: x.value,
-    )
+    keyword = resource_state.keyword[0].mappingRules[0].setValues
     spatial_by_bundesland_id = None
     if resource_state.spatial:
         spatial_by_bundesland_id = {
