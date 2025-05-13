@@ -135,7 +135,7 @@ def get_doi(
             doi = doi_string
         try:
             doi_adapter.validate_python(doi)
-        except:  # noqa: E722
+        except ValidationError:
             return None
     return doi
 
