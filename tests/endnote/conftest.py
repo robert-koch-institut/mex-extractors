@@ -59,7 +59,7 @@ def endnote_consent_mapping(settings: Settings) -> ConsentMapping:
 def endnote_bibliographic_resource_mapping(
     settings: Settings,
 ) -> BibliographicResourceMapping:
-    """Return confluence-vvt activity mapping from assets."""
+    """Return endnote bibliographic resource mapping from assets."""
     return BibliographicResourceMapping.model_validate(
         load_yaml(settings.endnote.mapping_path / "bibliographic-resource.yaml")
     )
