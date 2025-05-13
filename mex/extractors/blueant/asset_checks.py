@@ -1,7 +1,4 @@
-# mypy: ignore-errors
-
-from mex.common.types import MergedOrganizationIdentifier
-from mex.extractors.pipeline import (
+from dagster import (
     AssetCheckExecutionContext,
     AssetCheckResult,
     AssetCheckSeverity,
@@ -12,6 +9,8 @@ from mex.extractors.pipeline import (
     asset,
     asset_check,
 )
+
+from mex.common.types import MergedOrganizationIdentifier
 
 
 @asset(group_name="blueant")

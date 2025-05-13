@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
@@ -15,7 +17,7 @@ from mex.common.models import (
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator,
     extract_sources,

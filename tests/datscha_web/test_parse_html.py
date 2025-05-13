@@ -14,8 +14,11 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
 def test_parse_item_urls_from_overview_html() -> None:
-    with open(TEST_DATA_DIR / "overview.htm", "rb") as handle:
-        urls = parse_item_urls_from_overview_html(handle.read(), "https://datscha/")
+    with (TEST_DATA_DIR / "overview.htm").open() as handle:
+        urls = parse_item_urls_from_overview_html(
+            handle.read(),
+            "https://datscha/",
+        )
     assert urls == [
         "https://datscha/verzeichnis_detail.php?vavs_id=39&option=Anzeigen",
         "https://datscha/verzeichnis_detail.php?vavs_id=46&option=Anzeigen",
@@ -23,7 +26,7 @@ def test_parse_item_urls_from_overview_html() -> None:
 
 
 def test_parse_single_item_html() -> None:
-    with open(TEST_DATA_DIR / "single_entry.htm", "rb") as handle:
+    with (TEST_DATA_DIR / "single_entry.htm").open() as handle:
         details = parse_single_item_html(
             handle.read(),
             "verzeichnis_detail.php?vavs_id=39&option=Anzeigen",
@@ -75,7 +78,7 @@ def test_parse_single_item_html() -> None:
 
 
 def test_parse_single_entry_minimal() -> None:
-    with open(TEST_DATA_DIR / "single_entry_minimal.htm", "rb") as handle:
+    with (TEST_DATA_DIR / "single_entry_minimal.htm").open() as handle:
         details = parse_single_item_html(
             handle.read(),
             "verzeichnis_detail.php?vavs_id=39&option=Anzeigen",

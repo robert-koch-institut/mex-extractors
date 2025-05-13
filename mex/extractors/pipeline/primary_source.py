@@ -1,10 +1,11 @@
+from dagster import asset
+
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     get_primary_sources_by_name,
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
-from mex.extractors.pipeline import asset
 from mex.extractors.sinks import load
 
 

@@ -44,7 +44,7 @@ def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
             yield source
 
 
-def get_temporal_entity_from_cell(cell_value: Any) -> TemporalEntity | None:
+def get_temporal_entity_from_cell(cell_value: Any) -> TemporalEntity | None:  # noqa: ANN401
     """Try to extract a temporal_entity from a cell.
 
     Args:
@@ -62,7 +62,7 @@ def get_temporal_entity_from_cell(cell_value: Any) -> TemporalEntity | None:
     return None
 
 
-def get_string_from_cell(cell_value: Any) -> str:
+def get_string_from_cell(cell_value: Any) -> str:  # noqa: ANN401
     """Try to extract the string value from a cell by truncating floats.
 
     Args:
@@ -76,7 +76,7 @@ def get_string_from_cell(cell_value: Any) -> str:
     return str(cell_value)
 
 
-def get_optional_string_from_cell(cell_value: Any) -> str | None:
+def get_optional_string_from_cell(cell_value: Any) -> str | None:  # noqa: ANN401
     """Try to extract the string value from a cell by truncating floats.
 
     Args:

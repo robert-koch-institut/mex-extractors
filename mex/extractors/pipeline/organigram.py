@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.extract import (
     extract_organigram_units,
@@ -7,7 +9,6 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.pipeline import asset
 from mex.extractors.sinks import load
 
 

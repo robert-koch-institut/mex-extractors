@@ -35,15 +35,14 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
     def get_file_mocked(
         _self: DropApiConnector, x_system: str, file_id: str
     ) -> dict[str, Any]:
-        with open(
-            (
-                Path(__file__).parents[2]
-                / "tests"
-                / x_system.replace("-", "_")
-                / "test_data"
-                / file_id
-            ).with_suffix(".json")
-        ) as handle:
+        path = (
+            Path(__file__).parents[2]
+            / "tests"
+            / x_system.replace("-", "_")
+            / "test_data"
+            / file_id
+        ).with_suffix(".json")
+        with path.open() as handle:
             return json.load(handle)
 
     monkeypatch.setattr(

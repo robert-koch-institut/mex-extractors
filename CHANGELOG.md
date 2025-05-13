@@ -8,14 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Research Quality Control checks for extracted data in production
-  - comparison of data across pipeline executions in asset checks
-  - thresholding in checks
-  - stop downstream assets if checks fails
-  - examples for extractor blueant in asset_checks.py
 
-- enabled @asset_checks and additional usage of dagster's context an more features
-
+- enabled @asset_checks and additional usage of dagster's context
+- added exemplary assets checks for blueant extractor
 
 ### Changes
 

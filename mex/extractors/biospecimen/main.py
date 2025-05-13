@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
 from mex.common.models import (
@@ -20,7 +22,7 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml

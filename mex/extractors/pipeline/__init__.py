@@ -4,17 +4,13 @@ We use dagster (https://dagster.io) to orchestrate the ETL processes of the
 RKI Metadata Exchange. Dagster allows us to structure our code, visualize dependencies
 between different data sources and schedule the execution of pipelines.
 
-In order to decrease the vendor-lock, we try to restrict the use of dagster APIs to the
-`mex.extractors.pipeline` module and avoid directly importing dagster modules from the
-extractors.
-
 software-defined assets
 -----------------------
 
 Each pipeline should have a `main` module, e.g. `mex.extractors.artificial.main`, that
 contains all steps needed for a successful execution. Each "step" should be marked as a
-software-defined asset using the decorator exposed by `mex.extractors.pipeline.asset`
-and should be assigned to a group with a name unique to the pipeline.
+software-defined asset using the decorator by `dagster.asset` and should be assigned to
+a group with a name unique to the pipeline.
 
     # mex/foo_system/main.py
 
@@ -61,72 +57,9 @@ Pipelines can be run in a couple of different ways:
 - run `pdm run dagster job execute -m mex -j foo_system` using the asset group name
 """
 
-from typing import TYPE_CHECKING, Any, TypeVar
-
-if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Callable
-
-    _AssetFn = TypeVar("_AssetFn")
-    _AssetCheckFn = TypeVar("_AssetCheckFn")
-
-    class AssetExecutionContext:
-        """Class for Asset Annotation Context."""
-
-    class AssetCheckExecutionContext:
-        """Class for Asset Check Annotation Context."""
-
-    class AssetCheckResult:
-        """Class for Assets Sanity Checks."""
-
-    class AssetCheckSeverity:
-        """Severity level for an AssetCheckResult.
-
-        WARN: a potential issue with the asset
-        ERROR: a definite issue with the asset
-        """
-
-    class AssetKey:
-        """Class for setting a key for an asset."""
-
-    class EventRecordsFilter:
-        """Class for output infos about an asset."""
-
-    class DagsterEventType:
-        """Class for output infos about an asset."""
-
-    def asset(**_: Any) -> Callable[[_AssetFn], _AssetFn]:
-        """Create a definition for how to compute an asset."""
-        ...
-
-    def asset_check(**_: Any) -> Callable[[_AssetCheckFn], _AssetCheckFn]:
-        """Create a definition for sanity checks for an assett."""
-        ...
-
-else:
-    from dagster import (
-        AssetCheckExecutionContext,
-        AssetCheckResult,
-        AssetCheckSeverity,
-        AssetExecutionContext,
-        AssetKey,
-        DagsterEventType,
-        EventRecordsFilter,
-        asset,
-        asset_check,
-    )
-
 from mex.extractors.pipeline.base import load_job_definitions, run_job_in_process
 
 __all__ = (
-    "AssetCheckExecutionContext",
-    "AssetCheckResult",
-    "AssetCheckSeverity",
-    "AssetExecutionContext",
-    "AssetKey",
-    "DagsterEventType",
-    "EventRecordsFilter",
-    "asset",
-    "asset_check",
     "load_job_definitions",
     "run_job_in_process",
 )
