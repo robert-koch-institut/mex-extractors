@@ -49,7 +49,7 @@ def endnote_records() -> list[EndnoteRecord]:
 
 @pytest.fixture
 def endnote_consent_mapping(settings: Settings) -> ConsentMapping:
-    """Return confluence-vvt activity mapping from assets."""
+    """Return endnote consent mapping from assets."""
     return ConsentMapping.model_validate(
         load_yaml(settings.endnote.mapping_path / "consent.yaml")
     )
