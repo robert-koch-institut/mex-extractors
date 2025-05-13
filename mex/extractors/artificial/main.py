@@ -1,3 +1,4 @@
+from dagster import asset
 from faker import Faker
 
 from mex.common.cli import entrypoint
@@ -15,7 +16,7 @@ from mex.extractors.artificial.provider import (
     TemporalEntityProvider,
     TextProvider,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 

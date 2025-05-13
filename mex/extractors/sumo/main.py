@@ -1,5 +1,7 @@
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
     transform_ldap_actors_to_mex_contact_points,
@@ -24,7 +26,7 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.extract import (

@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedPrimarySource,
@@ -7,7 +9,7 @@ from mex.extractors.endnote.extract import (
     extract_endnote_records,
 )
 from mex.extractors.endnote.model import EndnoteRecord
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 

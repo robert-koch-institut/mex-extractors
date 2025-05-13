@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import transform_ldap_actor_to_mex_contact_point
@@ -38,8 +40,7 @@ from mex.extractors.open_data.transform import (
     transform_open_data_persons,
     transform_persons_and_creation_date,
 )
-from mex.extractors.pipeline import asset
-from mex.extractors.pipeline.base import run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml

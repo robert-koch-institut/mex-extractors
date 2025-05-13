@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- enabled scanning for asset_checks for dagster definitions
+
 ### Changes
+
+- switch `asset` decorator over to dagster for proper typing
 
 ### Deprecated
 

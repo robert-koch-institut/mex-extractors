@@ -1,5 +1,7 @@
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedOrganization,
@@ -35,7 +37,7 @@ from mex.extractors.ifsg.transform import (
     transform_resource_parent_to_mex_resource,
     transform_resource_state_to_mex_resource,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml

@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
     transform_ldap_actors_to_mex_contact_points,
@@ -37,7 +39,7 @@ from mex.extractors.grippeweb.transform import (
     transform_grippeweb_variable_group_to_extracted_variable_groups,
     transform_grippeweb_variable_to_extracted_variables,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.transform import get_contact_merged_ids_by_emails

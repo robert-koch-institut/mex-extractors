@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedActivity,
@@ -23,7 +25,7 @@ from mex.extractors.odk.transform import (
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
