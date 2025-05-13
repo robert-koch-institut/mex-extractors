@@ -189,7 +189,7 @@ def extract_endnote_bibliographic_resource(
         .setValues[0]
     )
     cn_for_value = (
-        endnote_bibliographic_resource.alternateIdentifier[0]  # type: ignore[index]
+        endnote_bibliographic_resource.alternateIdentifier[1]  # type: ignore[index]
         .mappingRules[0]
         .forValues[0]
     )
