@@ -41,7 +41,7 @@ def extract_endnote_persons_by_person_string(
         extracted persons by person string
     """
     unique_persons = {
-        author
+        author.strip()
         for record in endnote_records
         for author in [
             *record.authors,
