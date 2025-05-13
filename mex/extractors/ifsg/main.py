@@ -185,7 +185,6 @@ def extracted_ifsg_resource_state(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    meta_disease: list[MetaDisease],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
@@ -193,7 +192,6 @@ def extracted_ifsg_resource_state(
         extracted_ifsg_resource_parent,
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
-        meta_disease,
     )
     load(mex_resource_state)
 

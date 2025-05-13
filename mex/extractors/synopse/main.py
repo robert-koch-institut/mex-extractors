@@ -270,7 +270,7 @@ def extracted_synopse_activities(  # noqa: PLR0913
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
-    transformed_activities = list(
+    non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_source_report_server,
@@ -281,8 +281,10 @@ def extracted_synopse_activities(  # noqa: PLR0913
             contact_merged_id_by_query_string,
         )
     )
-    load(transformed_activities)
-    return transformed_activities
+
+    load(non_child_activities)
+    load(child_activities)
+    return [*non_child_activities, *child_activities]
 
 
 @asset(group_name="synopse")

@@ -68,7 +68,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     extracted_mex_functional_units_grippeweb: dict[Email, MergedContactPointIdentifier],
 ) -> None:
-    resource_dict = transform_grippeweb_resource_mappings_to_dict(
+    parent_resource, _ = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
         unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
@@ -146,8 +146,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         "stableTargetId": Joker(),
     }
     assert (
-        resource_dict["grippeweb"].model_dump(exclude_none=True, exclude_defaults=True)
-        == expected
+        parent_resource.model_dump(exclude_none=True, exclude_defaults=True) == expected
     )
 
 
@@ -160,38 +159,38 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
     grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     extracted_mex_functional_units_grippeweb: dict[Email, MergedContactPointIdentifier],
 ) -> None:
-    resource_dict = transform_grippeweb_resource_mappings_to_extracted_resources(
-        grippeweb_resource_mappings,
-        unit_stable_target_ids_by_synonym,
-        grippeweb_extracted_access_platform,
-        extracted_primary_sources["grippeweb"],
-        extracted_mex_persons_grippeweb,
-        grippeweb_organization_ids_by_query_string,
-        extracted_mex_functional_units_grippeweb,
+    parent_resource, child_resource = (
+        transform_grippeweb_resource_mappings_to_extracted_resources(
+            grippeweb_resource_mappings,
+            unit_stable_target_ids_by_synonym,
+            grippeweb_extracted_access_platform,
+            extracted_primary_sources["grippeweb"],
+            extracted_mex_persons_grippeweb,
+            grippeweb_organization_ids_by_query_string,
+            extracted_mex_functional_units_grippeweb,
+        )
     )
-    assert resource_dict["grippeweb-plus"].isPartOf == [
-        resource_dict["grippeweb"].stableTargetId
-    ]
+    assert child_resource.isPartOf == [parent_resource.stableTargetId]
 
 
 def test_transform_grippeweb_variable_group_to_extracted_variable_groups(
     grippeweb_variable_group: VariableGroupMapping,
     mocked_grippeweb_sql_tables: dict[str, dict[str, list[Any]]],
-    grippeweb_extracted_resource_dict: dict[str, ExtractedResource],
+    grippeweb_extracted_parent_resource: ExtractedResource,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_variable_groups = (
         transform_grippeweb_variable_group_to_extracted_variable_groups(
             grippeweb_variable_group,
             mocked_grippeweb_sql_tables,
-            grippeweb_extracted_resource_dict,
+            grippeweb_extracted_parent_resource,
             extracted_primary_sources["grippeweb"],
         )
     )
     expected = {
         "hadPrimarySource": extracted_primary_sources["grippeweb"].stableTargetId,
         "identifierInPrimarySource": "vActualQuestion",
-        "containedBy": [grippeweb_extracted_resource_dict["grippeweb"].stableTargetId],
+        "containedBy": [grippeweb_extracted_parent_resource.stableTargetId],
         "label": [{"value": "Additional Questions", "language": "en"}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
@@ -208,14 +207,14 @@ def test_transform_grippeweb_variable_to_extracted_variables(
     grippeweb_variable: VariableMapping,
     extracted_variable_groups: list[ExtractedVariableGroup],
     mocked_grippeweb_sql_tables: dict[str, dict[str, list[Any]]],
-    grippeweb_extracted_resource_dict: dict[str, ExtractedResource],
+    grippeweb_extracted_parent_resource: ExtractedResource,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_variables = transform_grippeweb_variable_to_extracted_variables(
         grippeweb_variable,
         extracted_variable_groups,
         mocked_grippeweb_sql_tables,
-        grippeweb_extracted_resource_dict,
+        grippeweb_extracted_parent_resource,
         extracted_primary_sources["grippeweb"],
     )
     extracted_variables[0].valueSet = sorted(extracted_variables[0].valueSet)
@@ -226,7 +225,7 @@ def test_transform_grippeweb_variable_to_extracted_variables(
         "identifierInPrimarySource": "Id",
         "label": [{"value": "Id"}],
         "stableTargetId": Joker(),
-        "usedIn": [grippeweb_extracted_resource_dict["grippeweb"].stableTargetId],
+        "usedIn": [grippeweb_extracted_parent_resource.stableTargetId],
         "valueSet": ["AAA", "BBB"],
     }
     assert (

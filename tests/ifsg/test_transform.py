@@ -90,7 +90,6 @@ def test_transform_resource_state_to_mex_resource(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
-    meta_disease: list[MetaDisease],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
@@ -98,7 +97,6 @@ def test_transform_resource_state_to_mex_resource(
             extracted_ifsg_resource_parent,
             extracted_primary_sources_ifsg,
             unit_stable_target_ids,
-            meta_disease,
         )
         for resource_state in resource_states
     ]
@@ -127,12 +125,7 @@ def test_transform_resource_state_to_mex_resource(
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "isPartOf": [str(extracted_ifsg_resource_parent.stableTargetId)],
         "keyword": [
-            {"value": "Epidemic", "language": TextLanguage.EN},
             {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
-            {
-                "language": TextLanguage.DE,
-                "value": "virus",
-            },
         ],
         "language": ["https://mex.rki.de/item/language-1"],
         "resourceCreationMethod": [

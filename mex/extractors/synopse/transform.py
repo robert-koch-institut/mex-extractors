@@ -425,7 +425,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         )
 
 
-@watch()
 def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     synopse_projects: Iterable[SynopseProject],
     extracted_primary_source: ExtractedPrimarySource,
@@ -434,7 +433,7 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
-) -> Generator[ExtractedActivity, None, None]:
+) -> tuple[list[ExtractedActivity], list[ExtractedActivity]]:
     """Transform synopse projects into MEx activities.
 
     Args:
@@ -448,7 +447,7 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         contact_merged_id_by_query_string: contact person lookup by email
 
     Returns:
-        Generator for extracted activities
+        tuple of non-child and child extracted activities
     """
     activity_stable_target_id_by_short_name: dict[str, Identifier] = {}
     anschlussprojekt_by_activity_stable_target_id: dict[Identifier, str] = {}
@@ -481,6 +480,8 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         activities.append(activity)
 
     # set succeeds
+    non_child_activities: list[ExtractedActivity] = []
+    child_activities: list[ExtractedActivity] = []
     for activity in activities:
         if anschlussprojekt := anschlussprojekt_by_activity_stable_target_id.get(
             activity.stableTargetId
@@ -491,7 +492,10 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
                     activity_stable_target_id_by_short_name[anschlussprojekt],
                 )
             ]
-    yield from activities
+            child_activities.append(activity)
+        else:
+            non_child_activities.append(activity)
+    return non_child_activities, child_activities
 
 
 def transform_synopse_project_to_activity(  # noqa: PLR0913

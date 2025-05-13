@@ -23,7 +23,9 @@ def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:
         if "test_" not in file_name
     }
     return {
-        file_name: [VoxcoVariable.model_validate(item) for item in file_rows["value"]]
+        file_name.removesuffix(".json"): [
+            VoxcoVariable.model_validate(item) for item in file_rows["value"]
+        ]
         for file_name, file_rows in data.items()
     }
 
