@@ -101,7 +101,7 @@ def extract_endnote_consents(
             .setValues,
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=f"{person.stableTargetId}_consent",
-            isIndicatedAtTime=datetime.fromtimestamp(time.time(), tz=UTC),
+            isIndicatedAtTime=datetime.now(tz=UTC),
         )
         for person in extracted_endnote_persons
     ]
