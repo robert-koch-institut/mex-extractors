@@ -171,7 +171,7 @@ def extract_endnote_bibliographic_resource(
         {
             for_value: rule.setValues
             for rule in endnote_bibliographic_resource.accessRestriction[0].mappingRules
-            if rule.forValues and len(rule.forValues) > 0 and rule.setValues
+            if rule.forValues and rule.setValues
             for for_value in rule.forValues
         }
     )
