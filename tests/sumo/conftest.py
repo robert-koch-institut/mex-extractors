@@ -151,7 +151,6 @@ def transformed_activity() -> ExtractedActivity:
         responsibleUnit=[MergedOrganizationalUnitIdentifier("bFQoRhcVH5DHVb")],
         shortName=[Text(value="SUMO", language=TextLanguage.DE)],
         start=[],
-        succeeds=[],
         theme=["https://mex.rki.de/item/theme-36"],
         title=[Text(value="SUMO Notaufnahmesurveillance", language=TextLanguage.DE)],
         website=[],

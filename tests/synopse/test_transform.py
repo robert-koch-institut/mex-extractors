@@ -492,4 +492,4 @@ def test_transform_synopse_projects_to_mex_activities(
     )
 
     assert len(activities) == 2
-    assert activities[0].model_dump(exclude_defaults=True) == expected_activity
+    assert activities[1][0].model_dump(exclude_defaults=True) == expected_activity

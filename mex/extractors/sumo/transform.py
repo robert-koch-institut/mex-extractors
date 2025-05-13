@@ -591,7 +591,6 @@ def transform_sumo_activity_to_extracted_activity(
         responsibleUnit=responsible_unit,
         shortName=short_name,
         start=start,
-        succeeds=[],
         theme=theme,
         title=title,
         website=website,
