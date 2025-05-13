@@ -94,7 +94,7 @@ def transform_odk_resources_to_mex_resources(
             if (partner := external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
         ]
         resources_tuple[resource.isPartOf is not None].append(
-            ExtractedResource(  # type: ignore[index]
+            ExtractedResource(
                 identifierInPrimarySource=identifier_in_primary_source,
                 accessRestriction=resource.accessRestriction[0]
                 .mappingRules[0]
