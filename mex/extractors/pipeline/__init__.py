@@ -68,7 +68,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     _AssetFn = TypeVar("_AssetFn")
 
-    def asset(**_: Any) -> Callable[[_AssetFn], _AssetFn]:
+    def asset(**_: Any) -> Callable[[_AssetFn], _AssetFn]:  # noqa: ANN401
         """Create a definition for how to compute an asset."""
         ...
 
