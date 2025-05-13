@@ -40,7 +40,7 @@ def asset2_get_blueant_organizations_names(
     context: AssetExecutionContext,
     asset1_get_blueant_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> list[str]:
-    """Test asset follows directly after succesfull run of asset1."""
+    """Test asset follows directly after successful run of asset1."""
     organization_names = list(asset1_get_blueant_organizations.keys())
     context.add_asset_metadata(metadata={"num_items": len(organization_names)})
     return organization_names
