@@ -232,11 +232,7 @@ def extract_endnote_bibliographic_resource(
             if record.abstract
             else []
         )
-        access_restriction = (
-            access_restriction_by_custom6[record.custom6]
-            if record.custom6 and record.custom6 in access_restriction_by_custom6
-            else access_restriction_by_custom6["default"]
-        )
+        access_restriction = access_restriction_by_custom6.get(record.custom6, access_restriction_by_custom6["default"])
         alternate_identifier_ern = (
             ern.replace(ern_for_value, ern_set_value)
             if (ern := record.electronic_resource_num) and ern_for_value in ern
