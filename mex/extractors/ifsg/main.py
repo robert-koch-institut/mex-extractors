@@ -1,5 +1,7 @@
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedOrganization,
@@ -35,7 +37,7 @@ from mex.extractors.ifsg.transform import (
     transform_resource_parent_to_mex_resource,
     transform_resource_state_to_mex_resource,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
@@ -183,7 +185,6 @@ def extracted_ifsg_resource_state(
     extracted_ifsg_resource_parent: ExtractedResource,
     extracted_primary_sources_ifsg: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    meta_disease: list[MetaDisease],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
@@ -191,7 +192,6 @@ def extracted_ifsg_resource_state(
         extracted_ifsg_resource_parent,
         extracted_primary_sources_ifsg,
         unit_stable_target_ids_by_synonym,
-        meta_disease,
     )
     load(mex_resource_state)
 

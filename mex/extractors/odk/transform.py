@@ -20,7 +20,7 @@ def transform_odk_resources_to_mex_resources(
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
-) -> tuple[dict[str, ExtractedResource], list[str]]:
+) -> tuple[list[ExtractedResource], list[ExtractedResource]]:
     """Transform odk resources to mex resources.
 
     Args:
@@ -33,14 +33,13 @@ def transform_odk_resources_to_mex_resources(
         extracted_primary_source_mex: mex primary source
 
     Returns:
-        tuple of list of mex resources and list of resources which are part of another
+        tuple of list of mex child and non-child resources
     """
     international_projects_stable_target_id_by_identifier_in_primary_source = {
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in extracted_international_projects_activities
     }
-    resources: dict[str, ExtractedResource] = {}
-    is_part_of_list: list[str] = []
+    resources_tuple: tuple[list[ExtractedResource], list[ExtractedResource]] = ([], [])
     for resource in odk_resource_mappings:
         alternative_title = None
         if rules := resource.alternativeTitle:
@@ -64,8 +63,6 @@ def transform_odk_resources_to_mex_resources(
         identifier_in_primary_source = (
             resource.identifierInPrimarySource[0].mappingRules[0].setValues
         )
-        if resource.isPartOf:
-            is_part_of_list.append(identifier_in_primary_source)  # type: ignore[arg-type]
         method_description = None
         if resource.methodDescription:
             method_description = resource.methodDescription[0].mappingRules[0].setValues
@@ -96,67 +93,73 @@ def transform_odk_resources_to_mex_resources(
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
             if (partner := external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
         ]
-        resources[identifier_in_primary_source] = ExtractedResource(  # type: ignore[index]
-            identifierInPrimarySource=identifier_in_primary_source,
-            accessRestriction=resource.accessRestriction[0].mappingRules[0].setValues,
-            alternativeTitle=alternative_title,
-            contact=unit_stable_target_ids_by_synonym[
-                resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ],
-            contributingUnit=contributing_unit,
-            description=description,
-            externalPartner=external_partner,
-            hadPrimarySource=extracted_primary_source_mex.stableTargetId,
-            hasLegalBasis=has_legal_basis,
-            keyword=resource.keyword[0].mappingRules[0].setValues,
-            language=resource.language[0].mappingRules[0].setValues,
-            meshId=resource.meshId[0].mappingRules[0].setValues,
-            method=resource.method[0].mappingRules[0].setValues,
-            methodDescription=method_description,
-            publisher=publisher,
-            resourceCreationMethod=resource.resourceCreationMethod[0]
-            .mappingRules[0]
-            .setValues,
-            resourceTypeGeneral=resource.resourceTypeGeneral[0]
-            .mappingRules[0]
-            .setValues,
-            resourceTypeSpecific=resource.resourceTypeSpecific[0]
-            .mappingRules[0]
-            .setValues,
-            rights=resource.rights[0].mappingRules[0].setValues,
-            sizeOfDataBasis=size_of_data_basis,
-            spatial=resource.spatial[0].mappingRules[0].setValues,
-            temporal=resource.temporal[0].mappingRules[0].setValues,
-            theme=resource.theme[0].mappingRules[0].setValues,
-            title=resource.title[0].mappingRules[0].setValues,
-            unitInCharge=unit_stable_target_ids_by_synonym[
-                resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ],
-            wasGeneratedBy=was_generated_by,
+        resources_tuple[resource.isPartOf is not None].append(
+            ExtractedResource(
+                identifierInPrimarySource=identifier_in_primary_source,
+                accessRestriction=resource.accessRestriction[0]
+                .mappingRules[0]
+                .setValues,
+                alternativeTitle=alternative_title,
+                contact=unit_stable_target_ids_by_synonym[
+                    resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                ],
+                contributingUnit=contributing_unit,
+                description=description,
+                externalPartner=external_partner,
+                hadPrimarySource=extracted_primary_source_mex.stableTargetId,
+                hasLegalBasis=has_legal_basis,
+                keyword=resource.keyword[0].mappingRules[0].setValues,
+                language=resource.language[0].mappingRules[0].setValues,
+                meshId=resource.meshId[0].mappingRules[0].setValues,
+                method=resource.method[0].mappingRules[0].setValues,
+                methodDescription=method_description,
+                publisher=publisher,
+                resourceCreationMethod=resource.resourceCreationMethod[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeGeneral=resource.resourceTypeGeneral[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeSpecific=resource.resourceTypeSpecific[0]
+                .mappingRules[0]
+                .setValues,
+                rights=resource.rights[0].mappingRules[0].setValues,
+                sizeOfDataBasis=size_of_data_basis,
+                spatial=resource.spatial[0].mappingRules[0].setValues,
+                temporal=resource.temporal[0].mappingRules[0].setValues,
+                theme=resource.theme[0].mappingRules[0].setValues,
+                title=resource.title[0].mappingRules[0].setValues,
+                unitInCharge=unit_stable_target_ids_by_synonym[
+                    resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                ],
+                wasGeneratedBy=was_generated_by,
+            )
         )
-    return (resources, is_part_of_list)
+    return resources_tuple
 
 
-def assign_resource_relations(
-    resources: dict[str, ExtractedResource],
-    is_part_of_list: list[str],
+def assign_resource_relations_and_load(
+    resources_tuple: tuple[list[ExtractedResource], list[ExtractedResource]],
 ) -> list[ExtractedResource]:
     """Assign resources related to each other.
 
     Args:
-        resources : list of mex resources
-        is_part_of_list : list of resources which are part of another
+        resources_tuple : tuple of list of mex resources
 
     Returns:
         list of mex resources
     """
-    main_questionnaire_id = resources[
-        "BCHW_ZIG2_FG37_main_questionnaire_01052021"
-    ].stableTargetId
-    for identifier_in_primary_source, resource in resources.items():
-        if identifier_in_primary_source in is_part_of_list:
-            resource.isPartOf = [main_questionnaire_id]
-    return list(resources.values())
+    main_questionnaire_id = next(
+        resource
+        for resource in resources_tuple[1]
+        if resource.identifierInPrimarySource
+        == "BCHW_ZIG2_FG37_main_questionnaire_01052021"
+    ).stableTargetId
+    load(resources_tuple[0])
+    for resource in resources_tuple[1]:
+        resource.isPartOf = [main_questionnaire_id]
+    load(resources_tuple[1])
+    return [*resources_tuple[0], *resources_tuple[1]]
 
 
 def transform_odk_data_to_extracted_variables(

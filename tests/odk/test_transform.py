@@ -30,7 +30,7 @@ def test_transform_odk_resources_to_mex_resources(
             extracted_international_projects_activities,
         )
     ).stableTargetId
-    resources, is_part_of = transform_odk_resources_to_mex_resources(
+    resources = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
@@ -105,24 +105,18 @@ def test_transform_odk_resources_to_mex_resources(
         "unitInCharge": [str(unit_stable_target_ids_by_synonym["C1"])],
         "wasGeneratedBy": str(international_project_stable_target_id),
     }
-    assert resources["test_raw_data"].model_dump(exclude_defaults=True) == expected
-    assert is_part_of == []
-    resources_organizations_empty_or_created, _ = (
-        transform_odk_resources_to_mex_resources(
-            odk_resource_mappings,
-            unit_stable_target_ids_by_synonym,
-            {},
-            extracted_international_projects_activities,
-            extracted_primary_sources["mex"],
-        )
+    assert resources[1][0].model_dump(exclude_defaults=True) == expected
+    resources_organizations_empty_or_created = transform_odk_resources_to_mex_resources(
+        odk_resource_mappings,
+        unit_stable_target_ids_by_synonym,
+        {},
+        extracted_international_projects_activities,
+        extracted_primary_sources["mex"],
     )
     assert (
-        resources_organizations_empty_or_created["test_raw_data"].model_dump()[
-            "publisher"
-        ]
-        == []
+        resources_organizations_empty_or_created[1][0].model_dump()["publisher"] == []
     )
-    assert resources_organizations_empty_or_created["test_raw_data"].model_dump()[
+    assert resources_organizations_empty_or_created[1][0].model_dump()[
         "externalPartner"
     ] == [
         "dHOP0smFLofntMGAA4Z89M",

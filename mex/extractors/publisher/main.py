@@ -1,8 +1,10 @@
 from collections import deque
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import AnyMergedModel, ItemsContainer
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.extract import get_merged_items
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
