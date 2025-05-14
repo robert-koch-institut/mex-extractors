@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- try out partitioning seq-repo resources
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.34.1] - 2025-05-14
+
+### Changes
+
+- try out partitioning seq-repo resources
 
 ## [0.34.0] - 2025-05-13
 
