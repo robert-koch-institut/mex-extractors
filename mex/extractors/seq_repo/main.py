@@ -6,6 +6,7 @@ from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.logging import logger
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -188,6 +189,7 @@ def load_seq_repo_resource(
     seq_repo_resource: list[ExtractedResource],
 ) -> None:
     """Load seq-repo resource partition."""
+    logger.info(f"running partition {context.partition_key} for loading resources")
     partition = [
         resource
         for resource in seq_repo_resource
