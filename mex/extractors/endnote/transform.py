@@ -121,11 +121,10 @@ def get_doi(
     doi = None
     if doi_string is None:
         return None
-        if (
-            for_value := endnote_bibliographic_resource.doi[0]  # type: ignore[index]
+        for_value = (endnote_bibliographic_resource.doi[0]  # type: ignore[index]
             .mappingRules[1]
-            .forValues[0]
-        ) and doi_string.startswith(for_value):
+            .forValues[0])
+        if doi_string.startswith(for_value):
             return None
         if doi_string.startswith("10."):
             doi = f"https://doi.org/{doi_string}"
