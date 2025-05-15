@@ -291,18 +291,13 @@ def extract_endnote_bibliographic_resource(
             else None
         )
         publisher: list[MergedOrganizationIdentifier] = []
-        if record.publisher and (
-            publisher_org := get_wikidata_extracted_organization_id_by_name(
+        for publisher_string in [record.publisher, record.custom3]:
+            if publisher_string is None:
+                continue
+            if publisher_org := get_wikidata_extracted_organization_id_by_name(
                 record.publisher
-            )
-        ):
-            publisher.append(publisher_org)
-        if record.custom3 and (
-            publisher_org := get_wikidata_extracted_organization_id_by_name(
-                record.custom3
-            )
-        ):
-            publisher.append(publisher_org)
+            ):
+                publisher.append(publisher_org)
         repository_url = record.related_urls[0] if record.related_urls else []
         title_of_series = []
         if record.ref_type == "Book Section":
