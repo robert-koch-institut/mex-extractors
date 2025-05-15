@@ -34,7 +34,14 @@ def run_job_in_process(group_name: str = "default") -> "ExecutionResult":
     from mex.extractors import defs  # avoid circular imports
 
     job = defs.get_job_def(group_name)
-    return job.execute_in_process()
+    partition_keys: list[str | None] = (
+        list(job.partitions_def.get_partition_keys()) if job.partitions_def else [None]
+    )
+    results = [
+        job.execute_in_process(partition_key=partition_key)
+        for partition_key in partition_keys
+    ]
+    return results[0]
 
 
 @sensor(

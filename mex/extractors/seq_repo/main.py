@@ -1,9 +1,12 @@
-from dagster import asset
+import re
+
+from dagster import AssetExecutionContext, StaticPartitionsDefinition, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.logging import logger
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -177,10 +180,22 @@ def seq_repo_resource(  # noqa: PLR0913
     )
 
 
-@asset(group_name="seq_repo")
-def load_seq_repo_resource(seq_repo_resource: list[ExtractedResource]) -> None:
-    """Load seq-repo resources."""
-    load(seq_repo_resource)
+seq_repo_resource_partitioning = StaticPartitionsDefinition([f"{i}" for i in range(10)])
+
+
+@asset(group_name="seq_repo", partitions_def=seq_repo_resource_partitioning)
+def load_seq_repo_resource(
+    context: AssetExecutionContext,
+    seq_repo_resource: list[ExtractedResource],
+) -> None:
+    """Load seq-repo resource partition."""
+    logger.info(f"running partition {context.partition_key} for loading resources")
+    partition = [
+        resource
+        for resource in seq_repo_resource
+        if re.match(f".+-{context.partition_key}.+", resource.identifierInPrimarySource)
+    ]
+    load(partition)
 
 
 @entrypoint(Settings)
