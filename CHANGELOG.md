@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- transform endnote
+- enabled scanning for asset_checks for dagster definitions
+
 ### Changes
 
 ### Deprecated

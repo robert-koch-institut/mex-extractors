@@ -1,23 +1,24 @@
 import xml.etree.ElementTree as ET
-from pathlib import Path
+from typing import Any
 
 import defusedxml.ElementTree as defused_ET
 
+from mex.extractors.drop import DropApiConnector
 from mex.extractors.endnote.model import EndnoteRecord
-from mex.extractors.settings import Settings
 
 
 def extract_endnote_records() -> list[EndnoteRecord]:
-    """Extract endnote records by loading data from XML files.
+    """Extract endnote records by loading XML files from MEx drop.
 
     Returns:
         list of endnote records
     """
-    settings = Settings.get()
-    files: list[ET.ElementTree] = []
-    for file in Path(settings.endnote.raw_data_path).glob("*.xml"):
-        with file.open(encoding="utf-8") as fh:
-            files.append(defused_ET.parse(fh))
+    connector = DropApiConnector.get()
+    file_names = connector.list_files("endnote")
+    files: list[Any] = []
+    for file_name in file_names:
+        response = connector.get_raw_file("endnote", file_name)
+        files.append(defused_ET.fromstring(response.content))
     return [
         EndnoteRecord.model_validate(
             {
@@ -33,6 +34,9 @@ def extract_endnote_records() -> list[EndnoteRecord]:
                 ],
                 "call_num": call_num.text
                 if isinstance(call_num := record.find("call-num/style"), ET.Element)
+                else None,
+                "custom3": custom3.text
+                if isinstance(custom3 := record.find("custom3/style"), ET.Element)
                 else None,
                 "custom4": custom4.text
                 if isinstance(custom4 := record.find("custom4/style"), ET.Element)
@@ -114,5 +118,5 @@ def extract_endnote_records() -> list[EndnoteRecord]:
             }
         )
         for file in files
-        for record in file.getroot().findall("*/record")
+        for record in file.findall("*/record")
     ]
