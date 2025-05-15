@@ -15,13 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Fixed
+
+### Security
+
+## [0.34.2] - 2025-05-15
+
+### Removed
+
 - remove partitioning seq-repo resources
 
 ### Fixed
 
 - odk resource relations
-
-### Security
 
 ## [0.34.1] - 2025-05-14
 
