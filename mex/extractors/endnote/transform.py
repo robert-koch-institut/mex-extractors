@@ -125,7 +125,7 @@ def get_doi(
             .mappingRules[1]
             .forValues[0]
         ) and doi_string.startswith(for_value):
-            return doi
+            return None
         if doi_string.startswith("10."):
             doi = f"https://doi.org/{doi_string}"
         else:
