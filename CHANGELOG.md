@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- odk resource relations
+
 ### Security
 
 ## [0.34.1] - 2025-05-14
