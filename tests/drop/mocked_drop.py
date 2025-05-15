@@ -73,4 +73,3 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
         "get_raw_file",
         get_raw_file_mocked,
     )
-    monkeypatch.setattr(defused_ET, "fromstring", lambda f: f.getroot())
