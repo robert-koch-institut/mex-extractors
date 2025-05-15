@@ -139,7 +139,7 @@ def get_doi(
 
 def extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
-    endnote_bibliographic_resource: BibliographicResourceMapping,
+    endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_endnote: ExtractedPrimarySource,
