@@ -105,7 +105,7 @@ def test_transform_odk_resources_to_mex_resources(
         "unitInCharge": [str(unit_stable_target_ids_by_synonym["C1"])],
         "wasGeneratedBy": str(international_project_stable_target_id),
     }
-    assert resources[1][0].model_dump(exclude_defaults=True) == expected
+    assert resources[0][0].model_dump(exclude_defaults=True) == expected
     resources_organizations_empty_or_created = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
@@ -114,9 +114,9 @@ def test_transform_odk_resources_to_mex_resources(
         extracted_primary_sources["mex"],
     )
     assert (
-        resources_organizations_empty_or_created[1][0].model_dump()["publisher"] == []
+        resources_organizations_empty_or_created[0][0].model_dump()["publisher"] == []
     )
-    assert resources_organizations_empty_or_created[1][0].model_dump()[
+    assert resources_organizations_empty_or_created[0][0].model_dump()[
         "externalPartner"
     ] == [
         "dHOP0smFLofntMGAA4Z89M",

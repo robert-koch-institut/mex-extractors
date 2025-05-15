@@ -93,7 +93,7 @@ def transform_odk_resources_to_mex_resources(
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
             if (partner := external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
         ]
-        resources_tuple[resource.isPartOf is not None].append(
+        resources_tuple[bool(resource.isPartOf)].append(
             ExtractedResource(
                 identifierInPrimarySource=identifier_in_primary_source,
                 accessRestriction=resource.accessRestriction[0]
@@ -151,7 +151,7 @@ def assign_resource_relations_and_load(
     """
     main_questionnaire_id = next(
         resource
-        for resource in resources_tuple[1]
+        for resource in resources_tuple[0]
         if resource.identifierInPrimarySource
         == "BCHW_ZIG2_FG37_main_questionnaire_01052021"
     ).stableTargetId
