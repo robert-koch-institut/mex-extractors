@@ -55,14 +55,15 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
     def get_raw_file_mocked(
         _self: DropApiConnector, x_system: str, file_id: str
     ) -> DropApiConnector:
-        with open(
+        with (
             (
                 Path(__file__).parents[2]
                 / "tests"
                 / x_system.replace("-", "_")
                 / "test_data"
                 / file_id
-            ).with_suffix(".xml"),
+            ).with_suffix(".xml")
+        ).open(
             encoding="utf-8",
         ) as f:
             _self.content = defused_ET.parse(f)
@@ -73,3 +74,4 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
         "get_raw_file",
         get_raw_file_mocked,
     )
+    monkeypatch.setattr(defused_ET, "fromstring", lambda f: f.getroot())

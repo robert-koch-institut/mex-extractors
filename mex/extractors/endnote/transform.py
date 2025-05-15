@@ -1,8 +1,7 @@
 import re
-import time
 from datetime import datetime
 
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, ValidationError
 
 from mex.common.models import (
     BibliographicResourceMapping,
@@ -20,6 +19,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     TemporalEntity,
     Text,
+    TextLanguage,
 )
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.wikidata.helpers import (
@@ -119,25 +119,27 @@ def get_doi(
     """
     doi_adapter = TypeAdapter(DoiStr)
     doi = None
-    if doi_string is None:
+    if electronic_resource_num is None:
         return None
-        for_value = (endnote_bibliographic_resource.doi[0]  # type: ignore[index]
-            .mappingRules[1]
-            .forValues[0])
-        if doi_string.startswith(for_value):
-            return None
-        if doi_string.startswith("10."):
-            doi = f"https://doi.org/{doi_string}"
-        else:
-            doi = doi_string
-        try:
-            doi_adapter.validate_python(doi)
-        except ValidationError:
-            return None
+    for_value = (
+        endnote_bibliographic_resource.doi[0]  # type: ignore[index]
+        .mappingRules[1]
+        .forValues[0]
+    )
+    if electronic_resource_num.startswith(for_value):
+        return None
+    if electronic_resource_num.startswith("10."):
+        doi = f"https://doi.org/{electronic_resource_num}"
+    else:
+        doi = electronic_resource_num
+    try:
+        doi_adapter.validate_python(doi)
+    except ValidationError:
+        return None
     return doi
 
 
-def extract_endnote_bibliographic_resource(
+def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
@@ -148,7 +150,7 @@ def extract_endnote_bibliographic_resource(
 
     Args:
         endnote_records: list of endnote record
-        endnote_bibliographic_resource: bibliographical resource mapping
+        endnote_bibliographic_resource_mapping: bibliographical resource mapping
         extracted_endnote_persons_by_person_string: extracted endnote persons by name
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         extracted_primary_source_endnote: primary source for endnote
@@ -158,50 +160,58 @@ def extract_endnote_bibliographic_resource(
     """
     language_by_language_field = {
         for_value: rule.setValues[0]
-        for rule in endnote_bibliographic_resource.language[0].mappingRules
+        for rule in endnote_bibliographic_resource_mapping.language[0].mappingRules
         if rule.forValues and rule.setValues
         for for_value in rule.forValues
     }
     access_restriction_by_custom6 = {
-        "default": endnote_bibliographic_resource.accessRestriction[0]
+        "default": endnote_bibliographic_resource_mapping.accessRestriction[0]
         .mappingRules[2]
         .setValues
     }
     access_restriction_by_custom6.update(
         {
             for_value: rule.setValues
-            for rule in endnote_bibliographic_resource.accessRestriction[0].mappingRules
+            for rule in endnote_bibliographic_resource_mapping.accessRestriction[
+                0
+            ].mappingRules
             if rule.forValues and rule.setValues
             for for_value in rule.forValues
         }
     )
     ern_for_value = (
-        endnote_bibliographic_resource.alternateIdentifier[0]  # type: ignore[index]
+        endnote_bibliographic_resource_mapping.alternateIdentifier[0]  # type: ignore[index]
         .mappingRules[0]
         .forValues[0]
     )
     ern_set_value = (
-        endnote_bibliographic_resource.alternateIdentifier[0]  # type: ignore[index]
+        endnote_bibliographic_resource_mapping.alternateIdentifier[0]  # type: ignore[index]
         .mappingRules[0]
         .setValues[0]
     )
-    cn_for_value = (
-        endnote_bibliographic_resource.alternateIdentifier[1]  # type: ignore[index]
-        .mappingRules[0]
-        .forValues[0]
-    )
-    cn_set_value = (
-        endnote_bibliographic_resource.alternateIdentifier[1]  # type: ignore[index]
-        .mappingRules[0]
-        .setValues[0]
-    )
+    try:
+        cn_for_value = (
+            endnote_bibliographic_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
+            .mappingRules[0]
+            .forValues[0]
+        )
+    except TypeError:
+        cn_for_value = None
+    try:
+        cn_set_value = (
+            endnote_bibliographic_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
+            .mappingRules[0]
+            .setValues[0]
+        )
+    except TypeError:
+        cn_set_value = None
     bibliographical_resource_type_by_ref_type = {
         "default": (
-            endnote_bibliographic_resource.bibliographicResourceType[0]
+            endnote_bibliographic_resource_mapping.bibliographicResourceType[0]
             .mappingRules[2]
             .setValues[0]
         )
-        if endnote_bibliographic_resource.bibliographicResourceType[0]
+        if endnote_bibliographic_resource_mapping.bibliographicResourceType[0]
         .mappingRules[2]
         .setValues
         else None
@@ -209,7 +219,7 @@ def extract_endnote_bibliographic_resource(
     bibliographical_resource_type_by_ref_type.update(
         {
             for_value: rule.setValues[0]
-            for rule in endnote_bibliographic_resource.bibliographicResourceType[
+            for rule in endnote_bibliographic_resource_mapping.bibliographicResourceType[  # noqa: E501
                 0
             ].mappingRules
             if rule.forValues and rule.setValues
@@ -218,13 +228,21 @@ def extract_endnote_bibliographic_resource(
     )
     bibliographical_resources: list[ExtractedBibliographicResource] = []
     for record in endnote_records:
-        text_language = language_by_language_field.get(record.language, TextLanguage.EN)
+        text_language = language_by_language_field.get(record.language, TextLanguage.EN)  # type: ignore[arg-type]
         abstract = (
-            [Text(value=record.abstract, language=text_language)]
+            [
+                Text(
+                    value=record.abstract,
+                    language="en" if text_language == Language["ENGLISH"] else "de",
+                )
+            ]
             if record.abstract
             else []
         )
-        access_restriction = access_restriction_by_custom6.get(record.custom6, access_restriction_by_custom6["default"])
+        access_restriction = access_restriction_by_custom6.get(
+            record.custom6,  # type: ignore[arg-type]
+            access_restriction_by_custom6["default"],
+        )
         alternate_identifier_ern = (
             ern.replace(ern_for_value, ern_set_value)
             if (ern := record.electronic_resource_num) and ern_for_value in ern
@@ -232,7 +250,10 @@ def extract_endnote_bibliographic_resource(
         )
         alternate_identifier_cn = (
             cn.replace(cn_for_value, cn_set_value)
-            if record.call_num and cn_for_value in (cn := record.call_num)
+            if record.call_num
+            and cn_for_value
+            and cn_set_value
+            and cn_for_value in (cn := record.call_num)
             else None
         )
         alternate_identifier = [
@@ -254,7 +275,9 @@ def extract_endnote_bibliographic_resource(
         ]
         if len(creator) == 0:
             continue
-        doi = get_doi(record.electronic_resource_num, endnote_bibliographic_resource)
+        doi = get_doi(
+            record.electronic_resource_num, endnote_bibliographic_resource_mapping
+        )
         editor = [
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.secondary_authors
@@ -267,23 +290,30 @@ def extract_endnote_bibliographic_resource(
         for pub_date in record.pub_dates:
             try:
                 issued.append(TemporalEntity(f"{pub_date} {record.year}"))
-            except ValidationError:
+            except (ValidationError, ValueError):
                 continue
 
         journal = [
-            Text(value=f"{record.ref_type} {periodical}", language=text_language)
+            Text(
+                value=f"{record.ref_type} {periodical}",
+                language="en" if text_language == Language["ENGLISH"] else "de",
+            )
             for periodical in record.periodical
             if record.ref_type == "Journal Article"
         ]
 
         keyword = [
-            Text(value=keyword, language=text_language) for keyword in record.keyword
+            Text(
+                value=keyword,
+                language="en" if text_language == Language["ENGLISH"] else "de",
+            )
+            for keyword in record.keyword
         ]
         pages = (
             record.pages
             if record.pages
             and (
-                for_value := endnote_bibliographic_resource.pages[0]  # type: ignore[index]
+                for_value := endnote_bibliographic_resource_mapping.pages[0]  # type: ignore[index]
                 .mappingRules[0]
                 .forValues[0]
             )
@@ -295,7 +325,7 @@ def extract_endnote_bibliographic_resource(
             if publisher_string is None:
                 continue
             if publisher_org := get_wikidata_extracted_organization_id_by_name(
-                record.publisher
+                record.publisher  # type: ignore[arg-type]
             ):
                 publisher.append(publisher_org)
         repository_url = record.related_urls[0] if record.related_urls else []
@@ -304,13 +334,21 @@ def extract_endnote_bibliographic_resource(
             if record.periodical:
                 title_of_series.extend(
                     [
-                        Text(value=title, language=text_language)
+                        Text(
+                            value=title,
+                            language="en"
+                            if text_language == Language["ENGLISH"]
+                            else "de",
+                        )
                         for title in record.periodical
                     ]
                 )
             if record.secondary_title:
                 title_of_series.append(
-                    Text(value=record.secondary_title, language=text_language),
+                    Text(
+                        value=record.secondary_title,
+                        language="en" if text_language == Language["ENGLISH"] else "de",
+                    ),
                 )
         bibliographical_resources.append(
             ExtractedBibliographicResource(
@@ -333,12 +371,15 @@ def extract_endnote_bibliographic_resource(
                 issued=issued,
                 journal=journal,
                 keyword=keyword,
-                language=language,
+                language=[text_language],
                 pages=pages,
                 publicationYear=record.year,
                 publisher=publisher,
                 repositoryURL=repository_url,
-                title=Text(value=record.title, language=text_language),
+                title=Text(
+                    value=record.title,
+                    language="en" if text_language == Language["ENGLISH"] else "de",
+                ),
                 titleOfSeries=title_of_series,
                 volume=record.volume,
             )
