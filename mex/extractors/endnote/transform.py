@@ -119,7 +119,8 @@ def get_doi(
     """
     doi_adapter = TypeAdapter(DoiStr)
     doi = None
-    if doi_string := electronic_resource_num:
+    if doi_string is None:
+        return None
         if (
             for_value := endnote_bibliographic_resource.doi[0]  # type: ignore[index]
             .mappingRules[1]
