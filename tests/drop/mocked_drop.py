@@ -6,11 +6,14 @@ from unittest.mock import MagicMock
 import defusedxml.ElementTree as defused_ET
 import pytest
 from pytest import MonkeyPatch
-from requests import Session
+from requests import Response, Session
 
 from mex.extractors.drop import DropApiConnector
 
 
+
+class MockedResponse:
+    content: bytes
 @pytest.fixture
 def mocked_drop(monkeypatch: MonkeyPatch) -> None:
     """Mock the drop api connector to return dummy data."""
@@ -52,10 +55,10 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
         "get_file",
         get_file_mocked,
     )
-
     def get_raw_file_mocked(
         _self: DropApiConnector, x_system: str, file_id: str
-    ) -> DropApiConnector:
+    ) -> "MockedResponse":
+
         with open(
             (
                 Path(__file__).parents[2]
@@ -64,14 +67,14 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
                 / "test_data"
                 / file_id
             ).with_suffix(".xml"),
-            encoding="utf-8",
+            mode="rb",
         ) as f:
-            _self.content = defused_ET.parse(f)
-            return _self
+            mocked_response = MockedResponse()
+            mocked_response.content = f.read()
+            return mocked_response
 
     monkeypatch.setattr(
         DropApiConnector,
         "get_raw_file",
         get_raw_file_mocked,
     )
-    monkeypatch.setattr(defused_ET, "fromstring", lambda f: f.getroot())
