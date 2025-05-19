@@ -11,9 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- change return type of `run_job_in_process` to bool indicating success
-- update mex-common to 0.61.1
-
 ### Deprecated
 
 ### Removed
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.34.4] - 2025-05-19
+
+### Changes
+
+- change return type of `run_job_in_process` to bool indicating success
+- update mex-common to 0.61.1
 
 ## [0.34.3] - 2025-05-19
 
