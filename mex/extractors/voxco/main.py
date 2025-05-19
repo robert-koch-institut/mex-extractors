@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Any
 
 from dagster import asset
 
@@ -55,35 +54,32 @@ def voxco_variables() -> dict[str, list[VoxcoVariable]]:
 
 
 @asset(group_name="voxco")
-def voxco_resource_mappings() -> list[dict[str, Any]]:
+def voxco_resource_mappings() -> list[ResourceMapping]:
     """Extract voxco resource mappings."""
     settings = Settings.get()
-    return [
+    raw_mappings = [
         load_yaml(file)
         for file in Path(settings.voxco.mapping_path).glob("resource_*.yaml")
     ]
+    return [ResourceMapping.model_validate(r) for r in raw_mappings]
 
 
 @asset(group_name="voxco")
 def organization_stable_target_id_by_query_voxco(
-    voxco_resource_mappings: list[dict[str, Any]],
+    voxco_resource_mappings: list[ResourceMapping],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract and load voxco organizations and group them by query."""
-    return extract_voxco_organizations(
-        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
-    )
+    return extract_voxco_organizations(voxco_resource_mappings)
 
 
 @asset(group_name="voxco")
 def extracted_mex_persons_voxco(
-    voxco_resource_mappings: list[dict[str, Any]],
+    voxco_resource_mappings: list[ResourceMapping],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for voxco, transform them and load them to sinks."""
-    ldap_persons = extract_ldap_persons_voxco(
-        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
-    )
+    ldap_persons = extract_ldap_persons_voxco(voxco_resource_mappings)
     mex_persons = transform_ldap_persons_to_mex_persons(
         ldap_persons,
         extracted_primary_source_ldap,
@@ -95,7 +91,7 @@ def extracted_mex_persons_voxco(
 
 @asset(group_name="voxco")
 def extracted_voxco_resources(  # noqa: PLR0913
-    voxco_resource_mappings: list[dict[str, Any]],
+    voxco_resource_mappings: list[ResourceMapping],
     organization_stable_target_id_by_query_voxco: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -107,7 +103,7 @@ def extracted_voxco_resources(  # noqa: PLR0913
 ) -> dict[str, ExtractedResource]:
     """Transform mex resources, load to them to the sinks and return."""
     mex_resources = transform_voxco_resource_mappings_to_extracted_resources(
-        [ResourceMapping.model_validate(r) for r in voxco_resource_mappings],
+        voxco_resource_mappings,
         organization_stable_target_id_by_query_voxco,
         extracted_mex_persons_voxco,
         unit_stable_target_ids_by_synonym,
@@ -116,7 +112,6 @@ def extracted_voxco_resources(  # noqa: PLR0913
         extracted_international_projects_activities,
     )
     load(mex_resources.values())
-
     return mex_resources
 
 

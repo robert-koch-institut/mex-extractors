@@ -47,7 +47,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 
 
 @asset(group_name="biospecimen")
-def extracted_mex_persons(
+def extracted_mex_persons_biospecimen(
     biospecimen_resources: list[BiospecimenResource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -65,7 +65,7 @@ def extracted_mex_persons(
 def extracted_biospecimen_resources(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
     extracted_primary_source_biospecimen: ExtractedPrimarySource,
-    extracted_mex_persons: list[ExtractedPerson],
+    extracted_mex_persons_biospecimen: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     extracted_synopse_activities: list[ExtractedActivity],
@@ -82,7 +82,7 @@ def extracted_biospecimen_resources(  # noqa: PLR0913
             biospecimen_resources,
             extracted_primary_source_biospecimen,
             unit_stable_target_ids_by_synonym,
-            extracted_mex_persons,
+            extracted_mex_persons_biospecimen,
             extracted_organization_rki,
             extracted_synopse_activities,
             resource_mapping,

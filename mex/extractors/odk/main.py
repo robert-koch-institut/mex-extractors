@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Any
 
 from dagster import asset
 
@@ -50,28 +49,27 @@ def odk_raw_data() -> list[ODKData]:
 
 
 @asset(group_name="odk")
-def odk_resource_mappings() -> list[dict[str, Any]]:
+def odk_resource_mappings() -> list[ResourceMapping]:
     """Extract odk resource mappings."""
     settings = Settings.get()
-    return [
+    raw_mappings = [
         load_yaml(file)
         for file in Path(settings.odk.mapping_path).glob("resource_*.yaml")
     ]
+    return [ResourceMapping.model_validate(r) for r in raw_mappings]
 
 
 @asset(group_name="odk")
 def external_partner_and_publisher_by_label(
-    odk_resource_mappings: list[dict[str, Any]],
+    odk_resource_mappings: list[ResourceMapping],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
-    return get_external_partner_and_publisher_by_label(
-        [ResourceMapping.model_validate(r) for r in odk_resource_mappings]
-    )
+    return get_external_partner_and_publisher_by_label(odk_resource_mappings)
 
 
 @asset(group_name="odk")
 def extracted_resources_odk(
-    odk_resource_mappings: list[dict[str, Any]],
+    odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],
@@ -79,7 +77,7 @@ def extracted_resources_odk(
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
-        [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
+        odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
         extracted_international_projects_activities,

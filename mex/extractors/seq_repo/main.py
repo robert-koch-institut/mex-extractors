@@ -133,6 +133,7 @@ def seq_repo_extracted_access_platform(
     access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "access-platform.yaml")
     )
+
     mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
             access_platform,

@@ -1,5 +1,3 @@
-from typing import Any
-
 from dagster import asset
 
 from mex.common.cli import entrypoint
@@ -110,19 +108,16 @@ def transformed_sumo_access_platform(
 
 @asset(group_name="sumo")
 def contact_merged_ids_by_emails_sumo(
-    extracted_resources_nokeda_sumo: dict[str, Any],
-    extracted_resources_feat_sumo: dict[str, Any],
+    extracted_resources_nokeda_sumo: ResourceMapping,
+    extracted_resources_feat_sumo: ResourceMapping,
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> dict[Email, MergedContactPointIdentifier]:
     """Load contacts related to resources and return them by their e-mail addresses."""
     ldap_contact_points_resources = list(
         extract_ldap_contact_points_by_emails(
             [
-                ResourceMapping.model_validate(r)
-                for r in [
-                    extracted_resources_nokeda_sumo,
-                    extracted_resources_feat_sumo,
-                ]
+                extracted_resources_nokeda_sumo,
+                extracted_resources_feat_sumo,
             ]
         )
     )
@@ -155,17 +150,21 @@ def transformed_activity_sumo(
 
 
 @asset(group_name="sumo")
-def extracted_resources_nokeda_sumo() -> dict[str, Any]:
+def extracted_resources_nokeda_sumo() -> ResourceMapping:
     """Extract Nokeda Resource from SUMO."""
     settings = Settings.get()
-    return load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
+    return ResourceMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
+    )
 
 
 @asset(group_name="sumo")
-def extracted_resources_feat_sumo() -> dict[str, Any]:
+def extracted_resources_feat_sumo() -> ResourceMapping:
     """Extract Resource feat from SUMO."""
     settings = Settings.get()
-    return load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
+    return ResourceMapping.model_validate(
+        load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
+    )
 
 
 @asset(group_name="sumo")
@@ -193,7 +192,7 @@ def extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 @asset(group_name="sumo")
 def transformed_resource_nokeda_sumo(  # noqa: PLR0913
-    extracted_resources_nokeda_sumo: dict[str, Any],
+    extracted_resources_nokeda_sumo: ResourceMapping,
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     contact_merged_ids_by_emails_sumo: dict[Email, MergedContactPointIdentifier],
@@ -203,7 +202,7 @@ def transformed_resource_nokeda_sumo(  # noqa: PLR0913
 ) -> ExtractedResource:
     """Transform and load extracted Nokeda Resource from SUMO."""
     mex_resource_nokeda = transform_resource_nokeda_to_mex_resource(
-        ResourceMapping.model_validate(extracted_resources_nokeda_sumo),
+        extracted_resources_nokeda_sumo,
         extracted_primary_source_sumo,
         unit_stable_target_ids_by_synonym,
         contact_merged_ids_by_emails_sumo,
@@ -217,7 +216,7 @@ def transformed_resource_nokeda_sumo(  # noqa: PLR0913
 
 @asset(group_name="sumo")
 def transformed_resource_feat_sumo(  # noqa: PLR0913
-    extracted_resources_feat_sumo: dict[str, Any],
+    extracted_resources_feat_sumo: ResourceMapping,
     extracted_primary_source_sumo: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     contact_merged_ids_by_emails_sumo: dict[Email, MergedContactPointIdentifier],
@@ -227,7 +226,7 @@ def transformed_resource_feat_sumo(  # noqa: PLR0913
 ) -> ExtractedResource:
     """Transform and load extracted SUMO Resource feat."""
     mex_resource_feat = transform_resource_feat_model_to_mex_resource(
-        ResourceMapping.model_validate(extracted_resources_feat_sumo),
+        extracted_resources_feat_sumo,
         extracted_primary_source_sumo,
         unit_stable_target_ids_by_synonym,
         contact_merged_ids_by_emails_sumo,
