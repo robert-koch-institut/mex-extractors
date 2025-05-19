@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from dagster import (
     AssetsDefinition,
@@ -23,18 +23,14 @@ from dagster import (
 
 from mex.extractors.settings import Settings
 
-if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Sequence
 
-    from dagster._core.execution.execution_result import ExecutionResult
-
-
-def run_job_in_process(group_name: str = "default") -> "ExecutionResult":
+def run_job_in_process(group_name: str = "default") -> bool:
     """Run the dagster job with the given group name locally in-process."""
     from mex.extractors import defs  # avoid circular imports
 
     job = defs.get_job_def(group_name)
-    return job.execute_in_process()
+    result = job.execute_in_process()
+    return result.success
 
 
 @sensor(
@@ -105,7 +101,7 @@ def load_job_definitions() -> Definitions:
     settings = Settings.get()
 
     resources = {"io_manager": FilesystemIOManager()}
-    assets = cast("Sequence[AssetsDefinition]", load_assets_from_package_module(mex))
+    assets = cast("list[AssetsDefinition]", load_assets_from_package_module(mex))
     checks = load_asset_checks_from_package_module(mex)
 
     extractor_group_names = {
