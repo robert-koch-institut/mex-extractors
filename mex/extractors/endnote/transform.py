@@ -274,10 +274,10 @@ def extract_endnote_bibliographic_resource(
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.tertiary_authors
         ]
-        issued: list[TemporalEntity] = []
         for pub_date in record.pub_dates:
             try:
-                issued.append(TemporalEntity(f"{pub_date} {record.year}"))
+                issued = TemporalEntity(f"{pub_date} {record.year}")
+                break
             except:  # noqa: E722, S112
                 continue
 
