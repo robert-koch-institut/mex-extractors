@@ -37,8 +37,6 @@ def extract_endnote_persons_by_person_string(
 
     Args:
         endnote_records: list of endnote record
-        extracted_primary_source_ldap: primary Source for ldap
-        extracted_organizational_units: list of organizational units
         extracted_primary_source_endnote: primary source for endnote
 
     Returns:
