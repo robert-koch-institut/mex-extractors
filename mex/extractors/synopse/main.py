@@ -1,6 +1,8 @@
 from itertools import chain, groupby, tee
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
@@ -26,7 +28,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedResourceIdentifier,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.synopse.extract import (
@@ -268,7 +270,7 @@ def extracted_synopse_activities(  # noqa: PLR0913
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
-    transformed_activities = list(
+    non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_source_report_server,
@@ -279,8 +281,10 @@ def extracted_synopse_activities(  # noqa: PLR0913
             contact_merged_id_by_query_string,
         )
     )
-    load(transformed_activities)
-    return transformed_activities
+
+    load(non_child_activities)
+    load(child_activities)
+    return [*non_child_activities, *child_activities]
 
 
 @asset(group_name="synopse")

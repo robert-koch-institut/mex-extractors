@@ -13,7 +13,7 @@ class OpenDataCreatorsOrContributors(BaseModel):
         return hash(f"{self.name}")
 
 
-class OpenDataRelateditdentifiers(BaseModel):
+class OpenDataRelatedIdentifiers(BaseModel):
     """Model subclass for Zenodo metadata related identifiers."""
 
     identifier: str | None = None
@@ -39,7 +39,7 @@ class OpenDataMetadata(BaseModel):
     creators: list[OpenDataCreatorsOrContributors] = []
     contributors: list[OpenDataCreatorsOrContributors] = []
     keywords: list[str] = []
-    related_identifiers: list[OpenDataRelateditdentifiers] = []
+    related_identifiers: list[OpenDataRelatedIdentifiers] = []
     language: str | None = None
     license: OpenDataLicenseOrFile
     publication_date: str | None = None

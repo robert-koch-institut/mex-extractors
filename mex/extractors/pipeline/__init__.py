@@ -4,17 +4,13 @@ We use dagster (https://dagster.io) to orchestrate the ETL processes of the
 RKI Metadata Exchange. Dagster allows us to structure our code, visualize dependencies
 between different data sources and schedule the execution of pipelines.
 
-In order to decrease the vendor-lock, we try to restrict the use of dagster APIs to the
-`mex.extractors.pipeline` module and avoid directly importing dagster modules from the
-extractors.
-
 software-defined assets
 -----------------------
 
 Each pipeline should have a `main` module, e.g. `mex.extractors.artificial.main`, that
 contains all steps needed for a successful execution. Each "step" should be marked as a
-software-defined asset using the decorator exposed by `mex.extractors.pipeline.asset`
-and should be assigned to a group with a name unique to the pipeline.
+software-defined asset using the decorator by `dagster.asset` and should be assigned to
+a group with a name unique to the pipeline.
 
     # mex/foo_system/main.py
 
@@ -61,20 +57,9 @@ Pipelines can be run in a couple of different ways:
 - run `pdm run dagster job execute -m mex -j foo_system` using the asset group name
 """
 
-from typing import TYPE_CHECKING, Any, TypeVar
-
-if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Callable
-
-    _AssetFn = TypeVar("_AssetFn")
-
-    def asset(**_: Any) -> Callable[[_AssetFn], _AssetFn]:
-        """Create a definition for how to compute an asset."""
-        ...
-
-else:
-    from dagster import asset
-
 from mex.extractors.pipeline.base import load_job_definitions, run_job_in_process
 
-__all__ = ("asset", "load_job_definitions", "run_job_in_process")
+__all__ = (
+    "load_job_definitions",
+    "run_job_in_process",
+)

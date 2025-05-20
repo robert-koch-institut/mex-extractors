@@ -21,6 +21,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.34.4] - 2025-05-19
+
+### Changes
+
+- change return type of `run_job_in_process` to bool indicating success
+- update mex-common to 0.61.1
+
+## [0.34.3] - 2025-05-19
+
+### Changes
+
+- update mex-common to 0.61.0
+
+## [0.34.2] - 2025-05-15
+
+### Removed
+
+- remove partitioning seq-repo resources
+
+### Fixed
+
+- odk resource relations
+
+## [0.34.1] - 2025-05-14
+
+### Changes
+
+- try out partitioning seq-repo resources
+
+## [0.34.0] - 2025-05-13
+
+### Added
+
+- enabled scanning for asset_checks for dagster definitions
+
+### Changes
+
+- switch `asset` decorator over to dagster for proper typing
+- update mex-common to 0.60.0
+
+### Fixed
+
+- always load parent before child
+- ifsg keyword extraction
+- voxco variable lookup
+
 ## [0.33.0] - 2025-04-29
 
 ### Added

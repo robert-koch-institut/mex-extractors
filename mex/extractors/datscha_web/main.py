@@ -1,3 +1,5 @@
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
@@ -22,7 +24,7 @@ from mex.extractors.datscha_web.transform import (
     transform_datscha_web_items_to_mex_activities,
 )
 from mex.extractors.filters import filter_by_global_rules
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 

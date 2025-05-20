@@ -19,9 +19,9 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> None:
         _self: BackendApiConnector,
         _method: str = "GET",
         _endpoint: str | None = None,
-        _payload: Any = None,
+        _payload: Any = None,  # noqa: ANN401
         _params: dict[str, str] | None = None,
-        **_kwargs: Any,
+        **_kwargs: Any,  # noqa: ANN401
     ) -> dict[str, Any]:
         return PaginatedItemsContainer[AnyMergedModel](
             total=1,

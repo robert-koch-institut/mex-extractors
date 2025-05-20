@@ -159,67 +159,63 @@ def grippeweb_variable() -> VariableMapping:
 
 
 @pytest.fixture
-def grippeweb_extracted_resource_dict(
+def grippeweb_extracted_parent_resource(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> dict[str, ExtractedResource]:
-    return {
-        "grippeweb": ExtractedResource(
-            hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
-            identifierInPrimarySource="grippeweb",
-            accessRestriction="https://mex.rki.de/item/access-restriction-2",
-            accrualPeriodicity="https://mex.rki.de/item/frequency-15",
-            contact=[MergedContactPointIdentifier.generate(42)],
-            temporal="seit 2011",
-            theme=["https://mex.rki.de/item/theme-11"],
-            title=[Text(value="GrippeWeb", language="de")],
-            anonymizationPseudonymization=[
-                "https://mex.rki.de/item/anonymization-pseudonymization-2"
-            ],
-            description=[Text(value="GrippeWeb", language="de")],
-            icd10code=["J00-J99"],
-            keyword=[Text(value="Citizen Science", language="en")],
-            language=["https://mex.rki.de/item/language-1"],
-            meshId=["http://id.nlm.nih.gov/mesh/D012140"],
-            method=[Text(value="Online-Befragung", language="de")],
-            methodDescription=[
-                Text(value="Online-Surveillanceintrument", language="de")
-            ],
-            resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
-            resourceTypeSpecific=[
-                Text(value="bevölkerungsbasierte Surveillancedaten", language="de")
-            ],
-            rights=[Text(value="Verfahren", language="de")],
-            stateOfDataProcessing=["https://mex.rki.de/item/data-processing-state-1"],
-            unitInCharge=[MergedOrganizationalUnitIdentifier.generate(42)],
-            entityType="ExtractedResource",
-        )
-    }
+) -> ExtractedResource:
+    return ExtractedResource(
+        hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+        identifierInPrimarySource="grippeweb",
+        accessRestriction="https://mex.rki.de/item/access-restriction-2",
+        accrualPeriodicity="https://mex.rki.de/item/frequency-15",
+        contact=[MergedContactPointIdentifier.generate(42)],
+        temporal="seit 2011",
+        theme=["https://mex.rki.de/item/theme-11"],
+        title=[Text(value="GrippeWeb", language="de")],
+        anonymizationPseudonymization=[
+            "https://mex.rki.de/item/anonymization-pseudonymization-2"
+        ],
+        description=[Text(value="GrippeWeb", language="de")],
+        icd10code=["J00-J99"],
+        keyword=[Text(value="Citizen Science", language="en")],
+        language=["https://mex.rki.de/item/language-1"],
+        meshId=["http://id.nlm.nih.gov/mesh/D012140"],
+        method=[Text(value="Online-Befragung", language="de")],
+        methodDescription=[Text(value="Online-Surveillanceintrument", language="de")],
+        resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
+        resourceTypeSpecific=[
+            Text(value="bevölkerungsbasierte Surveillancedaten", language="de")
+        ],
+        rights=[Text(value="Verfahren", language="de")],
+        stateOfDataProcessing=["https://mex.rki.de/item/data-processing-state-1"],
+        unitInCharge=[MergedOrganizationalUnitIdentifier.generate(42)],
+        entityType="ExtractedResource",
+    )
 
 
 @pytest.fixture
 def extracted_variable_groups(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    grippeweb_extracted_resource_dict: dict[str, ExtractedResource],
+    grippeweb_extracted_parent_resource: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     return [
         ExtractedVariableGroup(
             hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
             identifierInPrimarySource="vActualQuestion",
-            containedBy=[grippeweb_extracted_resource_dict["grippeweb"].stableTargetId],
+            containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Additional Questions", language="en")],
             entityType="ExtractedVariableGroup",
         ),
         ExtractedVariableGroup(
             hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
             identifierInPrimarySource="vWeeklyResponsesMEx",
-            containedBy=[grippeweb_extracted_resource_dict["grippeweb"].stableTargetId],
+            containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Weekly Responses", language="en")],
             entityType="ExtractedVariableGroup",
         ),
         ExtractedVariableGroup(
             hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
             identifierInPrimarySource="vMasterDataMEx",
-            containedBy=[grippeweb_extracted_resource_dict["grippeweb"].stableTargetId],
+            containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Master Data", language="en")],
             entityType="ExtractedVariableGroup",
         ),

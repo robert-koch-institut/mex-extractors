@@ -8,5 +8,4 @@ from mex.extractors.pipeline import run_job_in_process
     "mocked_wikidata",
 )
 def test_job() -> None:
-    result = run_job_in_process("international_projects")
-    assert result.success
+    assert run_job_in_process("international_projects")

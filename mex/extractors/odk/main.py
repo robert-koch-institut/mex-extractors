@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any
 
+from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedActivity,
@@ -19,11 +21,11 @@ from mex.extractors.odk.extract import (
 )
 from mex.extractors.odk.model import ODKData
 from mex.extractors.odk.transform import (
-    assign_resource_relations,
+    assign_resource_relations_and_load,
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
@@ -76,18 +78,14 @@ def extracted_resources_odk(
     extracted_primary_source_mex: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
-    extracted_resources_odk, is_part_of = transform_odk_resources_to_mex_resources(
+    extracted_resources_tuple = transform_odk_resources_to_mex_resources(
         [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
         unit_stable_target_ids_by_synonym,
         external_partner_and_publisher_by_label,
         extracted_international_projects_activities,
         extracted_primary_source_mex,
     )
-    extracted_resources_odk_linked = assign_resource_relations(
-        extracted_resources_odk, is_part_of
-    )
-    load(extracted_resources_odk_linked)
-    return extracted_resources_odk_linked
+    return assign_resource_relations_and_load(extracted_resources_tuple)
 
 
 @asset(group_name="odk")

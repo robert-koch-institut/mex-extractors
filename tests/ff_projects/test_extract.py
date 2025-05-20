@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -78,7 +77,7 @@ def test_get_temporal_entity_from_cell() -> None:
 @pytest.mark.parametrize(
     ("cell_value", "expected"), [("2004 ", "2004"), (2004, "2004"), (" ", " ")]
 )
-def test_get_string_from_cell(cell_value: Any, expected: str) -> None:
+def test_get_string_from_cell(cell_value: str | int, expected: str) -> None:
     string = get_string_from_cell(cell_value)
     assert string == expected
 

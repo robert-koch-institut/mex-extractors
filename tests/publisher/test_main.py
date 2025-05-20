@@ -17,5 +17,4 @@ def mocked_boto(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
 
 @pytest.mark.usefixtures("mocked_backend", "mocked_boto")
 def test_run() -> None:
-    result = run_job_in_process("publisher")
-    assert result.success
+    assert run_job_in_process("publisher")
