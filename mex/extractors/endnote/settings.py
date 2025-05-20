@@ -14,3 +14,10 @@ class EndnoteSettings(BaseModel):
             "absolute path or relative to `assets_dir`."
         ),
     )
+    mapping_path: AssetsPath = Field(
+        AssetsPath("mappings/endnote"),
+        description=(
+            "Path to the directory with the endnote mapping files containing the "
+            "default values, absolute path or relative to `assets_dir`."
+        ),
+    )
