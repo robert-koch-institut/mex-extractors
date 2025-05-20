@@ -278,7 +278,7 @@ def extract_endnote_bibliographic_resource(
             try:
                 issued = TemporalEntity(f"{pub_date} {record.year}")
                 break
-            except:  # noqa: E722, S112
+            except ValidationError:
                 continue
 
         journal = [
