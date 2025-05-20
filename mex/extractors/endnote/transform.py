@@ -333,7 +333,8 @@ def extract_endnote_bibliographic_resource(
                 accessRestriction=access_restriction,
                 alternateIdentifier=alternate_identifier,
                 bibliographicResourceType=bibliographical_resource_type_by_ref_type.get(
-                    record.ref_type, []
+                    record.ref_type,
+                    bibliographical_resource_type_by_ref_type["default"],
                 ),
                 contributingUnit=contributing_unit,
                 creator=creator,
