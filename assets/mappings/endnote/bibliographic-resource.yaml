@@ -28,9 +28,10 @@ alternateIdentifier:
   - fieldInPrimarySource: <call-num><style>
     examplesInPrimarySource:
     mappingRules:
-      - rule:
       - forValues:
           - https://edoc.rki.de/handle/
+        setValues:
+          - https://edoc.rki.de/
         rule:
 bibliographicResourceType:
   - fieldInPrimarySource:

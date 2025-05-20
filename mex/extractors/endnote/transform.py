@@ -1,5 +1,4 @@
 import re
-import time
 from datetime import datetime
 
 from pydantic import TypeAdapter
@@ -189,12 +188,12 @@ def extract_endnote_bibliographic_resource(
         .setValues[0]
     )
     cn_for_value = (
-        endnote_bib_resource_mapping.alternateIdentifier[0]  # type: ignore[index]
+        endnote_bib_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
         .mappingRules[0]
         .forValues[0]
     )
     cn_set_value = (
-        endnote_bib_resource_mapping.alternateIdentifier[0]  # type: ignore[index]
+        endnote_bib_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
         .mappingRules[0]
         .setValues[0]
     )
