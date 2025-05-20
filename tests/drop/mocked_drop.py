@@ -58,15 +58,16 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
     def get_raw_file_mocked(
         _self: DropApiConnector, x_system: str, file_id: str
     ) -> "MockedResponse":
-        with open(
+        with (
             (
                 Path(__file__).parents[2]
                 / "tests"
                 / x_system.replace("-", "_")
                 / "test_data"
                 / file_id
-            ).with_suffix(".xml"),
-            mode="rb",
+            ).with_suffix(".xml")
+        ).open(
+            encoding="utf-8",
         ) as f:
             mocked_response = MockedResponse()
             mocked_response.content = f.read()

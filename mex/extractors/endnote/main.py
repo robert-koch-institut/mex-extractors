@@ -18,7 +18,7 @@ from mex.extractors.endnote.transform import (
     extract_endnote_consents,
     extract_endnote_persons_by_person_string,
 )
-from mex.extractors.pipeline import asset, run_job_in_process
+from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
