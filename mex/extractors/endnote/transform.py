@@ -116,7 +116,6 @@ def get_doi(
         electronic_resource_num: list of electronic resource num string
         endnote_bibliographic_resource: bibliographic resource mapping
 
-
     Returns:
         doi string or None
     """
