@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, ValidationError
 
 from mex.common.models import (
     BibliographicResourceMapping,
@@ -134,7 +134,7 @@ def get_doi(
         doi = doi_string
     try:
         doi_adapter.validate_python(doi)
-    except:  # noqa: E722
+    except ValidationError:
         return None
     return doi
 
