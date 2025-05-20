@@ -10,6 +10,7 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.sinks import load
+from mex.extractors.sorters import topological_sort
 
 
 @asset(group_name="default")
@@ -22,6 +23,7 @@ def extracted_organizational_units(
         organigram_units,
         extracted_primary_source_organigram,
     )
+    topological_sort(mex_organizational_units, "stableTargetId", "parentUnit")
     load(mex_organizational_units)
     return mex_organizational_units
 
