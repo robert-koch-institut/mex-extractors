@@ -284,6 +284,7 @@ def extract_endnote_bibliographic_resource(
         journal = [
             Text(value=f"{record.ref_type} {periodical}", language=text_language)
             for periodical in record.periodical
+            if record.ref_type == "Journal Article"
         ]
 
         keyword = [
