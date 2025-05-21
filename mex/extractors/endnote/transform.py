@@ -189,12 +189,12 @@ def extract_endnote_bibliographic_resource(
     )
     cn_for_value = (
         endnote_bib_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
-        .mappingRules[0]
+        .mappingRules[1]
         .forValues[0]
     )
     cn_set_value = (
         endnote_bib_resource_mapping.alternateIdentifier[1]  # type: ignore[index]
-        .mappingRules[0]
+        .mappingRules[1]
         .setValues[0]
     )
     bibliographical_resource_type_by_ref_type = {
@@ -278,7 +278,7 @@ def extract_endnote_bibliographic_resource(
             try:
                 issued = TemporalEntity(f"{pub_date} {record.year}")
                 break
-            except ValidationError:
+            except (ValidationError, ValueError):
                 continue
 
         journal = [

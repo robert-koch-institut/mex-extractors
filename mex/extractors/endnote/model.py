@@ -27,6 +27,6 @@ class EndnoteRecord(BaseModel):
     secondary_authors: list[str]
     secondary_title: str | None
     tertiary_authors: list[str]
-    title: str | None
+    title: str
     volume: str | None
     year: str | None
