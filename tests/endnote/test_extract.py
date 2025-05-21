@@ -4,7 +4,7 @@ from mex.extractors.endnote.extract import extract_endnote_records
 
 
 @pytest.mark.usefixtures(
-    "mocked_drop",
+    "mocked_drop", "wikidata"
 )
 def test_extract_endnote_records() -> None:
     records = extract_endnote_records()

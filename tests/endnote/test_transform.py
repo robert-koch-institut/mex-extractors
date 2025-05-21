@@ -116,8 +116,8 @@ def test_extract_endnote_bibliographic_resource(
             "https://mex.rki.de/item/bibliographic-resource-type-2"
         ],
         "contributingUnit": ["bFQoRhcVH5DHU8"],
-        "editor": ["ccSc9u7Kjps1nNBxTw7y3l"],
-        "editorOfSeries": ["ccSc9u7Kjps1nNBxTw7y3l"],
+        "editor": ["eAoOVRo8MGXiVcaDyJwoaf"],
+        "editorOfSeries": ["c4Mgoj3j2OtABRXefB9vAy"],
         "isbnIssn": ["1234-5678"],
         "keyword": [
             {"value": "keyword 1", "language": TextLanguage.EN},

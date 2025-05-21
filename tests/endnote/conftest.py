@@ -84,7 +84,7 @@ def extracted_endnote_persons_by_person_string(
         "Erika Mustermann": ExtractedPerson.model_validate(
             {
                 "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
-                "identifierInPrimarySource": "00000000-0000-4000-8000-000000000001",
+                "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
                 "email": ["test_person@email.de"],
                 "familyName": ["Secondary"],
                 "fullName": ["Scondary, Roland"],
@@ -95,7 +95,7 @@ def extracted_endnote_persons_by_person_string(
         "Mustermann, I.": ExtractedPerson.model_validate(
             {
                 "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
-                "identifierInPrimarySource": "00000000-0000-4000-8000-000000000001",
+                "identifierInPrimarySource": "00000000-0000-4000-8000-000000000003",
                 "email": ["test_person@email.de"],
                 "familyName": ["Tertiary"],
                 "fullName": ["Tertiary, Roland"],
