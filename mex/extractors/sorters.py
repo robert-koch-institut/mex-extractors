@@ -14,7 +14,7 @@ def topological_sort(items: list[ItemT], primary_key: str, foreign_key: str) -> 
 
     This can be useful for submitting items to the backend in the correct order.
     """
-    graph = DiGraph[str]()
+    graph: DiGraph[str] = DiGraph()
     for item in items:
         pk_value = getattr(item, primary_key)
         graph.add_node(pk_value)
