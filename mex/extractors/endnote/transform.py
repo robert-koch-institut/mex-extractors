@@ -139,7 +139,7 @@ def get_doi(
     return doi
 
 
-def extract_endnote_bibliographic_resource(
+def extract_endnote_bibliographic_resource(  # noqa: C901
     endnote_records: list[EndnoteRecord],
     endnote_bib_resource_mapping: BibliographicResourceMapping,
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
@@ -306,7 +306,7 @@ def extract_endnote_bibliographic_resource(
             if publisher_string is None:
                 continue
             if publisher_org := get_wikidata_extracted_organization_id_by_name(
-                record.publisher
+                publisher_string
             ):
                 publisher.append(publisher_org)
         repository_url = record.related_urls[0] if record.related_urls else []

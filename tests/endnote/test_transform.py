@@ -25,6 +25,11 @@ def test_extract_endnote_persons_by_person_string(
         endnote_records,
         extracted_primary_sources["endnote"],
     )
+    assert sorted(person_dict.keys()) == [
+        "Erika Mustermann",
+        "Mustermann, I.",
+        "Mustermann, J.",
+    ]
     assert person_dict["Mustermann, J."].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
         "identifierInPrimarySource": "Mustermann, J.",
