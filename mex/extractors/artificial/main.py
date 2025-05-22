@@ -19,7 +19,7 @@ def artificial_data() -> None:
     """Load the artificial data models to the sinks."""
     models: Sequence[str] = list(EXTRACTED_MODEL_CLASSES_BY_NAME.keys())
     artificial_data = generate_artificial_extracted_items(
-        locale=DEFAULT_LOCALE
+        locale=DEFAULT_LOCALE,
         seed=42,
         count=len(models) * 25,
         chattiness=16,
