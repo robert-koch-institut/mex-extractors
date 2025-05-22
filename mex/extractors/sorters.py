@@ -32,6 +32,7 @@ def topological_sort(
     graph: DiGraph[str] = DiGraph()
     for item in items:
         current_node = getattr(item, primary_key)
+        graph.add_node(current_node)
         if parent_key:
             for parent_node in ensure_list(getattr(item, parent_key)):
                 graph.add_edge(parent_node, current_node)
