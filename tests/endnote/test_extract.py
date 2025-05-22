@@ -3,9 +3,7 @@ import pytest
 from mex.extractors.endnote.extract import extract_endnote_records
 
 
-@pytest.mark.usefixtures(
-    "mocked_drop", "wikidata"
-)
+@pytest.mark.usefixtures("mocked_drop", "mocked_wikidata")
 def test_extract_endnote_records() -> None:
     records = extract_endnote_records()
     expected = {
