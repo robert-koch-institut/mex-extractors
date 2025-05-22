@@ -6,7 +6,7 @@
 			<rec-number>1</rec-number>
 			<ref-type name="Journal Article">2</ref-type>
 			<call-num>
-				<style>call-num</style>
+				<style>https://edoc.rki.de/handle/1234</style>
 			</call-num>
 			<contributors>
 				<authors>
@@ -51,7 +51,7 @@
 				<style>3-4</style>
 			</pages>
 			<publisher>
-				<style>publisher</style>
+				<style>Robert-Koch Institut</style>
 			</publisher>
 			<volume>
 				<style>5</style>
@@ -93,14 +93,20 @@
 					</url>
 				</related-urls>
 			</urls>
+			<custom3>
+				<style>Robert-Koch Institut</style>
+			</custom3>
 			<custom4>
 				<style>C1</style>
 			</custom4>
 			<custom6>
-				<style>C6</style>
+				<style>Closed Access</style>
 			</custom6>
 			<electronic-resource-num>
-				<style>12.3456/qad.0000000000000789</style>
+				<style>10.3456/qad.00</style>
+			</electronic-resource-num>
+			<electronic-resource-num>
+				<style>https://edoc.rki.de/handle/1234</style>
 			</electronic-resource-num>
 			<language>
 				<style>eng</style>
