@@ -23,7 +23,11 @@ def extracted_organizational_units(
         organigram_units,
         extracted_primary_source_organigram,
     )
-    topological_sort(mex_organizational_units, "stableTargetId", "parentUnit")
+    topological_sort(
+        mex_organizational_units,
+        "stableTargetId",
+        parent_key="parentUnit",
+    )
     load(mex_organizational_units)
     return mex_organizational_units
 
