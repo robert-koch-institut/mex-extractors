@@ -23,7 +23,7 @@ def extracted_organizational_units(
         extracted_primary_source_organigram,
     )
     load(mex_organizational_units)
-    return mex_organizational_units
+    return list(mex_organizational_units)
 
 
 @asset(group_name="default")

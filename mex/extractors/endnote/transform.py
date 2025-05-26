@@ -8,6 +8,7 @@ from mex.common.models import (
     ConsentMapping,
     ExtractedBibliographicResource,
     ExtractedConsent,
+    ExtractedOrganization,
     ExtractedPerson,
     ExtractedPrimarySource,
 )
@@ -23,6 +24,7 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.extractors.endnote.model import EndnoteRecord
+from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -139,7 +141,7 @@ def get_doi(
     return doi
 
 
-def extract_endnote_bibliographic_resource(  # noqa: C901
+def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_records: list[EndnoteRecord],
     endnote_bib_resource_mapping: BibliographicResourceMapping,
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
@@ -311,6 +313,14 @@ def extract_endnote_bibliographic_resource(  # noqa: C901
                 publisher_string
             ):
                 publisher.append(publisher_org)
+            else:
+                created_org = ExtractedOrganization(
+                    hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
+                    identifierInPrimarySource=publisher_string,
+                    officialName=[publisher_string],
+                )
+                load([created_org])
+                publisher.append(created_org.stableTargetId)
         repository_url = record.related_urls[0] if record.related_urls else []
         title_of_series = []
         if record.ref_type == "Book Section":

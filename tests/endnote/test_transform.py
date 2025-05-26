@@ -129,6 +129,7 @@ def test_extract_endnote_bibliographic_resource(
             {"value": "keyword 2", "language": TextLanguage.EN},
         ],
         "language": ["https://mex.rki.de/item/language-2"],
+        "publisher": ["fPVAifNTaeeWWarVB5nk8U", "fPVAifNTaeeWWarVB5nk8U"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
