@@ -280,6 +280,8 @@ def extract_endnote_bibliographic_resource(  # noqa: C901
                 break
             except (ValidationError, ValueError):
                 continue
+        if not issued:
+            continue
 
         journal = [
             Text(value=f"{record.ref_type} {periodical}", language=text_language)
