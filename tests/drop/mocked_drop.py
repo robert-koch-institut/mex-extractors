@@ -4,10 +4,14 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
-import requests
 from pytest import MonkeyPatch
+from requests import Session
 
 from mex.extractors.drop import DropApiConnector
+
+
+class MockedResponse:
+    content: bytes
 
 
 @pytest.fixture
@@ -16,7 +20,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(
         DropApiConnector,
         "__init__",
-        lambda self: setattr(self, "session", MagicMock(spec=requests.Session)),
+        lambda self: setattr(self, "session", MagicMock(spec=Session)),
     )
     monkeypatch.setattr(
         DropApiConnector,
@@ -28,7 +32,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
                 / "tests"
                 / x_system.replace("-", "_")
                 / "test_data"
-            ).rglob("*.json")
+            ).rglob("*.*")
         ],
     )
 
@@ -49,4 +53,28 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
         DropApiConnector,
         "get_file",
         get_file_mocked,
+    )
+
+    def get_raw_file_mocked(
+        _self: DropApiConnector, x_system: str, file_id: str
+    ) -> "MockedResponse":
+        with (
+            (
+                Path(__file__).parents[2]
+                / "tests"
+                / x_system.replace("-", "_")
+                / "test_data"
+                / file_id
+            ).with_suffix(".xml")
+        ).open(
+            encoding="utf-8",
+        ) as f:
+            mocked_response = MockedResponse()
+            mocked_response.content = f.read()
+            return mocked_response
+
+    monkeypatch.setattr(
+        DropApiConnector,
+        "get_raw_file",
+        get_raw_file_mocked,
     )
