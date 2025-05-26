@@ -21,9 +21,9 @@ def extracted_primary_sources() -> list[ExtractedPrimarySource]:
     """
     seed_primary_sources = extract_seed_primary_sources()
     return transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    
+        seed_primary_sources
+    )
+
 
 @asset(group_name="default")
 def extracted_primary_source_mex(

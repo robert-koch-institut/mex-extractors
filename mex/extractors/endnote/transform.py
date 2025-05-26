@@ -276,6 +276,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
             extracted_endnote_persons_by_person_string[author].stableTargetId
             for author in record.tertiary_authors
         ]
+        issued: TemporalEntity | None = None
         for pub_date in record.pub_dates:
             try:
                 issued = TemporalEntity(f"{pub_date} {record.year}")
