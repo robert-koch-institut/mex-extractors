@@ -7,6 +7,7 @@ class EndnoteRecord(BaseModel):
     abstract: str | None
     authors: list[str]
     call_num: str | None
+    custom3: str | None
     custom4: str | None
     custom6: str | None
     database: str | None
@@ -21,11 +22,11 @@ class EndnoteRecord(BaseModel):
     pub_dates: list[str]
     publisher: str | None
     rec_number: str | None
-    ref_type: str | None
+    ref_type: str
     related_urls: list[str]
     secondary_authors: list[str]
     secondary_title: str | None
     tertiary_authors: list[str]
-    title: str | None
+    title: str
     volume: str | None
     year: str | None
