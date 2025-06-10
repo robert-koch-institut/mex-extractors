@@ -1,7 +1,9 @@
 from typing import TypeVar
 
-from networkx import DiGraph
+from networkx import DiGraph, NetworkXUnfeasible
 from networkx import topological_sort as network_sort
+
+from mex.common.exceptions import MExError
 
 ItemT = TypeVar("ItemT")
 
@@ -40,7 +42,12 @@ def topological_sort(
             for child_node in ensure_list(getattr(item, child_key)):
                 graph.add_edge(current_node, child_node)
 
-    sorted_keys = list(network_sort(graph))
+    try:
+        sorted_keys = list(network_sort(graph))
+    except NetworkXUnfeasible as error:
+        msg = "Found graph cycles while sorting."
+        raise MExError(msg) from error
+
     items.sort(
         key=lambda item: (
             sorted_keys.index(getattr(item, primary_key)),

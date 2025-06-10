@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from mex.common.exceptions import MExError
 from mex.extractors.sorters import topological_sort
 
 
@@ -67,3 +68,14 @@ class Item:
 def test_topological_sort(items: list[Item], expected: list[Item]) -> None:
     topological_sort(items, "id", parent_key="parent", child_key="child")
     assert items == expected
+
+
+def test_topological_sort_circular_error() -> None:
+    items = [
+        Item(id="North", child=["East"]),
+        Item(id="East", child=["South"]),
+        Item(id="South", child=["West"]),
+        Item(id="West", child=["North"]),
+    ]
+    with pytest.raises(MExError, match="Found graph cycles while sorting"):
+        topological_sort(items, "id", child_key="child")
