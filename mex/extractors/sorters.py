@@ -15,9 +15,7 @@ def topological_sort(
 ) -> None:
     """Sort the given list of items in-place according to their topology.
 
-    Items can reference other item's `primary_key` value in a field specified by
-    `parent_key` pointing towards a parent item can reference a child item using
-    the `child_key` field.
+    Items can refer to each other using key fields. A parent item can reference a child item by storing the child’s `primary_key` in the parent’s `child_key` field. Similarly, a child can reference its parent using the `parent_key` field.
 
     This can be useful for submitting items to the backend in the correct order.
     """
