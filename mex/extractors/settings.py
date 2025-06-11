@@ -3,7 +3,6 @@ from pydantic_core import Url
 
 from mex.common.settings import BaseSettings
 from mex.common.types import AssetsPath
-from mex.extractors.artificial.settings import ArtificialSettings
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
@@ -82,7 +81,6 @@ class Settings(BaseSettings):
         "s3_bucket",
         description="The S3 bucket where to store objects.",
     )
-    artificial: ArtificialSettings = ArtificialSettings()
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()

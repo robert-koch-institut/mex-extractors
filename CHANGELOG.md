@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use helper from mex-artificial to generate and load artificial extracted items
 - order organizational units according to organigram hierarchy
 
 ### Deprecated

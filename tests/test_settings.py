@@ -8,7 +8,5 @@ def test_settings(monkeypatch: MonkeyPatch) -> None:
     SETTINGS_STORE.reset()
     monkeypatch.setenv("MEX_ARTIFICIAL__SEED", "12")
     settings = Settings.get()
-    assert settings.artificial.seed == 12
-    assert str(settings.artificial.mesh_file) == str(
-        (settings.assets_dir / "raw-data/artificial/asciimesh.bin").as_posix()
-    )
+    assert settings.open_data.url == "https://zenodo"
+    assert settings.open_data.community_rki == "robertkochinstitut"
