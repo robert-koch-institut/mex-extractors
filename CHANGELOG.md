@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `topological_sort` function to reorder a list of items based on topology
 - transform endnote
 
 ### Changes
+
+- order organizational units according to organigram hierarchy
 
 ### Deprecated
 
