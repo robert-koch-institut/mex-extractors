@@ -10,8 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - transform and wrap up endnote
+- add `topological_sort` function to reorder a list of items based on topology
 
 ### Changes
+
+- use helper from mex-artificial to generate and load artificial extracted items
+- order organizational units according to organigram hierarchy
 
 ### Deprecated
 
