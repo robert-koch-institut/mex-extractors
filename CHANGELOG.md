@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- transform and wrap up endnote
 - add `topological_sort` function to reorder a list of items based on topology
-- transform endnote
 
 ### Changes
 
