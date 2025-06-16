@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+  <title>DATSCHA - Verzeichnis von Verarbeitungstätigkeiten</title>
+</head>
+
+<body>
+  <div id="top_menu">
+    Top Menu
+  </div>
+  <div id="inhalt">
+    <div class="container">
+      <h2>DATSCHA - Verzeichnis von Verarbeitungstätigkeiten</h2>
+      <div id="inhalt_switch_container">
+        <div id="inhalt_switch_box">
+          <div id="inhalt_switch_box_inner">
+            <form method="post" id="standard_form" action="/verzeichnis.php">
+              <table id="tbl_uebersicht"
+                summary="Die folgende Tabelle enthält das Verzeichnis von Verarbeitungstätigkeiten.">
+                <caption>Verzeichnis-Tabelle</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" title="Bezeichnung und Version">
+                      <label for="suche_bezeichnung">Bezeichnung und Version</label>
+                      <a href="verzeichnis.php?order_by=suche_bezeichnung&amp;order_by_richtung=aufsteigend"
+                        title="aufsteigende Sortierung nach Bezeichnung und Version">
+                        <img src="order_by_up_active.gif"
+                          title="aufsteigende Sortierung nach Bezeichnung und Version"></a>
+                      <a href="verzeichnis.php?order_by=suche_bezeichnung&amp;order_by_richtung=absteigend"
+                        title="aufsteigende Sortierung nach Bezeichnung und Version">
+                        <img src="order_by_down.gif" title="absteigende Sortierung nach Bezeichnung und Version"></a>
+                    </th>
+                    <th scope="col"
+                      title="Die Spalte Typ gibt Auskunft darüber, ob der Eintrag auf Stammdaten Verarbeitungen oder einer freien Eingabe beruht">
+                      <label for="suche_kategorien_id">Typ</label>
+                      <a href="verzeichnis.php?order_by=suche_kategorien_id&amp;order_by_richtung=aufsteigend"
+                        title="aufsteigende Sortierung nach Typ">
+                        <img src="order_by_up.gif" title="aufsteigende Sortierung nach Typ"></a>
+                      <a href="verzeichnis.php?order_by=suche_kategorien_id&amp;order_by_richtung=absteigend"
+                        title="aufsteigende Sortierung nach Typ">
+                        <img src="order_by_down.gif" title="absteigende Sortierung nach Typ"></a>
+                    </th>
+                    <th scope="col" title="Stand der letzten Aktualisierung
+Eingabe in folgenden Formaten möglich:
+'TT.MM.JJJJ'
+'TT.MM.JJJJ - TT.MM.JJJJ'
+'- TT.MM.YYYY'
+'TT.MM.YYYY -'">
+                      <label for="suche_stand">Stand</label>
+                      <a href="verzeichnis.php?order_by=suche_stand&amp;order_by_richtung=aufsteigend"
+                        title="aufsteigende Sortierung nach Stand">
+                        <img src="order_by_up.gif" title="aufsteigende Sortierung nach Stand"></a>
+                      <a href="verzeichnis.php?order_by=suche_stand&amp;order_by_richtung=absteigend"
+                        title="aufsteigende Sortierung nach Stand">
+                        <img src="order_by_down.gif" title="absteigende Sortierung nach Stand"></a>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th><input type="text" name="suche_bezeichnung" id="suche_bezeichnung" size="50"></th>
+                    <th><select name="suche_kategorien_id" id="suche_kategorien_id">
+                        <option value="0" selected="selected">alle</option>
+                        <option value="2">f, freier Eintrag</option>
+                        <option value="1">S, Stammdaten</option>
+                      </select></th>
+                    <th><input type="text" name="suche_stand" id="suche_stand" size="10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="tr_2">
+                    <td scope="row"><a href="verzeichnis_detail.php?vavs_id=39&amp;option=Anzeigen"
+                        title="Zum Eintrag">"Eintrag 1"</a></td>
+                    <td>(<abbr title="freier Eintrag">f</abbr>)</td>
+                    <td>24.06.2019</td>
+                  </tr>
+                  <tr class="tr_1">
+                    <td scope="row"><a href="verzeichnis_detail.php?vavs_id=46&amp;option=Anzeigen"
+                        title="Zum Eintrag">Eintrag 2</a></td>
+                    <td>(<abbr title="freier Eintrag">f</abbr>)</td>
+                    <td>24.02.2020</td>
+                  </tr>
+              </table>
+              <div id="naviblock_uebersicht">1 - 20 (99 insgesamt)
+                <input type="submit" title="Zum Anfang" name="kommando" value="&lt;&lt;">
+                <input type="submit" title="Rückwärts blättern" name="kommando" value="&lt;">
+                Anzahl Datensätze pro Seite: 20
+                <input type="submit" title="Vorwärts blättern" name="kommando" value="&gt;">
+                <input type="submit" title="Zum Ende" name="kommando" value="&gt;&gt;">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
+
+belongsTo:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+dataType:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
+      - forValues:
+          - "1"
+        setValues: https://mex.rki.de/item/data-type-2
+      - forValues:
+          - "2"
+          - "21"
+        setValues: https://mex.rki.de/item/data-type-1
+description:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+hadPrimarySource:
+  - mappingRules:
+        rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+label:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "3"
+          - "4"
+        rule:
+    comment:
+usedIn:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+valueSet:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+        rule:

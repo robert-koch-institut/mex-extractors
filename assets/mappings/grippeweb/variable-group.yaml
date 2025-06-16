@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableGroupMapping.json
+
+containedBy:
+  - mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "vActualQuestion"
+        setValues: "vActualQuestion"
+      - forValues:
+          - "vMasterData"
+        setValues: "vMasterData"
+      - forValues:
+          - "vWeeklyResponses"
+        setValues: "vWeeklyResponses"
+label:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "vActualQuestion"
+        setValues:
+          - language: en
+            value: "Additional Questions"
+      - forValues:
+          - "vMasterDataMEx"
+        setValues:
+          - language: en
+            value: "Master Data"
+      - forValues:
+          - "vWeeklyResponsesMEx"
+        setValues:
+          - language: en
+            value: "Weekly Responses"

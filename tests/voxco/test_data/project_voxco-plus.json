@@ -1,0 +1,22 @@
+{
+    "Count": 3,
+    "value": [
+        {
+            "Choices": [
+                "@{Code=1; Text=Januar; Image=; HasOpenEnd=False; Visible=True; Default=False}",
+                "@{Code=1; Text=Februar; Image=; HasOpenEnd=False; Visible=True; Default=False}"
+            ],
+            "DataType": "Text",
+            "HasOpenEnd": false,
+            "Id": 50614,
+            "MaxAnswers": 1,
+            "MaxLength": 2,
+            "Name": "MONAT",
+            "QuestionId": 33302,
+            "QuestionName": "MONAT",
+            "QuestionText": "Monat ",
+            "Text": "Tag",
+            "Type": "Discrete"
+        }
+    ]
+}

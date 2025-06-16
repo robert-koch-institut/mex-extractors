@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+    comment:
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-15
+    comment:
+alternativeTitle:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: IfSG Meldedaten
+contact:
+  - mappingRules:
+      - forValues:
+          - "FG99"
+        rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Das Infektionsschutzgesetz"
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz (IfSG)
+          - language: en
+            value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: ifsg-parent
+        rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz
+      - setValues:
+          - language: de
+            value: Infektionsschutz
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+    comment:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3 # Surveillance
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+    comment:
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Meldedaten
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Gesundheitsdaten."
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Meldedaten nach Infektionsschutzgesetz (IfSG)
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - "FG99"
+        rule:

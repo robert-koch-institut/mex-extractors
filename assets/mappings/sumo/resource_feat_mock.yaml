@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - comment:
+    mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - comment:
+    mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-17
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+        rule:
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - MF4
+        rule:
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: keyword 1
+      - setValues:
+          - language: de
+            value: keyword 2
+meshId:
+  - comment:
+    mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D004636
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-1
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-14
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Dummy resource type
+      - setValues:
+          - language: en
+            value: Dummy resource type
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Dummy spatial
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Syndrome
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - FG 99

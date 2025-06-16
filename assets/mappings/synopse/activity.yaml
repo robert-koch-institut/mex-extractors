@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+abstract:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+activityType:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/activity-type-6 # Other
+contact:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+        - email@email.de
+      - rule:
+documentation:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+end:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+externalAssociate:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+funderOrCommissioner:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - Bundesministerium für Gesundheit (BMG)
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+involvedPerson:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+involvedUnit:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+responsibleUnit:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+shortName:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+start:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+succeeds:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+theme:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "7202001"
+          - "7202002"
+          - "7202003"
+          - "7202004"
+        setValues:
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+      - rule:
+        setValues:
+          - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:

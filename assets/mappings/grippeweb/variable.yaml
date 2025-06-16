@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableMapping.json
+
+belongsTo:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+label:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+usedIn:
+  - mappingRules:
+      - rule:
+valueSet:
+  - fieldInPrimarySource: GuidTeilnehmer
+    locationInPrimarySource:
+    mappingRules:
+      - rule:

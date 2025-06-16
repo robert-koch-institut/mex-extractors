@@ -1,0 +1,34 @@
+[
+    {
+        "customer-org-unit-id": "FG99",
+        "customer-sample-name": "test-customer-name-1",
+        "lims-sample-id": "test-sample-id",
+        "project-coordinators": [
+            "max",
+            "mustermann",
+            "yee-haw"
+        ],
+        "project-id": "TEST-ID",
+        "project-name": "FG99-ABC-123",
+        "sequenced-sample-id": "SEQ-123",
+        "sequencing-date": "2023-08-07",
+        "sequencing-platform": "TEST",
+        "species": "virus XYZ"
+    },
+    {
+        "customer-org-unit-id": "FG99",
+        "customer-sample-name": "test-customer-name-2",
+        "lims-sample-id": "test-sample-id",
+        "project-coordinators": [
+            "jelly",
+            "fish",
+            "turtle"
+        ],
+        "project-id": "TEST-ID",
+        "project-name": "FG99-ABC-321",
+        "sequenced-sample-id": "SEQ-321",
+        "sequencing-date": "2023-08-07",
+        "sequencing-platform": "TEST",
+        "species": "Lab rat"
+    }
+]

@@ -1,0 +1,273 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - comment:
+    mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - comment:
+    mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-17
+alternativeTitle:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+contact:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule:
+documentation:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            title: Rheinland-Pfalz
+            url: http://landesrecht.rlp.de/jportal/portal/page/bsrlpprod.psml?doc.id=jlr-IfSGMeldpflVRPpP1%3Ajuris-lr00&showdoccase=1&doc.hl=1&documentnumber=1
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            title: Bayern
+            url: https://www.gesetze-bayern.de/Content/Document/BayMeldePflV/true
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            title: Saarland
+            url: https://www.saarland.de/msgff/DE/portale/gesundheitundpraevention/leistungenabisz/gesundheitsschutz/infektionsschutzgesetz/infektionsschutzgesetz.html
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            title: Berlin
+            url: https://gesetze.berlin.de/bsbe/document/jlr-IfSGMeldpflVBEpP1
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            title: Brandenburg
+            url: https://bravors.brandenburg.de/verordnungen/infkrankmv_2016
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            title: Mecklenburg-Vorpommern
+            url: https://www.landesrecht-mv.de/bsmv/document/jlr-InfSchAGMVrahmen
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            title: Sachsen
+            url: https://www.revosax.sachsen.de/vorschrift/1307-IfSGMeldeVO
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            title: Sachsen-Anhalt
+            url: https://www.landesrecht.sachsen-anhalt.de/bsst/document/jlr-IfSGMeldpflVST2005rahmen
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            title: "Thüringen"
+            url: https://landesrecht.thueringen.de/bsth/document/jlr-IfKrMeldAnpVTHrahmen
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz (IfSG)
+          - language: en
+            value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+icd10code:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+instrumentToolOrApparatus:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - A=1
+        setValues:
+          - language: de
+            value: Falldefinition A
+      - forValues:
+          - B=1
+        setValues:
+          - language: de
+            value: Falldefinition B
+      - forValues:
+          - C=1
+        setValues:
+          - language: de
+            value: Falldefinition C
+      - forValues:
+          - D=1
+        setValues:
+          - language: de
+            value: Falldefinition D
+      - forValues:
+          - E=1
+        setValues:
+          - language: de
+            value: Falldefinition E
+isPartOf:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "07"
+        rule:
+      - forValues:
+          - "09"
+        rule:
+      - forValues:
+          - "10"
+        rule:
+      - forValues:
+          - "11"
+        rule:
+      - forValues:
+          - "12"
+        rule:
+      - forValues:
+          - "13"
+        rule:
+      - forValues:
+          - "14"
+        rule:
+      - forValues:
+          - "15"
+        rule:
+      - forValues:
+          - "16"
+        rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz
+      - setValues:
+          - language: de
+            value: Infektionsschutz
+language:
+  - comment:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+publication:
+  - mappingRules:
+      - setValues:
+          - ctdBX3StWbg9nabBXgTjut
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - comment:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Meldedaten
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Gesundheitsdaten.
+spatial:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            value: Rheinland-Pfalz
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            value: Bayern
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            value: Saarland
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            value: Berlin
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            value: Brandenburg
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            value: Mecklenburg-Vorpommern
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            value: Sachsen
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            value: Sachsen-Anhalt
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            value: "Thüringen"
+theme:
+  - comment:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule:

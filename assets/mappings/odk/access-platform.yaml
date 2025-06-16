@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - Roland Resolved
+        rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: "sumo-db"
+        rule:
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+    comment:
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: SUMO Datenbank
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - Abteilung
+        rule:
+hadPrimarySource:
+  - mappingRules:
+        rule:

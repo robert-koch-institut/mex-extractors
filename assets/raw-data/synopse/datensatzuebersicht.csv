@@ -1,0 +1,10 @@
+StudienID,SynopseID,Varname,KeepVarname,KeepPUF,intVar,Titel_Datenset,Beschreibung,SchlagworteThemen,Dateiformat,ErstellungsDatum,Version,Rechte,Lizenz,Zugangsbeschraenkung,Plattform,PlattformAdresse,Dokumentation,DStypID,Datensatztyp
+1234567,405,,,,,BBCCDD,,,,,,,,,,,,15,
+1234567,405,,,,,BBCCDD,,,,,,,,,,,,17,
+1234567,406,,,,,BBCCDD_00,,,,,,,,,,,,17,
+1122999,406,,,,,BBCCDD1,,,,,,,,,,,,15,
+1144444,406,,,,,BBCCDD2,,,,,,,,,,,,1,
+1229999,406,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,503,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,507,,,,,EEFFGG,,,,,,,,,,,,999,
+1229999,508,,,,,EEFFGG,,,,,,,,,,,,999,

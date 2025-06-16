@@ -1,0 +1,159 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessPlatform:
+  - mappingRules:
+      - rule:
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-17 #irregular
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2 #pseudonymized
+contact:
+  - mappingRules:
+      - forValues:
+          - "contactc@rki.de"
+        rule:
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - "C1"
+        rule:
+contributor:
+  - mappingRules:
+      - forValues:
+          - "Roland Resolved"
+        rule:
+created:
+  - mappingRules:
+      - setValues: "2020"
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Erreger-spezifische Zusatzinformationen"
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: de
+            title: RKI Website
+            url: https://www.rki.de
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Bei dem Verfahren GrippeWeb."
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+icd10code:
+  - mappingRules:
+      - setValues:
+          - "J00-J99" #Diseases of the respiratory system
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: grippeweb-plus
+isPartOf:
+  - mappingRules:
+      - rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Surveillance
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+    comment:
+meshId:
+  - mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D012140 #Respiratory Tract Diseases
+          - http://id.nlm.nih.gov/mesh/D012141 #Respiratory Tract Infections
+          - http://id.nlm.nih.gov/mesh/D007251 #Influenza, Human
+method:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Selbstabstriche"
+methodDescription:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Stichprobe"
+minTypicalAge:
+  - mappingRules:
+      - setValues: 0
+populationCoverage:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Alle Personen."
+publication:
+  - mappingRules:
+      - forValues:
+          - "study"
+        rule:
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3 # Surveillance
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13 #Surveillance data
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-2 #Biospecimen
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Nasenabstrich
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Die Daten"
+sizeOfDataBasis:
+  - mappingRules:
+      - setValues: 500 Teilnehmende (Stand Mai 2023)
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Deutschland"
+stateOfDataProcessing:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-1
+    comment:
+temporal:
+  - mappingRules:
+      - setValues: "seit 2020"
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11 #Studies and Surveillance
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: GrippeWeb-Plus
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - "C1"
+        rule:

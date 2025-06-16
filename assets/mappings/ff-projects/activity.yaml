@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "1364"
+          - "1365"
+          - "1367"
+          - "1368"
+        setValues:
+          - https://mex.rki.de/item/activity-type-1
+      - forValues:
+          - "1360"
+          - "1361"
+          - "1363"
+          - "1362"
+          - "1369"
+        setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+end:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+funderOrCommissioner:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - Sonderforschung
+      - rule:
+fundingProgram:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+involvedPerson:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+responsibleUnit:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+start:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+title:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:

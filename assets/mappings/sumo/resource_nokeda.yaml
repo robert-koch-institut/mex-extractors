@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-15
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - Abteilung
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Echtzeitdaten der Routinedokumenation.
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: en
+            title: Confluence
+            url: https://link.com
+externalPartner:
+  - mappingRules:
+      - forValues:
+          - Register
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Keyword1
+          - language: de
+            value: Keyword2
+meshId:
+  - mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D004636
+publication:
+  - mappingRules:
+      - forValues:
+          - "Dummy publication"
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-14
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Daten
+          - language: en
+            value: data
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value:
+              "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des
+              RKI zur Nutzung zur Verfügung gestellt werden."
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+stateOfDataProcessing:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-2
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - setValues:
+          - langauge: de
+            value: test_project
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - FG99

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../__schema__/ActivityFilter.json
+
+fields:
+  - fieldInPrimarySource: contact
+    examplesInPrimarySource:
+    filterRules:
+    - rule:
+    comment:
+  - fieldInPrimarySource: end
+    filterRules:
+    - forValues:
+      - ' < 1890'
+      rule:
+  - fieldInPrimarySource: externalAssociate
+    filterRules:
+    - forValues:
+      - "Erika Mustermann"
+      rule:
+  - fieldInPrimarySource: involvedUnit
+    examplesInPrimarySource:
+    filterRules:
+    - rule:
+  - fieldInPrimarySource: responsibleUnit
+    examplesInPrimarySource:
+    filterRules:
+    - rule:
+    - forValues:
+      - 'FG99'
+      rule:
+  - fieldInPrimarySource: start
+    filterRules:
+    - forValues:
+      - ' < 1890'
+      rule:

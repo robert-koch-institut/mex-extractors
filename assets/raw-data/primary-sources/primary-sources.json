@@ -1,0 +1,59 @@
+[
+    {
+        "identifier": "mex"
+    },
+    {
+        "identifier": "biospecimen"
+    },
+    {
+        "identifier": "blueant"
+    },
+    {
+        "identifier": "confluence-vvt"
+    },
+    {
+        "identifier": "datscha-web"
+    },
+    {
+        "identifier": "endnote"
+    },
+    {
+        "identifier": "ff-projects"
+    },
+    {
+        "identifier": "grippeweb"
+    },
+    {
+        "identifier": "ifsg"
+    },
+    {
+        "identifier": "international-projects"
+    },
+    {
+        "identifier": "ldap"
+    },
+    {
+        "identifier": "odk"
+    },
+    {
+        "identifier": "open-data"
+    },
+    {
+        "identifier": "organigram"
+    },
+    {
+        "identifier": "seq-repo"
+    },
+    {
+        "identifier": "nokeda"
+    },
+    {
+        "identifier": "report-server"
+    },
+    {
+        "identifier": "voxco"
+    },
+    {
+        "identifier": "wikidata"
+    }
+]

@@ -1,0 +1,54 @@
+{
+    "_expandable": {
+        "ancestors": "",
+        "children": "/rest/api/content/09090909/child",
+        "container": "/rest/api/space/XYZ",
+        "descendants": "/rest/api/content/09090909/descendant",
+        "history": "/rest/api/content/09090909/history",
+        "metadata": "",
+        "operations": "",
+        "restrictions": "/rest/api/content/09090909/restriction/byOperation",
+        "space": "/rest/api/space/XYZ",
+        "version": ""
+    },
+    "_links": {
+        "base": "https://test.test.test",
+        "collection": "/rest/api/content",
+        "context": "",
+        "edit": "/pages/resumedraft.action",
+        "self": "https://test.test.test/rest/api/content/09090909",
+        "tinyui": "/x/m6DRAQ",
+        "webui": "/display/XYZ/CovApp"
+    },
+    "body": {
+        "_expandable": {
+            "anonymous_export_view": "",
+            "editor": "",
+            "export_view": "",
+            "storage": "",
+            "styled_view": ""
+        },
+        "view": {
+            "_expandable": {
+                "content": "/rest/api/content/09090909",
+                "webresource": ""
+            },
+            "representation": "storage",
+            "value": "<div></div>"
+        }
+    },
+    "extensions": {
+        "position": "none"
+    },
+    "id": "123457",
+    "results": [
+        {
+            "id": "123457",
+            "name": "vvt",
+            "prefix": "global"
+        }
+    ],
+    "status": "current",
+    "title": "Test Title",
+    "type": "page"
+}

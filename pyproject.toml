@@ -1,0 +1,205 @@
+[project]
+name = "mex-extractors"
+version = "0.34.4"
+description = "ETL pipelines for the RKI Metadata Exchange."
+authors = [{ name = "MEx Team", email = "mex@rki.de" }]
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+urls = { Repository = "https://github.com/robert-koch-institut/mex-extractors" }
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "beautifulsoup4>=4,<5",
+    "boto3>=1,<2",
+    "dagster-postgres>=0.25,<1",
+    "dagster-webserver>=1,<2",
+    "dagster>=1,<2",
+    "defusedxml>=0.7,<1",
+    "faker>=37,<38",
+    "mex-artificial @ git+https://github.com/robert-koch-institut/mex-artificial.git@0.4.2",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.61.1",
+    "networkx>=3",
+    "numpy>=2",
+    "openpyxl>=3,<4",
+    "pandas>=2",
+    "pydantic>=2",
+    "pyodbc>=5,<6",
+    "pyyaml>=6,<7",
+    "requests-ntlm>=1,<2",
+    "requests>=2",
+    "xlrd>=2,<3",
+]
+optional-dependencies.dev = [
+    "ipdb>=0.13",
+    "mypy>=1",
+    "pandas-stubs>=2",
+    "pytest-cov>=6",
+    "pytest-random-order>=1",
+    "pytest-xdist>=3",
+    "pytest>=8",
+    "ruff>=0.11",
+    "sphinx>=8",
+    "types-beautifulsoup4",
+    "types-defusedxml",
+    "types-networkx",
+    "types-pytz",
+    "types-pyyaml",
+    "types-requests",
+]
+
+[project.scripts]
+all-extractors = "mex.extractors.main:run"
+artificial = "mex.extractors.artificial.main:run"
+biospecimen = "mex.extractors.biospecimen.main:run"
+blueant = "mex.extractors.blueant.main:run"
+confluence-vvt = "mex.extractors.confluence_vvt.main:run"
+datscha-web = "mex.extractors.datscha_web.main:run"
+endnote = "mex.extractors.endnote.main:run"
+ff-projects = "mex.extractors.ff_projects.main:run"
+grippeweb = "mex.extractors.grippeweb.main:run"
+ifsg = "mex.extractors.ifsg.main:run"
+international-projects = "mex.extractors.international_projects.main:run"
+odk = "mex.extractors.odk.main:run"
+open-data = "mex.extractors.open_data.main:run"
+seq-repo = "mex.extractors.seq_repo.main:run"
+sumo = "mex.extractors.sumo.main:run"
+sync-persons = "mex.extractors.ldap.main:run"
+synopse = "mex.extractors.synopse.main:run"
+voxco = "mex.extractors.voxco.main:run"
+publisher = "mex.extractors.publisher.main:run"
+
+[tool.cruft]
+template = "https://github.com/robert-koch-institut/mex-template"
+skip = ["CHANGELOG.md", "mex", "tests"]
+
+[tool.dagster]
+module_name = "mex.extractors"
+
+[tool.ipdb]
+context = 5
+
+[tool.mypy]
+python_version = "3.11"
+show_error_codes = true
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "requests_ntlm.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "boto3.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "botocore.*"
+ignore_missing_imports = true
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
+lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
+install-all = { cmd = "pdm install --group :all --frozen-lockfile" }
+export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
+apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
+sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
+doc = { composite = ["apidoc", "sphinx"] }
+wheel = { cmd = "pdm build --no-sdist" }
+mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex" }
+lint = { cmd = "pre-commit run --all-files" }
+unit = { cmd = "pdm run pytest -m 'not integration'" }
+test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
+all = { composite = ["install-all", "lint", "test", "doc"] }
+
+[tool.pydantic-mypy]
+warn_untyped_fields = true
+
+[tool.pytest.ini_options]
+addopts = [
+    "--verbose",
+    "--cov",
+    "--no-cov-on-fail",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=94",
+    "--cov-branch",
+    "--pdbcls=IPython.terminal.debugger:TerminalPdb",
+    "--random-order-bucket=global",
+]
+markers = "integration: mark a test as integration test"
+
+[tool.ruff]
+fix = true
+line-length = 88
+show-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+ignore = [
+    "COM",     # Disable flake8-commas checks (let ruff format handle that)
+    "CPY",     # Disable copyright notice checks (we have LICENSE files)
+    "D100",    # Allow missing module docstring (for brevity)
+    "D104",    # Allow missing package docstring (for brevity)
+    "D203",    # Disallow blank line before class docstring (inverse of D211)
+    "D213",    # Disallow multi-line docstring starting at second line (inverse of D212)
+    "D406",    # Allow section name ending with newline (google style compat)
+    "D407",    # Allow missing dashed underline after section (google style compat)
+    "D413",    # Allow missing blank line after last section (google style compat)
+    "FIX",     # Allow committing with open TODOs (don't punish committers)
+    "ISC001",  # Disable checks for implicitly concatenated strings (formatter compat)
+    "N805",    # Allow first argument of a method to be non-self (pydantic compat)
+    "N815",    # Allow mixedCase variables in class scope (model compat)
+    "RUF012",  # Allow mutable class attributes (pydantic compat)
+    "SIM108",  # Allow explicit if-else instead of ternary (easier to read)
+    "TD003",   # Allow TODOs without ticket link (don't punish TODO writers)
+    "TRY003",  # Allow long exception message at the raise site (for pydantic)
+]
+select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"mex/extractors/logging.py" = [
+    "A005",     # Allow custom logging module to shadow standard-library
+]
+"mex/extractors/types.py" = [
+    "A005",     # Allow custom types module to shadow standard-library
+]
+"mex/extractors/mapping/types.py" = [
+    "A005",     # Allow custom mapping types module to shadow standard-library
+]
+"docs/**" = [
+    "INP001",   # Docs folder does not need to be a package
+]
+"scripts/**" = [
+    "INP001",   # Scripts folder does not need to be a package
+]
+"tests/**" = [
+    "ARG005",   # Allow unused lambda arguments for mocking
+    "D101",     # Allow missing docstring in public class
+    "D102",     # Allow missing docstring in public method
+    "D103",     # Allow missing docstring in public function
+    "D107",     # Allow missing docstring in `__init__`
+    "E501",     # Allow longer lines with test data
+    "N807",     # Allow mocking `__init__`
+    "PLR0915",  # Allow functions with many statements
+    "PLR2004",  # Allow comparing with static values
+    "PT004",    # Allow public fixtures without returns
+    "PT013",    # Allow more flexible pytest imports
+    "S101",     # Allow use of `assert` in tests
+    "SLF",      # Allow private member access
+]
+
+[tool.ruff.lint.flake8-import-conventions.extend-aliases]
+"reflex" = "rx"
+
+[tool.ruff.lint.isort]
+known-first-party = ["mex", "tests"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[build-system]
+requires = ["pdm-backend==2.4.4"]
+build-backend = "pdm.backend"

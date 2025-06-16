@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - comment:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+        - info@rki.de
+        rule:
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+responsibleUnit:
+  - mappingRules:
+      - {}
+theme:
+  - comment:
+    mappingRules:
+      - forValues:
+          - "7202001"
+          - "7202002"
+          - "7202003"
+          - "7202004"
+        setValues:
+          - https://mex.rki.de/item/theme-11
+      - setValues:
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - {}

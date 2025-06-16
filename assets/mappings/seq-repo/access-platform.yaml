@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+alternativeTitle:
+  - mappingRules:
+      - setValues:
+          - value: SeqRepo
+contact:
+  - mappingRules:
+      - forValues:
+          - fg99
+        rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: "This is just a sample description, don't read it."
+endpointType:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/api-type-1
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: https://dummy.url.com/
+landingPage:
+  - mappingRules:
+      - setValues:
+          - url: https://dummy.url.com/
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+title:
+  - mappingRules:
+      - setValues:
+          - value: Sequence Data Repository
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - fg99
+        rule:

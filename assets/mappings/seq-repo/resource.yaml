@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-15
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+        rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Testbeschreibung
+          - language: en
+            value: test description
+keyword:
+  - mappingRules:
+      - setValues:
+          - value: FASTA
+          - value: FASTQ
+method:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Next-Generation Sequencing
+          - language: en
+            value: NGS
+publisher:
+  - mappingRules:
+      - forValues:
+          - Dummy Publisher
+        rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-4
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Sequencing Data
+          - language: de
+            value: Sequenzdaten
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Dummy rights value."
+stateOfDataProcessing:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-1
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+          - https://mex.rki.de/item/theme-23
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: https://dummy.url.com/
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Syndrome
+unitInCharge:
+  - mappingRules:
+      - forValues:

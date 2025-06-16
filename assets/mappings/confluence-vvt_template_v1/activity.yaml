@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+abstract:
+  - fieldInPrimarySource: Ausführliche Beschreibung des Verfahrens / der Verarbeitung / der Studie
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource: Zwecke des Vorhabens
+    mappingRules:
+      - rule:
+activityType:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/activity-type-6 # Other
+contact:
+  - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
+    mappingRules:
+      - rule:
+documentation:
+  - mappingRules:
+      - setValues:
+          - url: https://test.rki.local/*
+            title: Eintrag im Verzeichnis der Verarbeitungstätigkeiten des RKI
+        rule:
+externalAssociate:
+  - fieldInPrimarySource:
+      ggfs. gemeinsam Verantwortliche(r) nach Art. 26 DSGVO (Nennung
+      der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
+      dortigen Studienleiters / der dortigen Studienleiterin)
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+involvedPerson:
+  - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource: Mitarbeitende
+    mappingRules:
+      - rule:
+involvedUnit:
+  - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource: ggfs. Vertreter der / des Verantwortlichen | OE
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource: Mitarbeitende | OE
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+      ggfs. gemeinsam Verantwortliche(r) nach Art. 26 DSGVO (Nennung
+      der Behörde/des Unternehmens inkl. vollständige Adresse UND der Kontaktdaten des
+      dortigen Studienleiters / der dortigen Studienleiterin)
+    mappingRules:
+      - rule:
+    comment:
+responsibleUnit:
+  - fieldInPrimarySource: Verantwortliche(r) StudienleiterIn | OE
+    mappingRules:
+      - rule:
+title:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:

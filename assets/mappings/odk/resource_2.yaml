@@ -1,0 +1,126 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: test_raw_data
+        rule:
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+        rule:
+contact:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
+description:
+  - mappingRules:
+      - setValues:
+          - value: voluptua
+            language: en
+        rule:
+externalPartner:
+  - mappingRules:
+      - forValues:
+          - At
+        rule:
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Informed consent
+          - language: de
+            value: Informierte Einwilligung
+isPartOf:
+  - mappingRules:
+      - rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - value: vero eos
+            language: en
+        rule:
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-2
+        rule:
+    comment:
+meshId:
+  - mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D000086382 #COVID-19
+        rule:
+method:
+  - mappingRules:
+      - setValues:
+          - value: et accusam
+            language: en
+          - value: et justo
+            language: de
+        rule:
+publisher:
+  - mappingRules:
+      - forValues:
+          - duo dolores
+        rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-2
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-15
+        rule:
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Questionnaire
+          - language: de
+            value: Fragebogen
+rights:
+  - mappingRules:
+      - setValues:
+          - value: et ea rebum
+            language: de
+        rule:
+spatial:
+  - mappingRules:
+      - setValues:
+          - value: Stet
+            language: en
+        rule:
+temporal:
+  - mappingRules:
+      - setValues: 2021-05-01 - 2021-12-31
+        rule:
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+          - https://mex.rki.de/item/theme-37
+        rule:
+title:
+  - mappingRules:
+      - setValues:
+          - value: clita
+            language: en
+          - value: kasd
+            language: en
+        rule:
+    comment:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
+wasGeneratedBy:
+  - mappingRules:
+      - forValues:
+          - 0000-1005
+        rule:

@@ -1,0 +1,27 @@
+name: OpenCoDE
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+          fetch-depth: 0
+      - name: Push main branch
+        run: |
+          git remote add opencode https://${{ secrets.OPENCODE_USER }}:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-extractors.git
+          git push opencode -f
+          git push opencode -f --tags

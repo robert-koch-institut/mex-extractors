@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - offen
+        setValues: https://mex.rki.de/item/access-restriction-1
+      - forValues:
+          - restriktiv
+        setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - mappingRules:
+      - {}
+anonymizationPseudonymization:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - anonymisiert
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-1
+      - forValues:
+          - pseudonomysiert
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+      - forValues:
+          - beides
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-1
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+conformsTo:
+  - mappingRules:
+      - setValues:
+          - LOINC
+contact:
+  - mappingRules:
+      - {}
+created:
+  - mappingRules:
+      - {}
+hadPrimarySource:
+  - mappingRules:
+      - {}
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: DSGVO
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-2
+          - https://mex.rki.de/item/resource-creation-method-4
+resourceTypeGeneral:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Bioproben
+        setValues:
+          - https://mex.rki.de/item/resource-type-general-2
+theme:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+        setValues:
+          - https://mex.rki.de/item/theme-36
+      - forValues:
+          - Infektionskrankheiten
+        setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - {}
+unitInCharge:
+  - mappingRules:
+      - {}

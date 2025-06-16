@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+	<records>
+		<record>
+			<database>1890-Converted.enl</database>
+			<rec-number>1</rec-number>
+			<ref-type name="Journal Article">2</ref-type>
+			<call-num>
+				<style>https://edoc.rki.de/handle/1234</style>
+			</call-num>
+			<contributors>
+				<authors>
+					<author>
+						<style>Mustermann, E.</style>
+					</author>
+					<author>
+						<style>Mustermann, F.</style>
+					</author>
+				</authors>
+				<secondary-authors>
+					<author>
+						<style>Mustermann, G.</style>
+					</author>
+					<author>
+						<style>Mustermann, H.</style>
+					</author>
+				</secondary-authors>
+				<tertiary-authors>
+					<author>
+						<style>Mustermann, I.</style>
+					</author>
+					<author>
+						<style>Mustermann, J.</style>
+					</author>
+				</tertiary-authors>
+			</contributors>
+			<titles>
+				<title>
+					<style>test title</style>
+				</title>
+				<secondary-title>
+					<style>secondary test title</style>
+				</secondary-title>
+			</titles>
+			<periodical>
+				<full-title>
+					<style>full-title</style>
+				</full-title>
+			</periodical>
+			<pages>
+				<style>3-4</style>
+			</pages>
+			<publisher>
+				<style>Robert-Koch Institut</style>
+			</publisher>
+			<volume>
+				<style>5</style>
+			</volume>
+			<number>
+				<style>6</style>
+			</number>
+			<edition>
+				<style>1890/01/01</style>
+			</edition>
+			<keywords>
+				<keyword>
+					<style>keyword 1</style>
+				</keyword>
+				<keyword>
+					<style>keyword 2</style>
+				</keyword>
+			</keywords>
+			<dates>
+				<year>
+					<style>1890</style>
+				</year>
+				<pub-dates>
+					<date>
+						<style>Jan 1</style>
+					</date>
+				</pub-dates>
+			</dates>
+			<isbn>
+				<style>1234-5678</style>
+			</isbn>
+			<abstract>
+				<style>abstract.</style>
+			</abstract>
+			<urls>
+				<related-urls>
+					<url>
+						<style>https://www.rki.de</style>
+					</url>
+				</related-urls>
+			</urls>
+			<custom3>
+				<style>Robert-Koch Institut</style>
+			</custom3>
+			<custom4>
+				<style>C1</style>
+			</custom4>
+			<custom6>
+				<style>Closed Access</style>
+			</custom6>
+			<electronic-resource-num>
+				<style>10.3456/qad.00</style>
+			</electronic-resource-num>
+			<electronic-resource-num>
+				<style>https://edoc.rki.de/handle/1234</style>
+			</electronic-resource-num>
+			<language>
+				<style>eng</style>
+			</language>
+		</record>
+	</records>
+</xml>

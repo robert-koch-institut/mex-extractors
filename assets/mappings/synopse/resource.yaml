@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessPlatform:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+accessRestriction:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "restriktiv"
+        setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+      - rule:
+contributingUnit:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+contributor:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+created:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+description:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+documentation:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+hasLegalBasis:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+keyword:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1 # German
+publication:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+      - rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-2 # Studies, surveys and interviews
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13 # Data collection
+resourceTypeSpecific:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+rights:
+  - mappingRules:
+      - forValues:
+          - "17"
+        setValues:
+          - language: de
+            value:
+              Lorem
+      - forValues:
+          - "74"
+        setValues:
+          - language: de
+            value:
+              Ipsum
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+temporal:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+theme:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "7202001"
+          - "7202002"
+          - "7202003"
+          - "7202004"
+        setValues:
+          - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
+      - rule:
+        setValues:
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+      - rule:
+wasGeneratedBy:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:

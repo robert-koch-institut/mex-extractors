@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableGroupMapping.json
+
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - "NULL"
+          - "AdditionalAttributes"
+      - rule:
+containedBy:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+label:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Epi
+        setValues:
+          - value: Epidemiologische Informationen
+            language: de
+      - forValues:
+          - Technical
+        setValues:
+          - value: Technische Angaben
+            language: de
+      - forValues:
+          - Clinical
+        setValues:
+          - value: Klinische Informationen
+            language: de
+      - forValues:
+          - Outbreak
+        setValues:
+          - value: Informationen zum Ausbruch
+            language: de
+      - forValues:
+          - Patient
+        setValues:
+          - value: Patienteninformationen
+            language: de
+      - forValues:
+          - Event
+        setValues:
+          - value: Informationen zum Ereignis
+            language: de
+      - forValues:
+          - General
+        setValues:
+          - value: Administrative Angaben
+            language: de
+      - forValues:
+          - Labor
+        setValues:
+          - value: Laborinformationen
+            language: de
+      - forValues:
+          - Address
+        setValues:
+          - value: Adressinformationen
+            language: de

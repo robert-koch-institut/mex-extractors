@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - C1
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+landingPage:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+        - https://asd.def
+        setValues:
+        - language: de
+          title: ASD DEF
+          url: https://asd.def
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+    comment:
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+      - rule:

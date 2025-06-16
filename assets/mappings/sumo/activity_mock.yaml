@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+abstract:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Dummy abstract
+activityType:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/activity-type-3
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: de
+            title: SUMO im internen RKI Confluence
+            url: https://url.url
+externalAssociate:
+  - mappingRules:
+      - forValues:
+          - Dummy Associate
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: https://url.url
+involvedUnit:
+  - mappingRules:
+      - forValues:
+          - mf4
+publication:
+  - mappingRules:
+      - forValues:
+          - Dummy publication
+      - forValues:
+          - Dummy publication
+responsibleUnit:
+  - mappingRules:
+      - forValues:
+          - fg32
+shortName:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: SUMO
+start:
+  - mappingRules:
+      - setValues:
+          - "2018-07-01"
+succeeds:
+  - mappingRules:
+      - forValues:
+          - Dummy project
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+          - https://mex.rki.de/item/theme-36
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: SUMO Notaufnahmesurveillance
+website:
+  - mappingRules:
+      - setValues:
+          - language: de
+            title: Surveillance Monitor
+            url: https://url.url

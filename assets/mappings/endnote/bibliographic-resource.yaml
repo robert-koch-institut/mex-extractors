@@ -1,0 +1,181 @@
+# yaml-language-server: $schema=../../__schema__/BibliographicResourceMapping.json
+
+abstract:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+          Extract original value.
+accessRestriction:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Open Access
+        setValues: https://mex.rki.de/item/access-restriction-1 # open
+      - forValues:
+          - Closed Access
+        setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+      - rule:
+        setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+alternateIdentifier:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+          - https://edoc.rki.de/handle/
+        setValues:
+          - https://edoc.rki.de/
+  - fieldInPrimarySource: <call-num><style>
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - https://edoc.rki.de/handle/
+        setValues:
+          - https://edoc.rki.de/
+        rule:
+bibliographicResourceType:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Book Section
+        setValues:
+          - https://mex.rki.de/item/bibliographic-resource-type-2 # Book Section
+      - forValues:
+          - Journal Article
+        setValues:
+          - https://mex.rki.de/item/bibliographic-resource-type-7 # Journal Article
+      - rule:
+        setValues:
+          - https://mex.rki.de/item/bibliographic-resource-type-8 # Other
+contributingUnit:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+creator:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+doi:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - https://edoc.rki.de/handle/
+      - rule:
+edition:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+editor:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+editorOfSeries:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:
+isbnIssn:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+issue:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+issued:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+keyword:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+language:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - eng
+        setValues:
+          - https://mex.rki.de/item/language-2 # English
+      - forValues:
+          - de
+          - De
+          - DE
+          - ger
+        setValues:
+          - https://mex.rki.de/item/language-1 # German
+pages:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        - /(\d{0,4})(|-(\d{0,4}))/gm
+      - rule:
+    comment:
+publicationYear:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+publisher:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+repositoryURL:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+title:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+titleOfSeries:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+volume:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:

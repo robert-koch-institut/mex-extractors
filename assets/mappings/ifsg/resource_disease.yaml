@@ -1,0 +1,200 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+    comment:
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-17
+    comment:
+alternativeTitle:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+contact:
+  - mappingRules:
+      - forValues:
+          - FG99
+        rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+icd10code:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+instrumentToolOrApparatus:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "A=1"
+        setValues:
+          - language: de
+            value: Falldefinition A
+      - forValues:
+          - "B=1"
+        setValues:
+          - language: de
+            value: Falldefinition B
+      - forValues:
+          - "C=1"
+        setValues:
+          - language: de
+            value: Falldefinition C
+      - forValues:
+          - "D=1"
+        setValues:
+          - language: de
+            value: Falldefinition D
+      - forValues:
+          - "E=1"
+        setValues:
+          - language: de
+            value: Falldefinition E
+isPartOf:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "07"
+        rule:
+      - forValues:
+          - "09"
+        rule:
+      - forValues:
+          - "10"
+        rule:
+      - forValues:
+          - "11"
+        rule:
+      - forValues:
+          - "12"
+        rule:
+      - forValues:
+          - "13"
+        rule:
+      - forValues:
+          - "14"
+        rule:
+      - forValues:
+          - "15"
+        rule:
+      - forValues:
+          - "16"
+        rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Infektionsschutzgesetz
+      - setValues:
+          - language: de
+            value: Infektionsschutz
+language:
+  - mappingRules:
+      - setValues:
+          - "https://mex.rki.de/item/language-1"
+    comment:
+publisher:
+  - mappingRules:
+      - rule:
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - "https://mex.rki.de/item/resource-type-general-13"
+    comment:
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Meldedaten"
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Gesundheitsdaten."
+spatial:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - setValues:
+          - language: de
+            value: "Deutschland"
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "07"
+        setValues:
+          - language: de
+            value: "Rheinland-Pfalz"
+      - forValues:
+          - "09"
+        setValues:
+          - language: de
+            value: "Bayern"
+      - forValues:
+          - "10"
+        setValues:
+          - language: de
+            value: "Saarland"
+      - forValues:
+          - "11"
+        setValues:
+          - language: de
+            value: "Berlin"
+      - forValues:
+          - "12"
+        setValues:
+          - language: de
+            value: "Brandenburg"
+      - forValues:
+          - "13"
+        setValues:
+          - language: de
+            value: "Mecklenburg-Vorpommern"
+      - forValues:
+          - "14"
+        setValues:
+          - language: de
+            value: "Sachsen"
+      - forValues:
+          - "15"
+        setValues:
+          - language: de
+            value: "Sachsen-Anhalt"
+      - forValues:
+          - "16"
+        setValues:
+          - language: de
+            value: "Thüringen"
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+    comment:
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - "FG99"
+        rule:

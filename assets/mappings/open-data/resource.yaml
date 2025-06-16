@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../__schema__/ResourceMapping.json
+
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-1 # open
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-1 # anonymized
+contact:
+  - mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-2 #No personal data
+identifierInPrimarySource:
+  - mappingRules:
+      - rule:
+license:
+  - mappingRules:
+      - forValues:
+          - cc-by-4.0
+        setValues: https://mex.rki.de/item/license-1 # Creative Commons Attribution 4.0 International
+language:
+  - mappingRules:
+      - forValues:
+          - deu
+        setValues:
+          - https://mex.rki.de/item/language-1 # German
+      - forValues:
+          - eng
+        setValues:
+          - https://mex.rki.de/item/language-2 # English
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-14 # Dataset
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-1 # Public Health
+title:
+  - mappingRules:
+      - rule:
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - "C1"
+        rule:

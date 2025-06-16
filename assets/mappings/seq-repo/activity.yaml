@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - fg99
+        rule:
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+          - https://mex.rki.de/item/theme-23
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: https://dummy.url.com/
+responsibleUnit:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
+title:
+  - mappingRules:
+      - setValues:
+          - value: Sequence Data Repository

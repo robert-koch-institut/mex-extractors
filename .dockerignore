@@ -1,0 +1,158 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.eggs/
+.installed.cfg
+.pdm-build
+.pdm-python
+.Python
+.web/
+*.egg
+*.egg-info/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+MANIFEST
+parts/
+sdist/
+share/python-wheels/
+var/
+wheels/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+tests/
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+test*.jpeg
+test*.png
+*.cover
+*,cover
+.hypothesis/
+.pytest_cache/
+cover/
+pytestdebug.log
+
+# Translations
+*.mo
+*.pot
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# PEP 582; used by e.g. pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule.*
+celerybeat.pid
+
+# Environments
+*.env
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ruff
+.ruff_cache
+
+# PyCharm
+.idea/
+.idea_modules/
+
+# VisualStudioCode
+.vscode/*
+.history/
+*.code-workspace
+
+# SQLite databases
+*.db
+
+# MEx specific
+.aws/
+.invenio.private
+.states
+.web
+*.ndjson
+assets/external/
+data/
+identity.csv
+logs/
+payload
+schema.json
+storage/
+tmp*/
+work/
+
+# Docker specifics
+**/.dockerignore
+**/.git
+**/.github
+**/.gitignore
+**/compose*
+**/docker-compose*
+**/Dockerfile*
+
+# Setup files
+.bandit
+.isort.cfg
+.mypy.ini
+.pdm-python
+.pre-commit-config.yaml
+.pydocstyle
+Makefile
+mex.bat
+*.lock
+Pipfile
+poetry.toml
+pytest.ini
+requirements.txt

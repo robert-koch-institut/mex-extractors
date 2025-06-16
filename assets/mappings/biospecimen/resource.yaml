@@ -1,0 +1,168 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessRestriction:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - offen
+        setValues: https://mex.rki.de/item/access-restriction-1
+      - forValues:
+          - restriktiv
+        setValues: https://mex.rki.de/item/access-restriction-2
+alternativeTitle:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+anonymizationPseudonymization:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - anonymisiert
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-1
+      - forValues:
+          - pseudonomysiert
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+      - forValues:
+          - beides
+        setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-1
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+conformsTo:
+  - mappingRules:
+      - setValues:
+          - LOINC
+contact:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+contributingUnit:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+contributor:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+description:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+documentation:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+externalPartner:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: DSGVO
+identifierInPrimarySource:
+    - mappingRules:
+      - rule:
+instrumentToolOrApparatus:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+keyword:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1 # German
+loincId:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+meshId:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+method:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+methodDescription:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+publication:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+publisher:
+  - mappingRules:
+      - rule:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-2 # Studies, surveys and interviews
+          - https://mex.rki.de/item/resource-creation-method-4 # Laboratory tests
+resourceTypeGeneral:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Bioproben
+        setValues:
+          - https://mex.rki.de/item/resource-type-general-2 # Samples
+resourceTypeSpecific:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+rights:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+sizeOfDataBasis:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+spatial:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+temporal:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+theme:
+  - fieldInPrimarySource:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
+        rule:
+      - forValues:
+          - Infektionskrankheiten
+        setValues:
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+title:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+unitInCharge:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+wasGeneratedBy:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:

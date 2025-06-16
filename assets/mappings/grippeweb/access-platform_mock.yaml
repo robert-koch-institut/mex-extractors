@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+
+contact:
+  - mappingRules:
+      - forValues:
+          - test_person@email.de
+        rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - rule:
+        setValues: primary-source
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
+title:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: primary-source
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Third party funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-1 # Third party funded Project
+      - forValues:
+          - RKI funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-3 # Internal project/endeavor
+      - rule:
+          If the values in primary source do not match "Third party funded" or "RKI
+          funded", then match to the following default value in "setValues".
+        setValues:
+          - https://mex.rki.de/item/activity-type-6 # Other
+contact:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - ZIG-GS
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+responsibleUnit:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - ZIG-GS
+      - rule:
+theme:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
+      - forValues:
+          - Infection prevention and control
+        setValues:
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+title:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:

@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ActivityMapping.json
+
+activityType:
+  - fieldInPrimarySource:
+    mappingRules:
+      - forValues:
+          - Third party funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-1
+      - forValues:
+          - RKI funded
+        setValues:
+          - https://mex.rki.de/item/activity-type-3
+      - rule:
+        setValues:
+          - https://mex.rki.de/item/activity-type-6
+contact:
+  - mappingRules:
+      - {}
+hadPrimarySource:
+  - mappingRules:
+      - {}
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
+responsibleUnit:
+  - mappingRules:
+      - {}
+theme:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
+      - forValues:
+          - Infection prevention and control
+        setValues:
+          - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+title:
+  - mappingRules:
+      - {}

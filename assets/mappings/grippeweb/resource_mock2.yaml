@@ -1,0 +1,181 @@
+# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
+
+accessPlatform:
+  - mappingRules:
+      - rule:
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-15
+alternativeTitle:
+  - mappingRules:
+      - {}
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+contact:
+  - mappingRules:
+      - forValues:
+          - contactc@rki.de
+        rule:
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
+contributor:
+  - mappingRules:
+      - forValues:
+          - Carla Contact
+        rule:
+created:
+  - mappingRules:
+      - setValues: "2011"
+creator:
+  - mappingRules:
+      - {}
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: GrippeWeb
+distribution:
+  - mappingRules:
+      - {}
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: de
+            title: RKI Website
+            url: https://www.rki.de
+externalPartner:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Bei dem Verfahren.
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
+icd10code:
+  - mappingRules:
+      - setValues:
+          - J00-J99
+identifierInPrimarySource:
+  - mappingRules:
+      - rule:
+        setValues: grippeweb
+instrumentToolOrApparatus:
+  - mappingRules:
+      - {}
+isPartOf:
+  - mappingRules:
+      - {}
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Citizen Science
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-1
+license:
+  - mappingRules:
+      - {}
+loincId:
+  - mappingRules:
+      - {}
+meshId:
+  - mappingRules:
+      - setValues:
+          - http://id.nlm.nih.gov/mesh/D012140
+method:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Online-Befragung
+methodDescription:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Online-Surveillanceintrument
+minTypicalAge:
+  - mappingRules:
+      - setValues: 0
+modified:
+  - mappingRules:
+      - {}
+populationCoverage:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Alle Personen.
+publication:
+  - mappingRules:
+      - {}
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule:
+qualityInformation:
+  - mappingRules:
+      - {}
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-13
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "bevölkerungsbasierte Surveillancedaten"
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Verfahren
+sizeOfDataBasis:
+  - mappingRules:
+      - setValues: Meldungen
+spatial:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Deutschland
+stateOfDataProcessing:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-1
+temporal:
+  - mappingRules:
+      - setValues: seit 2011
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: GrippeWeb
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
