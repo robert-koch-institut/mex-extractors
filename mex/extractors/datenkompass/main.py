@@ -13,7 +13,7 @@ from mex.extractors.settings import Settings
 
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
-    """Get merged items from mex-backend and filter them by allow-list."""
+    """Get merged items and filter them."""
     entity_type = ["MergedActivity"]
     had_primary_source = ["fR1KAfaMWLMUdvcR1KYMLA"]  # Synopse
     merged_activities = list(get_merged_items(entity_type, had_primary_source))
@@ -25,7 +25,7 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
 def transform_activities_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
-    """Get merged items from mex-backend and filter them by allow-list."""
+    """Transform items to datenkompass items."""
     merged_units = list(get_merged_items(["MergedOrganizationalUnit"], None))
 
     return transform_to_target_fields(
@@ -38,7 +38,7 @@ def transform_activities_to_target_fields(
 def publish_activities(
     transform_activities_to_target_fields: list[DatenkompassActivity],
 ) -> None:
-    """Write received merged items to configured sink."""
+    """Write items to S3."""
     write_activity_to_json(transform_activities_to_target_fields)
 
 

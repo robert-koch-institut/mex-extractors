@@ -10,7 +10,7 @@ def get_contact(
 ) -> list[str]:
     """Get shortName and email from merged units."""
     return [
-        str(s.value) if hasattr(s, "value") else str(s)  # type: ignore[attr-defined]
+        str(s.value) if hasattr(s, "value") else str(s)
         for responsibleUnit in responsible_unit_ids
         for target_unit in all_units
         if target_unit.identifier == responsibleUnit
