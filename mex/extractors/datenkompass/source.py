@@ -12,7 +12,7 @@ class DatenkompassActivity(BaseModel):
     Halter: str | None = None
     Kontakt: list[str] | None = None
     Titel: list[str] | None = None
-    Schlagwort: list[str] | None = None
+    Schlagwort: list[str | None]
     Datenbank: list[str] | None = None
     Voraussetzungen: str | None = None
     Hauptkategorie: str | None = None

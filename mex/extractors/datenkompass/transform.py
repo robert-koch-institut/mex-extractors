@@ -1,5 +1,6 @@
 from mex.common.models import MergedActivity, MergedOrganizationalUnit
 from mex.common.types import MergedOrganizationalUnitIdentifier
+from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.source import DatenkompassActivity
 
 
@@ -31,6 +32,19 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
+def get_vocabulary(themes: list[Theme]) -> list[str | None]:
+    """Get german prefLabel for Theme."""
+    return [
+        next(
+            concept.prefLabel.de
+            for concept in Theme.__concepts__
+            if str(concept.identifier)
+            == Theme[str(theme_entry).removeprefix("Theme.")].value
+        )
+        for theme_entry in themes
+    ]
+
+
 def transform_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     all_units: list[MergedOrganizationalUnit],
@@ -45,14 +59,15 @@ def transform_to_target_fields(
             beschreibung = None
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
+        schlagwort = get_vocabulary(item.theme)
         datenkompass_activities.append(
             DatenkompassActivity(
                 Beschreibung=beschreibung,
                 Halter="BMG",
                 Kontakt=kontakt,
                 Titel=titel,
-                Schlagwort=[str(entry).removeprefix("Theme.") for entry in item.theme],
-                Datenbank=[str(entry).removeprefix("Link.") for entry in item.website],
+                Schlagwort=schlagwort,
+                Datenbank=[str(entry) for entry in item.website],
                 Voraussetzungen="Unbekannt",
                 Hauptkategorie="Gesundheit",
                 Unterkategorie="Public Health",
