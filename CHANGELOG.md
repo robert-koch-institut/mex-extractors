@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- install mex-common and mex-artificial from pypi instead of github
 - bump mex-common dependency to 0.62.0
+- install mex-common and mex-artificial from pypi instead of github
 
 ### Deprecated
 
