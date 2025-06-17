@@ -9,7 +9,7 @@ hasConsentStatus:
     comment:
 hasConsentType:
   - mappingRules:
-      - setValues: https://mex.rki.de/item/consent-type-1 # Implied Consent
+      - setValues: https://mex.rki.de/item/consent-type-2 # Implied Consent
     comment:
 hasDataSubject:
   - fieldInPrimarySource:

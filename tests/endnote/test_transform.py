@@ -57,7 +57,7 @@ def test_extract_endnote_consents(
         "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
         "hasDataSubject": "ccSc9u7Kjps1nNBxTw7y3l",
         "isIndicatedAtTime": Joker(),
-        "hasConsentType": "https://mex.rki.de/item/consent-type-1",
+        "hasConsentType": "https://mex.rki.de/item/consent-type-2",
         "entityType": "ExtractedConsent",
         "identifier": Joker(),
         "stableTargetId": Joker(),

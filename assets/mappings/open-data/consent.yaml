@@ -8,7 +8,7 @@ hasConsentStatus:
       - setValues: https://mex.rki.de/item/consent-status-2 # Valid for Processing
 hasConsentType:
   - mappingRules:
-      - setValues: https://mex.rki.de/item/consent-type-1 # Implied Consent
+      - setValues: https://mex.rki.de/item/consent-type-2 # Implied Consent
 hasDataSubject:
   - mappingRules:
       - rule:
