@@ -227,7 +227,7 @@ def test_transform_open_data_person_to_mex_consent(
         "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
         "hasDataSubject": str(mocked_open_data_persons[0].stableTargetId),
         "isIndicatedAtTime": "2021-01-01T01:01:01Z",
-        "hasConsentType": "https://mex.rki.de/item/consent-type-1",
+        "hasConsentType": "https://mex.rki.de/item/consent-type-2",
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
