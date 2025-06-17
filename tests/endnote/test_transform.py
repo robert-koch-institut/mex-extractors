@@ -108,7 +108,7 @@ def test_extract_endnote_bibliographic_resource(
         "issue": "6",
         "issued": "1890-01-01",
         "publicationYear": "1890",
-        "repositoryURL": {"url": "https://www.rki.de"},
+        "repositoryURL": [{"url": "https://www.rki.de"}],
         "volume": "5",
         "creator": ["ccSc9u7Kjps1nNBxTw7y3l"],
         "title": [{"value": "test title", "language": TextLanguage.EN}],
