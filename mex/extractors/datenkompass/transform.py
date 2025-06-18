@@ -1,7 +1,14 @@
+from mex.common.exceptions import MExError
 from mex.common.models import MergedActivity, MergedOrganizationalUnit
-from mex.common.types import MergedOrganizationalUnitIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+)
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.source import DatenkompassActivity
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 def get_contact(
@@ -45,6 +52,16 @@ def get_vocabulary(themes: list[Theme]) -> list[str | None]:
     ]
 
 
+def get_halter(halter: list[MergedOrganizationIdentifier]) -> str:
+    """Check if 'Datenhalter' is really the BMG."""
+    bmg_id = get_wikidata_extracted_organization_id_by_name("BMG")
+    for halter_id in halter:
+        if halter_id == bmg_id:
+            return "BMG"
+    msg = f"'Datenhalter' is not {bmg_id} (BMG)!"
+    raise MExError(msg)
+
+
 def transform_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     all_units: list[MergedOrganizationalUnit],
@@ -60,10 +77,11 @@ def transform_to_target_fields(
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
+        halter = get_halter(item.funderOrCommissioner)
         datenkompass_activities.append(
             DatenkompassActivity(
                 Beschreibung=beschreibung,
-                Halter="BMG",
+                Halter=halter,
                 Kontakt=kontakt,
                 Titel=titel,
                 Schlagwort=schlagwort,

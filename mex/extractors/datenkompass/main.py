@@ -2,7 +2,10 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import MergedActivity, MergedOrganizationalUnit
-from mex.extractors.datenkompass.extract import get_merged_items
+from mex.extractors.datenkompass.extract import (
+    get_merged_items,
+    get_relevant_primary_source_ids,
+)
 from mex.extractors.datenkompass.filter import filter_for_bmg
 from mex.extractors.datenkompass.load import write_activity_to_json
 from mex.extractors.datenkompass.source import DatenkompassActivity
@@ -14,8 +17,19 @@ from mex.extractors.settings import Settings
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
     """Get merged items and filter them."""
+    relevant_primary_sources = [
+        "report-server",  # synopse
+        "endnote",
+        "blueant",
+        "confluence-vvt",
+        "datscha-web",
+        "ff-projects",
+        "international-projects",
+        "open-data",
+    ]
+    get_relevant_primary_source_ids(relevant_primary_sources)
     entity_type = ["MergedActivity"]
-    had_primary_source = ["fR1KAfaMWLMUdvcR1KYMLA"]  # Synopse
+    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
     merged_activities = list(get_merged_items(entity_type, had_primary_source))
 
     return filter_for_bmg(merged_activities)

@@ -9,7 +9,7 @@ class DatenkompassActivity(BaseModel):
     """Model for target fields for Activities."""
 
     Beschreibung: str | None = None
-    Halter: str | None = None
+    Halter: str
     Kontakt: list[str] | None = None
     Titel: list[str] | None = None
     Schlagwort: list[str | None]
