@@ -11,7 +11,6 @@ class EndnoteRecord(BaseModel):
     custom4: str | None
     custom6: str | None
     database: str | None
-    edition: str | None
     electronic_resource_num: str | None
     isbn: str | None
     keyword: list[str]

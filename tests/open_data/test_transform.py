@@ -1,7 +1,6 @@
 import pytest
 
 from mex.common.models import (
-    ConsentMapping,
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
@@ -15,23 +14,19 @@ from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
     TextLanguage,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
     lookup_person_in_ldap_and_transfom,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organisations,
-    transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
-    transform_persons_and_creation_date,
 )
 
 
@@ -158,23 +153,6 @@ def test_transform_open_data_persons(
     ]
 
 
-@pytest.mark.usefixtures("mocked_open_data", "mocked_ldap")
-def test_transform_persons_and_creation_date(
-    mocked_open_data_resource_version: list[OpenDataResourceVersion],
-    mocked_open_data_persons: list[ExtractedPerson],
-) -> None:
-    results = transform_persons_and_creation_date(
-        mocked_open_data_resource_version,
-        mocked_open_data_persons,
-    )
-
-    key, value = next(iter(results.items()))
-
-    assert len(results) == 1
-    assert value == "2021-01-01T01:01:01.111111+00:00"
-    assert isinstance(key, MergedPersonIdentifier)
-
-
 @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_distributions(
     mocked_open_data_parent_resource: OpenDataParentResource,
@@ -196,38 +174,6 @@ def test_transform_open_data_distributions(
         "license": "https://mex.rki.de/item/license-1",
         "title": [{"value": "some text"}],
         "downloadURL": [{"url": "www.efg.hi"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
-    }
-
-
-@pytest.mark.usefixtures("mocked_open_data")
-def test_transform_open_data_person_to_mex_consent(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    mocked_open_data_persons: list[ExtractedPerson],
-    mocked_open_data_consent_mapping: ConsentMapping,
-) -> None:
-    mocked_open_data_persons_and_creation_date = {
-        mocked_open_data_persons[0].stableTargetId: "2021-01-01T01:01:01.111111+00:00"
-    }
-    mex_consent_result = list(
-        transform_open_data_person_to_mex_consent(
-            extracted_primary_sources["open-data"],
-            mocked_open_data_persons,
-            mocked_open_data_persons_and_creation_date,
-            mocked_open_data_consent_mapping,
-        )
-    )
-
-    assert mex_consent_result[0].model_dump(
-        exclude_none=True, exclude_defaults=True
-    ) == {
-        "hadPrimarySource": extracted_primary_sources["open-data"].stableTargetId,
-        "identifierInPrimarySource": f"{mocked_open_data_persons[0].stableTargetId}_consent",
-        "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
-        "hasDataSubject": str(mocked_open_data_persons[0].stableTargetId),
-        "isIndicatedAtTime": "2021-01-01T01:01:01Z",
-        "hasConsentType": "https://mex.rki.de/item/consent-type-2",
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

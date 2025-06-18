@@ -23,7 +23,6 @@ def endnote_records() -> list[EndnoteRecord]:
                 "custom4": "C1",
                 "custom6": "Closed Access",
                 "database": "1890-Converted.enl",
-                "edition": "1890/01/01",
                 "electronic_resource_num": "10.3456/qad.00",
                 "isbn": "1234-5678",
                 "keyword": ["keyword 1", "keyword 2"],

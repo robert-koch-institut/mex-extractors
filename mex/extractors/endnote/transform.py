@@ -96,9 +96,6 @@ def extract_endnote_consents(
             hasConsentStatus=endnote_consent_mapping.hasConsentStatus[0]
             .mappingRules[0]
             .setValues,
-            hasConsentType=endnote_consent_mapping.hasConsentType[0]
-            .mappingRules[0]
-            .setValues,
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=f"{person.stableTargetId}_consent",
             isIndicatedAtTime=datetime.now(tz=UTC),
@@ -346,7 +343,6 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 contributingUnit=contributing_unit,
                 creator=creator,
                 doi=doi,
-                edition=record.edition,
                 editor=editor,
                 editorOfSeries=editor_of_series,
                 hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
