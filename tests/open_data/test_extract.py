@@ -5,7 +5,6 @@ from mex.extractors.open_data.extract import (
     extract_oldest_record_version_creationdate,
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
-    extract_resource_versions,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
@@ -51,52 +50,6 @@ def test_extract_parent_resources_mocked() -> None:
             "license": {"id": "no license"},
         },
         "files": [],
-    }
-
-
-@pytest.mark.usefixtures("mocked_open_data")
-def test_extract_resource_versions_mocked(
-    mocked_open_data_parent_resource: list[OpenDataParentResource],
-) -> None:
-    open_data_sources = list(
-        extract_resource_versions(mocked_open_data_parent_resource)
-    )
-
-    assert isinstance(open_data_sources, list)
-
-    assert len(open_data_sources) == 2
-    assert open_data_sources[0].model_dump(exclude_defaults=True) == {
-        "id": 1001,
-        "metadata": {
-            "license": {"id": "cc-by-4.0"},
-            "contributors": [
-                {"affiliation": "RKI", "name": "Muster, Maxi", "orcid": "1234567890"}
-            ],
-            "related_identifiers": [
-                {
-                    "identifier": "should be transformed",
-                    "relation": "isDocumentedBy",
-                },
-                {
-                    "identifier": "should be extracted but NOT transformed",
-                    "relation": "isSupplementTo",
-                },
-            ],
-            "publication_date": "2021",
-        },
-        "created": "2021-01-01T01:01:01.111111+00:00",
-    }
-    assert open_data_sources[1].model_dump(exclude_defaults=True) == {
-        "id": 1002,
-        "metadata": {
-            "license": {"id": "no license"},
-            "publication_date": "2022",
-            "creators": [
-                {"name": "Muster, Maxi"},
-                {"name": "Resolved, Roland"},
-            ],
-        },
-        "created": "2022-02-02T02:02:02.222222+00:00",
     }
 
 

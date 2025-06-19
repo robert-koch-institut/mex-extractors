@@ -1,7 +1,6 @@
 import pytest
 
 from mex.common.models import (
-    ConsentMapping,
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
@@ -111,15 +110,6 @@ def mocked_open_data_distribution() -> list[ExtractedDistribution]:
             title="test title",
         )
     ]
-
-
-@pytest.fixture
-def mocked_open_data_consent_mapping() -> ConsentMapping:
-    """Return consent mapping."""
-    settings = Settings.get()
-    return ConsentMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "consent.yaml")
-    )
 
 
 @pytest.fixture

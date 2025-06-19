@@ -43,9 +43,6 @@ def extract_endnote_records() -> list[EndnoteRecord]:
             custom6=custom6.text
             if isinstance(custom6 := record.find("custom6/style"), ET.Element)
             else None,
-            edition=edition.text
-            if isinstance(edition := record.find("edition/style"), ET.Element)
-            else None,
             electronic_resource_num=ern.text
             if isinstance(
                 ern := record.find("electronic-resource-num/style"), ET.Element

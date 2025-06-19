@@ -51,14 +51,12 @@ def test_extract_endnote_consents(
         endnote_consent_mapping,
     )
 
-    assert extracted_consents[0].model_dump() == {
-        "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+    assert extracted_consents[0].model_dump(exclude_defaults=True) == {
+        "hadPrimarySource": str(extracted_primary_sources["endnote"].stableTargetId),
         "identifierInPrimarySource": "ccSc9u7Kjps1nNBxTw7y3l_consent",
         "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
         "hasDataSubject": "ccSc9u7Kjps1nNBxTw7y3l",
         "isIndicatedAtTime": Joker(),
-        "hasConsentType": "https://mex.rki.de/item/consent-type-2",
-        "entityType": "ExtractedConsent",
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -104,7 +102,6 @@ def test_extract_endnote_bibliographic_resource(
         "identifierInPrimarySource": "1890-Converted.enl\\n1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "doi": "https://doi.org/10.3456/qad.00",
-        "edition": "1890/01/01",
         "issue": "6",
         "issued": "1890-01-01",
         "publicationYear": "1890",

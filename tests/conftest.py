@@ -14,6 +14,7 @@ pytest_plugins = (
     "tests.drop.mocked_drop",
     "tests.grippeweb.mocked_grippeweb",
     "tests.ifsg.mocked_ifsg",
+    "tests.igs.mocked_igs",
     "tests.ldap.mocked_ldap",
     "tests.open_data.mocked_open_data",
 )

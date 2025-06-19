@@ -4,9 +4,7 @@ from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import transform_ldap_actor_to_mex_contact_point
 from mex.common.models import (
-    ConsentMapping,
     DistributionMapping,
-    ExtractedConsent,
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
@@ -20,25 +18,20 @@ from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
 )
 from mex.extractors.open_data.extract import (
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
-    extract_resource_versions,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataResourceVersion,
 )
 from mex.extractors.open_data.transform import (
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organisations,
-    transform_open_data_person_to_mex_consent,
     transform_open_data_persons,
-    transform_persons_and_creation_date,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -62,14 +55,6 @@ def extracted_primary_source_open_data(
 def open_data_parent_resources() -> list[OpenDataParentResource]:
     """Extract open data parent resources from Zenodo."""
     return extract_parent_resources()
-
-
-@asset(group_name="open_data")
-def open_data_resource_versions(
-    open_data_parent_resources: list[OpenDataParentResource],
-) -> list[OpenDataResourceVersion]:
-    """Extract all versions of the parent resources from Zenodo."""
-    return extract_resource_versions(open_data_parent_resources)
 
 
 @asset(group_name="open_data")
@@ -113,18 +98,6 @@ def extracted_open_data_persons(  # noqa: PLR0913
     )
     load(extracted_open_data_persons)
     return extracted_open_data_persons
-
-
-@asset(group_name="open_data")
-def extracted_open_data_persons_and_creation_date(
-    open_data_resource_versions: list[OpenDataResourceVersion],
-    extracted_open_data_persons: list[ExtractedPerson],
-) -> dict[MergedPersonIdentifier, str]:
-    """Extract earliest creation date of associated resource versions per person."""
-    return transform_persons_and_creation_date(
-        open_data_resource_versions,
-        extracted_open_data_persons,
-    )
 
 
 @asset(group_name="open_data")
@@ -193,29 +166,6 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
 
     load(mex_sources)
     return mex_sources
-
-
-@asset(group_name="open_data")
-def extracted_open_data_consent(
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_persons: list[ExtractedPerson],
-    extracted_open_data_persons_and_creation_date: dict[MergedPersonIdentifier, str],
-) -> list[ExtractedConsent]:
-    """Transform open data persons to extracted consents and load them to the sinks."""
-    settings = Settings.get()
-    consent_mapping = ConsentMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "consent.yaml")
-    )
-
-    mex_consents = transform_open_data_person_to_mex_consent(
-        extracted_primary_source_open_data,
-        extracted_open_data_persons,
-        extracted_open_data_persons_and_creation_date,
-        consent_mapping,
-    )
-
-    load(mex_consents)
-    return mex_consents
 
 
 @entrypoint(Settings)

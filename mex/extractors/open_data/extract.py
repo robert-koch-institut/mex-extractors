@@ -2,7 +2,6 @@ from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataResourceVersion,
     OpenDataVersionFiles,
 )
 
@@ -19,26 +18,6 @@ def extract_parent_resources() -> list[OpenDataParentResource]:
     connector = OpenDataConnector()
 
     return connector.get_parent_resources()
-
-
-def extract_resource_versions(
-    open_data_parent_resources: list[OpenDataParentResource],
-) -> list[OpenDataResourceVersion]:
-    """Fetch all the versions of a parent resource.
-
-    Args:
-        open_data_parent_resources: Open Data rarent resource
-
-    Returns:
-        list of OpenDataResourceVersion items
-    """
-    connector = OpenDataConnector()
-
-    return [
-        resource_version
-        for parent_resource in open_data_parent_resources
-        for resource_version in connector.get_resource_versions(parent_resource.id)
-    ]
 
 
 def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
