@@ -1,0 +1,21 @@
+{
+    "components": {
+        "schemas": {
+            "enum_schema": {
+                "enum": [
+                    "enum"
+                ],
+                "title": "enum",
+                "type": "string"
+            },
+            "properties_schema": {
+                "description": "properties",
+                "properties": {
+                    "key": "value"
+                },
+                "title": "test_title",
+                "type": "string"
+            }
+        }
+    }
+}
