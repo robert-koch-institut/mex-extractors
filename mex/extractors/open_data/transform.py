@@ -4,9 +4,7 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import transform_ldap_person_to_mex_person
 from mex.common.models import (
-    ConsentMapping,
     DistributionMapping,
-    ExtractedConsent,
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
@@ -30,7 +28,6 @@ from mex.extractors.open_data.extract import (
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataResourceVersion,
 )
 from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
@@ -180,45 +177,6 @@ def transform_open_data_persons(  # noqa: PLR0913
     return list(extracted_persons.values())
 
 
-def transform_persons_and_creation_date(
-    open_data_resource_versions: list[OpenDataResourceVersion],
-    extracted_open_data_persons: list[ExtractedPerson],
-) -> dict[MergedPersonIdentifier, str]:
-    """Extract file creation dates per Extracted Person from open_data resource.
-
-    Args:
-        open_data_resource_versions: Open Data resource versions
-        extracted_open_data_persons: list of Extracted Persons
-
-    Returns:
-        dictionary of file Creation Date by stableTargetId of MergedPerson
-    """
-    dict_for_extractedconsent: dict[MergedPersonIdentifier, str] = {}
-    extracted_person_ids_by_name = {
-        extracted_person.fullName[0]: extracted_person.stableTargetId
-        for extracted_person in extracted_open_data_persons
-    }
-    for resource in open_data_resource_versions:
-        for person in resource.metadata.contributors + resource.metadata.creators:
-            if person.name in extracted_person_ids_by_name:
-                person_stable_target_id = extracted_person_ids_by_name[person.name]
-                if (
-                    resource.created
-                    and (
-                        person_stable_target_id in dict_for_extractedconsent
-                        and dict_for_extractedconsent[person_stable_target_id]
-                        > resource.created
-                    )
-                ) or (
-                    resource.created
-                    and (person_stable_target_id not in dict_for_extractedconsent)
-                ):  # if saved creation date is newer or entry doesn't exist yet, update
-                    dict_for_extractedconsent[person_stable_target_id] = (
-                        resource.created
-                    )
-    return dict_for_extractedconsent
-
-
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     extracted_primary_source_open_data: ExtractedPrimarySource,
@@ -270,41 +228,6 @@ def transform_open_data_distributions(
                 )
             )
     return extracted_distributions
-
-
-def transform_open_data_person_to_mex_consent(
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_persons: list[ExtractedPerson],
-    extracted_open_data_persons_and_creation_date: dict[MergedPersonIdentifier, str],
-    consent_mapping: ConsentMapping,
-) -> list[ExtractedConsent]:
-    """Transform open data persons to extracted consent.
-
-    Args:
-        extracted_primary_source_open_data: Extracted platform for open data
-        extracted_open_data_persons: list of ExtractedPerson
-        consent_mapping: resource mapping model with default values
-        extracted_open_data_persons_and_creation_date: person id by file creation date
-
-    Returns:
-        List of ExtractedConsent instances
-    """
-    has_consent_status = consent_mapping.hasConsentStatus[0].mappingRules[0].setValues
-    has_consent_type = consent_mapping.hasConsentType[0].mappingRules[0].setValues
-
-    return [
-        ExtractedConsent(
-            hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
-            hasConsentStatus=has_consent_status,
-            hasConsentType=has_consent_type,
-            hasDataSubject=person.stableTargetId,
-            identifierInPrimarySource=person.stableTargetId + "_consent",
-            isIndicatedAtTime=extracted_open_data_persons_and_creation_date[
-                person.stableTargetId
-            ],
-        )
-        for person in extracted_open_data_persons
-    ]
 
 
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913

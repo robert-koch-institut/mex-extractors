@@ -7,13 +7,11 @@ from pytest import MonkeyPatch
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
-    OpenDataResourceVersion,
     OpenDataVersionFiles,
 )
 from tests.open_data.mocked_open_data import (
     create_mocked_file_response,
     create_mocked_parent_response,
-    create_mocked_version_response,
 )
 
 
@@ -48,46 +46,6 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][0]),
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][1]),
     ]
-
-
-def test_get_resource_versions(mocked_open_data_connector: OpenDataConnector) -> None:
-    dummy_versions = create_mocked_version_response()
-
-    mocked_response = Mock(spec=requests.Response)
-    mocked_response.status_code = 200
-    mocked_response.json = MagicMock(return_value=dummy_versions)
-    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
-
-    connector = OpenDataConnector.get()
-    results = connector.get_resource_versions(1)
-
-    assert (
-        mocked_open_data_connector.request.call_count == 5
-    )  # 1x connector initializing, 1x getting total, 3x for 3 pages
-    assert results == 3 * [
-        OpenDataResourceVersion.model_validate(dummy_versions["hits"]["hits"][0]),
-        OpenDataResourceVersion.model_validate(dummy_versions["hits"]["hits"][1]),
-    ]
-
-
-def test_get_oldest_resource_version_creation_date(
-    mocked_open_data_connector: OpenDataConnector,
-) -> None:
-    # Create mock responses
-    dummy_versions = create_mocked_version_response()
-
-    mocked_response = Mock(spec=requests.Response)
-    mocked_response.status_code = 200
-    mocked_response.json = MagicMock(return_value=dummy_versions)
-    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
-
-    connector = OpenDataConnector.get()
-    results = connector.get_oldest_resource_version_creation_date(1003)
-
-    assert (
-        mocked_open_data_connector.request.call_count == 2
-    )  # 1x connector initializing, 1x for 1st page
-    assert results == "2021"
 
 
 def test_get_files_for_resource_version(

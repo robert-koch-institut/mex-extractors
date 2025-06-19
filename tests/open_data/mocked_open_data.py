@@ -6,7 +6,6 @@ from pytest import MonkeyPatch
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
-    OpenDataResourceVersion,
     OpenDataVersionFiles,
 )
 
@@ -134,19 +133,6 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     ]
     monkeypatch.setattr(
         OpenDataConnector, "get_parent_resources", lambda _: parent_resources
-    )
-
-    mocked_version_response = create_mocked_version_response()
-    resource_versions = [
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][0]
-        ),
-        OpenDataResourceVersion.model_validate(
-            mocked_version_response["hits"]["hits"][1]
-        ),
-    ]
-    monkeypatch.setattr(
-        OpenDataConnector, "get_resource_versions", lambda self, _: resource_versions
     )
 
     monkeypatch.setattr(

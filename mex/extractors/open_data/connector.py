@@ -44,38 +44,6 @@ class OpenDataConnector(HTTPConnector):
             )["hits"]["hits"]
         ]
 
-    def get_resource_versions(self, resource_id: int) -> list[OpenDataResourceVersion]:
-        """Load versions of different parent resources by querying the Zenodo API.
-
-        For a specific parent resource get all the versions of this resource.
-        The Zenodo API doesn't work by giving it the parent resource id ("conceptrecid")
-        but call it with the id ("id") of any version of that parent resource and then
-        'ask' for the versions in general.
-
-        Args:
-            resource_id: id of any resource version
-
-        Returns:
-            list of Zenodo resource versions
-        """
-        versions_base_url = f"api/records/{resource_id}/versions?"
-
-        total_records = self.request("GET", f"{versions_base_url}size=1")["hits"][
-            "total"
-        ]
-
-        limit = 100
-        amount_pages = math.ceil(total_records / limit)
-
-        return [
-            OpenDataResourceVersion.model_validate(item)
-            for page in range(1, amount_pages + 1)
-            for item in self.request(
-                "GET",
-                f"{versions_base_url}size={limit}&page={page}",
-            )["hits"]["hits"]
-        ]
-
     def get_oldest_resource_version_creation_date(self, resource_id: int) -> str | None:
         """Load oldest (first) version of a resource by querying the Zenodo API.
 

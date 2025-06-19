@@ -7,10 +7,6 @@ hasConsentStatus:
   - mappingRules:
       - setValues: https://mex.rki.de/item/consent-status-2 # Valid for Processing
     comment:
-hasConsentType:
-  - mappingRules:
-      - setValues: https://mex.rki.de/item/consent-type-2 # Expressed Consent
-    comment:
 hasDataSubject:
   - fieldInPrimarySource:
     examplesInPrimarySource:

@@ -67,11 +67,6 @@ doi:
       - forValues:
           - https://edoc.rki.de/handle/
       - rule:
-edition:
-  - fieldInPrimarySource:
-    examplesInPrimarySource:
-    mappingRules:
-      - rule:
 editor:
   - fieldInPrimarySource:
     examplesInPrimarySource:
