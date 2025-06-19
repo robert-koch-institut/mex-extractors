@@ -11,7 +11,7 @@ class IGSSettings(BaseModel):
     mapping_path: AssetsPath = Field(
         AssetsPath("mappings/igs"),
         description=(
-            "Path to the directory with the igs mapping files containing the "
+            "Path to the directory with the IGS mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
