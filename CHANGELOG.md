@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- extract from IGS Open API
-
 ### Changes
-
-- update endnote and open-data according to mapping changes
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.36.0] - 2025-06-19
+
+### Added
+
+- extract from IGS Open API
+
+### Changes
+
+- update endnote and open-data according to mapping changes
 
 ## [0.35.0] - 2025-06-17
 
