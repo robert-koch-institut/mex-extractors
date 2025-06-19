@@ -18,19 +18,16 @@ from mex.extractors.settings import Settings
 def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
     """Get merged items and filter them."""
     relevant_primary_sources = [
-        "report-server",  # synopse
-        "endnote",
         "blueant",
         "confluence-vvt",
         "datscha-web",
         "ff-projects",
         "international-projects",
-        "open-data",
+        "report-server",  # synopse
     ]
-    get_relevant_primary_source_ids(relevant_primary_sources)
     entity_type = ["MergedActivity"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_activities = list(get_merged_items(entity_type, had_primary_source))
+    merged_activities = list(get_merged_items(None, entity_type, had_primary_source))
 
     return filter_for_bmg(merged_activities)
 
@@ -40,7 +37,7 @@ def transform_activities_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
     """Transform items to datenkompass items."""
-    merged_units = list(get_merged_items(["MergedOrganizationalUnit"], None))
+    merged_units = list(get_merged_items(None, ["MergedOrganizationalUnit"], None))
 
     return transform_to_target_fields(
         extracted_and_filtered_merged_activities,

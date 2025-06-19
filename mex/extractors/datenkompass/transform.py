@@ -5,10 +5,8 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
 )
 from mex.common.types.vocabulary import Theme
+from mex.extractors.datenkompass.extract import get_merged_items
 from mex.extractors.datenkompass.source import DatenkompassActivity
-from mex.extractors.wikidata.helpers import (
-    get_wikidata_extracted_organization_id_by_name,
-)
 
 
 def get_contact(
@@ -52,13 +50,14 @@ def get_vocabulary(themes: list[Theme]) -> list[str | None]:
     ]
 
 
-def get_halter(halter: list[MergedOrganizationIdentifier]) -> str:
+def check_halter(
+    bmg_ids: set[MergedOrganizationIdentifier],
+    halter: list[MergedOrganizationIdentifier],
+) -> str:
     """Check if 'Datenhalter' is really the BMG."""
-    bmg_id = get_wikidata_extracted_organization_id_by_name("BMG")
-    for halter_id in halter:
-        if halter_id == bmg_id:
-            return "BMG"
-    msg = f"'Datenhalter' is not {bmg_id} (BMG)!"
+    if any(halter_id in bmg_ids for halter_id in halter):
+        return "BMG"
+    msg = "'Datenhalter' is not BMG!"
     raise MExError(msg)
 
 
@@ -68,6 +67,10 @@ def transform_to_target_fields(
 ) -> list[DatenkompassActivity]:
     """Get the info asked for."""
     datenkompass_activities = []
+    bmg_ids = {
+        MergedOrganizationIdentifier(bmg.identifier)
+        for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
+    }
     for item in extracted_and_filtered_merged_activities:
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
@@ -77,7 +80,7 @@ def transform_to_target_fields(
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
-        halter = get_halter(item.funderOrCommissioner)
+        halter = check_halter(bmg_ids, item.funderOrCommissioner)
         datenkompass_activities.append(
             DatenkompassActivity(
                 Beschreibung=beschreibung,
