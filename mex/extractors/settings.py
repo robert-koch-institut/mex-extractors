@@ -11,6 +11,7 @@ from mex.extractors.endnote.settings import EndnoteSettings
 from mex.extractors.ff_projects.settings import FFProjectsSettings
 from mex.extractors.grippeweb.settings import GrippewebSettings
 from mex.extractors.ifsg.settings import IFSGSettings
+from mex.extractors.igs.settings import IGSSettings
 from mex.extractors.international_projects.settings import InternationalProjectsSettings
 from mex.extractors.odk.settings import ODKSettings
 from mex.extractors.open_data.settings import OpenDataSettings
@@ -89,6 +90,7 @@ class Settings(BaseSettings):
     ff_projects: FFProjectsSettings = FFProjectsSettings()
     grippeweb: GrippewebSettings = GrippewebSettings()
     ifsg: IFSGSettings = IFSGSettings()
+    igs: IGSSettings = IGSSettings()
     international_projects: InternationalProjectsSettings = (
         InternationalProjectsSettings()
     )
