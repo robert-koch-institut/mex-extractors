@@ -6,7 +6,7 @@ from mex.common.types import (
 )
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.extract import get_merged_items
-from mex.extractors.datenkompass.source import DatenkompassActivity
+from mex.extractors.datenkompass.item import DatenkompassActivity
 
 
 def get_contact(
@@ -83,25 +83,25 @@ def transform_to_target_fields(
         halter = check_halter(bmg_ids, item.funderOrCommissioner)
         datenkompass_activities.append(
             DatenkompassActivity(
-                Beschreibung=beschreibung,
-                Halter=halter,
-                Kontakt=kontakt,
-                Titel=titel,
-                Schlagwort=schlagwort,
-                Datenbank=[str(entry) for entry in item.website],
-                Voraussetzungen="Unbekannt",
-                Hauptkategorie="Gesundheit",
-                Unterkategorie="Public Health",
-                Rechtsgrundlage="Nicht bekannt",
-                Weg="Externe Zulieferung",
-                Status="Unbekannt",
-                Datennutzungszweck="Themenspezifische Auswertung",
-                Herausgeber="Robert Koch-Institut",
-                Kommentar=(
+                datenhalter=halter,
+                beschreibung=beschreibung,
+                kontakt=kontakt,
+                titel=titel,
+                schlagwort=schlagwort,
+                datenbank=[str(entry) for entry in item.website],
+                voraussetzungen="Unbekannt",
+                hauptkategorie="Gesundheit",
+                unterkategorie="Public Health",
+                rechtsgrundlage="Nicht bekannt",
+                datenerhalt="Externe Zulieferung",
+                status="Unbekannt",
+                datennutzungszweck="Themenspezifische Auswertung",
+                herausgeber="Robert Koch-Institut",
+                kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein.)"
                 ),
-                Format="Projekt/Vorhaben",
+                format="Projekt/Vorhaben",
                 identifier=item.identifier,
                 entityType=item.entityType,
             )

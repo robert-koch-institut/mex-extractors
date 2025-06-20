@@ -7,8 +7,8 @@ from mex.extractors.datenkompass.extract import (
     get_relevant_primary_source_ids,
 )
 from mex.extractors.datenkompass.filter import filter_for_bmg
+from mex.extractors.datenkompass.item import AnyDatenkompassModel, DatenkompassActivity
 from mex.extractors.datenkompass.load import write_activity_to_json
-from mex.extractors.datenkompass.source import DatenkompassActivity
 from mex.extractors.datenkompass.transform import transform_to_target_fields
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -47,7 +47,7 @@ def transform_activities_to_target_fields(
 
 @asset(group_name="datenkompass")
 def publish_activities(
-    transform_activities_to_target_fields: list[DatenkompassActivity],
+    transform_activities_to_target_fields: list[AnyDatenkompassModel],
 ) -> None:
     """Write items to S3."""
     write_activity_to_json(transform_activities_to_target_fields)
