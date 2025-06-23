@@ -55,7 +55,9 @@ class DatenkompassBibliographicResource(BaseModel):
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
     herausgeber: str | None = Field(None, alias="Herausgeber")
     kommentar: str | None = Field(None, alias="Kommentar")
-    format: str | None = Field(None, alias="Format")
+    dk_format: str | None = Field(
+        None, alias="Format"
+    )  # "format" would shadow a builtIn
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
     entityType: str
 

@@ -1,10 +1,15 @@
+from collections.abc import Iterable
+
 from mex.common.exceptions import MExError
-from mex.common.models import MergedActivity, MergedOrganizationalUnit
+from mex.common.models import (
+    MergedActivity,
+    MergedOrganizationalUnit,
+)
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
-from mex.common.types.vocabulary import Theme
+from mex.common.types.vocabulary import BibliographicResourceType, Theme
 from mex.extractors.datenkompass.extract import get_merged_items
 from mex.extractors.datenkompass.item import DatenkompassActivity
 
@@ -37,16 +42,17 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
-def get_vocabulary(themes: list[Theme]) -> list[str | None]:
-    """Get german prefLabel for Theme."""
+def get_vocabulary(
+    entries: Iterable[Theme | BibliographicResourceType],
+) -> list[str | None]:
+    """Get german prefLabel for Vocabularies."""
     return [
         next(
             concept.prefLabel.de
-            for concept in Theme.__concepts__
-            if str(concept.identifier)
-            == Theme[str(theme_entry).removeprefix("Theme.")].value
+            for concept in type(entry).__concepts__
+            if str(concept.identifier) == entry.value
         )
-        for theme_entry in themes
+        for entry in entries
     ]
 
 
@@ -61,7 +67,7 @@ def check_halter(
     raise MExError(msg)
 
 
-def transform_to_target_fields(
+def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     all_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassActivity]:
