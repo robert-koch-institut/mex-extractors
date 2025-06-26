@@ -56,14 +56,14 @@ def get_vocabulary(
     ]
 
 
-def check_halter(
+def check_datenhalter(
     bmg_ids: set[MergedOrganizationIdentifier],
-    halter: list[MergedOrganizationIdentifier],
+    datenhalter: list[MergedOrganizationIdentifier],
 ) -> str:
     """Check if 'Datenhalter' is really the BMG."""
-    if any(halter_id in bmg_ids for halter_id in halter):
+    if any(datenhalter_id in bmg_ids for datenhalter_id in datenhalter):
         return "BMG"
-    msg = "'Datenhalter' is not BMG!"
+    msg = "Funder or Commissioner is not BMG!"
     raise MExError(msg)
 
 
@@ -86,15 +86,15 @@ def transform_activities(
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
-        halter = check_halter(bmg_ids, item.funderOrCommissioner)
+        datenhalter = check_datenhalter(bmg_ids, item.funderOrCommissioner)
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter=halter,
+                datenhalter=datenhalter,
                 beschreibung=beschreibung,
                 kontakt=kontakt,
                 titel=titel,
                 schlagwort=schlagwort,
-                datenbank=[str(entry) for entry in item.website],
+                datenbank=[entry.url for entry in item.website],
                 voraussetzungen="Unbekannt",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Public Health",

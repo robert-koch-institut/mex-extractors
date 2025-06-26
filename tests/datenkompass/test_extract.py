@@ -19,3 +19,8 @@ def test_get_merged_items_mocked() -> None:
             title="This is a test",
         ),
     ]
+
+
+@pytest.mark.usefixtures("mocked_backend")
+def test_get_relevant_primary_source_ids_mocked() -> None:
+    pass  # TODO(JE): implement

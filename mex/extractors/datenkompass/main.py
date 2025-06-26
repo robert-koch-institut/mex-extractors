@@ -11,7 +11,7 @@ from mex.extractors.datenkompass.extract import (
 )
 from mex.extractors.datenkompass.filter import filter_for_bmg
 from mex.extractors.datenkompass.item import DatenkompassActivity
-from mex.extractors.datenkompass.load import write_item_to_json
+from mex.extractors.datenkompass.load import start_s3_client, write_item_to_json
 from mex.extractors.datenkompass.transform import transform_activities
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -53,7 +53,8 @@ def publish_activities(
     transform_activities_to_target_fields: list[DatenkompassActivity],
 ) -> None:
     """Write items to S3."""
-    write_item_to_json(transform_activities_to_target_fields)
+    s3_client = start_s3_client()
+    write_item_to_json(transform_activities_to_target_fields, s3_client)
 
 
 @entrypoint(Settings)
