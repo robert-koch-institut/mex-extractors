@@ -1,7 +1,5 @@
-
 import pytest
 
-from mex.common.ldap.models import LDAPActor
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedContactPoint,
@@ -34,19 +32,17 @@ def igs_resource_mapping() -> ResourceMapping:
 def extracted_igs_contact_points_by_mail() -> dict[str, ExtractedContactPoint]:
     """Mock IGS actor."""
     return {
-        "email@email.de":
-        ExtractedContactPoint(
+        "email@email.de": ExtractedContactPoint(
             email="email@email.de",
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="actor 1",
         ),
-        "contactc@rki.de":
-        ExtractedContactPoint(
+        "contactc@rki.de": ExtractedContactPoint(
             email="contactc@rki.de",
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=43),
             identifierInPrimarySource="actor 2",
-        )
-        }
+        ),
+    }
 
 
 @pytest.fixture

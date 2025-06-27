@@ -18,7 +18,7 @@ description:
       - setValues:
 hadPrimarySource:
   - mappingRules:
-      - rule: 
+      - rule:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: https://igs

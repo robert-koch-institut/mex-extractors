@@ -34,7 +34,7 @@ documentation:
       - setValues:
 hadPrimarySource:
   - mappingRules:
-      - rule: 
+      - rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -49,7 +49,7 @@ identifierInPrimarySource:
 keyword:
   - mappingRules:
       - setValues:
-  - fieldInPrimarySource: 
+  - fieldInPrimarySource:
     locationInPrimarySource:
     examplesInPrimarySource:
     mappingRules:
@@ -101,4 +101,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule: 
+        rule:
