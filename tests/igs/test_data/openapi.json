@@ -1,9 +1,9 @@
 {
     "components": {
         "schemas": {
-            "enum_schema": {
+            "Pathogen": {
                 "enum": [
-                    "enum"
+                    "PATHOGEN"
                 ],
                 "title": "enum",
                 "type": "string"
