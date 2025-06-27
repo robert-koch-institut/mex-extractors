@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=../../__schema__/ResourceMapping.json
+
+accessPlatform:
+  - mappingRules:
+      - rule:
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+accrualPeriodicity:
+  - mappingRules:
+      - setValues:
+alternativeTitle:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+        setValues:
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+contact:
+  - mappingRules:
+      - forValues:
+          - contactc@rki.de
+        rule:
+contributingUnit:
+  - mappingRules:
+      - forValues:
+description:
+  - mappingRules:
+      - setValues:
+documentation:
+  - mappingRules:
+      - setValues:
+hadPrimarySource:
+  - mappingRules:
+      - rule: 
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+hasPersonalData:
+  - mappingRules:
+      - setValues:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+keyword:
+  - mappingRules:
+      - setValues:
+  - fieldInPrimarySource: 
+    locationInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        setValues:
+language:
+  - mappingRules:
+      - setValues:
+meshId:
+  - mappingRules:
+      - setValues:
+method:
+  - mappingRules:
+      - setValues:
+  - mappingRules:
+      - forValues:
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+rights:
+  - mappingRules:
+      - setValues:
+spatial:
+  - mappingRules:
+      - setValues:
+temporal:
+  - mappingRules:
+      - setValues:
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - PATHOGEN
+        setValues:
+          - language: de
+            value: Pathogen
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule: 

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../__schema__/AccessPlatformMapping.json
+
+endpointDescription:
+  - mappingRules:
+      - setValues:
+endpointType:
+  - mappingRules:
+      - setValues:
+endpointURL:
+  - mappingRules:
+      - setValues:
+contact:
+  - mappingRules:
+      - forValues:
+          - email@email.de
+description:
+  - mappingRules:
+      - setValues:
+hadPrimarySource:
+  - mappingRules:
+      - rule: 
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: https://igs
+landingPage:
+  - mappingRules:
+      - setValues:
+technicalAccessibility:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/technical-accessibility-1 # internal
+title:
+  - mappingRules:
+      - setValues:
+          - value: IGS Open API
+            language: en
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - C1
+        rule:
