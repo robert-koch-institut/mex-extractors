@@ -103,14 +103,14 @@ def extracted_igs_resources(
 @asset(group_name="igs")
 def extracted_igs_access_platform(
     extracted_primary_source_igs: ExtractedPrimarySource,
-    igs_access_platform_mapping: AccessPlatformMapping,
+    igs_access_platform_mapping: dict[str, Any],
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
     return transform_igs_access_platform(
         extracted_primary_source_igs,
-        igs_access_platform_mapping,
+        AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         extracted_igs_contact_points_by_mail,
         unit_stable_target_ids_by_synonym,
     )
