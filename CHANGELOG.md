@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ifsg variable extraction
+
 ### Security
 
 ## [0.36.0] - 2025-06-19
