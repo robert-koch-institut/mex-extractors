@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- transform mandatory fields of IGS access platform and resources
 - publisher for datenkompass
 
 ### Changes
@@ -18,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- ifsg variable extraction
 
 ### Security
 
