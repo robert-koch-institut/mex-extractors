@@ -51,6 +51,7 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     return [
         str(mps.identifier)
         for mps in merged_primary_sources
-        if provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
+        if mps.entityType == entity_type[0]
+        and provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
         in relevant_primary_sources
     ]

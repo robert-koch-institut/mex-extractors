@@ -64,7 +64,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
         MergedActivity(
             contact=["LoremIpsum5678"],
             responsibleUnit=["DolorSitAmetConsec"],
-            title=[Text(value="should not get extracted", language="de")],
+            title=[Text(value="should get filtered out", language="en")],
             funderOrCommissioner=[MergedOrganizationIdentifier("NoBMGIdentifier")],
             theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
             entityType="MergedActivity",

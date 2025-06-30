@@ -27,21 +27,22 @@ def write_item_to_json(
     """Write items to json."""
     settings = Settings.get()
 
-    datenkompassitems = list(datenkompassitems)
-    file_name = f"datenkompass_{datenkompassitems[0].entityType}.json"
-    file_content = json.dumps(
-        [item.model_dump(by_alias=True) for item in datenkompassitems],
-        indent=2,
-        ensure_ascii=False,
-    )
+    if datenkompassitems:
+        datenkompassitems = list(datenkompassitems)
+        file_name = f"datenkompass_{datenkompassitems[0].entityType}.json"
+        file_content = json.dumps(
+            [item.model_dump(by_alias=True) for item in datenkompassitems],
+            indent=2,
+            ensure_ascii=False,
+        )
 
-    s3.put_object(
-        Bucket=settings.s3_bucket_key,
-        Key=file_name,
-        Body=file_content.encode("utf-8"),
-        ContentType="application/json; charset=utf-8",
-    )
+        s3.put_object(
+            Bucket=settings.s3_bucket_key,
+            Key=file_name,
+            Body=file_content.encode("utf-8"),
+            ContentType="application/json; charset=utf-8",
+        )
 
-    logger.info(
-        "Written %s items to file '%s' on S3", len(datenkompassitems), file_name
-    )
+        logger.info(
+            "Written %s items to file '%s' on S3", len(datenkompassitems), file_name
+        )
