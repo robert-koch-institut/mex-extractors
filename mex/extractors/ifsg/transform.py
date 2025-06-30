@@ -476,13 +476,17 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
         for id_item in id_item_list:
             item_row = item_by_id_item[id_item]
             value_set.append(item_row.item_name)
-        resource_identifier_in_primary_source = f"{row.id_type}_{id_schema}"
+        resource_identifier_in_primary_source = (
+            f"resource_disease_{row.id_type}_{id_schema}"
+        )
         if (
             resource_identifier_in_primary_source
             not in resource_disease_stable_target_id_by_id
         ):
             continue
-        used_in = resource_disease_stable_target_id_by_id[f"{row.id_type}_{id_schema}"]
+        used_in = resource_disease_stable_target_id_by_id[
+            resource_identifier_in_primary_source
+        ]
         extracted_variables.append(
             ExtractedVariable(
                 belongsTo=belongs_to,
