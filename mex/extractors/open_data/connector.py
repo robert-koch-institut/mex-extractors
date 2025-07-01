@@ -1,30 +1,9 @@
-import json
 import math
 import time
-from abc import abstractmethod
 from collections.abc import Mapping
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
-import backoff
-import requests
-from requests import RequestException, Response, codes
-from requests.exceptions import (
-    ConnectTimeout,
-    ProxyError,
-    ReadTimeout,
-    SSLError,
-)
-
-from mex.common.connector import BaseConnector, HTTPConnector
-from mex.common.connector.utils import bounded_backoff
-from mex.common.exceptions import (
-    TimedReadTimeout,
-    TimedServerError,
-    TimedTooManyRequests,
-)
-from mex.common.logging import logger
-from mex.common.settings import BaseSettings
-from mex.common.transform import MExEncoder
+from mex.common.connector import HTTPConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
@@ -43,14 +22,14 @@ class OpenDataConnector(HTTPConnector):
         self.community_rki = settings.open_data.community_rki
 
     def request(
-            self,
-            method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
-            endpoint: str | None = None,
-            payload: Any = None,  # noqa: ANN401
-            params: Mapping[str, list[str] | str | None] | None = None,
-            **kwargs: Any,  # noqa: ANN401
-        ) -> dict[str, Any]:
-        """"Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
+        self,
+        method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
+        endpoint: str | None = None,
+        payload: Any = None,  # noqa: ANN401
+        params: Mapping[str, list[str] | str | None] | None = None,
+        **kwargs: Any,  # noqa: ANN401
+    ) -> dict[str, Any]:
+        """ "Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
         time.sleep(0.5)
         return super().request(
             method,
