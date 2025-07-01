@@ -36,10 +36,11 @@ def test_transform_odk_resources_to_mex_resources(
         external_partner_and_publisher_by_label,
         extracted_international_projects_activities,
         extracted_primary_sources["mex"],
+        extracted_primary_sources["odk"],
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": "00000000000000",
+        "hadPrimarySource": extracted_primary_sources["odk"].stableTargetId,
         "hasLegalBasis": [
             {
                 "language": TextLanguage.EN,
@@ -112,6 +113,7 @@ def test_transform_odk_resources_to_mex_resources(
         {},
         extracted_international_projects_activities,
         extracted_primary_sources["mex"],
+        extracted_primary_sources["odk"],
     )
     assert (
         resources_organizations_empty_or_created[0][0].model_dump()["publisher"] == []
