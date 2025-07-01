@@ -58,7 +58,7 @@ def extract_open_data_persons_from_open_data_parent_resources(
     Args:
         open_data_parent_resource: open data parent resource
 
-    Resturns:
+    Returns:
         list of extracted open data persons (creators or contributors)
     """
     return list(
