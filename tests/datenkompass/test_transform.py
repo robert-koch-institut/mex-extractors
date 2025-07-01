@@ -4,10 +4,12 @@ from pytest import MonkeyPatch
 import mex.extractors.datenkompass.transform as transform_module
 from mex.common.exceptions import MExError
 from mex.common.models import MergedOrganization
+from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.transform import (
     check_datenhalter,
     get_contact,
     get_title,
+    get_vocabulary,
     transform_activities,
 )
 from tests.datenkompass.mocked_item_lists import (
@@ -38,7 +40,8 @@ def test_get_title() -> None:
 
 
 def test_get_vocabulary() -> None:
-    pass  # TODO(JE): implement
+    result = get_vocabulary([Theme["PUBLIC_HEALTH"]])
+    assert result == ["Public Health"]
 
 
 def test_check_datenhalter() -> None:
