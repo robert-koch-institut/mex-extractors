@@ -70,12 +70,13 @@ def external_partner_and_publisher_by_label(
 
 
 @asset(group_name="odk")
-def extracted_resources_odk(
+def extracted_resources_odk(  # noqa: PLR0913
     odk_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
+    extracted_primary_source_odk: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
@@ -84,6 +85,7 @@ def extracted_resources_odk(
         external_partner_and_publisher_by_label,
         extracted_international_projects_activities,
         extracted_primary_source_mex,
+        extracted_primary_source_odk,
     )
     return assign_resource_relations_and_load(extracted_resources_tuple)
 
