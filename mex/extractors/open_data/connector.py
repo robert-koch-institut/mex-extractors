@@ -29,7 +29,7 @@ class OpenDataConnector(HTTPConnector):
         params: Mapping[str, list[str] | str | None] | None = None,
         **kwargs: Any,  # noqa: ANN401
     ) -> dict[str, Any]:
-        """ "Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
+        """Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
         time.sleep(0.5)
         return super().request(
             method,
