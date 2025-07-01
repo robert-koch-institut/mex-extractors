@@ -4,7 +4,6 @@ from io import BytesIO
 from typing import TypeVar
 
 import boto3
-from botocore.client import Config
 
 from mex.common.logging import logger
 from mex.common.models import BaseModel
@@ -21,7 +20,6 @@ class S3Sink(BaseSink):
 
     CHUNK_SIZE = 1000
     SERVICE_NAME = "s3"
-    SIGNATURE_VERSION = "s3"
 
     def __init__(self) -> None:
         """Instantiate a new S3 sink."""
@@ -31,7 +29,6 @@ class S3Sink(BaseSink):
             endpoint_url=str(settings.s3_endpoint_url),
             aws_access_key_id=settings.s3_access_key_id.get_secret_value(),
             aws_secret_access_key=settings.s3_secret_access_key.get_secret_value(),
-            config=Config(signature_version=self.SIGNATURE_VERSION),
         )
 
     def close(self) -> None:

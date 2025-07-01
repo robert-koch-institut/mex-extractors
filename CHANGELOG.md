@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - remove boto3 pin again
+- drop s3 signature version from client config
 
 ### Security
 
