@@ -1,4 +1,7 @@
 import math
+import time
+from collections.abc import Mapping
+from typing import Any, Literal
 
 from mex.common.connector import HTTPConnector
 from mex.extractors.open_data.models.source import (
@@ -17,6 +20,24 @@ class OpenDataConnector(HTTPConnector):
         settings = Settings.get()
         self.url = settings.open_data.url
         self.community_rki = settings.open_data.community_rki
+
+    def request(
+        self,
+        method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
+        endpoint: str | None = None,
+        payload: Any = None,  # noqa: ANN401
+        params: Mapping[str, list[str] | str | None] | None = None,
+        **kwargs: Any,  # noqa: ANN401
+    ) -> dict[str, Any]:
+        """Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
+        time.sleep(0.5)
+        return super().request(
+            method,
+            endpoint,
+            payload,
+            params,
+            **kwargs,
+        )
 
     def get_parent_resources(self) -> list[OpenDataParentResource]:
         """Load parent resources by querying the Zenodo API.
