@@ -123,12 +123,12 @@ def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
     return [
         MergedPrimarySource(
             entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("00000000000000"),
+            identifier=MergedPrimarySourceIdentifier("SomeIrrelevantPS"),
         ),
         MergedPrimarySource(
-            title=[Text(value="Awesome Primary Source", language="en")],
+            title=[Text(value="this is a Relevant Primary Source", language="en")],
             entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("identifierAwesomePS"),
+            identifier=MergedPrimarySourceIdentifier("identifierRelevantPS"),
         ),
     ]
 
