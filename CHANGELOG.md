@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- transform mandatory fields of IGS access platform and resources
-- waiting time in Open Data request to API
-
 ### Changes
-
-- odk resource hadPrimarysource to odk
 
 ### Deprecated
 
@@ -22,10 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [0.37.0] - 2025-07-01
+
+### Added
+
+- transform mandatory fields of IGS access platform and resources
+- waiting time in Open Data request to API
+
+### Changes
+
+- odk resource hadPrimarysource to odk
+
+### Fixed
+
 - ifsg variable extraction
 - temporarily pin boto3 to below 1.38.38
-
-### Security
 
 ## [0.36.0] - 2025-06-19
 
