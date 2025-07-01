@@ -62,6 +62,7 @@ def extract_endnote_persons_by_person_string(
                     hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
                     familyName=family_name,
                     givenName=given_name,
+                    fullName=person,
                 )
             else:
                 continue

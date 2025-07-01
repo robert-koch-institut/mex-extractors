@@ -34,6 +34,7 @@ def test_extract_endnote_persons_by_person_string(
         "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
         "identifierInPrimarySource": "Mustermann, J.",
         "familyName": ["Mustermann"],
+        "fullName": ["Mustermann, J."],
         "givenName": ["J."],
         "identifier": Joker(),
         "stableTargetId": Joker(),
