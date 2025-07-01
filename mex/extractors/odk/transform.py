@@ -14,12 +14,13 @@ from mex.extractors.odk.model import ODKData
 from mex.extractors.sinks import load
 
 
-def transform_odk_resources_to_mex_resources(
+def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
     extracted_international_projects_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
+    extracted_primary_source_odk: ExtractedPrimarySource,
 ) -> tuple[list[ExtractedResource], list[ExtractedResource]]:
     """Transform odk resources to mex resources.
 
@@ -31,6 +32,7 @@ def transform_odk_resources_to_mex_resources(
         extracted_international_projects_activities: list of extracted international
                                                      projects activities
         extracted_primary_source_mex: mex primary source
+        extracted_primary_source_odk: odk primary source
 
     Returns:
         tuple of list of mex child and non-child resources
@@ -106,7 +108,7 @@ def transform_odk_resources_to_mex_resources(
                 contributingUnit=contributing_unit,
                 description=description,
                 externalPartner=external_partner,
-                hadPrimarySource=extracted_primary_source_mex.stableTargetId,
+                hadPrimarySource=extracted_primary_source_odk.stableTargetId,
                 hasLegalBasis=has_legal_basis,
                 keyword=resource.keyword[0].mappingRules[0].setValues,
                 language=resource.language[0].mappingRules[0].setValues,
