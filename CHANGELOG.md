@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- remove boto3 pin again
+
 ### Security
 
 ## [0.37.0] - 2025-07-01
@@ -33,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - ifsg variable extraction
+- temporarily pin boto3 to below 1.38.38
 
 ## [0.36.0] - 2025-06-19
 
