@@ -1,17 +1,23 @@
 from collections.abc import Iterable
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
     MergedOrganizationalUnit,
+    MergedPerson,
 )
 from mex.common.types import (
+    AccessRestriction,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
-from mex.extractors.datenkompass.extract import get_merged_items
-from mex.extractors.datenkompass.item import DatenkompassActivity
+from mex.extractors.datenkompass.item import (
+    DatenkompassActivity,
+    DatenkompassBibliographicResource,
+)
 
 
 def get_contact(
@@ -57,7 +63,7 @@ def get_vocabulary(
 
 
 def check_datenhalter(
-    bmg_ids: set[MergedOrganizationIdentifier],
+    bmg_ids: list[MergedOrganizationIdentifier],
     datenhalter: list[MergedOrganizationIdentifier],
 ) -> str:
     """Check if 'Datenhalter' is really the BMG."""
@@ -67,16 +73,21 @@ def check_datenhalter(
     raise MExError(msg)
 
 
+def get_datenbank(item: MergedBibliographicResource) -> str:
+    """Get Datenbank entries."""
+    return ", ".join(
+        str(entry)
+        for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
+    )
+
+
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     all_units: list[MergedOrganizationalUnit],
+    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
 ) -> list[DatenkompassActivity]:
     """Get the info asked for."""
     datenkompass_activities = []
-    bmg_ids = {
-        MergedOrganizationIdentifier(bmg.identifier)
-        for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
-    }
     for item in extracted_and_filtered_merged_activities:
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
@@ -86,7 +97,9 @@ def transform_activities(
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
-        datenhalter = check_datenhalter(bmg_ids, item.funderOrCommissioner)
+        datenhalter = check_datenhalter(
+            extracted_merged_bmg_ids, item.funderOrCommissioner
+        )
         datenkompass_activities.append(
             DatenkompassActivity(
                 datenhalter=datenhalter,
@@ -113,3 +126,58 @@ def transform_activities(
             )
         )
     return datenkompass_activities
+
+
+def transform_biblio_resources(
+    extracted_and_filtered_merged_biblio_resource: list[MergedBibliographicResource],
+    all_units: list[MergedOrganizationalUnit],
+) -> list[DatenkompassBibliographicResource]:
+    """Get the info asked for."""
+    datenkompass_biblio_recources = []
+    connector = BackendApiConnector.get()
+    for item in extracted_and_filtered_merged_biblio_resource:
+        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
+            voraussetzungen = "Zugang eingeschränkt"
+        elif item.accessRestriction == AccessRestriction["OPEN"]:
+            voraussetzungen = "Frei zugänglich"
+        else:
+            voraussetzungen = None
+        datenbank = get_datenbank(item)
+        dk_format = get_vocabulary(item.bibliographicResourceType)
+        kontakt = get_contact(item.contributingUnit, all_units)
+        titel = (
+            ", ".join(entry.value for entry in item.title)
+            + " ("
+            + " / ".join(
+                [
+                    " / ".join(
+                        MergedPerson.model_validate(
+                            connector.get_merged_item(c)
+                        ).fullName
+                    )
+                    for c in item.creator
+                ]
+            )
+            + ")"
+        )
+        datenkompass_biblio_recources.append(
+            DatenkompassBibliographicResource(
+                beschreibung=[abstract.value for abstract in item.abstract],
+                voraussetzungen=voraussetzungen,
+                datenbank=datenbank,
+                dk_format=dk_format,
+                kontakt=kontakt,
+                schlagwort=[word.value for word in item.keyword],
+                titel=titel,
+                hauptkategorie="Gesundheit",
+                unterkategorie="Public Health",
+                herausgeber="Robert Koch-Institut",
+                kommentar=(
+                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                    "voraussichtlich Ende 2025 verfügbar sein.)"
+                ),
+                identifier=item.identifier,
+                entityType=item.entityType,
+            )
+        )
+    return datenkompass_biblio_recources
