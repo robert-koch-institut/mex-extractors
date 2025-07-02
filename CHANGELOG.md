@@ -22,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.37.1] - 2025-07-01
+
+### Added
+
+- assign fullName for endnote person
+
+### Fixed
+
+- remove boto3 pin again
+- drop s3 signature version from client config
+
 ## [0.37.0] - 2025-07-01
 
 ### Added
