@@ -82,7 +82,7 @@ class DatenkompassResource(BaseModel):
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
     rechtsgrundlage: str | None = Field(
-        None, alias="Rechtsgrundlage für die Zugangseröffnung"
+        None, alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
     )
     datenerhalt: str | None = Field(None, alias="Weg des Datenerhalts")
     status: str | None = Field(None, alias="Status (planbare Verfügbarkeit der Daten)")
