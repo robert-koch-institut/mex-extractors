@@ -3,20 +3,24 @@ from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.transform as transform_module
 from mex.common.exceptions import MExError
-from mex.common.models import MergedOrganization
+from mex.common.models import MergedOrganization, MergedPerson
 from mex.common.types.vocabulary import Theme
+from mex.extractors.datenkompass.item import DatenkompassBibliographicResource
 from mex.extractors.datenkompass.transform import (
     check_datenhalter,
     get_contact,
     get_title,
     get_vocabulary,
     transform_activities,
+    transform_bibliographic_resources,
 )
 from tests.datenkompass.mocked_item_lists import (
     mocked_bmg,
     mocked_datenkompass_activity,
     mocked_merged_activities,
+    mocked_merged_bibliographic_resource,
     mocked_merged_organizational_units,
+    mocked_merged_person,
 )
 
 
@@ -80,3 +84,49 @@ def test_transform_activities(monkeypatch: MonkeyPatch) -> None:
     result = transform_activities(extracted_and_filtered_merged_activities, all_units)
 
     assert result == mocked_datenkompass_activity()
+
+
+def test_transform_bibliographic_resource(monkeypatch: MonkeyPatch) -> None:
+    class FakeConnector:
+        def get_merged_item(
+            self,
+            identifier: str,  # noqa: ARG002
+        ) -> MergedPerson:
+            return mocked_merged_person()
+
+    def fake_get() -> FakeConnector:
+        return FakeConnector()
+
+    monkeypatch.setattr(transform_module.BackendApiConnector, "get", FakeConnector)
+    extracted_and_filtered_merged_bibliographic_resource = (
+        mocked_merged_bibliographic_resource()
+    )
+    all_units = mocked_merged_organizational_units()
+
+    result = transform_bibliographic_resources(
+        extracted_and_filtered_merged_bibliographic_resource, all_units
+    )
+
+    assert result == [
+        DatenkompassBibliographicResource(
+            beschreibung=["Die Nutzung", "The usage"],
+            kontakt=["e.g. unit", "unit@example.org"],
+            titel="title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
+            schlagwort=["short en", "short de"],
+            datenbank=(
+                "https://doi.org/10.1234_find_this_first, find_second_a, "
+                "find_second_b, https://www.find_third.to"
+            ),
+            voraussetzungen="Frei zugänglich",
+            hauptkategorie="Gesundheit",
+            unterkategorie="Public Health",
+            herausgeber="Robert Koch-Institut",
+            kommentar=(
+                "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                "voraussichtlich Ende 2025 verfügbar sein."
+            ),
+            dk_format=["Buch"],
+            identifier="MergedBibResource1",
+            entityType="MergedBibliographicResource",
+        ),
+    ]

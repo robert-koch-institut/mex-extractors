@@ -1,16 +1,21 @@
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
     MergedOrganization,
     MergedOrganizationalUnit,
+    MergedPerson,
 )
 from mex.common.models.primary_source import (
     PreviewPrimarySource,
 )
 from mex.common.types import (
+    AccessRestriction,
     Link,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     Text,
 )
 from mex.extractors.datenkompass.item import DatenkompassActivity
@@ -74,6 +79,38 @@ def mocked_merged_activities() -> list[MergedActivity]:
     ]
 
 
+def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
+    return [
+        MergedBibliographicResource(
+            accessRestriction=AccessRestriction["OPEN"],
+            title=[
+                Text(value="title no language"),
+                Text(value="titel en", language="en"),
+            ],
+            abstract=[
+                Text(value="Die Nutzung", language="de"),
+                Text(value="The usage", language="en"),
+            ],
+            contributingUnit=[
+                MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG")
+            ],
+            keyword=[
+                Text(value="short en", language="en"),
+                Text(value="short de", language="de"),
+            ],
+            doi="https://doi.org/10.1234_find_this_first",
+            alternateIdentifier=["find_second_a", "find_second_b"],
+            repositoryURL=["https://www.find_third.to"],
+            bibliographicResourceType=[
+                "https://mex.rki.de/item/bibliographic-resource-type-1"
+            ],  # BOOK
+            creator=["PersonIdentifier4Peppa"],
+            entityType="MergedBibliographicResource",
+            identifier=MergedBibliographicResourceIdentifier("MergedBibResource1"),
+        ),
+    ]
+
+
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     return [
         MergedOrganizationalUnit(
@@ -120,6 +157,14 @@ def mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
+def mocked_merged_person() -> MergedPerson:
+    return MergedPerson(
+        fullName=["Pattern, Peppa P.", "Pattern, P.P."],
+        entityType="MergedPerson",
+        identifier=MergedPersonIdentifier("PersonIdentifier4Peppa"),
+    )
+
+
 def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     return [
         PreviewPrimarySource(
@@ -160,7 +205,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             herausgeber="Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein.)"
+                "voraussichtlich Ende 2025 verfügbar sein."
             ),
             format="Projekt/Vorhaben",
             identifier="MergedActivityWithBMG2",
@@ -186,7 +231,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             herausgeber="Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein.)"
+                "voraussichtlich Ende 2025 verfügbar sein."
             ),
             format="Projekt/Vorhaben",
             identifier="MergedActivityWithBMG1",

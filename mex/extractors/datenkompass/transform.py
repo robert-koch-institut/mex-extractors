@@ -10,6 +10,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     AccessRestriction,
+    Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
@@ -76,7 +77,7 @@ def check_datenhalter(
 def get_datenbank(item: MergedBibliographicResource) -> str:
     """Get Datenbank entries."""
     return ", ".join(
-        str(entry)
+        entry.url if isinstance(entry, Link) else str(entry)
         for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
     )
 
@@ -118,7 +119,7 @@ def transform_activities(
                 herausgeber="Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein.)"
+                    "voraussichtlich Ende 2025 verfügbar sein."
                 ),
                 format="Projekt/Vorhaben",
                 identifier=item.identifier,
@@ -128,14 +129,16 @@ def transform_activities(
     return datenkompass_activities
 
 
-def transform_biblio_resources(
-    extracted_and_filtered_merged_biblio_resource: list[MergedBibliographicResource],
+def transform_bibliographic_resources(
+    extracted_and_filtered_merged_bibliographic_resource: list[
+        MergedBibliographicResource
+    ],
     all_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassBibliographicResource]:
     """Get the info asked for."""
-    datenkompass_biblio_recources = []
+    datenkompass_bibliographic_recources = []
     connector = BackendApiConnector.get()
-    for item in extracted_and_filtered_merged_biblio_resource:
+    for item in extracted_and_filtered_merged_bibliographic_resource:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
@@ -160,7 +163,7 @@ def transform_biblio_resources(
             )
             + ")"
         )
-        datenkompass_biblio_recources.append(
+        datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=[abstract.value for abstract in item.abstract],
                 voraussetzungen=voraussetzungen,
@@ -174,10 +177,10 @@ def transform_biblio_resources(
                 herausgeber="Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein.)"
+                    "voraussichtlich Ende 2025 verfügbar sein."
                 ),
                 identifier=item.identifier,
                 entityType=item.entityType,
             )
         )
-    return datenkompass_biblio_recources
+    return datenkompass_bibliographic_recources

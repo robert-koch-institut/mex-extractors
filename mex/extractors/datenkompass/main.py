@@ -21,7 +21,7 @@ from mex.extractors.datenkompass.item import (
 from mex.extractors.datenkompass.load import start_s3_client, write_item_to_json
 from mex.extractors.datenkompass.transform import (
     transform_activities,
-    transform_biblio_resources,
+    transform_bibliographic_resources,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -46,20 +46,20 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
 
 
 @asset(group_name="datenkompass")
-def extracted_and_filtered_merged_biblio_resource() -> list[
+def extracted_and_filtered_merged_bibliographic_resource() -> list[
     MergedBibliographicResource
 ]:
     """Get merged items and filter them."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_biblio_resource = list(
+    merged_bibliographic_resource = list(
         get_merged_items(None, entity_type, had_primary_source)
     )
 
     return [
         MergedBibliographicResource.model_validate(item)
-        for item in merged_biblio_resource
+        for item in merged_bibliographic_resource
     ]
 
 
@@ -98,13 +98,15 @@ def transform_activities_to_target_fields(
 
 
 @asset(group_name="datenkompass")
-def transform_biblio_resources_to_target_fields(
-    extracted_and_filtered_merged_biblio_resource: list[MergedBibliographicResource],
+def transform_bibliographic_resources_to_target_fields(
+    extracted_and_filtered_merged_bibliographic_resource: list[
+        MergedBibliographicResource
+    ],
     extracted_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform items to datenkompass items."""
-    return transform_biblio_resources(
-        extracted_and_filtered_merged_biblio_resource,
+    return transform_bibliographic_resources(
+        extracted_and_filtered_merged_bibliographic_resource,
         extracted_merged_organizational_units,
     )
 
@@ -112,14 +114,14 @@ def transform_biblio_resources_to_target_fields(
 @asset(group_name="datenkompass")
 def publish_activities(
     transform_activities_to_target_fields: list[DatenkompassActivity],
-    transform_biblio_resources_to_target_fields: list[
+    transform_bibliographic_resources_to_target_fields: list[
         DatenkompassBibliographicResource
     ],
 ) -> None:
     """Write items to S3."""
     s3_client = start_s3_client()
     write_item_to_json(transform_activities_to_target_fields, s3_client)
-    write_item_to_json(transform_biblio_resources_to_target_fields, s3_client)
+    write_item_to_json(transform_bibliographic_resources_to_target_fields, s3_client)
 
 
 @entrypoint(Settings)
