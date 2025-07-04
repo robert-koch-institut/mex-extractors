@@ -16,7 +16,7 @@ class DatenkompassActivity(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    kontakt: list[str] | None = Field(None, alias="Kontakt (herausgeber)")
+    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
     titel: list[str] | None = Field(None, alias="Titel")
     schlagwort: list[str | None] = Field([], alias="Schlagwort")
     datenbank: list[str] | None = Field(None, alias="Link oder Datenbank")
