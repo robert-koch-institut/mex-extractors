@@ -100,7 +100,7 @@ def test_extract_endnote_bibliographic_resource(
 
     assert bibliographic_resources[0].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": str(extracted_primary_sources["endnote"].stableTargetId),
-        "identifierInPrimarySource": "1890-Converted.enl\\n1",
+        "identifierInPrimarySource": "1890-Converted.enl::1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "doi": "https://doi.org/10.3456/qad.00",
         "issue": "6",

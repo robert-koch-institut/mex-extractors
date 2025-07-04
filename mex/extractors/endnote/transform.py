@@ -347,7 +347,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 editor=editor,
                 editorOfSeries=editor_of_series,
                 hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
-                identifierInPrimarySource=f"{record.database}\\n{record.rec_number}",
+                identifierInPrimarySource=f"{record.database}::{record.rec_number}",
                 isbnIssn=[record.isbn] if record.isbn else [],
                 issue=record.number,
                 issued=issued,
