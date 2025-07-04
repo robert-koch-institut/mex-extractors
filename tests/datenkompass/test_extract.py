@@ -2,17 +2,16 @@ import pytest
 from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.extract as extract_module
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity
 from mex.common.models import (
     AnyMergedModel,
+    AnyPreviewModel,
     MergedActivity,
-    MergedPrimarySource,
     PaginatedItemsContainer,
 )
 from tests.datenkompass.mocked_item_lists import (
     mocked_merged_activities,
-    mocked_merged_primary_sources,
+    mocked_preview_primary_sources,
 )
 
 
@@ -25,13 +24,13 @@ def test_get_merged_items_mocked(monkeypatch: MonkeyPatch) -> None:
             had_primary_source: list[str] | None,  # noqa: ARG002
             skip: int,  # noqa: ARG002
             limit: int,  # noqa: ARG002
-        ) -> list[MergedActivity]:
+        ) -> PaginatedItemsContainer:
             return PaginatedItemsContainer[AnyMergedModel](
                 total=3,
                 items=mocked_merged_activities(),
             )
 
-    def fake_get() -> BackendApiConnector:
+    def fake_get() -> FakeConnector:
         return FakeConnector()
 
     monkeypatch.setattr(extract_module.BackendApiConnector, "get", fake_get)
@@ -52,18 +51,28 @@ def test_get_merged_items_mocked(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_get_relevant_primary_source_ids_mocked(monkeypatch: MonkeyPatch) -> None:
-    mocked_merged_ps = mocked_merged_primary_sources()
+    mocked_preview_ps = mocked_preview_primary_sources()
 
-    def fake_get_merged_items(
-        query_string: str,  # noqa: ARG001
-        entity_type: list[str],  # noqa: ARG001
-        had_primary_source: None,  # noqa: ARG001
-    ) -> list[MergedPrimarySource]:
-        return mocked_merged_ps
+    class FakeConnector:
+        def fetch_preview_items(
+            self,
+            query_string: str | None,  # noqa: ARG002
+            entity_type: list[str] | None,  # noqa: ARG002
+            had_primary_source: list[str] | None,  # noqa: ARG002
+            skip: int,  # noqa: ARG002
+            limit: int,  # noqa: ARG002
+        ) -> PaginatedItemsContainer:
+            return PaginatedItemsContainer[AnyPreviewModel](
+                total=2,
+                items=mocked_preview_ps,
+            )
+
+    def fake_get() -> FakeConnector:
+        return FakeConnector()
 
     class FakeProvider:
         def fetch(self, stable_target_id: str) -> list[MergedActivity]:
-            if stable_target_id == mocked_merged_ps[0].identifier:
+            if stable_target_id == mocked_preview_ps[0].identifier:
                 return [
                     Identity(
                         identifier="12345678901234",
@@ -72,7 +81,7 @@ def test_get_relevant_primary_source_ids_mocked(monkeypatch: MonkeyPatch) -> Non
                         stableTargetId="SomeIrrelevantPS",
                     )
                 ]
-            if stable_target_id == mocked_merged_ps[1].identifier:
+            if stable_target_id == mocked_preview_ps[1].identifier:
                 return [
                     Identity(
                         identifier="98765432109876",
@@ -83,10 +92,10 @@ def test_get_relevant_primary_source_ids_mocked(monkeypatch: MonkeyPatch) -> Non
                 ]
             pytest.fail("wrong mocking of identity provider")
 
-    def fake_get_provider() -> BackendApiConnector:
+    def fake_get_provider() -> FakeProvider:
         return FakeProvider()
 
-    monkeypatch.setattr(extract_module, "get_merged_items", fake_get_merged_items)
+    monkeypatch.setattr(extract_module.BackendApiConnector, "get", fake_get)
     monkeypatch.setattr(extract_module, "get_provider", fake_get_provider)
 
     result = extract_module.get_relevant_primary_source_ids(["relevant primary source"])

@@ -2,14 +2,15 @@ from mex.common.models import (
     MergedActivity,
     MergedOrganization,
     MergedOrganizationalUnit,
-    MergedPrimarySource,
+)
+from mex.common.models.primary_source import (
+    PreviewPrimarySource,
 )
 from mex.common.types import (
     Link,
     MergedActivityIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPrimarySourceIdentifier,
     Text,
 )
 from mex.extractors.datenkompass.item import DatenkompassActivity
@@ -119,16 +120,16 @@ def mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
-def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
+def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     return [
-        MergedPrimarySource(
-            entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("SomeIrrelevantPS"),
+        PreviewPrimarySource(
+            entityType="PreviewPrimarySource",
+            identifier="SomeIrrelevantPS",
         ),
-        MergedPrimarySource(
+        PreviewPrimarySource(
             title=[Text(value="this is a Relevant Primary Source", language="en")],
-            entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("identifierRelevantPS"),
+            entityType="PreviewPrimarySource",
+            identifier="identifierRelevantPS",
         ),
     ]
 

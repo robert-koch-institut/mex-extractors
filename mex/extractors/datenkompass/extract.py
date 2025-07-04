@@ -44,14 +44,21 @@ def get_merged_items(
 
 def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list[str]:
     """Get the IDs of the relevant primary sources."""
-    entity_type = ["MergedPrimarySource"]
-    merged_primary_sources = list(get_merged_items(None, entity_type, None))
+    connector = BackendApiConnector.get()
+    preview_primary_sources = connector.fetch_preview_items(
+        query_string=None,
+        entity_type=["MergedPrimarySource"],
+        had_primary_source=None,
+        skip=0,
+        limit=100,  # change if Datenkompass still running when we have more than 100 PS
+    ).items
+
     provider = get_provider()
 
     return [
-        str(mps.identifier)
-        for mps in merged_primary_sources
-        if mps.entityType == entity_type[0]
-        and provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
+        str(pps.identifier)
+        for pps in preview_primary_sources
+        if pps.entityType == "PreviewPrimarySource"
+        and provider.fetch(stable_target_id=pps.identifier)[0].identifierInPrimarySource
         in relevant_primary_sources
     ]
