@@ -3,12 +3,13 @@ from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.transform as transform_module
 from mex.common.exceptions import MExError
-from mex.common.models import MergedOrganization, MergedPerson
+from mex.common.models import MergedPerson
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.item import DatenkompassBibliographicResource
 from mex.extractors.datenkompass.transform import (
     check_datenhalter,
     get_contact,
+    get_datenbank,
     get_title,
     get_vocabulary,
     transform_activities,
@@ -68,20 +69,25 @@ def test_check_datenhalter() -> None:
         pytest.raises(MExError, match="Funder or Commissioner is not BMG!")
 
 
-def test_transform_activities(monkeypatch: MonkeyPatch) -> None:
-    def fake_get_merged_items(
-        query_string: str,  # noqa: ARG001
-        entity_type: list[str],  # noqa: ARG001
-        had_primary_source: None,  # noqa: ARG001
-    ) -> list[MergedOrganization]:
-        return mocked_bmg()
+def test_get_datenbank() -> None:
+    item = mocked_merged_bibliographic_resource()[0]
 
-    monkeypatch.setattr(transform_module, "get_merged_items", fake_get_merged_items)
+    assert get_datenbank(item) == (
+        "https://doi.org/10.1234_find_this_first, find_second_a, "
+        "find_second_b, https://www.find_third.to"
+    )
 
+
+def test_transform_activities() -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities()[:2]
     all_units = mocked_merged_organizational_units()
+    extracted_merged_bmg_ids = [bmg.identifier for bmg in mocked_bmg()]
 
-    result = transform_activities(extracted_and_filtered_merged_activities, all_units)
+    result = transform_activities(
+        extracted_and_filtered_merged_activities,
+        all_units,
+        extracted_merged_bmg_ids,
+    )
 
     assert result == mocked_datenkompass_activity()
 
