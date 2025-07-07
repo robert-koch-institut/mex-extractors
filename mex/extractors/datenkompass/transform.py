@@ -77,11 +77,10 @@ def transform_activities(
         for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
     }
     for item in extracted_and_filtered_merged_activities:
+        beschreibung = None
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
-            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        else:
-            beschreibung = None
+            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value      
         kontakt = get_contact(item.responsibleUnit, all_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
