@@ -44,7 +44,7 @@ def transform_activities_to_target_fields(
 
     return transform_activities(
         extracted_and_filtered_merged_activities,
-        [MergedOrganizationalUnit.model_validate(unit) for unit in merged_units],
+        merged_organizational_units ,
     )
 
 
