@@ -40,7 +40,7 @@ def transform_activities_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
     """Transform items to datenkompass items."""
-    merged_units = list(get_merged_items(None, ["MergedOrganizationalUnit"], None))
+    merged_organizational_units = [MergedOrganizationalUnit.model_validate(unit) for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)]
 
     return transform_activities(
         extracted_and_filtered_merged_activities,
