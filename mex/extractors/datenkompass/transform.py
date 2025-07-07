@@ -16,7 +16,7 @@ from mex.extractors.datenkompass.item import DatenkompassActivity
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    all_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[str]:
     """Get shortName and email from merged units."""
     return [
