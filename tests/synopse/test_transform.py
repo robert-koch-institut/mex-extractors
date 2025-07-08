@@ -1,9 +1,7 @@
 import pytest
 
 from mex.common.models import (
-    AccessPlatformMapping,
     ActivityMapping,
-    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
@@ -16,7 +14,6 @@ from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
     Identifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TemporalEntity,
     TextLanguage,
@@ -29,66 +26,10 @@ from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_data_to_mex_resources,
     transform_synopse_projects_to_mex_activities,
-    transform_synopse_studies_into_access_platforms,
     transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables,
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-
-
-@pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_synopse_studies_into_access_platforms(
-    synopse_studies: list[SynopseStudy],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    synopse_access_platform: AccessPlatformMapping,
-) -> None:
-    unit_merged_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
-    }
-    expected_access_platform_one = {
-        "contact": [str(Identifier.generate(seed=234))],
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "S:\\data",
-        "landingPage": [{"url": "file:///S:/data"}],
-        "stableTargetId": Joker(),
-        "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "S:\\data"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
-    }
-    expected_access_platform_two = {
-        "contact": [str(Identifier.generate(seed=234))],
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "blabli blubb",
-        "landingPage": [{"url": "blabli blubb"}],
-        "stableTargetId": Joker(),
-        "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "S:\\data"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
-    }
-
-    access_platforms = list(
-        transform_synopse_studies_into_access_platforms(
-            synopse_studies,
-            unit_merged_ids_by_synonym,
-            extracted_primary_sources["report-server"],
-            synopse_access_platform,
-        )
-    )
-    assert len(access_platforms) == 4
-    assert (
-        access_platforms[0].model_dump(exclude_defaults=True)
-        == expected_access_platform_one
-    )
-    assert (
-        access_platforms[1].model_dump(exclude_defaults=True)
-        == expected_access_platform_two
-    )
 
 
 def test_transform_overviews_to_resource_lookup() -> None:
@@ -345,22 +286,11 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_studies: list[SynopseStudy],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activity: ExtractedActivity,
-    extracted_access_platforms: list[ExtractedAccessPlatform],
     extracted_organization: list[ExtractedOrganization],
     synopse_resource: ResourceMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {"C1": Identifier.generate(seed=234)}
-    access_platform_by_identifier_in_primary_source = {
-        p.identifierInPrimarySource: p for p in extracted_access_platforms
-    }
     expected_resource = {
-        "accessPlatform": [
-            str(
-                access_platform_by_identifier_in_primary_source[
-                    synopse_studies[0].plattform_adresse
-                ].stableTargetId
-            )
-        ],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": [str(Identifier.generate(seed=235))],
         "contributor": [str(extracted_activity.involvedPerson[0])],
@@ -420,7 +350,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             [synopse_project],
             synopse_variables_by_study_id,
             [extracted_activity],
-            extracted_access_platforms,
             extracted_primary_sources["report-server"],
             unit_merged_ids_by_synonym,
             extracted_organization[0],

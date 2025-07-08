@@ -11,9 +11,7 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_with_query_to_mex_persons,
 )
 from mex.common.models import (
-    AccessPlatformMapping,
     ActivityMapping,
-    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
@@ -41,7 +39,6 @@ from mex.extractors.synopse.extract import (
     extract_variables,
 )
 from mex.extractors.synopse.filter import (
-    filter_and_log_access_platforms,
     filter_and_log_synopse_variables,
 )
 from mex.extractors.synopse.models.project import SynopseProject
@@ -52,7 +49,6 @@ from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_data_to_mex_resources,
     transform_synopse_projects_to_mex_activities,
-    transform_synopse_studies_into_access_platforms,
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
@@ -191,7 +187,6 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     synopse_study_overviews: list[SynopseStudyOverview],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_synopse_access_platforms: list[ExtractedAccessPlatform],
     extracted_synopse_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_report_server: ExtractedPrimarySource,
@@ -207,7 +202,6 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
         synopse_projects,
         synopse_variables_by_study_id,
         extracted_synopse_activities,
-        extracted_synopse_access_platforms,
         extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
@@ -222,32 +216,6 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
             transformed_study_data_resource_gens[1],
         ),
     )
-
-
-@asset(group_name="synopse")
-def extracted_synopse_access_platforms(
-    synopse_studies: list[SynopseStudy],
-    extracted_primary_source_report_server: ExtractedPrimarySource,
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-) -> list[ExtractedAccessPlatform]:
-    """Transform Synopse data to extracted access platforms and load result."""
-    settings = Settings.get()
-    synopse_access_platform = AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
-    )
-    synopse_studies_filtered = filter_and_log_access_platforms(
-        synopse_studies, extracted_primary_source_report_server
-    )
-    transformed_access_platforms = list(
-        transform_synopse_studies_into_access_platforms(
-            synopse_studies_filtered,
-            unit_stable_target_ids_by_synonym,
-            extracted_primary_source_report_server,
-            synopse_access_platform,
-        )
-    )
-    load(transformed_access_platforms)
-    return transformed_access_platforms
 
 
 @asset(group_name="synopse")

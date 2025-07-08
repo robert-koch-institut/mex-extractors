@@ -6,9 +6,7 @@ from typing import cast
 
 from mex.common.logging import watch
 from mex.common.models import (
-    AccessPlatformMapping,
     ActivityMapping,
-    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPrimarySource,
@@ -35,79 +33,6 @@ from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
-
-
-def transform_synopse_studies_into_access_platforms(
-    synopse_studies: Iterable[SynopseStudy],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
-    synopse_access_platform: AccessPlatformMapping,
-) -> Generator[ExtractedAccessPlatform, None, None]:
-    """Transform synopse studies into access platforms.
-
-    Args:
-        synopse_studies: Iterable of Synopse Studies
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
-        extracted_primary_source: Extracted report server primary source
-        synopse_access_platform: access platform mapping model with default values
-
-    Returns:
-        extracted access platform
-    """
-    for plattform_adresse in sorted(
-        {
-            study.plattform_adresse
-            for study in synopse_studies
-            if study.plattform_adresse is not None
-        }
-    ):
-        if (
-            plattform_adresse
-            == synopse_access_platform.landingPage[0].mappingRules[1].forValues[0]  # type: ignore[index]
-        ):
-            landing_page = (
-                synopse_access_platform.landingPage[0].mappingRules[1].setValues[0]  # type: ignore[index]
-            )
-        else:
-            try:
-                landing_page = Link(url=PureWindowsPath(plattform_adresse).as_uri())
-            except ValueError:
-                landing_page = Link(url=plattform_adresse)
-        if "S:" in plattform_adresse:
-            contact = unit_merged_ids_by_synonym[
-                synopse_access_platform.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
-            technical_accessibility = (
-                synopse_access_platform.technicalAccessibility[0]
-                .mappingRules[0]
-                .setValues
-            )
-            title = Text(value=plattform_adresse)
-            unit_in_charge = unit_merged_ids_by_synonym[
-                synopse_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
-        elif "https://" in plattform_adresse:
-            contact = unit_merged_ids_by_synonym[
-                synopse_access_platform.contact[0].mappingRules[1].forValues[0]  # type: ignore[index]
-            ]
-            technical_accessibility = (
-                synopse_access_platform.technicalAccessibility[0]
-                .mappingRules[1]
-                .setValues
-            )
-            title = synopse_access_platform.title[0].mappingRules[1].setValues[0]  # type: ignore[index]
-            unit_in_charge = unit_merged_ids_by_synonym[
-                synopse_access_platform.unitInCharge[0].mappingRules[1].forValues[0]  # type: ignore[index]
-            ]
-        yield ExtractedAccessPlatform(
-            contact=contact,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
-            identifierInPrimarySource=plattform_adresse,
-            landingPage=landing_page,
-            technicalAccessibility=technical_accessibility,
-            title=title,
-            unitInCharge=unit_in_charge,
-        )
 
 
 def transform_overviews_to_resource_lookup(
@@ -266,7 +191,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_projects: Iterable[SynopseProject],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activities: Iterable[ExtractedActivity],
-    extracted_access_platforms: Iterable[ExtractedAccessPlatform],
     extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization: ExtractedOrganization,
@@ -281,7 +205,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         synopse_variables_by_study_id: mapping from synopse studie id to the variables
             with this studie id
         extracted_activities: Iterable of extracted activities
-        extracted_access_platforms: Iterable of extracted access platforms
         extracted_primary_source: Extracted report server platform
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_organization: extracted organization
@@ -298,9 +221,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     contact = contact_merged_id_by_query_string[
         synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
     ]
-    access_platform_by_identifier_in_primary_source = {
-        p.identifierInPrimarySource: p for p in extracted_access_platforms
-    }
     synopse_studien_art_typ_by_study_ids = {
         p.studien_id: p.studienart_studientyp for p in synopse_projects
     }
@@ -345,14 +265,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         title_by_study_id[study.studien_id] = Text(
             value=study.titel_datenset, language=TextLanguage("de")
         )
-        access_platform = (
-            access_platform_by_identifier_in_primary_source[
-                study.plattform_adresse
-            ].stableTargetId
-            if study.plattform_adresse
-            in access_platform_by_identifier_in_primary_source
-            else []
-        )
         created = created_by_study_id.get(study.studien_id)
         description = description_by_study_id.get(study.studien_id)
         documentation = documentation_by_study_id.get(study.studien_id)
@@ -368,7 +280,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         yield ExtractedResource(
-            accessPlatform=access_platform,
             accessRestriction=synopse_resource.accessRestriction[0]
             .mappingRules[0]
             .setValues,

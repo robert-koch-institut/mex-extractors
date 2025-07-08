@@ -3,9 +3,7 @@ from itertools import groupby
 import pytest
 
 from mex.common.models import (
-    AccessPlatformMapping,
     ActivityMapping,
-    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
@@ -374,33 +372,6 @@ def synopse_project(synopse_projects: list[SynopseProject]) -> SynopseProject:
 
 
 @pytest.fixture
-def extracted_access_platforms(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> list[ExtractedAccessPlatform]:
-    """Return a list of extracted access platforms."""
-    return [
-        ExtractedAccessPlatform(
-            contact=[Identifier.generate(seed=234)],
-            hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="S:\\data",
-            landingPage=[Link(url="file:///Z:/data")],
-            technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
-            title=[Text(value="Z:\\data")],
-            unitInCharge=[Identifier.generate(seed=234)],
-        ),
-        ExtractedAccessPlatform(
-            contact=[Identifier.generate(seed=234)],
-            hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="blabli blubb",
-            landingPage=[Link(url="blabli blubb")],
-            technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
-            title=[Text(value="blabli blubb")],
-            unitInCharge=[Identifier.generate(seed=234)],
-        ),
-    ]
-
-
-@pytest.fixture
 def extracted_activity(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedActivity:
@@ -553,14 +524,6 @@ def extracted_variable_groups(
             extracted_primary_sources["report-server"],
             resource_ids_by_synopse_id,
         )
-    )
-
-
-@pytest.fixture
-def synopse_access_platform(settings: Settings) -> AccessPlatformMapping:
-    """Return a mapping model with access platform default values."""
-    return AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform_mock.yaml")
     )
 
 
