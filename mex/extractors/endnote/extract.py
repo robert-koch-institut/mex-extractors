@@ -7,6 +7,16 @@ from mex.extractors.drop import DropApiConnector
 from mex.extractors.endnote.model import EndnoteRecord
 
 
+def findall_text_from_record(record: ET.Element, path: str) -> list[str]:
+    return ["".join(node.itertext()) for node in record.findall(path)]
+
+
+def find_text_from_record(record: ET.Element, path: str) -> str | None:
+    if node := record.find(path):
+        return "".join(node.itertext())
+    return None
+
+
 def extract_endnote_records() -> list[EndnoteRecord]:
     """Extract endnote records by loading XML files from MEx drop.
 
@@ -15,22 +25,18 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     """
     connector = DropApiConnector.get()
     file_names = connector.list_files("endnote")
-    files: list[Any] = []
+    records: list[EndnoteRecord] = []
     for file_name in file_names:
         response = connector.get_raw_file("endnote", file_name)
-        files.append(defused_ET.fromstring(response.content))
-    return [
-        EndnoteRecord(
-            database=database.text
-            if isinstance(database := record.find("database"), ET.Element)
-            else None,
-            abstract=abstract.text
-            if isinstance(abstract := record.find("abstract/style"), ET.Element)
-            else None,
-            authors=[
-                author.text
-                for author in record.findall("contributors/authors/author/style")
-            ],
+        file = defused_ET.fromstring(response.content)
+        for record in file.findall("*/record"):
+            records.append(  # noqa: PERF401
+                EndnoteRecord(
+                    database=find_text_from_record(record, "database"),
+                    abstract=find_text_from_record(record, "abstract/style"),
+                    authors=findall_text_from_record(
+                        record, "contributors/authors/author/style"
+                    ),
             call_num=call_num.text
             if isinstance(call_num := record.find("call-num/style"), ET.Element)
             else None,
