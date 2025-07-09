@@ -34,7 +34,6 @@ def write_item_to_json(
     settings = Settings.get()
 
     if datenkompassitems:
-        datenkompassitems = list(datenkompassitems)
         file_name = f"datenkompass_{datenkompassitems[0].entityType}.json"
         file_content = json.dumps(
             [item.model_dump(by_alias=True) for item in datenkompassitems],
