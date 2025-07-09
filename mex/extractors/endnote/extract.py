@@ -66,7 +66,9 @@ def extract_endnote_records() -> list[EndnoteRecord]:
                 ),
                 publisher=find_text_from_record(record, "publisher/style"),
                 rec_number=find_text_from_record(record, "rec-number"),
-                ref_type=find_text_from_record(record, "ref-type"),
+                ref_type=ref_type.get("name")
+                if isinstance(ref_type := record.find("ref-type"), ET.Element)
+                else None,
                 related_urls=findall_text_from_record(
                     record, "urls/related-urls/url/style"
                 ),
