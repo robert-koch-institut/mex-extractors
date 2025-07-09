@@ -21,7 +21,7 @@ def start_s3_client() -> BaseClient:
 
 
 def write_item_to_json(
-    datenkompassitems: Iterable[AnyDatenkompassModel],
+    datenkompassitems: list[AnyDatenkompassModel],
     s3: BaseClient,
 ) -> None:
     """Write items to json."""
