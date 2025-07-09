@@ -1,5 +1,3 @@
-from collections.abc import Generator
-
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import get_provider
 from mex.common.logging import logger
@@ -10,7 +8,7 @@ def get_merged_items(
     query_string: str | None,
     entity_type: list[str],
     had_primary_source: list[str] | None,
-) -> Generator[AnyMergedModel, None, None]:
+) -> list[AnyMergedModel]:
     """Read merged items from backend."""
     connector = BackendApiConnector.get()
 
@@ -23,6 +21,7 @@ def get_merged_items(
 
     logging_counter = 0
 
+    result: list[AnyMergedModel] = []
     for item_counter in range(0, total_item_number, item_number_limit):
         response = connector.fetch_merged_items(
             query_string,
@@ -31,15 +30,15 @@ def get_merged_items(
             item_counter,
             item_number_limit,
         )
-        for item in response.items:
-            logging_counter += 1
-            yield item
-        logger.info(
-            "%s of %s %ss were extracted.",
-            logging_counter,
-            total_item_number,
-            entity_type,
-        )
+        logging_counter += len(response.items)
+        result.extend(response.items)
+    logger.debug(
+        "%s of %s %ss were extracted.",
+        logging_counter,
+        total_item_number,
+        entity_type,
+    )
+    return result
 
 
 def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list[str]:

@@ -35,7 +35,7 @@ class DatenkompassActivity(BaseModel):
     kommentar: str | None = Field(None, alias="Kommentar")
     format: str | None = Field(None, alias="Format")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassBibliographicResource(BaseModel):
@@ -59,7 +59,7 @@ class DatenkompassBibliographicResource(BaseModel):
         None, alias="Format"
     )  # "format" would shadow a builtIn
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassResource(BaseModel):
@@ -91,7 +91,7 @@ class DatenkompassResource(BaseModel):
     kommentar: str | None = Field(None, alias="Kommentar")
     format: str | None = Field(None, alias="Format")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 AnyDatenkompassModel = (

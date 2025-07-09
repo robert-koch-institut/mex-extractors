@@ -30,7 +30,7 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
     ]
     entity_type = ["MergedActivity"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_activities = list(get_merged_items(None, entity_type, had_primary_source))
+    merged_activities = get_merged_items(None, entity_type, had_primary_source)
 
     return filter_for_bmg(merged_activities)
 
@@ -40,16 +40,19 @@ def transform_activities_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
     """Transform items to datenkompass items."""
-    merged_organizational_units = [MergedOrganizationalUnit.model_validate(unit) for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)]
+    merged_organizational_units = [
+        MergedOrganizationalUnit.model_validate(unit)
+        for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)
+    ]
 
     return transform_activities(
         extracted_and_filtered_merged_activities,
-        merged_organizational_units ,
+        merged_organizational_units,
     )
 
 
 @asset(group_name="datenkompass")
-def publish_activities(
+def load_activities(
     transform_activities_to_target_fields: list[DatenkompassActivity],
 ) -> None:
     """Write items to S3."""

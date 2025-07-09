@@ -1,11 +1,15 @@
 import json
-from collections.abc import Iterable
+from collections.abc import Sequence
 
 import boto3
 from botocore.client import BaseClient
 
 from mex.common.logging import logger
-from mex.extractors.datenkompass.item import AnyDatenkompassModel
+from mex.extractors.datenkompass.item import (
+    DatenkompassActivity,
+    DatenkompassBibliographicResource,
+    DatenkompassResource,
+)
 from mex.extractors.settings import Settings
 
 
@@ -21,7 +25,9 @@ def start_s3_client() -> BaseClient:
 
 
 def write_item_to_json(
-    datenkompassitems: list[AnyDatenkompassModel],
+    datenkompassitems: Sequence[
+        DatenkompassActivity | DatenkompassBibliographicResource | DatenkompassResource
+    ],
     s3: BaseClient,
 ) -> None:
     """Write items to json."""

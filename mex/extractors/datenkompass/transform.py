@@ -21,9 +21,10 @@ def get_contact(
     """Get shortName and email from merged units."""
     return [
         contact
-        for target_unit in all_units
+        for target_unit in merged_organizational_units
         if target_unit.identifier in responsible_unit_ids
-        for contact in [short_name.value for short_name in target_unit.shortName] + [str(email) for email in target_unit.email]
+        for contact in [short_name.value for short_name in target_unit.shortName]
+        + [str(email) for email in target_unit.email]
     ]
 
 
@@ -68,7 +69,7 @@ def check_datenhalter(
 
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    all_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassActivity]:
     """Get the info asked for."""
     datenkompass_activities = []
@@ -80,8 +81,8 @@ def transform_activities(
         beschreibung = None
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
-            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value      
-        kontakt = get_contact(item.responsibleUnit, all_units)
+            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
+        kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
         datenhalter = check_datenhalter(bmg_ids, item.funderOrCommissioner)
