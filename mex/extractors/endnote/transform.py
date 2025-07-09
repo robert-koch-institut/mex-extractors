@@ -219,6 +219,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         }
     )
     bibliographical_resources: list[ExtractedBibliographicResource] = []
+    publisher_lookup_dict: dict[str, MergedOrganizationIdentifier] = {}
     for record in endnote_records:
         language = (
             language_by_language_field.get(record.language, Language["ENGLISH"])
@@ -306,10 +307,13 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         for publisher_string in [record.publisher, record.custom3]:
             if publisher_string is None:
                 continue
-            if publisher_org := get_wikidata_extracted_organization_id_by_name(
+            if publisher_string in publisher_lookup_dict:
+                publisher.append(publisher_lookup_dict[publisher_string])
+            elif publisher_org := get_wikidata_extracted_organization_id_by_name(
                 publisher_string
             ):
                 publisher.append(publisher_org)
+                publisher_lookup_dict[publisher_string] = publisher_org
             else:
                 created_org = ExtractedOrganization(
                     hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
@@ -318,6 +322,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 )
                 load([created_org])
                 publisher.append(created_org.stableTargetId)
+                publisher_lookup_dict[publisher_string] = created_org.stableTargetId
         repository_url = record.related_urls[0] if record.related_urls else []
         title_of_series = []
         if record.ref_type == "Book Section":
