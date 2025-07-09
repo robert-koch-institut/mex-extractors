@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-from typing import Any
 
 import defusedxml.ElementTree as defused_ET
 
@@ -8,11 +7,13 @@ from mex.extractors.endnote.model import EndnoteRecord
 
 
 def findall_text_from_record(record: ET.Element, path: str) -> list[str]:
+    """Finds all instances of items in path."""
     return ["".join(node.itertext()) for node in record.findall(path)]
 
 
 def find_text_from_record(record: ET.Element, path: str) -> str | None:
-    if node := record.find(path):
+    """Finds the instance of an item in path."""
+    if isinstance(node := record.find(path), ET.Element):
         return "".join(node.itertext())
     return None
 
@@ -25,99 +26,62 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     """
     connector = DropApiConnector.get()
     file_names = connector.list_files("endnote")
-    records: list[EndnoteRecord] = []
+    results: list[EndnoteRecord] = []
+    cutoff_number_authors = 50
     for file_name in file_names:
         response = connector.get_raw_file("endnote", file_name)
         file = defused_ET.fromstring(response.content)
-        for record in file.findall("*/record"):
-            records.append(  # noqa: PERF401
-                EndnoteRecord(
-                    database=find_text_from_record(record, "database"),
-                    abstract=find_text_from_record(record, "abstract/style"),
-                    authors=findall_text_from_record(
-                        record, "contributors/authors/author/style"
-                    ),
-            call_num=call_num.text
-            if isinstance(call_num := record.find("call-num/style"), ET.Element)
-            else None,
-            custom3=custom3.text
-            if isinstance(custom3 := record.find("custom3/style"), ET.Element)
-            else None,
-            custom4=custom4.text
-            if isinstance(custom4 := record.find("custom4/style"), ET.Element)
-            else None,
-            custom6=custom6.text
-            if isinstance(custom6 := record.find("custom6/style"), ET.Element)
-            else None,
-            electronic_resource_num=ern.text
-            if isinstance(
-                ern := record.find("electronic-resource-num/style"), ET.Element
-            )
-            else None,
-            isbn=isbn.text
-            if isinstance(isbn := record.find("isbn/style"), ET.Element)
-            else None,
-            keyword=[
-                keyword.text for keyword in record.findall("keywords/keyword/style")
-            ],
-            language=language.text
-            if isinstance(language := record.find("language/style"), ET.Element)
-            else None,
-            number=number.text
-            if isinstance(number := record.find("number/style"), ET.Element)
-            else None,
-            pages=pages.text
-            if isinstance(pages := record.find("pages/style"), ET.Element)
-            else None,
-            periodical=[
-                periodical.text
-                for periodical in record.findall("periodical/full-title/style")
-            ],
-            pub_dates=[
-                pub_date.text
-                for pub_date in record.findall("dates/pub-dates/date/style")
-            ],
-            publisher=publisher.text
-            if isinstance(publisher := record.find("publisher/style"), ET.Element)
-            else None,
-            rec_number=rec_number.text
-            if isinstance(rec_number := record.find("rec-number"), ET.Element)
-            else None,
-            ref_type=ref_type.get("name")
-            if isinstance(ref_type := record.find("ref-type"), ET.Element)
-            else None,
-            related_urls=[
-                related_url.text
-                for related_url in record.findall("urls/related-urls/url/style")
-            ],
-            secondary_authors=[
-                secondary_author.text
-                for secondary_author in record.findall(
-                    "contributors/secondary-authors/author/style"
+    for record in file.findall("*/record"):
+        if (
+            len(
+                authors := findall_text_from_record(
+                    record, "contributors/authors/author/style"
                 )
-            ],
-            secondary_title=secondary_title.text
-            if isinstance(
-                secondary_title := record.find("titles/secondary-title/style"),
-                ET.Element,
             )
-            else None,
-            tertiary_authors=[
-                tertiary_author.text
-                for tertiary_author in record.findall(
-                    "contributors/tertiary-authors/author/style"
-                )
-            ],
-            title=title.text
-            if isinstance(title := record.find("titles/title/style"), ET.Element)
-            else None,
-            volume=volume.text
-            if isinstance(volume := record.find("volume/style"), ET.Element)
-            else None,
-            year=year.text
-            if isinstance(year := record.find("dates/year/style"), ET.Element)
-            else None,
+            >= cutoff_number_authors
+        ):
+            continue
+        results.append(
+            EndnoteRecord(
+                database=find_text_from_record(record, "database"),
+                abstract=find_text_from_record(record, "abstract/style"),
+                authors=authors,
+                call_num=find_text_from_record(record, "call-num/style"),
+                custom3=find_text_from_record(record, "custom3/style"),
+                custom4=find_text_from_record(record, "custom4/style"),
+                custom6=find_text_from_record(record, "custom6/style"),
+                electronic_resource_num=find_text_from_record(
+                    record, "electronic-resource-num/style"
+                ),
+                isbn=find_text_from_record(record, "isbn/style"),
+                keyword=findall_text_from_record(record, "keywords/keyword/style"),
+                language=find_text_from_record(record, "language/style"),
+                number=find_text_from_record(record, "number/style"),
+                pages=find_text_from_record(record, "pages/style"),
+                periodical=findall_text_from_record(
+                    record, "periodical/full-title/style"
+                ),
+                pub_dates=findall_text_from_record(
+                    record, "dates/pub-dates/date/style"
+                ),
+                publisher=find_text_from_record(record, "publisher/style"),
+                rec_number=find_text_from_record(record, "rec-number"),
+                ref_type=find_text_from_record(record, "ref-type"),
+                related_urls=findall_text_from_record(
+                    record, "urls/related-urls/url/style"
+                ),
+                secondary_authors=findall_text_from_record(
+                    record, "contributors/secondary-authors/author/style"
+                ),
+                secondary_title=find_text_from_record(
+                    record, "titles/secondary-title/style"
+                ),
+                tertiary_authors=findall_text_from_record(
+                    record, "contributors/tertiary-authors/author/style"
+                ),
+                title=find_text_from_record(record, "titles/title/style"),
+                volume=find_text_from_record(record, "volume/style"),
+                year=find_text_from_record(record, "dates/year/style"),
+            )
         )
-        for file in files
-        for record in file.findall("*/record")
-    ]
+    return results

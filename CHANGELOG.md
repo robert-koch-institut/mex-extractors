@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- endnote extractor ignores records with 50 or more authors.
 
 ### Deprecated
 
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - change endnote identifierInPrimarySource hyphenation
+- improve endnote reading from loaded record
 
 ### Security
 
