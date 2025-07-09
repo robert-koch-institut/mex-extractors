@@ -86,7 +86,7 @@ class DatenkompassResource(BaseModel):
     )
     datenerhalt: str | None = Field(None, alias="Weg des Datenerhalts")
     status: str | None = Field(None, alias="Status (planbare Verfügbarkeit der Daten)")
-    datennutzungszweck: str | None = Field(None, alias="Datennutzungszweck")
+    datennutzungszweck: str | None = Field(None, alias="Datennutzungszweck (erweitert)")
     herausgeber: str | None = Field(None, alias="Herausgeber")
     kommentar: str | None = Field(None, alias="Kommentar")
     format: str | None = Field(None, alias="Format")
