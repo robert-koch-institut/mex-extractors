@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - change endnote identifierInPrimarySource hyphenation
 - improve endnote reading from loaded record
+- avoid identifier collision in endnote organizations and persons
 
 ### Security
 
