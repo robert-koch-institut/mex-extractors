@@ -18,11 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [0.37.2] - 2025-07-10
+
+### Fixed
+
 - change endnote identifierInPrimarySource hyphenation
 - improve endnote reading from loaded record
 - avoid identifier collision in endnote organizations and persons
-
-### Security
 
 ## [0.37.1] - 2025-07-01
 
