@@ -48,6 +48,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
     }
     connector = ConfluenceVvtConnector.get()
     page_data = connector.get_page_by_id("89780861")
+    assert page_data is not None
 
     contacts = get_contact_from_page(page_data, confluence_vvt_activity_mapping)
     involved_persons = get_involved_persons_from_page(

@@ -75,7 +75,7 @@ def extracted_synopse_activities() -> list[ExtractedActivity]:
 
 def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    biospecimen_resources: BiospecimenResource,
+    biospecimen_resources: list[BiospecimenResource],
     mex_persons: list[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     extracted_synopse_activities: list[ExtractedActivity],

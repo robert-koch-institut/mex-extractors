@@ -36,9 +36,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
         ],
     )
 
-    def get_file_mocked(
-        _self: DropApiConnector, x_system: str, file_id: str
-    ) -> dict[str, Any]:
+    def get_file_mocked(_self: DropApiConnector, x_system: str, file_id: str) -> Any:
         path = (
             Path(__file__).parents[2]
             / "tests"
@@ -70,7 +68,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
             encoding="utf-8",
         ) as f:
             mocked_response = MockedResponse()
-            mocked_response.content = f.read()
+            mocked_response.content = f.read().encode("utf-8")
             return mocked_response
 
     monkeypatch.setattr(
