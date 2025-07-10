@@ -4,6 +4,7 @@ import defusedxml.ElementTree as defused_ET
 
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.endnote.model import EndnoteRecord
+from mex.extractors.settings import Settings
 
 
 def findall_text_from_record(record: ET.Element, path: str) -> list[str]:
@@ -24,10 +25,10 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     Returns:
         list of endnote records
     """
+    settings = Settings.get()
     connector = DropApiConnector.get()
     file_names = connector.list_files("endnote")
     results: list[EndnoteRecord] = []
-    cutoff_number_authors = 50
     for file_name in file_names:
         response = connector.get_raw_file("endnote", file_name)
         file = defused_ET.fromstring(response.content)
@@ -39,7 +40,7 @@ def extract_endnote_records() -> list[EndnoteRecord]:
                         record, "contributors/authors/author/style"
                     )
                 )
-                >= cutoff_number_authors
+                >= settings.endnote.cutoff_number_authors
             ):
                 continue
             results.append(
