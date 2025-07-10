@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- endnote extractor ignores records with 50 or more authors.
+- improve endnote reading from extracted raw record
 
 ### Deprecated
 
