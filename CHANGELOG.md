@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 - endnote extractor ignores records with 50 or more authors.
+- improve endnote reading from extracted raw record
 
 ### Deprecated
 
@@ -25,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - change endnote identifierInPrimarySource hyphenation
-- improve endnote reading from loaded record
 - avoid identifier collision in endnote organizations and persons
 
 ## [0.37.1] - 2025-07-01
