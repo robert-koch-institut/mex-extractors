@@ -32,7 +32,7 @@ def test_extract_endnote_persons_by_person_string(
     ]
     assert person_dict["Mustermann, J."].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
-        "identifierInPrimarySource": "Mustermann, J.",
+        "identifierInPrimarySource": "Person_Mustermann, J.",
         "familyName": ["Mustermann"],
         "fullName": ["Mustermann, J."],
         "givenName": ["J."],
@@ -127,7 +127,7 @@ def test_extract_endnote_bibliographic_resource(
             {"value": "keyword 2", "language": TextLanguage.EN},
         ],
         "language": ["https://mex.rki.de/item/language-2"],
-        "publisher": ["fPVAifNTaeeWWarVB5nk8U", "fPVAifNTaeeWWarVB5nk8U"],
+        "publisher": ["dKesJpFog76YEZ4BhPwKuF", "dKesJpFog76YEZ4BhPwKuF"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

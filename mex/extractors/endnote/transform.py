@@ -58,7 +58,7 @@ def extract_endnote_persons_by_person_string(
             if len(split_name := person.split(",")) == 2 and split_name[1]:  # noqa: PLR2004
                 family_name, given_name = split_name
                 extracted_persons[person] = ExtractedPerson(
-                    identifierInPrimarySource=person,
+                    identifierInPrimarySource=f"Person_{person}",
                     hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
                     familyName=family_name,
                     givenName=given_name,
@@ -68,7 +68,7 @@ def extract_endnote_persons_by_person_string(
                 continue
         else:
             extracted_persons[person] = ExtractedPerson(
-                identifierInPrimarySource=person,
+                identifierInPrimarySource=f"Person_{person}",
                 hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
                 fullName=person,
             )
@@ -313,7 +313,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
             else:
                 created_org = ExtractedOrganization(
                     hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
-                    identifierInPrimarySource=publisher_string,
+                    identifierInPrimarySource=f"Organization_{publisher_string}",
                     officialName=[publisher_string],
                 )
                 load([created_org])
