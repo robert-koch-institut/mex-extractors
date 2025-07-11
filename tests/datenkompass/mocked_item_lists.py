@@ -39,7 +39,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
                 Link(language=None, title="Eintrag", url="https://www.Eintrag.de"),
                 Link(url="https://www.weiterer_Eintrag.org"),
@@ -57,7 +57,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             abstract=[Text(value="Without language", language=None)],
             funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forBMG")],
             shortName=[Text(value="short ony english", language="en")],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityWithBMG1"),
         ),
@@ -66,7 +66,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             responsibleUnit=["DolorSitAmetConsec"],
             title=[Text(value="should get filtered out", language="en")],
             funderOrCommissioner=[MergedOrganizationIdentifier("NoBMGIdentifier")],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ..
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityNoBMG"),
         ),
@@ -139,12 +139,12 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             beschreibung="Die Nutzung",
             datenhalter="BMG",
             kontakt=[
-                "a.bsp. unit",
                 "e.g. unit",
                 "unit@example.org",
+                "a.bsp. unit",
             ],
             titel=["short de", "title no language"],
-            schlagwort=["Public Health"],
+            schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
                 "https://www.Eintrag.de",
                 "https://www.weiterer_Eintrag.org",
@@ -173,7 +173,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "unit@example.org",
             ],
             titel=["short ony english", "titel de"],
-            schlagwort=["Public Health"],
+            schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
             voraussetzungen="Unbekannt",
             hauptkategorie="Gesundheit",

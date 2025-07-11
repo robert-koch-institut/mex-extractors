@@ -13,9 +13,9 @@ def mocked_boto() -> MagicMock:
         mock_session_instance.client.return_value = mock_s3_client
         mock_session_class.return_value = mock_session_instance
 
-        yield mock_s3_client  # You get access to the mocked client in your test
+        yield mock_s3_client
 
 
 @pytest.mark.usefixtures("mocked_backend", "mocked_boto")
 def test_run() -> None:
-    assert run_job_in_process("publisher")
+    assert run_job_in_process("datenkompass")

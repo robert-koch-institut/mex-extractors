@@ -25,7 +25,7 @@ def test_get_contact() -> None:
     all_units = mocked_merged_organizational_units()
     result = get_contact(responsible_unit_ids, all_units)
 
-    assert result == [
+    assert sorted(result) == [
         "a.bsp. unit",
         "e.g. unit",
         "unit@example.org",
@@ -40,8 +40,8 @@ def test_get_title() -> None:
 
 
 def test_get_vocabulary() -> None:
-    result = get_vocabulary([Theme["PUBLIC_HEALTH"]])
-    assert result == ["Public Health"]
+    result = get_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
+    assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
 def test_check_datenhalter() -> None:

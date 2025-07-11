@@ -25,7 +25,7 @@ def test_get_merged_items_mocked(monkeypatch: MonkeyPatch) -> None:
             had_primary_source: list[str] | None,  # noqa: ARG002
             skip: int,  # noqa: ARG002
             limit: int,  # noqa: ARG002
-        ) -> list[MergedActivity]:
+        ) -> PaginatedItemsContainer[AnyMergedModel]:
             return PaginatedItemsContainer[AnyMergedModel](
                 total=3,
                 items=mocked_merged_activities(),
@@ -45,7 +45,7 @@ def test_get_merged_items_mocked(monkeypatch: MonkeyPatch) -> None:
         responsibleUnit=["DolorSitAmetConsec"],
         title="should get filtered out",
         funderOrCommissioner=["NoBMGIdentifier"],
-        theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+        theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
         entityType="MergedActivity",
         identifier="MergedActivityNoBMG",
     )
