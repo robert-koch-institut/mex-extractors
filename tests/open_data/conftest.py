@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
-    MergedPrimarySourceIdentifier,
     PersonMapping,
     ResourceMapping,
 )
@@ -15,9 +14,7 @@ from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import (
-    Identifier,
-)
+from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,

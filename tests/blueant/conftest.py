@@ -11,6 +11,7 @@ from mex.extractors.utils import load_yaml
 def extracted_person() -> ExtractedPerson:
     """Return an extracted person with static dummy values."""
     return ExtractedPerson(
+        hadPrimarySource=Identifier("bFQoRhcVH5DHzz"),
         departmentOrUnit=Identifier("bFQoRhcVH5DHUU"),
         email="samples@rki.de",
         familyName="Sample",

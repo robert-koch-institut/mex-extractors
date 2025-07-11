@@ -74,6 +74,8 @@ def test_get_row_data() -> None:
 
 
 def test_parse_data_html_page_mocked(detail_page_data_html: str) -> None:
+    page_data = parse_data_html_page(detail_page_data_html)
+    assert page_data is not None
     (
         abstract,
         lead_author_names,
@@ -83,7 +85,7 @@ def test_parse_data_html_page_mocked(detail_page_data_html: str) -> None:
         collaborating_author_names,
         collaborating_author_oes,
         interne_vorgangsnummer,
-    ) = parse_data_html_page(detail_page_data_html)
+    ) = page_data
 
     assert lead_author_oes == ["Test OE 1"]
     assert lead_author_names == ["Test Verantwortliche 1"]

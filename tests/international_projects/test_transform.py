@@ -3,7 +3,9 @@ from pytz import timezone
 from mex.common.models import ActivityMapping, ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import (
-    Identifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     TextLanguage,
     YearMonthDay,
 )
@@ -17,15 +19,15 @@ from mex.extractors.international_projects.transform import (
 
 def test_transform_international_projects_source_to_mex_source(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:
-    organization_id = Identifier.generate(seed=44)
+    organization_id = MergedOrganizationIdentifier.generate(seed=44)
     funding_source_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
     partner_organizations_stable_target_ids_by_synonym = {"WHO": organization_id}
-    person_id = Identifier.generate(seed=30)
+    person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
-    unit_id = Identifier.generate(seed=21)
+    unit_id = MergedOrganizationalUnitIdentifier.generate(seed=21)
     unit_stable_target_ids_by_synonym = {"FG99": unit_id}
 
     international_projects_sources = list(extract_international_projects_sources())

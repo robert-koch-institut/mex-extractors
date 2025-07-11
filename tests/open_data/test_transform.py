@@ -13,6 +13,7 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
+    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TextLanguage,
 )
@@ -155,7 +156,7 @@ def test_transform_open_data_persons(
 
 @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_distributions(
-    mocked_open_data_parent_resource: OpenDataParentResource,
+    mocked_open_data_parent_resource: list[OpenDataParentResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_distribution_mapping: DistributionMapping,
 ) -> None:
@@ -181,17 +182,17 @@ def test_transform_open_data_distributions(
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
 def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
-    mocked_open_data_parent_resource: OpenDataParentResource,
+    mocked_open_data_parent_resource: list[OpenDataParentResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
-    mocked_open_data_contact_point: ExtractedContactPoint,
+    mocked_open_data_contact_point: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        "C1": Identifier.generate(seed=999),
-        "XY": Identifier.generate(seed=959),
+        "C1": MergedOrganizationalUnitIdentifier.generate(seed=999),
+        "XY": MergedOrganizationalUnitIdentifier.generate(seed=959),
     }
 
     mex_sources = list(

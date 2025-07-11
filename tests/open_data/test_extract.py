@@ -58,7 +58,7 @@ def test_extract_oldest_record_version_creationdate(
     mocked_open_data_parent_resource: list[OpenDataParentResource],
 ) -> None:
     open_data_source_date = extract_oldest_record_version_creationdate(
-        mocked_open_data_parent_resource
+        mocked_open_data_parent_resource[0].id
     )
 
     assert isinstance(open_data_source_date, str)

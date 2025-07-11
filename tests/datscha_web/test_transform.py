@@ -4,7 +4,11 @@ import pytest
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
-from mex.common.types import Identifier, MergedOrganizationIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.datscha_web.transform import (
     transform_datscha_web_items_to_mex_activities,
@@ -12,22 +16,26 @@ from mex.extractors.datscha_web.transform import (
 
 
 @pytest.fixture
-def person_stable_target_ids_by_query_string() -> dict[Hashable, list[Identifier]]:
+def person_stable_target_ids_by_query_string() -> dict[
+    Hashable, list[MergedPersonIdentifier]
+]:
     return {
         "Coolname, Cordula/ Ausgedacht, Alwina": [
-            Identifier("ID000000001111"),
-            Identifier("ID000000002222"),
+            MergedPersonIdentifier("ID000000001111"),
+            MergedPersonIdentifier("ID000000002222"),
         ],
         None: [],
     }
 
 
 @pytest.fixture
-def unit_stable_target_ids_by_synonym() -> dict[str, Identifier]:
+def unit_stable_target_ids_by_synonym() -> dict[
+    str, MergedOrganizationalUnitIdentifier
+]:
     return {
-        "L1": Identifier("ID000000000033"),
-        "FG99": Identifier("ID000000000044"),
-        "Abteilung 2": Identifier("ID000000000055"),
+        "L1": MergedOrganizationalUnitIdentifier("ID000000000033"),
+        "FG99": MergedOrganizationalUnitIdentifier("ID000000000044"),
+        "Abteilung 2": MergedOrganizationalUnitIdentifier("ID000000000055"),
     }
 
 
@@ -36,16 +44,16 @@ def organizations_stable_target_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:
     return {
-        "Fancy Fake Firm & CoKG": Identifier("ID000000000077"),
-        "FG99": Identifier("ID000000000884"),
-        "Abteilung 2": Identifier("ID000000000039"),
+        "Fancy Fake Firm & CoKG": MergedOrganizationIdentifier("ID000000000077"),
+        "FG99": MergedOrganizationIdentifier("ID000000000884"),
+        "Abteilung 2": MergedOrganizationIdentifier("ID000000000039"),
     }
 
 
 def test_transform_datscha_web_items_to_mex_activities(
     datscha_web_item: DatschaWebItem,
-    person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -89,8 +97,8 @@ def test_transform_datscha_web_items_to_mex_activities(
 
 def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     datscha_web_item_without_contributors: DatschaWebItem,
-    person_stable_target_ids_by_query_string: dict[Hashable, list[Identifier]],
-    unit_stable_target_ids_by_synonym: dict[str, Identifier],
+    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
