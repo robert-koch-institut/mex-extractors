@@ -1,16 +1,15 @@
 from collections.abc import Iterable
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
     MergedOrganizationalUnit,
-    MergedPerson,
 )
 from mex.common.types import (
     AccessRestriction,
     Link,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
 from mex.extractors.datenkompass.models.item import (
@@ -145,11 +144,11 @@ def transform_bibliographic_resources(
     extracted_and_filtered_merged_bibliographic_resource: list[
         MergedBibliographicResource
     ],
-    all_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: list[MergedOrganizationalUnit],
+    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Get the info asked for."""
     datenkompass_bibliographic_recources = []
-    connector = BackendApiConnector.get()
     for item in extracted_and_filtered_merged_bibliographic_resource:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
             voraussetzungen = "Zugang eingeschränkt"
@@ -159,20 +158,11 @@ def transform_bibliographic_resources(
             voraussetzungen = None
         datenbank = get_datenbank(item)
         dk_format = get_vocabulary(item.bibliographicResourceType)
-        kontakt = get_contact(item.contributingUnit, all_units)
+        kontakt = get_contact(item.contributingUnit, merged_organizational_units)
         titel = (
             ", ".join(entry.value for entry in item.title)
             + " ("
-            + " / ".join(
-                [
-                    " / ".join(
-                        MergedPerson.model_validate(
-                            connector.get_merged_item(c)
-                        ).fullName
-                    )
-                    for c in item.creator
-                ]
-            )
+            + " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
             + ")"
         )
         datenkompass_bibliographic_recources.append(

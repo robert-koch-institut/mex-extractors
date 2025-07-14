@@ -161,13 +161,15 @@ def mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
-def mocked_merged_person() -> MergedPerson:
+def mocked_merged_person() -> list[MergedPerson]:
     """Mock a single Merged Person item."""
-    return MergedPerson(
-        fullName=["Pattern, Peppa P.", "Pattern, P.P."],
-        entityType="MergedPerson",
-        identifier=MergedPersonIdentifier("PersonIdentifier4Peppa"),
-    )
+    return [
+        MergedPerson(
+            fullName=["Pattern, Peppa P.", "Pattern, P.P."],
+            entityType="MergedPerson",
+            identifier=MergedPersonIdentifier("PersonIdentifier4Peppa"),
+        )
+    ]
 
 
 def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:

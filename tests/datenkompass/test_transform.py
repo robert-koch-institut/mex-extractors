@@ -1,7 +1,8 @@
-from pytest import MonkeyPatch
+import pytest
 
-import mex.extractors.datenkompass.transform as transform_module
-from mex.common.models import MergedPerson
+from mex.common.types import (
+    MergedPersonIdentifier,
+)
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import DatenkompassBibliographicResource
 from mex.extractors.datenkompass.transform import (
@@ -17,7 +18,6 @@ from tests.datenkompass.mocked_item_lists import (
     mocked_merged_activities,
     mocked_merged_bibliographic_resource,
     mocked_merged_organizational_units,
-    mocked_merged_person,
 )
 
 
@@ -58,32 +58,32 @@ def test_transform_activities() -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities()[
         :2
     ]  # item with no BMG filtered out
-    all_units = mocked_merged_organizational_units()
+    merged_organizational_units = mocked_merged_organizational_units()
 
-    result = transform_activities(extracted_and_filtered_merged_activities, all_units)
+    result = transform_activities(
+        extracted_and_filtered_merged_activities, merged_organizational_units
+    )
 
     assert result == mocked_datenkompass_activity()
 
 
-def test_transform_bibliographic_resource(monkeypatch: MonkeyPatch) -> None:
-    class FakeConnector:
-        def get_merged_item(
-            self,
-            identifier: str,  # noqa: ARG002
-        ) -> MergedPerson:
-            return mocked_merged_person()
-
-    def fake_get() -> FakeConnector:
-        return FakeConnector()
-
-    monkeypatch.setattr(transform_module.BackendApiConnector, "get", FakeConnector)
+@pytest.mark.usefixtures("mocked_backend_api_connector")
+def test_transform_bibliographic_resource() -> None:
     extracted_and_filtered_merged_bibliographic_resource = (
         mocked_merged_bibliographic_resource()
     )
-    all_units = mocked_merged_organizational_units()
+    merged_organizational_units = mocked_merged_organizational_units()
+    person_name_by_id = {
+        MergedPersonIdentifier("PersonIdentifier4Peppa"): [
+            "Pattern, Peppa P.",
+            "Pattern, P.P.",
+        ]
+    }
 
     result = transform_bibliographic_resources(
-        extracted_and_filtered_merged_bibliographic_resource, all_units
+        extracted_and_filtered_merged_bibliographic_resource,
+        merged_organizational_units,
+        person_name_by_id,
     )
 
     assert result == [
