@@ -10,8 +10,8 @@ from mex.extractors.datenkompass.extract import (
     get_relevant_primary_source_ids,
 )
 from mex.extractors.datenkompass.filter import filter_for_bmg
-from mex.extractors.datenkompass.item import DatenkompassActivity
 from mex.extractors.datenkompass.load import start_s3_client, write_item_to_json
+from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.transform import transform_activities
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -19,7 +19,7 @@ from mex.extractors.settings import Settings
 
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
-    """Get merged items and filter them."""
+    """Fetch merged activities and filter them."""
     relevant_primary_sources = [
         "blueant",
         "confluence-vvt",
@@ -39,7 +39,7 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
 def transform_activities_to_target_fields(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
-    """Transform items to datenkompass items."""
+    """Transform activities to datenkompass items."""
     merged_organizational_units = [
         MergedOrganizationalUnit.model_validate(unit)
         for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)

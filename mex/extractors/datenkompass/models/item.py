@@ -6,7 +6,7 @@ from mex.common.types import (
 
 
 class DatenkompassActivity(BaseModel):
-    """Model for target fields for Activities."""
+    """Model for Datenkompass Activities."""
 
     model_config = {
         "populate_by_name": True  # allows using field names instead of aliases
@@ -39,7 +39,7 @@ class DatenkompassActivity(BaseModel):
 
 
 class DatenkompassBibliographicResource(BaseModel):
-    """Model for target fields for Bibliographic Resources."""
+    """Model for Datenkompass Bibliographic Resources."""
 
     model_config = {"populate_by_name": True}
 
@@ -63,7 +63,7 @@ class DatenkompassBibliographicResource(BaseModel):
 
 
 class DatenkompassResource(BaseModel):
-    """Model for target fields for Resources."""
+    """Model for Datenkompass Resources."""
 
     model_config = {"populate_by_name": True}
 

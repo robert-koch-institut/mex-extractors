@@ -5,6 +5,7 @@ import pytest
 
 @pytest.fixture  # needed for hardcoded upload to S3.
 def mocked_boto() -> MagicMock:
+    """Mock a S3 session client to write the jsons to."""
     with patch("boto3.Session") as mock_session_class:
         mock_s3_client = MagicMock()
         mock_session_instance = MagicMock()

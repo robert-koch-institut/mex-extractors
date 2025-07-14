@@ -9,7 +9,16 @@ def get_merged_items(
     entity_type: list[str],
     had_primary_source: list[str] | None,
 ) -> list[AnyMergedModel]:
-    """Read merged items from backend."""
+    """Read merged items from backend.
+
+    Args:
+        query_string (str): Query string.
+        entity_type (list[str]): List of entity types.
+        had_primary_source (list[str]): List of primary sources.
+
+    Returns:
+        List of merged items.
+    """
     connector = BackendApiConnector.get()
 
     response = connector.fetch_merged_items(
@@ -42,7 +51,14 @@ def get_merged_items(
 
 
 def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list[str]:
-    """Get the IDs of the relevant primary sources."""
+    """Get the IDs of the relevant primary sources.
+
+    Args:
+        relevant_primary_sources (list[str]): List of primary sources.
+
+    Returns:
+        List of IDs of the relevant primary sources.
+    """
     entity_type = ["MergedPrimarySource"]
     merged_primary_sources = list(get_merged_items(None, entity_type, None))
     provider = get_provider()

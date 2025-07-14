@@ -12,10 +12,11 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.extractors.datenkompass.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
 def mocked_merged_activities() -> list[MergedActivity]:
+    """Mock a list of Merged Activity items."""
     return [
         MergedActivity(
             contact=["LoremIpsum1234"],
@@ -74,6 +75,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
 
 
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
+    """Mock a list of Merged Organizational Unit items."""
     return [
         MergedOrganizationalUnit(
             name=[Text(value="example unit", language="en")],
@@ -103,6 +105,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
 
 
 def mocked_bmg() -> list[MergedOrganization]:
+    """Mock a list of BMG as Merged ORganization items."""
     return [
         MergedOrganization(
             officialName=[
@@ -120,6 +123,7 @@ def mocked_bmg() -> list[MergedOrganization]:
 
 
 def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
+    """Mock a list of Merged Primary Source items."""
     return [
         MergedPrimarySource(
             entityType="MergedPrimarySource",
@@ -134,6 +138,7 @@ def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
 
 
 def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
+    """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
             beschreibung="Die Nutzung",

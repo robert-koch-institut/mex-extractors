@@ -11,14 +11,22 @@ from mex.common.types import (
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
 from mex.extractors.datenkompass.extract import get_merged_items
-from mex.extractors.datenkompass.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
     merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[str]:
-    """Get shortName and email from merged units."""
+    """Get shortName and email from merged units.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers.
+        merged_organizational_units: List of merged organizational unit identifiers.
+
+    Returns:
+        List of short name and email of contact units as strings.
+    """
     return [
         contact
         for target_unit in merged_organizational_units
@@ -29,7 +37,14 @@ def get_contact(
 
 
 def get_title(item: MergedActivity) -> list[str]:
-    """Get shortName and title from merged activity item."""
+    """Get shortName and title from merged activity item.
+
+    Args:
+        item: MergedActivity item.
+
+    Returns:
+        List of short name and title of units as strings.
+    """
     collected_titles = []
     if item.shortName:
         shortname_de = [name.value for name in item.shortName if name.language == "de"]
@@ -43,9 +58,16 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_vocabulary(
-    entries: Iterable[Theme | BibliographicResourceType],
+    entries: Iterable[Theme | BibliographicResourceType],  # "list doesn't accept '|' "
 ) -> list[str | None]:
-    """Get german prefLabel for Vocabularies."""
+    """Get german prefLabel for Vocabularies.
+
+    Args:
+        entries: Iterable of Theme or BibliographicResourceType entries.
+
+    Returns:
+        list of german Vocabulary entries.
+    """
     return [
         next(
             concept.prefLabel.de
@@ -60,7 +82,15 @@ def check_datenhalter(
     bmg_ids: set[MergedOrganizationIdentifier],
     datenhalter: list[MergedOrganizationIdentifier],
 ) -> str:
-    """Check if 'Datenhalter' is really the BMG."""
+    """Check if 'Datenhalter' is really the BMG.
+
+    Args:
+        bmg_ids: List of BMG identifiers on database.
+        datenhalter: List of BMG identifiers in data set.
+
+    Returns:
+        string.
+    """
     if any(datenhalter_id in bmg_ids for datenhalter_id in datenhalter):
         return "BMG"
     msg = "Funder or Commissioner is not BMG!"
@@ -71,7 +101,15 @@ def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassActivity]:
-    """Get the info asked for."""
+    """Get the relevant info from the merged activities.
+
+    Args:
+        extracted_and_filtered_merged_activities: List of merged activities.
+        merged_organizational_units: List of merged organizational units.
+
+    Returns:
+        list of DatenkompassActivity instances.
+    """
     datenkompass_activities = []
     bmg_ids = {
         MergedOrganizationIdentifier(bmg.identifier)

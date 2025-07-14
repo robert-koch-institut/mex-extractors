@@ -4,7 +4,15 @@ from mex.extractors.datenkompass.extract import get_merged_items
 
 
 def filter_for_bmg(merged_items: list[AnyMergedModel]) -> list[MergedActivity]:
-    """Filter the merged items based on the mapping specifications."""
+    """Filter the merged activities based on the mapping specifications.
+
+    Args:
+        merged_items: list of merged activities.
+
+    Returns:
+        filtered list of merged activities.
+
+    """
     bmg_ids = {
         bmg.identifier for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
     }

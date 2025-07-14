@@ -5,7 +5,7 @@ import boto3
 from botocore.client import BaseClient
 
 from mex.common.logging import logger
-from mex.extractors.datenkompass.item import (
+from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
     DatenkompassResource,
@@ -14,7 +14,11 @@ from mex.extractors.settings import Settings
 
 
 def start_s3_client() -> BaseClient:
-    """Start up S3 session."""
+    """Start up S3 session.
+
+    Returns:
+        BaseClient of a S3 session.
+    """
     settings = Settings.get()
     session = boto3.Session(
         aws_access_key_id=settings.s3_access_key_id.get_secret_value(),
@@ -30,7 +34,12 @@ def write_item_to_json(
     ],
     s3: BaseClient,
 ) -> None:
-    """Write items to json."""
+    """Write Datenkompass items to json.
+
+    Args:
+        datenkompassitems: List of Datenkompass items.
+        s3: S3 session.
+    """
     settings = Settings.get()
 
     file_name = f"datenkompass_{datenkompassitems[0].entityType}.json"
