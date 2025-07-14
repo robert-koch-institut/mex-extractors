@@ -18,9 +18,9 @@ from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.types import (
-    Identifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
 )
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -236,5 +236,5 @@ def extracted_person() -> ExtractedPerson:
         givenName="Frieda",
         fullName="Dr. Fictitious, Frieda",
         identifierInPrimarySource="frieda",
-        hadPrimarySource=Identifier.generate(seed=40),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
     )

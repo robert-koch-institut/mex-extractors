@@ -12,7 +12,6 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    Identifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TextLanguage,
@@ -219,7 +218,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "contact": [str(mocked_open_data_contact_point[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": [str(Identifier.generate(seed=999))],
+        "unitInCharge": ["bFQoRhcVH5DIax"],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],

@@ -1,7 +1,7 @@
 import pytest
 
 from mex.common.models import ActivityMapping, ExtractedPerson
-from mex.common.types import Identifier
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -15,7 +15,7 @@ def extracted_person() -> ExtractedPerson:
         givenName="Frieda",
         fullName="Dr. Fictitious, Frieda",
         identifierInPrimarySource="frieda",
-        hadPrimarySource=Identifier.generate(seed=40),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
     )
 
 

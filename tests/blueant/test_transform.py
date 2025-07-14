@@ -43,7 +43,7 @@ def test_transform_blueant_sources_to_extracted_activities(
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [str(Identifier.generate(seed=99))],
         "responsibleUnit": [str(Identifier.generate(seed=555))],
-        "funderOrCommissioner": [str(MergedOrganizationIdentifier.generate(seed=42))],
+        "funderOrCommissioner": [str(Identifier.generate(seed=42))],
         "identifier": Joker(),
         "identifierInPrimarySource": "00123",
         "involvedPerson": ["bFQoRhcVH5DHV1"],
@@ -54,7 +54,7 @@ def test_transform_blueant_sources_to_extracted_activities(
     }
     assert mex_sources[1].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": ["bFQoRhcVH5DHV1"],
-        "funderOrCommissioner": [str(MergedOrganizationIdentifier.generate(seed=42))],
+        "funderOrCommissioner": [str(Identifier.generate(seed=42))],
         "responsibleUnit": ["bFQoRhcVH5DH3n"],
         "identifier": Joker(),
         "identifierInPrimarySource": "00255",

@@ -14,7 +14,7 @@ from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import Identifier, MergedPrimarySourceIdentifier
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -51,7 +51,7 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
     """Mock an extracted person."""
     return [
         ExtractedPerson(
-            hadPrimarySource=Identifier.generate(seed=42),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="test_id",
             email=["test_person@email.de"],
             familyName=["Muster"],
@@ -100,7 +100,7 @@ def mocked_open_data_distribution() -> list[ExtractedDistribution]:
     """Mock an extracted distribution."""
     return [
         ExtractedDistribution(
-            hadPrimarySource=Identifier.generate(seed=42),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="file_test_id",
             accessRestriction="https://mex.rki.de/item/access-restriction-1",
             issued="1900-01-01",

@@ -14,7 +14,6 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     Email,
-    Identifier,
     LinkLanguage,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -98,7 +97,7 @@ def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
         "accessPlatform": [transformed_sumo_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "contact": [Identifier.generate(43)],
+        "contact": [MergedPersonIdentifier.generate(43)],
         "contributingUnit": [Joker()],
         "description": [
             {
@@ -445,9 +444,8 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     sumo_access_platform: AccessPlatformMapping,
 ) -> None:
-    person_id = Identifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {
-        "Roland Resolved": MergedPersonIdentifier(person_id)
+        "Roland Resolved": MergedPersonIdentifier.generate(seed=30)
     }
     expected = {
         "identifier": Joker(),
