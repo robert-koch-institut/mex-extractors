@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
-    PersonMapping,
     ResourceMapping,
 )
 from mex.common.organigram.extract import extract_organigram_units
@@ -18,14 +17,10 @@ from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataResourceVersion,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-from tests.open_data.mocked_open_data import (
-    create_mocked_parent_response,
-    create_mocked_version_response,
-)
+from tests.open_data.mocked_open_data import create_mocked_parent_response
 
 
 @pytest.fixture
@@ -33,16 +28,6 @@ def mocked_open_data_parent_resource() -> list[OpenDataParentResource]:
     mocked_parent_response = create_mocked_parent_response()
     return [
         OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
-    ]
-
-
-@pytest.fixture
-def mocked_open_data_resource_version() -> list[OpenDataResourceVersion]:
-    mocked_resource_version = create_mocked_version_response()
-    return [
-        OpenDataResourceVersion.model_validate(
-            mocked_resource_version["hits"]["hits"][0]
-        )
     ]
 
 
@@ -124,15 +109,6 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
-    )
-
-
-@pytest.fixture
-def mocked_person_mapping() -> PersonMapping:
-    """Return person mapping."""
-    settings = Settings.get()
-    return PersonMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "person.yaml")
     )
 
 

@@ -8,7 +8,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedPerson,
     ExtractedPrimarySource,
     ResourceMapping,
 )
@@ -20,7 +19,6 @@ from mex.common.primary_source.transform import (
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
-    MergedPrimarySourceIdentifier,
 )
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -225,16 +223,3 @@ def unit_stable_target_ids_by_synonym() -> dict[
         "FG 99": MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK"),
         "FG99": MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK"),
     }
-
-
-@pytest.fixture
-def extracted_person() -> ExtractedPerson:
-    """Return an extracted person with static dummy values."""
-    return ExtractedPerson(
-        email=["fictitiousf@rki.de", "info@rki.de"],
-        familyName="Fictitious",
-        givenName="Frieda",
-        fullName="Dr. Fictitious, Frieda",
-        identifierInPrimarySource="frieda",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
-    )

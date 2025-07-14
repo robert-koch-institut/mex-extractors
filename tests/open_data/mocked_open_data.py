@@ -56,57 +56,6 @@ def create_mocked_parent_response() -> dict[str, Any]:
     }
 
 
-def create_mocked_version_response() -> dict[str, Any]:
-    return {
-        "hits": {
-            "hits": [
-                {
-                    "title": "Dumdidumdidum",
-                    "id": 1001,
-                    "conceptrecid": "Eins",
-                    "metadata": {
-                        "license": {"id": "cc-by-4.0"},
-                        "contributors": [
-                            {
-                                "name": "Muster, Maxi",
-                                "affiliation": "RKI",
-                                "orcid": "1234567890",
-                            },
-                        ],
-                        "related_identifiers": [
-                            {
-                                "identifier": "should be transformed",
-                                "relation": "isDocumentedBy",
-                            },
-                            {
-                                "identifier": "should be extracted but NOT transformed",
-                                "relation": "isSupplementTo",
-                            },
-                        ],
-                        "publication_date": "2021",
-                    },
-                    "created": "2021-01-01T01:01:01.111111+00:00",
-                },
-                {
-                    "title": "Ladidadida",
-                    "conceptrecid": "Eins",
-                    "id": 1002,
-                    "metadata": {
-                        "license": {"id": "no license"},
-                        "publication_date": "2022",
-                        "creators": [
-                            {"name": "Muster, Maxi"},
-                            {"name": "Resolved, Roland"},
-                        ],
-                    },
-                    "created": "2022-02-02T02:02:02.222222+00:00",
-                },
-            ],
-            "total": 201,
-        }
-    }
-
-
 def create_mocked_file_response() -> dict[str, Any]:
     return {
         "entries": [
