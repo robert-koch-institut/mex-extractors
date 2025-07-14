@@ -36,7 +36,7 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
 
 
 @asset(group_name="datenkompass")
-def transform_activities_to_target_fields(
+def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
@@ -53,11 +53,11 @@ def transform_activities_to_target_fields(
 
 @asset(group_name="datenkompass")
 def load_activities(
-    transform_activities_to_target_fields: list[DatenkompassActivity],
+    transform_activities_to_datenkompass_activities: list[DatenkompassActivity],
 ) -> None:
     """Write items to S3."""
     s3_client = start_s3_client()
-    write_item_to_json(transform_activities_to_target_fields, s3_client)
+    write_item_to_json(transform_activities_to_datenkompass_activities, s3_client)
 
 
 @entrypoint(Settings)
