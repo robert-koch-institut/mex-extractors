@@ -6,7 +6,7 @@ from mex.common.types import (
 
 
 class DatenkompassActivity(BaseModel):
-    """Model for target fields for Activities."""
+    """Model for Datenkompass Activities."""
 
     model_config = {
         "populate_by_name": True  # allows using field names instead of aliases
@@ -16,7 +16,7 @@ class DatenkompassActivity(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    kontakt: list[str] | None = Field(None, alias="Kontakt (herausgeber)")
+    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
     titel: list[str] | None = Field(None, alias="Titel")
     schlagwort: list[str | None] = Field([], alias="Schlagwort")
     datenbank: list[str] | None = Field(None, alias="Link oder Datenbank")
@@ -35,16 +35,16 @@ class DatenkompassActivity(BaseModel):
     kommentar: str | None = Field(None, alias="Kommentar")
     format: str | None = Field(None, alias="Format")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassBibliographicResource(BaseModel):
-    """Model for target fields for Bibliographic Resources."""
+    """Model for Datenkompass Bibliographic Resources."""
 
     model_config = {"populate_by_name": True}
 
     beschreibung: list[str] | None = Field(None, alias="Beschreibung")
-    kontakt: list[str] | None = Field(None, alias="Kontakt (herausgeber)")
+    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
     titel: str | None = Field(None, alias="Titel")
     schlagwort: list[str | None] = Field([], alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
@@ -59,11 +59,11 @@ class DatenkompassBibliographicResource(BaseModel):
         None, alias="Format"
     )  # "format" would shadow a builtIn
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassResource(BaseModel):
-    """Model for target fields for Resources."""
+    """Model for Datenkompass Resources."""
 
     model_config = {"populate_by_name": True}
 
@@ -71,8 +71,8 @@ class DatenkompassResource(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    frequenz: str | None = Field(None, alias="Frequenz")
-    kontakt: list[str] | None = Field(None, alias="Kontakt (herausgeber)")
+    frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
+    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
     titel: list[str] | None = Field(None, alias="Titel")
     schlagwort: list[str | None] = Field([], alias="Schlagwort")
     datenbank: list[str] | None = Field(None, alias="Link oder Datenbank")
@@ -82,16 +82,16 @@ class DatenkompassResource(BaseModel):
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
     rechtsgrundlage: str | None = Field(
-        None, alias="Rechtsgrundlage für die Zugangseröffnung"
+        None, alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
     )
     datenerhalt: str | None = Field(None, alias="Weg des Datenerhalts")
     status: str | None = Field(None, alias="Status (planbare Verfügbarkeit der Daten)")
-    datennutzungszweck: str | None = Field(None, alias="Datennutzungszweck")
+    datennutzungszweck: str | None = Field(None, alias="Datennutzungszweck (erweitert)")
     herausgeber: str | None = Field(None, alias="Herausgeber")
     kommentar: str | None = Field(None, alias="Kommentar")
     format: str | None = Field(None, alias="Format")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: str
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 AnyDatenkompassModel = (

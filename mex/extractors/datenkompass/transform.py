@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.exceptions import MExError
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
@@ -12,10 +11,9 @@ from mex.common.types import (
     AccessRestriction,
     Link,
     MergedOrganizationalUnitIdentifier,
-    MergedOrganizationIdentifier,
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
-from mex.extractors.datenkompass.item import (
+from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
 )
@@ -23,20 +21,35 @@ from mex.extractors.datenkompass.item import (
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    all_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[str]:
-    """Get shortName and email from merged units."""
+    """Get shortName and email from merged units.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers.
+        merged_organizational_units: List of merged organizational unit identifiers.
+
+    Returns:
+        List of short name and email of contact units as strings.
+    """
     return [
-        str(s.value) if hasattr(s, "value") else str(s)
-        for responsibleUnit in responsible_unit_ids
-        for target_unit in all_units
-        if target_unit.identifier == responsibleUnit
-        for s in target_unit.shortName + target_unit.email
+        contact
+        for target_unit in merged_organizational_units
+        if target_unit.identifier in responsible_unit_ids
+        for contact in [short_name.value for short_name in target_unit.shortName]
+        + [str(email) for email in target_unit.email]
     ]
 
 
 def get_title(item: MergedActivity) -> list[str]:
-    """Get shortName and title from merged activity item."""
+    """Get shortName and title from merged activity item.
+
+    Args:
+        item: MergedActivity item.
+
+    Returns:
+        List of short name and title of units as strings.
+    """
     collected_titles = []
     if item.shortName:
         shortname_de = [name.value for name in item.shortName if name.language == "de"]
@@ -50,9 +63,16 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_vocabulary(
-    entries: Iterable[Theme | BibliographicResourceType],
+    entries: Iterable[Theme | BibliographicResourceType],  # "list doesn't accept '|' "
 ) -> list[str | None]:
-    """Get german prefLabel for Vocabularies."""
+    """Get german prefLabel for Vocabularies.
+
+    Args:
+        entries: Iterable of Theme or BibliographicResourceType entries.
+
+    Returns:
+        list of german Vocabulary entries.
+    """
     return [
         next(
             concept.prefLabel.de
@@ -61,17 +81,6 @@ def get_vocabulary(
         )
         for entry in entries
     ]
-
-
-def check_datenhalter(
-    bmg_ids: list[MergedOrganizationIdentifier],
-    datenhalter: list[MergedOrganizationIdentifier],
-) -> str:
-    """Check if 'Datenhalter' is really the BMG."""
-    if any(datenhalter_id in bmg_ids for datenhalter_id in datenhalter):
-        return "BMG"
-    msg = "Funder or Commissioner is not BMG!"
-    raise MExError(msg)
 
 
 def get_datenbank(item: MergedBibliographicResource) -> str:
@@ -84,26 +93,29 @@ def get_datenbank(item: MergedBibliographicResource) -> str:
 
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    all_units: list[MergedOrganizationalUnit],
-    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> list[DatenkompassActivity]:
-    """Get the info asked for."""
+    """Get the relevant info from the merged activities.
+
+    Args:
+        extracted_and_filtered_merged_activities: List of merged activities.
+        merged_organizational_units: List of merged organizational units.
+
+    Returns:
+        list of DatenkompassActivity instances.
+    """
     datenkompass_activities = []
     for item in extracted_and_filtered_merged_activities:
+        beschreibung = None
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
             beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        else:
-            beschreibung = None
-        kontakt = get_contact(item.responsibleUnit, all_units)
+        kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
-        datenhalter = check_datenhalter(
-            extracted_merged_bmg_ids, item.funderOrCommissioner
-        )
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter=datenhalter,
+                datenhalter="BMG",
                 beschreibung=beschreibung,
                 kontakt=kontakt,
                 titel=titel,

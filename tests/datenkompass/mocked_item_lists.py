@@ -18,10 +18,11 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
-from mex.extractors.datenkompass.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
 def mocked_merged_activities() -> list[MergedActivity]:
+    """Mock a list of Merged Activity items."""
     return [
         MergedActivity(
             contact=["LoremIpsum1234"],
@@ -45,7 +46,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
                 Link(language=None, title="Eintrag", url="https://www.Eintrag.de"),
                 Link(url="https://www.weiterer_Eintrag.org"),
@@ -63,7 +64,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             abstract=[Text(value="Without language", language=None)],
             funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forBMG")],
             shortName=[Text(value="short ony english", language="en")],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityWithBMG1"),
         ),
@@ -72,7 +73,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             responsibleUnit=["DolorSitAmetConsec"],
             title=[Text(value="should get filtered out", language="en")],
             funderOrCommissioner=[MergedOrganizationIdentifier("NoBMGIdentifier")],
-            theme=["https://mex.rki.de/item/theme-1"],  # PUBLIC_HEALTH
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ..
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityNoBMG"),
         ),
@@ -80,6 +81,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
 
 
 def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
+    """Mock a list of Merged Bibliographic Resource items."""
     return [
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
@@ -112,6 +114,7 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
 
 
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
+    """Mock a list of Merged Organizational Unit items."""
     return [
         MergedOrganizationalUnit(
             name=[Text(value="example unit", language="en")],
@@ -141,6 +144,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
 
 
 def mocked_bmg() -> list[MergedOrganization]:
+    """Mock a list of BMG as Merged ORganization items."""
     return [
         MergedOrganization(
             officialName=[
@@ -158,6 +162,7 @@ def mocked_bmg() -> list[MergedOrganization]:
 
 
 def mocked_merged_person() -> MergedPerson:
+    """Mock a single Merged Person item."""
     return MergedPerson(
         fullName=["Pattern, Peppa P.", "Pattern, P.P."],
         entityType="MergedPerson",
@@ -166,6 +171,7 @@ def mocked_merged_person() -> MergedPerson:
 
 
 def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
+    """Mock a list of Preview Primary Source items."""
     return [
         PreviewPrimarySource(
             entityType="PreviewPrimarySource",
@@ -180,17 +186,18 @@ def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
 
 
 def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
+    """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
             beschreibung="Die Nutzung",
             datenhalter="BMG",
             kontakt=[
-                "a.bsp. unit",
                 "e.g. unit",
                 "unit@example.org",
+                "a.bsp. unit",
             ],
             titel=["short de", "title no language"],
-            schlagwort=["Public Health"],
+            schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
                 "https://www.Eintrag.de",
                 "https://www.weiterer_Eintrag.org",
@@ -219,7 +226,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "unit@example.org",
             ],
             titel=["short ony english", "titel de"],
-            schlagwort=["Public Health"],
+            schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
             voraussetzungen="Unbekannt",
             hauptkategorie="Gesundheit",

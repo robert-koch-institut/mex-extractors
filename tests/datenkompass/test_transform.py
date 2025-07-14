@@ -1,13 +1,10 @@
-import pytest
 from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.transform as transform_module
-from mex.common.exceptions import MExError
 from mex.common.models import MergedPerson
 from mex.common.types.vocabulary import Theme
-from mex.extractors.datenkompass.item import DatenkompassBibliographicResource
+from mex.extractors.datenkompass.models.item import DatenkompassBibliographicResource
 from mex.extractors.datenkompass.transform import (
-    check_datenhalter,
     get_contact,
     get_datenbank,
     get_title,
@@ -16,7 +13,6 @@ from mex.extractors.datenkompass.transform import (
     transform_bibliographic_resources,
 )
 from tests.datenkompass.mocked_item_lists import (
-    mocked_bmg,
     mocked_datenkompass_activity,
     mocked_merged_activities,
     mocked_merged_bibliographic_resource,
@@ -30,7 +26,7 @@ def test_get_contact() -> None:
     all_units = mocked_merged_organizational_units()
     result = get_contact(responsible_unit_ids, all_units)
 
-    assert result == [
+    assert sorted(result) == [
         "a.bsp. unit",
         "e.g. unit",
         "unit@example.org",
@@ -45,28 +41,8 @@ def test_get_title() -> None:
 
 
 def test_get_vocabulary() -> None:
-    result = get_vocabulary([Theme["PUBLIC_HEALTH"]])
-    assert result == ["Public Health"]
-
-
-def test_check_datenhalter() -> None:
-    bmg_ids = [bmg.identifier for bmg in mocked_bmg()]
-
-    assert (
-        check_datenhalter(
-            bmg_ids,
-            mocked_merged_activities()[0].funderOrCommissioner,  # has bmg id
-        )
-        == "BMG"
-    )
-
-    try:
-        check_datenhalter(
-            bmg_ids,
-            mocked_merged_activities()[2].funderOrCommissioner,  # no bmg id
-        )
-    except MExError:
-        pytest.raises(MExError, match="Funder or Commissioner is not BMG!")
+    result = get_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
+    assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
 def test_get_datenbank() -> None:
@@ -79,15 +55,12 @@ def test_get_datenbank() -> None:
 
 
 def test_transform_activities() -> None:
-    extracted_and_filtered_merged_activities = mocked_merged_activities()[:2]
+    extracted_and_filtered_merged_activities = mocked_merged_activities()[
+        :2
+    ]  # item with no BMG filtered out
     all_units = mocked_merged_organizational_units()
-    extracted_merged_bmg_ids = [bmg.identifier for bmg in mocked_bmg()]
 
-    result = transform_activities(
-        extracted_and_filtered_merged_activities,
-        all_units,
-        extracted_merged_bmg_ids,
-    )
+    result = transform_activities(extracted_and_filtered_merged_activities, all_units)
 
     assert result == mocked_datenkompass_activity()
 

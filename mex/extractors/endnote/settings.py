@@ -14,3 +14,5 @@ class EndnoteSettings(BaseModel):
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
+
+    cutoff_number_authors: int = 42
