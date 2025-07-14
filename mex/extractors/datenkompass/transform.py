@@ -1,16 +1,13 @@
 from collections.abc import Iterable
 
-from mex.common.exceptions import MExError
 from mex.common.models import (
     MergedActivity,
     MergedOrganizationalUnit,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
-    MergedOrganizationIdentifier,
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
-from mex.extractors.datenkompass.extract import get_merged_items
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
@@ -78,25 +75,6 @@ def get_vocabulary(
     ]
 
 
-def check_datenhalter(
-    bmg_ids: set[MergedOrganizationIdentifier],
-    datenhalter: list[MergedOrganizationIdentifier],
-) -> str:
-    """Check if 'Datenhalter' is really the BMG.
-
-    Args:
-        bmg_ids: List of BMG identifiers on database.
-        datenhalter: List of BMG identifiers in data set.
-
-    Returns:
-        string.
-    """
-    if any(datenhalter_id in bmg_ids for datenhalter_id in datenhalter):
-        return "BMG"
-    msg = "Funder or Commissioner is not BMG!"
-    raise MExError(msg)
-
-
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     merged_organizational_units: list[MergedOrganizationalUnit],
@@ -111,10 +89,6 @@ def transform_activities(
         list of DatenkompassActivity instances.
     """
     datenkompass_activities = []
-    bmg_ids = {
-        MergedOrganizationIdentifier(bmg.identifier)
-        for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
-    }
     for item in extracted_and_filtered_merged_activities:
         beschreibung = None
         if item.abstract:
@@ -123,10 +97,9 @@ def transform_activities(
         kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
-        datenhalter = check_datenhalter(bmg_ids, item.funderOrCommissioner)
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter=datenhalter,
+                datenhalter="BMG",
                 beschreibung=beschreibung,
                 kontakt=kontakt,
                 titel=titel,
