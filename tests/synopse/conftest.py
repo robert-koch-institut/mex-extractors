@@ -278,46 +278,6 @@ def synopse_studies() -> list[SynopseStudy]:
 
 
 @pytest.fixture
-def created_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
-    """Return a lookup from study ID to created string."""
-    return {
-        s.studien_id: s.erstellungs_datum
-        for s in synopse_studies
-        if s.erstellungs_datum
-    }
-
-
-@pytest.fixture
-def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
-    """Return a lookup from study ID to description string."""
-    return {s.studien_id: s.beschreibung for s in synopse_studies if s.beschreibung}
-
-
-@pytest.fixture
-def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
-    """Return a lookup from study ID to documentation Link."""
-    return {s.studien_id: s.dokumentation for s in synopse_studies if s.dokumentation}
-
-
-@pytest.fixture
-def keyword_text_by_study_id(
-    synopse_studies: list[SynopseStudy],
-) -> dict[str, list[Text]]:
-    """Return a lookup from study ID to list of keyword Text."""
-    return {
-        s.studien_id: s.schlagworte_themen
-        for s in synopse_studies
-        if s.schlagworte_themen
-    }
-
-
-@pytest.fixture
-def synopse_study(synopse_studies: list[SynopseStudy]) -> SynopseStudy:
-    """Return a Synopse Study."""
-    return synopse_studies[0]
-
-
-@pytest.fixture
 def synopse_organization_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:
@@ -542,9 +502,9 @@ def resource_ids_by_synopse_id() -> dict[str, list[MergedResourceIdentifier]]:
 
 @pytest.fixture
 def extracted_variable_groups(
-    synopse_variables_by_thema: dict[int, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
     return list(

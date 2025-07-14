@@ -18,6 +18,7 @@ from mex.common.types import (
     LinkLanguage,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     TextLanguage,
     YearMonthDay,
@@ -446,7 +447,7 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
 ) -> None:
     person_id = Identifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {
-        "Roland Resolved": MergedOrganizationalUnitIdentifier(person_id)
+        "Roland Resolved": MergedPersonIdentifier(person_id)
     }
     expected = {
         "identifier": Joker(),

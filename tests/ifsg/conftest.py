@@ -1,16 +1,10 @@
 import pytest
 
 from mex.common.models import (
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
-)
-from mex.common.primary_source.extract import extract_seed_primary_sources
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-    transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -223,21 +217,6 @@ def resource_diseases(settings: Settings) -> list[ResourceMapping]:
             load_yaml(settings.ifsg.mapping_path / "resource_disease_2_mock.yaml")
         ),
     ]
-
-
-@pytest.fixture
-def extracted_primary_sources_ifsg() -> ExtractedPrimarySource:
-    seed_primary_sources = extract_seed_primary_sources()
-    extracted_primary_sources = (
-        transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    )
-    (extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources,
-        "ifsg",
-    )
-    return extracted_primary_source
 
 
 @pytest.fixture

@@ -1,9 +1,7 @@
 import pytest
 
 from mex.common.models import ExtractedPerson, ResourceMapping
-from mex.common.types import (
-    Identifier,
-)
+from mex.common.types import Identifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml

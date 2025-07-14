@@ -8,9 +8,7 @@ from dagster import (
 )
 from dagster._core.test_utils import instance_for_test
 
-from mex.extractors.pipeline.base import (
-    monitor_jobs_sensor,
-)
+from mex.extractors.pipeline.base import monitor_jobs_sensor
 
 
 def test_monitor_skip_if_jobs_are_running() -> None:

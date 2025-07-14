@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from itertools import chain, groupby, tee
 from typing import Any
 
@@ -267,7 +268,12 @@ def extracted_synopse_activities(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     synopse_activity: dict[str, Any],
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    contact_merged_id_by_query_string: Mapping[
+        str,
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier,
+    ],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
     non_child_activities, child_activities = (

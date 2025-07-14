@@ -34,7 +34,7 @@ def filter_and_log_access_platforms(
 
 
 def filter_and_log_synopse_variables(
-    synopse_variables: Generator[SynopseVariable, None, None],
+    synopse_variables: Iterable[SynopseVariable],
     extracted_primary_source: ExtractedPrimarySource,
 ) -> list[SynopseVariable]:
     """Filter out and log variables used for internal context.

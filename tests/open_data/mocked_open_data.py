@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,7 +11,7 @@ from mex.extractors.open_data.models.source import (
 )
 
 
-def create_mocked_parent_response() -> dict:
+def create_mocked_parent_response() -> dict[str, Any]:
     return {
         "hits": {
             "hits": [
@@ -55,7 +56,7 @@ def create_mocked_parent_response() -> dict:
     }
 
 
-def create_mocked_version_response() -> dict:
+def create_mocked_version_response() -> dict[str, Any]:
     return {
         "hits": {
             "hits": [
@@ -106,7 +107,7 @@ def create_mocked_version_response() -> dict:
     }
 
 
-def create_mocked_file_response() -> dict:
+def create_mocked_file_response() -> dict[str, Any]:
     return {
         "entries": [
             {
