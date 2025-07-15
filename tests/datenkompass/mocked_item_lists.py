@@ -164,7 +164,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             herausgeber="Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein.)"
+                "voraussichtlich Ende 2025 verfügbar sein."
             ),
             format="Projekt/Vorhaben",
             identifier="MergedActivityWithBMG2",
@@ -190,7 +190,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             herausgeber="Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein.)"
+                "voraussichtlich Ende 2025 verfügbar sein."
             ),
             format="Projekt/Vorhaben",
             identifier="MergedActivityWithBMG1",

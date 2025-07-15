@@ -115,7 +115,7 @@ def transform_activities(
                 herausgeber="Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein.)"
+                    "voraussichtlich Ende 2025 verfügbar sein."
                 ),
                 format="Projekt/Vorhaben",
                 identifier=item.identifier,
