@@ -25,7 +25,9 @@ def publishable_merged_items() -> ItemsContainer[AnyMergedModel]:
         for item in MERGED_MODEL_CLASSES_BY_NAME
         if item not in settings.publisher.skip_merged_items
     ]
-    merged_items = get_publishable_merged_items(entity_type=allowed_entity_types)
+    merged_items = get_publishable_merged_items(
+        entity_type=allowed_entity_types,
+    )
     return ItemsContainer[AnyMergedModel](items=merged_items)
 
 
@@ -45,7 +47,8 @@ def publishable_merged_persons() -> ItemsContainer[AnyMergedModel]:
         }
     )
     merged_items = get_publishable_merged_items(
-        had_primary_source=allowed_primary_sources
+        had_primary_source=allowed_primary_sources,
+        entity_type=["MergedPerson"],
     )
     return ItemsContainer[AnyMergedModel](items=merged_items)
 
