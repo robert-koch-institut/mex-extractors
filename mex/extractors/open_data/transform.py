@@ -103,7 +103,7 @@ def transform_open_data_persons_not_in_ldap(
     )
 
 
-def lookup_person_in_ldap_and_transfom(
+def lookup_person_in_ldap_and_transform(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_ldap: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
@@ -158,7 +158,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     extracted_persons: dict[MergedPersonIdentifier, ExtractedPerson] = {}
 
     for person in extracted_open_data_creators_contributors:
-        extracted_person = lookup_person_in_ldap_and_transfom(
+        extracted_person = lookup_person_in_ldap_and_transform(
             person, extracted_primary_source_ldap, units_by_identifier_in_primary_source
         ) or transform_open_data_persons_not_in_ldap(
             person,

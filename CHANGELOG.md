@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.37.4] - 2025-07-11
+
+### Changes
+
+- increase zenodo connector patience with more backoff time
+
 ## [0.37.3] - 2025-07-10
 
 ### Changes
