@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - ensure dagster definitions are resolved, for dagster 1.11 compat
+- summarize logging for synopse filtering functions
 
 ### Deprecated
 
