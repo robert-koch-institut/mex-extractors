@@ -67,3 +67,5 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", mocked_fetch_extracted_items
     )
+
+    monkeypatch.setattr(BackendApiConnector, "_check_availability", bool)
