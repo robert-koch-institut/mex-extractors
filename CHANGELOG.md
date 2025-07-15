@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- include persons from allowed primary sources in the publishing pipeline
+
 ### Changes
 
 ### Deprecated
