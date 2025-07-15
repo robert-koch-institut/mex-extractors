@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- summarize logging for synopse filtering functions
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.37.3] - 2025-07-10
 
 ### Changes
+
 - endnote extractor ignores records with 50 or more authors.
 - improve endnote reading from extracted raw record
 
