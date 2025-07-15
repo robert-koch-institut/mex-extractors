@@ -120,6 +120,7 @@ def load_job_definitions() -> Definitions:
         )
         for group_name in extractor_group_names
     ]
+    sensors = []
 
     schedules = [
         ScheduleDefinition(
@@ -147,12 +148,16 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "publisher"},
     )
     jobs.append(publisher_job)
+    sensors.append(monitor_jobs_sensor)
 
-    return Definitions(
+    # Define dagster code location
+    defs = Definitions(
         assets=assets,
         asset_checks=checks,
         jobs=jobs,
         resources=resources,
         schedules=schedules,
-        sensors=[monitor_jobs_sensor],
+        sensors=sensors,
     )
+    defs.get_repository_def().load_all_definitions()
+    return defs
