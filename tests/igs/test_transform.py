@@ -16,7 +16,7 @@ from mex.extractors.igs.transform import (
 
 
 @pytest.mark.usefixtures("mocked_igs")
-def test_transfom_igs_schemas_to_resources(
+def test_transform_igs_schemas_to_resources(
     igs_schemas: dict[str, IGSSchema],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_resource_mapping: ResourceMapping,
