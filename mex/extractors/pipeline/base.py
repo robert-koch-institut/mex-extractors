@@ -96,7 +96,7 @@ def monitor_jobs_sensor(
 
 def load_job_definitions() -> Definitions:
     """Scan the mex package for assets, define jobs and io and return definitions."""
-    import mex
+    import mex  # avoid circular imports
 
     settings = Settings.get()
 
@@ -120,7 +120,6 @@ def load_job_definitions() -> Definitions:
         )
         for group_name in extractor_group_names
     ]
-    sensors = []
 
     schedules = [
         ScheduleDefinition(
@@ -148,16 +147,12 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "publisher"},
     )
     jobs.append(publisher_job)
-    sensors.append(monitor_jobs_sensor)
 
-    # Define dagster code location
-    defs = Definitions(
+    return Definitions(
         assets=assets,
         asset_checks=checks,
         jobs=jobs,
         resources=resources,
         schedules=schedules,
-        sensors=sensors,
+        sensors=[monitor_jobs_sensor],
     )
-    defs.get_repository_def().load_all_definitions()
-    return defs
