@@ -54,7 +54,7 @@ def test_initialization_mocked_auth_fail(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 401
     mocked_response.json = MagicMock(return_value=error_message)
-    mocked_confluence_vvt_session.request = MagicMock(return_value=mocked_response)
+    mocked_confluence_vvt_session.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = ConfluenceVvtConnector.get()
 
@@ -73,7 +73,7 @@ def test_initialization_mocked_server_error(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 500
     mocked_response.json = MagicMock(return_value=error_message)
-    mocked_confluence_vvt_session.request = MagicMock(return_value=mocked_response)
+    mocked_confluence_vvt_session.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = ConfluenceVvtConnector.get()
 
@@ -92,7 +92,7 @@ def test_get_page_by_id(
     page_label = Mock(spec=Response, status_code=200)
     page_label.json.return_value = {"results": [{"name": "vvt"}]}
 
-    connector.session.get = MagicMock(
+    connector.session.get = MagicMock(  # type: ignore[method-assign]
         side_effect=(content for content in [page_label, response])
     )
 
@@ -101,8 +101,9 @@ def test_get_page_by_id(
         "__init__",
         lambda self: setattr(self, "session", connector.session),
     )
-    page = connector.get_page_by_id(["123457"])
+    page = connector.get_page_by_id("123457")
 
+    assert page is not None
     page_dict = page.model_dump(exclude_none=True)
     assert page_dict["id"] == 123457
     assert page_dict["title"] == "Test Title"

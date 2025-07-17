@@ -8,9 +8,7 @@ from dagster import (
 )
 from dagster._core.test_utils import instance_for_test
 
-from mex.extractors.pipeline.base import (
-    monitor_jobs_sensor,
-)
+from mex.extractors.pipeline.base import monitor_jobs_sensor
 
 
 def test_monitor_skip_if_jobs_are_running() -> None:
@@ -20,7 +18,7 @@ def test_monitor_skip_if_jobs_are_running() -> None:
     with instance_for_test() as test_instance:
         # First get_run_records returns a running job
         running_job = MagicMock()
-        test_instance.get_run_records = MagicMock(
+        test_instance.get_run_records = MagicMock(  # type: ignore[method-assign]
             side_effect=[
                 [running_job],  # Other jobs are still running
                 [publisher_run],  # Publisher run
@@ -36,6 +34,7 @@ def test_monitor_skip_if_jobs_are_running() -> None:
             sensor = monitor_jobs_sensor
             result = sensor(context)
 
+            assert isinstance(result, SkipReason)
             assert (
                 result.skip_message
                 == "No publishing because jobs are running at the moment."
@@ -47,7 +46,7 @@ def test_monitor_skip_if_no_complete_run() -> None:
     extractor_run = MagicMock(end_time=900)  # older than publisher
 
     with instance_for_test() as test_instance:
-        test_instance.get_run_records = MagicMock(
+        test_instance.get_run_records = MagicMock(  # type: ignore[method-assign]
             side_effect=[
                 [],  # No running jobs
                 [publisher_run],  # Publisher run
@@ -72,7 +71,7 @@ def test_monitor_triggers_if_new_jobs_finished() -> None:
     extractor_run = MagicMock(end_time=1100)  # newer than publisher
 
     with instance_for_test() as test_instance:
-        test_instance.get_run_records = MagicMock(
+        test_instance.get_run_records = MagicMock(  # type: ignore[method-assign]
             side_effect=[
                 [],  # No running jobs
                 [publisher_run],  # Publisher run

@@ -41,7 +41,7 @@ def confluence_vvt_pages(
     unfiltered_activities = get_page_data_by_id(page_ids)
     return list(
         filter_by_global_rules(
-            extracted_primary_source_confluence_vvt.identifier,
+            extracted_primary_source_confluence_vvt.stableTargetId,
             unfiltered_activities,
         )
     )
