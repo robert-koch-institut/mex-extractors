@@ -105,7 +105,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
 
 
 def mocked_bmg() -> list[MergedOrganization]:
-    """Mock a list of BMG as Merged ORganization items."""
+    """Mock a list of BMG as Merged Organization items."""
     return [
         MergedOrganization(
             officialName=[
