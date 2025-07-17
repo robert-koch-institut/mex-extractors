@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.models import ActivityMapping, ExtractedPerson, ExtractedPrimarySource
+from mex.common.models import ActivityMapping, ExtractedPrimarySource
 from mex.common.organigram.extract import (
     extract_organigram_units,
     get_unit_merged_ids_by_synonyms,
@@ -8,25 +8,9 @@ from mex.common.organigram.extract import (
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-    MergedPrimarySourceIdentifier,
-)
+from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture
-def extracted_person() -> ExtractedPerson:
-    """Return an extracted person with static dummy values."""
-    return ExtractedPerson(
-        email=["fictitiousf@rki.de", "info@rki.de"],
-        familyName="Fictitious",
-        givenName="Frieda",
-        fullName="Dr. Fictitious, Frieda",
-        identifierInPrimarySource="frieda",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
-    )
 
 
 @pytest.fixture

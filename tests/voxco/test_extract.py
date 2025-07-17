@@ -11,9 +11,7 @@ from mex.extractors.voxco.extract import (
 )
 
 
-@pytest.mark.usefixtures(
-    "mocked_drop",
-)
+@pytest.mark.usefixtures("mocked_drop")
 def test_extract_voxco_variables() -> None:
     sources = extract_voxco_variables()
     expected = {
@@ -30,11 +28,9 @@ def test_extract_voxco_variables() -> None:
     assert sources["voxco_data"][0].model_dump() == expected
 
 
-@pytest.mark.usefixtures(
-    "mocked_wikidata",
-)
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_extract_voxco_organizations(
-    voxco_resource_mappings: ResourceMapping,
+    voxco_resource_mappings: list[ResourceMapping],
 ) -> None:
     organizations = extract_voxco_organizations(voxco_resource_mappings)
     assert organizations == {
@@ -42,11 +38,9 @@ def test_extract_voxco_organizations(
     }
 
 
-@pytest.mark.usefixtures(
-    "mocked_ldap",
-)
+@pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_persons_voxco(
-    voxco_resource_mappings: ResourceMapping,
+    voxco_resource_mappings: list[ResourceMapping],
 ) -> None:
     organizations = extract_ldap_persons_voxco(voxco_resource_mappings)
 

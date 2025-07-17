@@ -1,17 +1,18 @@
+from collections.abc import Sequence
+
 from mex.common.logging import logger
 from mex.common.models import AnyMergedModel, MergedActivity
 from mex.extractors.datenkompass.extract import get_merged_items
 
 
-def filter_for_bmg(merged_items: list[AnyMergedModel]) -> list[MergedActivity]:
+def filter_for_bmg(merged_items: Sequence[AnyMergedModel]) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        merged_items: list of merged activities.
+        merged_items: list of merged activities as sequence.
 
     Returns:
         filtered list of merged activities.
-
     """
     bmg_ids = {
         bmg.identifier for bmg in get_merged_items("BMG", ["MergedOrganization"], None)

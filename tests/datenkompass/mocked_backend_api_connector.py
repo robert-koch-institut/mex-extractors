@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 import pytest
 from pytest import MonkeyPatch
 
-import mex.extractors.datenkompass.extract as extract_module
+from mex.common.backend_api import connector
 from mex.common.models import (
     AnyMergedModel,
     AnyPreviewModel,
@@ -31,7 +36,7 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
             limit: int,  # noqa: ARG002
         ) -> PaginatedItemsContainer[AnyMergedModel]:
             if entity_type == ["MergedActivity"]:
-                return_items = [mocked_merged_activities()[1]]
+                return_items: Sequence[AnyMergedModel] = [mocked_merged_activities()[1]]
             elif entity_type == ["MergedBibliographicResource"]:
                 return_items = mocked_merged_bibliographic_resource()
             elif entity_type == ["MergedOrganizationalUnit"]:
@@ -40,8 +45,7 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
                 return_items = [mocked_bmg()[1]]
             elif entity_type == ["MergedPerson"]:
                 return_items = mocked_merged_person()
-            else:
-                return_items = None
+
             return PaginatedItemsContainer[AnyMergedModel](
                 total=3,
                 items=return_items,
@@ -63,4 +67,4 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
     def fake_get() -> FakeConnector:
         return FakeConnector()
 
-    monkeypatch.setattr(extract_module.BackendApiConnector, "get", fake_get)
+    monkeypatch.setattr(connector.BackendApiConnector, "get", fake_get)

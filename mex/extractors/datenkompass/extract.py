@@ -12,9 +12,9 @@ def get_merged_items(
     """Read merged items from backend.
 
     Args:
-        query_string (str): Query string.
-        entity_type (list[str]): List of entity types.
-        had_primary_source (list[str]): List of primary sources.
+        query_string: Query string.
+        entity_type: List of entity types.
+        had_primary_source: List of primary sources.
 
     Returns:
         List of merged items.
@@ -54,7 +54,7 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     """Get the IDs of the relevant primary sources.
 
     Args:
-        relevant_primary_sources (list[str]): List of primary sources.
+        relevant_primary_sources: List of primary sources.
 
     Returns:
         List of IDs of the relevant primary sources.

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
@@ -47,7 +47,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
             / file_id
         ).with_suffix(".json")
         with path.open() as handle:
-            return json.load(handle)
+            return cast("dict[str, Any]", json.load(handle))
 
     monkeypatch.setattr(
         DropApiConnector,
@@ -70,7 +70,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
             encoding="utf-8",
         ) as f:
             mocked_response = MockedResponse()
-            mocked_response.content = f.read()
+            mocked_response.content = f.read().encode("utf-8")
             return mocked_response
 
     monkeypatch.setattr(
