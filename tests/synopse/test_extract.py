@@ -2,7 +2,6 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.models import ActivityMapping, ResourceMapping
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
@@ -56,20 +55,29 @@ def test_extract_variables() -> None:
 def test_extract_study_data() -> None:
     expected_study_data = {
         "beschreibung": "BBCCDD Basiserhebung, Kohorte",
+        "bevoelkerungsabdeckung": None,
         "dateiformat": "sas,stata",
-        "dokumentation": r'"Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation',
+        "dokumentation": '"Z:\\Lorem\\Ipsum\\DATA\\BBCCDD\\Dokumentation',
         "ds_typ_id": 17,
         "erstellungs_datum": "2013",
+        "feld_ende": None,
+        "feld_start": None,
+        "herkunft_der_daten": None,
         "lizenz": None,
+        "datum_der_letzten_aenderung": None,
         "plattform": "Reportserver",
         "plattform_adresse": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
         "rechte": None,
+        "raeumlicher_bezug": None,
         "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
         "studie": "BBCCDD",
         "studien_id": "1234567",
         "titel_datenset": "BBCCDD",
+        "typisches_alter_max": None,
+        "typisches_alter_min": None,
         "version": "V26",
         "zugangsbeschraenkung": "restriktiv",
+        "zweck": None,
     }
     study_data = list(extract_study_data())
     assert len(study_data) == 6
@@ -104,11 +112,8 @@ def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_synopse_contact(
-    synopse_resource: ResourceMapping,
-    synopse_activity: ActivityMapping,
-) -> None:
-    actor = extract_synopse_contact(synopse_resource, synopse_activity)
+def test_extract_synopse_contact() -> None:
+    actor = extract_synopse_contact()
     expected = {
         "sAMAccountName": "ContactC",
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),

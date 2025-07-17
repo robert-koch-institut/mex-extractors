@@ -6,10 +6,13 @@ accessRestriction:
       - forValues:
           - restriktiv
         setValues: https://mex.rki.de/item/access-restriction-2
+      - forValues:
+          - open
+        setValues: https://mex.rki.de/item/access-restriction-1 # open
 contact:
   - mappingRules:
       - forValues:
-          - C1
+          - "17"
       - rule:
 hadPrimarySource:
   - mappingRules:

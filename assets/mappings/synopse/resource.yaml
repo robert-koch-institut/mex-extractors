@@ -11,10 +11,13 @@ accessRestriction:
       - forValues:
           - "restriktiv"
         setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+      - forValues:
+          - open
+        setValues: https://mex.rki.de/item/access-restriction-1 # open
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - "17"
       - rule:
 contributingUnit:
   - fieldInPrimarySource:

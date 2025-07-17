@@ -96,18 +96,6 @@ def synopse_variables(
 
 
 @asset(group_name="synopse")
-def synopse_variables_by_study_id(
-    synopse_variables: list[SynopseVariable],
-) -> dict[int, list[SynopseVariable]]:
-    """Convert Synopse data to synopse_variables_by_study_id."""
-    sorted_variables = sorted(synopse_variables, key=lambda v: v.studie_id)
-    return {
-        studie_id: list(variables)
-        for studie_id, variables in groupby(sorted_variables, key=lambda v: v.studie_id)
-    }
-
-
-@asset(group_name="synopse")
 def synopse_variables_by_thema(
     synopse_variables: list[SynopseVariable],
 ) -> dict[str, list[SynopseVariable]]:
@@ -163,25 +151,17 @@ def synopse_resource() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def contact_merged_id_by_query_string(
-    synopse_activity: dict[str, Any],
-    synopse_resource: dict[str, Any],
+def contact_merged_id(
     extracted_primary_source_ldap: ExtractedPrimarySource,
-) -> dict[str, MergedContactPointIdentifier]:
+) -> MergedContactPointIdentifier:
     """Get lookup of ldap functional accounts by email."""
-    synopse_contact = extract_synopse_contact(
-        ResourceMapping.model_validate(synopse_resource),
-        ActivityMapping.model_validate(synopse_activity),
-    )
+    synopse_contact = extract_synopse_contact()
     contact_points = transform_ldap_actors_to_mex_contact_points(
         synopse_contact,
         extracted_primary_source_ldap,
     )
     load(contact_points)
-    return {
-        contact_point.email[0].lower(): contact_point.stableTargetId
-        for contact_point in contact_points
-    }
+    return contact_points[0].stableTargetId
 
 
 @asset(group_name="synopse")
@@ -189,14 +169,15 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_synopse_access_platforms: list[ExtractedAccessPlatform],
     extracted_synopse_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    contact_merged_id: MergedContactPointIdentifier,
+    extracted_synopse_contributor_stable_target_ids_by_name: dict[
+        str, list[MergedPersonIdentifier]
+    ],
 ) -> dict[str, list[MergedResourceIdentifier]]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
@@ -205,14 +186,13 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     transformed_study_data_resources = transform_synopse_data_to_mex_resources(
         synopse_studies,
         synopse_projects,
-        synopse_variables_by_study_id,
         extracted_synopse_activities,
-        extracted_synopse_access_platforms,
         extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
-        contact_merged_id_by_query_string,
+        contact_merged_id,
+        extracted_synopse_contributor_stable_target_ids_by_name,
     )
     transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
     load(transformed_study_data_resource_gens[0])
@@ -267,7 +247,6 @@ def extracted_synopse_activities(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     synopse_activity: dict[str, Any],
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
     non_child_activities, child_activities = (
@@ -278,7 +257,6 @@ def extracted_synopse_activities(  # noqa: PLR0913
             unit_stable_target_ids_by_synonym,
             ActivityMapping.model_validate(synopse_activity),
             synopse_organization_ids_by_query_string,
-            contact_merged_id_by_query_string,
         )
     )
 
