@@ -1,9 +1,7 @@
 from dagster import asset
 
 from mex.common.exceptions import MExError
-from mex.common.models import (
-    ExtractedOrganization,
-)
+from mex.common.models import ExtractedOrganization
 from mex.extractors.wikidata.helpers import (
     get_wikidata_organization_by_id,
     get_wikidata_organization_ids_by_label,

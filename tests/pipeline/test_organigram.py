@@ -1,7 +1,12 @@
+from typing import cast
+
 import pytest
 
-from mex.common.models import ExtractedPrimarySource
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.extractors.pipeline.organigram import (
     extracted_organizational_units,
     unit_stable_target_ids_by_synonym,
@@ -20,7 +25,10 @@ def extracted_primary_source_organigram() -> ExtractedPrimarySource:
 def test_extracted_organizational_units(
     extracted_primary_source_organigram: ExtractedPrimarySource,
 ) -> None:
-    units = extracted_organizational_units(extracted_primary_source_organigram)
+    units = cast(
+        "list[ExtractedOrganizationalUnit]",
+        extracted_organizational_units(extracted_primary_source_organigram),
+    )
     assert [u.identifierInPrimarySource for u in units] == [
         "child-unit",
         "parent-unit",
@@ -31,8 +39,11 @@ def test_extracted_organizational_units(
 def test_unit_stable_target_ids_by_synonym(
     extracted_primary_source_organigram: ExtractedPrimarySource,
 ) -> None:
-    units_by_synonym = unit_stable_target_ids_by_synonym(
-        extracted_organizational_units(extracted_primary_source_organigram)
+    units_by_synonym = cast(
+        "dict[str, MergedOrganizationalUnitIdentifier]",
+        unit_stable_target_ids_by_synonym(
+            extracted_organizational_units(extracted_primary_source_organigram)
+        ),
     )
     assert sorted(units_by_synonym) == [
         "Abteilung",

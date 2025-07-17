@@ -9,14 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- transform mandatory fields of IGS access platform and resources
+- enable mypy linting for tests folder
+- include persons from allowed primary sources in the publishing pipeline
 - publisher for datenkompass
 
 ### Changes
 
+- summarize logging for synopse filtering functions
+
 ### Deprecated
 
 ### Removed
+
+- remove unused pytest fixtures
 
 ### Fixed
 

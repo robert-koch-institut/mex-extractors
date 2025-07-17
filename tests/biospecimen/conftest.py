@@ -1,9 +1,7 @@
 import pytest
 
 from mex.common.models import ExtractedPerson, ResourceMapping
-from mex.common.types import (
-    Identifier,
-)
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
@@ -53,7 +51,7 @@ def mex_persons() -> list[ExtractedPerson]:
     """Mock and extracted person."""
     return [
         ExtractedPerson(
-            hadPrimarySource=Identifier.generate(seed=42),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="test_id",
             email=["test_person@email.de"],
             familyName=["Müller"],

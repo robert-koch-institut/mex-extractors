@@ -86,7 +86,9 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
-        "contact": [str(extracted_mex_functional_units_grippeweb["contactc@rki.de"])],
+        "contact": [
+            str(extracted_mex_functional_units_grippeweb[Email("contactc@rki.de")])
+        ],
         "contributingUnit": [str(unit_stable_target_ids_by_synonym["C1"])],
         "contributor": [str(extracted_mex_persons_grippeweb[0].stableTargetId)],
         "created": "2011",

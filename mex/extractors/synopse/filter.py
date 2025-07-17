@@ -1,7 +1,7 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
+from mex.common.logging import logger
 from mex.common.models import ExtractedPrimarySource
-from mex.extractors.logging import log_filter
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.variable import SynopseVariable
 
@@ -9,7 +9,7 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 def filter_and_log_access_platforms(
     synopse_studies: Iterable[SynopseStudy],
     extracted_primary_source: ExtractedPrimarySource,
-) -> Generator[SynopseStudy, None, None]:
+) -> list[SynopseStudy]:
     """Filter out and log studies that cannot be accessed via an internal network drive.
 
     Args:
@@ -17,24 +17,31 @@ def filter_and_log_access_platforms(
         extracted_primary_source: primary source for report server platform
 
     Returns:
-        Generator for filtered synopse studies
+        List of filtered synopse studies
     """
+    filtered_studies: list[SynopseStudy] = []
+    skipped_study_ids: list[str] = []
     for study in synopse_studies:
-        if study.plattform_adresse not in [
+        if study.plattform_adresse in [
             "interne Datennutzung",
             "noch nicht erstellt",
         ]:
-            yield study
+            skipped_study_ids.append(study.plattform_adresse)
         else:
-            log_filter(
-                study.plattform_adresse,
-                extracted_primary_source.stableTargetId,
-                "Platform address cannot be accessed via an internal network drive.",
-            )
+            filtered_studies.append(study)
+    logger.info(
+        "Skipped studies id sample: %s, "
+        "had_primary_source: %s, "
+        "amount of skipped studies: %s",
+        skipped_study_ids[:10],
+        extracted_primary_source.stableTargetId,
+        len(skipped_study_ids),
+    )
+    return filtered_studies
 
 
 def filter_and_log_synopse_variables(
-    synopse_variables: Generator[SynopseVariable, None, None],
+    synopse_variables: Iterable[SynopseVariable],
     extracted_primary_source: ExtractedPrimarySource,
 ) -> list[SynopseVariable]:
     """Filter out and log variables used for internal context.
@@ -47,13 +54,18 @@ def filter_and_log_synopse_variables(
         list of filtered synopse variables
     """
     filtered_variables: list[SynopseVariable] = []
+    skipped_variable_ids: list[str] = []
     for variable in synopse_variables:
         if variable.int_var:
-            log_filter(
-                variable.synopse_id,
-                extracted_primary_source.stableTargetId,
-                "variable used for internal context",
-            )
+            skipped_variable_ids.append(variable.synopse_id)
         else:
             filtered_variables.append(variable)
+    logger.info(
+        "Skipped variable id sample: %s, "
+        "had_primary_source: %s, "
+        "amount of skipped variables: %s",
+        skipped_variable_ids[:10],
+        extracted_primary_source.stableTargetId,
+        len(skipped_variable_ids),
+    )
     return filtered_variables
