@@ -8,7 +8,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedPerson,
     ExtractedPrimarySource,
     ResourceMapping,
 )
@@ -18,7 +17,6 @@ from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.types import (
-    Identifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
@@ -225,16 +223,3 @@ def unit_stable_target_ids_by_synonym() -> dict[
         "FG 99": MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK"),
         "FG99": MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK"),
     }
-
-
-@pytest.fixture
-def extracted_person() -> ExtractedPerson:
-    """Return an extracted person with static dummy values."""
-    return ExtractedPerson(
-        email=["fictitiousf@rki.de", "info@rki.de"],
-        familyName="Fictitious",
-        givenName="Frieda",
-        fullName="Dr. Fictitious, Frieda",
-        identifierInPrimarySource="frieda",
-        hadPrimarySource=Identifier.generate(seed=40),
-    )

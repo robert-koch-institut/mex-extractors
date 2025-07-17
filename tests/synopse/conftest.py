@@ -10,12 +10,10 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     ExtractedPrimarySource,
-    ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
-    AccessRestriction,
     Identifier,
     Link,
     MergedOrganizationIdentifier,
@@ -27,7 +25,6 @@ from mex.common.types import (
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
 from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
@@ -272,46 +269,6 @@ def synopse_studies() -> list[SynopseStudy]:
 
 
 @pytest.fixture
-def created_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
-    """Return a lookup from study ID to created string."""
-    return {
-        s.studien_id: s.erstellungs_datum
-        for s in synopse_studies
-        if s.erstellungs_datum
-    }
-
-
-@pytest.fixture
-def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
-    """Return a lookup from study ID to description string."""
-    return {s.studien_id: s.beschreibung for s in synopse_studies if s.beschreibung}
-
-
-@pytest.fixture
-def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
-    """Return a lookup from study ID to documentation Link."""
-    return {s.studien_id: s.dokumentation for s in synopse_studies if s.dokumentation}
-
-
-@pytest.fixture
-def keyword_text_by_study_id(
-    synopse_studies: list[SynopseStudy],
-) -> dict[str, list[Text]]:
-    """Return a lookup from study ID to list of keyword Text."""
-    return {
-        s.studien_id: s.schlagworte_themen
-        for s in synopse_studies
-        if s.schlagworte_themen
-    }
-
-
-@pytest.fixture
-def synopse_study(synopse_studies: list[SynopseStudy]) -> SynopseStudy:
-    """Return a Synopse Study."""
-    return synopse_studies[0]
-
-
-@pytest.fixture
 def synopse_organization_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:
@@ -422,107 +379,6 @@ def extracted_activity(
 
 
 @pytest.fixture
-def extracted_resources() -> list[ExtractedResource]:
-    """Return an list of extracted resources."""
-    return [
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="23456-17-set1",
-            theme="https://mex.rki.de/item/theme-11",
-            title="Found in overview",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="12345-12-set2",
-            theme="https://mex.rki.de/item/theme-11",
-            title="The other one",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="12345-13-set13",
-            theme="https://mex.rki.de/item/theme-11",
-            title="The other one",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-    ]
-
-
-@pytest.fixture
-def synopse_overviews() -> list[SynopseStudyOverview]:
-    """Return list of Synopse Overviews."""
-    return [
-        SynopseStudyOverview(
-            studien_id="23456",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="23456",
-        ),
-        SynopseStudyOverview(
-            studien_id="23456",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="5",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="12345",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="1",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=13,
-            titel_datenset="set13",
-            synopse_id="1",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="2",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="3",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=None,
-            titel_datenset="set2",
-            synopse_id="12345678901111",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="4",
-        ),
-    ]
-
-
-@pytest.fixture
 def resource_ids_by_synopse_id() -> dict[str, list[MergedResourceIdentifier]]:
     """Return a lookup from study ID to list of resource IDs."""
     return {
@@ -536,9 +392,9 @@ def resource_ids_by_synopse_id() -> dict[str, list[MergedResourceIdentifier]]:
 
 @pytest.fixture
 def extracted_variable_groups(
-    synopse_variables_by_thema: dict[int, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
     return list(

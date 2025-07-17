@@ -7,9 +7,9 @@ from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.variable import SynopseVariable
 
 
-def test_filter_and_log_access_plattforms(
+def test_filter_and_log_access_platforms(
     synopse_studies: list[SynopseStudy],
-    extracted_primary_sources: list[ExtractedPrimarySource],
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     assert len(list(synopse_studies)) == 6
     synopse_studies_filtered = filter_and_log_access_platforms(
@@ -20,7 +20,7 @@ def test_filter_and_log_access_plattforms(
 
 def test_filter_and_log_synopse_variables(
     synopse_variables: list[SynopseVariable],
-    extracted_primary_sources: list[ExtractedPrimarySource],
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     assert len(list(synopse_variables)) == 6
     synopse_variables_filtered = filter_and_log_synopse_variables(

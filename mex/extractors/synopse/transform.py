@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Mapping
 from itertools import groupby, tee
 from pathlib import PureWindowsPath
 from types import NoneType
@@ -461,7 +461,7 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
-        contact_merged_id_by_query_string: contact person lookup by email
+        contact_merged_id_by_query_string: contact merged identifier lookup by email
 
     Returns:
         tuple of non-child and child extracted activities
@@ -532,7 +532,7 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
-        contact_merged_id_by_query_string: contact person lookup by email
+        contact_merged_id_by_query_string: contact merged identifier lookup by email
 
     Returns:
         extracted activity
