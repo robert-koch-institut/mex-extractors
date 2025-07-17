@@ -5,7 +5,6 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPActor, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
-from mex.common.models import ActivityMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
@@ -95,30 +94,14 @@ def extract_synopse_project_contributors(
                 yield LDAPPersonWithQuery(person=persons[0], query=names)
 
 
-def extract_synopse_contact(
-    synopse_resource: ResourceMapping,
-    synopse_activity: ActivityMapping,
-) -> list[LDAPActor]:
+def extract_synopse_contact() -> list[LDAPActor]:
     """Extract LDAP persons for Synopse project contact.
-
-    Args:
-        synopse_resource: Synopse resource default values
-        synopse_activity: Synopse activity default values
 
     Returns:
         contact LDAP persons
     """
     ldap = LDAPConnector.get()
-    contact_list: list[str] = []
-    if synopse_resource.contact[0].mappingRules[0].forValues:
-        contact_list.extend(synopse_resource.contact[0].mappingRules[0].forValues)
-    if synopse_activity.contact[0].mappingRules[0].forValues:
-        contact_list.extend(synopse_activity.contact[0].mappingRules[0].forValues)
-    return [
-        account
-        for mail in contact_list
-        for account in ldap.get_functional_accounts(mail=mail)
-    ]
+    return ldap.get_functional_accounts(mail="fdz@rki.de")
 
 
 @watch()

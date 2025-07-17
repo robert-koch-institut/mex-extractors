@@ -6,7 +6,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
@@ -18,6 +17,7 @@ from mex.common.types import (
     Identifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     TemporalEntity,
     TextLanguage,
 )
@@ -343,32 +343,19 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activity: ExtractedActivity,
     extracted_access_platforms: list[ExtractedAccessPlatform],
     extracted_organization: list[ExtractedOrganization],
     synopse_resource: ResourceMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {"C1": Identifier.generate(seed=234)}
-    access_platform_by_identifier_in_primary_source = {
-        p.identifierInPrimarySource: p for p in extracted_access_platforms
-    }
     expected_resource = {
-        "accessPlatform": [
-            str(
-                access_platform_by_identifier_in_primary_source[
-                    synopse_studies[0].plattform_adresse
-                ].stableTargetId
-            )
-        ],
-        "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "contact": [str(Identifier.generate(seed=235))],
-        "contributor": [str(extracted_activity.involvedPerson[0])],
-        "created": "2022",
+        "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
+        "contact": ["bFQoRhcVH5DHYd", "bFQoRhcVH5DHYc"],
+        "contributor": [str(MergedPersonIdentifier.generate(seed=42))],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
-        "documentation": [{"url": "file:///Z:/foo/bar"}],
         "hadPrimarySource": str(
             extracted_primary_sources["report-server"].stableTargetId
         ),
@@ -378,14 +365,12 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
                 "value": "Niemand darf irgendwas.",
             },
         ],
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifier": Joker(),
         "identifierInPrimarySource": ("12345-Titel-17"),
         "keyword": [
             {"language": TextLanguage.DE, "value": "Alkohol"},
             {"language": TextLanguage.DE, "value": "Alter und Geschlecht"},
             {"language": TextLanguage.DE, "value": "Drogen"},
-            {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": [str(extracted_organization[0].stableTargetId)],
@@ -396,7 +381,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "resourceTypeSpecific": [
             {
-                "language": TextLanguage.EN,
+                "language": TextLanguage.DE,
                 "value": "Monitoring-Studie",
             },
         ],
@@ -406,9 +391,8 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
                 "value": "Lorem",
             },
         ],
-        "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stableTargetId": Joker(),
-        "temporal": "2000 - 2013",
+        "temporal": "2000-2013",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
         "unitInCharge": [str(Identifier.generate(seed=234))],
@@ -418,14 +402,14 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         transform_synopse_data_to_mex_resources(
             [synopse_studies[0]],
             [synopse_project],
-            synopse_variables_by_study_id,
             [extracted_activity],
             extracted_access_platforms,
             extracted_primary_sources["report-server"],
             unit_merged_ids_by_synonym,
             extracted_organization[0],
             synopse_resource,
-            {"C1": [Identifier.generate(seed=235)]},
+            Identifier.generate(seed=235),
+            {"Carla Contact": MergedPersonIdentifier.generate(seed=42)},
         )
     )
     assert len(resources) == 1
@@ -436,19 +420,17 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
 def test_transform_synopse_projects_to_mex_activities(
     synopse_projects: list[SynopseProject],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_person: ExtractedPerson,
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
 ) -> None:
     synopse_project = synopse_projects[0]
-    contact_merged_ids_by_emails = {"info@rki.de": extracted_person.stableTargetId}
     contributor_merged_ids_by_name = {"Carla Contact": [Identifier.generate(seed=12)]}
     unit_merged_ids_by_synonym = {"C1": Identifier.generate(seed=13)}
 
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_der_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": [str(extracted_person.stableTargetId)],
+        "contact": ["bFQoRhcVH5DHUD"],
         "documentation": [
             {
                 "url": "file:///Z:/Projekte/Dokumentation",
@@ -474,7 +456,7 @@ def test_transform_synopse_projects_to_mex_activities(
         ],
         "stableTargetId": Joker(),
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],
-        "succeeds": Joker(),
+        "succeeds": [Joker()],
         "theme": ["https://mex.rki.de/item/theme-36"],
         "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
     }
@@ -487,7 +469,6 @@ def test_transform_synopse_projects_to_mex_activities(
             unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_organization_ids_by_query_string,
-            contact_merged_ids_by_emails,
         )
     )
 
