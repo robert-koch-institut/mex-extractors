@@ -11,7 +11,6 @@ def filter_for_bmg(merged_items: list[AnyMergedModel]) -> list[MergedActivity]:
 
     Returns:
         filtered list of merged activities.
-
     """
     bmg_ids = {
         bmg.identifier for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
