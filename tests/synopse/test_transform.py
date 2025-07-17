@@ -429,7 +429,6 @@ def test_transform_synopse_projects_to_mex_activities(
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
 ) -> None:
     synopse_project = synopse_projects[0]
-    contact_merged_ids_by_emails = {"info@rki.de": extracted_person.stableTargetId}
     contributor_merged_ids_by_name = {
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
