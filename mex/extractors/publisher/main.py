@@ -25,12 +25,13 @@ from mex.extractors.sinks.s3 import S3Sink
 CONTACT_ENTITY_TYPES = [
     "MergedPerson",
     "MergedContactPoint",
-    "MergedPrimarySource",
+    "MergedOrganizationalUnit",
 ]
 
 
 @asset(group_name="publisher")
 def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
+    """All items with entity types that are neither a contact nor skipped."""
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
@@ -68,6 +69,7 @@ def publishable_merged_persons() -> ItemsContainer[AnyMergedModel]:
 
 @asset(group_name="publisher")
 def publishable_contacts_without_persons() -> ItemsContainer[AnyMergedModel]:
+    """All items with contact entity types except Persons: so ContactPoint and Unit."""
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
@@ -111,6 +113,7 @@ def publishable_items(
     publishable_contacts_without_persons: ItemsContainer[AnyMergedModel],
     mex_contact_point_identifier: MergedContactPointIdentifier,
 ) -> ItemsContainer[AnyMergedModel]:
+    """All publishable items with updated contact references, where needed."""
     allowed_contacts = {
         person.identifier
         for person in publishable_merged_persons.items
