@@ -36,6 +36,9 @@
         "identifier": "ldap"
     },
     {
+        "identifier": "nokeda"
+    },
+    {
         "identifier": "odk"
     },
     {
@@ -45,13 +48,10 @@
         "identifier": "organigram"
     },
     {
-        "identifier": "seq-repo"
-    },
-    {
-        "identifier": "nokeda"
-    },
-    {
         "identifier": "report-server"
+    },
+    {
+        "identifier": "seq-repo"
     },
     {
         "identifier": "voxco"
