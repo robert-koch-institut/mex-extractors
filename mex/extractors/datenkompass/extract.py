@@ -54,7 +54,7 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     """Get the IDs of the relevant primary sources.
 
     Args:
-        relevant_primary_sources (list[str]): List of primary sources.
+        relevant_primary_sources: List of primary sources.
 
     Returns:
         List of IDs of the relevant primary sources.
