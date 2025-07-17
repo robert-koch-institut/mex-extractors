@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - summarize logging for synopse filtering functions
+- filter out unpublished persons from contact fields and set mex@rki.de as fallback
 
 ### Deprecated
 

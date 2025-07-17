@@ -5,7 +5,7 @@ from dagster import asset
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.cli import entrypoint
-from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
+from mex.common.exceptions import MExError
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -22,12 +22,6 @@ from mex.extractors.publisher.transform import update_contact_where_needed
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
 
-CONTACT_ENTITY_TYPES = [
-    "MergedPerson",
-    "MergedContactPoint",
-    "MergedOrganizationalUnit",
-]
-
 
 @asset(group_name="publisher")
 def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
@@ -37,7 +31,7 @@ def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
         entity_type
         for entity_type in MERGED_MODEL_CLASSES_BY_NAME
         if entity_type not in settings.publisher.skip_entity_types
-        and entity_type not in CONTACT_ENTITY_TYPES
+        and entity_type not in ["MergedPerson"]
     ]
     merged_items = get_publishable_merged_items(
         entity_type=allowed_entity_types,
@@ -46,16 +40,20 @@ def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publishable_merged_persons() -> ItemsContainer[AnyMergedModel]:
-    """Get merged persons from green-lit primary sources.."""
+def publishable_persons() -> ItemsContainer[AnyMergedModel]:
+    """Get publishable persons from green-lit primary sources."""
     settings = Settings.get()
     connector = BackendApiConnector.get()
+    limit = 100
+    primary_sources = connector.fetch_extracted_items(
+        None, None, ["ExtractedPrimarySource"], 0, limit
+    )
+    if primary_sources.total > limit:
+        raise NotImplementedError
     allowed_primary_sources = sorted(
         {
             str(primary_source.stableTargetId)
-            for primary_source in connector.fetch_extracted_items(
-                None, None, ["ExtractedPrimarySource"], 0, 100
-            ).items
+            for primary_source in primary_sources.items
             if primary_source.identifierInPrimarySource
             in settings.publisher.allowed_person_primary_sources
         }
@@ -68,13 +66,13 @@ def publishable_merged_persons() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publishable_contacts_without_persons() -> ItemsContainer[AnyMergedModel]:
-    """All items with contact entity types except Persons: so ContactPoint and Unit."""
+def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
+    """Get publishable contact points and organizational units."""
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
         for entity_type in MERGED_MODEL_CLASSES_BY_NAME
-        if entity_type in CONTACT_ENTITY_TYPES
+        if entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
         and entity_type not in settings.publisher.skip_entity_types
     ]
     merged_items = get_publishable_merged_items(
@@ -97,27 +95,24 @@ def mex_contact_point_identifier() -> MergedContactPointIdentifier:
             1,
         ),
     )
-    if response.total == 0:
-        msg = f"No ContactPoint for {MEX_EMAIL} found."
-        raise EmptySearchResultError(msg)
-    if response.total >= 1:
+    if response.total != 0:
         msg = f"Found {response.total} ContactPoints for {MEX_EMAIL}, expected 1."
-        raise FoundMoreThanOneError(msg)
+        raise MExError(msg)
     return response.items[0].identifier
 
 
 @asset(group_name="publisher")
 def publishable_items(
     publishable_items_without_contacts: ItemsContainer[AnyMergedModel],
-    publishable_merged_persons: ItemsContainer[AnyMergedModel],
-    publishable_contacts_without_persons: ItemsContainer[AnyMergedModel],
+    publishable_persons: ItemsContainer[AnyMergedModel],
+    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
     mex_contact_point_identifier: MergedContactPointIdentifier,
 ) -> ItemsContainer[AnyMergedModel]:
     """All publishable items with updated contact references, where needed."""
     allowed_contacts = {
         person.identifier
-        for person in publishable_merged_persons.items
-        + publishable_contacts_without_persons.items
+        for person in publishable_persons.items
+        + publishable_contact_points_and_units.items
     }
     fallback_contacts = [
         mex_contact_point_identifier,
@@ -126,8 +121,8 @@ def publishable_items(
         update_contact_where_needed(item, allowed_contacts, fallback_contacts)
     return ItemsContainer[AnyMergedModel](
         items=publishable_items_without_contacts.items
-        + publishable_merged_persons.items
-        + publishable_contacts_without_persons.items
+        + publishable_persons.items
+        + publishable_contact_points_and_units.items
     )
 
 
