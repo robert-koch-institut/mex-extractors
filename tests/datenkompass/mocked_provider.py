@@ -3,9 +3,6 @@ from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.extract as extract_module
 from mex.common.identity import Identity
-from mex.common.models import (
-    MergedActivity,
-)
 from tests.datenkompass.mocked_item_lists import (
     mocked_merged_primary_sources,
 )
@@ -17,7 +14,7 @@ def mocked_provider(monkeypatch: MonkeyPatch) -> None:
     mocked_merged_ps = mocked_merged_primary_sources()
 
     class FakeProvider:
-        def fetch(self, stable_target_id: str) -> list[MergedActivity]:
+        def fetch(self, stable_target_id: str) -> list[Identity]:
             if stable_target_id == mocked_merged_ps[0].identifier:
                 return [
                     Identity(

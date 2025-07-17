@@ -1,7 +1,7 @@
 import pytest
 from pytest import MonkeyPatch
 
-import mex.extractors.datenkompass.extract as extract_module
+from mex.common.backend_api import connector
 from mex.common.models import (
     AnyMergedModel,
     PaginatedItemsContainer,
@@ -28,15 +28,13 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
             limit: int,  # noqa: ARG002
         ) -> PaginatedItemsContainer[AnyMergedModel]:
             if entity_type == ["MergedActivity"]:
-                return_items = mocked_merged_activities()[1]
+                return_items: AnyMergedModel = mocked_merged_activities()[1]
             elif entity_type == ["MergedOrganizationalUnit"]:
                 return_items = mocked_merged_organizational_units()[0]
             elif entity_type == ["MergedPrimarySource"]:
                 return_items = mocked_merged_primary_sources()[1]
             elif entity_type == ["MergedOrganization"]:
                 return_items = mocked_bmg()[1]
-            else:
-                return_items = None
 
             return PaginatedItemsContainer[AnyMergedModel](
                 total=3,
@@ -46,4 +44,4 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
     def fake_get() -> FakeConnector:
         return FakeConnector()
 
-    monkeypatch.setattr(extract_module.BackendApiConnector, "get", fake_get)
+    monkeypatch.setattr(connector.BackendApiConnector, "get", fake_get)
