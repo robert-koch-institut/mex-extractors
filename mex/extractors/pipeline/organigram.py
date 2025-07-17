@@ -1,6 +1,7 @@
 from dagster import asset
 
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import (
     extract_organigram_units,
     get_unit_merged_ids_by_synonyms,
@@ -16,12 +17,15 @@ from mex.extractors.sorters import topological_sort
 @asset(group_name="default")
 def extracted_organizational_units(
     extracted_primary_source_organigram: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedOrganizationalUnit]:
     """Extract organizational units."""
     organigram_units = extract_organigram_units()
     mex_organizational_units = transform_organigram_units_to_organizational_units(
         organigram_units,
         extracted_primary_source_organigram,
+        extracted_organization_rki
+
     )
     topological_sort(
         mex_organizational_units,

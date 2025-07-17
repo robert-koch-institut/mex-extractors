@@ -11,13 +11,12 @@ from mex.common.models import (
     PersonMapping,
     ResourceMapping,
 )
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import (
-    Identifier,
-)
+from mex.common.types import Identifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -142,10 +141,12 @@ def mocked_person_mapping() -> PersonMapping:
 @pytest.fixture
 def mocked_extracted_organizational_units(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    rki_organization: ExtractedOrganization,
 ) -> list[ExtractedOrganizationalUnit]:
     return transform_organigram_units_to_organizational_units(
         extract_organigram_units(),
         extracted_primary_sources["organigram"],
+        rki_organization
     )
 
 
