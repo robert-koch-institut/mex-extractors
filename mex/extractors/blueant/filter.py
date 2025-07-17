@@ -1,7 +1,7 @@
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
-from mex.common.types import Identifier
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.utils import contains_any
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import log_filter
@@ -10,7 +10,8 @@ from mex.extractors.settings import Settings
 
 @watch()
 def filter_and_log_blueant_sources(
-    sources: Generator[BlueAntSource, None, None], primary_source_id: Identifier
+    sources: Iterable[BlueAntSource],
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> Generator[BlueAntSource, None, None]:
     """Filter Blueant sources and log filtered sources.
 
@@ -27,7 +28,8 @@ def filter_and_log_blueant_sources(
 
 
 def filter_and_log_blueant_source(
-    source: BlueAntSource, primary_source_id: Identifier
+    source: BlueAntSource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> bool:
     """Filter a BlueantSource according to settings and log filtering.
 

@@ -9,9 +9,7 @@ from mex.common.models import (
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.endnote.extract import (
-    extract_endnote_records,
-)
+from mex.extractors.endnote.extract import extract_endnote_records
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,

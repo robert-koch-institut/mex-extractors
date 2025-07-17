@@ -1,6 +1,6 @@
 from collections.abc import Generator, Sequence
 
-from mex.common.types import Identifier, TemporalEntity
+from mex.common.types import MergedPrimarySourceIdentifier, TemporalEntity
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.models import BaseRawData
 
@@ -85,19 +85,31 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
 def test_filters_skips_partners_mocked() -> None:
     """Test global filter for skipping partners."""
     source_gen = mocked_base_raw_data_source()
-    sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
+    sources = list(
+        filter_by_global_rules(
+            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
+        )
+    )
     assert len(sources) == 3
 
 
 def test_filters_skips_units_mocked() -> None:
     """Test global filter for skipping units."""
     source_gen = mocked_base_raw_data_source()
-    sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
+    sources = list(
+        filter_by_global_rules(
+            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
+        )
+    )
     assert len(sources) == 3
 
 
 def test_filters_skips_years_mocked() -> None:
     """Test global filter for skipping years before."""
     source_gen = mocked_base_raw_data_source()
-    sources = list(filter_by_global_rules(Identifier.generate(seed=42), source_gen))
+    sources = list(
+        filter_by_global_rules(
+            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
+        )
+    )
     assert len(sources) == 3

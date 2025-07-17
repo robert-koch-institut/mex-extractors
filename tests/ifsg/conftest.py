@@ -1,16 +1,10 @@
 import pytest
 
 from mex.common.models import (
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
-)
-from mex.common.primary_source.extract import extract_seed_primary_sources
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-    transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -43,23 +37,15 @@ def unit_stable_target_ids() -> dict[str, MergedOrganizationalUnitIdentifier]:
 @pytest.fixture
 def meta_catalogue2item() -> list[MetaCatalogue2Item]:
     return [
-        MetaCatalogue2Item(IdCatalogue2Item=0, IdCatalogue=0, IdItem=0),
-        MetaCatalogue2Item(IdCatalogue2Item=0, IdCatalogue=0, IdItem=1),
-        MetaCatalogue2Item(
-            IdCatalogue2Item=1,
-            IdCatalogue=1001,
-            IdItem=1001,
-        ),
+        MetaCatalogue2Item(id_catalogue2item=0, id_catalogue=0, id_item=0),
+        MetaCatalogue2Item(id_catalogue2item=0, id_catalogue=0, id_item=1),
+        MetaCatalogue2Item(id_catalogue2item=1, id_catalogue=1001, id_item=1001),
     ]
 
 
 @pytest.fixture
 def meta_catalogue2item2schema() -> list[MetaCatalogue2Item2Schema]:
-    return [
-        MetaCatalogue2Item2Schema(
-            IdCatalogue2Item=0,
-        )
-    ]
+    return [MetaCatalogue2Item2Schema(id_catalogue2item=0)]
 
 
 @pytest.fixture
@@ -97,17 +83,19 @@ def meta_type() -> list[MetaType]:
 def meta_item() -> list[MetaItem]:
     return [
         MetaItem(
-            IdItem=0,
-            ItemName="NullItem",
-            ItemNameEN=None,
+            id_item=0,
+            item_name="NullItem",
+            item_name_en=None,
         ),
         MetaItem(
-            IdItem=1,
-            ItemName="NullItem2",
-            ItemNameEN=None,
+            id_item=1,
+            item_name="NullItem2",
+            item_name_en=None,
         ),
         MetaItem(
-            IdItem=1001, ItemName="-nicht erhoben-", ItemNameEN="- not enquired -,"
+            id_item=1001,
+            item_name="-nicht erhoben-",
+            item_name_en="- not enquired -,",
         ),
     ]
 
@@ -116,49 +104,49 @@ def meta_item() -> list[MetaItem]:
 def meta_disease() -> list[MetaDisease]:
     return [
         MetaDisease(
-            IdType=101,
-            IdSchema=1,
-            DiseaseName="virus",
-            DiseaseNameEN="Epidemic",
-            SpecimenName="virus",
-            IfSGBundesland=0,
-            InBundesland="01,02",
-            ReferenceDefA=0,
-            ReferenceDefB=1,
-            ReferenceDefC=1,
-            ReferenceDefD=0,
-            ReferenceDefE=0,
-            ICD10Code="A1",
+            id_type=101,
+            id_schema=1,
+            disease_name="virus",
+            disease_name_en="Epidemic",
+            specimen_name="virus",
+            ifsg_bundesland=0,
+            in_bundesland="01,02",
+            reference_def_a=0,
+            reference_def_b=1,
+            reference_def_c=1,
+            reference_def_d=0,
+            reference_def_e=0,
+            icd10_code="A1",
         ),
         MetaDisease(
-            IdType=102,
-            IdSchema=1,
-            DiseaseName="virus",
-            DiseaseNameEN="Epidemic",
-            SpecimenName="virus",
-            IfSGBundesland=1,
-            InBundesland=None,
-            ReferenceDefA=1,
-            ReferenceDefB=0,
-            ReferenceDefC=0,
-            ReferenceDefD=1,
-            ReferenceDefE=1,
-            ICD10Code="A1",
+            id_type=102,
+            id_schema=1,
+            disease_name="virus",
+            disease_name_en="Epidemic",
+            specimen_name="virus",
+            ifsg_bundesland=1,
+            in_bundesland=None,
+            reference_def_a=1,
+            reference_def_b=0,
+            reference_def_c=0,
+            reference_def_d=1,
+            reference_def_e=1,
+            icd10_code="A1",
         ),
         MetaDisease(
-            IdType=103,
-            IdSchema=1,
-            DiseaseName="virus",
-            DiseaseNameEN="Epidemic",
-            SpecimenName="virus",
-            IfSGBundesland=1,
-            InBundesland="07,09",
-            ReferenceDefA=1,
-            ReferenceDefB=0,
-            ReferenceDefC=0,
-            ReferenceDefD=1,
-            ReferenceDefE=1,
-            ICD10Code="A1",
+            id_type=103,
+            id_schema=1,
+            disease_name="virus",
+            disease_name_en="Epidemic",
+            specimen_name="virus",
+            ifsg_bundesland=1,
+            in_bundesland="07,09",
+            reference_def_a=1,
+            reference_def_b=0,
+            reference_def_c=0,
+            reference_def_d=1,
+            reference_def_e=1,
+            icd10_code="A1",
         ),
     ]
 
@@ -229,21 +217,6 @@ def resource_diseases(settings: Settings) -> list[ResourceMapping]:
             load_yaml(settings.ifsg.mapping_path / "resource_disease_2_mock.yaml")
         ),
     ]
-
-
-@pytest.fixture
-def extracted_primary_sources_ifsg() -> ExtractedPrimarySource:
-    seed_primary_sources = extract_seed_primary_sources()
-    extracted_primary_sources = (
-        transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    )
-    (extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources,
-        "ifsg",
-    )
-    return extracted_primary_source
 
 
 @pytest.fixture

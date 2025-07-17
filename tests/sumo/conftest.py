@@ -74,18 +74,6 @@ def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
 
 
 @pytest.fixture
-def organizations_stable_target_ids_by_synonym() -> dict[
-    str, MergedOrganizationalUnitIdentifier
-]:
-    """Return dummy merged ids for units for testing."""
-    return {
-        "Register": MergedOrganizationalUnitIdentifier.generate(seed=60),
-        "Dummy Associate": MergedOrganizationalUnitIdentifier.generate(seed=61),
-        "Robert Koch-Institut": MergedOrganizationalUnitIdentifier.generate(seed=62),
-    }
-
-
-@pytest.fixture
 def sumo_resources_feat(settings: Settings) -> ResourceMapping:
     """Return feat SumoResource."""
     return ResourceMapping.model_validate(

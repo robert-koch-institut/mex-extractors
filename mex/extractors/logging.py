@@ -1,10 +1,10 @@
 from mex.common.logging import logger
-from mex.common.types import Identifier
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 def log_filter(
     identifier_in_primary_source: str | None,
-    primary_source_id: Identifier,
+    primary_source_id: MergedPrimarySourceIdentifier,
     reason: str,
 ) -> None:
     """Log filtered sources.
