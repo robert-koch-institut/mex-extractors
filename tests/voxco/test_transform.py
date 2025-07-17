@@ -4,7 +4,6 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
-    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.testing import Joker
@@ -28,7 +27,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
     extracted_mex_persons_voxco: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_primary_sources: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_international_projects_activities: list[ExtractedActivity],
 ) -> None:
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
@@ -95,8 +94,8 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
 def test_transform_voxco_variable_mappings_to_extracted_variables(
     extracted_voxco_resources: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
-    extracted_primary_sources: ExtractedPrimarySource,
-) -> list[ExtractedVariable]:
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> None:
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
         extracted_voxco_resources, voxco_variables, extracted_primary_sources["voxco"]
     )
