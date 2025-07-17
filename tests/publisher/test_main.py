@@ -36,7 +36,7 @@ def test_publishable_items_without_contacts(mocked_backend: MagicMock) -> None:
     container = cast(
         "ItemsContainer[AnyMergedModel]", publishable_items_without_contacts()
     )
-    assert len(container.items) == 5
+    assert len(container.items) == 1
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_merged_items.call_args_list == [
         call(None, None, None, 0, 1),
@@ -62,7 +62,7 @@ def test_publishable_items_without_contacts(mocked_backend: MagicMock) -> None:
 @pytest.mark.usefixtures("mocked_backend", "mocked_boto")
 def test_publishable_persons(mocked_backend: MagicMock) -> None:
     container = cast("ItemsContainer[AnyMergedModel]", publishable_persons())
-    assert len(container.items) == 5
+    assert len(container.items) == 1
     assert mocked_backend.fetch_extracted_items.call_args_list == [
         call(None, None, ["ExtractedPrimarySource"], 0, 100)
     ]
@@ -76,7 +76,7 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
     container = cast(
         "ItemsContainer[AnyMergedModel]", publishable_contact_points_and_units()
     )
-    assert len(container.items) == 5
+    assert len(container.items) == 2
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_merged_items.call_args_list == [
         call(None, None, None, 0, 1),
@@ -93,18 +93,26 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 @pytest.mark.usefixtures("mocked_backend")
 def test_mex_contact_point_identifier() -> None:
     identifier = cast("MergedContactPointIdentifier", mex_contact_point_identifier())
-    assert identifier == MergedContactPointIdentifier("32")
+    assert identifier == MergedContactPointIdentifier("fakeFakeContact")
 
 
 def test_mex_contact_point_identifier_missing(mocked_backend: MagicMock) -> None:
-    mocked_backend.fetch_merged_items.return_value = PaginatedItemsContainer[
+    mocked_backend.fetch_merged_items.side_effect = lambda *_: PaginatedItemsContainer[
         AnyMergedModel
     ](total=0, items=[])
-    with pytest.raises(MExError, match="Found 0 ContactPoints"):
+    with pytest.raises(MExError, match="Found 0 contact points"):
         mex_contact_point_identifier()
 
 
 @pytest.mark.usefixtures("mocked_backend")
 def test_publishable_items() -> None:
-    container = cast("ItemsContainer[AnyMergedModel]", publishable_items())
-    assert len(container.items) == 21
+    container = cast(
+        "ItemsContainer[AnyMergedModel]",
+        publishable_items(
+            publishable_items_without_contacts(),
+            publishable_persons(),
+            publishable_contact_points_and_units(),
+            mex_contact_point_identifier(),
+        ),
+    )
+    assert len(container.items) == 5

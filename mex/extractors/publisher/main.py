@@ -30,8 +30,13 @@ def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
     allowed_entity_types = [
         entity_type
         for entity_type in MERGED_MODEL_CLASSES_BY_NAME
-        if entity_type not in settings.publisher.skip_entity_types
-        and entity_type not in ["MergedPerson"]
+        if entity_type
+        not in [
+            *settings.publisher.skip_entity_types,
+            "MergedPerson",
+            "MergedContactPoint",
+            "MergedOrganizationalUnit",
+        ]
     ]
     merged_items = get_publishable_merged_items(
         entity_type=allowed_entity_types,
@@ -95,8 +100,8 @@ def mex_contact_point_identifier() -> MergedContactPointIdentifier:
             1,
         ),
     )
-    if response.total != 0:
-        msg = f"Found {response.total} ContactPoints for {MEX_EMAIL}, expected 1."
+    if response.total != 1:
+        msg = f"Found {response.total} contact points for {MEX_EMAIL}, expected 1."
         raise MExError(msg)
     return response.items[0].identifier
 

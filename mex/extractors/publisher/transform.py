@@ -4,7 +4,7 @@ from typing import cast
 from mex.common.models import AnyMergedModel
 from mex.common.types import AnyMergedIdentifier
 from mex.extractors.publisher.fields import CONTACT_FIELDS_BY_CLASS_NAME
-from mex.extractors.publisher.utils import ensure_list
+from mex.extractors.utils import ensure_list
 
 
 def update_contact_where_needed(
