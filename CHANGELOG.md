@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - enable mypy linting for tests folder
 - include persons from allowed primary sources in the publishing pipeline
+- add mex-extractors version to asset and job metadata
 
 ### Changes
 

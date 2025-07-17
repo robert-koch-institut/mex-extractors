@@ -1,4 +1,6 @@
-from typing import cast
+from importlib import import_module
+from importlib.metadata import version
+from typing import Any, cast
 
 from dagster import (
     AssetsDefinition,
@@ -24,11 +26,10 @@ from dagster import (
 from mex.extractors.settings import Settings
 
 
-def run_job_in_process(group_name: str = "default") -> bool:
+def run_job_in_process(group_name: str) -> bool:
     """Run the dagster job with the given group name locally in-process."""
-    from mex.extractors import defs  # avoid circular imports
-
-    job = defs.get_job_def(group_name)
+    defs = load_job_definitions()
+    job = defs.resolve_job_def(group_name)
     result = job.execute_in_process()
     return result.success
 
@@ -95,27 +96,32 @@ def monitor_jobs_sensor(
 
 
 def load_job_definitions() -> Definitions:
-    """Scan the mex package for assets, define jobs and io and return definitions."""
-    import mex  # avoid circular imports
-
+    """Scan the given module for assets, define jobs and io and return definitions."""
     settings = Settings.get()
 
     resources = {"io_manager": FilesystemIOManager()}
-    assets = cast("list[AssetsDefinition]", load_assets_from_package_module(mex))
-    checks = load_asset_checks_from_package_module(mex)
+    module = import_module("mex.extractors")
+    assets = load_assets_from_package_module(module)
+    checks = load_asset_checks_from_package_module(module)
 
     extractor_group_names = {
         group
         for asset in assets
-        for group in asset.group_names_by_key.values()
+        for group in cast("AssetsDefinition", asset).group_names_by_key.values()
         if group not in ["default", "publisher", *settings.skip_extractors]
     }
-    settings_md = MetadataValue.md(f"```json\n{settings.model_dump_json(indent=4)}```")
+    metadata: dict[str, Any] = {
+        "settings": MetadataValue.md(
+            f"```json\n{settings.model_dump_json(indent=4)}```"
+        ),
+        "version": MetadataValue.text(version("mex-extractors")),
+    }
+
     jobs = [
         define_asset_job(
             group_name,
             AssetSelection.groups(group_name).upstream(),
-            metadata={"settings": settings_md},
+            metadata=metadata,
             tags={"job_category": "extractor"},
         )
         for group_name in extractor_group_names
@@ -135,7 +141,7 @@ def load_job_definitions() -> Definitions:
         define_asset_job(
             "all_extractors",
             AssetSelection.groups(*extractor_group_names).upstream(),
-            metadata={"settings": settings_md},
+            metadata=metadata,
             tags={"job_category": "extractor"},
         )
     )
@@ -144,14 +150,14 @@ def load_job_definitions() -> Definitions:
     publisher_job = define_asset_job(
         "publisher",
         AssetSelection.groups("publisher").upstream(),
-        metadata={"settings": settings_md},
+        metadata=metadata,
         tags={"job_category": "publisher"},
     )
     jobs.append(publisher_job)
     sensors.append(monitor_jobs_sensor)
 
     # Define dagster code location
-    defs = Definitions(
+    return Definitions(
         assets=assets,
         asset_checks=checks,
         jobs=jobs,
@@ -159,5 +165,3 @@ def load_job_definitions() -> Definitions:
         schedules=schedules,
         sensors=sensors,
     )
-    defs.get_repository_def().load_all_definitions()
-    return defs
