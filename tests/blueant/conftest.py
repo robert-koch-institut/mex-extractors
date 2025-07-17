@@ -1,25 +1,10 @@
 import pytest
 
-from mex.common.models import ActivityMapping, ExtractedPerson
-from mex.common.types import Identifier, TemporalEntity
+from mex.common.models import ActivityMapping
+from mex.common.types import TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture
-def extracted_person() -> ExtractedPerson:
-    """Return an extracted person with static dummy values."""
-    return ExtractedPerson(
-        departmentOrUnit=Identifier("bFQoRhcVH5DHUU"),
-        email="samples@rki.de",
-        familyName="Sample",
-        givenName="Sam",
-        wasExtractedFrom=Identifier("bFQoRhcVH5DHVy"),
-        identifierInPrimarySource="sam",
-        worksFor=Identifier("bFQoRhcVH5DHUY"),
-        label="Sample, Sam",
-    )
 
 
 @pytest.fixture

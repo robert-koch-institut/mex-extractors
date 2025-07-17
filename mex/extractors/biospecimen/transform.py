@@ -38,7 +38,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         biospecimen_resources: Biospecimen resources
         extracted_primary_source_biospecimen: Extracted platform for Biospecimen
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        mex_persons: Generator for ExtractedPerson
+        mex_persons: Iterable of ExtractedPersons
         extracted_synopse_activities: extracted synopse activities
         extracted_organization_rki: extracted organization
         resource_mapping: resource mapping model with default values

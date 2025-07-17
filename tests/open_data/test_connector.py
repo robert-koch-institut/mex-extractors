@@ -34,7 +34,7 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=dummy_parents)
-    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
+    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = OpenDataConnector.get()
     results = connector.get_parent_resources()
@@ -56,7 +56,7 @@ def test_get_files_for_resource_version(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=dummy_versions)
-    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)
+    mocked_open_data_connector.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = OpenDataConnector.get()
     results = connector.get_files_for_resource_version(1001)
