@@ -13,8 +13,7 @@ def update_contact_where_needed(
     fallback_contacts: Iterable[AnyMergedIdentifier],
 ) -> None:
     """Update references in contact fields, where needed."""
-    fields_allowing_persons = CONTACT_FIELDS_BY_CLASS_NAME[item.entityType]
-    for field in fields_allowing_persons:
+    for field in CONTACT_FIELDS_BY_CLASS_NAME[item.entityType]:
         contacts = [
             reference
             for reference in cast(
