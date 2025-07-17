@@ -24,8 +24,7 @@ def extracted_organizational_units(
     mex_organizational_units = transform_organigram_units_to_organizational_units(
         organigram_units,
         extracted_primary_source_organigram,
-        extracted_organization_rki
-
+        extracted_organization_rki,
     )
     topological_sort(
         mex_organizational_units,

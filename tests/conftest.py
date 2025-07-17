@@ -36,6 +36,7 @@ def extracted_organization_rki() -> ExtractedOrganization:
         officialName=["Robert Koch-Institut"],
     )
 
+
 @pytest.fixture
 def rki_organization() -> ExtractedOrganization:
     """Return a mock RKI organization for testing."""

@@ -121,7 +121,7 @@ def mocked_extracted_organizational_units(
     return transform_organigram_units_to_organizational_units(
         extract_organigram_units(),
         extracted_primary_sources["organigram"],
-        rki_organization
+        rki_organization,
     )
 
 

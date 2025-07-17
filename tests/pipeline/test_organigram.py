@@ -25,13 +25,12 @@ def extracted_primary_source_organigram() -> ExtractedPrimarySource:
 
 def test_extracted_organizational_units(
     extracted_primary_source_organigram: ExtractedPrimarySource,
-    extracted_organization_rki: ExtractedOrganization
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     units = cast(
         "list[ExtractedOrganizationalUnit]",
         extracted_organizational_units(
-          extracted_primary_source_organigram,
-          extracted_organization_rki
+            extracted_primary_source_organigram, extracted_organization_rki
         ),
     )
     assert [u.identifierInPrimarySource for u in units] == [
@@ -43,14 +42,13 @@ def test_extracted_organizational_units(
 
 def test_unit_stable_target_ids_by_synonym(
     extracted_primary_source_organigram: ExtractedPrimarySource,
-    extracted_organization_rki: ExtractedOrganization
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     units_by_synonym = cast(
         "dict[str, MergedOrganizationalUnitIdentifier]",
         unit_stable_target_ids_by_synonym(
             extracted_organizational_units(
-              extracted_primary_source_organigram,
-              extracted_organization_rki
+                extracted_primary_source_organigram, extracted_organization_rki
             )
         ),
     )
