@@ -115,4 +115,4 @@ def test_publishable_items() -> None:
             mex_contact_point_identifier(),
         ),
     )
-    assert len(container.items) == 5
+    assert len(container.items) == 4

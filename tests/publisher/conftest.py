@@ -52,8 +52,8 @@ def fetch_merged_items(
             memberOf="fakeFakeOrgUnit",
         ),
         MergedBibliographicResource(
-            identifier="fakeFakeBib",
-            accessRestriction=AccessRestriction,
+            identifier="fakeFakeBibRes",
+            accessRestriction=AccessRestriction["OPEN"],
             title="Bib 98765",
             creator=["fakeFakePerson"],
         ),
