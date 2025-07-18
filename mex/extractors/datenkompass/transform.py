@@ -83,7 +83,14 @@ def get_vocabulary(
 
 
 def get_datenbank(item: MergedBibliographicResource) -> str:
-    """Get Datenbank entries."""
+    """Get Datenbank entries.
+
+    Args:
+        item: MergedBibliographicResource item.
+
+    Returns:
+        string of concatenated entries.
+    """
     return ", ".join(
         entry.url if isinstance(entry, Link) else str(entry)
         for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
