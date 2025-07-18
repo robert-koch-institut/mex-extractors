@@ -24,7 +24,9 @@ def test_update_contact_where_needed(merged_activity: MergedActivity) -> None:
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
         ],
-        fallback_contacts=[MergedContactPointIdentifier("thisIsTheFallbackId")],
+        fallback_contact_identifiers=[
+            MergedContactPointIdentifier("thisIsTheFallbackId")
+        ],
     )
     assert merged_activity.model_dump(exclude_defaults=True, mode="json") == {
         "identifier": "activity123456",

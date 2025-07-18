@@ -1,20 +1,21 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.exceptions import MExError
-from mex.common.models import AnyMergedModel, ItemsContainer, PaginatedItemsContainer
 from mex.common.types import MergedContactPointIdentifier
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
-    mex_contact_point_identifier,
+    fallback_contact_identifiers,
     publishable_contact_points_and_units,
     publishable_items,
     publishable_items_without_contacts,
     publishable_persons,
 )
 from mex.extractors.sinks.s3 import S3Sink
+
+if TYPE_CHECKING:
+    from mex.common.models import AnyMergedModel, ItemsContainer
 
 
 @pytest.fixture  # needed for hardcoded upload to S3. Remove with MX-1808
@@ -91,17 +92,11 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_mex_contact_point_identifier() -> None:
-    identifier = cast("MergedContactPointIdentifier", mex_contact_point_identifier())
-    assert identifier == MergedContactPointIdentifier("fakeFakeContact")
-
-
-def test_mex_contact_point_identifier_missing(mocked_backend: MagicMock) -> None:
-    mocked_backend.fetch_merged_items.side_effect = lambda *_: PaginatedItemsContainer[
-        AnyMergedModel
-    ](total=0, items=[])
-    with pytest.raises(MExError, match="Found 0 contact points"):
-        mex_contact_point_identifier()
+def test_fallback_contact_identifiers() -> None:
+    identifiers = cast(
+        "list[MergedContactPointIdentifier]", fallback_contact_identifiers()
+    )
+    assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
 
 @pytest.mark.usefixtures("mocked_backend")
@@ -112,7 +107,7 @@ def test_publishable_items() -> None:
             publishable_items_without_contacts(),
             publishable_persons(),
             publishable_contact_points_and_units(),
-            mex_contact_point_identifier(),
+            fallback_contact_identifiers(),
         ),
     )
     assert len(container.items) == 4

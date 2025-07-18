@@ -5,7 +5,6 @@ from dagster import asset
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.cli import entrypoint
-from mex.common.exceptions import MExError
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -15,7 +14,6 @@ from mex.common.models import (
     PaginatedItemsContainer,
 )
 from mex.common.types import MergedContactPointIdentifier
-from mex.extractors.contact_point.main import MEX_EMAIL
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.publisher.transform import update_contact_where_needed
@@ -87,23 +85,21 @@ def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def mex_contact_point_identifier() -> MergedContactPointIdentifier:
-    """Get the mex contact point from the backend."""
+def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
+    """Get the mex contact point as a fallback contact."""
+    settings = Settings.get()
     connector = BackendApiConnector.get()
     response = cast(
         "PaginatedItemsContainer[MergedContactPoint]",
         connector.fetch_merged_items(
-            MEX_EMAIL,
+            str(settings.contact_point.mex_email),
             ["MergedContactPoint"],
             [MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
             0,
             1,
         ),
     )
-    if response.total != 1:
-        msg = f"Found {response.total} contact points for {MEX_EMAIL}, expected 1."
-        raise MExError(msg)
-    return response.items[0].identifier
+    return [item.identifier for item in response.items]
 
 
 @asset(group_name="publisher")
@@ -111,7 +107,7 @@ def publishable_items(
     publishable_items_without_contacts: ItemsContainer[AnyMergedModel],
     publishable_persons: ItemsContainer[AnyMergedModel],
     publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
-    mex_contact_point_identifier: MergedContactPointIdentifier,
+    fallback_contact_identifiers: list[MergedContactPointIdentifier],
 ) -> ItemsContainer[AnyMergedModel]:
     """All publishable items with updated contact references, where needed."""
     allowed_contacts = {
@@ -119,11 +115,10 @@ def publishable_items(
         for person in publishable_persons.items
         + publishable_contact_points_and_units.items
     }
-    fallback_contacts = [
-        mex_contact_point_identifier,
-    ]
     for item in publishable_items_without_contacts.items:
-        update_contact_where_needed(item, allowed_contacts, fallback_contacts)
+        update_contact_where_needed(
+            item, allowed_contacts, fallback_contact_identifiers
+        )
     return ItemsContainer[AnyMergedModel](
         items=publishable_items_without_contacts.items
         + publishable_persons.items

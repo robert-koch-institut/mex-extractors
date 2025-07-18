@@ -10,7 +10,7 @@ from mex.extractors.utils import ensure_list
 def update_contact_where_needed(
     item: AnyMergedModel,
     allowed_contacts: Collection[AnyMergedIdentifier],
-    fallback_contacts: Iterable[AnyMergedIdentifier],
+    fallback_contact_identifiers: Iterable[AnyMergedIdentifier],
 ) -> None:
     """Update references in contact fields, where needed."""
     for field in CONTACT_FIELDS_BY_CLASS_NAME[item.entityType]:
@@ -22,5 +22,5 @@ def update_contact_where_needed(
             if reference in allowed_contacts
         ]
         if not contacts and item.model_fields[field].is_required():
-            contacts = list(fallback_contacts)
+            contacts = list(fallback_contact_identifiers)
         setattr(item, field, contacts)
