@@ -9,55 +9,97 @@ from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
     ExtractedPrimarySource,
+    MergedBibliographicResource,
     MergedConsent,
     MergedContactPoint,
+    MergedOrganizationalUnit,
     MergedPerson,
     MergedPrimarySource,
     PaginatedItemsContainer,
 )
+from mex.common.types import AccessRestriction
+
+
+def fetch_merged_items(
+    query_string: str | None,  # noqa: ARG001
+    entity_type: list[str] | None,
+    had_primary_source: list[str] | None,  # noqa: ARG001
+    skip: int,  # noqa: ARG001
+    limit: int,  # noqa: ARG001
+) -> PaginatedItemsContainer[AnyMergedModel]:
+    merged_items: list[AnyMergedModel] = [
+        MergedPrimarySource(
+            identifier="fakeFakeSource",
+        ),
+        MergedContactPoint(
+            email=["mex@rki.de"],
+            identifier="fakeFakeContact",
+        ),
+        MergedConsent(
+            identifier="fakeFakeConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            hasDataSubject="fakeFakePerson",
+            isIndicatedAtTime="2014-05-21T19:38:51Z",
+        ),
+        MergedOrganizationalUnit(
+            email=["unit@rki.de"],
+            identifier="fakeFakeOrgUnit",
+            name="Unique Unit",
+        ),
+        MergedPerson(
+            fullName="Dr. Fake",
+            identifier="fakeFakePerson",
+            memberOf="fakeFakeOrgUnit",
+        ),
+        MergedBibliographicResource(
+            identifier="fakeFakeBibRes",
+            accessRestriction=AccessRestriction["OPEN"],
+            title="Bib 98765",
+            creator=["fakeFakePerson"],
+        ),
+    ]
+    items = [
+        item
+        for item in merged_items
+        if not entity_type or item.entityType in entity_type
+    ]
+    return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
+
+
+def fetch_extracted_items(
+    query_string: str | None,  # noqa: ARG001
+    stable_target_id: str | None,  # noqa: ARG001
+    entity_type: list[str] | None,
+    skip: int,  # noqa: ARG001
+    limit: int,  # noqa: ARG001
+) -> PaginatedItemsContainer[AnyExtractedModel]:
+    extracted_items: list[AnyExtractedModel] = [
+        ExtractedPrimarySource(
+            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            identifierInPrimarySource="wikidata",
+        ),
+        ExtractedPrimarySource(
+            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            identifierInPrimarySource="endnote",
+        ),
+    ]
+    items = [
+        item
+        for item in extracted_items
+        if not entity_type or item.entityType in entity_type
+    ]
+    return PaginatedItemsContainer[AnyExtractedModel](total=len(items), items=items)
 
 
 @pytest.fixture
 def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     backend = MagicMock(
         fetch_merged_items=MagicMock(
-            return_value=PaginatedItemsContainer[AnyMergedModel](
-                total=5,
-                items=[
-                    MergedPrimarySource(
-                        identifier="fakefakefakeJA",
-                    ),
-                    MergedContactPoint(
-                        email=["1fake@e.mail"],
-                        identifier="alsofakefakefakeJA",
-                    ),
-                    MergedConsent(
-                        identifier="anotherfakefakefakefak",
-                        hasConsentStatus="https://mex.rki.de/item/consent-status-1",
-                        hasDataSubject="fakefakefakefakefakefa",
-                        isIndicatedAtTime="2014-05-21T19:38:51Z",
-                    ),
-                    MergedContactPoint(
-                        email=["2fake@e.mail"],
-                        identifier="alsofakefakefakeYO",
-                    ),
-                    MergedPerson(
-                        fullName="Dr. Fake",
-                        identifier="drdrdrdrdrdrfAKE",
-                    ),
-                ],
-            )
+            spec=BackendApiConnector.fetch_merged_items, side_effect=fetch_merged_items
         ),
         fetch_extracted_items=MagicMock(
-            return_value=PaginatedItemsContainer[AnyExtractedModel](
-                total=1,
-                items=[
-                    ExtractedPrimarySource(
-                        hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-                        identifierInPrimarySource="endnote",
-                    ),
-                ],
-            )
+            spec=BackendApiConnector.fetch_extracted_items,
+            side_effect=fetch_extracted_items,
         ),
     )
     monkeypatch.setattr(

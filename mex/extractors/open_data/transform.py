@@ -35,11 +35,11 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-def transform_open_data_person_affiliations_to_organisations(
+def transform_open_data_person_affiliations_to_organizations(
     extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_open_data: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
-    """Search wikidata or create own organisations, load to sink and create dictionary.
+    """Search wikidata or create own organizations, load to sink and create dictionary.
 
     Args:
         extracted_open_data_creators_contributors: list of creators and contributors

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - enable mypy linting for tests folder
 - include persons from allowed primary sources in the publishing pipeline
+- add contact-point mini extractor to get default contact points
 - add mex-extractors version to asset and job metadata
 - publisher for datenkompass
 
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ensure dagster definitions are resolved, for dagster 1.11 compat
 - summarize logging for synopse filtering functions
+- filter out unpublished persons from contact fields and set a fallback
 
 ### Deprecated
 

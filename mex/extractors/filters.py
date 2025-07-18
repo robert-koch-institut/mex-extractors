@@ -16,7 +16,7 @@ def filter_by_global_rules(
     primary_source_id: MergedPrimarySourceIdentifier,
     items: Iterable[RawDataT],
 ) -> list[RawDataT,]:
-    """Filter out items according to global filter rules, build filtered Generator.
+    """Filter out items according to global filter rules, return filtered items.
 
     Args:
         primary_source_id: identifier of the primary source

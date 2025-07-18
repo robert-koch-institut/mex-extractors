@@ -30,7 +30,7 @@ from mex.extractors.open_data.models.source import (
 from mex.extractors.open_data.transform import (
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
-    transform_open_data_person_affiliations_to_organisations,
+    transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
 )
 from mex.extractors.pipeline import run_job_in_process
@@ -72,8 +72,8 @@ def extracted_open_data_organizations(
     extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_open_data: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
-    """Transform affiliations of open data persons to extracted organisations."""
-    return transform_open_data_person_affiliations_to_organisations(
+    """Transform affiliations of open data persons to extracted organizations."""
+    return transform_open_data_person_affiliations_to_organizations(
         extracted_open_data_creators_contributors, extracted_primary_source_open_data
     )
 
@@ -104,7 +104,7 @@ def extracted_open_data_persons(  # noqa: PLR0913
 def open_data_contact_point(
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> list[ExtractedContactPoint]:
-    """Convert opendata email address to contact point and load to sink."""
+    """Convert open data email address to contact point and load to sink."""
     ldap = LDAPConnector.get()
     contact_point = [
         transform_ldap_actor_to_mex_contact_point(
