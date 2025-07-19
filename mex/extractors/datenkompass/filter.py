@@ -7,13 +7,13 @@ from mex.common.types import MergedOrganizationIdentifier
 
 def filter_for_bmg(
     extracted_merged_activities: Sequence[MergedActivity],
-    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
         extracted_merged_activities: list of merged activities as sequence.
-        extracted_merged_bmg_ids: list of extracted merged bmg identifiers.
+        extracted_merged_bmg_ids: set of extracted merged bmg identifiers.
 
     Returns:
         filtered list of merged activities.

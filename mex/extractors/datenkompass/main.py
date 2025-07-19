@@ -1,9 +1,12 @@
+from typing import cast
+
 from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
 )
@@ -32,30 +35,30 @@ from mex.extractors.settings import Settings
 @asset(group_name="datenkompass")
 def extracted_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Get all organizational units."""
-    return [
-        MergedOrganizationalUnit.model_validate(unit)
-        for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)
-    ]
+    return cast(
+        "list[MergedOrganizationalUnit]",
+        get_merged_items(None, ["MergedOrganizationalUnit"], None),
+    )
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_bmg_ids() -> list[MergedOrganizationIdentifier]:
+def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
     """Get BMG identifiers."""
-    return list(
-        {
-            MergedOrganizationIdentifier(bmg.identifier)
-            for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
-        }
-    )
+    return {
+        bmg.identifier
+        for bmg in cast(
+            "list[MergedOrganization]",
+            get_merged_items("BMG", ["MergedOrganization"], None),
+        )
+    }
 
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
     """Get all persons."""
-    merged_persons = [
-        MergedPerson.model_validate(person)
-        for person in get_merged_items(None, ["MergedPerson"], None)
-    ]
+    merged_persons = cast(
+        "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
+    )
 
     return {person.identifier: person.fullName for person in merged_persons}
 
@@ -73,16 +76,15 @@ def extracted_merged_activities() -> list[MergedActivity]:
     ]
     entity_type = ["MergedActivity"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    return [
-        MergedActivity.model_validate(item)
-        for item in get_merged_items(None, entity_type, had_primary_source)
-    ]
+    return cast(
+        "list[MergedActivity]", get_merged_items(None, entity_type, had_primary_source)
+    )
 
 
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities(
     extracted_merged_activities: list[MergedActivity],
-    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter merged activities."""
     return filter_for_bmg(extracted_merged_activities, extracted_merged_bmg_ids)
@@ -94,14 +96,10 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_bibliographic_resource = list(
-        get_merged_items(None, entity_type, had_primary_source)
+    return cast(
+        "list[MergedBibliographicResource]",
+        get_merged_items(None, entity_type, had_primary_source),
     )
-
-    return [
-        MergedBibliographicResource.model_validate(item)
-        for item in merged_bibliographic_resource
-    ]
 
 
 @asset(group_name="datenkompass")
