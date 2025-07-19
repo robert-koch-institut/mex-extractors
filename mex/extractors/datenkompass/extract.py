@@ -24,7 +24,7 @@ def get_merged_items(
     response = connector.fetch_merged_items(
         query_string, entity_type, had_primary_source, 0, 1
     )
-    total_item_number = 10  # response.total
+    total_item_number = response.total
 
     item_number_limit = 100  # 100 is the maximum possible number per get-request
 
