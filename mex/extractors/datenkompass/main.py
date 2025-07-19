@@ -48,9 +48,7 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
 
 
 @asset(group_name="datenkompass")
-def extracted_and_filtered_merged_bibliographic_resource() -> list[
-    MergedBibliographicResource
-]:
+def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
     """Get merged items and filter them."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
@@ -110,15 +108,13 @@ def transform_activities_to_datenkompass_activities(
 
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
-    extracted_and_filtered_merged_bibliographic_resource: list[
-        MergedBibliographicResource
-    ],
+    extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
     extracted_merged_organizational_units: list[MergedOrganizationalUnit],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform items to datenkompass items."""
     return transform_bibliographic_resources(
-        extracted_and_filtered_merged_bibliographic_resource,
+        extracted_merged_bibliographic_resources,
         extracted_merged_organizational_units,
         person_name_by_id,
     )

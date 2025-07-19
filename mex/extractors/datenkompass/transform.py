@@ -148,15 +148,13 @@ def transform_activities(
 
 
 def transform_bibliographic_resources(
-    extracted_and_filtered_merged_bibliographic_resource: list[
-        MergedBibliographicResource
-    ],
+    extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
     merged_organizational_units: list[MergedOrganizationalUnit],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Get the info asked for."""
     datenkompass_bibliographic_recources = []
-    for item in extracted_and_filtered_merged_bibliographic_resource:
+    for item in extracted_merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
