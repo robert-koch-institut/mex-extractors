@@ -213,7 +213,16 @@ def transform_bibliographic_resources(
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
-    """Get the info asked for."""
+    """Get the relevant info from the merged biblopgraphic resources.
+
+    Args:
+        extracted_merged_bibliographic_resources: List of merged bibliographic resources
+        extracted_merged_organizational_units: dict of merged organizational units by id
+        person_name_by_id: dict of merged person names by id
+
+    Returns:
+        list of DatenkompassBibliographicResource instances.
+    """
     datenkompass_bibliographic_recources = []
     for item in extracted_merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
@@ -257,7 +266,7 @@ def transform_bibliographic_resources(
 
 
 def transform_resources(
-    extracted_merged_resources: list[MergedResource],
+    extracted_merged_resources: dict[str, list[MergedResource]],
     extracted_and_filtered_merged_activities: list[MergedActivity],
     extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
     extracted_merged_organizational_units: dict[
@@ -267,80 +276,100 @@ def transform_resources(
         MergedContactPointIdentifier, MergedContactPoint
     ],
 ) -> list[DatenkompassResource]:
-    """Get the info asked for."""
+    """Get the relevant info from the merged resources.
+
+    Args:
+        extracted_merged_resources: List of merged resources
+        extracted_and_filtered_merged_activities: list of merged activities
+        extracted_merged_bmg_ids: list of merged bmg organization identifiers
+        extracted_merged_organizational_units: dict of merged organizational units by id
+        extracted_merged_contact_points: dict of merged contact points
+
+    Returns:
+        list of DatenkompassResource instances.
+    """
     datenkompass_recources = []
     merged_activities_set = {
         ma.identifier
         for ma in extracted_and_filtered_merged_activities
         if any(fOC in extracted_merged_bmg_ids for fOC in ma.funderOrCommissioner)
     }
-    for item in extracted_merged_resources:
-        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
-            voraussetzungen = "Zugang eingeschränkt"
-        elif item.accessRestriction == AccessRestriction["OPEN"]:
-            voraussetzungen = "Frei zugänglich"
-        else:
-            voraussetzungen = None
-        frequenz = (
-            get_vocabulary([item.accrualPeriodicity])
-            if item.accrualPeriodicity
-            else None
-        )
-        kontakt = get_resource_contact(
-            item.contact,
-            extracted_merged_organizational_units,
-            extracted_merged_contact_points,
-        )
-        beschreibung = "n/a"
-        if item.description:
-            description_de = [d.value for d in item.description if d.language == "de"]
-            beschreibung = (
-                description_de[0] if description_de else item.description[0].value
+    for primary_source, list_merged_resources in extracted_merged_resources.items():
+        for item in list_merged_resources:
+            if item.accessRestriction == AccessRestriction["RESTRICTED"]:
+                voraussetzungen = "Zugang eingeschränkt"
+            elif item.accessRestriction == AccessRestriction["OPEN"]:
+                voraussetzungen = "Frei zugänglich"
+            else:
+                voraussetzungen = None
+            frequenz = (
+                get_vocabulary([item.accrualPeriodicity])
+                if item.accrualPeriodicity
+                else None
             )
-        rechtsgrundlagenbenennung = [
-            *[entry.value for entry in item.hasLegalBasis],
-            *get_vocabulary([item.license] if item.license else []),
-        ]
-        schlagwort = [
-            *get_vocabulary(item.theme),
-            *[entry.value for entry in item.keyword],
-        ]
-        dk_format = [
-            *get_vocabulary(item.resourceCreationMethod),
-            *get_vocabulary(item.resourceTypeGeneral),
-        ]
-        unterkategorie = ["Public Health"]  ## UPDATE with HasPrimarySource
-        datenhalter = "BMG" if item.wasGeneratedBy in merged_activities_set else None
-        rechtsgrundlage = (
-            "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
-        )
-        datennutzungszweck = ["Public Health"]  ## UPDATE with HasPrimarySource
-        datenkompass_recources.append(
-            DatenkompassResource(
-                voraussetzungen=voraussetzungen,
-                frequenz=frequenz,
-                kontakt=kontakt,
-                beschreibung=beschreibung,
-                datenbank=item.doi,
-                rechtsgrundlagenbenennung=rechtsgrundlagenbenennung,
-                datennutzungszweckerweitert=[hp.value for hp in item.hasPurpose],
-                schlagwort=schlagwort,
-                dk_format=dk_format,
-                titel=[t.value for t in item.title],
-                datenhalter=datenhalter,
-                hauptkategorie="Gesundheit",
-                unterkategorie=unterkategorie,
-                rechtsgrundlage=rechtsgrundlage,
-                datenerhalt="Externe Zulieferung",
-                status="Stabil",
-                datennutzungszweck=datennutzungszweck,
-                herausgeber="Robert Koch-Institut",
-                kommentar=(
-                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein."
+            kontakt = get_resource_contact(
+                item.contact,
+                extracted_merged_organizational_units,
+                extracted_merged_contact_points,
+            )
+            beschreibung = "n/a"
+            if item.description:
+                description_de = [
+                    d.value for d in item.description if d.language == "de"
+                ]
+                beschreibung = (
+                    description_de[0] if description_de else item.description[0].value
+                )
+            rechtsgrundlagenbenennung = [
+                *[entry.value for entry in item.hasLegalBasis],
+                *get_vocabulary([item.license] if item.license else []),
+            ]
+            schlagwort = [
+                *get_vocabulary(item.theme),
+                *[entry.value for entry in item.keyword],
+            ]
+            dk_format = [
+                *get_vocabulary(item.resourceCreationMethod),
+                *get_vocabulary(item.resourceTypeGeneral),
+            ]
+            unterkategorie = ["Public Health"]
+            if primary_source == "synopse":
+                unterkategorie += ["Gesundheitliche Lage"]
+            datenhalter = (
+                "BMG" if item.wasGeneratedBy in merged_activities_set else None
+            )
+            rechtsgrundlage = (
+                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
+            )
+            datennutzungszweck = ["Themenspezifische Auswertung"]
+            if primary_source == "synopse":
+                datennutzungszweck += ["Themenspezifisches Monitoring"]
+            datenkompass_recources.append(
+                DatenkompassResource(
+                    voraussetzungen=voraussetzungen,
+                    frequenz=frequenz,
+                    kontakt=kontakt,
+                    beschreibung=beschreibung,
+                    datenbank=item.doi,
+                    rechtsgrundlagenbenennung=rechtsgrundlagenbenennung,
+                    datennutzungszweckerweitert=[hp.value for hp in item.hasPurpose],
+                    schlagwort=schlagwort,
+                    dk_format=dk_format,
+                    titel=[t.value for t in item.title],
+                    datenhalter=datenhalter,
+                    hauptkategorie="Gesundheit",
+                    unterkategorie=unterkategorie,
+                    rechtsgrundlage=rechtsgrundlage,
+                    datenerhalt="Externe Zulieferung",
+                    status="Stabil",
+                    datennutzungszweck=datennutzungszweck,
+                    herausgeber="Robert Koch-Institut",
+                    kommentar=(
+                        "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                        "voraussichtlich Ende 2025 verfügbar sein."
+                    ),
+                    identifier=item.identifier,
+                    entityType=item.entityType,
                 ),
-                identifier=item.identifier,
-                entityType=item.entityType,
-            ),
-        )
+            )
     return datenkompass_recources
