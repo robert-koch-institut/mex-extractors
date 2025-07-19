@@ -1,30 +1,31 @@
 from collections.abc import Sequence
 
 from mex.common.logging import logger
-from mex.common.models import AnyMergedModel, MergedActivity
-from mex.extractors.datenkompass.extract import get_merged_items
+from mex.common.models import MergedActivity
+from mex.common.types import MergedOrganizationIdentifier
 
 
-def filter_for_bmg(merged_items: Sequence[AnyMergedModel]) -> list[MergedActivity]:
+def filter_for_bmg(
+    extracted_merged_activities: Sequence[MergedActivity],
+    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        merged_items: list of merged activities as sequence.
+        extracted_merged_activities: list of merged activities as sequence.
+        extracted_merged_bmg_ids: list of extracted merged bmg identifiers.
 
     Returns:
         filtered list of merged activities.
     """
-    bmg_ids = {
-        bmg.identifier for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
-    }
-
-    bmg_items = [
-        MergedActivity.model_validate(item)
-        for item in merged_items
-        if isinstance(item, MergedActivity)
-        and any(funder in bmg_ids for funder in item.funderOrCommissioner)
+    filtered_items = [
+        item
+        for item in extracted_merged_activities
+        if any(
+            funder in extracted_merged_bmg_ids for funder in item.funderOrCommissioner
+        )
     ]
 
-    logger.info("%s items remain after filtering.", len(bmg_items))
+    logger.info("%s items remain after filtering.", len(filtered_items))
 
-    return bmg_items
+    return filtered_items

@@ -30,40 +30,6 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
-    """Get merged activities and filter them."""
-    relevant_primary_sources = [
-        "blueant",
-        "confluence-vvt",
-        "datscha-web",
-        "ff-projects",
-        "international-projects",
-        "report-server",  # synopse
-    ]
-    entity_type = ["MergedActivity"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_activities = get_merged_items(None, entity_type, had_primary_source)
-
-    return filter_for_bmg(merged_activities)
-
-
-@asset(group_name="datenkompass")
-def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
-    """Get merged items and filter them."""
-    relevant_primary_sources = ["endnote"]
-    entity_type = ["MergedBibliographicResource"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_bibliographic_resource = list(
-        get_merged_items(None, entity_type, had_primary_source)
-    )
-
-    return [
-        MergedBibliographicResource.model_validate(item)
-        for item in merged_bibliographic_resource
-    ]
-
-
-@asset(group_name="datenkompass")
 def extracted_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Get all organizational units."""
     return [
@@ -74,7 +40,7 @@ def extracted_merged_organizational_units() -> list[MergedOrganizationalUnit]:
 
 @asset(group_name="datenkompass")
 def extracted_merged_bmg_ids() -> list[MergedOrganizationIdentifier]:
-    """Get all BMG organisations."""
+    """Get BMG identifiers."""
     return list(
         {
             MergedOrganizationIdentifier(bmg.identifier)
@@ -92,6 +58,50 @@ def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
     ]
 
     return {person.identifier: person.fullName for person in merged_persons}
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_activities() -> list[MergedActivity]:
+    """Get merged activities."""
+    relevant_primary_sources = [
+        "blueant",
+        "confluence-vvt",
+        "datscha-web",
+        "ff-projects",
+        "international-projects",
+        "report-server",  # synopse
+    ]
+    entity_type = ["MergedActivity"]
+    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
+    return [
+        MergedActivity.model_validate(item)
+        for item in get_merged_items(None, entity_type, had_primary_source)
+    ]
+
+
+@asset(group_name="datenkompass")
+def extracted_and_filtered_merged_activities(
+    extracted_merged_activities: list[MergedActivity],
+    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+) -> list[MergedActivity]:
+    """Filter merged activities."""
+    return filter_for_bmg(extracted_merged_activities, extracted_merged_bmg_ids)
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
+    """Get merged items and filter them."""
+    relevant_primary_sources = ["endnote"]
+    entity_type = ["MergedBibliographicResource"]
+    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
+    merged_bibliographic_resource = list(
+        get_merged_items(None, entity_type, had_primary_source)
+    )
+
+    return [
+        MergedBibliographicResource.model_validate(item)
+        for item in merged_bibliographic_resource
+    ]
 
 
 @asset(group_name="datenkompass")
