@@ -194,9 +194,9 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             beschreibung="Die Nutzung",
             datenhalter="BMG",
             kontakt=[
+                "a.bsp. unit",
                 "e.g. unit",
                 "unit@example.org",
-                "a.bsp. unit",
             ],
             titel=["short de", "title no language"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],

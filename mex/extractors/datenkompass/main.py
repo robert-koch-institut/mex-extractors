@@ -11,6 +11,7 @@ from mex.common.models import (
     MergedPerson,
 )
 from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -33,17 +34,22 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_organizational_units() -> list[MergedOrganizationalUnit]:
-    """Get all organizational units."""
-    return cast(
-        "list[MergedOrganizationalUnit]",
-        get_merged_items(None, ["MergedOrganizationalUnit"], None),
-    )
+def extracted_merged_organizational_units() -> dict[
+    MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+]:
+    """Get all organizational units as dict by id."""
+    return {
+        organization.identifier: organization
+        for organization in cast(
+            "list[MergedOrganizationalUnit]",
+            get_merged_items(None, ["MergedOrganizationalUnit"], None),
+        )
+    }
 
 
 @asset(group_name="datenkompass")
 def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
-    """Get BMG identifiers."""
+    """Get BMG identifiers as set."""
     return {
         bmg.identifier
         for bmg in cast(
@@ -55,12 +61,13 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
-    """Get all persons."""
-    merged_persons = cast(
-        "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
-    )
-
-    return {person.identifier: person.fullName for person in merged_persons}
+    """Get all person names as dict by id."""
+    return {
+        person.identifier: person.fullName
+        for person in cast(
+            "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
+        )
+    }
 
 
 @asset(group_name="datenkompass")
@@ -105,7 +112,9 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 @asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
@@ -117,7 +126,9 @@ def transform_activities_to_datenkompass_activities(
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform items to datenkompass items."""
