@@ -2,34 +2,43 @@ from collections.abc import Iterable
 
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
     MergedOrganizationalUnit,
 )
 from mex.common.types import (
+    AccessRestriction,
+    Link,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.common.types.vocabulary import BibliographicResourceType, Theme
-from mex.extractors.datenkompass.models.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.item import (
+    DatenkompassActivity,
+    DatenkompassBibliographicResource,
+)
 
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[str]:
     """Get shortName and email from merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: List of merged organizational unit identifiers.
+        merged_organizational_units: dict of all merged organizational units by id.
 
     Returns:
         List of short name and email of contact units as strings.
     """
     return [
         contact
-        for target_unit in merged_organizational_units
-        if target_unit.identifier in responsible_unit_ids
-        for contact in [short_name.value for short_name in target_unit.shortName]
-        + [str(email) for email in target_unit.email]
+        for org_id in responsible_unit_ids
+        for unit in [merged_organizational_units[org_id]]
+        for contact in [short_name.value for short_name in unit.shortName]
+        + [str(email) for email in unit.email]
     ]
 
 
@@ -75,15 +84,32 @@ def get_vocabulary(
     ]
 
 
+def get_datenbank(item: MergedBibliographicResource) -> str:
+    """Get Datenbank entries.
+
+    Args:
+        item: MergedBibliographicResource item.
+
+    Returns:
+        string of concatenated entries.
+    """
+    return ", ".join(
+        entry.url if isinstance(entry, Link) else str(entry)
+        for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
+    )
+
+
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[DatenkompassActivity]:
     """Get the relevant info from the merged activities.
 
     Args:
-        extracted_and_filtered_merged_activities: List of merged activities.
-        merged_organizational_units: List of merged organizational units.
+        extracted_and_filtered_merged_activities: List of merged activities
+        extracted_merged_organizational_units: dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -94,7 +120,10 @@ def transform_activities(
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
             beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
+        kontakt = get_contact(
+            item.responsibleUnit,
+            extracted_merged_organizational_units,
+        )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
         datenkompass_activities.append(
@@ -123,3 +152,53 @@ def transform_activities(
             )
         )
     return datenkompass_activities
+
+
+def transform_bibliographic_resources(
+    extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+) -> list[DatenkompassBibliographicResource]:
+    """Get the info asked for."""
+    datenkompass_bibliographic_recources = []
+    for item in extracted_merged_bibliographic_resources:
+        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
+            voraussetzungen = "Zugang eingeschränkt"
+        elif item.accessRestriction == AccessRestriction["OPEN"]:
+            voraussetzungen = "Frei zugänglich"
+        else:
+            voraussetzungen = None
+        datenbank = get_datenbank(item)
+        dk_format = get_vocabulary(item.bibliographicResourceType)
+        kontakt = get_contact(
+            item.contributingUnit, extracted_merged_organizational_units
+        )
+        titel = (
+            ", ".join(entry.value for entry in item.title)
+            + " ("
+            + " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
+            + ")"
+        )
+        datenkompass_bibliographic_recources.append(
+            DatenkompassBibliographicResource(
+                beschreibung=[abstract.value for abstract in item.abstract],
+                voraussetzungen=voraussetzungen,
+                datenbank=datenbank,
+                dk_format=dk_format,
+                kontakt=kontakt,
+                schlagwort=[word.value for word in item.keyword],
+                titel=titel,
+                hauptkategorie="Gesundheit",
+                unterkategorie="Public Health",
+                herausgeber="Robert Koch-Institut",
+                kommentar=(
+                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                    "voraussichtlich Ende 2025 verfügbar sein."
+                ),
+                identifier=item.identifier,
+                entityType=item.entityType,
+            )
+        )
+    return datenkompass_bibliographic_recources
