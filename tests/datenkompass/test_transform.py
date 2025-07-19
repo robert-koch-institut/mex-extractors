@@ -1,8 +1,5 @@
 import pytest
 
-from mex.common.types import (
-    MergedPersonIdentifier,
-)
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import DatenkompassBibliographicResource
 from mex.extractors.datenkompass.transform import (
@@ -18,12 +15,13 @@ from tests.datenkompass.mocked_item_lists import (
     mocked_merged_activities,
     mocked_merged_bibliographic_resource,
     mocked_merged_organizational_units,
+    mocked_merged_person,
 )
 
 
 def test_get_contact() -> None:
     responsible_unit_ids = mocked_merged_activities()[0].responsibleUnit
-    all_units = mocked_merged_organizational_units()
+    all_units = {unit.identifier: unit for unit in mocked_merged_organizational_units()}
     result = get_contact(responsible_unit_ids, all_units)
 
     assert sorted(result) == [
@@ -58,7 +56,9 @@ def test_transform_activities() -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities()[
         :2
     ]  # item with no BMG filtered out
-    merged_organizational_units = mocked_merged_organizational_units()
+    merged_organizational_units = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units()
+    }
 
     result = transform_activities(
         extracted_and_filtered_merged_activities, merged_organizational_units
@@ -72,12 +72,11 @@ def test_transform_bibliographic_resource() -> None:
     extracted_and_filtered_merged_bibliographic_resource = (
         mocked_merged_bibliographic_resource()
     )
-    merged_organizational_units = mocked_merged_organizational_units()
+    merged_organizational_units = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units()
+    }
     person_name_by_id = {
-        MergedPersonIdentifier("PersonIdentifier4Peppa"): [
-            "Pattern, Peppa P.",
-            "Pattern, P.P.",
-        ]
+        person.identifier: person.fullName for person in mocked_merged_person()
     }
 
     result = transform_bibliographic_resources(

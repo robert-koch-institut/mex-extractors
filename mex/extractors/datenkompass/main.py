@@ -1,14 +1,18 @@
+from typing import cast
+
 from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
     MergedResource,
 )
 from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -33,8 +37,45 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
-    """Get merged activities and filter them."""
+def extracted_merged_organizational_units() -> dict[
+    MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+]:
+    """Get all organizational units as dict by id."""
+    return {
+        organization.identifier: organization
+        for organization in cast(
+            "list[MergedOrganizationalUnit]",
+            get_merged_items(None, ["MergedOrganizationalUnit"], None),
+        )
+    }
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
+    """Get BMG identifiers as set."""
+    return {
+        bmg.identifier
+        for bmg in cast(
+            "list[MergedOrganization]",
+            get_merged_items("BMG", ["MergedOrganization"], None),
+        )
+    }
+
+
+@asset(group_name="datenkompass")
+def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
+    """Get all person names as dict by id."""
+    return {
+        person.identifier: person.fullName
+        for person in cast(
+            "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
+        )
+    }
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_activities() -> list[MergedActivity]:
+    """Get merged activities."""
     relevant_primary_sources = [
         "blueant",
         "confluence-vvt",
@@ -45,73 +86,38 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
     ]
     entity_type = ["MergedActivity"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_activities = get_merged_items(None, entity_type, had_primary_source)
+    return cast(
+        "list[MergedActivity]", get_merged_items(None, entity_type, had_primary_source)
+    )
 
-    return filter_for_bmg(merged_activities)
+
+@asset(group_name="datenkompass")
+def extracted_and_filtered_merged_activities(
+    extracted_merged_activities: list[MergedActivity],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+) -> list[MergedActivity]:
+    """Filter merged activities."""
+    return filter_for_bmg(extracted_merged_activities, extracted_merged_bmg_ids)
 
 
 @asset(group_name="datenkompass")
 def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
-    """Get merged items and filter them."""
+    """Get merged items them."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_bibliographic_resource = list(
-        get_merged_items(None, entity_type, had_primary_source)
+    return cast(
+        "list[MergedBibliographicResource]",
+        get_merged_items(None, entity_type, had_primary_source),
     )
-
-    return [
-        MergedBibliographicResource.model_validate(item)
-        for item in merged_bibliographic_resource
-    ]
-
-
-@asset(group_name="datenkompass")
-def extracted_merged_resources() -> list[MergedResource]:
-    """Get merged items and filter them."""
-    relevant_primary_sources = ["open-data", "synopse"]
-    entity_type = ["MergedResource"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_resource = list(get_merged_items(None, entity_type, had_primary_source))
-
-    return [MergedResource.model_validate(item) for item in merged_resource]
-
-
-@asset(group_name="datenkompass")
-def extracted_merged_organizational_units() -> list[MergedOrganizationalUnit]:
-    """Get all organizational units."""
-    return [
-        MergedOrganizationalUnit.model_validate(unit)
-        for unit in get_merged_items(None, ["MergedOrganizationalUnit"], None)
-    ]
-
-
-@asset(group_name="datenkompass")
-def extracted_merged_bmg_ids() -> list[MergedOrganizationIdentifier]:
-    """Get all BMG organisations."""
-    return list(
-        {
-            MergedOrganizationIdentifier(bmg.identifier)
-            for bmg in get_merged_items("BMG", ["MergedOrganization"], None)
-        }
-    )
-
-
-@asset(group_name="datenkompass")
-def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
-    """Get all persons."""
-    merged_persons = [
-        MergedPerson.model_validate(person)
-        for person in get_merged_items(None, ["MergedPerson"], None)
-    ]
-
-    return {person.identifier: person.fullName for person in merged_persons}
 
 
 @asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
@@ -123,7 +129,9 @@ def transform_activities_to_datenkompass_activities(
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform items to datenkompass items."""

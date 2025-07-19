@@ -31,23 +31,25 @@ from mex.extractors.datenkompass.models.item import (
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[str]:
     """Get shortName and email from merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: List of merged organizational unit identifiers.
+        merged_organizational_units: dict of all merged organizational units by id.
 
     Returns:
         List of short name and email of contact units as strings.
     """
     return [
         contact
-        for target_unit in merged_organizational_units
-        if target_unit.identifier in responsible_unit_ids
-        for contact in [short_name.value for short_name in target_unit.shortName]
-        + [str(email) for email in target_unit.email]
+        for org_id in responsible_unit_ids
+        for unit in [merged_organizational_units[org_id]]
+        for contact in [short_name.value for short_name in unit.shortName]
+        + [str(email) for email in unit.email]
     ]
 
 
@@ -136,13 +138,15 @@ def get_datenbank(item: MergedBibliographicResource) -> str:
 
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[DatenkompassActivity]:
     """Get the relevant info from the merged activities.
 
     Args:
-        extracted_and_filtered_merged_activities: List of merged activities.
-        merged_organizational_units: List of merged organizational units.
+        extracted_and_filtered_merged_activities: List of merged activities
+        extracted_merged_organizational_units: dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -153,7 +157,10 @@ def transform_activities(
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
             beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
+        kontakt = get_contact(
+            item.responsibleUnit,
+            extracted_merged_organizational_units,
+        )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
         datenkompass_activities.append(
@@ -186,7 +193,9 @@ def transform_activities(
 
 def transform_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
     """Get the info asked for."""
@@ -200,7 +209,9 @@ def transform_bibliographic_resources(
             voraussetzungen = None
         datenbank = get_datenbank(item)
         dk_format = get_vocabulary(item.bibliographicResourceType)
-        kontakt = get_contact(item.contributingUnit, merged_organizational_units)
+        kontakt = get_contact(
+            item.contributingUnit, extracted_merged_organizational_units
+        )
         titel = (
             ", ".join(entry.value for entry in item.title)
             + " ("
