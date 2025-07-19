@@ -268,7 +268,7 @@ def transform_bibliographic_resources(
 def transform_resources(
     extracted_merged_resources: dict[str, list[MergedResource]],
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
     extracted_merged_organizational_units: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -281,7 +281,7 @@ def transform_resources(
     Args:
         extracted_merged_resources: List of merged resources
         extracted_and_filtered_merged_activities: list of merged activities
-        extracted_merged_bmg_ids: list of merged bmg organization identifiers
+        extracted_merged_bmg_ids: set of merged bmg organization identifiers
         extracted_merged_organizational_units: dict of merged organizational units by id
         extracted_merged_contact_points: dict of merged contact points
 
