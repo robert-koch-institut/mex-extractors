@@ -1,36 +1,90 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganizationalUnit,
+    MergedResource,
 )
 from mex.common.types import (
+    AccessRestriction,
+    Link,
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
 )
-from mex.common.types.vocabulary import BibliographicResourceType, Theme
-from mex.extractors.datenkompass.models.item import DatenkompassActivity
+from mex.common.types.vocabulary import (
+    BibliographicResourceType,
+    Frequency,
+    License,
+    ResourceCreationMethod,
+    ResourceTypeGeneral,
+    Theme,
+)
+from mex.extractors.datenkompass.models.item import (
+    DatenkompassActivity,
+    DatenkompassBibliographicResource,
+    DatenkompassResource,
+)
 
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[str]:
     """Get shortName and email from merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: List of merged organizational unit identifiers.
+        merged_organizational_units: Dict of all merged organizational units by id.
 
     Returns:
         List of short name and email of contact units as strings.
     """
     return [
         contact
-        for target_unit in merged_organizational_units
-        if target_unit.identifier in responsible_unit_ids
-        for contact in [short_name.value for short_name in target_unit.shortName]
-        + [str(email) for email in target_unit.email]
+        for org_id in responsible_unit_ids
+        for unit in [merged_organizational_units[org_id]]
+        for contact in [short_name.value for short_name in unit.shortName]
+        + [str(email) for email in unit.email]
     ]
+
+
+def get_resource_contact(
+    responsible_unit_ids: Sequence[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ],
+    merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    merged_contact_points: dict[MergedContactPointIdentifier, MergedContactPoint],
+) -> list[str]:
+    """Get email from merged units and merged contact points.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers as Sequence.
+        merged_organizational_units: Dict of all merged organizational units by id.
+        merged_contact_points: Dict of all merged contact points by id.
+
+    Returns:
+        List of emails as strings.
+    """
+    emails: list[str] = []
+    for contact_id in responsible_unit_ids:
+        if isinstance(contact_id, MergedOrganizationalUnitIdentifier):
+            unit = merged_organizational_units[contact_id]
+            emails.extend([str(email) for email in unit.email])
+        elif isinstance(contact_id, MergedContactPointIdentifier):
+            cp = merged_contact_points[contact_id]
+            emails.extend([str(email) for email in cp.email])
+
+    return emails
 
 
 def get_title(item: MergedActivity) -> list[str]:
@@ -55,12 +109,19 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_vocabulary(
-    entries: Iterable[Theme | BibliographicResourceType],  # "list doesn't accept '|' "
+    entries: Iterable[
+        Theme
+        | BibliographicResourceType
+        | Frequency
+        | License
+        | ResourceCreationMethod
+        | ResourceTypeGeneral
+    ],  # "list doesn't work well with '|' "
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
     Args:
-        entries: Iterable of Theme or BibliographicResourceType entries.
+        entries: Iterable of Theme BibliographicResourceType, or Frequency entries.
 
     Returns:
         list of german Vocabulary entries.
@@ -75,15 +136,32 @@ def get_vocabulary(
     ]
 
 
+def get_datenbank(item: MergedBibliographicResource) -> str:
+    """Get Datenbank entries.
+
+    Args:
+        item: MergedBibliographicResource item.
+
+    Returns:
+        string of concatenated entries.
+    """
+    return ", ".join(
+        entry.url if isinstance(entry, Link) else str(entry)
+        for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
+    )
+
+
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    merged_organizational_units: list[MergedOrganizationalUnit],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
 ) -> list[DatenkompassActivity]:
     """Get the relevant info from the merged activities.
 
     Args:
-        extracted_and_filtered_merged_activities: List of merged activities.
-        merged_organizational_units: List of merged organizational units.
+        extracted_and_filtered_merged_activities: List of merged activities
+        extracted_merged_organizational_units: dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -94,7 +172,10 @@ def transform_activities(
         if item.abstract:
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
             beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        kontakt = get_contact(item.responsibleUnit, merged_organizational_units)
+        kontakt = get_contact(
+            item.responsibleUnit,
+            extracted_merged_organizational_units,
+        )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
         datenkompass_activities.append(
@@ -120,6 +201,175 @@ def transform_activities(
                 format="Projekt/Vorhaben",
                 identifier=item.identifier,
                 entityType=item.entityType,
-            )
+            ),
         )
     return datenkompass_activities
+
+
+def transform_bibliographic_resources(
+    extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+) -> list[DatenkompassBibliographicResource]:
+    """Get the relevant info from the merged biblopgraphic resources.
+
+    Args:
+        extracted_merged_bibliographic_resources: List of merged bibliographic resources
+        extracted_merged_organizational_units: dict of merged organizational units by id
+        person_name_by_id: dict of merged person names by id
+
+    Returns:
+        list of DatenkompassBibliographicResource instances.
+    """
+    datenkompass_bibliographic_recources = []
+    for item in extracted_merged_bibliographic_resources:
+        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
+            voraussetzungen = "Zugang eingeschränkt"
+        elif item.accessRestriction == AccessRestriction["OPEN"]:
+            voraussetzungen = "Frei zugänglich"
+        else:
+            voraussetzungen = None
+        datenbank = get_datenbank(item)
+        dk_format = get_vocabulary(item.bibliographicResourceType)
+        kontakt = get_contact(
+            item.contributingUnit, extracted_merged_organizational_units
+        )
+        titel = (
+            ", ".join(entry.value for entry in item.title)
+            + " ("
+            + " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
+            + ")"
+        )
+        datenkompass_bibliographic_recources.append(
+            DatenkompassBibliographicResource(
+                beschreibung=[abstract.value for abstract in item.abstract],
+                voraussetzungen=voraussetzungen,
+                datenbank=datenbank,
+                dk_format=dk_format,
+                kontakt=kontakt,
+                schlagwort=[word.value for word in item.keyword],
+                titel=titel,
+                hauptkategorie="Gesundheit",
+                unterkategorie="Public Health",
+                herausgeber="Robert Koch-Institut",
+                kommentar=(
+                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                    "voraussichtlich Ende 2025 verfügbar sein."
+                ),
+                identifier=item.identifier,
+                entityType=item.entityType,
+            ),
+        )
+    return datenkompass_bibliographic_recources
+
+
+def transform_resources(
+    extracted_merged_resources: dict[str, list[MergedResource]],
+    extracted_and_filtered_merged_activities: list[MergedActivity],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    extracted_merged_contact_points: dict[
+        MergedContactPointIdentifier, MergedContactPoint
+    ],
+) -> list[DatenkompassResource]:
+    """Get the relevant info from the merged resources.
+
+    Args:
+        extracted_merged_resources: List of merged resources
+        extracted_and_filtered_merged_activities: list of merged activities
+        extracted_merged_bmg_ids: set of merged bmg organization identifiers
+        extracted_merged_organizational_units: dict of merged organizational units by id
+        extracted_merged_contact_points: dict of merged contact points
+
+    Returns:
+        list of DatenkompassResource instances.
+    """
+    datenkompass_recources = []
+    merged_activities_set = {
+        ma.identifier
+        for ma in extracted_and_filtered_merged_activities
+        if any(fOC in extracted_merged_bmg_ids for fOC in ma.funderOrCommissioner)
+    }
+    for primary_source, list_merged_resources in extracted_merged_resources.items():
+        for item in list_merged_resources:
+            if item.accessRestriction == AccessRestriction["RESTRICTED"]:
+                voraussetzungen = "Zugang eingeschränkt"
+            elif item.accessRestriction == AccessRestriction["OPEN"]:
+                voraussetzungen = "Frei zugänglich"
+            else:
+                voraussetzungen = None
+            frequenz = (
+                get_vocabulary([item.accrualPeriodicity])
+                if item.accrualPeriodicity
+                else None
+            )
+            kontakt = get_resource_contact(
+                item.contact,
+                extracted_merged_organizational_units,
+                extracted_merged_contact_points,
+            )
+            beschreibung = "n/a"
+            if item.description:
+                description_de = [
+                    d.value for d in item.description if d.language == "de"
+                ]
+                beschreibung = (
+                    description_de[0] if description_de else item.description[0].value
+                )
+            rechtsgrundlagenbenennung = [
+                *[entry.value for entry in item.hasLegalBasis],
+                *get_vocabulary([item.license] if item.license else []),
+            ]
+            schlagwort = [
+                *get_vocabulary(item.theme),
+                *[entry.value for entry in item.keyword],
+            ]
+            dk_format = [
+                *get_vocabulary(item.resourceCreationMethod),
+                *get_vocabulary(item.resourceTypeGeneral),
+            ]
+            unterkategorie = ["Public Health"]
+            if primary_source == "synopse":
+                unterkategorie += ["Gesundheitliche Lage"]
+            datenhalter = (
+                "BMG" if item.wasGeneratedBy in merged_activities_set else None
+            )
+            rechtsgrundlage = (
+                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
+            )
+            datennutzungszweck = ["Themenspezifische Auswertung"]
+            if primary_source == "synopse":
+                datennutzungszweck += ["Themenspezifisches Monitoring"]
+            datenkompass_recources.append(
+                DatenkompassResource(
+                    voraussetzungen=voraussetzungen,
+                    frequenz=frequenz,
+                    kontakt=kontakt,
+                    beschreibung=beschreibung,
+                    datenbank=item.doi,
+                    rechtsgrundlagenbenennung=rechtsgrundlagenbenennung,
+                    datennutzungszweckerweitert=[hp.value for hp in item.hasPurpose],
+                    schlagwort=schlagwort,
+                    dk_format=dk_format,
+                    titel=[t.value for t in item.title],
+                    datenhalter=datenhalter,
+                    hauptkategorie="Gesundheit",
+                    unterkategorie=unterkategorie,
+                    rechtsgrundlage=rechtsgrundlage,
+                    datenerhalt="Externe Zulieferung",
+                    status="Stabil",
+                    datennutzungszweck=datennutzungszweck,
+                    herausgeber="Robert Koch-Institut",
+                    kommentar=(
+                        "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+                        "voraussichtlich Ende 2025 verfügbar sein."
+                    ),
+                    identifier=item.identifier,
+                    entityType=item.entityType,
+                ),
+            )
+    return datenkompass_recources
