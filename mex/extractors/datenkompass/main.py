@@ -6,12 +6,14 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
     MergedResource,
 )
 from mex.common.types import (
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -46,6 +48,20 @@ def extracted_merged_organizational_units() -> dict[
         for organization in cast(
             "list[MergedOrganizationalUnit]",
             get_merged_items(None, ["MergedOrganizationalUnit"], None),
+        )
+    }
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_contact_points() -> dict[
+    MergedContactPointIdentifier, MergedContactPoint
+]:
+    """Get all organizational units as dict by id."""
+    return {
+        cp.identifier: cp
+        for cp in cast(
+            "list[MergedContactPoint]",
+            get_merged_items(None, ["MergedContactPoint"], None),
         )
     }
 
@@ -147,12 +163,20 @@ def transform_resources_to_datenkompass_resources(
     extracted_merged_resources: list[MergedResource],
     extracted_and_filtered_merged_activities: list[MergedActivity],
     extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    extracted_merged_contact_points: dict[
+        MergedContactPointIdentifier, MergedContactPoint
+    ],
 ) -> list[DatenkompassResource]:
     """Transform resources to datenkompass items."""
     return transform_resources(
         extracted_merged_resources,
         extracted_and_filtered_merged_activities,
         extracted_merged_bmg_ids,
+        extracted_merged_organizational_units,
+        extracted_merged_contact_points,
     )
 
 

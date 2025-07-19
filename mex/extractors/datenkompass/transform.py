@@ -1,8 +1,9 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganizationalUnit,
     MergedResource,
 )
@@ -39,7 +40,7 @@ def get_contact(
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: dict of all merged organizational units by id.
+        merged_organizational_units: Dict of all merged organizational units by id.
 
     Returns:
         List of short name and email of contact units as strings.
@@ -54,22 +55,36 @@ def get_contact(
 
 
 def get_resource_contact(
-    contact: Iterable[
-        MergedPersonIdentifier
-        | MergedOrganizationalUnitIdentifier
+    responsible_unit_ids: Sequence[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
         | MergedContactPointIdentifier
-    ],  # merged_organizational_units, merged_contact_ponts,
+    ],
+    merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    merged_contact_points: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[str]:
     """Get email from merged units and merged contact points.
 
-    Args: #### UPDATE
-        responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: List of merged organizational unit identifiers.
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers as Sequence.
+        merged_organizational_units: Dict of all merged organizational units by id.
+        merged_contact_points: Dict of all merged contact points by id.
 
     Returns:
-        List of short name and email of contact units as strings.
+        List of emails as strings.
     """
-    return [str(c) for c in contact]
+    emails: list[str] = []
+    for contact_id in responsible_unit_ids:
+        if isinstance(contact_id, MergedOrganizationalUnitIdentifier):
+            unit = merged_organizational_units[contact_id]
+            emails.extend([str(email) for email in unit.email])
+        elif isinstance(contact_id, MergedContactPointIdentifier):
+            cp = merged_contact_points[contact_id]
+            emails.extend([str(email) for email in cp.email])
+
+    return emails
 
 
 def get_title(item: MergedActivity) -> list[str]:
@@ -245,6 +260,12 @@ def transform_resources(
     extracted_merged_resources: list[MergedResource],
     extracted_and_filtered_merged_activities: list[MergedActivity],
     extracted_merged_bmg_ids: list[MergedOrganizationIdentifier],
+    extracted_merged_organizational_units: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    extracted_merged_contact_points: dict[
+        MergedContactPointIdentifier, MergedContactPoint
+    ],
 ) -> list[DatenkompassResource]:
     """Get the info asked for."""
     datenkompass_recources = []
@@ -265,7 +286,11 @@ def transform_resources(
             if item.accrualPeriodicity
             else None
         )
-        kontakt = get_resource_contact(item.contact)  # UPDATE
+        kontakt = get_resource_contact(
+            item.contact,
+            extracted_merged_organizational_units,
+            extracted_merged_contact_points,
+        )
         beschreibung = "n/a"
         if item.description:
             description_de = [d.value for d in item.description if d.language == "de"]
