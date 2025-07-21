@@ -67,6 +67,7 @@ sumo = "mex.extractors.sumo.main:run"
 sync-persons = "mex.extractors.ldap.main:run"
 synopse = "mex.extractors.synopse.main:run"
 voxco = "mex.extractors.voxco.main:run"
+datenkompass = "mex.extractors.datenkompass.main:run"
 publisher = "mex.extractors.publisher.main:run"
 
 [tool.cruft]
