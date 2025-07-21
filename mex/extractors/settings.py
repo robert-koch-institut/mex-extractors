@@ -6,6 +6,7 @@ from mex.common.types import AssetsPath
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
+from mex.extractors.contact_point.settings import ContactPointSettings
 from mex.extractors.datscha_web.settings import DatschaWebSettings
 from mex.extractors.endnote.settings import EndnoteSettings
 from mex.extractors.ff_projects.settings import FFProjectsSettings
@@ -80,6 +81,7 @@ class Settings(BaseSettings):
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
+    contact_point: ContactPointSettings = ContactPointSettings()
     datscha_web: DatschaWebSettings = DatschaWebSettings()
     endnote: EndnoteSettings = EndnoteSettings()
     ff_projects: FFProjectsSettings = FFProjectsSettings()

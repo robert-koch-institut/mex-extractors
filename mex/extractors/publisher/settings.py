@@ -6,9 +6,9 @@ from mex.common.models import BaseModel
 class PublisherSettings(BaseModel):
     """Settings submodel definition for the publishing pipeline."""
 
-    skip_merged_items: list[str] = Field(
-        ["MergedPrimarySource", "MergedConsent", "MergedPerson"],
-        description="Skip merged items with these types during publishing.",
+    skip_entity_types: list[str] = Field(
+        ["MergedPrimarySource", "MergedConsent"],
+        description="Skip publishing items with these types.",
     )
     allowed_person_primary_sources: list[str] = Field(
         ["endnote"],
