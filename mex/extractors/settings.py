@@ -33,6 +33,11 @@ class Settings(BaseSettings):
         ),
     )
 
+    all_checks_path: AssetsPath = Field(
+        AssetsPath("checks/__final__"),
+        description="Path to the directory with checks config for each extractor.",
+    )
+
     skip_extractors: list[str] = Field(
         [],
         description="Skip execution of these extractors in dagster",
