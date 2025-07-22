@@ -6,6 +6,7 @@ from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySourc
 from mex.common.models.organization import ExtractedOrganization
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
 )
 from mex.extractors.pipeline.organigram import (
@@ -33,10 +34,10 @@ def test_extracted_organizational_units(
             extracted_primary_source_organigram, extracted_organization_rki
         ),
     )
-    assert [u.identifierInPrimarySource for u in units] == [
-        "child-unit",
-        "parent-unit",
-        "fg99",
+    assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
+        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
     ]
 
 
