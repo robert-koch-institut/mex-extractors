@@ -28,7 +28,9 @@ def unit_merged_ids_by_synonym(
     """Return unit merged ids by synonym for organigram units."""
     organigram_units = extract_organigram_units()
     mex_organizational_units = transform_organigram_units_to_organizational_units(
-        organigram_units, extracted_primary_sources["organigram"], extracted_organization_rki
+        organigram_units,
+        extracted_primary_sources["organigram"],
+        extracted_organization_rki,
     )
     return get_unit_merged_ids_by_synonyms(mex_organizational_units)
 
