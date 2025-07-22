@@ -6,6 +6,7 @@ from mex.common.types import AssetsPath
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
+from mex.extractors.contact_point.settings import ContactPointSettings
 from mex.extractors.datscha_web.settings import DatschaWebSettings
 from mex.extractors.endnote.settings import EndnoteSettings
 from mex.extractors.ff_projects.settings import FFProjectsSettings
@@ -15,6 +16,7 @@ from mex.extractors.igs.settings import IGSSettings
 from mex.extractors.international_projects.settings import InternationalProjectsSettings
 from mex.extractors.odk.settings import ODKSettings
 from mex.extractors.open_data.settings import OpenDataSettings
+from mex.extractors.publisher.settings import PublisherSettings
 from mex.extractors.seq_repo.settings import SeqRepoSettings
 from mex.extractors.sumo.settings import SumoSettings
 from mex.extractors.synopse.settings import SynopseSettings
@@ -42,11 +44,6 @@ class Settings(BaseSettings):
         [],
         description="Skip execution of these extractors in dagster",
         validation_alias="MEX_SKIP_EXTRACTORS",
-    )
-    skip_merged_items: list[str] = Field(
-        ["MergedPrimarySource", "MergedConsent", "MergedPerson"],
-        description="Skip merged items with these types",
-        validation_alias="MEX_SKIP_MERGED_ITEMS",
     )
     drop_api_key: SecretStr = Field(
         SecretStr("dummy_admin_key"),
@@ -90,6 +87,7 @@ class Settings(BaseSettings):
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
+    contact_point: ContactPointSettings = ContactPointSettings()
     datscha_web: DatschaWebSettings = DatschaWebSettings()
     endnote: EndnoteSettings = EndnoteSettings()
     ff_projects: FFProjectsSettings = FFProjectsSettings()
@@ -101,8 +99,9 @@ class Settings(BaseSettings):
     )
     odk: ODKSettings = ODKSettings()
     open_data: OpenDataSettings = OpenDataSettings()
+    publisher: PublisherSettings = PublisherSettings()
     seq_repo: SeqRepoSettings = SeqRepoSettings()
     sumo: SumoSettings = SumoSettings()
-    voxco: VoxcoSettings = VoxcoSettings()
     synopse: SynopseSettings = SynopseSettings()
+    voxco: VoxcoSettings = VoxcoSettings()
     wikidata: WikidataSettings = WikidataSettings()

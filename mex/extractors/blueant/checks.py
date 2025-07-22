@@ -1,4 +1,3 @@
-
 from dagster import AssetCheckExecutionContext, AssetCheckResult, AssetKey, asset_check
 from mex.extractors.pipeline.checks.main import (
     check_x_items_more_passed,
@@ -22,19 +21,23 @@ def check_yaml_rules_exist(context) -> AssetCheckResult:
 
 
 @asset_check(asset="extracted_blueant_activities", blocking=True)
-def check_x_items_more_than( context: AssetCheckExecutionContext, extracted_blueant_activities: int) -> AssetCheckResult:
+def check_x_items_more_than(
+    context: AssetCheckExecutionContext, extracted_blueant_activities: int
+) -> AssetCheckResult:
     """Check that latest item count is not more than threshold over historical baseline."""
     asset_key = AssetKey(["extracted_blueant_activities"])
-    passed=check_x_items_more_passed(context, asset_key, "blueant", "activity", extracted_blueant_activities)
+    passed = check_x_items_more_passed(
+        context, asset_key, "blueant", "activity", extracted_blueant_activities
+    )
     # TODO if no historic then just pass. Error only when extracting is higher than historic.
     return AssetCheckResult(
         passed=passed,
-         metadata={
-        #     "rule_details": MetadataValue.md(f"```json\n{json.dumps(rule, indent=2)}\n```"),
-        #     "events_nr": len(events),
-        #     "time_frame": MetadataValue.timestamp(time_frame),
-        #     "latest_count": latest_count,
+        metadata={
+            #     "rule_details": MetadataValue.md(f"```json\n{json.dumps(rule, indent=2)}\n```"),
+            #     "events_nr": len(events),
+            #     "time_frame": MetadataValue.timestamp(time_frame),
+            #     "latest_count": latest_count,
             # "latest_event_timestamp": MetadataValue.text(datetime.fromtimestamp(latest_event.timestamp, tz=UTC).isoformat()),
-        #     "historic_counts": MetadataValue.int(historic_count),
+            #     "historic_counts": MetadataValue.int(historic_count),
         },
     )

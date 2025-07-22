@@ -18,10 +18,14 @@ def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetChe
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
     return AssetCheck.model_validate(load_yaml(path))
 
-def get_rule(rule: str,extractor: str, entity_type: str)->dict[str, Any]:
+
+def get_rule(rule: str, extractor: str, entity_type: str) -> dict[str, Any]:
     """Load rule details from YAML file for given rule type."""
-    check_model = load_asset_check_from_settings(extractor=extractor, entity_type=entity_type)
+    check_model = load_asset_check_from_settings(
+        extractor=extractor, entity_type=entity_type
+    )
     return next(r for r in check_model.rules if r.fail_if == rule).model_dump()
+
 
 def parse_time_frame(time_frame: str) -> timedelta:
     """Parse time frame string like '7d', '3m', '1y' into timedelta."""
@@ -33,7 +37,8 @@ def parse_time_frame(time_frame: str) -> timedelta:
         return timedelta(days=365 * num)
     return timedelta(days=num)
 
-def get_historical_events(events:list[EventLogRecord])-> dict[datetime, int]:
+
+def get_historical_events(events: list[EventLogRecord]) -> dict[datetime, int]:
     """Load all past events and refactor it to a dict."""
     historical_events = [
         e for e in events if "num_items" in e.asset_materialization.metadata
@@ -44,6 +49,7 @@ def get_historical_events(events:list[EventLogRecord])-> dict[datetime, int]:
         )
         for e in historical_events
     }
+
 
 def get_historic_count(
     historic_events: dict[datetime, int],
@@ -72,9 +78,16 @@ def get_historic_count(
     # if no historic event at all available
     return 0
 
-def check_x_items_more_passed(context:AssetCheckExecutionContext, asset_key:str, extractor: str, entity_type: str, asset_data: int) -> Any:
+
+def check_x_items_more_passed(
+    context: AssetCheckExecutionContext,
+    asset_key: str,
+    extractor: str,
+    entity_type: str,
+    asset_data: int,
+) -> Any:
     """Checks rule threshold and returns a bool."""
-    rule = get_rule("x_items_more_than",extractor, entity_type)
+    rule = get_rule("x_items_more_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
     current_time = datetime.now(UTC)
     time_frame = current_time - time_delta
@@ -83,11 +96,15 @@ def check_x_items_more_passed(context:AssetCheckExecutionContext, asset_key:str,
     time_frame = current_time - time_delta
 
     events = context.instance.get_event_records(
-        EventRecordsFilter(asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION)
+        EventRecordsFilter(
+            asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
+        )
     )
-    #latest_event = context.instance.get_latest_materialization_event(asset_key)
+    # latest_event = context.instance.get_latest_materialization_event(asset_key)
     latest_count = asset_data
 
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
-    return latest_count <= (historic_count if historic_count> 0 else latest_count) + (rule["value"] or 0)
+    return latest_count <= (historic_count if historic_count > 0 else latest_count) + (
+        rule["value"] or 0
+    )

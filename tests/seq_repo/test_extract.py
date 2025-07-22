@@ -19,9 +19,7 @@ from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_d
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 
-@pytest.mark.usefixtures(
-    "mocked_drop",
-)
+@pytest.mark.usefixtures("mocked_drop")
 def test_extract_sources() -> None:
     sources = list(extract_sources())
     expected = {

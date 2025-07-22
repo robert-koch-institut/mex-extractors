@@ -1,4 +1,4 @@
-from dagster import MaterializeResult, MetadataValue, Output, asset
+from dagster import MetadataValue, Output, asset
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
 from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
@@ -108,10 +108,8 @@ def extracted_blueant_activities(
     extracted_activities = list(extracted_activities)
     num_items = len(extracted_activities)
     load(extracted_activities)
-    return Output(
-        value=num_items,
-        metadata={"num_items": MetadataValue.int(num_items)}
-    )
+    return Output(value=num_items, metadata={"num_items": MetadataValue.int(num_items)})
+
 
 @entrypoint(Settings)
 def run() -> None:  # pragma: no cover

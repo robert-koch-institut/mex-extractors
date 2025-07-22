@@ -4,6 +4,7 @@ from networkx import DiGraph, NetworkXUnfeasible
 from networkx import topological_sort as network_sort
 
 from mex.common.exceptions import MExError
+from mex.extractors.utils import ensure_list
 
 ItemT = TypeVar("ItemT")
 
@@ -23,14 +24,6 @@ def topological_sort(
 
     This can be useful for submitting items to the backend in the correct order.
     """
-
-    def ensure_list(value: list[str] | str | None) -> list[str]:
-        if value is None:
-            return []
-        if isinstance(value, list):
-            return value
-        return [value]
-
     graph: DiGraph[str] = DiGraph()
     for item in items:
         current_node = getattr(item, primary_key)
