@@ -35,13 +35,3 @@ def extracted_organization_rki() -> ExtractedOrganization:
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(123),
         officialName=["Robert Koch-Institut"],
     )
-
-
-@pytest.fixture
-def rki_organization() -> ExtractedOrganization:
-    """Return a mock RKI organization for testing."""
-    return ExtractedOrganization(
-        officialName=[Text(value="Robert Koch-Institut")],
-        hadPrimarySource=MergedPrimarySourceIdentifier("RKIID1234567890"),
-        identifierInPrimarySource="RKIID9876543210",
-    )
