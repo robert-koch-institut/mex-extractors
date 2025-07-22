@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add RKI organization as unitOf to organigram units
 - enable mypy linting for tests folder
 - include persons from allowed primary sources in the publishing pipeline
 - add contact-point mini extractor to get default contact points

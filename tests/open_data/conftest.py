@@ -9,6 +9,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ResourceMapping,
 )
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
@@ -115,10 +116,12 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
 @pytest.fixture
 def mocked_extracted_organizational_units(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedOrganizationalUnit]:
     return transform_organigram_units_to_organizational_units(
         extract_organigram_units(),
         extracted_primary_sources["organigram"],
+        extracted_organization_rki,
     )
 
 
