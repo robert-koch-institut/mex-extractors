@@ -16,7 +16,7 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "faker>=37,<38",
     "mex-artificial>=0.5",
-    "mex-common>=0.62",
+    "mex-common>=0.63,<0.64",
     "networkx>=3",
     "numpy>=2",
     "openpyxl>=3,<4",
@@ -52,6 +52,7 @@ artificial = "mex.extractors.artificial.main:run"
 biospecimen = "mex.extractors.biospecimen.main:run"
 blueant = "mex.extractors.blueant.main:run"
 confluence-vvt = "mex.extractors.confluence_vvt.main:run"
+contact-point = "mex.extractors.contact_point.main:run"
 datscha-web = "mex.extractors.datscha_web.main:run"
 endnote = "mex.extractors.endnote.main:run"
 ff-projects = "mex.extractors.ff_projects.main:run"
@@ -66,6 +67,7 @@ sumo = "mex.extractors.sumo.main:run"
 sync-persons = "mex.extractors.ldap.main:run"
 synopse = "mex.extractors.synopse.main:run"
 voxco = "mex.extractors.voxco.main:run"
+datenkompass = "mex.extractors.datenkompass.main:run"
 publisher = "mex.extractors.publisher.main:run"
 
 [tool.cruft]
