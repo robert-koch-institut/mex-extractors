@@ -105,7 +105,7 @@ def transform_activities(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
-    """Get the relevant info from the merged activities.
+    """Transform merged to datenkompass activities.
 
     Args:
         extracted_and_filtered_merged_activities: List of merged activities
@@ -161,7 +161,16 @@ def transform_bibliographic_resources(
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
-    """Get the info asked for."""
+    """Transform merged to datenkompass bibliographic resources.
+
+    Args:
+        extracted_merged_bibliographic_resources: List of merged bibliographic resources
+        extracted_merged_organizational_units: dict of merged organizational units by id
+        person_name_by_id: dictionary of merged person names by id
+
+    Returns:
+        list of DatenkompassBibliographicResource instances.
+    """
     datenkompass_bibliographic_recources = []
     for item in extracted_merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:

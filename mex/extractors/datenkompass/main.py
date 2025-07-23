@@ -37,7 +37,7 @@ from mex.extractors.settings import Settings
 def extracted_merged_organizational_units() -> dict[
     MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
 ]:
-    """Get all organizational units as dict by id."""
+    """Get all organizational units as dictionary by id."""
     return {
         organization.identifier: organization
         for organization in cast(
@@ -61,7 +61,7 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
-    """Get all person names as dict by id."""
+    """Get all person names as dictionary by id."""
     return {
         person.identifier: person.fullName
         for person in cast(
@@ -99,7 +99,7 @@ def extracted_and_filtered_merged_activities(
 
 @asset(group_name="datenkompass")
 def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
-    """Get merged items and filter them."""
+    """Get merged bibliographic resources."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
     had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
@@ -131,7 +131,7 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
 ) -> list[DatenkompassBibliographicResource]:
-    """Transform items to datenkompass items."""
+    """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         extracted_merged_bibliographic_resources,
         extracted_merged_organizational_units,

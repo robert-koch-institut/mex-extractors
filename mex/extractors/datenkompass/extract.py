@@ -9,7 +9,7 @@ def get_merged_items(
     entity_type: list[str],
     had_primary_source: list[str] | None,
 ) -> list[AnyMergedModel]:
-    """Read merged items from backend.
+    """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
