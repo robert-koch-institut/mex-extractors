@@ -24,17 +24,17 @@ from mex.extractors.open_data.transform import (
     lookup_person_in_ldap_and_transform,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
-    transform_open_data_person_affiliations_to_organisations,
+    transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
 )
 
 
-def test_transform_open_data_person_affiliations_to_organisations(
+def test_transform_open_data_person_affiliations_to_organizations(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
-    results = transform_open_data_person_affiliations_to_organisations(
+    results = transform_open_data_person_affiliations_to_organizations(
         [mocked_open_data_creator_with_processed_affiliation],
         extracted_primary_sources["open-data"],
     )

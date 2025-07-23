@@ -19,7 +19,7 @@ def get_publishable_merged_items(
 
     logging_counter = 0
 
-    for item_counter in range(0, total_item_number, item_number_limit):
+    for item_counter in range(0, total_item_number + 1, item_number_limit):
         response = connector.fetch_merged_items(
             None,
             entity_type,
