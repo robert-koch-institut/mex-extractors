@@ -11,6 +11,7 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_with_query_to_mex_persons,
 )
 from mex.common.models import (
+    AccessPlatformMapping,
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
@@ -20,6 +21,7 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
+    MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -49,6 +51,7 @@ from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_data_to_mex_resources,
     transform_synopse_projects_to_mex_activities,
+    transform_synopse_studies_into_access_platforms,
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
@@ -179,6 +182,28 @@ def contact_merged_id_by_query_string(
         for contact_point in contact_points
     }
 
+@asset(group_name="synopse")
+def extracted_synopse_access_platform_id(
+    extracted_primary_source_report_server: ExtractedPrimarySource,
+    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+) -> MergedAccessPlatformIdentifier:
+    """Transform Synopse data to extracted access platforms and load result."""
+    settings = Settings.get()
+    synopse_access_platform = AccessPlatformMapping.model_validate(
+        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
+    )
+
+    transformed_access_platforms = transform_synopse_studies_into_access_platforms(
+            unit_stable_target_ids_by_synonym,
+            extracted_primary_source_report_server,
+            contact_merged_id_by_query_string,
+            synopse_access_platform,
+        )
+
+    load([transformed_access_platforms])
+    return transformed_access_platforms.stableTargetId
+
 
 @asset(group_name="synopse")
 def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
@@ -192,6 +217,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    extracted_synopse_access_platform_id:MergedAccessPlatformIdentifier
 ) -> dict[str, list[MergedResourceIdentifier]]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
@@ -207,6 +233,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         contact_merged_id_by_query_string,
+        extracted_synopse_access_platform_id
     )
     transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
     load(transformed_study_data_resource_gens[0])

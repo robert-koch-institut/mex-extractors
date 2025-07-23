@@ -3,6 +3,7 @@ from itertools import groupby
 import pytest
 
 from mex.common.models import (
+    AccessPlatformMapping,
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
@@ -273,6 +274,15 @@ def synopse_studies() -> list[SynopseStudy]:
             titel_datenset="Study 2 ohne Referenzen",
         ),
     ]
+
+
+@pytest.fixture
+def synopse_access_platform() -> AccessPlatformMapping:
+    """Return a list of extracted access platforms."""
+    settings = Settings.get()
+    return AccessPlatformMapping.model_validate(
+        load_yaml(settings.synopse.mapping_path / "access-platform.yaml")
+    )
 
 
 @pytest.fixture

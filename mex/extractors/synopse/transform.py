@@ -6,7 +6,9 @@ from typing import cast
 
 from mex.common.logging import watch
 from mex.common.models import (
+    AccessPlatformMapping,
     ActivityMapping,
+    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPrimarySource,
@@ -18,6 +20,7 @@ from mex.common.models import (
 from mex.common.types import (
     Identifier,
     Link,
+    MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -33,6 +36,45 @@ from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
+
+
+def transform_synopse_studies_into_access_platforms(
+    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_primary_source: ExtractedPrimarySource,
+    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    access_platform_mapping: AccessPlatformMapping,
+) -> ExtractedAccessPlatform:
+    """Transform synopse studies into access platforms.
+
+    Args:
+        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
+        extracted_primary_source: Extracted report server primary source
+        contact_merged_id_by_query_string: contact person lookup by email
+        access_platform_mapping: mapping default values for access platform
+    Returns:
+        extracted access platform
+    """
+    return ExtractedAccessPlatform(
+        alternativeTitle=access_platform_mapping.alternativeTitle[0]
+        .mappingRules[0]
+        .setValues,
+        contact=contact_merged_id_by_query_string[
+            access_platform_mapping.contact[0].mappingRules[0].forValues[0]
+        ],
+        description=access_platform_mapping.description[0].mappingRules[0].setValues,
+        hadPrimarySource=extracted_primary_source.stableTargetId,
+        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource[0]
+        .mappingRules[0]
+        .setValues[0],
+        landingPage=access_platform_mapping.landingPage[0].mappingRules[0].setValues,
+        technicalAccessibility=access_platform_mapping.technicalAccessibility[0]
+        .mappingRules[0]
+        .setValues,
+        title=access_platform_mapping.title[0].mappingRules[0].setValues,
+        unitInCharge=unit_merged_ids_by_synonym[
+            access_platform_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+        ],
+    )
 
 
 def transform_overviews_to_resource_lookup(
@@ -196,6 +238,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    extracted_synopse_access_platform_id:MergedAccessPlatformIdentifier
 ) -> Generator[ExtractedResource, None, None]:
     """Transform Synopse Studies to MEx resources.
 
@@ -210,7 +253,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         extracted_organization: extracted organization
         synopse_resource: resource default values
         contact_merged_id_by_query_string: contact person lookup by email
-
+        extracted_synopse_access_platforms: synopse access platform id
 
     Returns:
         Generator for extracted resources
@@ -235,6 +278,9 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         for rule in synopse_resource.rights[0].mappingRules
     }
     for study in synopse_studies_gens[0]:
+        access_platform: list[MergedAccessPlatformIdentifier] = []
+        if study.ds_typ_id in synopse_resource.accessPlatform[0].mappingRules[0].forValues:
+            access_platform.append(extracted_synopse_access_platform_id)
         created_by_study_id[study.studien_id] = study.erstellungs_datum
         description_by_study_id[study.studien_id] = study.beschreibung
         synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
@@ -280,6 +326,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         yield ExtractedResource(
+            accessPlatform=access_platform,
             accessRestriction=synopse_resource.accessRestriction[0]
             .mappingRules[0]
             .setValues,
