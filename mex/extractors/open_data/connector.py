@@ -1,9 +1,12 @@
 import math
-import time
 from collections.abc import Mapping
-from typing import Any, Literal
+from typing import Any
+
+import backoff
+from requests import HTTPError, Response
 
 from mex.common.connector import HTTPConnector
+from mex.common.logging import logger
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
@@ -21,23 +24,24 @@ class OpenDataConnector(HTTPConnector):
         self.url = settings.open_data.url
         self.community_rki = settings.open_data.community_rki
 
-    def request(
+    @backoff.on_exception(
+        wait_gen=backoff.constant,
+        exception=HTTPError,
+        interval=10,
+        max_tries=5,
+        jitter=backoff.random_jitter,
+        logger=logger,
+    )
+    def _send_request(
         self,
-        method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
-        endpoint: str | None = None,
-        payload: Any = None,  # noqa: ANN401
-        params: Mapping[str, list[str] | str | None] | None = None,
+        method: str,
+        url: str,
+        params: Mapping[str, list[str] | str | None] | None,
         **kwargs: Any,  # noqa: ANN401
-    ) -> dict[str, Any]:
-        """Overwrite HTTP request with waiting time (Zenodo: 133 per minute)."""
-        time.sleep(0.5)
-        return super().request(
-            method,
-            endpoint,
-            payload,
-            params,
-            **kwargs,
-        )
+    ) -> Response:
+        """Overwrite HTTPConnector._send_request with more waiting time."""
+        # Have a little more patience because Zenodo only allows 133 requests/minute
+        return super()._send_request(method, url, params, **kwargs)
 
     def get_parent_resources(self) -> list[OpenDataParentResource]:
         """Load parent resources by querying the Zenodo API.

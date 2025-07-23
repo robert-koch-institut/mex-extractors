@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Mapping
 from itertools import groupby, tee
 from pathlib import PureWindowsPath
 from typing import cast
@@ -390,7 +390,12 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    contact_merged_id_by_query_string: Mapping[
+        str,
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier,
+    ],
 ) -> tuple[list[ExtractedActivity], list[ExtractedActivity]]:
     """Transform synopse projects into MEx activities.
 
@@ -402,7 +407,7 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
-        contact_merged_id_by_query_string: contact person lookup by email
+        contact_merged_id_by_query_string: contact merged identifier lookup by email
 
     Returns:
         tuple of non-child and child extracted activities
@@ -463,7 +468,12 @@ def transform_synopse_project_to_activity(  # noqa: PLR0913
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    contact_merged_id_by_query_string: Mapping[
+        str,
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier,
+    ],
 ) -> ExtractedActivity:
     """Transform a synopse project into a MEx activity.
 
@@ -475,7 +485,7 @@ def transform_synopse_project_to_activity(  # noqa: PLR0913
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_organization_ids_by_query_string: merged organization ids by org name
-        contact_merged_id_by_query_string: contact person lookup by email
+        contact_merged_id_by_query_string: contact merged identifier lookup by email
 
     Returns:
         extracted activity

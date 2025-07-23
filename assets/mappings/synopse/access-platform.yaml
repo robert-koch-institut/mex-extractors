@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../__schema__/AccessPlatformMapping.json
+
+alternativeTitle:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: alternative test title
+contact:
+  - mappingRules:
+    - forValues:
+      - email@email.de
+      rule:
+description:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: test description
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: test id
+landingPage:
+  - mappingRules:
+      - setValues:
+        - language: de
+          title: test landing page
+          url: https://www.rki.de/test_landing_page
+technicalAccessibility:
+  - mappingRules:
+    - setValues: https://mex.rki.de/item/technical-accessibility-2 # external
+title:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: test title
+unitInCharge:
+  - mappingRules:
+    - forValues:
+      - C1
+      rule:

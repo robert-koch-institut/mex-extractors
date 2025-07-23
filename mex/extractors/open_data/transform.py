@@ -35,11 +35,11 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-def transform_open_data_person_affiliations_to_organisations(
+def transform_open_data_person_affiliations_to_organizations(
     extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_open_data: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
-    """Search wikidata or create own organisations, load to sink and create dictionary.
+    """Search wikidata or create own organizations, load to sink and create dictionary.
 
     Args:
         extracted_open_data_creators_contributors: list of creators and contributors
@@ -103,7 +103,7 @@ def transform_open_data_persons_not_in_ldap(
     )
 
 
-def lookup_person_in_ldap_and_transfom(
+def lookup_person_in_ldap_and_transform(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_ldap: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
@@ -158,7 +158,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     extracted_persons: dict[MergedPersonIdentifier, ExtractedPerson] = {}
 
     for person in extracted_open_data_creators_contributors:
-        extracted_person = lookup_person_in_ldap_and_transfom(
+        extracted_person = lookup_person_in_ldap_and_transform(
             person, extracted_primary_source_ldap, units_by_identifier_in_primary_source
         ) or transform_open_data_persons_not_in_ldap(
             person,

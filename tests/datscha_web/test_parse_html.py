@@ -26,7 +26,7 @@ def test_parse_item_urls_from_overview_html() -> None:
 
 
 def test_parse_single_item_html() -> None:
-    with (TEST_DATA_DIR / "single_entry.htm").open() as handle:
+    with (TEST_DATA_DIR / "single_entry.htm").open(encoding="utf-8") as handle:
         details = parse_single_item_html(
             handle.read(),
             "verzeichnis_detail.php?vavs_id=39&option=Anzeigen",
@@ -78,7 +78,7 @@ def test_parse_single_item_html() -> None:
 
 
 def test_parse_single_entry_minimal() -> None:
-    with (TEST_DATA_DIR / "single_entry_minimal.htm").open() as handle:
+    with (TEST_DATA_DIR / "single_entry_minimal.htm").open(encoding="utf-8") as handle:
         details = parse_single_item_html(
             handle.read(),
             "verzeichnis_detail.php?vavs_id=39&option=Anzeigen",

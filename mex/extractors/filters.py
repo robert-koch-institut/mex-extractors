@@ -2,7 +2,7 @@ from collections.abc import Iterable
 from typing import TypeVar
 
 from mex.common.models import ActivityFilter
-from mex.common.types import Identifier
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.utils import any_contains_any
 from mex.extractors.logging import log_filter
 from mex.extractors.models import BaseRawData
@@ -13,10 +13,10 @@ RawDataT = TypeVar("RawDataT", bound=BaseRawData)
 
 
 def filter_by_global_rules(
-    primary_source_id: Identifier,
+    primary_source_id: MergedPrimarySourceIdentifier,
     items: Iterable[RawDataT],
 ) -> list[RawDataT,]:
-    """Filter out items according to global filter rules, build filtered Generator.
+    """Filter out items according to global filter rules, return filtered items.
 
     Args:
         primary_source_id: identifier of the primary source

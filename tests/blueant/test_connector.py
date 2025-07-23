@@ -85,7 +85,7 @@ def test_get_projects_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=project_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     projects = list(connector.get_projects())
@@ -115,7 +115,7 @@ def test_get_client_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=client_name_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     name = connector.get_client_name(12345)
@@ -144,7 +144,7 @@ def test_get_type_description_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=type_description_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     name = connector.get_type_description(12345)
@@ -173,7 +173,7 @@ def test_get_status_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=status_name_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     name = connector.get_status_name(12345)
@@ -200,7 +200,7 @@ def test_get_department_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=get_department_name_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     name = connector.get_department_name(12345)
@@ -235,7 +235,7 @@ def test_get_persons_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=persons_dict)
-    mocked_blueant.request = MagicMock(return_value=mocked_response)
+    mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
     persons = connector.get_persons()

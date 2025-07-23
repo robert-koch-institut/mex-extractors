@@ -15,6 +15,8 @@ from mex.common.types import (
     AccessRestriction,
     Identifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+    MergedResourceIdentifier,
     TemporalEntity,
     TextLanguage,MergedContactPointIdentifier,MergedOrganizationalUnitIdentifier,MergedAccessPlatformIdentifier
 )
@@ -149,7 +151,7 @@ def test_transform_overviews_to_resource_lookup() -> None:
 def test_transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    resource_ids_by_synopse_id: dict[str, Identifier],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
 ) -> None:
     expected_variable_group = {
         "containedBy": ["bFQoRhcVH5DHU6"],
@@ -177,7 +179,7 @@ def test_transform_synopse_variables_to_mex_variable_groups(
 def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     synopse_variables: list[SynopseVariable],
     extracted_variable_groups: list[ExtractedVariableGroup],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
@@ -258,9 +260,9 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
 
 
 def test_transform_synopse_variables_to_mex_variables(
-    synopse_variables_by_thema: dict[int, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_variable_groups: list[ExtractedVariableGroup],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
@@ -427,9 +429,14 @@ def test_transform_synopse_projects_to_mex_activities(
 ) -> None:
     synopse_project = synopse_projects[0]
     contact_merged_ids_by_emails = {"info@rki.de": extracted_person.stableTargetId}
-    contributor_merged_ids_by_name = {"Carla Contact": [Identifier.generate(seed=12)]}
-    unit_merged_ids_by_synonym = {"C1": Identifier.generate(seed=13)}
-
+    contributor_merged_ids_by_name = {
+        "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
+    }
+    unit_merged_ids_by_synonym = {
+        "C1": MergedOrganizationalUnitIdentifier.generate(seed=13)
+    }
+    assert synopse_project.projektende
+    assert synopse_project.projektbeginn
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_der_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
@@ -441,9 +448,7 @@ def test_transform_synopse_projects_to_mex_activities(
             }
         ],
         "end": [str(TemporalEntity(synopse_project.projektende))],
-        "externalAssociate": [
-            "bWt8MuXvqsiYEDpjwYIT2S",
-        ],
+        "externalAssociate": ["bWt8MuXvqsiYEDpjwYIT2S"],
         "hadPrimarySource": str(
             extracted_primary_sources["report-server"].stableTargetId
         ),
@@ -451,12 +456,7 @@ def test_transform_synopse_projects_to_mex_activities(
         "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": [str(Identifier.generate(seed=12))],
         "responsibleUnit": [str(Identifier.generate(seed=13))],
-        "shortName": [
-            {
-                "value": "BBCCDD_00",
-                "language": TextLanguage.DE,
-            }
-        ],
+        "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],
         "succeeds": Joker(),

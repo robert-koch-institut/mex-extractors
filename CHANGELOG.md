@@ -9,17 +9,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add RKI organization as unitOf to organigram units
+- enable mypy linting for tests folder
+- include persons from allowed primary sources in the publishing pipeline
+- add contact-point mini extractor to get default contact points
+- add mex-extractors version to asset and job metadata
+- publisher for datenkompass
+
 ### Changes
+
+- ensure dagster definitions are resolved, for dagster 1.11 compat
+- summarize logging for synopse filtering functions
+- filter out unpublished persons from contact fields and set a fallback
 
 ### Deprecated
 
 ### Removed
 
+- remove unused pytest fixtures
+
+### Fixed
+
+### Security
+
+## [0.37.4] - 2025-07-11
+
+### Changes
+
+- increase zenodo connector patience with more backoff time
+
+## [0.37.3] - 2025-07-10
+
+### Changes
+
+- endnote extractor ignores records with 50 or more authors.
+- improve endnote reading from extracted raw record
+
+## [0.37.2] - 2025-07-10
+
 ### Fixed
 
 - change endnote identifierInPrimarySource hyphenation
-
-### Security
+- avoid identifier collision in endnote organizations and persons
 
 ## [0.37.1] - 2025-07-01
 
