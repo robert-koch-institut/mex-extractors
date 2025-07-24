@@ -8,12 +8,11 @@ from mex.extractors.settings import Settings
 
 pytest_plugins = (
     "mex.common.testing.plugin",
-    "tests.backend_api.mocked_backend_api",
     "tests.blueant.mocked_blueant",
     "tests.confluence_vvt.mocked_confluence_vvt",
     "tests.datenkompass.mocked_backend_api_connector",
-    "tests.datenkompass.mocked_boto",
     "tests.datenkompass.mocked_provider",
+    "tests.datenkompass.mocked_boto",
     "tests.datscha_web.mocked_datscha_web",
     "tests.drop.mocked_drop",
     "tests.grippeweb.mocked_grippeweb",
