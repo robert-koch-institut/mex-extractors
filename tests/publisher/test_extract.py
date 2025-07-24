@@ -1,8 +1,6 @@
 import pytest
 
-from mex.common.models import (
-    MergedPrimarySource,
-)
+from mex.common.models import MergedPrimarySource
 from mex.extractors.publisher.extract import get_publishable_merged_items
 
 

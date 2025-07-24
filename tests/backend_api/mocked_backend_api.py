@@ -20,7 +20,7 @@ from mex.common.models import (
 from mex.common.types import AccessRestriction
 
 
-def fetch_merged_items(
+def _mocked_fetch_merged_items(
     query_string: str | None,  # noqa: ARG001
     entity_type: list[str] | None,
     had_primary_source: list[str] | None,  # noqa: ARG001
@@ -66,7 +66,7 @@ def fetch_merged_items(
     return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
 
 
-def fetch_extracted_items(
+def _mocked_fetch_extracted_items(
     query_string: str | None,  # noqa: ARG001
     stable_target_id: str | None,  # noqa: ARG001
     entity_type: list[str] | None,
@@ -95,11 +95,12 @@ def fetch_extracted_items(
 def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     backend = MagicMock(
         fetch_merged_items=MagicMock(
-            spec=BackendApiConnector.fetch_merged_items, side_effect=fetch_merged_items
+            spec=BackendApiConnector.fetch_merged_items,
+            side_effect=_mocked_fetch_merged_items,
         ),
         fetch_extracted_items=MagicMock(
             spec=BackendApiConnector.fetch_extracted_items,
-            side_effect=fetch_extracted_items,
+            side_effect=_mocked_fetch_extracted_items,
         ),
     )
     monkeypatch.setattr(
