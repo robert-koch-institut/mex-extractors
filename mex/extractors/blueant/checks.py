@@ -11,6 +11,7 @@ def check_yaml_rules_exist(context) -> AssetCheckResult:
     check_model = load_asset_check_from_settings("blueant", "activity")
     num_rules = len(check_model.rules)
     context.log.info("Loaded %d asset check rules", num_rules)
+    context.log.info(f"RULE DETAILS: {check_model.model_dump()}")    
     return AssetCheckResult(
         passed=num_rules > 0,
         metadata={
@@ -31,13 +32,5 @@ def check_x_items_more_than(
     )
     # TODO if no historic then just pass. Error only when extracting is higher than historic.
     return AssetCheckResult(
-        passed=passed,
-        metadata={
-            #     "rule_details": MetadataValue.md(f"```json\n{json.dumps(rule, indent=2)}\n```"),
-            #     "events_nr": len(events),
-            #     "time_frame": MetadataValue.timestamp(time_frame),
-            #     "latest_count": latest_count,
-            # "latest_event_timestamp": MetadataValue.text(datetime.fromtimestamp(latest_event.timestamp, tz=UTC).isoformat()),
-            #     "historic_counts": MetadataValue.int(historic_count),
-        },
+        passed=passed
     )
