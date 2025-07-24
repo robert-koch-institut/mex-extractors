@@ -17,6 +17,7 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
+    ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
 )
@@ -26,7 +27,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedResourceIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -207,7 +207,7 @@ def extracted_synopse_access_platform_id(
 
 
 @asset(group_name="synopse")
-def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
+def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
@@ -219,7 +219,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     synopse_resource: dict[str, Any],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
     extracted_synopse_access_platform_id: MergedAccessPlatformIdentifier,
-) -> dict[str, list[MergedResourceIdentifier]]:
+) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
     Also transforms Synopse data to extracted resources
@@ -287,16 +287,14 @@ def extracted_synopse_activities(  # noqa: PLR0913
 def extracted_synopse_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    extracted_synopse_resource_stable_target_ids_by_synopse_id: dict[
-        str, list[MergedResourceIdentifier]
-    ],
+    extracted_synopse_resources_by_synopse_id: dict[str, ExtractedResource],
 ) -> list[ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
             extracted_primary_source_report_server,
-            extracted_synopse_resource_stable_target_ids_by_synopse_id,
+            extracted_synopse_resources_by_synopse_id,
         )
     )
     load(transformed_variable_groups)
@@ -308,15 +306,13 @@ def extracted_synopse_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
     extracted_synopse_variable_groups: list[ExtractedVariableGroup],
-    extracted_synopse_resource_stable_target_ids_by_synopse_id: dict[
-        str, list[MergedResourceIdentifier]
-    ],
+    extracted_synopse_resources_by_synopse_id: dict[str, ExtractedResource],
 ) -> None:
     """Transforms Synopse data to extracted variables and load result."""
     extracted_variables = transform_synopse_variables_to_mex_variables(
         synopse_variables_by_thema,
         extracted_synopse_variable_groups,
-        extracted_synopse_resource_stable_target_ids_by_synopse_id,
+        extracted_synopse_resources_by_synopse_id,
         extracted_primary_source_report_server,
     )
     load(extracted_variables)

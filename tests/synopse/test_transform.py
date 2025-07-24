@@ -129,10 +129,8 @@ def test_transform_overviews_to_resource_lookup() -> None:
         ),
     ]
     expected_lookup = {
-        "synopse1": [
-            study_resources[0].stableTargetId,
-            study_resources[1].stableTargetId,
-        ],
+        "synopse1": study_resources[0],
+
     }
     lookup = transform_overviews_to_resource_lookup(study_overviews, study_resources)
     assert lookup == expected_lookup
