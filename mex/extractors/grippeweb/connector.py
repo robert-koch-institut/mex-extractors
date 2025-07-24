@@ -19,7 +19,7 @@ class GrippewebConnector(BaseConnector):
     def __init__(self) -> None:
         """Create a new connector instance."""
         # https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
-        import pyodbc  # type: ignore[import-not-found]
+        import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
 
         settings = Settings.get()
         if platform.system() != "Windows":  # pragma: no cover
