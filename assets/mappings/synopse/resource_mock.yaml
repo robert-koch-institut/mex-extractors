@@ -1,5 +1,13 @@
 # yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
 
+accessPlatform:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        - "17"
+        rule:
 accessRestriction:
   - fieldInPrimarySource:
     mappingRules:

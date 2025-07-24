@@ -182,6 +182,7 @@ def contact_merged_id_by_query_string(
         for contact_point in contact_points
     }
 
+
 @asset(group_name="synopse")
 def extracted_synopse_access_platform_id(
     extracted_primary_source_report_server: ExtractedPrimarySource,
@@ -195,11 +196,11 @@ def extracted_synopse_access_platform_id(
     )
 
     transformed_access_platforms = transform_synopse_studies_into_access_platforms(
-            unit_stable_target_ids_by_synonym,
-            extracted_primary_source_report_server,
-            contact_merged_id_by_query_string,
-            synopse_access_platform,
-        )
+        unit_stable_target_ids_by_synonym,
+        extracted_primary_source_report_server,
+        contact_merged_id_by_query_string,
+        synopse_access_platform,
+    )
 
     load([transformed_access_platforms])
     return transformed_access_platforms.stableTargetId
@@ -217,7 +218,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
-    extracted_synopse_access_platform_id:MergedAccessPlatformIdentifier
+    extracted_synopse_access_platform_id: MergedAccessPlatformIdentifier,
 ) -> dict[str, list[MergedResourceIdentifier]]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
@@ -233,7 +234,7 @@ def extracted_synopse_resource_stable_target_ids_by_synopse_id(  # noqa: PLR0913
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         contact_merged_id_by_query_string,
-        extracted_synopse_access_platform_id
+        extracted_synopse_access_platform_id,
     )
     transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
     load(transformed_study_data_resource_gens[0])

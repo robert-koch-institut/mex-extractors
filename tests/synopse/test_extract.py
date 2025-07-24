@@ -47,7 +47,7 @@ def test_extract_variables() -> None:
         "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
         "varname": "KLMNO_F4",
     }
-    variables = list(extract_variables())
+    variables = extract_variables()
     assert len(variables) == 16
     assert variables[0].model_dump() == expected_first_variable
     assert variables[4].model_dump() == expected_second_variable

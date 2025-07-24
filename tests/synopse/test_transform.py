@@ -1,6 +1,7 @@
 import pytest
 
 from mex.common.models import (
+    AccessPlatformMapping,
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
@@ -8,17 +9,20 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
-    ResourceMapping,AccessPlatformMapping,
+    ResourceMapping,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
     Identifier,
+    MergedAccessPlatformIdentifier,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedResourceIdentifier,
     TemporalEntity,
-    TextLanguage,MergedContactPointIdentifier,MergedOrganizationalUnitIdentifier,MergedAccessPlatformIdentifier
+    TextLanguage,
 )
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -39,52 +43,38 @@ from mex.extractors.synopse.transform import (
 def test_transform_synopse_studies_into_access_platforms(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_access_platform: AccessPlatformMapping,
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
 ) -> None:
     unit_merged_ids_by_synonym = {
         "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
     }
-    expected_access_platform_one = {
-        "contact": [str(Identifier.generate(seed=234))],
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "S:\\data",
-        "landingPage": [{"url": "file:///S:/data"}],
-        "stableTargetId": Joker(),
-        "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "S:\\data"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
-    }
-    expected_access_platform_two = {
-        "contact": [str(Identifier.generate(seed=234))],
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "blabli blubb",
-        "landingPage": [{"url": "blabli blubb"}],
-        "stableTargetId": Joker(),
-        "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"value": "S:\\data"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
+    expected_access_platform = {
+        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "identifierInPrimarySource": "t",
+        "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-2",
+        "alternativeTitle": [{"value": "alternative test title", "language": "de"}],
+        "contact": ["bFQoRhcVH5DHYc"],
+        "description": [{"value": "test description", "language": "de"}],
+        "landingPage": [
+            {
+                "language": "de",
+                "title": "test landing page",
+                "url": "https://www.rki.de/test_landing_page",
+            }
+        ],
+        "title": [{"value": "test title", "language": "de"}],
+        "unitInCharge": ["bFQoRhcVH5DHYc"],
+        "identifier": "caja5lr50xZDp3vqBFy5oN",
+        "stableTargetId": "hok9BZyh5ZyU9EWzXUYLqd",
     }
 
-    access_platforms = list(
-        transform_synopse_studies_into_access_platforms(
-            unit_merged_ids_by_synonym,
-            synopse_access_platform,
-            contact_merged_id_by_query_string,
-        )
+    access_platforms = transform_synopse_studies_into_access_platforms(
+        unit_merged_ids_by_synonym,
+        extracted_primary_sources["report-server"],
+        {"email@email.de": MergedContactPointIdentifier.generate(seed=234)},
+        synopse_access_platform,
     )
     assert (
-        access_platforms[0].model_dump(exclude_defaults=True)
-        == expected_access_platform_one
-    )
-    assert (
-        access_platforms[1].model_dump(exclude_defaults=True)
-        == expected_access_platform_two
+        access_platforms.model_dump(exclude_defaults=True) == expected_access_platform
     )
 
 
@@ -345,9 +335,11 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_organization: list[ExtractedOrganization],
     synopse_resource: ResourceMapping,
 ) -> None:
-    unit_merged_ids_by_synonym = {"C1": Identifier.generate(seed=234)}
+    unit_merged_ids_by_synonym = {
+        "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
+    }
     expected_resource = {
-        "accessPlatform": str(Identifier.generate(seed=236)),
+        "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": [str(Identifier.generate(seed=235))],
         "contributor": [str(extracted_activity.involvedPerson[0])],
@@ -411,8 +403,8 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             unit_merged_ids_by_synonym,
             extracted_organization[0],
             synopse_resource,
-            {"C1": [Identifier.generate(seed=235)]},
-            MergedAccessPlatformIdentifier.generate(seed=236)
+            {"C1": MergedContactPointIdentifier.generate(seed=235)},
+            MergedAccessPlatformIdentifier.generate(seed=236),
         )
     )
     assert len(resources) == 1

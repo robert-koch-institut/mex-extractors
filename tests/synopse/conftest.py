@@ -301,7 +301,11 @@ def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, st
 @pytest.fixture
 def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
-    return {s.studien_id: s.dokumentation for s in synopse_studies if s.dokumentation}
+    return {
+        s.studien_id: Link(url=s.dokumentation)
+        for s in synopse_studies
+        if s.dokumentation
+    }
 
 
 @pytest.fixture
@@ -310,7 +314,7 @@ def keyword_text_by_study_id(
 ) -> dict[str, list[Text]]:
     """Return a lookup from study ID to list of keyword Text."""
     return {
-        s.studien_id: s.schlagworte_themen
+        s.studien_id: [Text(value=s.schlagworte_themen)]
         for s in synopse_studies
         if s.schlagworte_themen
     }

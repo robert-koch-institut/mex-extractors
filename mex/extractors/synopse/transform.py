@@ -59,20 +59,20 @@ def transform_synopse_studies_into_access_platforms(
         .mappingRules[0]
         .setValues,
         contact=contact_merged_id_by_query_string[
-            access_platform_mapping.contact[0].mappingRules[0].forValues[0]
+            access_platform_mapping.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         description=access_platform_mapping.description[0].mappingRules[0].setValues,
         hadPrimarySource=extracted_primary_source.stableTargetId,
         identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource[0]
         .mappingRules[0]
-        .setValues[0],
+        .setValues[0],  # type: ignore[index]
         landingPage=access_platform_mapping.landingPage[0].mappingRules[0].setValues,
         technicalAccessibility=access_platform_mapping.technicalAccessibility[0]
         .mappingRules[0]
         .setValues,
         title=access_platform_mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_merged_ids_by_synonym[
-            access_platform_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+            access_platform_mapping.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
     )
 
@@ -238,7 +238,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
-    extracted_synopse_access_platform_id:MergedAccessPlatformIdentifier
+    extracted_synopse_access_platform_id: MergedAccessPlatformIdentifier,
 ) -> Generator[ExtractedResource, None, None]:
     """Transform Synopse Studies to MEx resources.
 
@@ -253,7 +253,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         extracted_organization: extracted organization
         synopse_resource: resource default values
         contact_merged_id_by_query_string: contact person lookup by email
-        extracted_synopse_access_platforms: synopse access platform id
+        extracted_synopse_access_platform_id: synopse access platform id
 
     Returns:
         Generator for extracted resources
@@ -279,7 +279,10 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     }
     for study in synopse_studies_gens[0]:
         access_platform: list[MergedAccessPlatformIdentifier] = []
-        if study.ds_typ_id in synopse_resource.accessPlatform[0].mappingRules[0].forValues:
+        if synopse_resource.accessPlatform[0].mappingRules[0].forValues and (
+            str(study.ds_typ_id)
+            in synopse_resource.accessPlatform[0].mappingRules[0].forValues
+        ):
             access_platform.append(extracted_synopse_access_platform_id)
         created_by_study_id[study.studien_id] = study.erstellungs_datum
         description_by_study_id[study.studien_id] = study.beschreibung
