@@ -1,8 +1,3 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 import pytest
 from pytest import MonkeyPatch
 
@@ -16,8 +11,10 @@ from tests.datenkompass.mocked_item_lists import (
     mocked_bmg,
     mocked_merged_activities,
     mocked_merged_bibliographic_resource,
+    mocked_merged_contact_point,
     mocked_merged_organizational_units,
     mocked_merged_person,
+    mocked_merged_resource,
     mocked_preview_primary_sources,
 )
 
@@ -35,16 +32,25 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
             skip: int,  # noqa: ARG002
             limit: int,  # noqa: ARG002
         ) -> PaginatedItemsContainer[AnyMergedModel]:
-            if entity_type == ["MergedActivity"]:
-                return_items: Sequence[AnyMergedModel] = [mocked_merged_activities()[1]]
-            elif entity_type == ["MergedBibliographicResource"]:
-                return_items = mocked_merged_bibliographic_resource()
-            elif entity_type == ["MergedOrganizationalUnit"]:
-                return_items = [mocked_merged_organizational_units()[0]]
-            elif entity_type == ["MergedOrganization"]:
-                return_items = [mocked_bmg()[1]]
-            elif entity_type == ["MergedPerson"]:
-                return_items = mocked_merged_person()
+            if entity_type and len(entity_type) > 0:
+                key = entity_type[0]
+            else:
+                pytest.fail("No entity_type given in query to Backend.")
+
+            mock_dispatch = {
+                "MergedActivity": lambda: [mocked_merged_activities()[1]],
+                "MergedBibliographicResource": mocked_merged_bibliographic_resource,
+                "MergedResource": mocked_merged_resource,
+                "MergedOrganizationalUnit": lambda: [
+                    mocked_merged_organizational_units()[0]
+                ],
+                "MergedOrganization": lambda: [mocked_bmg()[1]],
+                "MergedPerson": mocked_merged_person,
+                "MergedContactPoint": mocked_merged_contact_point,
+            }
+            default_result: list[AnyMergedModel] = []
+
+            return_items = mock_dispatch.get(key, lambda: default_result)()
 
             return PaginatedItemsContainer[AnyMergedModel](
                 total=3,

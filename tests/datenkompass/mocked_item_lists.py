@@ -1,9 +1,11 @@
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
+    MergedResource,
 )
 from mex.common.models.primary_source import (
     PreviewPrimarySource,
@@ -13,6 +15,7 @@ from mex.common.types import (
     Link,
     MergedActivityIdentifier,
     MergedBibliographicResourceIdentifier,
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -113,6 +116,49 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
     ]
 
 
+def mocked_merged_resource() -> list[MergedResource]:
+    """Mock a list of Merged Resource items."""
+    return [
+        MergedResource(
+            accessRestriction=AccessRestriction["OPEN"],
+            description=[
+                Text(value="english description", language="en"),
+                Text(value="deutsche Beschreibung", language="de"),
+            ],
+            contact=[
+                "PersonIdentifier4Peppa",
+                "IdentifierOrgUnitEG",
+                "IdentifierOrgUnitZB",
+                "identifier4contactPt",
+            ],
+            doi="https://doi.org/10.1234_example",
+            hasLegalBasis=[
+                Text(value="has basis", language="en"),
+                Text(value="hat weitere Basis", language="de"),
+            ],
+            hasPurpose=[Text(value="has purpose", language=None)],
+            keyword=[
+                Text(value="word 1", language="en"),
+                Text(value="Wort 2", language="de"),
+            ],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["some open data resource title"],
+            wasGeneratedBy=["MergedActivityWithBMG2"],
+            unitInCharge=["IdentifierOrgUnitEG"],
+            identifier=["openDataResource"],
+        ),
+        MergedResource(
+            accessRestriction=AccessRestriction["RESTRICTED"],
+            contact=["PersonIdentifier4Peppa"],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["some synopse resource title"],
+            wasGeneratedBy=["MergedActivityNoBMG"],
+            unitInCharge=["IdentifierOrgUnitZB"],
+            identifier=["SynopseResource"],
+        ),
+    ]
+
+
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
@@ -166,9 +212,20 @@ def mocked_merged_person() -> list[MergedPerson]:
     return [
         MergedPerson(
             fullName=["Pattern, Peppa P.", "Pattern, P.P."],
+            email=["PatternPP@example.org"],
             entityType="MergedPerson",
             identifier=MergedPersonIdentifier("PersonIdentifier4Peppa"),
         )
+    ]
+
+
+def mocked_merged_contact_point() -> list[MergedContactPoint]:
+    """Mock a list of Merged Contact Point items."""
+    return [
+        MergedContactPoint(
+            email=["contactpoint@example.org"],
+            identifier=[MergedContactPointIdentifier("identifier4contactPt")],
+        ),
     ]
 
 

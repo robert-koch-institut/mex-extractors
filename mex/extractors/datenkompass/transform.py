@@ -1,4 +1,5 @@
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
+from typing import cast
 
 from mex.common.models import (
     MergedActivity,
@@ -9,6 +10,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     AccessRestriction,
+    Identifier,
     Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -55,36 +57,37 @@ def get_contact(
 
 
 def get_resource_contact(
-    responsible_unit_ids: Sequence[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier
-    ],
+    responsible_unit_ids: list[Identifier],
     merged_organizational_units: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[str]:
-    """Get email from merged units and merged contact points.
+    """Get email from units and contact points and shortname from units.
 
     Args:
-        responsible_unit_ids: List of responsible unit identifiers as Sequence.
+        responsible_unit_ids: Set of responsible unit identifiers.
         merged_organizational_units: Dict of all merged organizational units by id.
         merged_contact_points: Dict of all merged contact points by id.
 
     Returns:
-        List of emails as strings.
+        List of shortnames and email-addresses as strings.
     """
-    emails: list[str] = []
-    for contact_id in responsible_unit_ids:
-        if isinstance(contact_id, MergedOrganizationalUnitIdentifier):
-            unit = merged_organizational_units[contact_id]
-            emails.extend([str(email) for email in unit.email])
-        elif isinstance(contact_id, MergedContactPointIdentifier):
-            cp = merged_contact_points[contact_id]
-            emails.extend([str(email) for email in cp.email])
+    contact_details: list[str] = []
+    combined_dict = cast(
+        "dict[Identifier, MergedContactPoint | MergedOrganizationalUnit]",
+        {**merged_organizational_units, **merged_contact_points},
+    )
 
-    return emails
+    for contact_id in responsible_unit_ids:
+        if contact := combined_dict.get(contact_id):
+            if contact.entityType == "MergedOrganizationalUnit":
+                contact_details.extend(
+                    [short_name.value for short_name in contact.shortName]
+                )
+            contact_details.extend([str(email) for email in contact.email])
+
+    return contact_details
 
 
 def get_title(item: MergedActivity) -> list[str]:
@@ -230,7 +233,7 @@ def transform_bibliographic_resources(
         elif item.accessRestriction == AccessRestriction["OPEN"]:
             voraussetzungen = "Frei zugänglich"
         else:
-            voraussetzungen = None
+            voraussetzungen = None  # DELETE?
         datenbank = get_datenbank(item)
         dk_format = get_vocabulary(item.bibliographicResourceType)
         kontakt = get_contact(
@@ -300,15 +303,13 @@ def transform_resources(
                 voraussetzungen = "Zugang eingeschränkt"
             elif item.accessRestriction == AccessRestriction["OPEN"]:
                 voraussetzungen = "Frei zugänglich"
-            else:
-                voraussetzungen = None
             frequenz = (
                 get_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
                 else None
             )
             kontakt = get_resource_contact(
-                item.contact,
+                sorted({*item.contact, *item.unitInCharge}),
                 extracted_merged_organizational_units,
                 extracted_merged_contact_points,
             )
@@ -333,7 +334,7 @@ def transform_resources(
                 *get_vocabulary(item.resourceTypeGeneral),
             ]
             unterkategorie = ["Public Health"]
-            if primary_source == "synopse":
+            if primary_source == "Synopse":
                 unterkategorie += ["Gesundheitliche Lage"]
             datenhalter = (
                 "BMG" if item.wasGeneratedBy in merged_activities_set else None
@@ -342,7 +343,7 @@ def transform_resources(
                 "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
             )
             datennutzungszweck = ["Themenspezifische Auswertung"]
-            if primary_source == "synopse":
+            if primary_source == "Synopse":
                 datennutzungszweck += ["Themenspezifisches Monitoring"]
             datenkompass_recources.append(
                 DatenkompassResource(

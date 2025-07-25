@@ -86,7 +86,7 @@ class DatenkompassResource(BaseModel):
     )
     titel: list[str] | None = Field(None, alias="Titel")
     datenhalter: str | None = Field(
-        ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
+        None, alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
     unterkategorie: list[str] | None = Field(None, alias="Unterkategorie")
