@@ -130,6 +130,10 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `pdm run confluence-vvt` extracts sources from the VVT confluence page
 
+### consent-mailer
+
+- `pdm run consent-mailer` send emails to collect publishing consents
+
 ### contact-point
 
 - `pdm run contact-point` extracts default contact points
