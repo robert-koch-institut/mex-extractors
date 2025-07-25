@@ -1,15 +1,24 @@
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
-    MergedPrimarySource,
+    MergedPerson,
+    MergedResource,
+)
+from mex.common.models.primary_source import (
+    PreviewPrimarySource,
 )
 from mex.common.types import (
+    AccessRestriction,
     Link,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPrimarySourceIdentifier,
+    MergedPersonIdentifier,
     Text,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
@@ -74,6 +83,82 @@ def mocked_merged_activities() -> list[MergedActivity]:
     ]
 
 
+def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
+    """Mock a list of Merged Bibliographic Resource items."""
+    return [
+        MergedBibliographicResource(
+            accessRestriction=AccessRestriction["OPEN"],
+            title=[
+                Text(value="title no language"),
+                Text(value="titel en", language="en"),
+            ],
+            abstract=[
+                Text(value="Die Nutzung", language="de"),
+                Text(value="The usage", language="en"),
+            ],
+            contributingUnit=[
+                MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG")
+            ],
+            keyword=[
+                Text(value="short en", language="en"),
+                Text(value="short de", language="de"),
+            ],
+            doi="https://doi.org/10.1234_find_this_first",
+            alternateIdentifier=["find_second_a", "find_second_b"],
+            repositoryURL=["https://www.find_third.to"],
+            bibliographicResourceType=[
+                "https://mex.rki.de/item/bibliographic-resource-type-1"
+            ],  # BOOK
+            creator=["PersonIdentifier4Peppa"],
+            entityType="MergedBibliographicResource",
+            identifier=MergedBibliographicResourceIdentifier("MergedBibResource1"),
+        ),
+    ]
+
+
+def mocked_merged_resource() -> list[MergedResource]:
+    """Mock a list of Merged Resource items."""
+    return [
+        MergedResource(
+            accessRestriction=AccessRestriction["OPEN"],
+            description=[
+                Text(value="english description", language="en"),
+                Text(value="deutsche Beschreibung", language="de"),
+            ],
+            contact=[
+                "PersonIdentifier4Peppa",
+                "IdentifierOrgUnitEG",
+                "IdentifierOrgUnitZB",
+                "identifier4contactPt",
+            ],
+            doi="https://doi.org/10.1234_example",
+            hasLegalBasis=[
+                Text(value="has basis", language="en"),
+                Text(value="hat weitere Basis", language="de"),
+            ],
+            hasPurpose=[Text(value="has purpose", language=None)],
+            keyword=[
+                Text(value="word 1", language="en"),
+                Text(value="Wort 2", language="de"),
+            ],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["some open data resource title"],
+            wasGeneratedBy=["MergedActivityWithBMG2"],
+            unitInCharge=["IdentifierOrgUnitEG"],
+            identifier=["openDataResource"],
+        ),
+        MergedResource(
+            accessRestriction=AccessRestriction["RESTRICTED"],
+            contact=["PersonIdentifier4Peppa"],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["some synopse resource title"],
+            wasGeneratedBy=["MergedActivityNoBMG"],
+            unitInCharge=["IdentifierOrgUnitZB"],
+            identifier=["SynopseResource"],
+        ),
+    ]
+
+
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
@@ -122,17 +207,39 @@ def mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
-def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
-    """Mock a list of Merged Primary Source items."""
+def mocked_merged_person() -> list[MergedPerson]:
+    """Mock a single Merged Person item."""
     return [
-        MergedPrimarySource(
-            entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("SomeIrrelevantPS"),
+        MergedPerson(
+            fullName=["Pattern, Peppa P.", "Pattern, P.P."],
+            email=["PatternPP@example.org"],
+            entityType="MergedPerson",
+            identifier=MergedPersonIdentifier("PersonIdentifier4Peppa"),
+        )
+    ]
+
+
+def mocked_merged_contact_point() -> list[MergedContactPoint]:
+    """Mock a list of Merged Contact Point items."""
+    return [
+        MergedContactPoint(
+            email=["contactpoint@example.org"],
+            identifier=[MergedContactPointIdentifier("identifier4contactPt")],
         ),
-        MergedPrimarySource(
+    ]
+
+
+def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
+    """Mock a list of Preview Primary Source items."""
+    return [
+        PreviewPrimarySource(
+            entityType="PreviewPrimarySource",
+            identifier="SomeIrrelevantPS",
+        ),
+        PreviewPrimarySource(
             title=[Text(value="this is a Relevant Primary Source", language="en")],
-            entityType="MergedPrimarySource",
-            identifier=MergedPrimarySourceIdentifier("identifierRelevantPS"),
+            entityType="PreviewPrimarySource",
+            identifier="identifierRelevantPS",
         ),
     ]
 
@@ -144,9 +251,9 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             beschreibung="Die Nutzung",
             datenhalter="BMG",
             kontakt=[
+                "a.bsp. unit",
                 "e.g. unit",
                 "unit@example.org",
-                "a.bsp. unit",
             ],
             titel=["short de", "title no language"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
