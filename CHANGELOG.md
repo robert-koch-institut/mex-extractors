@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add consent-mailer pipeline (unfinished)
+
+### Changes
+
+- bumped cookiecutter template to e886ec
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.38.0] - 2025-07-24
+
+### Added
+
 - add RKI organization as unitOf to organigram units
 - enable mypy linting for tests folder
 - include persons from allowed primary sources in the publishing pipeline
@@ -22,15 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - summarize logging for synopse filtering functions
 - filter out unpublished persons from contact fields and set a fallback
 
-### Deprecated
-
 ### Removed
 
 - remove unused pytest fixtures
-
-### Fixed
-
-### Security
 
 ## [0.37.4] - 2025-07-11
 
