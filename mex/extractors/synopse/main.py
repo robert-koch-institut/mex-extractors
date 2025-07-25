@@ -1,4 +1,4 @@
-from itertools import chain, groupby, tee
+from itertools import groupby
 from typing import Any
 
 from dagster import asset
@@ -236,13 +236,10 @@ def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
         contact_merged_id_by_query_string,
         extracted_synopse_access_platform_id,
     )
-    transformed_study_data_resource_gens = tee(transformed_study_data_resources, 2)
-    load(transformed_study_data_resource_gens[0])
+    load(transformed_study_data_resources)
     return transform_overviews_to_resource_lookup(
         synopse_study_overviews,
-        chain(
-            transformed_study_data_resource_gens[1],
-        ),
+        transformed_study_data_resources,
     )
 
 

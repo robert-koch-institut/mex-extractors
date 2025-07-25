@@ -13,14 +13,12 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    AccessRestriction,
     Identifier,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedResourceIdentifier,
     TemporalEntity,
     TextLanguage,
 )
@@ -78,96 +76,50 @@ def test_transform_synopse_studies_into_access_platforms(
     )
 
 
-def test_transform_overviews_to_resource_lookup() -> None:
-    study_overviews = [
-        SynopseStudyOverview(
-            studien_id="studie1",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="synopse1",
-        ),
-        SynopseStudyOverview(
-            studien_id="studie1",
-            ds_typ_id=18,
-            titel_datenset="set2",
-            synopse_id="synopse1",
-        ),
-        SynopseStudyOverview(
-            studien_id="studie2",
-            ds_typ_id=32,
-            titel_datenset="set2",
-            synopse_id="synopse2",
-        ),
-    ]
-    study_resources = [
-        ExtractedResource(
-            title="Found in overview",
-            identifierInPrimarySource="studie1-set1-17",
-            hadPrimarySource=Identifier.generate(),
-            accessRestriction=AccessRestriction["OPEN"],
-            contact=[Identifier.generate()],
-            unitInCharge=[Identifier.generate()],
-            theme="https://mex.rki.de/item/theme-36",
-        ),
-        ExtractedResource(
-            title="Found in overview too",
-            identifierInPrimarySource="studie1-set2-18",
-            hadPrimarySource=Identifier.generate(),
-            accessRestriction=AccessRestriction["OPEN"],
-            contact=[Identifier.generate()],
-            unitInCharge=[Identifier.generate()],
-            theme="https://mex.rki.de/item/theme-36",
-        ),
-        ExtractedResource(
-            title="Not found in overview",
-            identifierInPrimarySource="not-found",
-            hadPrimarySource=Identifier.generate(),
-            accessRestriction=AccessRestriction["OPEN"],
-            contact=[Identifier.generate()],
-            unitInCharge=[Identifier.generate()],
-            theme="https://mex.rki.de/item/theme-36",
-        ),
-    ]
-    expected_lookup = {
-        "synopse1": study_resources[0],
-
-    }
-    lookup = transform_overviews_to_resource_lookup(study_overviews, study_resources)
-    assert lookup == expected_lookup
+def test_transform_overviews_to_resource_lookup(
+    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_resources: list[ExtractedResource],
+) -> None:
+    lookup = transform_overviews_to_resource_lookup(
+        synopse_study_overviews, synopse_resources
+    )
+    assert lookup["synopse1"] == synopse_resources[1]
 
 
 def test_transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
+    resources_by_synopse_id: dict[str, ExtractedResource],
 ) -> None:
     expected_variable_group = {
-        "containedBy": ["bFQoRhcVH5DHU6"],
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "Gesundheiten (1101)",
-        "label": [{"language": TextLanguage.DE, "value": "Gesundheiten"}],
-        "stableTargetId": Joker(),
+        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "identifierInPrimarySource": "Krankheiten (1101)-studie1-set1-17",
+        "containedBy": [Joker(), Joker()],
+        "label": [{"value": "Krankheiten", "language": "de"}],
+        "identifier": "hSo6lOFWAQYpRHZzr5MhTN",
+        "stableTargetId": "d95T1lCg7ZSlWgqOxBQAAr",
     }
 
     variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
             extracted_primary_sources["report-server"],
-            resource_ids_by_synopse_id,
+            resources_by_synopse_id,
         )
     )
+    sorted_variable_groups = sorted(
+        variable_groups, key=lambda v: v.identifierInPrimarySource
+    )
     assert (
-        variable_groups[0].model_dump(exclude_defaults=True) == expected_variable_group
+        sorted_variable_groups[0].model_dump(exclude_defaults=True)
+        == expected_variable_group
     )
 
 
 def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     synopse_variables: list[SynopseVariable],
     extracted_variable_groups: list[ExtractedVariableGroup],
-    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
+    resources_by_synopse_id: dict[str, ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
@@ -179,7 +131,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         if var.thema_und_fragebogenausschnitt == "Krankheiten (1101)"
     ]
     variable_group = variable_group_by_identifier_in_primary_source[
-        "Krankheiten (1101)"
+        "Krankheiten (1101)-studie1-set2-18"
     ]
     expected_variable_one = {
         "belongsTo": [str(variable_group.stableTargetId)],
@@ -192,7 +144,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifierInPrimarySource": "1",
         "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
         "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["3"]],
+        "usedIn": [str(resources_by_synopse_id["1"].stableTargetId)],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
     }
     expected_variable_two = {  # var 2, missing var label
@@ -204,123 +156,51 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifier": Joker(),
         "label": [{"value": "KHEfiebB", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["2"]],
+        "usedIn": [str(resources_by_synopse_id["2"].stableTargetId)],
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
-    }
-    expected_variable_three = {  # var 3, no auspraegung
-        "belongsTo": [str(variable_group.stableTargetId)],
-        "dataType": "Text",
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "label": [{"value": "no auspraegung"}],
-        "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["3"]],
-        "identifierInPrimarySource": "3",
-    }
-    expected_variable_four = {  # var 4, different value in textbox5
-        "belongsTo": [str(variable_group.stableTargetId)],
-        "dataType": "Text",
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "label": [{"value": "no auspraegung"}],
-        "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["5"]],
-        "identifierInPrimarySource": "5",
     }
     variables = list(
         transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
             synopse_variables,
             variable_group,
-            resource_ids_by_synopse_id,
+            resources_by_synopse_id,
             extracted_primary_sources["report-server"],
         )
     )
-    assert len(variables) == 4
+    assert len(variables) == 2
     assert variables[0].model_dump(exclude_defaults=True) == expected_variable_one
     assert variables[1].model_dump(exclude_defaults=True) == expected_variable_two
-    assert variables[2].model_dump(exclude_defaults=True) == expected_variable_three
-    assert variables[3].model_dump(exclude_defaults=True) == expected_variable_four
 
 
 def test_transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_variable_groups: list[ExtractedVariableGroup],
-    resource_ids_by_synopse_id: dict[str, list[MergedResourceIdentifier]],
+    resources_by_synopse_id: dict[str, ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
-    variable_group_by_identifier_in_primary_source = {
-        group.identifierInPrimarySource: group for group in extracted_variable_groups
-    }
     variables = list(
         transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
             extracted_variable_groups,
-            resource_ids_by_synopse_id,
+            resources_by_synopse_id,
             extracted_primary_sources["report-server"],
         )
     )
 
-    assert len(variables) == 5
-    assert variables[0].model_dump(exclude_defaults=True) == {
-        "belongsTo": [
-            str(
-                variable_group_by_identifier_in_primary_source[
-                    "Gesundheiten (1101)"
-                ].stableTargetId
-            )
-        ],
-        "dataType": "Zahl",
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "label": [{"value": "no auspraegung"}],
-        "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["4"]],
-        "identifierInPrimarySource": "4",
-    }
-    assert variables[1].model_dump(exclude_defaults=True) == {
-        "belongsTo": [
-            str(
-                variable_group_by_identifier_in_primary_source[
-                    "Krankheiten (1101)"
-                ].stableTargetId
-            )
-        ],
+    sorted_variables = sorted(variables, key=lambda v: v.identifierInPrimarySource)
+    assert len(variables) == 2
+    assert sorted_variables[0].model_dump(exclude_defaults=True) == {
+        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "identifierInPrimarySource": "1",
         "codingSystem": "Health Questionnaire , Frage 18",
         "dataType": "Zahl",
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "identifierInPrimarySource": "1",
-        "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
-        "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["1"]],
+        "label": [{"value": "Angeborene Fehlbildung", "language": "de"}],
+        "usedIn": [Joker()],
+        "belongsTo": [Joker()],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
-    }
-    assert variables[4].model_dump(exclude_defaults=True) == {
-        "belongsTo": [
-            str(
-                variable_group_by_identifier_in_primary_source[
-                    "Krankheiten (1101)"
-                ].stableTargetId
-            )
-        ],
-        "dataType": "Text",
-        "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
-        ),
-        "identifier": Joker(),
-        "label": [{"value": "no auspraegung"}],
-        "stableTargetId": Joker(),
-        "usedIn": [str(rid) for rid in resource_ids_by_synopse_id["5"]],
-        "identifierInPrimarySource": "5",
+        "identifier": "33C9QmrGmQPXKmwaOsXTt",
+        "stableTargetId": "evkDk6Y3auo0xASIuyWQV9",
     }
 
 
@@ -391,19 +271,17 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "unitInCharge": [str(Identifier.generate(seed=234))],
         "wasGeneratedBy": str(extracted_activity.stableTargetId),
     }
-    resources = list(
-        transform_synopse_data_to_mex_resources(
-            [synopse_studies[0]],
-            [synopse_project],
-            synopse_variables_by_study_id,
-            [extracted_activity],
-            extracted_primary_sources["report-server"],
-            unit_merged_ids_by_synonym,
-            extracted_organization[0],
-            synopse_resource,
-            {"C1": MergedContactPointIdentifier.generate(seed=235)},
-            MergedAccessPlatformIdentifier.generate(seed=236),
-        )
+    resources = transform_synopse_data_to_mex_resources(
+        [synopse_studies[0]],
+        [synopse_project],
+        synopse_variables_by_study_id,
+        [extracted_activity],
+        extracted_primary_sources["report-server"],
+        unit_merged_ids_by_synonym,
+        extracted_organization[0],
+        synopse_resource,
+        {"C1": MergedContactPointIdentifier.generate(seed=235)},
+        MergedAccessPlatformIdentifier.generate(seed=236),
     )
     assert len(resources) == 1
     assert resources[0].model_dump(exclude_defaults=True) == expected_resource

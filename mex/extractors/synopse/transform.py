@@ -26,7 +26,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedResourceIdentifier,
     TemporalEntity,
     Text,
     TextLanguage,
@@ -78,14 +77,14 @@ def transform_synopse_studies_into_access_platforms(
 
 
 def transform_overviews_to_resource_lookup(
-    study_overviews: Iterable[SynopseStudyOverview],
-    study_resources: Iterable[ExtractedResource],
+    study_overviews: list[SynopseStudyOverview],
+    study_resources: list[ExtractedResource],
 ) -> dict[str, ExtractedResource]:
     """Transform overviews and resources into a resource ID lookup.
 
     Args:
-        study_overviews: Iterable of Synopse Overviews
-        study_resources: Iterable of Study Resources
+        study_overviews: list of Synopse Overviews
+        study_resources: list of Study Resources
 
     Returns:
         Map from synopse variable ID to list of resource stable target IDs
@@ -170,13 +169,14 @@ def transform_synopse_variables_to_mex_variables(
     Returns:
         Generator for ExtractedVariable
     """
-    variable_group_by_identifier_in_primary_source = {
-        group.identifierInPrimarySource: group for group in variable_groups
+    variable_group_by_thema = {
+        group.identifierInPrimarySource.split("-")[0]: group
+        for group in variable_groups
     }
     for thema, variables in synopse_variables_by_thema.items():
-        if thema not in variable_group_by_identifier_in_primary_source:
+        if thema not in variable_group_by_thema:
             continue
-        belongs_to = variable_group_by_identifier_in_primary_source[thema]
+        belongs_to = variable_group_by_thema[thema]
         yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501
             variables,
             belongs_to,
@@ -185,7 +185,6 @@ def transform_synopse_variables_to_mex_variables(
         )
 
 
-@watch()
 def transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source: ExtractedPrimarySource,
@@ -202,6 +201,7 @@ def transform_synopse_variables_to_mex_variable_groups(
     Returns:
         list of extracted variable groups
     """
+    variable_groups: list[ExtractedVariableGroup] = []
     for thema, variables in synopse_variables_by_thema.items():
         synopse_ids = {v.synopse_id for v in variables}
 
@@ -212,29 +212,32 @@ def transform_synopse_variables_to_mex_variable_groups(
                 if (resource := resources_by_synopse_id.get(synopse_id))
             }
         )
-        resource_identifier_in_primary_source = list(
+        for resource_identifier_in_primary_source in list(
             {
                 resource.identifierInPrimarySource
                 for synopse_id in synopse_ids
                 if (resource := resources_by_synopse_id.get(synopse_id))
             }
-        )
-        if len(resource_identifier_in_primary_source) > 0:
-            identifier_in_primary_source = (
-                f"{thema}-{resource_identifier_in_primary_source[0]}"
-            )
-        else:
-            continue
+        ):
+            if len(resource_identifier_in_primary_source) > 0:
+                identifier_in_primary_source = (
+                    f"{thema}-{resource_identifier_in_primary_source}"
+                )
+            else:
+                continue
 
-        label = Text(value=re.sub(r"\s\(\d+\)", "", thema), language=TextLanguage("de"))
-        variable_groups : list[ExtractedVariableGroup] = []
-        if contained_by:
-            variable_groups.append(ExtractedVariableGroup(
-                containedBy=contained_by,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
-                identifierInPrimarySource=identifier_in_primary_source  ,
-                label=label,
-            ))
+            label = Text(
+                value=re.sub(r"\s\(\d+\)", "", thema), language=TextLanguage("de")
+            )
+            if contained_by:
+                variable_groups.append(
+                    ExtractedVariableGroup(
+                        containedBy=contained_by,
+                        hadPrimarySource=extracted_primary_source.stableTargetId,
+                        identifierInPrimarySource=identifier_in_primary_source,
+                        label=label,
+                    )
+                )
     return variable_groups
 
 
@@ -339,62 +342,64 @@ def transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         unit_in_charge = unit_merged_ids_by_synonym[
             synopse_resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
-        extracted_resources.append(ExtractedResource(
-            accessPlatform=access_platform,
-            accessRestriction=synopse_resource.accessRestriction[0]
-            .mappingRules[0]
-            .setValues,
-            contact=contact,
-            contributingUnit=(
-                extracted_activity.involvedUnit if extracted_activity else None
-            ),
-            contributor=(
-                extracted_activity.involvedPerson if extracted_activity else None
-            ),
-            created=created,
-            description=description,
-            documentation=documentation,
-            hasLegalBasis=[study.rechte] if study.rechte else [],
-            hasPersonalData=synopse_resource.hasPersonalData[0]
-            .mappingRules[0]
-            .setValues,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
-            identifierInPrimarySource=identifier_in_primary_source_by_study_id[
-                study.studien_id
-            ],
-            keyword=keyword,
-            language=synopse_resource.language[0].mappingRules[0].setValues,
-            publisher=[extracted_organization.stableTargetId],
-            resourceCreationMethod=synopse_resource.resourceCreationMethod[0]
-            .mappingRules[0]
-            .setValues,
-            resourceTypeGeneral=synopse_resource.resourceTypeGeneral[0]
-            .mappingRules[0]
-            .setValues,
-            resourceTypeSpecific=synopse_studien_art_typ_by_study_ids.get(
-                study.studien_id, []
-            ),
-            rights=rights,
-            spatial=synopse_resource.spatial[0].mappingRules[0].setValues,
-            temporal=(
-                " - ".join(
-                    [
-                        min(extracted_activity.start).date_time.strftime("%Y"),
-                        max(extracted_activity.end).date_time.strftime("%Y"),
-                    ]
-                )
-                if extracted_activity
-                and extracted_activity.start
-                and extracted_activity.end
-                else None
-            ),
-            theme=theme,
-            title=title_by_study_id[study.studien_id],
-            unitInCharge=unit_in_charge,
-            wasGeneratedBy=(
-                extracted_activity.stableTargetId if extracted_activity else None
-            ),
-        ))
+        extracted_resources.append(
+            ExtractedResource(
+                accessPlatform=access_platform,
+                accessRestriction=synopse_resource.accessRestriction[0]
+                .mappingRules[0]
+                .setValues,
+                contact=contact,
+                contributingUnit=(
+                    extracted_activity.involvedUnit if extracted_activity else None
+                ),
+                contributor=(
+                    extracted_activity.involvedPerson if extracted_activity else None
+                ),
+                created=created,
+                description=description,
+                documentation=documentation,
+                hasLegalBasis=[study.rechte] if study.rechte else [],
+                hasPersonalData=synopse_resource.hasPersonalData[0]
+                .mappingRules[0]
+                .setValues,
+                hadPrimarySource=extracted_primary_source.stableTargetId,
+                identifierInPrimarySource=identifier_in_primary_source_by_study_id[
+                    study.studien_id
+                ],
+                keyword=keyword,
+                language=synopse_resource.language[0].mappingRules[0].setValues,
+                publisher=[extracted_organization.stableTargetId],
+                resourceCreationMethod=synopse_resource.resourceCreationMethod[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeGeneral=synopse_resource.resourceTypeGeneral[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeSpecific=synopse_studien_art_typ_by_study_ids.get(
+                    study.studien_id, []
+                ),
+                rights=rights,
+                spatial=synopse_resource.spatial[0].mappingRules[0].setValues,
+                temporal=(
+                    " - ".join(
+                        [
+                            min(extracted_activity.start).date_time.strftime("%Y"),
+                            max(extracted_activity.end).date_time.strftime("%Y"),
+                        ]
+                    )
+                    if extracted_activity
+                    and extracted_activity.start
+                    and extracted_activity.end
+                    else None
+                ),
+                theme=theme,
+                title=title_by_study_id[study.studien_id],
+                unitInCharge=unit_in_charge,
+                wasGeneratedBy=(
+                    extracted_activity.stableTargetId if extracted_activity else None
+                ),
+            )
+        )
     return extracted_resources
 
 
