@@ -28,7 +28,8 @@ def get_contact(
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers.
-        merged_organizational_units: dict of all merged organizational units by id.
+        merged_organizational_units_by_id:
+                dict of all merged organizational units by id.
 
     Returns:
         List of short name and email of contact units as strings.
@@ -36,7 +37,7 @@ def get_contact(
     return [
         contact
         for org_id in responsible_unit_ids
-        for unit in [merged_organizational_units[org_id]]
+        for unit in [merged_organizational_units_by_id[org_id]]
         for contact in [short_name.value for short_name in unit.shortName]
         + [str(email) for email in unit.email]
     ]
@@ -109,7 +110,8 @@ def transform_activities(
 
     Args:
         extracted_and_filtered_merged_activities: List of merged activities
-        extracted_merged_organizational_units: dict of merged organizational units by id
+        extracted_merged_organizational_units_by_id:
+                dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -122,7 +124,7 @@ def transform_activities(
             beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
         kontakt = get_contact(
             item.responsibleUnit,
-            extracted_merged_organizational_units,
+            extracted_merged_organizational_units_by_id,
         )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
@@ -156,7 +158,7 @@ def transform_activities(
 
 def transform_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
@@ -165,7 +167,8 @@ def transform_bibliographic_resources(
 
     Args:
         extracted_merged_bibliographic_resources: List of merged bibliographic resources
-        extracted_merged_organizational_units: dict of merged organizational units by id
+        extracted_merged_organizational_units_by_id:
+                dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
 
     Returns:
@@ -182,11 +185,13 @@ def transform_bibliographic_resources(
         datenbank = get_datenbank(item)
         dk_format = get_vocabulary(item.bibliographicResourceType)
         kontakt = get_contact(
-            item.contributingUnit, extracted_merged_organizational_units
+            item.contributingUnit, extracted_merged_organizational_units_by_id
         )
         title_list = ", ".join(entry.value for entry in item.title)
-        creator_list = " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
-        titel = f"{title_list}({creator_list})"
+        creator_list = " / ".join(
+            [" / ".join(person_name_by_id[c]) for c in item.creator]
+        )
+        titel = f"{title_list} ({creator_list})"
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=[abstract.value for abstract in item.abstract],

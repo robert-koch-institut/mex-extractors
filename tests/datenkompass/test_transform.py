@@ -21,8 +21,10 @@ from tests.datenkompass.mocked_item_lists import (
 
 def test_get_contact() -> None:
     responsible_unit_ids = mocked_merged_activities()[0].responsibleUnit
-    all_units = {unit.identifier: unit for unit in mocked_merged_organizational_units()}
-    result = get_contact(responsible_unit_ids, all_units)
+    merged_organizational_units_by_id = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units()
+    }
+    result = get_contact(responsible_unit_ids, merged_organizational_units_by_id)
 
     assert sorted(result) == [
         "a.bsp. unit",
@@ -56,12 +58,12 @@ def test_transform_activities() -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities()[
         :2
     ]  # item with no BMG filtered out
-    merged_organizational_units = {
+    merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units()
     }
 
     result = transform_activities(
-        extracted_and_filtered_merged_activities, merged_organizational_units
+        extracted_and_filtered_merged_activities, merged_organizational_units_by_id
     )
 
     assert result == mocked_datenkompass_activity()
@@ -72,7 +74,7 @@ def test_transform_bibliographic_resource() -> None:
     extracted_and_filtered_merged_bibliographic_resource = (
         mocked_merged_bibliographic_resource()
     )
-    merged_organizational_units = {
+    merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units()
     }
     person_name_by_id = {
@@ -81,7 +83,7 @@ def test_transform_bibliographic_resource() -> None:
 
     result = transform_bibliographic_resources(
         extracted_and_filtered_merged_bibliographic_resource,
-        merged_organizational_units,
+        merged_organizational_units_by_id,
         person_name_by_id,
     )
 

@@ -112,21 +112,21 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 @asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
         extracted_and_filtered_merged_activities,
-        extracted_merged_organizational_units,
+        extracted_merged_organizational_units_by_id,
     )
 
 
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
@@ -134,7 +134,7 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         extracted_merged_bibliographic_resources,
-        extracted_merged_organizational_units,
+        extracted_merged_organizational_units_by_id,
         person_name_by_id,
     )
 
