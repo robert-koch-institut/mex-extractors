@@ -184,12 +184,9 @@ def transform_bibliographic_resources(
         kontakt = get_contact(
             item.contributingUnit, extracted_merged_organizational_units
         )
-        titel = (
-            ", ".join(entry.value for entry in item.title)
-            + " ("
-            + " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
-            + ")"
-        )
+        title_list = ", ".join(entry.value for entry in item.title)
+        creator_list = " / ".join([" / ".join(person_name_by_id[c]) for c in item.creator])
+        titel = f"{title_list}({creator_list})"
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=[abstract.value for abstract in item.abstract],
