@@ -10,7 +10,7 @@ def merged_activity() -> MergedActivity:
     return MergedActivity(
         identifier="activity123456",
         contact=["thisIdIsBlocked"],
-        externalAssociate=["thisIdIsBlocked"],
+        externalAssociate=["thisIdIsBlocked", "thisIdentifierIsOkay"],
         involvedPerson=["thisIdentifierIsOkay"],
         responsibleUnit=["thisUnitIsResponsible"],
         title=["Activity 123456"],
@@ -32,8 +32,8 @@ def test_update_actor_references_where_needed(merged_activity: MergedActivity) -
         "identifier": "activity123456",
         # contact fallback applied
         "contact": ["thisIsTheFallbackId"],
-        # externalAssociate not updated because field does not allow contact points
-        "externalAssociate": ["thisIdIsBlocked"],
+        # externalAssociate is filtered to exclude invalid references
+        "externalAssociate": ["thisIdentifierIsOkay"],
         # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
