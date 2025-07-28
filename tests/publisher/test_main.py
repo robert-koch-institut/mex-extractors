@@ -40,10 +40,9 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
     assert len(container.items) == 1
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_merged_items.call_args_list == [
-        call(None, None, None, 0, 1),
         call(
-            None,
-            [
+            query_string=None,
+            entity_type=[
                 "MergedAccessPlatform",
                 "MergedActivity",
                 "MergedBibliographicResource",
@@ -53,9 +52,25 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
                 "MergedVariable",
                 "MergedVariableGroup",
             ],
-            None,
-            0,
-            100,
+            had_primary_source=None,
+            skip=0,
+            limit=1,
+        ),
+        call(
+            query_string=None,
+            entity_type=[
+                "MergedAccessPlatform",
+                "MergedActivity",
+                "MergedBibliographicResource",
+                "MergedDistribution",
+                "MergedOrganization",
+                "MergedResource",
+                "MergedVariable",
+                "MergedVariableGroup",
+            ],
+            had_primary_source=None,
+            skip=0,
+            limit=100,
         ),
     ]
 
@@ -68,8 +83,20 @@ def test_publishable_persons(mocked_backend: MagicMock) -> None:
         call(None, None, ["ExtractedPrimarySource"], 0, 100)
     ]
     assert mocked_backend.fetch_merged_items.call_args_list == [
-        call(None, None, None, 0, 1),
-        call(None, ["MergedPerson"], ["hSHhxBonhhI8TpMqFqSFKl"], 0, 100),
+        call(
+            query_string=None,
+            entity_type=["MergedPerson"],
+            had_primary_source=["hSHhxBonhhI8TpMqFqSFKl"],
+            skip=0,
+            limit=1,
+        ),
+        call(
+            query_string=None,
+            entity_type=["MergedPerson"],
+            had_primary_source=["hSHhxBonhhI8TpMqFqSFKl"],
+            skip=0,
+            limit=100,
+        ),
     ]
 
 
@@ -80,13 +107,19 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
     assert len(container.items) == 2
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_merged_items.call_args_list == [
-        call(None, None, None, 0, 1),
         call(
-            None,
-            ["MergedContactPoint", "MergedOrganizationalUnit"],
-            None,
-            0,
-            100,
+            query_string=None,
+            entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
+            had_primary_source=None,
+            skip=0,
+            limit=1,
+        ),
+        call(
+            query_string=None,
+            entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
+            had_primary_source=None,
+            skip=0,
+            limit=100,
         ),
     ]
 
