@@ -52,7 +52,7 @@ def publishable_persons() -> ItemsContainer[AnyMergedModel]:
     connector = BackendApiConnector.get()
     limit = 100
     primary_sources = connector.fetch_extracted_items(
-        None, None, ["ExtractedPrimarySource"], 0, limit
+        entity_type=["ExtractedPrimarySource"]
     )
     if primary_sources.total > limit:
         raise NotImplementedError
@@ -65,7 +65,7 @@ def publishable_persons() -> ItemsContainer[AnyMergedModel]:
         }
     )
     merged_items = get_publishable_merged_items(
-        had_primary_source=allowed_primary_sources,
+        primary_source_ids=allowed_primary_sources,
         entity_type=["MergedPerson"],
     )
     return ItemsContainer[AnyMergedModel](items=merged_items)
@@ -95,11 +95,11 @@ def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     response = cast(
         "PaginatedItemsContainer[MergedContactPoint]",
         connector.fetch_merged_items(
-            str(settings.contact_point.mex_email),
-            ["MergedContactPoint"],
-            [MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
-            0,
-            1,
+            query_string=str(settings.contact_point.mex_email),
+            entity_type=["MergedContactPoint"],
+            referenced_identifier=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
+            reference_field="hadPrimarySource",
+            limit=1,
         ),
     )
     return [item.identifier for item in response.items]
