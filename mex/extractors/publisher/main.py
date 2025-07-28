@@ -16,14 +16,17 @@ from mex.common.models import (
 from mex.common.types import MergedContactPointIdentifier
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.extract import get_publishable_merged_items
-from mex.extractors.publisher.transform import update_contact_where_needed
+from mex.extractors.publisher.transform import update_actor_references_where_needed
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
 
 
 @asset(group_name="publisher")
-def publishable_items_without_contacts() -> ItemsContainer[AnyMergedModel]:
-    """All items with entity types that are neither a contact nor skipped."""
+def publishable_items_without_actors() -> ItemsContainer[AnyMergedModel]:
+    """All items with entity types that are neither an actor nor skipped.
+
+    Actor types are: Person, ContactPoint and OrganizationalUnit.
+    """
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
@@ -104,23 +107,23 @@ def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
 
 @asset(group_name="publisher")
 def publishable_items(
-    publishable_items_without_contacts: ItemsContainer[AnyMergedModel],
+    publishable_items_without_actors: ItemsContainer[AnyMergedModel],
     publishable_persons: ItemsContainer[AnyMergedModel],
     publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
     fallback_contact_identifiers: list[MergedContactPointIdentifier],
 ) -> ItemsContainer[AnyMergedModel]:
     """All publishable items with updated contact references, where needed."""
-    allowed_contacts = {
+    allowed_actors = {
         person.identifier
         for person in publishable_persons.items
         + publishable_contact_points_and_units.items
     }
-    for item in publishable_items_without_contacts.items:
-        update_contact_where_needed(
-            item, allowed_contacts, fallback_contact_identifiers
+    for item in publishable_items_without_actors.items:
+        update_actor_references_where_needed(
+            item, allowed_actors, fallback_contact_identifiers
         )
     return ItemsContainer[AnyMergedModel](
-        items=publishable_items_without_contacts.items
+        items=publishable_items_without_actors.items
         + publishable_persons.items
         + publishable_contact_points_and_units.items
     )

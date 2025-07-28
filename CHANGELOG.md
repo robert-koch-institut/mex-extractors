@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - bumped cookiecutter template to e886ec
+- try to remove broken person references in the publisher
 
 ### Deprecated
 
