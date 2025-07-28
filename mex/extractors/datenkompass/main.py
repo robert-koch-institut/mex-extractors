@@ -34,7 +34,7 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_organizational_units() -> dict[
+def extracted_merged_organizational_units_by_id() -> dict[
     MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
 ]:
     """Get all organizational units as dictionary by id."""
