@@ -16,8 +16,12 @@ def update_actor_references_where_needed(
     """Update references to actors, where needed.
 
     We filter all fields that allow Person references to only contain references to
-    publishable actors. Additionally, for fields that allow contact points, but have no
-    valid references, we set a fallback contact point.
+    publishable actors. Fields that allow contact points, but contain no valid
+    references are set to a fallback contact point.
+    Should the field be required, not allow contact points, but still contain no valid
+    references, we keep the broken ones in order to keep mex-model compliance.
+    Would we skip those items instead, we might break other items relying on the former
+    item, and start a recursive de-publication process - which we don't want.
     """
     for field, ref_types in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[
         item.entityType
