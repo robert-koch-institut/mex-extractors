@@ -20,7 +20,7 @@ from mex.extractors.datenkompass.models.item import (
 
 def get_contact(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
