@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add consent-mailer pipeline (unfinished)
-
 ### Changes
-
-- bumped cookiecutter template to e886ec
-- try to remove broken person references in the publisher
 
 ### Deprecated
 
@@ -23,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.39.0] - 2025-07-28
+
+### Added
+
+- add consent-mailer pipeline (unfinished)
+
+### Changes
+
+- bumped cookiecutter template to e886ec
+- try to remove broken person references in the publisher
 
 ## [0.38.0] - 2025-07-24
 
