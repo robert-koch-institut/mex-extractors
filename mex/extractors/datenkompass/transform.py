@@ -101,7 +101,7 @@ def get_datenbank(item: MergedBibliographicResource) -> str:
 
 def transform_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
