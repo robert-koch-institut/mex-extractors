@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import MergedActivity
 from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
-from mex.extractors.publisher.transform import update_contact_where_needed
+from mex.extractors.publisher.transform import update_actor_references_where_needed
 
 
 @pytest.fixture
@@ -17,10 +17,10 @@ def merged_activity() -> MergedActivity:
     )
 
 
-def test_update_contact_where_needed(merged_activity: MergedActivity) -> None:
-    update_contact_where_needed(
+def test_update_actor_references_where_needed(merged_activity: MergedActivity) -> None:
+    update_actor_references_where_needed(
         merged_activity,
-        allowed_contacts=[
+        allowed_actors=[
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
         ],

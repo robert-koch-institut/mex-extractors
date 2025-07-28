@@ -1,29 +1,42 @@
-from collections.abc import Collection, Iterable
+from collections.abc import Collection
 
-from mex.common.models import (
-    AnyMergedModel,
-    MergedAccessPlatform,
-    MergedActivity,
-    MergedPrimarySource,
-    MergedResource,
-)
+from mex.common.logging import logger
+from mex.common.models import AnyMergedModel
 from mex.common.types import AnyMergedIdentifier, MergedContactPointIdentifier
-
-MergedModelsWithContact = (
-    MergedAccessPlatform | MergedActivity | MergedPrimarySource | MergedResource
+from mex.extractors.publisher.fields import (
+    REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
 )
 
 
-def update_contact_where_needed(
+def update_actor_references_where_needed(
     item: AnyMergedModel,
-    allowed_contacts: Collection[AnyMergedIdentifier],
-    fallback_contact_identifiers: Iterable[MergedContactPointIdentifier],
+    allowed_actors: Collection[AnyMergedIdentifier],
+    fallback_contact_identifiers: list[MergedContactPointIdentifier],
 ) -> None:
-    """Update references in contact fields, where needed."""
-    if isinstance(item, MergedModelsWithContact):
-        contacts = [
-            reference for reference in item.contact if reference in allowed_contacts
-        ]
-        if not contacts and item.model_fields["contact"].is_required():
-            contacts = list(fallback_contact_identifiers)
-        item.contact = contacts
+    """Update references to actors, where needed.
+
+    We filter all fields that allow Person references to only contain references to
+    publishable actors. Additionally, for fields that allow contact points, but have no
+    valid references, we set a fallback contact point.
+    """
+    for field, ref_types in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[
+        item.entityType
+    ].items():
+        if "MergedPerson" in ref_types:
+            identifiers = [
+                identifier
+                for identifier in getattr(item, field)
+                if identifier in allowed_actors
+            ]
+            if not identifiers and "MergedContactPoint" in ref_types:
+                identifiers = fallback_contact_identifiers
+            if not identifiers and item.model_fields[field].is_required():
+                logger.error(
+                    "%s(identifier='%s') has no valid references "
+                    "for required field %s, publishing broken references",
+                    item.entityType,
+                    item.identifier,
+                    field,
+                )
+            else:
+                setattr(item, field, identifiers)

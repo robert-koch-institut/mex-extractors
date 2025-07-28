@@ -9,7 +9,7 @@ from mex.extractors.publisher.main import (
     fallback_contact_identifiers,
     publishable_contact_points_and_units,
     publishable_items,
-    publishable_items_without_contacts,
+    publishable_items_without_actors,
     publishable_persons,
 )
 from mex.extractors.sinks.s3 import S3Sink
@@ -33,9 +33,9 @@ def test_run() -> None:
 
 
 @pytest.mark.usefixtures("mocked_backend", "mocked_boto")
-def test_publishable_items_without_contacts(mocked_backend: MagicMock) -> None:
+def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
     container = cast(
-        "ItemsContainer[AnyMergedModel]", publishable_items_without_contacts()
+        "ItemsContainer[AnyMergedModel]", publishable_items_without_actors()
     )
     assert len(container.items) == 1
     mocked_backend.fetch_extracted_items.assert_not_called()
@@ -104,7 +104,7 @@ def test_publishable_items() -> None:
     container = cast(
         "ItemsContainer[AnyMergedModel]",
         publishable_items(
-            publishable_items_without_contacts(),
+            publishable_items_without_actors(),
             publishable_persons(),
             publishable_contact_points_and_units(),
             fallback_contact_identifiers(),
