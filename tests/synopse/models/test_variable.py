@@ -44,4 +44,4 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 )
 def test_synopse_variable_model(variable: dict[str, Any]) -> None:
     syn_var = SynopseVariable.model_validate(variable)
-    assert not any(v is np.nan for v in syn_var.model_dump().values())
+    assert not any(v is np.nan for v in syn_var.model_dump().values())  # noqa: PLW0177
