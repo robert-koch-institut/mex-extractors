@@ -3,8 +3,11 @@
 accessPlatform:
   - fieldInPrimarySource:
     locationInPrimarySource:
+    examplesInPrimarySource:
     mappingRules:
-      - rule:
+      - forValues:
+        - "17"
+        rule:
 accessRestriction:
   - fieldInPrimarySource:
     mappingRules:

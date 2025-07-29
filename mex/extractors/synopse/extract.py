@@ -17,8 +17,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch()
-def extract_variables() -> Generator[SynopseVariable, None, None]:
+def extract_variables() -> list[SynopseVariable]:
     """Extract variables from `variablenuebersicht` report.
 
     Settings:
@@ -26,12 +25,14 @@ def extract_variables() -> Generator[SynopseVariable, None, None]:
                                   absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Synopse Variables
+        list for Synopse Variables
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.variablenuebersicht_path,
-        SynopseVariable,
+    return list(
+        parse_csv(
+            settings.synopse.variablenuebersicht_path,
+            SynopseVariable,
+        )
     )
 
 
