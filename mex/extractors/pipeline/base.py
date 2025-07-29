@@ -108,7 +108,13 @@ def load_job_definitions() -> Definitions:
         group
         for asset in assets
         for group in cast("AssetsDefinition", asset).group_names_by_key.values()
-        if group not in ["default", "publisher", *settings.skip_extractors]
+        if group
+        not in [
+            "default",
+            "publisher",
+            "consent_mailer",
+            *settings.skip_extractors,
+        ]
     }
     metadata: dict[str, Any] = {
         "settings": MetadataValue.md(
@@ -126,6 +132,7 @@ def load_job_definitions() -> Definitions:
         )
         for group_name in extractor_group_names
     ]
+
     sensors = []
 
     schedules = [
@@ -143,6 +150,22 @@ def load_job_definitions() -> Definitions:
             AssetSelection.groups(*extractor_group_names).upstream(),
             metadata=metadata,
             tags={"job_category": "extractor"},
+        )
+    )
+
+    # configure consent mailer
+    consent_mailer_job = define_asset_job(
+        "consent_mailer",
+        AssetSelection.groups("consent_mailer").upstream(),
+        metadata=metadata,
+        tags={"job_category": "consent_mailer"},
+    )
+    jobs.append(consent_mailer_job)
+    schedules.append(
+        ScheduleDefinition(
+            job=consent_mailer_job,
+            cron_schedule=settings.consent_mailer.schedule,
+            default_status=DefaultScheduleStatus.RUNNING,
         )
     )
 
