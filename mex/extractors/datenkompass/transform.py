@@ -37,9 +37,11 @@ def get_contact(
     return [
         contact
         for org_id in responsible_unit_ids
-        for unit in [merged_organizational_units_by_id[org_id]]
-        for contact in [short_name.value for short_name in unit.shortName]
-        + [str(email) for email in unit.email]
+        for contact in [
+            short_name.value
+            for short_name in merged_organizational_units_by_id[org_id].shortName
+        ]
+        + [str(email) for email in merged_organizational_units_by_id[org_id].email]
     ]
 
 
