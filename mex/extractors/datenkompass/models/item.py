@@ -16,10 +16,10 @@ class DatenkompassActivity(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
-    titel: list[str] | None = Field(None, alias="Titel")
-    schlagwort: list[str | None] = Field([], alias="Schlagwort")
-    datenbank: list[str] | None = Field(None, alias="Link oder Datenbank")
+    kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    titel: list[str] = Field([], alias="Titel")
+    schlagwort: list[str] = Field([], alias="Schlagwort")
+    datenbank: list[str] = Field([], alias="Link oder Datenbank")
     voraussetzungen: str | None = Field(
         None, alias="Formelle Voraussetzungen für den Datenerhalt"
     )
@@ -43,10 +43,10 @@ class DatenkompassBibliographicResource(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    beschreibung: list[str]  = Field([], alias="Beschreibung")
-    kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
+    beschreibung: list[str] = Field([], alias="Beschreibung")
+    kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
     titel: str | None = Field(None, alias="Titel")
-    schlagwort: list[str | None] = Field([], alias="Schlagwort")
+    schlagwort: list[str] = Field([], alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
     voraussetzungen: str | None = Field(
         None, alias="Formelle Voraussetzungen für den Datenerhalt"
@@ -55,9 +55,7 @@ class DatenkompassBibliographicResource(BaseModel):
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
     herausgeber: str | None = Field(None, alias="Herausgeber")
     kommentar: str | None = Field(None, alias="Kommentar")
-    dk_format: list[str] | None = Field(
-        None, alias="Format"
-    )  # "format" would shadow a builtIn
+    dk_format: list[str] = Field([], alias="Format")  # "format" would shadow a builtIn
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
     entityType: str = Field(exclude=True)  # ignore when writing to json
 
