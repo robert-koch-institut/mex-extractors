@@ -29,7 +29,7 @@ def fetch_merged_items(  # noqa: PLR0913
     reference_field: str | None = None,  # noqa: ARG001
     skip: int = 0,  # noqa: ARG001
     limit: int = 100,  # noqa: ARG001
-) -> list[AnyMergedModel]:
+) -> PaginatedItemsContainer[AnyMergedModel]:
     merged_items: list[AnyMergedModel] = [
         MergedContactPoint(
             email=["mex@rki.de"],
