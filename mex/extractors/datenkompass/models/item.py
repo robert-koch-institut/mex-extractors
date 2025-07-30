@@ -43,7 +43,7 @@ class DatenkompassBibliographicResource(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    beschreibung: list[str] | None = Field(None, alias="Beschreibung")
+    beschreibung: list[str]  = Field([], alias="Beschreibung")
     kontakt: list[str] | None = Field(None, alias="Kontakt (Herausgeber)")
     titel: str | None = Field(None, alias="Titel")
     schlagwort: list[str | None] = Field([], alias="Schlagwort")
