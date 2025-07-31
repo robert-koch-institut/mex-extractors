@@ -19,7 +19,7 @@ from tests.datenkompass.mocked_item_lists import (
 )
 
 
-def test_get_contact() -> None:
+def test_get_contact(mocked_merged_activities: list[MergedActivity]) -> None:
     responsible_unit_ids = mocked_merged_activities()[0].responsibleUnit
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units()
