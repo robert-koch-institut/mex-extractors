@@ -3,20 +3,17 @@ from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.extract as extract_module
 from mex.common.identity import Identity
-from mex.common.models.primary_source import PreviewPrimarySource
 
 
 @pytest.fixture
 def mocked_provider(
     monkeypatch: MonkeyPatch,
-    mocked_preview_primary_sources: list[PreviewPrimarySource],
 ) -> None:
     """Mock the IdentityProvider to return dummy variables."""
-    mocked_merged_ps = mocked_preview_primary_sources
 
     class FakeProvider:
         def fetch(self, stable_target_id: str) -> list[Identity]:
-            if stable_target_id == mocked_merged_ps[0].identifier:
+            if stable_target_id == "SomeIrrelevantPS":
                 return [
                     Identity(
                         identifier="12345678901234",
@@ -25,7 +22,7 @@ def mocked_provider(
                         stableTargetId="SomeIrrelevantPS",
                     )
                 ]
-            if stable_target_id == mocked_merged_ps[1].identifier:
+            if stable_target_id == "identifierRelevantPS":
                 return [
                     Identity(
                         identifier="98765432109876",
