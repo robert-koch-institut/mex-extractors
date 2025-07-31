@@ -28,7 +28,8 @@ from mex.common.types import (
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
-def create_mocked_merged_activities() -> list[MergedActivity]:
+@pytest.fixture
+def mocked_merged_activities() -> list[MergedActivity]:
     """Mock a list of Merged Activity items."""
     return [
         MergedActivity(
@@ -87,7 +88,8 @@ def create_mocked_merged_activities() -> list[MergedActivity]:
     ]
 
 
-def create_mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
+@pytest.fixture
+def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
     """Mock a list of Merged Bibliographic Resource items."""
     return [
         MergedBibliographicResource(
@@ -120,7 +122,8 @@ def create_mocked_merged_bibliographic_resource() -> list[MergedBibliographicRes
     ]
 
 
-def create_mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
+@pytest.fixture
+def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
         MergedOrganizationalUnit(
@@ -150,7 +153,8 @@ def create_mocked_merged_organizational_units() -> list[MergedOrganizationalUnit
     ]
 
 
-def create_mocked_bmg() -> list[MergedOrganization]:
+@pytest.fixture
+def mocked_bmg() -> list[MergedOrganization]:
     """Mock a list of BMG as Merged Organization items."""
     return [
         MergedOrganization(
@@ -168,7 +172,8 @@ def create_mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
-def create_mocked_merged_person() -> list[MergedPerson]:
+@pytest.fixture
+def mocked_merged_person() -> list[MergedPerson]:
     """Mock a single Merged Person item."""
     return [
         MergedPerson(
@@ -179,7 +184,8 @@ def create_mocked_merged_person() -> list[MergedPerson]:
     ]
 
 
-def create_mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
+@pytest.fixture
+def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     """Mock a list of Preview Primary Source items."""
     return [
         PreviewPrimarySource(
@@ -194,7 +200,8 @@ def create_mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     ]
 
 
-def create_mocked_datenkompass_activity() -> list[DatenkompassActivity]:
+@pytest.fixture
+def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
@@ -257,8 +264,14 @@ def create_mocked_datenkompass_activity() -> list[DatenkompassActivity]:
 
 
 @pytest.fixture
-def mocked_backend_api_connector(
+def mocked_backend_api_connector(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_bmg: list[MergedOrganization],
+    mocked_merged_person: list[MergedPerson],
+    mocked_preview_primary_sources: list[PreviewPrimarySource],
 ) -> None:
     """Mock the backendAPIConnector to return dummy variables."""
 
@@ -277,19 +290,14 @@ def mocked_backend_api_connector(
                 pytest.fail("No entity_type given in query to Backend.")
 
             mock_dispatch = {
-                "MergedActivity": lambda: [create_mocked_merged_activities()[1]],
-                "MergedBibliographicResource": create_mocked_merged_bibliographic_resource,
-                "MergedOrganizationalUnit": lambda: [
-                    create_mocked_merged_organizational_units()[0]
-                ],
-                "MergedOrganization": lambda: [create_mocked_bmg()[1]],
-                "MergedPerson": create_mocked_merged_person,
+                "MergedActivity": [mocked_merged_activities[1]],
+                "MergedBibliographicResource": mocked_merged_bibliographic_resource,
+                "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
+                "MergedOrganization": [mocked_bmg[1]],
+                "MergedPerson": mocked_merged_person,
             }
-            default_result: list[AnyMergedModel] = []
 
-            return cast(
-                "list[AnyMergedModel]", mock_dispatch.get(key, lambda: default_result)()
-            )
+            return cast("list[AnyMergedModel]", mock_dispatch.get(key))
 
         def fetch_preview_items(  # noqa: PLR0913
             self,
@@ -303,7 +311,7 @@ def mocked_backend_api_connector(
         ) -> PaginatedItemsContainer[AnyPreviewModel]:
             return PaginatedItemsContainer[AnyPreviewModel](
                 total=2,
-                items=create_mocked_preview_primary_sources(),
+                items=mocked_preview_primary_sources,
             )
 
     def fake_get() -> FakeConnector:
