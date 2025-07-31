@@ -9,7 +9,6 @@ from mex.common.models import (
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
-    DatenkompassBibliographicResource,
 )
 from mex.extractors.datenkompass.transform import (
     get_contact,
@@ -99,26 +98,23 @@ def test_transform_bibliographic_resource(
         person_name_by_id,
     )
 
-    assert result[0].model_dump() == [
-        DatenkompassBibliographicResource(
-            beschreibung=["Die Nutzung", "The usage"],
-            kontakt=["e.g. unit", "unit@example.org"],
-            titel="title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
-            schlagwort=["short en", "short de"],
-            datenbank=(
-                "https://doi.org/10.1234_find_this_first, find_second_a, "
-                "find_second_b, https://www.find_third.to"
-            ),
-            voraussetzungen="Frei zugänglich",
-            hauptkategorie="Gesundheit",
-            unterkategorie="Public Health",
-            herausgeber="Robert Koch-Institut",
-            kommentar=(
-                "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein."
-            ),
-            dk_format=["Buch"],
-            identifier="MergedBibResource1",
-            entityType="MergedBibliographicResource",
+    assert result[0].model_dump() == {
+        "beschreibung": ["Die Nutzung", "The usage"],
+        "kontakt": ["e.g. unit", "unit@example.org"],
+        "titel": "title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
+        "schlagwort": ["short en", "short de"],
+        "datenbank": (
+            "https://doi.org/10.1234_find_this_first, find_second_a, "
+            "find_second_b, https://www.find_third.to"
         ),
-    ]
+        "voraussetzungen": "Frei zugänglich",
+        "hauptkategorie": "Gesundheit",
+        "unterkategorie": "Public Health",
+        "herausgeber": "Robert Koch-Institut",
+        "kommentar": (
+            "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+            "voraussichtlich Ende 2025 verfügbar sein."
+        ),
+        "dk_format": ["Buch"],
+        "identifier": "MergedBibResource1",
+    }
