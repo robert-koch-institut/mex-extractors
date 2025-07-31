@@ -54,7 +54,7 @@ def test_get_datenbank() -> None:
     )
 
 
-def test_transform_activities() -> None:
+def test_transform_activities(mocked_merged_activities: list[MergedActivity]) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities()[
         :2
     ]  # item with no BMG filtered out
