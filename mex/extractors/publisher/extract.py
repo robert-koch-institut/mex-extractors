@@ -1,33 +1,20 @@
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
 from mex.common.models import AnyMergedModel
 
 
 def get_publishable_merged_items(
     *,
     entity_type: list[str] | None = None,
-    had_primary_source: list[str] | None = None,
+    primary_source_ids: list[str] | None = None,
 ) -> list[AnyMergedModel]:
     """Read publishable merged items from backend."""
-    items: list[AnyMergedModel] = []
     connector = BackendApiConnector.get()
 
-    response = connector.fetch_merged_items(None, None, None, 0, 1)
-    total_item_number = response.total
+    reference_field = "hadPrimarySource" if primary_source_ids else None
 
-    item_number_limit = 100  # 100 is the maximum possible number per get-request
-
-    logging_counter = 0
-
-    for item_counter in range(0, total_item_number + 1, item_number_limit):
-        response = connector.fetch_merged_items(
-            None,
-            entity_type,
-            had_primary_source,
-            item_counter,
-            item_number_limit,
-        )
-        logging_counter += len(response.items)
-        items.extend(response.items)
-        logger.info("collected %s of %s items", logging_counter, total_item_number)
-    return items
+    response = connector.fetch_all_merged_items(
+        entity_type=entity_type,
+        referenced_identifier=primary_source_ids,
+        reference_field=reference_field,
+    )
+    return list(response)

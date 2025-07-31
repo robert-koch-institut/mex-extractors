@@ -1,53 +1,35 @@
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import get_provider
-from mex.common.logging import logger
 from mex.common.models import AnyMergedModel
 
 
 def get_merged_items(
     query_string: str | None,
     entity_type: list[str],
-    had_primary_source: list[str] | None,
+    primary_source_ids: list[str] | None,
 ) -> list[AnyMergedModel]:
     """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
         entity_type: List of entity types.
-        had_primary_source: List of primary sources.
+        primary_source_ids: List of primary source ids.
 
     Returns:
         List of merged items.
     """
     connector = BackendApiConnector.get()
 
-    response = connector.fetch_merged_items(
-        query_string, entity_type, had_primary_source, 0, 1
+    reference_field = "hadPrimarySource" if primary_source_ids else None
+
+    response = connector.fetch_all_merged_items(
+        query_string=query_string,
+        entity_type=entity_type,
+        referenced_identifier=primary_source_ids,
+        reference_field=reference_field,
     )
-    total_item_number = response.total
 
-    item_number_limit = 100  # 100 is the maximum possible number per get-request
-
-    logging_counter = 0
-
-    result: list[AnyMergedModel] = []
-    for item_counter in range(0, total_item_number, item_number_limit):
-        response = connector.fetch_merged_items(
-            query_string,
-            entity_type,
-            had_primary_source,
-            item_counter,
-            item_number_limit,
-        )
-        logging_counter += len(response.items)
-        result.extend(response.items)
-    logger.debug(
-        "%s of %s %ss were extracted.",
-        logging_counter,
-        total_item_number,
-        entity_type,
-    )
-    return result
+    return list(response)
 
 
 def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list[str]:
@@ -60,13 +42,12 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
         List of IDs of the relevant primary sources.
     """
     connector = BackendApiConnector.get()
+    limit = 100
     preview_primary_sources = connector.fetch_preview_items(
-        query_string=None,
         entity_type=["MergedPrimarySource"],
-        had_primary_source=None,
-        skip=0,
-        limit=100,  # change if Datenkompass still running when we have more than 100 PS
     ).items
+    if len(preview_primary_sources) > limit:
+        raise NotImplementedError
 
     provider = get_provider()
 
