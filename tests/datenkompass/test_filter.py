@@ -10,7 +10,7 @@ def test_filter_for_bmg() -> None:
     assert len(mocked_merged_activities) == 3
 
     result = filter_for_bmg(
-        mocked_merged_activities(),  # 3 items, one without bmg to be filtered out
+        mocked_merged_activities,  # 3 items, one without bmg to be filtered out
         bmg_ids,
     )
 
