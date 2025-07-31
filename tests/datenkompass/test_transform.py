@@ -99,7 +99,7 @@ def test_transform_bibliographic_resource(
         person_name_by_id,
     )
 
-    assert result == [
+    assert result[0].model_dump() == [
         DatenkompassBibliographicResource(
             beschreibung=["Die Nutzung", "The usage"],
             kontakt=["e.g. unit", "unit@example.org"],
