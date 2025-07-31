@@ -3,15 +3,16 @@ from pytest import MonkeyPatch
 
 import mex.extractors.datenkompass.extract as extract_module
 from mex.common.identity import Identity
-from tests.datenkompass.mocked_item_lists import (
-    mocked_preview_primary_sources,
-)
+from mex.common.models.primary_source import PreviewPrimarySource
 
 
 @pytest.fixture
-def mocked_provider(monkeypatch: MonkeyPatch) -> None:
+def mocked_provider(
+    monkeypatch: MonkeyPatch,
+    mocked_preview_primary_sources: list[PreviewPrimarySource],
+) -> None:
     """Mock the IdentityProvider to return dummy variables."""
-    mocked_merged_ps = mocked_preview_primary_sources()
+    mocked_merged_ps = mocked_preview_primary_sources
 
     class FakeProvider:
         def fetch(self, stable_target_id: str) -> list[Identity]:

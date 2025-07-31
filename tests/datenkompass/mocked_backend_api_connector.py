@@ -10,20 +10,26 @@ from mex.common.backend_api import connector
 from mex.common.models import (
     AnyMergedModel,
     AnyPreviewModel,
+    MergedActivity,
+    MergedBibliographicResource,
+    MergedOrganization,
+    MergedOrganizationalUnit,
+    MergedPerson,
     PaginatedItemsContainer,
 )
-from tests.datenkompass.mocked_item_lists import (
-    mocked_bmg,
-    mocked_merged_activities,
-    mocked_merged_bibliographic_resource,
-    mocked_merged_organizational_units,
-    mocked_merged_person,
-    mocked_preview_primary_sources,
-)
+from mex.common.models.primary_source import PreviewPrimarySource
 
 
 @pytest.fixture
-def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
+def mocked_backend_api_connector(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_bmg: list[MergedOrganization],
+    mocked_merged_person: list[MergedPerson],
+    mocked_preview_primary_sources: list[PreviewPrimarySource],
+) -> None:
     """Mock the backendAPIConnector to return dummy variables."""
 
     class FakeConnector:
@@ -36,15 +42,15 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
             reference_field: str | None = None,  # noqa: ARG002
         ) -> list[AnyMergedModel]:
             if entity_type == ["MergedActivity"]:
-                return_items: Sequence[AnyMergedModel] = [mocked_merged_activities()[1]]
+                return_items: Sequence[AnyMergedModel] = [mocked_merged_activities[1]]
             elif entity_type == ["MergedBibliographicResource"]:
-                return_items = mocked_merged_bibliographic_resource()
+                return_items = mocked_merged_bibliographic_resource
             elif entity_type == ["MergedOrganizationalUnit"]:
-                return_items = [mocked_merged_organizational_units()[0]]
+                return_items = [mocked_merged_organizational_units[0]]
             elif entity_type == ["MergedOrganization"]:
-                return_items = [mocked_bmg()[1]]
+                return_items = [mocked_bmg[1]]
             elif entity_type == ["MergedPerson"]:
-                return_items = mocked_merged_person()
+                return_items = mocked_merged_person
 
             return list(return_items)
 
@@ -60,7 +66,7 @@ def mocked_backend_api_connector(monkeypatch: MonkeyPatch) -> None:
         ) -> PaginatedItemsContainer[AnyPreviewModel]:
             return PaginatedItemsContainer[AnyPreviewModel](
                 total=2,
-                items=mocked_preview_primary_sources(),
+                items=mocked_preview_primary_sources,
             )
 
     def fake_get() -> FakeConnector:

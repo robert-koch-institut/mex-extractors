@@ -1,7 +1,16 @@
 import pytest
 
+from mex.common.models import (
+    MergedActivity,
+    MergedBibliographicResource,
+    MergedOrganizationalUnit,
+    MergedPerson,
+)
 from mex.common.types.vocabulary import Theme
-from mex.extractors.datenkompass.models.item import DatenkompassBibliographicResource
+from mex.extractors.datenkompass.models.item import (
+    DatenkompassActivity,
+    DatenkompassBibliographicResource,
+)
 from mex.extractors.datenkompass.transform import (
     get_contact,
     get_datenbank,
@@ -10,19 +19,15 @@ from mex.extractors.datenkompass.transform import (
     transform_activities,
     transform_bibliographic_resources,
 )
-from tests.datenkompass.mocked_item_lists import (
-    mocked_datenkompass_activity,
-    mocked_merged_activities,
-    mocked_merged_bibliographic_resource,
-    mocked_merged_organizational_units,
-    mocked_merged_person,
-)
 
 
-def test_get_contact(mocked_merged_activities: list[MergedActivity]) -> None:
-    responsible_unit_ids = mocked_merged_activities()[0].responsibleUnit
+def test_get_contact(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+) -> None:
+    responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
     merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units()
+        unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     result = get_contact(responsible_unit_ids, merged_organizational_units_by_id)
 
@@ -33,8 +38,8 @@ def test_get_contact(mocked_merged_activities: list[MergedActivity]) -> None:
     ]
 
 
-def test_get_title() -> None:
-    item = mocked_merged_activities()[0]
+def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
+    item = mocked_merged_activities[0]
     result = get_title(item)
 
     assert result == ["short de", "title no language"]
@@ -45,40 +50,47 @@ def test_get_vocabulary() -> None:
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
-def test_get_datenbank(mocked_merged_activities: list[MergedActivity]) -> None:
-    item = mocked_merged_bibliographic_resource()[0]
-
-    assert get_datenbank(item) == (
+def test_get_datenbank(
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+) -> None:
+    assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
         "https://doi.org/10.1234_find_this_first, find_second_a, "
         "find_second_b, https://www.find_third.to"
     )
 
 
-def test_transform_activities(mocked_merged_activities: list[MergedActivity]) -> None:
-    extracted_and_filtered_merged_activities = mocked_merged_activities()[
+def test_transform_activities(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_datenkompass_activity: list[DatenkompassActivity],
+) -> None:
+    extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
     ]  # item with no BMG filtered out
     merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units()
+        unit.identifier: unit for unit in mocked_merged_organizational_units
     }
 
     result = transform_activities(
         extracted_and_filtered_merged_activities, merged_organizational_units_by_id
     )
-
-    assert result == mocked_datenkompass_activity()
+    assert result == mocked_datenkompass_activity
 
 
 @pytest.mark.usefixtures("mocked_backend_api_connector")
-def test_transform_bibliographic_resource() -> None:
+def test_transform_bibliographic_resource(
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_person: list[MergedPerson],
+) -> None:
     extracted_and_filtered_merged_bibliographic_resource = (
-        mocked_merged_bibliographic_resource()
+        mocked_merged_bibliographic_resource
     )
     merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units()
+        unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     person_name_by_id = {
-        person.identifier: person.fullName for person in mocked_merged_person()
+        person.identifier: person.fullName for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(

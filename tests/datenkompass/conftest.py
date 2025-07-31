@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
@@ -5,9 +7,7 @@ from mex.common.models import (
     MergedOrganizationalUnit,
     MergedPerson,
 )
-from mex.common.models.primary_source import (
-    PreviewPrimarySource,
-)
+from mex.common.models.primary_source import PreviewPrimarySource
 from mex.common.types import (
     AccessRestriction,
     Link,
@@ -21,6 +21,7 @@ from mex.common.types import (
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 
 
+@pytest.fixture
 def mocked_merged_activities() -> list[MergedActivity]:
     """Mock a list of Merged Activity items."""
     return [
@@ -80,6 +81,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
     ]
 
 
+@pytest.fixture
 def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
     """Mock a list of Merged Bibliographic Resource items."""
     return [
@@ -113,6 +115,7 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
     ]
 
 
+@pytest.fixture
 def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
@@ -143,6 +146,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     ]
 
 
+@pytest.fixture
 def mocked_bmg() -> list[MergedOrganization]:
     """Mock a list of BMG as Merged Organization items."""
     return [
@@ -161,6 +165,7 @@ def mocked_bmg() -> list[MergedOrganization]:
     ]
 
 
+@pytest.fixture
 def mocked_merged_person() -> list[MergedPerson]:
     """Mock a single Merged Person item."""
     return [
@@ -172,6 +177,7 @@ def mocked_merged_person() -> list[MergedPerson]:
     ]
 
 
+@pytest.fixture
 def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     """Mock a list of Preview Primary Source items."""
     return [
@@ -187,6 +193,7 @@ def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
     ]
 
 
+@pytest.fixture
 def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
