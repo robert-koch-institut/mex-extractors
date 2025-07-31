@@ -45,7 +45,7 @@ def test_get_vocabulary() -> None:
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
-def test_get_datenbank() -> None:
+def test_get_datenbank(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_bibliographic_resource()[0]
 
     assert get_datenbank(item) == (
