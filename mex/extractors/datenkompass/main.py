@@ -29,8 +29,8 @@ def extracted_and_filtered_merged_activities() -> list[MergedActivity]:
         "report-server",  # synopse
     ]
     entity_type = ["MergedActivity"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
-    merged_activities = get_merged_items(None, entity_type, had_primary_source)
+    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
+    merged_activities = get_merged_items(None, entity_type, primary_source_ids)
 
     return filter_for_bmg(merged_activities)
 

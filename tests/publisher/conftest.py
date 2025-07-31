@@ -20,13 +20,38 @@ from mex.common.models import (
 from mex.common.types import AccessRestriction
 
 
-def fetch_merged_items(
-    query_string: str | None,  # noqa: ARG001
-    entity_type: list[str] | None,
-    had_primary_source: list[str] | None,  # noqa: ARG001
-    skip: int,  # noqa: ARG001
-    limit: int,  # noqa: ARG001
+def fetch_merged_items(  # noqa: PLR0913
+    *,
+    query_string: str | None = None,  # noqa: ARG001
+    identifier: str | None = None,  # noqa: ARG001
+    entity_type: list[str] | None = None,
+    referenced_identifier: list[str] | None = None,  # noqa: ARG001
+    reference_field: str | None = None,  # noqa: ARG001
+    skip: int = 0,  # noqa: ARG001
+    limit: int = 100,  # noqa: ARG001
 ) -> PaginatedItemsContainer[AnyMergedModel]:
+    merged_items: list[AnyMergedModel] = [
+        MergedContactPoint(
+            email=["mex@rki.de"],
+            identifier="fakeFakeContact",
+        ),
+    ]
+    items = [
+        item
+        for item in merged_items
+        if not entity_type or item.entityType in entity_type
+    ]
+    return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
+
+
+def fetch_all_merged_items(
+    *,
+    query_string: str | None = None,  # noqa: ARG001
+    identifier: str | None = None,  # noqa: ARG001
+    entity_type: list[str] | None = None,
+    referenced_identifier: list[str] | None = None,  # noqa: ARG001
+    reference_field: str | None = None,  # noqa: ARG001
+) -> list[AnyMergedModel]:
     merged_items: list[AnyMergedModel] = [
         MergedPrimarySource(
             identifier="fakeFakeSource",
@@ -58,20 +83,20 @@ def fetch_merged_items(
             creator=["fakeFakePerson"],
         ),
     ]
-    items = [
+    return [
         item
         for item in merged_items
         if not entity_type or item.entityType in entity_type
     ]
-    return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
 
 
 def fetch_extracted_items(
-    query_string: str | None,  # noqa: ARG001
-    stable_target_id: str | None,  # noqa: ARG001
-    entity_type: list[str] | None,
-    skip: int,  # noqa: ARG001
-    limit: int,  # noqa: ARG001
+    *,
+    query_string: str | None = None,  # noqa: ARG001
+    stable_target_id: str | None = None,  # noqa: ARG001
+    entity_type: list[str] | None = None,
+    skip: int = 0,  # noqa: ARG001
+    limit: int = 100,  # noqa: ARG001
 ) -> PaginatedItemsContainer[AnyExtractedModel]:
     extracted_items: list[AnyExtractedModel] = [
         ExtractedPrimarySource(
@@ -97,6 +122,10 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
         fetch_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_merged_items, side_effect=fetch_merged_items
         ),
+        fetch_all_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_all_merged_items,
+            side_effect=fetch_all_merged_items,
+        ),
         fetch_extracted_items=MagicMock(
             spec=BackendApiConnector.fetch_extracted_items,
             side_effect=fetch_extracted_items,
@@ -107,6 +136,9 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_merged_items", backend.fetch_merged_items
+    )
+    monkeypatch.setattr(
+        BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items
