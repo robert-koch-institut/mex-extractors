@@ -76,7 +76,7 @@ def test_transform_activities(
     assert result == mocked_datenkompass_activity
 
 
-@pytest.mark.usefixtures("mocked_backend_api_connector")
+@pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_transform_bibliographic_resource(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],

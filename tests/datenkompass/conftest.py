@@ -1,9 +1,12 @@
+from collections.abc import Generator
 from typing import cast
+from unittest.mock import MagicMock, patch
 
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.backend_api import connector
+from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.identity import Identity, get_provider
 from mex.common.models import (
     AnyMergedModel,
     AnyPreviewModel,
@@ -264,7 +267,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
 
 
 @pytest.fixture
-def mocked_backend_api_connector(  # noqa: PLR0913
+def mocked_backend_datenkompass(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
@@ -272,49 +275,109 @@ def mocked_backend_api_connector(  # noqa: PLR0913
     mocked_bmg: list[MergedOrganization],
     mocked_merged_person: list[MergedPerson],
     mocked_preview_primary_sources: list[PreviewPrimarySource],
-) -> None:
-    """Mock the backendAPIConnector to return dummy variables."""
+) -> MagicMock:
+    """Mock the backendAPIConnector functions to return dummy variables."""
+    mock_dispatch = {
+        "MergedActivity": [mocked_merged_activities[1]],
+        "MergedBibliographicResource": mocked_merged_bibliographic_resource,
+        "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
+        "MergedOrganization": [mocked_bmg[1]],
+        "MergedPerson": mocked_merged_person,
+    }
 
-    class FakeConnector:
-        def fetch_all_merged_items(
-            self,
-            *,
-            query_string: str | None = None,  # noqa: ARG002
-            entity_type: list[str] | None = None,
-            referenced_identifier: list[str] | None = None,  # noqa: ARG002
-            reference_field: str | None = None,  # noqa: ARG002
-        ) -> list[AnyMergedModel]:
-            if entity_type and len(entity_type) > 0:
-                key = entity_type[0]
-            else:
-                pytest.fail("No entity_type given in query to Backend.")
+    def fetch_all_merged_items(
+        *,
+        query_string: str | None = None,  # noqa: ARG001
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,  # noqa: ARG001
+        reference_field: str | None = None,  # noqa: ARG001
+    ) -> list[AnyMergedModel]:
+        if entity_type and len(entity_type) > 0:
+            key = entity_type[0]
+        else:
+            pytest.fail("No entity_type given in query to Backend.")
 
-            mock_dispatch = {
-                "MergedActivity": [mocked_merged_activities[1]],
-                "MergedBibliographicResource": mocked_merged_bibliographic_resource,
-                "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
-                "MergedOrganization": [mocked_bmg[1]],
-                "MergedPerson": mocked_merged_person,
-            }
+        return cast("list[AnyMergedModel]", mock_dispatch.get(key))
 
-            return cast("list[AnyMergedModel]", mock_dispatch.get(key))
+    def fetch_preview_items(  # noqa: PLR0913
+        *,
+        query_string: str | None = None,  # noqa: ARG001
+        entity_type: list[str] | None = None,  # noqa: ARG001
+        referenced_identifier: list[str] | None = None,  # noqa: ARG001
+        reference_field: str | None = None,  # noqa: ARG001
+        skip: int = 0,  # noqa: ARG001
+        limit: int = 100,  # noqa: ARG001
+    ) -> PaginatedItemsContainer[AnyPreviewModel]:
+        return PaginatedItemsContainer[AnyPreviewModel](
+            total=2,
+            items=mocked_preview_primary_sources,
+        )
 
-        def fetch_preview_items(  # noqa: PLR0913
-            self,
-            *,
-            query_string: str | None = None,  # noqa: ARG002
-            entity_type: list[str] | None = None,  # noqa: ARG002
-            referenced_identifier: list[str] | None = None,  # noqa: ARG002
-            reference_field: str | None = None,  # noqa: ARG002
-            skip: int = 0,  # noqa: ARG002
-            limit: int = 100,  # noqa: ARG002
-        ) -> PaginatedItemsContainer[AnyPreviewModel]:
-            return PaginatedItemsContainer[AnyPreviewModel](
-                total=2,
-                items=mocked_preview_primary_sources,
-            )
+    backend = MagicMock(
+        fetch_all_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_all_merged_items,
+            side_effect=fetch_all_merged_items,
+        ),
+        fetch_preview_items=MagicMock(
+            spec=BackendApiConnector.fetch_preview_items,
+            side_effect=fetch_preview_items,
+        ),
+    )
+    monkeypatch.setattr(
+        BackendApiConnector, "_check_availability", MagicMock(return_value=True)
+    )
+    monkeypatch.setattr(
+        BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
+    )
+    monkeypatch.setattr(
+        BackendApiConnector, "fetch_preview_items", backend.fetch_preview_items
+    )
+    return backend
 
-    def fake_get() -> FakeConnector:
-        return FakeConnector()
 
-    monkeypatch.setattr(connector.BackendApiConnector, "get", fake_get)
+@pytest.fixture
+def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
+    """Mock the IdentityProvider functions to return dummy variables."""
+
+    def fetch(stable_target_id: str) -> list[Identity]:
+        if stable_target_id == "SomeIrrelevantPS":
+            return [
+                Identity(
+                    identifier="12345678901234",
+                    hadPrimarySource="00000000000000",
+                    identifierInPrimarySource="completely irrelevant",
+                    stableTargetId="SomeIrrelevantPS",
+                )
+            ]
+        if stable_target_id == "identifierRelevantPS":
+            return [
+                Identity(
+                    identifier="98765432109876",
+                    hadPrimarySource="00000000000000",
+                    identifierInPrimarySource="relevant primary source",
+                    stableTargetId="identifierRelevantPS",
+                )
+            ]
+        pytest.fail("wrong mocking of identity provider")
+
+    provider = get_provider()
+
+    fake_provider = MagicMock(
+        fetch=MagicMock(spec=provider.fetch, side_effect=fetch),
+    )
+
+    monkeypatch.setattr(provider, "fetch", fake_provider.fetch)
+
+    return fake_provider
+
+
+@pytest.fixture  # needed for hardcoded upload to S3.
+def mocked_boto() -> Generator[MagicMock, None, None]:
+    """Mock a S3 session client to write the jsons to."""
+    with patch("boto3.Session") as mock_session_class:
+        mock_s3_client = MagicMock()
+        mock_session_instance = MagicMock()
+        mock_session_instance.client.return_value = mock_s3_client
+        mock_session_class.return_value = mock_session_instance
+
+        yield mock_s3_client
