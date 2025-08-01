@@ -8,7 +8,7 @@ def get_merged_items(
     entity_type: list[str],
     primary_source_ids: list[str] | None,
 ) -> list[AnyMergedModel]:
-    """Read merged items from backend.
+    """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
@@ -41,14 +41,20 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     Returns:
         List of IDs of the relevant primary sources.
     """
-    entity_type = ["MergedPrimarySource"]
-    merged_primary_sources = list(get_merged_items(None, entity_type, None))
+    connector = BackendApiConnector.get()
+    limit = 100
+    preview_primary_sources = connector.fetch_preview_items(
+        entity_type=["MergedPrimarySource"],
+    ).items
+    if len(preview_primary_sources) > limit:
+        raise NotImplementedError
+
     provider = get_provider()
 
     return [
-        str(mps.identifier)
-        for mps in merged_primary_sources
-        if mps.entityType == entity_type[0]
-        and provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
+        str(pps.identifier)
+        for pps in preview_primary_sources
+        if pps.entityType == "PreviewPrimarySource"
+        and provider.fetch(stable_target_id=pps.identifier)[0].identifierInPrimarySource
         in relevant_primary_sources
     ]

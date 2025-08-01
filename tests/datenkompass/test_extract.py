@@ -5,7 +5,7 @@ from mex.common.models import MergedActivity
 from mex.common.types import Text
 
 
-@pytest.mark.usefixtures("mocked_backend_api_connector")
+@pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_get_merged_items_mocked() -> None:
     item_generator = extract_module.get_merged_items("blah", ["MergedActivity"], None)
     items = list(item_generator)
@@ -27,7 +27,7 @@ def test_get_merged_items_mocked() -> None:
     )
 
 
-@pytest.mark.usefixtures("mocked_backend_api_connector", "mocked_provider")
+@pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
 def test_get_relevant_primary_source_ids_mocked() -> None:
     result = extract_module.get_relevant_primary_source_ids(["relevant primary source"])
 

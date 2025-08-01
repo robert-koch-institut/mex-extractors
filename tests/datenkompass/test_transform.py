@@ -1,21 +1,34 @@
+import pytest
+
+from mex.common.models import (
+    MergedActivity,
+    MergedBibliographicResource,
+    MergedOrganizationalUnit,
+    MergedPerson,
+)
 from mex.common.types.vocabulary import Theme
+from mex.extractors.datenkompass.models.item import (
+    DatenkompassActivity,
+)
 from mex.extractors.datenkompass.transform import (
     get_contact,
+    get_datenbank,
     get_title,
     get_vocabulary,
     transform_activities,
-)
-from tests.datenkompass.mocked_item_lists import (
-    mocked_datenkompass_activity,
-    mocked_merged_activities,
-    mocked_merged_organizational_units,
+    transform_bibliographic_resources,
 )
 
 
-def test_get_contact() -> None:
-    responsible_unit_ids = mocked_merged_activities()[0].responsibleUnit
-    all_units = mocked_merged_organizational_units()
-    result = get_contact(responsible_unit_ids, all_units)
+def test_get_contact(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+) -> None:
+    responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
+    merged_organizational_units_by_id = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units
+    }
+    result = get_contact(responsible_unit_ids, merged_organizational_units_by_id)
 
     assert sorted(result) == [
         "a.bsp. unit",
@@ -24,8 +37,8 @@ def test_get_contact() -> None:
     ]
 
 
-def test_get_title() -> None:
-    item = mocked_merged_activities()[0]
+def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
+    item = mocked_merged_activities[0]
     result = get_title(item)
 
     assert result == ["short de", "title no language"]
@@ -36,12 +49,72 @@ def test_get_vocabulary() -> None:
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
-def test_transform_activities() -> None:
-    extracted_and_filtered_merged_activities = mocked_merged_activities()[
+def test_get_datenbank(
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+) -> None:
+    assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
+        "https://doi.org/10.1234_find_this_first, find_second_a, "
+        "find_second_b, https://www.find_third.to"
+    )
+
+
+def test_transform_activities(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_datenkompass_activity: list[DatenkompassActivity],
+) -> None:
+    extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
     ]  # item with no BMG filtered out
-    all_units = mocked_merged_organizational_units()
+    merged_organizational_units_by_id = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units
+    }
 
-    result = transform_activities(extracted_and_filtered_merged_activities, all_units)
+    result = transform_activities(
+        extracted_and_filtered_merged_activities, merged_organizational_units_by_id
+    )
+    assert result == mocked_datenkompass_activity
 
-    assert result == mocked_datenkompass_activity()
+
+@pytest.mark.usefixtures("mocked_backend_datenkompass")
+def test_transform_bibliographic_resource(
+    mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_person: list[MergedPerson],
+) -> None:
+    extracted_and_filtered_merged_bibliographic_resource = (
+        mocked_merged_bibliographic_resource
+    )
+    merged_organizational_units_by_id = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units
+    }
+    person_name_by_id = {
+        person.identifier: person.fullName for person in mocked_merged_person
+    }
+
+    result = transform_bibliographic_resources(
+        extracted_and_filtered_merged_bibliographic_resource,
+        merged_organizational_units_by_id,
+        person_name_by_id,
+    )
+
+    assert result[0].model_dump() == {
+        "beschreibung": ["Die Nutzung", "The usage"],
+        "kontakt": ["e.g. unit", "unit@example.org"],
+        "titel": "title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
+        "schlagwort": ["short en", "short de"],
+        "datenbank": (
+            "https://doi.org/10.1234_find_this_first, find_second_a, "
+            "find_second_b, https://www.find_third.to"
+        ),
+        "voraussetzungen": "Frei zugänglich",
+        "hauptkategorie": "Gesundheit",
+        "unterkategorie": "Public Health",
+        "herausgeber": "Robert Koch-Institut",
+        "kommentar": (
+            "Link zum Metadatensatz im RKI Metadatenkatalog wird "
+            "voraussichtlich Ende 2025 verfügbar sein."
+        ),
+        "dk_format": ["Buch"],
+        "identifier": "MergedBibResource1",
+    }
