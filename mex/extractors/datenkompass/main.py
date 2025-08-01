@@ -39,7 +39,7 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_organizational_units() -> dict[
+def extracted_merged_organizational_units_by_id() -> dict[
     MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
 ]:
     """Get all organizational units as dictionary by id."""
@@ -53,7 +53,7 @@ def extracted_merged_organizational_units() -> dict[
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_contact_points() -> dict[
+def extracted_merged_contact_points_by_id() -> dict[
     MergedContactPointIdentifier, MergedContactPoint
 ]:
     """Get all organizational units as dict by id."""
@@ -101,9 +101,9 @@ def extracted_merged_activities() -> list[MergedActivity]:
         "report-server",  # synopse
     ]
     entity_type = ["MergedActivity"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
     return cast(
-        "list[MergedActivity]", get_merged_items(None, entity_type, had_primary_source)
+        "list[MergedActivity]", get_merged_items(None, entity_type, primary_source_ids)
     )
 
 
@@ -148,21 +148,21 @@ def extracted_merged_resources() -> dict[str, list[MergedResource]]:
 @asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
         extracted_and_filtered_merged_activities,
-        extracted_merged_organizational_units,
+        extracted_merged_organizational_units_by_id,
     )
 
 
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, list[str]],
@@ -170,7 +170,7 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         extracted_merged_bibliographic_resources,
-        extracted_merged_organizational_units,
+        extracted_merged_organizational_units_by_id,
         person_name_by_id,
     )
 
@@ -180,10 +180,10 @@ def transform_resources_to_datenkompass_resources(
     extracted_merged_resources: dict[str, list[MergedResource]],
     extracted_and_filtered_merged_activities: list[MergedActivity],
     extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
-    extracted_merged_organizational_units: dict[
+    extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    extracted_merged_contact_points: dict[
+    extracted_merged_contact_points_by_id: dict[
         MergedContactPointIdentifier, MergedContactPoint
     ],
 ) -> list[DatenkompassResource]:
@@ -192,8 +192,8 @@ def transform_resources_to_datenkompass_resources(
         extracted_merged_resources,
         extracted_and_filtered_merged_activities,
         extracted_merged_bmg_ids,
-        extracted_merged_organizational_units,
-        extracted_merged_contact_points,
+        extracted_merged_organizational_units_by_id,
+        extracted_merged_contact_points_by_id,
     )
 
 

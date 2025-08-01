@@ -1,15 +1,19 @@
-from mex.extractors.datenkompass.filter import filter_for_bmg
-from tests.datenkompass.mocked_item_lists import (
-    mocked_bmg,
-    mocked_merged_activities,
+from mex.common.models import (
+    MergedActivity,
+    MergedOrganization,
 )
+from mex.extractors.datenkompass.filter import filter_for_bmg
 
 
-def test_filter_for_bmg() -> None:
-    bmg_ids = {bmg.identifier for bmg in mocked_bmg()}
+def test_filter_for_bmg(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_bmg: list[MergedOrganization],
+) -> None:
+    bmg_ids = {bmg.identifier for bmg in mocked_bmg}
+    assert len(mocked_merged_activities) == 3
 
     result = filter_for_bmg(
-        mocked_merged_activities(),  # 3 items, one without bmg to be filtered out
+        mocked_merged_activities,  # 3 items, one to be filtered out because no bmg
         bmg_ids,
     )
 

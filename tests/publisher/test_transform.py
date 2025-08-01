@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import MergedActivity
 from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
-from mex.extractors.publisher.transform import update_contact_where_needed
+from mex.extractors.publisher.transform import update_actor_references_where_needed
 
 
 @pytest.fixture
@@ -10,17 +10,17 @@ def merged_activity() -> MergedActivity:
     return MergedActivity(
         identifier="activity123456",
         contact=["thisIdIsBlocked"],
-        externalAssociate=["thisIdIsBlocked"],
+        externalAssociate=["thisIdIsBlocked", "thisIdentifierIsOkay"],
         involvedPerson=["thisIdentifierIsOkay"],
         responsibleUnit=["thisUnitIsResponsible"],
         title=["Activity 123456"],
     )
 
 
-def test_update_contact_where_needed(merged_activity: MergedActivity) -> None:
-    update_contact_where_needed(
+def test_update_actor_references_where_needed(merged_activity: MergedActivity) -> None:
+    update_actor_references_where_needed(
         merged_activity,
-        allowed_contacts=[
+        allowed_actors=[
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
         ],
@@ -32,8 +32,8 @@ def test_update_contact_where_needed(merged_activity: MergedActivity) -> None:
         "identifier": "activity123456",
         # contact fallback applied
         "contact": ["thisIsTheFallbackId"],
-        # externalAssociate not updated because field does not allow contact points
-        "externalAssociate": ["thisIdIsBlocked"],
+        # externalAssociate is filtered to exclude invalid references
+        "externalAssociate": ["thisIdentifierIsOkay"],
         # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
