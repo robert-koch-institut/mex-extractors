@@ -212,7 +212,7 @@ def transform_activities(
 
 
 def transform_bibliographic_resources(
-    xtracted_merged_bibliographic_resources: list[MergedBibliographicResource],
+    merged_bibliographic_resources: list[MergedBibliographicResource],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -221,7 +221,7 @@ def transform_bibliographic_resources(
     """Transform merged to datenkompass bibliographic resources.
 
     Args:
-        xtracted_merged_bibliographic_resources: List of merged bibliographic resources
+        merged_bibliographic_resources: List of merged bibliographic resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
 
@@ -229,13 +229,13 @@ def transform_bibliographic_resources(
         list of DatenkompassBibliographicResource instances.
     """
     datenkompass_bibliographic_recources = []
-    for item in xtracted_merged_bibliographic_resources:
+    for item in merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
             voraussetzungen = "Frei zugänglich"
         else:
-            voraussetzungen = None  # DELETE?
+            voraussetzungen = None
         datenbank = get_datenbank(item)
         dk_format = get_vocabulary(item.bibliographicResourceType)
         kontakt = get_contact(item.contributingUnit, merged_organizational_units_by_id)
