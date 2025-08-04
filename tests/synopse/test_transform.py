@@ -5,7 +5,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
@@ -219,7 +218,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "contact": [str(Identifier.generate(seed=235))],
+        "contact": ["bFQoRhcVH5DHYc"],
         "contributor": [str(extracted_activity.involvedPerson[0])],
         "created": "2022",
         "description": [
@@ -235,7 +234,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
                 "value": "Niemand darf irgendwas.",
             },
         ],
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifier": Joker(),
         "identifierInPrimarySource": ("12345-Titel-17"),
         "keyword": [
@@ -280,7 +278,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         unit_merged_ids_by_synonym,
         extracted_organization[0],
         synopse_resource,
-        {"C1": MergedContactPointIdentifier.generate(seed=235)},
         MergedAccessPlatformIdentifier.generate(seed=236),
     )
     assert len(resources) == 1
@@ -291,12 +288,10 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
 def test_transform_synopse_projects_to_mex_activities(
     synopse_projects: list[SynopseProject],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_person: ExtractedPerson,
     synopse_activity: ActivityMapping,
     synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
 ) -> None:
     synopse_project = synopse_projects[0]
-    contact_merged_ids_by_emails = {"info@rki.de": extracted_person.stableTargetId}
     contributor_merged_ids_by_name = {
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
@@ -308,7 +303,7 @@ def test_transform_synopse_projects_to_mex_activities(
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_der_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": [str(extracted_person.stableTargetId)],
+        "contact": ["bFQoRhcVH5DHUD"],
         "documentation": [
             {
                 "url": "file:///Z:/Projekte/Dokumentation",
@@ -340,7 +335,6 @@ def test_transform_synopse_projects_to_mex_activities(
             unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_organization_ids_by_query_string,
-            contact_merged_ids_by_emails,
         )
     )
 
