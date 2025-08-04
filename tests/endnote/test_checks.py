@@ -6,7 +6,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from dagster import AssetKey, DagsterInstance, build_asset_check_context
-from mex.extractors.blueant.checks import check_yaml_rules_exist
+from mex.extractors.endnote.checks import check_yaml_rules_exist
 from mex.extractors.pipeline.checks.main import check_x_items_more_passed
 
 
@@ -52,12 +52,12 @@ def test_check_yaml_rules_exist_valid_threshold(
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
 
     monkeypatch.setattr(
-        "mex.extractors.blueant.checks.check_yaml_path",
+        "mex.extractors.endnote.checks.check_yaml_path",
         lambda extractor, entity_type: True,
     )
 
     monkeypatch.setattr(
-        "mex.extractors.blueant.checks.get_rule",
+        "mex.extractors.endnote.checks.get_rule",
         lambda rule, extractor, entity_type: {"value": rule_threshold},
     )
 

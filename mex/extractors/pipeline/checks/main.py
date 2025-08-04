@@ -11,6 +11,10 @@ from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
+def check_yaml_path(extractor: str, entity_type: str) -> bool:
+    settings = Settings.get()
+    path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
+    return path.exists()
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
@@ -85,26 +89,30 @@ def check_x_items_more_passed(
     extractor: str,
     entity_type: str,
     asset_data: int,
-) -> Any:
+) -> bool:
     """Checks rule threshold and returns a bool."""
-    rule = get_rule("x_items_more_than", extractor, entity_type)
-    time_delta = parse_time_frame(rule["time_frame"])
-    current_time = datetime.now(UTC)
-    time_frame = current_time - time_delta
+    context.log.info(f"CONTEXT: {context}")
+    yaml_exists = check_yaml_path(extractor, entity_type)
+    if yaml_exists:
+        rule = get_rule("x_items_more_than", extractor, entity_type)
+        time_delta = parse_time_frame(rule["time_frame"])
+        current_time = datetime.now(UTC)
+        time_frame = current_time - time_delta
 
-    current_time = datetime.now(UTC)
-    time_frame = current_time - time_delta
-
-    events = context.instance.get_event_records(
-        EventRecordsFilter(
-            asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
+        events = context.instance.get_event_records(
+            EventRecordsFilter(
+                asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
+            )
         )
-    )
-    # latest_event = context.instance.get_latest_materialization_event(asset_key)
-    latest_count = asset_data
-
-    historical_events = get_historical_events(events)
-    historic_count = get_historic_count(historical_events, time_frame)
-    return latest_count <= (historic_count if historic_count > 0 else latest_count) + (
+        context.log.info(f"EVENTS: {events}")
+        historical_events = get_historical_events(events)
+        historic_count = get_historic_count(historical_events, time_frame)
+        latest_count = asset_data
+        passed =latest_count <= (historic_count if historic_count > 0 else latest_count) + (
         rule["value"] or 0
     )
+    else:
+        passed= True
+
+    #context.log.info(f"CHECK MODEL: {rule}, HISTORICAL EVENTS: {historic_count}, LATEST COUNT: {latest_count}")
+    return passed
