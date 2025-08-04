@@ -108,7 +108,8 @@ def load_job_definitions() -> Definitions:
         group
         for asset in assets
         for group in cast("AssetsDefinition", asset).group_names_by_key.values()
-        if group not in ["default", "publisher", *settings.skip_extractors]
+        if group
+        not in ["default", "publisher", "datenkompass", *settings.skip_extractors]
     }
     metadata: dict[str, Any] = {
         "settings": MetadataValue.md(
@@ -145,6 +146,15 @@ def load_job_definitions() -> Definitions:
             tags={"job_category": "extractor"},
         )
     )
+
+    # Define the extra datenkompass job but without schedule or trigger
+    datenkompass_job = define_asset_job(
+        "datenkompass",
+        AssetSelection.groups("datenkompass").upstream(),
+        metadata=metadata,
+        tags={"job_category": "publisher"},
+    )
+    jobs.append(datenkompass_job)
 
     # Define the extra publisher job
     publisher_job = define_asset_job(
