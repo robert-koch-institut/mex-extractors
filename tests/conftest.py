@@ -10,6 +10,7 @@ pytest_plugins = (
     "mex.common.testing.plugin",
     "tests.blueant.mocked_blueant",
     "tests.confluence_vvt.mocked_confluence_vvt",
+    "tests.consent_mailer.mocked_consent_backend_api_connector",
     "tests.datenkompass.mocked_backend_api_connector",
     "tests.datenkompass.mocked_provider",
     "tests.datenkompass.mocked_boto",
