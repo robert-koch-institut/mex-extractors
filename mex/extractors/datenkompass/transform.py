@@ -268,7 +268,7 @@ def transform_bibliographic_resources(
 
 
 def transform_resources(
-    merged_resources: dict[str, list[MergedResource]],
+    merged_resources_by_primary_source: dict[str, list[MergedResource]],
     filtered_merged_activities: list[MergedActivity],
     merged_bmg_ids: set[MergedOrganizationIdentifier],
     merged_organizational_units_by_id: dict[
@@ -276,10 +276,10 @@ def transform_resources(
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[DatenkompassResource]:
-    """Get the relevant info from the merged resources.
+    """Transform merged to datenkompass resources.
 
     Args:
-        merged_resources: List of merged resources
+        merged_resources_by_primary_source: dictionary of merged resources
         filtered_merged_activities: list of merged activities
         merged_bmg_ids: set of merged bmg organization identifiers
         merged_organizational_units_by_id: dict of merged organizational units by id
@@ -294,8 +294,11 @@ def transform_resources(
         for ma in filtered_merged_activities
         if any(fOC in merged_bmg_ids for fOC in ma.funderOrCommissioner)
     }
-    for primary_source, list_merged_resources in merged_resources.items():
-        for item in list_merged_resources:
+    for (
+        primary_source,
+        merged_resources_list,
+    ) in merged_resources_by_primary_source.items():
+        for item in merged_resources_list:
             if item.accessRestriction == AccessRestriction["RESTRICTED"]:
                 voraussetzungen = "Zugang eingeschränkt"
             elif item.accessRestriction == AccessRestriction["OPEN"]:
