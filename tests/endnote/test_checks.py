@@ -6,7 +6,12 @@ from typing import Any
 import pytest
 from pytest import MonkeyPatch
 
-from dagster import AssetKey, DagsterInstance, build_asset_check_context
+from dagster import (
+    AssetCheckResult,
+    AssetKey,
+    DagsterInstance,
+    build_asset_check_context,
+)
 from mex.extractors.endnote.checks import check_yaml_rules_exist
 from mex.extractors.pipeline.checks.main import check_x_items_more_passed
 
@@ -25,6 +30,7 @@ def test_check_yaml_rules_exist_with_real_yaml(monkeypatch: MonkeyPatch) -> None
 
     context = build_asset_check_context()
     result = check_yaml_rules_exist(context)
+    assert isinstance(result, AssetCheckResult)
     assert result.passed
 
 
@@ -64,7 +70,7 @@ def test_check_yaml_rules_exist_valid_threshold(
 
     context = build_asset_check_context()
     result = check_yaml_rules_exist(context)
-
+    assert isinstance(result, AssetCheckResult)
     assert result.passed == expected_passed
 
 
@@ -130,20 +136,20 @@ def test_check_yaml_rules_exist_valid_threshold(
 )
 def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
-    yaml_exists: False,
     rule_threshold: int,
     time_frame_str: str,
     events: list[dict[str, Any]],
     current_count: int,
     *,
     expected_passed: bool,
+    yaml_exists: bool,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
     class FixedDatetime(datetime):
         @classmethod
         def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
-            return mocked_now.astimezone(tz)
+            return cls.fromtimestamp(mocked_now.astimezone(tz).timestamp(), tz=tz)
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)
 

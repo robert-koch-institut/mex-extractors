@@ -1,11 +1,17 @@
 from datetime import UTC, datetime, tzinfo
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 from pytest import MonkeyPatch
 
-from dagster import AssetKey, DagsterInstance, build_asset_check_context
+from dagster import (
+    AssetCheckResult,
+    AssetKey,
+    DagsterInstance,
+    build_asset_check_context,
+)
 from mex.extractors.blueant.checks import check_yaml_rules_exist
 from mex.extractors.pipeline.checks.main import check_x_items_more_passed
 
@@ -24,6 +30,7 @@ def test_check_yaml_rules_exist_with_real_yaml(monkeypatch: MonkeyPatch) -> None
 
     context = build_asset_check_context()
     result = check_yaml_rules_exist(context)
+    assert isinstance(result, AssetCheckResult)
     assert result.passed
 
 
@@ -38,7 +45,7 @@ def test_check_yaml_rules_exist_with_real_yaml(monkeypatch: MonkeyPatch) -> None
     ids=["none", "0", "negative_value", "valid_value"],
 )
 def test_check_yaml_rules_exist_valid_threshold(
-    monkeypatch: MonkeyPatch, rule_threshold: int, *, expected_passed: False
+    monkeypatch: MonkeyPatch, rule_threshold: int, *, expected_passed: bool
 ) -> None:
     yaml_path = Path(__file__).parent.parent.parent / "assets" / "raw-data" / "pipeline"
 
@@ -63,7 +70,7 @@ def test_check_yaml_rules_exist_valid_threshold(
 
     context = build_asset_check_context()
     result = check_yaml_rules_exist(context)
-
+    assert isinstance(result, AssetCheckResult)
     assert result.passed == expected_passed
 
 
@@ -129,20 +136,20 @@ def test_check_yaml_rules_exist_valid_threshold(
 )
 def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
-    yaml_exists: False,
     rule_threshold: int,
     time_frame_str: str,
-    events: list,
+    events: list[dict[str, Any]],
     current_count: int,
     *,
-    expected_passed: False,
+    expected_passed: bool,
+    yaml_exists: bool,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
     class FixedDatetime(datetime):
         @classmethod
         def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
-            return mocked_now.astimezone(tz)
+            return cls.fromtimestamp(mocked_now.astimezone(tz).timestamp(), tz=tz)
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)
 
@@ -158,11 +165,13 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
         )
 
     class DummyMaterialization:
-        def __init__(self, metadata: dict) -> None:
+        def __init__(self, metadata: dict[str, SimpleNamespace]) -> None:
             self.metadata = {"num_items": SimpleNamespace(value=metadata["num_items"])}
 
     class DummyEvent:
-        def __init__(self, timestamp: datetime, metadata: dict) -> None:
+        def __init__(
+            self, timestamp: datetime, metadata: dict[str, SimpleNamespace]
+        ) -> None:
             self.timestamp = timestamp
             self.asset_materialization = DummyMaterialization(metadata)
 

@@ -78,7 +78,7 @@ def extracted_endnote_bibliographic_resources(
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_endnote: ExtractedPrimarySource,
-) -> Output:
+) -> Output[int]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
     endnote_bibliographic_resource_mapping = (
