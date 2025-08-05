@@ -69,7 +69,7 @@ def extract_projects() -> Generator[SynopseProject, None, None]:
     yield from parse_csv(
         settings.synopse.projekt_und_studienverwaltung_path,
         SynopseProject,
-        delimiter=";",
+        delimiter=",",
     )
 
 
