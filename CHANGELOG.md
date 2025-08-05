@@ -291,9 +291,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `AssetCheckRule` model into `mex.extractors.pipeline.checks.models.check`
+- assetcheck implementation for `x_items_more_than`-rule in `mex.extractors.pipeline.checks.main`
+- AssetChecks `x_items_more_than` for blueant `mex.extractors.blueant.checks` and endnote `mex.extractors.endnote.checks`
+- tests for blueant, endnote and pipeline
+- yaml data for testing `assets\raw-data\pipeline\{extractor}\{entityType}`
+- `all_checks_path` added in `mex.extractors.settings` for rules
+
 - add s3 sink implementation for use with the publisher
 
 ### Changes
+- `mapping_path` in `mex.extractors.endnote.settings` set to `mappings/__final__/endnote`
+- `extracted_endnote_bibliographic_resources()` and `extracted_blueant_activities()` return `Output`-object
 
 - let `load` function accept rule-sets and merged-items, just like sinks
 - let publisher use `load` function with configurable sinks

@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, tzinfo
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -23,14 +23,14 @@ from mex.extractors.pipeline.checks.models.check import AssetCheck, AssetCheckRu
 
 
 @pytest.mark.parametrize(
-    "input_str,expected",
+    ("input_str", "expected"),
     [
         ("7d", timedelta(days=7)),
         ("3m", timedelta(days=90)),
         ("1y", timedelta(days=365)),
     ],
 )
-def test_parse_time_frame(input_str: str, expected) -> None:
+def test_parse_time_frame(input_str: str, expected: timedelta) -> None:
     assert parse_time_frame(input_str) == expected
 
 
@@ -41,14 +41,14 @@ def test_check_yaml_path(monkeypatch: MonkeyPatch) -> None:
         all_checks_path = yaml_path
 
         @classmethod
-        def get(cls):
+        def get(cls) -> "MockSettings":
             return cls()
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
     assert check_yaml_path("blueant", "activity") is True
 
 
-def test_get_rule(monkeypatch) -> None:
+def test_get_rule(monkeypatch: MonkeyPatch) -> None:
     rule_dict = {
         "fail_if": "x_items_more_than",
         "value": 10,
@@ -74,7 +74,7 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
         all_checks_path = yaml_path
 
         @classmethod
-        def get(cls):
+        def get(cls) -> "MockSettings":
             return cls()
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
@@ -99,7 +99,7 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.mark.parametrize(
-    "mock_events, expected_values",
+    ("mock_events", "expected_values"),
     [
         (
             [
@@ -133,7 +133,7 @@ def test_get_historical_events(mock_events: list, expected_values: list) -> None
 
 
 @pytest.mark.parametrize(
-    "historic_events,time_frame,expected_count",
+    ("historic_events", "time_frame", "expected_count"),
     [
         (
             {
@@ -185,7 +185,13 @@ def test_get_historic_count(
 
 
 @pytest.mark.parametrize(
-    "current_count, historical_events, rule_threshold, time_frame_str, passed",
+    (
+        "current_count",
+        "historical_events",
+        "rule_threshold",
+        "time_frame_str",
+        "passed",
+    ),
     [
         (
             12,
@@ -241,15 +247,20 @@ def test_get_historic_count(
         "passes_no_historical_events",
     ],
 )
-def test_check_x_items_more_passed(
-    monkeypatch:MonkeyPatch, current_count:int, historical_events:dict, rule_threshold:int, time_frame_str: str, passed: bool
+def test_check_x_items_more_passed(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    historical_events: dict,
+    rule_threshold: int,
+    time_frame_str: str,
+    passed: False,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
     class FixedDatetime(datetime):
         @classmethod
-        def now(cls, tz=UTC) -> datetime:
-            return mocked_now
+        def now(cls, tz: tzinfo = UTC) -> datetime:
+            return mocked_now.astimezone(tz)
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)
     monkeypatch.setattr(
