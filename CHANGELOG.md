@@ -301,7 +301,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add s3 sink implementation for use with the publisher
 
 ### Changes
-- `mapping_path` in `mex.extractors.endnote.settings` set to `mappings/__final__/endnote`
 - `extracted_endnote_bibliographic_resources()` and `extracted_blueant_activities()` return `Output`-object
 
 - let `load` function accept rule-sets and merged-items, just like sinks

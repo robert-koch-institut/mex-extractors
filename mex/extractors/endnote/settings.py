@@ -8,7 +8,7 @@ class EndnoteSettings(BaseModel):
     """Settings submodel for the endnote extractor."""
 
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__final__/endnote"),
+        AssetsPath("mappings/endnote"),
         description=(
             "Path to the directory with the endnote mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."
