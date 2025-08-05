@@ -1,5 +1,4 @@
-from collections.abc import Iterable
-from typing import cast
+from typing import TypeVar, cast
 
 from mex.common.models import (
     MergedActivity,
@@ -29,6 +28,16 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
     DatenkompassResource,
+)
+
+_VocabularyT = TypeVar(
+    "_VocabularyT",
+    Theme,
+    BibliographicResourceType,
+    Frequency,
+    License,
+    ResourceCreationMethod,
+    ResourceTypeGeneral,
 )
 
 
@@ -114,15 +123,15 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_vocabulary(
-entries: list[_VocabularyT],
+    entries: list[_VocabularyT],
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
     Args:
-        entries: list of vocabulary entries.
+        entries: list of vocabulary type entries.
 
     Returns:
-        list of german Vocabulary entries.
+        list of german Vocabulary entries as strings.
     """
     return [
         next(
