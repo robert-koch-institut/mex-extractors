@@ -80,7 +80,7 @@ class DatenkompassResource(BaseModel):
     rechtsgrundlagen_benennung: list[str] = Field(
         [], alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
     )
-    datennutzungszweckerweitert: list[str] = Field(
+    datennutzungszweck_erweitert: list[str] = Field(
         [], alias="Datennutzungszweck (erweitert)"
     )
     dk_format: list[str] = Field(  # "format" would shadow a builtIn
