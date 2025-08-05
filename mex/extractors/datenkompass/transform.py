@@ -119,7 +119,7 @@ entries: list[_VocabularyT],
     """Get german prefLabel for Vocabularies.
 
     Args:
-        entries: Iterable of vocabulary entries.
+        entries: list of vocabulary entries.
 
     Returns:
         list of german Vocabulary entries.
