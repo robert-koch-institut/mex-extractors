@@ -50,7 +50,7 @@ def extract_study_data() -> Generator[SynopseStudy, None, None]:
     """
     settings = Settings.get()
     yield from parse_csv(
-        settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=";"
+        settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=","
     )
 
 
