@@ -77,7 +77,7 @@ class DatenkompassResource(BaseModel):
         None, alias="Formelle Voraussetzungen für den Datenerhalt"
     )
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
-    rechtsgrundlagenbenennung: list[str] = Field(
+    rechtsgrundlagen_benennung: list[str] = Field(
         [], alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
     )
     datennutzungszweckerweitert: list[str] = Field(
