@@ -1,5 +1,4 @@
 from dagster import MetadataValue, Output, asset
-
 from mex.common.cli import entrypoint
 from mex.common.models import (
     BibliographicResourceMapping,

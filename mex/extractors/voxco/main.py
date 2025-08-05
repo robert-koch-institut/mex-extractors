@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Any
 
 from dagster import asset
-
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
 from mex.common.models import (

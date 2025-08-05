@@ -7,7 +7,6 @@ from dagster import (
     build_sensor_context,
 )
 from dagster._core.test_utils import instance_for_test
-
 from mex.extractors.pipeline.base import monitor_jobs_sensor
 
 

@@ -38,7 +38,7 @@ def test_check_yaml_rules_exist_with_real_yaml(monkeypatch: MonkeyPatch) -> None
     ids=["none", "0", "negative_value", "valid_value"],
 )
 def test_check_yaml_rules_exist_valid_threshold(
-    monkeypatch: MonkeyPatch, rule_threshold: int, expected_passed: False
+    monkeypatch: MonkeyPatch, rule_threshold: int, *, expected_passed: False
 ) -> None:
     yaml_path = Path(__file__).parent.parent.parent / "assets" / "raw-data" / "pipeline"
 
@@ -134,13 +134,14 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     time_frame_str: str,
     events: list,
     current_count: int,
+    *,
     expected_passed: False,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
     class FixedDatetime(datetime):
         @classmethod
-        def now(cls, tz: tzinfo = UTC) -> datetime:
+        def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
             return mocked_now.astimezone(tz)
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)

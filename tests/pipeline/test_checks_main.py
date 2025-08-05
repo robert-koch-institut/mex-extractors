@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta, tzinfo
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 from pytest import MonkeyPatch
@@ -98,37 +99,38 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
     }
 
 
+class DummyEventLogRecord:
+    def __init__(self, timestamp: float, metadata: dict[str, Any]) -> None:
+        self.timestamp = timestamp
+        self.asset_materialization = SimpleNamespace(metadata=metadata)
+
+
 @pytest.mark.parametrize(
     ("mock_events", "expected_values"),
     [
         (
             [
-                SimpleNamespace(
+                DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
-                    asset_materialization=SimpleNamespace(
-                        metadata={"num_items": SimpleNamespace(value=132)}
-                    ),
+                    metadata={"num_items": SimpleNamespace(value=132)},
                 ),
-                SimpleNamespace(
+                DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 1, 12, 0, tzinfo=UTC).timestamp(),
-                    asset_materialization=SimpleNamespace(
-                        metadata={"num_items": SimpleNamespace(value=120)}
-                    ),
+                    metadata={"num_items": SimpleNamespace(value=120)},
                 ),
-                SimpleNamespace(
+                DummyEventLogRecord(
                     timestamp=datetime(2025, 5, 1, 12, 0, tzinfo=UTC).timestamp(),
-                    asset_materialization=SimpleNamespace(
-                        metadata={"num_items": SimpleNamespace(value=108)}
-                    ),
+                    metadata={"num_items": SimpleNamespace(value=108)},
                 ),
             ],
             [132, 120, 108],
         )
     ],
 )
-def test_get_historical_events(mock_events: list, expected_values: list) -> None:
+def test_get_historical_events(
+    mock_events: list[Any], expected_values: list[int]
+) -> None:
     result = get_historical_events(mock_events)
-    assert isinstance(result, dict)
     assert sorted(result.values(), reverse=True) == expected_values
 
 
@@ -178,7 +180,7 @@ def test_get_historical_events(mock_events: list, expected_values: list) -> None
     ],
 )
 def test_get_historic_count(
-    historic_events: dict, time_frame: datetime, expected_count: int
+    historic_events: dict[datetime, int], time_frame: datetime, expected_count: int
 ) -> None:
     result = get_historic_count(historic_events, time_frame)
     assert result == expected_count
@@ -250,17 +252,28 @@ def test_get_historic_count(
 def test_check_x_items_more_passed(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     current_count: int,
-    historical_events: dict,
+    historical_events: dict[datetime, int],
     rule_threshold: int,
     time_frame_str: str,
-    passed: False,
+    *,
+    passed: bool,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
     class FixedDatetime(datetime):
         @classmethod
-        def now(cls, tz: tzinfo = UTC) -> datetime:
-            return mocked_now.astimezone(tz)
+        def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
+            dt = mocked_now.astimezone(tz) if tz else mocked_now.replace(tzinfo=None)
+            return cls(
+                dt.year,
+                dt.month,
+                dt.day,
+                dt.hour,
+                dt.minute,
+                dt.second,
+                dt.microsecond,
+                dt.tzinfo,
+            )
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)
     monkeypatch.setattr(

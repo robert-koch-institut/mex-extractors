@@ -1,5 +1,4 @@
 from dagster import asset
-
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import (

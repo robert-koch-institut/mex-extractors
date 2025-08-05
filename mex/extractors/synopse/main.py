@@ -2,7 +2,6 @@ from itertools import chain, groupby, tee
 from typing import Any
 
 from dagster import asset
-
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery

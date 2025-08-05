@@ -1,7 +1,6 @@
 from typing import Any
 
 from dagster import asset
-
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import transform_ldap_actor_to_mex_contact_point
 from mex.common.models import (

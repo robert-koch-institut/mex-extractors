@@ -1,5 +1,4 @@
 from dagster import asset
-
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons

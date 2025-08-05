@@ -3,6 +3,7 @@ from typing import Any
 
 from dagster import (
     AssetCheckExecutionContext,
+    AssetKey,
     DagsterEventType,
     EventLogRecord,
     EventRecordsFilter,
@@ -91,7 +92,7 @@ def get_historic_count(
 
 def check_x_items_more_passed(
     context: AssetCheckExecutionContext,
-    asset_key: str,
+    asset_key: AssetKey,
     extractor: str,
     entity_type: str,
     asset_data: int,
@@ -101,24 +102,29 @@ def check_x_items_more_passed(
     Returns bool to AssetCheck.
     """
     yaml_exists = check_yaml_path(extractor, entity_type)
-    if yaml_exists:
-        rule = get_rule("x_items_more_than", extractor, entity_type)
-        time_delta = parse_time_frame(rule["time_frame"])
-        current_time = datetime.now(UTC)
-        time_frame = current_time - time_delta
 
-        events = context.instance.get_event_records(
-            EventRecordsFilter(
-                asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
-            )
+    if not yaml_exists:
+        return True
+
+    rule = get_rule("x_items_more_than", extractor, entity_type)
+    time_delta = parse_time_frame(rule["time_frame"])
+    current_time = datetime.now(UTC)
+    time_frame = current_time - time_delta
+
+    events = context.instance.get_event_records(
+        EventRecordsFilter(
+            asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
         )
-        historical_events = get_historical_events(events)
-        historic_count = get_historic_count(historical_events, time_frame)
-        latest_count = asset_data
-        passed = latest_count <= (
-            historic_count if historic_count > 0 else latest_count
-        ) + (rule["value"] or 0)
-    else:
-        passed = True
+    )
 
-    return passed
+    if events is None:
+        return True
+
+    latest_count = asset_data
+    historical_events = get_historical_events(events)
+    historic_count = get_historic_count(historical_events, time_frame)
+    return latest_count <= (
+        historic_count if historic_count > 0 else latest_count
+    ) + (rule["value"] or 0)
+
+

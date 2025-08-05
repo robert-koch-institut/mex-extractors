@@ -1,5 +1,4 @@
 from dagster import asset
-
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
