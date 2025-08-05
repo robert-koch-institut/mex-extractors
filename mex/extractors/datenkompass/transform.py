@@ -321,7 +321,7 @@ def transform_resources(
                 beschreibung = (
                     description_de[0] if description_de else item.description[0].value
                 )
-            rechtsgrundlagenbenennung = [
+            rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
                 *get_vocabulary([item.license] if item.license else []),
             ]
@@ -352,8 +352,8 @@ def transform_resources(
                     kontakt=kontakt,
                     beschreibung=beschreibung,
                     datenbank=item.doi,
-                    rechtsgrundlagenbenennung=rechtsgrundlagenbenennung,
-                    datennutzungszweckerweitert=[hp.value for hp in item.hasPurpose],
+                    rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
+                    datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
                     dk_format=dk_format,
                     titel=[t.value for t in item.title],
