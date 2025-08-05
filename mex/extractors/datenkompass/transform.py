@@ -114,14 +114,7 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_vocabulary(
-    entries: Iterable[
-        Theme
-        | BibliographicResourceType
-        | Frequency
-        | License
-        | ResourceCreationMethod
-        | ResourceTypeGeneral
-    ],  # "list doesn't work well with '|' "
+entries: list[_VocabularyT],
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
