@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - tests for blueant, endnote and pipeline
 
-- yaml data for testing `assets\raw-data\pipeline\{extractor}\{entityType}`
+- yaml rule data for testing `assets\raw-data\pipeline\{extractor}\{entityType}`
 
 - `all_checks_path` added in `mex.extractors.settings` for rules
 
