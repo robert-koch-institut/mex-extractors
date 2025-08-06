@@ -4,28 +4,29 @@ from mex.common.models import AnyMergedModel
 
 
 def get_merged_items(
-    query_string: str | None,
-    entity_type: list[str],
-    primary_source_ids: list[str] | None,
+    *,
+    query_string: str | None = None,
+    entity_type: list[str] | None = None,
+    referenced_identifier: list[str] | None = None,
+    reference_field: str | None = None,
 ) -> list[AnyMergedModel]:
     """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
         entity_type: List of entity types.
-        primary_source_ids: List of primary source ids.
+        referenced_identifier: List of Identifier.
+        reference_field: List of fields accepting identifiers.
 
     Returns:
         List of merged items.
     """
     connector = BackendApiConnector.get()
 
-    reference_field = "hadPrimarySource" if primary_source_ids else None
-
     response = connector.fetch_all_merged_items(
         query_string=query_string,
         entity_type=entity_type,
-        referenced_identifier=primary_source_ids,
+        referenced_identifier=referenced_identifier,
         reference_field=reference_field,
     )
 
@@ -44,7 +45,7 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     connector = BackendApiConnector.get()
     limit = 100
     preview_primary_sources = connector.fetch_preview_items(
-        entity_type=["MergedPrimarySource"],
+        entity_type=["MergedPrimarySource"]
     ).items
     if len(preview_primary_sources) > limit:
         raise NotImplementedError

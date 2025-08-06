@@ -270,7 +270,7 @@ def transform_bibliographic_resources(
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
     filtered_merged_activities: list[MergedActivity],
-    merged_bmg_ids: set[MergedOrganizationIdentifier],
+    merged_organization_ids: set[MergedOrganizationIdentifier],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -281,7 +281,7 @@ def transform_resources(
     Args:
         merged_resources_by_primary_source: dictionary of merged resources
         filtered_merged_activities: list of merged activities
-        merged_bmg_ids: set of merged bmg organization identifiers
+        merged_organization_ids: set of merged organization identifiers
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
 
@@ -292,7 +292,7 @@ def transform_resources(
     merged_activities_set = {
         ma.identifier
         for ma in filtered_merged_activities
-        if any(fOC in merged_bmg_ids for fOC in ma.funderOrCommissioner)
+        if any(fOC in merged_organization_ids for fOC in ma.funderOrCommissioner)
     }
     for (
         primary_source,
@@ -334,7 +334,7 @@ def transform_resources(
                 *get_vocabulary(item.resourceTypeGeneral),
             ]
             unterkategorie = ["Public Health"]
-            if primary_source == "Synopse":
+            if primary_source == "report-server":
                 unterkategorie += ["Gesundheitliche Lage"]
             datenhalter = (
                 "BMG" if item.wasGeneratedBy in merged_activities_set else None
@@ -343,7 +343,7 @@ def transform_resources(
                 "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
             )
             datennutzungszweck = ["Themenspezifische Auswertung"]
-            if primary_source == "Synopse":
+            if primary_source == "report-server":
                 datennutzungszweck += ["Themenspezifisches Monitoring"]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -371,6 +371,7 @@ def transform_resources(
                     ),
                     identifier=item.identifier,
                     entityType=item.entityType,
+                    primary_source=primary_source,
                 ),
             )
     return datenkompass_recources

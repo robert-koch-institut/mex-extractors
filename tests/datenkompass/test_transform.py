@@ -104,7 +104,7 @@ def test_transform_activities(
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
-    ]  # item with no BMG filtered out
+    ]  # item with wrong organization filtered out
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -164,15 +164,17 @@ def test_transform_resources(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
-    mocked_bmg: list[MergedOrganization],
+    mocked_merged_organization: list[MergedOrganization],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
     extracted_merged_resource = {
-        "Open-Data": [mocked_merged_resource[0]],
-        "Synopse": [mocked_merged_resource[1]],
+        "open-data": [mocked_merged_resource[0]],
+        "report-server": [mocked_merged_resource[1]],
     }
     extracted_and_filtered_merged_activities = mocked_merged_activities[:2]
-    bmg_ids = {bmg.identifier for bmg in mocked_bmg}
+    organization_ids = {
+        organization.identifier for organization in mocked_merged_organization
+    }
     extracted_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -183,7 +185,7 @@ def test_transform_resources(
     result = transform_resources(
         extracted_merged_resource,
         extracted_and_filtered_merged_activities,
-        bmg_ids,
+        organization_ids,
         extracted_merged_organizational_units_by_id,
         extracted_merged_contact_points_by_id,
     )
@@ -218,6 +220,7 @@ def test_transform_resources(
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
         "identifier": "openDataResource",
+        "primary_source": "open-data",
     }
 
     assert result[1].model_dump() == {
@@ -247,4 +250,5 @@ def test_transform_resources(
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
         "identifier": "SynopseResource",
+        "primary_source": "report-server",
     }

@@ -98,6 +98,7 @@ class DatenkompassResource(BaseModel):
     kommentar: str | None = Field(None, alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
     entityType: str = Field(exclude=True)  # ignore when writing to json
+    primary_source: str = Field(..., alias="Primary Source")
 
 
 AnyDatenkompassModel = (
