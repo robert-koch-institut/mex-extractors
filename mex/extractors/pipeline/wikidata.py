@@ -1,4 +1,5 @@
 from dagster import asset
+
 from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganization
 from mex.extractors.wikidata.helpers import (

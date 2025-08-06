@@ -1,4 +1,5 @@
 from dagster import asset
+
 from mex.artificial.helpers import generate_artificial_extracted_items
 from mex.artificial.main import DEFAULT_LOCALE
 from mex.common.cli import entrypoint

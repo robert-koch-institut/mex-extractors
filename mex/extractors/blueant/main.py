@@ -1,4 +1,5 @@
 from dagster import MetadataValue, Output, asset
+
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
 from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons

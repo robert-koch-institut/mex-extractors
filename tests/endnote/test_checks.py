@@ -4,14 +4,14 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from pytest import MonkeyPatch
-
 from dagster import (
     AssetCheckResult,
     AssetKey,
     DagsterInstance,
     build_asset_check_context,
 )
+from pytest import MonkeyPatch
+
 from mex.extractors.endnote.checks import check_yaml_rules_exist
 from mex.extractors.pipeline.checks.main import check_x_items_more_passed
 

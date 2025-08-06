@@ -1,4 +1,5 @@
 from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import ExtractedPrimarySource, MergedPerson
 from mex.extractors.consent_mailer.extract import extract_ldap_persons

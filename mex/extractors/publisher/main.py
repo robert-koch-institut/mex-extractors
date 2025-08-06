@@ -2,6 +2,7 @@ from collections import deque
 from typing import cast
 
 from dagster import asset
+
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.cli import entrypoint
 from mex.common.models import (

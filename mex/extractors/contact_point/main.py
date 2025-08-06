@@ -1,4 +1,5 @@
 from dagster import asset
+
 from mex.common.cli import entrypoint
 from mex.common.models import ExtractedContactPoint, ExtractedPrimarySource
 from mex.extractors.pipeline import run_job_in_process

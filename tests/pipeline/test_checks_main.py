@@ -4,13 +4,13 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from pytest import MonkeyPatch
-
 from dagster import (
     AssetKey,
     DagsterInstance,
     build_asset_check_context,
 )
+from pytest import MonkeyPatch
+
 from mex.extractors.pipeline.checks.main import (
     check_x_items_more_passed,
     check_yaml_path,
