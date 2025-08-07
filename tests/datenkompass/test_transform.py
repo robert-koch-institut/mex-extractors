@@ -80,7 +80,7 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_activities[0]
     result = get_title(item)
 
-    assert result == ["short de", "title no language"]
+    assert result == ["short de", "title 'Act' no language"]
 
 
 def test_get_vocabulary() -> None:
@@ -140,7 +140,7 @@ def test_transform_bibliographic_resource(
     assert result[0].model_dump() == {
         "beschreibung": ["Die Nutzung", "The usage"],
         "kontakt": ["e.g. unit", "unit@example.org"],
-        "titel": "title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
+        "titel": 'title "BibRes" no language, titel en (Pattern, Peppa P. / Pattern, P.P.)',
         "schlagwort": ["short en", "short de"],
         "datenbank": (
             "https://doi.org/10.1234_find_this_first, find_second_a, "

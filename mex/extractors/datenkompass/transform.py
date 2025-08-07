@@ -67,6 +67,56 @@ def get_contact(
     ]
 
 
+def get_unit_shortname(
+    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get shortName of merged units.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers
+        merged_organizational_units_by_id: dict of all merged organizational units by id
+
+    Returns:
+        List of short names of contact units as strings.
+    """
+    return [
+        shortname
+        for org_id in responsible_unit_ids
+        for shortname in [
+            unit_short_name.value
+            for unit_short_name in merged_organizational_units_by_id[org_id].shortName
+        ]
+    ]
+
+
+def get_email(
+    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get email of merged units.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers
+        merged_organizational_units_by_id: dict of all merged organizational units by id
+
+    Returns:
+        List of emails of contact units as strings.
+    """
+    return [
+        email
+        for org_id in responsible_unit_ids
+        for email in [
+            str(unit_email)
+            for unit_email in merged_organizational_units_by_id[org_id].email
+        ]
+    ]
+
+
 def get_resource_contact(
     responsible_unit_ids: list[Identifier],
     merged_organizational_units_by_id: dict[
@@ -114,11 +164,11 @@ def get_title(item: MergedActivity) -> list[str]:
     if item.shortName:
         shortname_de = [name.value for name in item.shortName if name.language == "de"]
         shortname = shortname_de[0] if shortname_de else item.shortName[0].value
-        collected_titles.append(shortname)
+        collected_titles.append(shortname.replace('"', "'"))
     if item.title:
         title_de = [name.value for name in item.title if name.language == "de"]
         title = title_de[0] if title_de else item.title[0].value
-        collected_titles.append(title)
+        collected_titles.append(title.replace('"', "'"))
     return collected_titles
 
 
@@ -175,27 +225,39 @@ def transform_activities(
     """
     datenkompass_activities = []
     for item in filtered_merged_activities:
-        beschreibung = None
+        beschreibung = "Es handelt sich um ein Projekt/ Vorhaben."
         if item.abstract:
+            beschreibung += " "
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
-            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        kontakt = get_contact(
+            beschreibung += abstract_de[0] if abstract_de else item.abstract[0].value
+        beschreibung = beschreibung.replace('"', "'")
+        kontakt = get_email(
+            item.responsibleUnit,
+            merged_organizational_units_by_id,
+        )
+        organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
             merged_organizational_units_by_id,
         )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
+        datenbank = []
+        if item.website:
+            url_de = [w.url for w in item.website if w.language == "de"]
+            datenbank += url_de if url_de else [item.website[0].url]
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter="BMG",
+                datenhalter="Robert Koch-Institut",
                 beschreibung=beschreibung,
                 kontakt=kontakt,
+                organisationseinheit=organisationseinheit,
                 titel=titel,
                 schlagwort=schlagwort,
-                datenbank=[entry.url for entry in item.website],
+                datenbank=datenbank,
                 voraussetzungen="Unbekannt",
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
-                unterkategorie="Public Health",
+                unterkategorie="Einflussfaktoren auf die Gesundheit",
                 rechtsgrundlage="Nicht bekannt",
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
@@ -205,7 +267,7 @@ def transform_activities(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
                 ),
-                format="Projekt/Vorhaben",
+                format="Sonstiges",
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
