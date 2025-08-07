@@ -10,7 +10,6 @@ from mex.common.models import (
 from mex.common.types import (
     AccessRestriction,
     Identifier,
-    Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -194,18 +193,19 @@ def get_vocabulary(
 
 
 def get_datenbank(item: MergedBibliographicResource) -> str:
-    """Get Datenbank entries.
+    """Get first doi url or first repository URL.
 
     Args:
         item: MergedBibliographicResource item.
 
     Returns:
-        string of concatenated entries.
+        url as string.
     """
-    return ", ".join(
-        entry.url if isinstance(entry, Link) else str(entry)
-        for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
-    )
+    if item.doi:
+        entry = item.doi
+    elif item.repositoryURL:
+        entry = item.repositoryURL[0].url
+    return entry
 
 
 def transform_activities(
@@ -279,7 +279,7 @@ def transform_bibliographic_resources(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+    person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
 
@@ -300,24 +300,38 @@ def transform_bibliographic_resources(
         else:
             voraussetzungen = None
         datenbank = get_datenbank(item)
-        dk_format = get_vocabulary(item.bibliographicResourceType)
-        kontakt = get_contact(item.contributingUnit, merged_organizational_units_by_id)
-        title_list = ", ".join(entry.value for entry in item.title)
-        creator_list = " / ".join(
-            [" / ".join(person_name_by_id[c]) for c in item.creator]
+        kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
+        organisationseinheit = get_unit_shortname(
+            item.contributingUnit, merged_organizational_units_by_id
         )
-        titel = f"{title_list} ({creator_list})"
+        max_number_authors_cutoff = 5
+        title_collection = ", ".join(
+            entry.value.strip('"').replace('"', "'") for entry in item.title
+        )
+        creator_collection = " / ".join(
+            [person_name_by_id[c] for c in item.creator[:max_number_authors_cutoff]]
+        )
+        if len(item.creator) > max_number_authors_cutoff:
+            creator_collection += " / et al."
+        titel = f"{title_collection} ({creator_collection})"
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
-                beschreibung=[abstract.value for abstract in item.abstract],
+                beschreibung=[*get_vocabulary(item.bibliographicResourceType), "."]
+                + [
+                    abstract.value.strip('"').replace('"', "'")
+                    for abstract in item.abstract
+                ],
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
-                dk_format=dk_format,
+                dk_format="Sonstiges",
                 kontakt=kontakt,
+                organisationseinheit=organisationseinheit,
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
+                datenhalter="Robert Koch-Institut",
+                frequenz="Einmalig",
                 hauptkategorie="Gesundheit",
-                unterkategorie="Public Health",
+                unterkategorie="Einflussfaktoren auf die Gesundheit",
                 herausgeber="Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "

@@ -44,7 +44,13 @@ class DatenkompassBibliographicResource(BaseModel):
 
     beschreibung: list[str] = Field([], alias="Beschreibung")
     kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: str | None = Field(None, alias="Titel")
+    datenhalter: str = Field(
+        ..., alias="Datenhalter/ Beautragung durch Behörde im Geschäftsbereich"
+    )
+    dk_format: str | None = Field(None, alias="Format der Daten")
+    frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
     schlagwort: list[str] = Field([], alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
     voraussetzungen: str | None = Field(
@@ -54,7 +60,6 @@ class DatenkompassBibliographicResource(BaseModel):
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
     herausgeber: str | None = Field(None, alias="Herausgeber")
     kommentar: str | None = Field(None, alias="Kommentar")
-    dk_format: list[str] = Field([], alias="Format")  # "format" would shadow a builtIn
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
     entityType: str = Field(exclude=True)  # ignore when writing to json
 

@@ -92,8 +92,7 @@ def test_get_datenbank(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
 ) -> None:
     assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
-        "https://doi.org/10.1234_find_this_first, find_second_a, "
-        "find_second_b, https://www.find_third.to"
+        "https://doi.org/10.1234_find_this"
     )
 
 
@@ -128,7 +127,7 @@ def test_transform_bibliographic_resource(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     person_name_by_id = {
-        person.identifier: person.fullName for person in mocked_merged_person
+        person.identifier: person.fullName[0] for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(
@@ -138,23 +137,27 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": ["Die Nutzung", "The usage"],
-        "kontakt": ["e.g. unit", "unit@example.org"],
-        "titel": 'title "BibRes" no language, titel en (Pattern, Peppa P. / Pattern, P.P.)',
-        "schlagwort": ["short en", "short de"],
-        "datenbank": (
-            "https://doi.org/10.1234_find_this_first, find_second_a, "
-            "find_second_b, https://www.find_third.to"
+        "beschreibung": ["Buch", ".", "Die Nutzung", "The usage"],
+        "kontakt": ["unit@example.org"],
+        "organisationseinheit": ["e.g. unit"],
+        "titel": (
+            "title 'BibRes' no language, titel en (Pattern, Peppa P. / "
+            "Pattern, Peppa P. / Pattern, Peppa P. / "
+            "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
         ),
+        "schlagwort": ["short en", "short de"],
+        "datenbank": "https://doi.org/10.1234_find_this",
         "voraussetzungen": "Frei zugänglich",
+        "datenhalter": "Robert Koch-Institut",
+        "frequenz": "Einmalig",
         "hauptkategorie": "Gesundheit",
-        "unterkategorie": "Public Health",
+        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "herausgeber": "Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
-        "dk_format": ["Buch"],
+        "dk_format": "Sonstiges",
         "identifier": "MergedBibResource1",
     }
 

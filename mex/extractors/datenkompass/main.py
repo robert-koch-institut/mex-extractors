@@ -79,10 +79,10 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
 
 
 @asset(group_name="datenkompass")
-def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
+def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get all person names as dictionary by id."""
     return {
-        person.identifier: person.fullName
+        person.identifier: person.fullName[0]
         for person in cast(
             "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
         )
@@ -165,7 +165,7 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+    person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(

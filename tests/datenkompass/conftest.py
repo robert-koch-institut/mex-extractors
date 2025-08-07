@@ -115,13 +115,13 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            doi="https://doi.org/10.1234_find_this_first",
+            doi="https://doi.org/10.1234_find_this",
             alternateIdentifier=["find_second_a", "find_second_b"],
-            repositoryURL=["https://www.find_third.to"],
+            repositoryURL=["https://www.ignore_this.to"],
             bibliographicResourceType=[
                 "https://mex.rki.de/item/bibliographic-resource-type-1"
             ],  # BOOK
-            creator=["PersonIdentifier4Peppa"],
+            creator=["PersonIdentifier4Peppa"] * 6,
             entityType="MergedBibliographicResource",
             identifier=MergedBibliographicResourceIdentifier("MergedBibResource1"),
         ),
