@@ -131,7 +131,7 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 @asset(group_name="datenkompass")
 def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
-    relevant_primary_sources = ["open-data", "synopse"]
+    relevant_primary_sources = ["open-data", "report-server"]
     entity_type = ["MergedResource"]
     merged_resources: dict[str, list[MergedResource]] = {}
     for rps in relevant_primary_sources:

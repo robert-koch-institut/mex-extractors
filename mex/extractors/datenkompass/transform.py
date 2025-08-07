@@ -371,6 +371,13 @@ def transform_resources(
         for ma in filtered_merged_activities
         if any(fOC in merged_bmg_ids for fOC in ma.funderOrCommissioner)
     }
+    datennutzungszweck_by_primary_source = {
+        "report-server": [
+            "Themenspezifische Auswertung",
+            "Themenspezifisches Monitoring",
+        ],
+        "open-data": ["Themenspezifische Auswertung"],
+    }
     for (
         primary_source,
         merged_resources_list,
@@ -411,7 +418,7 @@ def transform_resources(
                 *get_vocabulary(item.resourceTypeGeneral),
             ]
             unterkategorie = ["Public Health"]
-            if primary_source == "Synopse":
+            if primary_source == "report-server":
                 unterkategorie += ["Gesundheitliche Lage"]
             datenhalter = (
                 "BMG" if item.wasGeneratedBy in merged_activities_set else None
@@ -419,9 +426,7 @@ def transform_resources(
             rechtsgrundlage = (
                 "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
             )
-            datennutzungszweck = ["Themenspezifische Auswertung"]
-            if primary_source == "Synopse":
-                datennutzungszweck += ["Themenspezifisches Monitoring"]
+            datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
                     voraussetzungen=voraussetzungen,
