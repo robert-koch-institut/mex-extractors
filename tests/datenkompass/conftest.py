@@ -45,7 +45,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             ],
             title=[
-                Text(value='title "Act" no language'),
+                Text(value='"title "Act" no language"'),
                 Text(value="titel en", language="en"),
             ],
             abstract=[

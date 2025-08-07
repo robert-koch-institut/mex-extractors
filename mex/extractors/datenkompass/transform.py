@@ -164,11 +164,11 @@ def get_title(item: MergedActivity) -> list[str]:
     if item.shortName:
         shortname_de = [name.value for name in item.shortName if name.language == "de"]
         shortname = shortname_de[0] if shortname_de else item.shortName[0].value
-        collected_titles.append(shortname.replace('"', "'"))
+        collected_titles.append(shortname.strip('"').replace('"', "'"))
     if item.title:
         title_de = [name.value for name in item.title if name.language == "de"]
         title = title_de[0] if title_de else item.title[0].value
-        collected_titles.append(title.replace('"', "'"))
+        collected_titles.append(title.strip('"').replace('"', "'"))
     return collected_titles
 
 
@@ -230,7 +230,7 @@ def transform_activities(
             beschreibung += " "
             abstract_de = [a.value for a in item.abstract if a.language == "de"]
             beschreibung += abstract_de[0] if abstract_de else item.abstract[0].value
-        beschreibung = beschreibung.replace('"', "'")
+        beschreibung = beschreibung.strip('"').replace('"', "'")
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
