@@ -1,4 +1,10 @@
-from dagster import AssetCheckExecutionContext, AssetCheckResult, AssetKey, asset_check
+from dagster import (
+    AssetCheckExecutionContext,
+    AssetCheckResult,
+    AssetCheckSeverity,
+    AssetKey,
+    asset_check,
+)
 
 from mex.extractors.pipeline.checks.main import (
     check_x_items_more_passed,
@@ -19,7 +25,7 @@ def check_yaml_rules_exist() -> AssetCheckResult:
         passed = value is not None and value > 0
     else:
         passed = True
-    return AssetCheckResult(passed=passed)
+    return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
 
 
 @asset_check(
@@ -39,4 +45,4 @@ def check_x_items_more_than(
         "bibliographic-resource",
         extracted_endnote_bibliographic_resources,
     )
-    return AssetCheckResult(passed=passed)
+    return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
