@@ -168,8 +168,8 @@ def test_transform_resources(
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
     extracted_merged_resource = {
-        "Open-Data": [mocked_merged_resource[0]],
-        "Synopse": [mocked_merged_resource[1]],
+        "open-data": [mocked_merged_resource[0]],
+        "report-server": [mocked_merged_resource[1]],
     }
     extracted_and_filtered_merged_activities = mocked_merged_activities[:2]
     bmg_ids = {bmg.identifier for bmg in mocked_bmg}
