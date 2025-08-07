@@ -115,8 +115,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     Args:
         variables: Iterable of Synopse Variables
         belongs_to: extracted variable group that the variables belong to
-        resources_by_synopse_id: Map from synopse ID to list of study resources
-            stable target id
+        resources_by_synopse_id: Map from synopse ID to study resource
         extracted_primary_source: Extracted report server primary source
 
     Returns:
@@ -163,7 +162,7 @@ def transform_synopse_variables_to_mex_variables(
         synopse_variables_by_thema: mapping from "Thema und Fragebogenausschnitt"
             to the variables having this value
         variable_groups: extracted variable groups
-        resources_by_synopse_id: Map from synopse ID to list of study resources
+        resources_by_synopse_id: Map from synopse ID to study resource
         extracted_primary_source: Extracted report server primary source
 
     Returns:

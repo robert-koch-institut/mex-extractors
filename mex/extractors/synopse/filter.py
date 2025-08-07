@@ -10,7 +10,7 @@ def filter_and_log_synopse_variables(
     """Filter out and log variables used for internal context.
 
     Args:
-        synopse_variables: iterable of synopse variables
+        synopse_variables: list of synopse variables
         extracted_primary_source: primary source for report server platform
 
     Returns:
