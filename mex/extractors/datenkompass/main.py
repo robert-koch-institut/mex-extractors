@@ -6,11 +6,14 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
+    MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
+    MergedResource,
 )
 from mex.common.types import (
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -24,10 +27,12 @@ from mex.extractors.datenkompass.load import start_s3_client, write_item_to_json
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
+    DatenkompassResource,
 )
 from mex.extractors.datenkompass.transform import (
     transform_activities,
     transform_bibliographic_resources,
+    transform_resources,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -43,6 +48,20 @@ def extracted_merged_organizational_units_by_id() -> dict[
         for organization in cast(
             "list[MergedOrganizationalUnit]",
             get_merged_items(None, ["MergedOrganizationalUnit"], None),
+        )
+    }
+
+
+@asset(group_name="datenkompass")
+def extracted_merged_contact_points_by_id() -> dict[
+    MergedContactPointIdentifier, MergedContactPoint
+]:
+    """Get all organizational units as dict by id."""
+    return {
+        cp.identifier: cp
+        for cp in cast(
+            "list[MergedContactPoint]",
+            get_merged_items(None, ["MergedContactPoint"], None),
         )
     }
 
@@ -110,6 +129,23 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 
 
 @asset(group_name="datenkompass")
+def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResource]]:
+    """Get merged resources as dictionary."""
+    relevant_primary_sources = ["open-data", "report-server"]
+    entity_type = ["MergedResource"]
+    merged_resources: dict[str, list[MergedResource]] = {}
+    for rps in relevant_primary_sources:
+        had_primary_source = get_relevant_primary_source_ids([rps])
+
+        merged_resources[rps] = cast(
+            "list[MergedResource]",
+            get_merged_items(None, entity_type, had_primary_source),
+        )
+
+    return merged_resources
+
+
+@asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
     extracted_merged_organizational_units_by_id: dict[
@@ -140,11 +176,34 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
 
 
 @asset(group_name="datenkompass")
+def transform_resources_to_datenkompass_resources(
+    extracted_merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    extracted_and_filtered_merged_activities: list[MergedActivity],
+    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+    extracted_merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+    extracted_merged_contact_points_by_id: dict[
+        MergedContactPointIdentifier, MergedContactPoint
+    ],
+) -> list[DatenkompassResource]:
+    """Transform resources to datenkompass items."""
+    return transform_resources(
+        extracted_merged_resources_by_primary_source,
+        extracted_and_filtered_merged_activities,
+        extracted_merged_bmg_ids,
+        extracted_merged_organizational_units_by_id,
+        extracted_merged_contact_points_by_id,
+    )
+
+
+@asset(group_name="datenkompass")
 def load_activities(
     transform_activities_to_datenkompass_activities: list[DatenkompassActivity],
     transform_bibliographic_resources_to_datenkompass_bibliographic_resources: list[
         DatenkompassBibliographicResource
     ],
+    transform_resources_to_datenkompass_resources: list[DatenkompassResource],
 ) -> None:
     """Write items to S3."""
     s3_client = start_s3_client()
@@ -153,6 +212,7 @@ def load_activities(
         transform_bibliographic_resources_to_datenkompass_bibliographic_resources,
         s3_client,
     )
+    write_item_to_json(transform_resources_to_datenkompass_resources, s3_client)
 
 
 @entrypoint(Settings)
