@@ -21,9 +21,6 @@ class DatenkompassActivity(BaseModel):
     titel: list[str] = Field([], alias="Titel")
     schlagwort: list[str] = Field([], alias="Schlagwort")
     datenbank: list[str] = Field([], alias="Link oder Datenbank")
-    voraussetzungen: str | None = Field(
-        None, alias="Formelle Voraussetzungen für den Datenerhalt"
-    )
     frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
     unterkategorie: str | None = Field(None, alias="Unterkategorie")

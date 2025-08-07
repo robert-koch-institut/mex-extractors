@@ -276,7 +276,6 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenbank=[
                 "https://www.do-transform.org",
             ],
-            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -301,7 +300,6 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
-            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
