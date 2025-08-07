@@ -110,7 +110,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     resources_by_synopse_id: dict[str, ExtractedResource],
     extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
-    """Transform Synopse Variables to MEx datums.
+    """Transform Synopse variables to extracted variables.
 
     Args:
         variables: Iterable of Synopse Variables
