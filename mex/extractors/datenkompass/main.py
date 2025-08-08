@@ -82,10 +82,16 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
 def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get all person names as dictionary by id."""
     return {
-        person.identifier: person.fullName[0]
+        person.identifier: (
+            person.fullName[0]
+            if person.fullName
+            else person.familyName[0]
+            + (f", {person.givenName[0]}" if person.givenName else "")
+        )
         for person in cast(
             "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
         )
+        if person.fullName or person.givenName
     }
 
 
