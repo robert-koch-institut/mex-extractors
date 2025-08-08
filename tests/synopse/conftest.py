@@ -217,6 +217,7 @@ def synopse_studies() -> list[SynopseStudy]:
     """Return a list of Synopse Studies."""
     return [
         SynopseStudy(
+            beitragende="Jane Doe",
             beschreibung="ein heikles Unterfangen.",
             dokumentation="Z:\\foo\\bar",
             ds_typ_id=17,
@@ -227,6 +228,7 @@ def synopse_studies() -> list[SynopseStudy]:
             studien_id="12345",
             titel_datenset="Titel",
             Studie="Studie123",
+            zugangsbeschraenkung="protected",
         ),
         SynopseStudy(
             beschreibung="ein zweites heikles Unterfangen.",
@@ -238,6 +240,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123456",
             titel_datenset="Titel 2",
+            zugangsbeschraenkung="open",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -249,6 +252,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123457",
             titel_datenset="Study ohne Referenzen",
+            zugangsbeschraenkung="sensitive",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -260,6 +264,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",
             titel_datenset="Study 2 ohne Referenzen",
+            zugangsbeschraenkung="protected",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -271,6 +276,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123457",
             titel_datenset="Study ohne Referenzen",
+            zugangsbeschraenkung="sensitive",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -282,6 +288,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",
             titel_datenset="Study 2 ohne Referenzen",
+            zugangsbeschraenkung="open",
         ),
     ]
 

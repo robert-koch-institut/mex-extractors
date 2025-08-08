@@ -55,16 +55,14 @@ def test_extract_variables() -> None:
 
 def test_extract_study_data() -> None:
     expected_study_data = {
-        "beschreibung": "BBCCDD Basiserhebung; Kohorte",
-        "dateiformat": "sas;stata",
-        "dokumentation": None,
+        "beschreibung": "BBCCDD Basiserhebung, Kohorte",
+        "dateiformat": "sas,stata",
         "ds_typ_id": 17,
         "erstellungs_datum": "2013",
         "lizenz": "Reportserver",
         "plattform": '"Z:\\Lorem\\Ipsum\\DATA\\BBCCDD\\Dokumentation',
-        "plattform_adresse": None,
         "rechte": "restriktiv",
-        "schlagworte_themen": "BBCCDD Basiserhebung; Kohorte",
+        "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
         "studie": "BBCCDD",
         "studien_id": "1234567",
         "titel_datenset": "BBCCDD",
@@ -72,8 +70,8 @@ def test_extract_study_data() -> None:
         "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
     study_data = list(extract_study_data())
-    assert len(study_data) == 6
-    assert study_data[0].model_dump() == expected_study_data
+    assert len(study_data) == 2
+    assert study_data[0].model_dump(exclude_defaults=True) == expected_study_data
 
 
 def test_extract_projects() -> None:

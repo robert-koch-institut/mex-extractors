@@ -219,6 +219,9 @@ def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     extracted_synopse_access_platform_id: MergedAccessPlatformIdentifier,
+    extracted_synopse_contributor_stable_target_ids_by_name: dict[
+        str, list[MergedPersonIdentifier]
+    ],
 ) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource stable target id.
 
@@ -234,6 +237,7 @@ def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         extracted_synopse_access_platform_id,
+        extracted_synopse_contributor_stable_target_ids_by_name,
     )
     load(transformed_study_data_resources)
     return transform_overviews_to_resource_lookup(

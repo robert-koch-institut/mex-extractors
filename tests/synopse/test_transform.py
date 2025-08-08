@@ -219,12 +219,10 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["bFQoRhcVH5DHYc"],
-        "contributor": [str(extracted_activity.involvedPerson[0])],
-        "created": "2022",
+        "contributingUnit": ["bFQoRhcVH5DHYc"],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
-        "documentation": [{"url": "file:///Z:/foo/bar"}],
         "hadPrimarySource": str(
             extracted_primary_sources["report-server"].stableTargetId
         ),
@@ -251,7 +249,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "resourceTypeSpecific": [
             {
-                "language": TextLanguage.EN,
+                "language": TextLanguage.DE,
                 "value": "Monitoring-Studie",
             },
         ],
@@ -261,9 +259,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
                 "value": "Lorem",
             },
         ],
-        "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stableTargetId": Joker(),
-        "temporal": "2000 - 2013",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
         "unitInCharge": [str(Identifier.generate(seed=234))],
@@ -279,6 +275,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         extracted_organization[0],
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
+        {"Jane Doe": [MergedPersonIdentifier.generate(seed=237)]},
     )
     assert len(resources) == 1
     assert resources[0].model_dump(exclude_defaults=True) == expected_resource

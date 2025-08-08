@@ -12,8 +12,8 @@ accessRestriction:
   - fieldInPrimarySource:
     mappingRules:
       - forValues:
-          - "restriktiv"
-        setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+          - "protected"
+        setValues: https://mex.rki.de/item/access-restriction-2
 contact:
   - mappingRules:
       - forValues:
