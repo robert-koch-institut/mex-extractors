@@ -25,7 +25,7 @@ from mex.extractors.datenkompass.extract import (
 from mex.extractors.datenkompass.filter import filter_for_bmg
 from mex.extractors.datenkompass.load import (
     start_s3_client,
-    write_items_to_csv,
+    write_items_to_xlsx,
 )
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -216,12 +216,12 @@ def load_activities(
 ) -> None:
     """Write items to S3."""
     s3_client = start_s3_client()
-    write_items_to_csv(transform_activities_to_datenkompass_activities, s3_client)
-    write_items_to_csv(
+    write_items_to_xlsx(transform_activities_to_datenkompass_activities, s3_client)
+    write_items_to_xlsx(
         transform_bibliographic_resources_to_datenkompass_bibliographic_resources,
         s3_client,
     )
-    write_items_to_csv(transform_resources_to_datenkompass_resources, s3_client)
+    write_items_to_xlsx(transform_resources_to_datenkompass_resources, s3_client)
 
 
 @entrypoint(Settings)

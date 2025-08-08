@@ -1,3 +1,4 @@
+import io
 from collections.abc import Sequence
 
 import boto3
@@ -27,13 +28,13 @@ def start_s3_client() -> BaseClient:
     return session.client("s3", endpoint_url=str(settings.s3_endpoint_url))
 
 
-def write_items_to_csv(
+def write_items_to_xlsx(
     datenkompassitems: Sequence[
         DatenkompassActivity | DatenkompassBibliographicResource | DatenkompassResource,
     ],
     s3: BaseClient,
 ) -> None:
-    """Write Datenkompass items to csv.
+    """Write Datenkompass items to xlsx.
 
     Args:
         datenkompassitems: List of Datenkompass items.
@@ -41,8 +42,7 @@ def write_items_to_csv(
     """
     settings = Settings.get()
     list_delimiter: str = ";"
-    field_delimiter: str = ","
-    file_name = f"datenkompass_{datenkompassitems[0].entityType}.csv"
+    file_name = f"datenkompass_{datenkompassitems[0].entityType}.xlsx"
 
     dicts = [
         item.model_dump(by_alias=True, exclude_none=True) for item in datenkompassitems
@@ -55,11 +55,13 @@ def write_items_to_csv(
             lambda v: list_delimiter.join(map(str, v)) if isinstance(v, list) else v
         )
 
-    csv_str = df.to_csv(index=False, sep=field_delimiter, encoding="utf-8-sig")
+    xlsx_buf = io.BytesIO()
+    df.to_excel(xlsx_buf, index=False)
+    xlsx_buf.seek(0)
 
     s3.put_object(
         Bucket=settings.s3_bucket_key,
         Key=file_name,
-        Body=csv_str.encode("utf-8-sig"),
-        ContentType="text/csv; charset=utf-8",
+        Body=xlsx_buf.getvalue(),
+        ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
