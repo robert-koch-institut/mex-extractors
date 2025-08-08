@@ -192,7 +192,7 @@ def get_vocabulary(
     ]
 
 
-def get_datenbank(item: MergedBibliographicResource) -> str:
+def get_datenbank(item: MergedBibliographicResource) -> str | None:
     """Get first doi url or first repository URL.
 
     Args:
@@ -202,10 +202,10 @@ def get_datenbank(item: MergedBibliographicResource) -> str:
         url as string.
     """
     if item.doi:
-        entry = item.doi
-    elif item.repositoryURL:
-        entry = item.repositoryURL[0].url
-    return entry
+        return item.doi
+    if item.repositoryURL:
+        return item.repositoryURL[0].url
+    return None
 
 
 def transform_activities(
