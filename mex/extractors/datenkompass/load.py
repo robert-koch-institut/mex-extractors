@@ -1,10 +1,10 @@
-import json
+import io
 from collections.abc import Sequence
 
 import boto3
+import pandas as pd
 from botocore.client import BaseClient
 
-from mex.common.logging import logger
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
@@ -28,34 +28,40 @@ def start_s3_client() -> BaseClient:
     return session.client("s3", endpoint_url=str(settings.s3_endpoint_url))
 
 
-def write_item_to_json(
+def write_items_to_xlsx(
     datenkompassitems: Sequence[
-        DatenkompassActivity | DatenkompassBibliographicResource | DatenkompassResource
+        DatenkompassActivity | DatenkompassBibliographicResource | DatenkompassResource,
     ],
     s3: BaseClient,
 ) -> None:
-    """Write Datenkompass items to json.
+    """Write Datenkompass items to xlsx.
 
     Args:
         datenkompassitems: List of Datenkompass items.
         s3: S3 session.
     """
     settings = Settings.get()
+    list_delimiter: str = ";"
+    file_name = f"datenkompass_{datenkompassitems[0].entityType}.xlsx"
 
-    file_name = f"datenkompass_{datenkompassitems[0].entityType}.json"
-    file_content = json.dumps(
-        [item.model_dump(by_alias=True) for item in datenkompassitems],
-        indent=2,
-        ensure_ascii=False,
-    )
+    dicts = [
+        item.model_dump(by_alias=True, exclude_none=True) for item in datenkompassitems
+    ]
+
+    df = pd.DataFrame(dicts)
+
+    for col in df.columns:
+        df[col] = df[col].apply(
+            lambda v: list_delimiter.join(map(str, v)) if isinstance(v, list) else v
+        )
+
+    xlsx_buf = io.BytesIO()
+    df.to_excel(xlsx_buf, index=False)
+    xlsx_buf.seek(0)
 
     s3.put_object(
         Bucket=settings.s3_bucket_key,
         Key=file_name,
-        Body=file_content.encode("utf-8"),
-        ContentType="application/json; charset=utf-8",
-    )
-
-    logger.info(
-        "Written %s items to file '%s' on S3", len(datenkompassitems), file_name
+        Body=xlsx_buf.getvalue(),
+        ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
