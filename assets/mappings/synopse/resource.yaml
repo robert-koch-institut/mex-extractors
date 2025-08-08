@@ -3,14 +3,17 @@
 accessPlatform:
   - fieldInPrimarySource:
     locationInPrimarySource:
+    examplesInPrimarySource:
     mappingRules:
-      - rule:
+      - forValues:
+        - "17"
+        rule:
 accessRestriction:
   - fieldInPrimarySource:
     mappingRules:
       - forValues:
-          - "restriktiv"
-        setValues: https://mex.rki.de/item/access-restriction-2 # restricted
+          - "protected"
+        setValues: https://mex.rki.de/item/access-restriction-2
 contact:
   - mappingRules:
       - forValues:

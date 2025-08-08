@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.models import ActivityMapping, ResourceMapping
+from mex.common.models import AccessPlatformMapping
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
@@ -47,7 +47,7 @@ def test_extract_variables() -> None:
         "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
         "varname": "KLMNO_F4",
     }
-    variables = list(extract_variables())
+    variables = extract_variables()
     assert len(variables) == 16
     assert variables[0].model_dump() == expected_first_variable
     assert variables[4].model_dump() == expected_second_variable
@@ -57,37 +57,30 @@ def test_extract_study_data() -> None:
     expected_study_data = {
         "beschreibung": "BBCCDD Basiserhebung, Kohorte",
         "dateiformat": "sas,stata",
-        "dokumentation": r'"Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation',
         "ds_typ_id": 17,
         "erstellungs_datum": "2013",
-        "lizenz": None,
-        "plattform": "Reportserver",
-        "plattform_adresse": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
-        "rechte": None,
+        "lizenz": "Reportserver",
+        "plattform": '"Z:\\Lorem\\Ipsum\\DATA\\BBCCDD\\Dokumentation',
+        "rechte": "restriktiv",
         "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
         "studie": "BBCCDD",
         "studien_id": "1234567",
         "titel_datenset": "BBCCDD",
         "version": "V26",
-        "zugangsbeschraenkung": "restriktiv",
+        "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
     study_data = list(extract_study_data())
-    assert len(study_data) == 6
-    assert study_data[0].model_dump() == expected_study_data
+    assert len(study_data) == 2
+    assert study_data[0].model_dump(exclude_defaults=True) == expected_study_data
 
 
 def test_extract_projects() -> None:
     expected_project = {
         "akronym_des_studientitels": "BBCCDD1",
-        "beschreibung_der_studie": "Mit der BBCCDD-Basiserhebung hat das Robert "
-        "Koch-Institut umfassende Daten zur Gesundheit der "
-        "in Deutschland lebenden Lorems gesammelt. Das "
-        "Studienprogramm umfasste neben Befragungen auch "
-        "Ipsumalysen.",
-        "project_studientitel": "Studie zu Lorem und Ipsum",
+        "beschreibung_der_studie": "fg@example.com",
+        "project_studientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
         "studien_id": "1122999",
         "studienart_studientyp": "Monitoring-Studie",
-        "verantwortliche_oe": "CHLD",
     }
     projects = list(extract_projects())
     assert len(projects) == 4
@@ -105,10 +98,9 @@ def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_contact(
-    synopse_resource: ResourceMapping,
-    synopse_activity: ActivityMapping,
+    synopse_access_platform: AccessPlatformMapping,
 ) -> None:
-    actor = extract_synopse_contact(synopse_resource, synopse_activity)
+    actor = extract_synopse_contact(synopse_access_platform)
     expected = {
         "sAMAccountName": "ContactC",
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),

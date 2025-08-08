@@ -5,7 +5,7 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPActor, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
-from mex.common.models import ActivityMapping, ResourceMapping
+from mex.common.models import AccessPlatformMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
@@ -17,8 +17,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
-@watch()
-def extract_variables() -> Generator[SynopseVariable, None, None]:
+def extract_variables() -> list[SynopseVariable]:
     """Extract variables from `variablenuebersicht` report.
 
     Settings:
@@ -26,12 +25,15 @@ def extract_variables() -> Generator[SynopseVariable, None, None]:
                                   absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Synopse Variables
+        list for Synopse Variables
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.variablenuebersicht_path,
-        SynopseVariable,
+    return list(
+        parse_csv(
+            settings.synopse.variablenuebersicht_path,
+            SynopseVariable,
+            delimiter=",",
+        )
     )
 
 
@@ -47,7 +49,9 @@ def extract_study_data() -> Generator[SynopseStudy, None, None]:
         Generator for Synopse Studies
     """
     settings = Settings.get()
-    yield from parse_csv(settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy)
+    yield from parse_csv(
+        settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=","
+    )
 
 
 @watch()
@@ -65,6 +69,7 @@ def extract_projects() -> Generator[SynopseProject, None, None]:
     yield from parse_csv(
         settings.synopse.projekt_und_studienverwaltung_path,
         SynopseProject,
+        delimiter=",",
     )
 
 
@@ -96,24 +101,22 @@ def extract_synopse_project_contributors(
 
 
 def extract_synopse_contact(
-    synopse_resource: ResourceMapping,
-    synopse_activity: ActivityMapping,
+    access_platform_mapping: AccessPlatformMapping,
 ) -> list[LDAPActor]:
     """Extract LDAP persons for Synopse project contact.
 
     Args:
-        synopse_resource: Synopse resource default values
-        synopse_activity: Synopse activity default values
+        access_platform_mapping: Synopse access platform default values
 
     Returns:
         contact LDAP persons
     """
     ldap = LDAPConnector.get()
     contact_list: list[str] = []
-    if synopse_resource.contact[0].mappingRules[0].forValues:
-        contact_list.extend(synopse_resource.contact[0].mappingRules[0].forValues)
-    if synopse_activity.contact[0].mappingRules[0].forValues:
-        contact_list.extend(synopse_activity.contact[0].mappingRules[0].forValues)
+    if access_platform_mapping.contact[0].mappingRules[0].forValues:
+        contact_list.extend(
+            access_platform_mapping.contact[0].mappingRules[0].forValues
+        )
     return [
         account
         for mail in contact_list
@@ -134,7 +137,9 @@ def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
     """
     settings = Settings.get()
     yield from parse_csv(
-        settings.synopse.datensatzuebersicht_path, SynopseStudyOverview
+        settings.synopse.datensatzuebersicht_path,
+        SynopseStudyOverview,
+        delimiter=",",
     )
 
 
