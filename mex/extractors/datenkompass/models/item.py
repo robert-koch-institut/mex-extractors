@@ -75,6 +75,7 @@ class DatenkompassResource(BaseModel):
     )
     frequenz: list[str] = Field([], alias="Frequenz der Aktualisierung")
     kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: list[str] = Field([], alias="Titel")
     schlagwort: list[str] = Field([], alias="Schlagwort")
     voraussetzungen: str | None = Field(
@@ -88,10 +89,10 @@ class DatenkompassResource(BaseModel):
         [], alias="Datennutzungszweck (erweitert)"
     )
     dk_format: list[str] = Field(  # "format" would shadow a builtIn
-        [], alias="Format"
+        [], alias="Format der Daten"
     )
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
-    unterkategorie: list[str] = Field([], alias="Unterkategorie")
+    unterkategorie: str | None = Field(None, alias="Unterkategorie")
     rechtsgrundlage: str | None = Field(
         None, alias="Rechtsgrundlage für die Zugangseröffnung"
     )

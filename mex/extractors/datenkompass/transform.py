@@ -12,7 +12,6 @@ from mex.common.types import (
     Identifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
-    MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
 from mex.common.types.vocabulary import (
@@ -38,32 +37,6 @@ _VocabularyT = TypeVar(
     ResourceCreationMethod,
     ResourceTypeGeneral,
 )
-
-
-def get_contact(
-    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
-    ],
-) -> list[str]:
-    """Get shortName and email from merged units.
-
-    Args:
-        responsible_unit_ids: List of responsible unit identifiers
-        merged_organizational_units_by_id: dict of all merged organizational units by id
-
-    Returns:
-        List of short name and email of contact units as strings.
-    """
-    return [
-        contact
-        for org_id in responsible_unit_ids
-        for contact in [
-            short_name.value
-            for short_name in merged_organizational_units_by_id[org_id].shortName
-        ]
-        + [str(email) for email in merged_organizational_units_by_id[org_id].email]
-    ]
 
 
 def get_unit_shortname(
@@ -117,13 +90,17 @@ def get_email(
 
 
 def get_resource_contact(
-    responsible_unit_ids: list[Identifier],
+    responsible_unit_ids: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[str]:
-    """Get email from units and contact points and shortname from units.
+    """Get email from units and contact points.
 
     Args:
         responsible_unit_ids: Set of responsible unit identifiers
@@ -131,7 +108,7 @@ def get_resource_contact(
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
-        List of shortnames and email-addresses as strings.
+        List of email-addresses as strings.
     """
     contact_details: list[str] = []
     combined_dict = cast(
@@ -141,10 +118,6 @@ def get_resource_contact(
 
     for contact_id in responsible_unit_ids:
         if contact := combined_dict.get(contact_id):
-            if contact.entityType == "MergedOrganizationalUnit":
-                contact_details.extend(
-                    [short_name.value for short_name in contact.shortName]
-                )
             contact_details.extend([str(email) for email in contact.email])
 
     return contact_details
@@ -346,8 +319,6 @@ def transform_bibliographic_resources(
 
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    filtered_merged_activities: list[MergedActivity],
-    merged_bmg_ids: set[MergedOrganizationIdentifier],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -357,8 +328,6 @@ def transform_resources(
 
     Args:
         merged_resources_by_primary_source: dictionary of merged resources
-        filtered_merged_activities: list of merged activities
-        merged_bmg_ids: set of merged bmg organization identifiers
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
 
@@ -366,11 +335,6 @@ def transform_resources(
         list of DatenkompassResource instances.
     """
     datenkompass_recources = []
-    merged_activities_set = {
-        ma.identifier
-        for ma in filtered_merged_activities
-        if any(fOC in merged_bmg_ids for fOC in ma.funderOrCommissioner)
-    }
     datennutzungszweck_by_primary_source = {
         "report-server": [
             "Themenspezifische Auswertung",
@@ -393,17 +357,24 @@ def transform_resources(
                 else []
             )
             kontakt = get_resource_contact(
-                sorted({*item.contact, *item.unitInCharge}),
+                item.contact,
                 merged_organizational_units_by_id,
                 merged_contact_points_by_id,
+            )
+            organisationseinheit = get_unit_shortname(
+                item.unitInCharge, merged_organizational_units_by_id
             )
             beschreibung = "n/a"
             if item.description:
                 description_de = [
-                    d.value for d in item.description if d.language == "de"
+                    d.value.strip('"').replace('"', "'")
+                    for d in item.description
+                    if d.language == "de"
                 ]
                 beschreibung = (
-                    description_de[0] if description_de else item.description[0].value
+                    (description_de[0] if description_de else item.description[0].value)
+                    .strip('"')
+                    .replace('"', "'")
                 )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
@@ -417,12 +388,6 @@ def transform_resources(
                 *get_vocabulary(item.resourceCreationMethod),
                 *get_vocabulary(item.resourceTypeGeneral),
             ]
-            unterkategorie = ["Public Health"]
-            if primary_source == "report-server":
-                unterkategorie += ["Gesundheitliche Lage"]
-            datenhalter = (
-                "BMG" if item.wasGeneratedBy in merged_activities_set else None
-            )
             rechtsgrundlage = (
                 "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
             )
@@ -432,16 +397,17 @@ def transform_resources(
                     voraussetzungen=voraussetzungen,
                     frequenz=frequenz,
                     kontakt=kontakt,
+                    organisationseinheit=organisationseinheit,
                     beschreibung=beschreibung,
                     datenbank=item.doi,
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
                     dk_format=dk_format,
-                    titel=[t.value for t in item.title],
-                    datenhalter=datenhalter,
+                    titel=[t.value.strip('"').replace('"', "'") for t in item.title],
+                    datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
-                    unterkategorie=unterkategorie,
+                    unterkategorie="Einflussfaktoren auf die Gesundheit",
                     rechtsgrundlage=rechtsgrundlage,
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",

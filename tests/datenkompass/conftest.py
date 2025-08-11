@@ -336,7 +336,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         "MergedActivity": [mocked_merged_activities[1]],
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
-        "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
+        "MergedOrganizationalUnit": mocked_merged_organizational_units,
         "MergedOrganization": [mocked_bmg[1]],
         "MergedPerson": mocked_merged_person,
         "MergedContactPoint": mocked_merged_contact_point,

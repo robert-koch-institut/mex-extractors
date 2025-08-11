@@ -187,8 +187,6 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
 @asset(group_name="datenkompass")
 def transform_resources_to_datenkompass_resources(
     extracted_merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
     extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -199,8 +197,6 @@ def transform_resources_to_datenkompass_resources(
     """Transform resources to datenkompass items."""
     return transform_resources(
         extracted_merged_resources_by_primary_source,
-        extracted_and_filtered_merged_activities,
-        extracted_merged_bmg_ids,
         extracted_merged_organizational_units_by_id,
         extracted_merged_contact_points_by_id,
     )
