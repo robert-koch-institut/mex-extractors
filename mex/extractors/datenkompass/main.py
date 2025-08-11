@@ -26,7 +26,10 @@ from mex.extractors.datenkompass.filter import (
     filter_for_organization,
     find_descendant_units,
 )
-from mex.extractors.datenkompass.load import start_s3_client, write_item_to_json
+from mex.extractors.datenkompass.load import (
+    start_s3_client,
+    write_items_to_xlsx,
+)
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
@@ -96,13 +99,19 @@ def relevant_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
 
 
 @asset(group_name="datenkompass")
-def person_name_by_id() -> dict[MergedPersonIdentifier, list[str]]:
+def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get all person names as dictionary by id."""
     return {
-        person.identifier: person.fullName
+        person.identifier: (
+            person.fullName[0]
+            if person.fullName
+            else person.familyName[0]
+            + (f", {person.givenName[0]}" if person.givenName else "")
+        )
         for person in cast(
             "list[MergedPerson]", get_merged_items(entity_type=["MergedPerson"])
         )
+        if person.fullName or person.givenName
     }
 
 
@@ -220,7 +229,7 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
     extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+    person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
@@ -233,8 +242,6 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
 @asset(group_name="datenkompass")
 def transform_resources_to_datenkompass_resources(
     extracted_merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    extracted_and_filtered_merged_activities: list[MergedActivity],
-    relevant_merged_organization_ids: set[MergedOrganizationIdentifier],
     extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -245,8 +252,6 @@ def transform_resources_to_datenkompass_resources(
     """Transform resources to datenkompass items."""
     return transform_resources(
         extracted_merged_resources_by_primary_source,
-        extracted_and_filtered_merged_activities,
-        relevant_merged_organization_ids,
         extracted_merged_organizational_units_by_id,
         extracted_merged_contact_points_by_id,
     )
@@ -262,12 +267,12 @@ def load_activities(
 ) -> None:
     """Write items to S3."""
     s3_client = start_s3_client()
-    write_item_to_json(transform_activities_to_datenkompass_activities, s3_client)
-    write_item_to_json(
+    write_items_to_xlsx(transform_activities_to_datenkompass_activities, s3_client)
+    write_items_to_xlsx(
         transform_bibliographic_resources_to_datenkompass_bibliographic_resources,
         s3_client,
     )
-    write_item_to_json(transform_resources_to_datenkompass_resources, s3_client)
+    write_items_to_xlsx(transform_resources_to_datenkompass_resources, s3_client)
 
 
 @entrypoint(Settings)

@@ -1,14 +1,9 @@
-from typing import TYPE_CHECKING, cast
-
 import pytest
 
-if TYPE_CHECKING:
-    from mex.common.types import Identifier
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
     MergedContactPoint,
-    MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
     MergedResource,
@@ -18,10 +13,11 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
 from mex.extractors.datenkompass.transform import (
-    get_contact,
     get_datenbank,
+    get_email,
     get_resource_contact,
     get_title,
+    get_unit_shortname,
     get_vocabulary,
     transform_activities,
     transform_bibliographic_resources,
@@ -29,7 +25,7 @@ from mex.extractors.datenkompass.transform import (
 )
 
 
-def test_get_contact(
+def test_get_unit_shortname(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> None:
@@ -37,13 +33,25 @@ def test_get_contact(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    result = get_contact(responsible_unit_ids, merged_organizational_units_by_id)
+    result = get_unit_shortname(responsible_unit_ids, merged_organizational_units_by_id)
 
     assert sorted(result) == [
         "a.bsp. unit",
         "e.g. unit",
-        "unit@example.org",
     ]
+
+
+def test_get_email(
+    mocked_merged_activities: list[MergedActivity],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+) -> None:
+    responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
+    merged_organizational_units_by_id = {
+        unit.identifier: unit for unit in mocked_merged_organizational_units
+    }
+    result = get_email(responsible_unit_ids, merged_organizational_units_by_id)
+
+    assert sorted(result) == ["unit@example.org"]
 
 
 def test_get_resource_contact(
@@ -52,9 +60,7 @@ def test_get_resource_contact(
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
     item = mocked_merged_resource[0]
-    responsible_unit_ids = cast(
-        "list[Identifier]", sorted({*item.contact, *item.unitInCharge})
-    )
+    responsible_unit_ids = item.contact
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -69,9 +75,7 @@ def test_get_resource_contact(
     )
 
     assert sorted(result) == [
-        "a.bsp. unit",
         "contactpoint@example.org",
-        "e.g. unit",
         "unit@example.org",
     ]
 
@@ -80,7 +84,7 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_activities[0]
     result = get_title(item)
 
-    assert result == ["short de", "title no language"]
+    assert result == ["short de", "title 'Act' no language"]
 
 
 def test_get_vocabulary() -> None:
@@ -92,8 +96,7 @@ def test_get_datenbank(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
 ) -> None:
     assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
-        "https://doi.org/10.1234_find_this_first, find_second_a, "
-        "find_second_b, https://www.find_third.to"
+        "https://doi.org/10.1234_find_this"
     )
 
 
@@ -128,7 +131,7 @@ def test_transform_bibliographic_resource(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     person_name_by_id = {
-        person.identifier: person.fullName for person in mocked_merged_person
+        person.identifier: person.fullName[0] for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(
@@ -138,42 +141,40 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": ["Die Nutzung", "The usage"],
-        "kontakt": ["e.g. unit", "unit@example.org"],
-        "titel": "title no language, titel en (Pattern, Peppa P. / Pattern, P.P.)",
-        "schlagwort": ["short en", "short de"],
-        "datenbank": (
-            "https://doi.org/10.1234_find_this_first, find_second_a, "
-            "find_second_b, https://www.find_third.to"
+        "beschreibung": ["Buch", ".", "Die Nutzung", "The usage"],
+        "kontakt": ["unit@example.org"],
+        "organisationseinheit": ["e.g. unit"],
+        "titel": (
+            "title 'BibRes' no language, titel en (Pattern, Peppa P. / "
+            "Pattern, Peppa P. / Pattern, Peppa P. / "
+            "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
         ),
+        "schlagwort": ["short en", "short de"],
+        "datenbank": "https://doi.org/10.1234_find_this",
         "voraussetzungen": "Frei zugänglich",
+        "datenhalter": "Robert Koch-Institut",
+        "frequenz": "Einmalig",
         "hauptkategorie": "Gesundheit",
-        "unterkategorie": "Public Health",
+        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "herausgeber": "Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
-        "dk_format": ["Buch"],
+        "dk_format": "Sonstiges",
         "identifier": "MergedBibResource1",
     }
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_transform_resources(
-    mocked_merged_activities: list[MergedActivity],
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
-    mocked_merged_organization: list[MergedOrganization],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
     extracted_merged_resource = {
         "open-data": [mocked_merged_resource[0]],
         "report-server": [mocked_merged_resource[1]],
-    }
-    extracted_and_filtered_merged_activities = mocked_merged_activities[:2]
-    organization_ids = {
-        organization.identifier for organization in mocked_merged_organization
     }
     extracted_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
@@ -184,8 +185,6 @@ def test_transform_resources(
 
     result = transform_resources(
         extracted_merged_resource,
-        extracted_and_filtered_merged_activities,
-        organization_ids,
         extracted_merged_organizational_units_by_id,
         extracted_merged_contact_points_by_id,
     )
@@ -195,21 +194,20 @@ def test_transform_resources(
         "voraussetzungen": "Frei zugänglich",
         "frequenz": [],
         "kontakt": [
-            "e.g. unit",
             "unit@example.org",
-            "a.bsp. unit",
             "contactpoint@example.org",
         ],
+        "organisationseinheit": ["e.g. unit"],
         "beschreibung": "deutsche Beschreibung",
         "datenbank": "https://doi.org/10.1234_example",
-        "rechtsgrundlagenbenennung": ["has basis", "hat weitere Basis"],
-        "datennutzungszweckerweitert": ["has purpose"],
+        "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
+        "datennutzungszweck_erweitert": ["has purpose"],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie", "word 1", "Wort 2"],
         "dk_format": [],
         "titel": ["some open data resource title"],
-        "datenhalter": "BMG",
+        "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
-        "unterkategorie": ["Public Health"],
+        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "rechtsgrundlage": "Ja",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
@@ -226,17 +224,18 @@ def test_transform_resources(
     assert result[1].model_dump() == {
         "voraussetzungen": "Zugang eingeschränkt",
         "frequenz": [],
-        "kontakt": ["a.bsp. unit"],
+        "kontakt": [],
+        "organisationseinheit": ["a.bsp. unit"],
         "beschreibung": "n/a",
         "datenbank": None,
-        "rechtsgrundlagenbenennung": [],
-        "datennutzungszweckerweitert": [],
+        "rechtsgrundlagen_benennung": [],
+        "datennutzungszweck_erweitert": [],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie"],
         "dk_format": [],
         "titel": ["some synopse resource title"],
-        "datenhalter": None,
+        "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
-        "unterkategorie": ["Public Health", "Gesundheitliche Lage"],
+        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "rechtsgrundlage": "Nicht bekannt",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
