@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update synopse according to mapping changes
-- update datenkompass according to mapping changes and save items as xlsx
 
 ### Deprecated
 

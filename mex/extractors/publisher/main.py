@@ -65,8 +65,9 @@ def publishable_persons() -> ItemsContainer[AnyMergedModel]:
         }
     )
     merged_items = get_publishable_merged_items(
-        primary_source_ids=allowed_primary_sources,
         entity_type=["MergedPerson"],
+        referenced_identifier=allowed_primary_sources,
+        reference_field="hadPrimarySource",
     )
     return ItemsContainer[AnyMergedModel](items=merged_items)
 

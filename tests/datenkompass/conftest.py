@@ -9,17 +9,15 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity, get_provider
 from mex.common.models import (
     AnyMergedModel,
-    AnyPreviewModel,
     MergedActivity,
     MergedBibliographicResource,
     MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
+    MergedPrimarySource,
     MergedResource,
-    PaginatedItemsContainer,
 )
-from mex.common.models.primary_source import PreviewPrimarySource
 from mex.common.types import (
     AccessRestriction,
     Link,
@@ -245,16 +243,16 @@ def mocked_merged_contact_point() -> list[MergedContactPoint]:
 
 
 @pytest.fixture
-def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
-    """Mock a list of Preview Primary Source items."""
+def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
+    """Mock a list of merged Primary Source items."""
     return [
-        PreviewPrimarySource(
-            entityType="PreviewPrimarySource",
+        MergedPrimarySource(
+            entityType="MergedPrimarySource",
             identifier="SomeIrrelevantPS",
         ),
-        PreviewPrimarySource(
+        MergedPrimarySource(
             title=[Text(value="this is a Relevant Primary Source", language="en")],
-            entityType="PreviewPrimarySource",
+            entityType="MergedPrimarySource",
             identifier="identifierRelevantPS",
         ),
     ]
@@ -327,13 +325,14 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     mocked_merged_organization: list[MergedOrganization],
     mocked_merged_person: list[MergedPerson],
     mocked_merged_contact_point: list[MergedContactPoint],
-    mocked_preview_primary_sources: list[PreviewPrimarySource],
+    mocked_merged_primary_sources: list[MergedPrimarySource],
 ) -> MagicMock:
     """Mock the backendAPIConnector functions to return dummy variables."""
     mock_dispatch = {
         "MergedActivity": [mocked_merged_activities[1]],
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
+        "MergedPrimarySource": mocked_merged_primary_sources,
         "MergedOrganizationalUnit": mocked_merged_organizational_units,
         "MergedOrganization": [mocked_merged_organization[1]],
         "MergedPerson": mocked_merged_person,
@@ -354,28 +353,10 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 
         return cast("list[AnyMergedModel]", mock_dispatch.get(key))
 
-    def fetch_preview_items(  # noqa: PLR0913
-        *,
-        query_string: str | None = None,  # noqa: ARG001
-        entity_type: list[str] | None = None,  # noqa: ARG001
-        referenced_identifier: list[str] | None = None,  # noqa: ARG001
-        reference_field: str | None = None,  # noqa: ARG001
-        skip: int = 0,  # noqa: ARG001
-        limit: int = 100,  # noqa: ARG001
-    ) -> PaginatedItemsContainer[AnyPreviewModel]:
-        return PaginatedItemsContainer[AnyPreviewModel](
-            total=2,
-            items=mocked_preview_primary_sources,
-        )
-
     backend = MagicMock(
         fetch_all_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_all_merged_items,
             side_effect=fetch_all_merged_items,
-        ),
-        fetch_preview_items=MagicMock(
-            spec=BackendApiConnector.fetch_preview_items,
-            side_effect=fetch_preview_items,
         ),
     )
     monkeypatch.setattr(
@@ -383,9 +364,6 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
-    )
-    monkeypatch.setattr(
-        BackendApiConnector, "fetch_preview_items", backend.fetch_preview_items
     )
     return backend
 

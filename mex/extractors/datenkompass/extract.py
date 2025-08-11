@@ -1,6 +1,8 @@
+from typing import cast
+
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import get_provider
-from mex.common.models import AnyMergedModel
+from mex.common.models import AnyMergedModel, MergedPrimarySource
 
 
 def get_merged_items(
@@ -42,20 +44,16 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     Returns:
         List of IDs of the relevant primary sources.
     """
-    connector = BackendApiConnector.get()
-    limit = 100
-    preview_primary_sources = connector.fetch_preview_items(
-        entity_type=["MergedPrimarySource"]
-    ).items
-    if len(preview_primary_sources) > limit:
-        raise NotImplementedError
+    merged_primary_sources = cast(
+        "list[MergedPrimarySource]",
+        get_merged_items(entity_type=["MergedPrimarySource"]),
+    )
 
     provider = get_provider()
 
     return [
-        str(pps.identifier)
-        for pps in preview_primary_sources
-        if pps.entityType == "PreviewPrimarySource"
-        and provider.fetch(stable_target_id=pps.identifier)[0].identifierInPrimarySource
+        str(mps.identifier)
+        for mps in merged_primary_sources
+        if provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
         in relevant_primary_sources
     ]
