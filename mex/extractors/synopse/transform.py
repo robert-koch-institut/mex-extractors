@@ -565,7 +565,7 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
             pass  # TODO(HS): handle relative paths
     involved_units = [
         merged_id
-        for unit in (synopse_project.interne_partner or "").split(" ,")
+        for unit in (synopse_project.interne_partner or "").split(", ")
         if (merged_id := unit_merged_ids_by_synonym.get(unit.strip()))
     ]
 
