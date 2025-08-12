@@ -27,6 +27,7 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
+from mex.extractors.settings import Settings
 
 _VocabularyT = TypeVar(
     "_VocabularyT",
@@ -264,6 +265,7 @@ def transform_bibliographic_resources(
     Returns:
         list of DatenkompassBibliographicResource instances.
     """
+    settings = Settings()
     datenkompass_bibliographic_recources = []
     for item in merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
@@ -277,7 +279,7 @@ def transform_bibliographic_resources(
         organisationseinheit = get_unit_shortname(
             item.contributingUnit, merged_organizational_units_by_id
         )
-        max_number_authors_cutoff = 5
+        max_number_authors_cutoff = settings.datenkompass.max_authors
         title_collection = ", ".join(
             entry.value.strip('"').replace('"', "'") for entry in item.title
         )

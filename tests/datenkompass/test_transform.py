@@ -146,7 +146,6 @@ def test_transform_bibliographic_resource(
         "organisationseinheit": ["e.g. unit"],
         "titel": (
             "title 'BibRes' no language, titel en (Pattern, Peppa P. / "
-            "Pattern, Peppa P. / Pattern, Peppa P. / "
             "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
         ),
         "schlagwort": ["short en", "short de"],
