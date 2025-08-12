@@ -83,7 +83,7 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
-    """Get all person names as dictionary by id."""
+    """Get person name by id."""
     return {
         person.identifier: (
             person.fullName[0]
