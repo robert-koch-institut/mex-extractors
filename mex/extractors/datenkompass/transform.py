@@ -279,7 +279,7 @@ def transform_bibliographic_resources(
         organisationseinheit = get_unit_shortname(
             item.contributingUnit, merged_organizational_units_by_id
         )
-        max_number_authors_cutoff = settings.datenkompass.max_authors
+        max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(
             entry.value.strip('"').replace('"', "'") for entry in item.title
         )
