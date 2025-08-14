@@ -88,13 +88,15 @@ def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
         person.identifier: (
             person.fullName[0]
             if person.fullName
-            else person.familyName[0]
-            + (f", {person.givenName[0]}" if person.givenName else "")
+            else (
+                person.familyName[0]
+                + (f", {person.givenName[0]}" if person.givenName else "")
+            )
         )
         for person in cast(
             "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
         )
-        if person.fullName or person.givenName
+        if person.fullName or person.familyName
     }
 
 
