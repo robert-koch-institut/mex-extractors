@@ -283,7 +283,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 continue
 
         journal = [
-            Text(value=f"{record.ref_type} {periodical}", language=text_language)
+            Text(value=periodical, language=text_language)
             for periodical in record.periodical
             if record.ref_type == "Journal Article"
         ]
