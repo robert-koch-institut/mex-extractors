@@ -1,31 +1,34 @@
+from typing import cast
+
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import get_provider
-from mex.common.models import AnyMergedModel
+from mex.common.models import AnyMergedModel, MergedPrimarySource
 
 
 def get_merged_items(
-    query_string: str | None,
-    entity_type: list[str],
-    primary_source_ids: list[str] | None,
+    *,
+    query_string: str | None = None,
+    entity_type: list[str] | None = None,
+    referenced_identifier: list[str] | None = None,
+    reference_field: str | None = None,
 ) -> list[AnyMergedModel]:
     """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
         entity_type: List of entity types.
-        primary_source_ids: List of primary source ids.
+        referenced_identifier: List of Identifier.
+        reference_field: List of fields accepting identifiers.
 
     Returns:
         List of merged items.
     """
     connector = BackendApiConnector.get()
 
-    reference_field = "hadPrimarySource" if primary_source_ids else None
-
     response = connector.fetch_all_merged_items(
         query_string=query_string,
         entity_type=entity_type,
-        referenced_identifier=primary_source_ids,
+        referenced_identifier=referenced_identifier,
         reference_field=reference_field,
     )
 
@@ -41,20 +44,16 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
     Returns:
         List of IDs of the relevant primary sources.
     """
-    connector = BackendApiConnector.get()
-    limit = 100
-    preview_primary_sources = connector.fetch_preview_items(
-        entity_type=["MergedPrimarySource"],
-    ).items
-    if len(preview_primary_sources) > limit:
-        raise NotImplementedError
+    merged_primary_sources = cast(
+        "list[MergedPrimarySource]",
+        get_merged_items(entity_type=["MergedPrimarySource"]),
+    )
 
     provider = get_provider()
 
     return [
-        str(pps.identifier)
-        for pps in preview_primary_sources
-        if pps.entityType == "PreviewPrimarySource"
-        and provider.fetch(stable_target_id=pps.identifier)[0].identifierInPrimarySource
+        str(mps.identifier)
+        for mps in merged_primary_sources
+        if provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
         in relevant_primary_sources
     ]

@@ -5,16 +5,15 @@ from mex.common.models import AnyMergedModel
 def get_publishable_merged_items(
     *,
     entity_type: list[str] | None = None,
-    primary_source_ids: list[str] | None = None,
+    referenced_identifier: list[str] | None = None,
+    reference_field: str | None = None,
 ) -> list[AnyMergedModel]:
     """Read publishable merged items from backend."""
     connector = BackendApiConnector.get()
 
-    reference_field = "hadPrimarySource" if primary_source_ids else None
-
     response = connector.fetch_all_merged_items(
         entity_type=entity_type,
-        referenced_identifier=primary_source_ids,
+        referenced_identifier=referenced_identifier,
         reference_field=reference_field,
     )
     return list(response)

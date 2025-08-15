@@ -9,17 +9,15 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity, get_provider
 from mex.common.models import (
     AnyMergedModel,
-    AnyPreviewModel,
     MergedActivity,
     MergedBibliographicResource,
     MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
+    MergedPrimarySource,
     MergedResource,
-    PaginatedItemsContainer,
 )
-from mex.common.models.primary_source import PreviewPrimarySource
 from mex.common.types import (
     AccessRestriction,
     Link,
@@ -45,16 +43,16 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             ],
             title=[
-                Text(value="title no language"),
-                Text(value="titel en", language="en"),
+                Text(value='"title "Act" no language"', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
                 Text(value="The usage", language="en"),
             ],
             funderOrCommissioner=[
-                MergedOrganizationIdentifier("Identifier2forBMG"),
-                MergedOrganizationIdentifier("NoBMGIdentifier"),
+                MergedOrganizationIdentifier("Identifier2forORG"),
+                MergedOrganizationIdentifier("NoORGIdentifier"),
             ],
             shortName=[
                 Text(value="short en", language="en"),
@@ -62,11 +60,11 @@ def mocked_merged_activities() -> list[MergedActivity]:
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
-                Link(language=None, title="Eintrag", url="https://www.Eintrag.de"),
-                Link(url="https://www.weiterer_Eintrag.org"),
+                Link(language=None, url="https://www.dont-transform.de"),
+                Link(language="de", title="Yes", url="https://www.do-transform.org"),
             ],
             entityType="MergedActivity",
-            identifier=MergedActivityIdentifier("MergedActivityWithBMG2"),
+            identifier=MergedActivityIdentifier("MergedActivityWithORG2"),
         ),
         MergedActivity(
             contact=["LoremIpsum3456"],
@@ -76,20 +74,20 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 Text(value="title en", language="en"),
             ],
             abstract=[Text(value="Without language", language=None)],
-            funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forBMG")],
-            shortName=[Text(value="short ony english", language="en")],
+            funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forORG")],
+            shortName=[Text(value="short only english", language="en")],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
             entityType="MergedActivity",
-            identifier=MergedActivityIdentifier("MergedActivityWithBMG1"),
+            identifier=MergedActivityIdentifier("MergedActivityWithORG1"),
         ),
         MergedActivity(
             contact=["LoremIpsum5678"],
             responsibleUnit=["DolorSitAmetConsec"],
             title=[Text(value="should get filtered out", language="en")],
-            funderOrCommissioner=[MergedOrganizationIdentifier("NoBMGIdentifier")],
+            funderOrCommissioner=[MergedOrganizationIdentifier("NoORGIdentifier")],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ..
             entityType="MergedActivity",
-            identifier=MergedActivityIdentifier("MergedActivityNoBMG"),
+            identifier=MergedActivityIdentifier("MergedActivityNoORG"),
         ),
     ]
 
@@ -101,8 +99,8 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             title=[
-                Text(value="title no language"),
-                Text(value="titel en", language="en"),
+                Text(value='title "BibRes" no language', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
@@ -115,13 +113,13 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            doi="https://doi.org/10.1234_find_this_first",
+            doi="https://doi.org/10.1234_find_this",
             alternateIdentifier=["find_second_a", "find_second_b"],
-            repositoryURL=["https://www.find_third.to"],
+            repositoryURL=["https://www.ignore_this.to"],
             bibliographicResourceType=[
                 "https://mex.rki.de/item/bibliographic-resource-type-1"
             ],  # BOOK
-            creator=["PersonIdentifier4Peppa"],
+            creator=["PersonIdentifier4Peppa"] * 6,
             entityType="MergedBibliographicResource",
             identifier=MergedBibliographicResourceIdentifier("MergedBibResource1"),
         ),
@@ -156,7 +154,7 @@ def mocked_merged_resource() -> list[MergedResource]:
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["some open data resource title"],
-            wasGeneratedBy=["MergedActivityWithBMG2"],
+            wasGeneratedBy=["MergedActivityWithORG2"],
             unitInCharge=["IdentifierOrgUnitEG"],
             identifier=["openDataResource"],
         ),
@@ -165,7 +163,7 @@ def mocked_merged_resource() -> list[MergedResource]:
             contact=["PersonIdentifier4Peppa"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["some synopse resource title"],
-            wasGeneratedBy=["MergedActivityNoBMG"],
+            wasGeneratedBy=["MergedActivityNoORG"],
             unitInCharge=["IdentifierOrgUnitZB"],
             identifier=["SynopseResource"],
         ),
@@ -186,7 +184,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
         ),
         MergedOrganizationalUnit(
             name=[Text(value="andere Beispiel unit", language="de")],
-            parentUnit=MergedOrganizationalUnitIdentifier("identifierParentUnit"),
+            parentUnit=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             email=[],
             shortName=[Text(value="a.bsp. unit", language="en")],
             entityType="MergedOrganizationalUnit",
@@ -204,20 +202,18 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
 
 
 @pytest.fixture
-def mocked_bmg() -> list[MergedOrganization]:
-    """Mock a list of BMG as Merged Organization items."""
+def mocked_merged_organization() -> list[MergedOrganization]:
+    """Mock a list of organizations as Merged Organization items."""
     return [
         MergedOrganization(
-            officialName=[
-                Text(value="Bundesministerium für Gesundheit", language="de")
-            ],
+            officialName=[Text(value="Organization 2", language="de")],
             entityType="MergedOrganization",
-            identifier=MergedOrganizationIdentifier("Identifier2forBMG"),
+            identifier=MergedOrganizationIdentifier("Identifier2forORG"),
         ),
         MergedOrganization(
-            officialName=[Text(value="BMG", language=None)],
+            officialName=[Text(value="Organization 1", language=None)],
             entityType="MergedOrganization",
-            identifier=MergedOrganizationIdentifier("Identifier1forBMG"),
+            identifier=MergedOrganizationIdentifier("Identifier1forORG"),
         ),
     ]
 
@@ -247,16 +243,16 @@ def mocked_merged_contact_point() -> list[MergedContactPoint]:
 
 
 @pytest.fixture
-def mocked_preview_primary_sources() -> list[PreviewPrimarySource]:
-    """Mock a list of Preview Primary Source items."""
+def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
+    """Mock a list of merged Primary Source items."""
     return [
-        PreviewPrimarySource(
-            entityType="PreviewPrimarySource",
+        MergedPrimarySource(
+            entityType="MergedPrimarySource",
             identifier="SomeIrrelevantPS",
         ),
-        PreviewPrimarySource(
+        MergedPrimarySource(
             title=[Text(value="this is a Relevant Primary Source", language="en")],
-            entityType="PreviewPrimarySource",
+            entityType="MergedPrimarySource",
             identifier="identifierRelevantPS",
         ),
     ]
@@ -267,22 +263,18 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
-            beschreibung="Die Nutzung",
-            datenhalter="BMG",
-            kontakt=[
-                "a.bsp. unit",
-                "e.g. unit",
-                "unit@example.org",
-            ],
-            titel=["short de", "title no language"],
+            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Die Nutzung",
+            datenhalter="Robert Koch-Institut",
+            kontakt=["unit@example.org"],
+            organisationseinheit=["a.bsp. unit", "e.g. unit"],
+            titel=["short de", "title 'Act' no language", "title en"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
-                "https://www.Eintrag.de",
-                "https://www.weiterer_Eintrag.org",
+                "https://www.do-transform.org",
             ],
-            voraussetzungen="Unbekannt",
+            frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
-            unterkategorie="Public Health",
+            unterkategorie="Einflussfaktoren auf die Gesundheit",
             rechtsgrundlage="Nicht bekannt",
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
@@ -292,23 +284,21 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
             ),
-            format="Projekt/Vorhaben",
-            identifier="MergedActivityWithBMG2",
+            format="Sonstiges",
+            identifier="MergedActivityWithORG2",
             entityType="MergedActivity",
         ),
         DatenkompassActivity(
-            beschreibung="Without language",
-            datenhalter="BMG",
-            kontakt=[
-                "e.g. unit",
-                "unit@example.org",
-            ],
-            titel=["short ony english", "titel de"],
+            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Without language",
+            datenhalter="Robert Koch-Institut",
+            kontakt=["unit@example.org"],
+            organisationseinheit=["e.g. unit"],
+            titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
-            voraussetzungen="Unbekannt",
+            frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
-            unterkategorie="Public Health",
+            unterkategorie="Einflussfaktoren auf die Gesundheit",
             rechtsgrundlage="Nicht bekannt",
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
@@ -318,8 +308,8 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
             ),
-            format="Projekt/Vorhaben",
-            identifier="MergedActivityWithBMG1",
+            format="Sonstiges",
+            identifier="MergedActivityWithORG1",
             entityType="MergedActivity",
         ),
     ]
@@ -332,18 +322,19 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
-    mocked_bmg: list[MergedOrganization],
+    mocked_merged_organization: list[MergedOrganization],
     mocked_merged_person: list[MergedPerson],
     mocked_merged_contact_point: list[MergedContactPoint],
-    mocked_preview_primary_sources: list[PreviewPrimarySource],
+    mocked_merged_primary_sources: list[MergedPrimarySource],
 ) -> MagicMock:
     """Mock the backendAPIConnector functions to return dummy variables."""
     mock_dispatch = {
         "MergedActivity": [mocked_merged_activities[1]],
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
-        "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
-        "MergedOrganization": [mocked_bmg[1]],
+        "MergedPrimarySource": mocked_merged_primary_sources,
+        "MergedOrganizationalUnit": mocked_merged_organizational_units,
+        "MergedOrganization": [mocked_merged_organization[1]],
         "MergedPerson": mocked_merged_person,
         "MergedContactPoint": mocked_merged_contact_point,
     }
@@ -362,28 +353,10 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 
         return cast("list[AnyMergedModel]", mock_dispatch.get(key))
 
-    def fetch_preview_items(  # noqa: PLR0913
-        *,
-        query_string: str | None = None,  # noqa: ARG001
-        entity_type: list[str] | None = None,  # noqa: ARG001
-        referenced_identifier: list[str] | None = None,  # noqa: ARG001
-        reference_field: str | None = None,  # noqa: ARG001
-        skip: int = 0,  # noqa: ARG001
-        limit: int = 100,  # noqa: ARG001
-    ) -> PaginatedItemsContainer[AnyPreviewModel]:
-        return PaginatedItemsContainer[AnyPreviewModel](
-            total=2,
-            items=mocked_preview_primary_sources,
-        )
-
     backend = MagicMock(
         fetch_all_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_all_merged_items,
             side_effect=fetch_all_merged_items,
-        ),
-        fetch_preview_items=MagicMock(
-            spec=BackendApiConnector.fetch_preview_items,
-            side_effect=fetch_preview_items,
         ),
     )
     monkeypatch.setattr(
@@ -391,9 +364,6 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
-    )
-    monkeypatch.setattr(
-        BackendApiConnector, "fetch_preview_items", backend.fetch_preview_items
     )
     return backend
 
