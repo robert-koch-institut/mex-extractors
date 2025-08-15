@@ -40,6 +40,11 @@ _VocabularyT = TypeVar(
 )
 
 
+def fix_quotes(string: str) -> str:
+    """Fix quote characters in titles or descriptions."""
+    return string.strip('"').replace('"', "'")
+
+
 def get_unit_shortname(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
     merged_organizational_units_by_id: dict[
@@ -135,13 +140,23 @@ def get_title(item: MergedActivity) -> list[str]:
     """
     collected_titles = []
     if item.shortName:
-        shortname_de = [name.value for name in item.shortName if name.language == "de"]
-        shortname = shortname_de[0] if shortname_de else item.shortName[0].value
-        collected_titles.append(shortname.strip('"').replace('"', "'"))
+        shortname_de = [
+            fix_quotes(name.value) for name in item.shortName if name.language == "de"
+        ]
+        shortname = (
+            shortname_de
+            if shortname_de
+            else [fix_quotes(name.value) for name in item.shortName]
+        )
+        collected_titles.extend(shortname)
     if item.title:
-        title_de = [name.value for name in item.title if name.language == "de"]
-        title = title_de[0] if title_de else item.title[0].value
-        collected_titles.append(title.strip('"').replace('"', "'"))
+        title_de = [
+            fix_quotes(name.value) for name in item.title if name.language == "de"
+        ]
+        title = (
+            title_de if title_de else [fix_quotes(name.value) for name in item.title]
+        )
+        collected_titles.extend(title)
     return collected_titles
 
 
@@ -197,14 +212,20 @@ def transform_activities(
     Returns:
         list of DatenkompassActivity instances.
     """
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_activities = []
     for item in filtered_merged_activities:
-        beschreibung = "Es handelt sich um ein Projekt/ Vorhaben."
+        beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
-            beschreibung += " "
-            abstract_de = [a.value for a in item.abstract if a.language == "de"]
-            beschreibung += abstract_de[0] if abstract_de else item.abstract[0].value
-        beschreibung = beschreibung.strip('"').replace('"', "'")
+            abstract_de = [
+                fix_quotes(a.value) for a in item.abstract if a.language == "de"
+            ]
+            beschreibung += delim.join(
+                abstract_de
+                if abstract_de
+                else [fix_quotes(a.value) for a in item.abstract]
+            )
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -266,6 +287,7 @@ def transform_bibliographic_resources(
         list of DatenkompassBibliographicResource instances.
     """
     settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_bibliographic_recources = []
     for item in merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
@@ -280,22 +302,20 @@ def transform_bibliographic_resources(
             item.contributingUnit, merged_organizational_units_by_id
         )
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
-        title_collection = ", ".join(
-            entry.value.strip('"').replace('"', "'") for entry in item.title
-        )
+        title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
         creator_collection = " / ".join(
             [person_name_by_id[c] for c in item.creator[:max_number_authors_cutoff]]
         )
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
+        vocab = get_vocabulary(item.bibliographicResourceType)
+        b1 = f"{delim.join(s for s in vocab if s is not None)}. "
+        b2 = delim.join([fix_quotes(abstract.value) for abstract in item.abstract])
+        beschreibung = b1 + b2
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
-                beschreibung=[*get_vocabulary(item.bibliographicResourceType), "."]
-                + [
-                    abstract.value.strip('"').replace('"', "'")
-                    for abstract in item.abstract
-                ],
+                beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
                 dk_format="Sonstiges",
@@ -336,6 +356,8 @@ def transform_resources(
     Returns:
         list of DatenkompassResource instances.
     """
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_recources = []
     datennutzungszweck_by_primary_source = {
         "report-server": [
@@ -369,14 +391,12 @@ def transform_resources(
             beschreibung = "n/a"
             if item.description:
                 description_de = [
-                    d.value.strip('"').replace('"', "'")
-                    for d in item.description
-                    if d.language == "de"
+                    fix_quotes(d.value) for d in item.description if d.language == "de"
                 ]
-                beschreibung = (
-                    (description_de[0] if description_de else item.description[0].value)
-                    .strip('"')
-                    .replace('"', "'")
+                beschreibung = delim.join(
+                    description_de
+                    if description_de
+                    else [fix_quotes(d.value) for d in item.description]
                 )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
@@ -406,7 +426,7 @@ def transform_resources(
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
                     dk_format=dk_format,
-                    titel=[t.value.strip('"').replace('"', "'") for t in item.title],
+                    titel=[fix_quotes(t.value) for t in item.title],
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",

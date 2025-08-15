@@ -40,8 +40,8 @@ def write_items_to_xlsx(
         datenkompassitems: List of Datenkompass items.
         s3: S3 session.
     """
-    settings = Settings.get()
-    list_delimiter: str = ";"
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     file_name = f"datenkompass_{datenkompassitems[0].entityType}.xlsx"
 
     dicts = [
@@ -52,7 +52,7 @@ def write_items_to_xlsx(
 
     for col in df.columns:
         df[col] = df[col].apply(
-            lambda v: list_delimiter.join(map(str, v)) if isinstance(v, list) else v
+            lambda v: delim.join(map(str, v)) if isinstance(v, list) else v
         )
 
     xlsx_buf = io.BytesIO()
