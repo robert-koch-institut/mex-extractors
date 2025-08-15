@@ -219,6 +219,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         }
     )
     bibliographical_resources: list[ExtractedBibliographicResource] = []
+    already_loaded_publisher_organizations: dict[str, MergedOrganizationIdentifier] = {}
     for record in endnote_records:
         language = (
             language_by_language_field.get(record.language, Language["ENGLISH"])
@@ -283,7 +284,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 continue
 
         journal = [
-            Text(value=f"{record.ref_type} {periodical}", language=text_language)
+            Text(value=periodical, language=text_language)
             for periodical in record.periodical
             if record.ref_type == "Journal Article"
         ]
@@ -306,10 +307,17 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         for publisher_string in [record.publisher, record.custom3]:
             if publisher_string is None:
                 continue
-            if publisher_org := get_wikidata_extracted_organization_id_by_name(
+            if publisher_org_id := already_loaded_publisher_organizations.get(
                 publisher_string
             ):
-                publisher.append(publisher_org)
+                publisher.append(publisher_org_id)
+            elif publisher_org_id := get_wikidata_extracted_organization_id_by_name(
+                publisher_string
+            ):
+                publisher.append(publisher_org_id)
+                already_loaded_publisher_organizations[publisher_string] = (
+                    publisher_org_id
+                )
             else:
                 created_org = ExtractedOrganization(
                     hadPrimarySource=extracted_primary_source_endnote.stableTargetId,
@@ -318,6 +326,9 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 )
                 load([created_org])
                 publisher.append(created_org.stableTargetId)
+                already_loaded_publisher_organizations[publisher_string] = (
+                    created_org.stableTargetId
+                )
         repository_url = record.related_urls[0] if record.related_urls else []
         title_of_series = []
         if record.ref_type == "Book Section":
