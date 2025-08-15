@@ -20,7 +20,7 @@ def test_get_merged_items_mocked() -> None:
         ],
         abstract=[Text(value="Without language", language=None)],
         funderOrCommissioner=["Identifier1forBMG"],
-        shortName=["short ony english"],
+        shortName=["short only english"],
         theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
         entityType="MergedActivity",
         identifier="MergedActivityWithBMG1",
