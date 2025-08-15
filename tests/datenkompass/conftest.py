@@ -43,8 +43,8 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             ],
             title=[
-                Text(value='"title "Act" no language"'),
-                Text(value="titel en", language="en"),
+                Text(value='"title "Act" no language"', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
@@ -99,8 +99,8 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             title=[
-                Text(value='title "BibRes" no language'),
-                Text(value="titel en", language="en"),
+                Text(value='title "BibRes" no language', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
@@ -267,7 +267,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenhalter="Robert Koch-Institut",
             kontakt=["unit@example.org"],
             organisationseinheit=["a.bsp. unit", "e.g. unit"],
-            titel=["short de", "title 'Act' no language"],
+            titel=["short de", "title 'Act' no language", "title en"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
                 "https://www.do-transform.org",
