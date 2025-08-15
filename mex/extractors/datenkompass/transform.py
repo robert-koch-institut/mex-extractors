@@ -41,7 +41,17 @@ _VocabularyT = TypeVar(
 
 
 def fix_quotes(string: str) -> str:
-    """Fix quote characters in titles or descriptions."""
+    """Fix quote characters in titles or descriptions.
+
+    Removes surrounding (leading and trailing) double quotes and
+    replaces in-string double quotes with single quotes.
+
+    Args:
+        string: The string to fix quotes for.
+
+    Returns:
+        The fixed string.
+    """
     return string.strip('"').replace('"', "'")
 
 
