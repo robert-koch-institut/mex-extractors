@@ -10,10 +10,8 @@ from mex.common.models import (
 from mex.common.types import (
     AccessRestriction,
     Identifier,
-    Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
-    MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
 from mex.common.types.vocabulary import (
@@ -29,6 +27,7 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
+from mex.extractors.settings import Settings
 
 _VocabularyT = TypeVar(
     "_VocabularyT",
@@ -41,40 +40,83 @@ _VocabularyT = TypeVar(
 )
 
 
-def get_contact(
+def fix_quotes(string: str) -> str:
+    """Fix quote characters in titles or descriptions.
+
+    Removes surrounding (leading and trailing) double quotes and
+    replaces in-string double quotes with single quotes.
+
+    Args:
+        string: The string to fix quotes for.
+
+    Returns:
+        The fixed string.
+    """
+    return string.strip('"').replace('"', "'")
+
+
+def get_unit_shortname(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
-    """Get shortName and email from merged units.
+    """Get shortName of merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
         merged_organizational_units_by_id: dict of all merged organizational units by id
 
     Returns:
-        List of short name and email of contact units as strings.
+        List of short names of contact units as strings.
     """
     return [
-        contact
+        shortname
         for org_id in responsible_unit_ids
-        for contact in [
-            short_name.value
-            for short_name in merged_organizational_units_by_id[org_id].shortName
+        for shortname in [
+            unit_short_name.value
+            for unit_short_name in merged_organizational_units_by_id[org_id].shortName
         ]
-        + [str(email) for email in merged_organizational_units_by_id[org_id].email]
+    ]
+
+
+def get_email(
+    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get email of merged units.
+
+    Args:
+        responsible_unit_ids: List of responsible unit identifiers
+        merged_organizational_units_by_id: dict of all merged organizational units by id
+
+    Returns:
+        List of emails of contact units as strings.
+    """
+    return [
+        email
+        for org_id in responsible_unit_ids
+        for email in [
+            str(unit_email)
+            for unit_email in merged_organizational_units_by_id[org_id].email
+        ]
     ]
 
 
 def get_resource_contact(
-    responsible_unit_ids: list[Identifier],
+    responsible_unit_ids: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[str]:
-    """Get email from units and contact points and shortname from units.
+    """Get email from units and contact points.
 
     Args:
         responsible_unit_ids: Set of responsible unit identifiers
@@ -82,7 +124,7 @@ def get_resource_contact(
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
-        List of shortnames and email-addresses as strings.
+        List of email-addresses as strings.
     """
     contact_details: list[str] = []
     combined_dict = cast(
@@ -92,10 +134,6 @@ def get_resource_contact(
 
     for contact_id in responsible_unit_ids:
         if contact := combined_dict.get(contact_id):
-            if contact.entityType == "MergedOrganizationalUnit":
-                contact_details.extend(
-                    [short_name.value for short_name in contact.shortName]
-                )
             contact_details.extend([str(email) for email in contact.email])
 
     return contact_details
@@ -112,13 +150,23 @@ def get_title(item: MergedActivity) -> list[str]:
     """
     collected_titles = []
     if item.shortName:
-        shortname_de = [name.value for name in item.shortName if name.language == "de"]
-        shortname = shortname_de[0] if shortname_de else item.shortName[0].value
-        collected_titles.append(shortname)
+        shortname_de = [
+            fix_quotes(name.value) for name in item.shortName if name.language == "de"
+        ]
+        shortname = (
+            shortname_de
+            if shortname_de
+            else [fix_quotes(name.value) for name in item.shortName]
+        )
+        collected_titles.extend(shortname)
     if item.title:
-        title_de = [name.value for name in item.title if name.language == "de"]
-        title = title_de[0] if title_de else item.title[0].value
-        collected_titles.append(title)
+        title_de = [
+            fix_quotes(name.value) for name in item.title if name.language == "de"
+        ]
+        title = (
+            title_de if title_de else [fix_quotes(name.value) for name in item.title]
+        )
+        collected_titles.extend(title)
     return collected_titles
 
 
@@ -143,19 +191,20 @@ def get_vocabulary(
     ]
 
 
-def get_datenbank(item: MergedBibliographicResource) -> str:
-    """Get Datenbank entries.
+def get_datenbank(item: MergedBibliographicResource) -> str | None:
+    """Get first doi url or first repository URL.
 
     Args:
         item: MergedBibliographicResource item.
 
     Returns:
-        string of concatenated entries.
+        url as string.
     """
-    return ", ".join(
-        entry.url if isinstance(entry, Link) else str(entry)
-        for entry in [item.doi, *item.alternateIdentifier, *item.repositoryURL]
-    )
+    if item.doi:
+        return item.doi
+    if item.repositoryURL:
+        return item.repositoryURL[0].url
+    return None
 
 
 def transform_activities(
@@ -173,29 +222,46 @@ def transform_activities(
     Returns:
         list of DatenkompassActivity instances.
     """
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_activities = []
     for item in filtered_merged_activities:
-        beschreibung = None
+        beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
-            abstract_de = [a.value for a in item.abstract if a.language == "de"]
-            beschreibung = abstract_de[0] if abstract_de else item.abstract[0].value
-        kontakt = get_contact(
+            abstract_de = [
+                fix_quotes(a.value) for a in item.abstract if a.language == "de"
+            ]
+            beschreibung += delim.join(
+                abstract_de
+                if abstract_de
+                else [fix_quotes(a.value) for a in item.abstract]
+            )
+        kontakt = get_email(
+            item.responsibleUnit,
+            merged_organizational_units_by_id,
+        )
+        organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
             merged_organizational_units_by_id,
         )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
+        datenbank = []
+        if item.website:
+            url_de = [w.url for w in item.website if w.language == "de"]
+            datenbank += url_de if url_de else [item.website[0].url]
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter="BMG",
+                datenhalter="Robert Koch-Institut",
                 beschreibung=beschreibung,
                 kontakt=kontakt,
+                organisationseinheit=organisationseinheit,
                 titel=titel,
                 schlagwort=schlagwort,
-                datenbank=[entry.url for entry in item.website],
-                voraussetzungen="Unbekannt",
+                datenbank=datenbank,
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
-                unterkategorie="Public Health",
+                unterkategorie="Einflussfaktoren auf die Gesundheit",
                 rechtsgrundlage="Nicht bekannt",
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
@@ -205,7 +271,7 @@ def transform_activities(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
                 ),
-                format="Projekt/Vorhaben",
+                format="Sonstiges",
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
@@ -218,7 +284,7 @@ def transform_bibliographic_resources(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    person_name_by_id: dict[MergedPersonIdentifier, list[str]],
+    person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
 
@@ -230,6 +296,8 @@ def transform_bibliographic_resources(
     Returns:
         list of DatenkompassBibliographicResource instances.
     """
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_bibliographic_recources = []
     for item in merged_bibliographic_resources:
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
@@ -239,24 +307,36 @@ def transform_bibliographic_resources(
         else:
             voraussetzungen = None
         datenbank = get_datenbank(item)
-        dk_format = get_vocabulary(item.bibliographicResourceType)
-        kontakt = get_contact(item.contributingUnit, merged_organizational_units_by_id)
-        title_list = ", ".join(entry.value for entry in item.title)
-        creator_list = " / ".join(
-            [" / ".join(person_name_by_id[c]) for c in item.creator]
+        kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
+        organisationseinheit = get_unit_shortname(
+            item.contributingUnit, merged_organizational_units_by_id
         )
-        titel = f"{title_list} ({creator_list})"
+        max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
+        title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
+        creator_collection = " / ".join(
+            [person_name_by_id[c] for c in item.creator[:max_number_authors_cutoff]]
+        )
+        if len(item.creator) > max_number_authors_cutoff:
+            creator_collection += " / et al."
+        titel = f"{title_collection} ({creator_collection})"
+        vocab = get_vocabulary(item.bibliographicResourceType)
+        b1 = f"{delim.join(s for s in vocab if s is not None)}. "
+        b2 = delim.join([fix_quotes(abstract.value) for abstract in item.abstract])
+        beschreibung = b1 + b2
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
-                beschreibung=[abstract.value for abstract in item.abstract],
+                beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
-                dk_format=dk_format,
+                dk_format="Sonstiges",
                 kontakt=kontakt,
+                organisationseinheit=organisationseinheit,
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
+                datenhalter="Robert Koch-Institut",
+                frequenz="Einmalig",
                 hauptkategorie="Gesundheit",
-                unterkategorie="Public Health",
+                unterkategorie="Einflussfaktoren auf die Gesundheit",
                 herausgeber="Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
@@ -271,8 +351,6 @@ def transform_bibliographic_resources(
 
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    filtered_merged_activities: list[MergedActivity],
-    merged_bmg_ids: set[MergedOrganizationIdentifier],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -282,20 +360,15 @@ def transform_resources(
 
     Args:
         merged_resources_by_primary_source: dictionary of merged resources
-        filtered_merged_activities: list of merged activities
-        merged_bmg_ids: set of merged bmg organization identifiers
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
 
     Returns:
         list of DatenkompassResource instances.
     """
+    settings = Settings()
+    delim = settings.datenkompass.list_delimiter
     datenkompass_recources = []
-    merged_activities_set = {
-        ma.identifier
-        for ma in filtered_merged_activities
-        if any(fOC in merged_bmg_ids for fOC in ma.funderOrCommissioner)
-    }
     datennutzungszweck_by_primary_source = {
         "report-server": [
             "Themenspezifische Auswertung",
@@ -318,17 +391,22 @@ def transform_resources(
                 else []
             )
             kontakt = get_resource_contact(
-                sorted({*item.contact, *item.unitInCharge}),
+                item.contact,
                 merged_organizational_units_by_id,
                 merged_contact_points_by_id,
+            )
+            organisationseinheit = get_unit_shortname(
+                item.unitInCharge, merged_organizational_units_by_id
             )
             beschreibung = "n/a"
             if item.description:
                 description_de = [
-                    d.value for d in item.description if d.language == "de"
+                    fix_quotes(d.value) for d in item.description if d.language == "de"
                 ]
-                beschreibung = (
-                    description_de[0] if description_de else item.description[0].value
+                beschreibung = delim.join(
+                    description_de
+                    if description_de
+                    else [fix_quotes(d.value) for d in item.description]
                 )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
@@ -342,12 +420,6 @@ def transform_resources(
                 *get_vocabulary(item.resourceCreationMethod),
                 *get_vocabulary(item.resourceTypeGeneral),
             ]
-            unterkategorie = ["Public Health"]
-            if primary_source == "report-server":
-                unterkategorie += ["Gesundheitliche Lage"]
-            datenhalter = (
-                "BMG" if item.wasGeneratedBy in merged_activities_set else None
-            )
             rechtsgrundlage = (
                 "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
             )
@@ -357,16 +429,17 @@ def transform_resources(
                     voraussetzungen=voraussetzungen,
                     frequenz=frequenz,
                     kontakt=kontakt,
+                    organisationseinheit=organisationseinheit,
                     beschreibung=beschreibung,
                     datenbank=item.doi,
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
                     dk_format=dk_format,
-                    titel=[t.value for t in item.title],
-                    datenhalter=datenhalter,
+                    titel=[fix_quotes(t.value) for t in item.title],
+                    datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
-                    unterkategorie=unterkategorie,
+                    unterkategorie="Einflussfaktoren auf die Gesundheit",
                     rechtsgrundlage=rechtsgrundlage,
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
