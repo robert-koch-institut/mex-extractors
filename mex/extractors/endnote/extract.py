@@ -32,6 +32,7 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     for file_name in file_names:
         response = connector.get_raw_file("endnote", file_name)
         file = defused_ET.fromstring(response.content)
+
         for record in file.findall("*/record"):
             if (
                 len(
