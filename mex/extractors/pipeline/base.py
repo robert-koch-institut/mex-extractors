@@ -113,6 +113,7 @@ def load_job_definitions() -> Definitions:
             "default",
             "publisher",
             "consent_mailer",
+            "datenkompass",
             *settings.skip_extractors,
         ]
     }
@@ -168,6 +169,15 @@ def load_job_definitions() -> Definitions:
             default_status=DefaultScheduleStatus.RUNNING,
         )
     )
+
+    # Define the extra datenkompass job but without schedule or trigger
+    datenkompass_job = define_asset_job(
+        "datenkompass",
+        AssetSelection.groups("datenkompass").upstream(),
+        metadata=metadata,
+        tags={"job_category": "publisher"},
+    )
+    jobs.append(datenkompass_job)
 
     # Define the extra publisher job
     publisher_job = define_asset_job(

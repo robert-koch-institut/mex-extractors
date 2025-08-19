@@ -1,7 +1,7 @@
 StudienID,DStypID,Studie,Titel_Datenset,Beschreibung,SchlagworteThemen,Dateiformat,ErstellungsDatum,Version,Rechte,Lizenz,Zugangsbeschraenkung,Plattform,PlattformAdresse,Dokumentation
-1234567,17,BBCCDD,BBCCDD,"BBCCDD Basiserhebung, Kohorte","BBCCDD Basiserhebung, Kohorte","sas,stata",2013,V26,,,restriktiv,Reportserver,S:BBCCDD-Basis Variablennamen - XYZ-Reports,"""Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation"
-1234567,17,BBCCDD,BBCCDD,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten/Wissen, Inanspruchnahme Prävention","sas,stata",2012,V26,,,restriktiv,Reportserver,,"""Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation"
-1122999,17,BBCCDD1,BBCCDD1,"BBCCDD Welle 1, Kohorte","BBCCDD Welle 1, Kohorte, Telefon, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",2014,,,,restriktiv,Reportserver,,
-1144444,17,BBCCDD2,BBCCDD2,"BBCCDD Welle 2, 1. Datensatz","BBCCDD Welle 2, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Inanspruchnahme Prävention, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",,,,,restriktiv,Reportserver,,
-1229999,17,EEFFGG,EEFFGG,"BGS 98, Dummy",,"sas,stata",2016,,,,restriktiv,Reportserver,,
-1234567,17,EEFFGG,EEFFGG,"BGS 98, Dummy",,"sas,stata",2016,,,,restriktiv,Reportserver,,
+1234567,17,BBCCDD,BBCCDD,"BBCCDD Basiserhebung, Kohorte","BBCCDD Basiserhebung, Kohorte","sas,stata",2013,V26,restriktiv,Reportserver,S:BBCCDD-Basis Variablennamen - XYZ-Reports,"""Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation"
+1234567,17,BBCCDD,BBCCDD,"BBCCDD Basiserhebung, vollständiger Datensatz, Querschnitt","BBCCDD Basiserhebung, allgemeine Gesundheit, Gesundheitsbezogenes Verhalten/Wissen, Inanspruchnahme Prävention","sas,stata",2012,V26,restriktiv,Reportserver,"""Z:\Lorem\Ipsum\DATA\BBCCDD\Dokumentation"
+1122999,17,BBCCDD1,BBCCDD1,"BBCCDD Welle 1, Kohorte","BBCCDD Welle 1, Kohorte, Telefon, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",2014,restriktiv,Reportserver,
+1144444,17,BBCCDD2,BBCCDD2,"BBCCDD Welle 2, 1. Datensatz","BBCCDD Welle 2, allgemeine Gesundheit, Untersuchungsteil, psychische Gesundheit, Inanspruchnahme Prävention, Gesundheitsbezogenes Verhalten/Wissen, Stammdaten, technische Variablen, Feldablauf","sas,stata",restriktiv,Reportserver,
+1229999,17,EEFFGG,EEFFGG,"BGS 98, Dummy","sas,stata",2016,restriktiv,Reportserver,
+1234567,17,EEFFGG,EEFFGG,"BGS 98, Dummy","sas,stata",2016,restriktiv,Reportserver,
