@@ -32,12 +32,11 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     for file_name in file_names:
         response = connector.get_raw_file("endnote", file_name)
         file = defused_ET.fromstring(response.content)
-
         for record in file.findall("*/record"):
             if (
                 len(
                     authors := findall_text_from_record(
-                        record, "contributors/authors/author/style"
+                        record, "contributors/authors/author"
                     )
                 )
                 >= settings.endnote.cutoff_number_authors
@@ -46,36 +45,34 @@ def extract_endnote_records() -> list[EndnoteRecord]:
             results.append(
                 EndnoteRecord(
                     database=find_text_from_record(record, "database"),
-                    abstract=find_text_from_record(record, "abstract/style"),
+                    abstract=find_text_from_record(record, "abstract"),
                     authors=authors,
-                    call_num=find_text_from_record(record, "call-num/style"),
-                    custom3=find_text_from_record(record, "custom3/style"),
-                    custom4=find_text_from_record(record, "custom4/style"),
-                    custom6=find_text_from_record(record, "custom6/style"),
+                    call_num=find_text_from_record(record, "call-num"),
+                    custom3=find_text_from_record(record, "custom3"),
+                    custom4=find_text_from_record(record, "custom4"),
+                    custom6=find_text_from_record(record, "custom6"),
                     electronic_resource_num=find_text_from_record(
-                        record, "electronic-resource-num/style"
+                        record, "electronic-resource-num"
                     ),
-                    isbn=find_text_from_record(record, "isbn/style"),
-                    keyword=findall_text_from_record(record, "keywords/keyword/style"),
-                    language=find_text_from_record(record, "language/style"),
-                    number=find_text_from_record(record, "number/style"),
-                    pages=find_text_from_record(record, "pages/style"),
+                    isbn=find_text_from_record(record, "isbn"),
+                    keyword=findall_text_from_record(record, "keywords/keyword"),
+                    language=find_text_from_record(record, "language"),
+                    number=find_text_from_record(record, "number"),
+                    pages=find_text_from_record(record, "pages"),
                     periodical=findall_text_from_record(
-                        record, "periodical/full-title/style"
+                        record, "periodical/full-title"
                     ),
-                    pub_dates=findall_text_from_record(
-                        record, "dates/pub-dates/date/style"
-                    ),
-                    publisher=find_text_from_record(record, "publisher/style"),
+                    pub_dates=findall_text_from_record(record, "dates/pub-dates/date"),
+                    publisher=find_text_from_record(record, "publisher"),
                     rec_number=find_text_from_record(record, "rec-number"),
                     ref_type=ref_type.get("name")  # ref_type is stored differently
                     if isinstance(ref_type := record.find("ref-type"), ET.Element)
                     else None,
                     related_urls=findall_text_from_record(
-                        record, "urls/related-urls/url/style"
+                        record, "urls/related-urls/url"
                     ),
                     secondary_authors=findall_text_from_record(
-                        record, "contributors/secondary-authors/author/style"
+                        record, "contributors/secondary-authors/author"
                     ),
                     secondary_title=find_text_from_record(
                         record, "titles/secondary-title/style"

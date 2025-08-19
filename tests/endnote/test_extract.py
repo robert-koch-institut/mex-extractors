@@ -8,7 +8,7 @@ def test_extract_endnote_records() -> None:
     records = extract_endnote_records()
     expected = {
         "abstract": "abstract.",
-        "authors": ["Mustermann, E.", "Mustermann, F."],
+        "authors": ["Mustermänn, E.", "Mustermann, F."],
         "call_num": "https://edoc.rki.de/handle/1234",
         "custom3": "Robert-Koch Institut",
         "custom4": "C1",
