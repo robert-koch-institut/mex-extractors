@@ -1,0 +1,9 @@
+rules:
+  - fail_if: x_items_more_than
+    value: 10
+    time_frame: "10d"
+    target_type: null
+  - fail_if: x_items_less_than
+    value: 5
+    time_frame: "2m"
+    target_type: null
