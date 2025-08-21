@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - igs test main
+- reading of xml-files for endnote
 
 ### Security
 
