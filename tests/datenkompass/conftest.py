@@ -45,8 +45,8 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             ],
             title=[
-                Text(value="title no language"),
-                Text(value="titel en", language="en"),
+                Text(value='"title "Act" no language"', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
@@ -62,8 +62,8 @@ def mocked_merged_activities() -> list[MergedActivity]:
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
-                Link(language=None, title="Eintrag", url="https://www.Eintrag.de"),
-                Link(url="https://www.weiterer_Eintrag.org"),
+                Link(language=None, url="https://www.dont-transform.de"),
+                Link(language="de", title="Yes", url="https://www.do-transform.org"),
             ],
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityWithBMG2"),
@@ -77,7 +77,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             ],
             abstract=[Text(value="Without language", language=None)],
             funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forBMG")],
-            shortName=[Text(value="short ony english", language="en")],
+            shortName=[Text(value="short only english", language="en")],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityWithBMG1"),
@@ -101,8 +101,8 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             title=[
-                Text(value="title no language"),
-                Text(value="titel en", language="en"),
+                Text(value='title "BibRes" no language', language=None),
+                Text(value="title en", language="en"),
             ],
             abstract=[
                 Text(value="Die Nutzung", language="de"),
@@ -115,13 +115,13 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            doi="https://doi.org/10.1234_find_this_first",
+            doi="https://doi.org/10.1234_find_this",
             alternateIdentifier=["find_second_a", "find_second_b"],
-            repositoryURL=["https://www.find_third.to"],
+            repositoryURL=["https://www.ignore_this.to"],
             bibliographicResourceType=[
                 "https://mex.rki.de/item/bibliographic-resource-type-1"
             ],  # BOOK
-            creator=["PersonIdentifier4Peppa"],
+            creator=["PersonIdentifier4Peppa"] * 6,
             entityType="MergedBibliographicResource",
             identifier=MergedBibliographicResourceIdentifier("MergedBibResource1"),
         ),
@@ -267,22 +267,18 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
-            beschreibung="Die Nutzung",
-            datenhalter="BMG",
-            kontakt=[
-                "a.bsp. unit",
-                "e.g. unit",
-                "unit@example.org",
-            ],
-            titel=["short de", "title no language"],
+            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Die Nutzung",
+            datenhalter="Robert Koch-Institut",
+            kontakt=["unit@example.org"],
+            organisationseinheit=["a.bsp. unit", "e.g. unit"],
+            titel=["short de", "title 'Act' no language", "title en"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
-                "https://www.Eintrag.de",
-                "https://www.weiterer_Eintrag.org",
+                "https://www.do-transform.org",
             ],
-            voraussetzungen="Unbekannt",
+            frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
-            unterkategorie="Public Health",
+            unterkategorie="Einflussfaktoren auf die Gesundheit",
             rechtsgrundlage="Nicht bekannt",
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
@@ -292,23 +288,21 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
             ),
-            format="Projekt/Vorhaben",
+            format="Sonstiges",
             identifier="MergedActivityWithBMG2",
             entityType="MergedActivity",
         ),
         DatenkompassActivity(
-            beschreibung="Without language",
-            datenhalter="BMG",
-            kontakt=[
-                "e.g. unit",
-                "unit@example.org",
-            ],
-            titel=["short ony english", "titel de"],
+            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Without language",
+            datenhalter="Robert Koch-Institut",
+            kontakt=["unit@example.org"],
+            organisationseinheit=["e.g. unit"],
+            titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
-            voraussetzungen="Unbekannt",
+            frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
-            unterkategorie="Public Health",
+            unterkategorie="Einflussfaktoren auf die Gesundheit",
             rechtsgrundlage="Nicht bekannt",
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
@@ -318,7 +312,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
             ),
-            format="Projekt/Vorhaben",
+            format="Sonstiges",
             identifier="MergedActivityWithBMG1",
             entityType="MergedActivity",
         ),
@@ -342,7 +336,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         "MergedActivity": [mocked_merged_activities[1]],
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
-        "MergedOrganizationalUnit": [mocked_merged_organizational_units[0]],
+        "MergedOrganizationalUnit": mocked_merged_organizational_units,
         "MergedOrganization": [mocked_bmg[1]],
         "MergedPerson": mocked_merged_person,
         "MergedContactPoint": mocked_merged_contact_point,
