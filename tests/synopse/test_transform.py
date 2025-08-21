@@ -82,21 +82,22 @@ def test_transform_overviews_to_resource_lookup(
     lookup = transform_overviews_to_resource_lookup(
         synopse_study_overviews, synopse_resources
     )
-    assert lookup["synopse1"] == synopse_resources[1]
+    assert lookup["studie1-set2-18"] == synopse_resources[1]
 
 
 def test_transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     resources_by_synopse_id: dict[str, ExtractedResource],
+    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
     expected_variable_group = {
         "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
-        "identifierInPrimarySource": "Krankheiten (1101)-studie1-set1-17",
-        "containedBy": [Joker(), Joker()],
+        "identifierInPrimarySource": "Krankheiten (1101)-12345-set1-17",
+        "containedBy": [resources_by_synopse_id["12345-set1-17"].stableTargetId],
         "label": [{"value": "Krankheiten", "language": "de"}],
-        "identifier": "hSo6lOFWAQYpRHZzr5MhTN",
-        "stableTargetId": "d95T1lCg7ZSlWgqOxBQAAr",
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
     }
 
     variable_groups = list(
@@ -104,6 +105,7 @@ def test_transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
             extracted_primary_sources["report-server"],
             resources_by_synopse_id,
+            synopse_study_overviews,
         )
     )
     sorted_variable_groups = sorted(
@@ -120,6 +122,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
@@ -130,7 +133,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         if var.thema_und_fragebogenausschnitt == "Krankheiten (1101)"
     ]
     variable_group = variable_group_by_identifier_in_primary_source[
-        "Krankheiten (1101)-studie1-set2-18"
+        "Krankheiten (1101)-12345-set1-17"
     ]
     expected_variable_one = {
         "belongsTo": [str(variable_group.stableTargetId)],
@@ -143,7 +146,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifierInPrimarySource": "1",
         "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
         "stableTargetId": Joker(),
-        "usedIn": [str(resources_by_synopse_id["1"].stableTargetId)],
+        "usedIn": [str(resources_by_synopse_id["12345-set1-17"].stableTargetId)],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
     }
     expected_variable_two = {  # var 2, missing var label
@@ -155,7 +158,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifier": Joker(),
         "label": [{"value": "KHEfiebB", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
-        "usedIn": [str(resources_by_synopse_id["2"].stableTargetId)],
+        "usedIn": [str(resources_by_synopse_id["12345-set1-17"].stableTargetId)],
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
     }
@@ -165,6 +168,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
             variable_group,
             resources_by_synopse_id,
             extracted_primary_sources["report-server"],
+            synopse_study_overviews,
         )
     )
     assert len(variables) == 2
@@ -177,6 +181,7 @@ def test_transform_synopse_variables_to_mex_variables(
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
     variables = list(
         transform_synopse_variables_to_mex_variables(
@@ -184,6 +189,7 @@ def test_transform_synopse_variables_to_mex_variables(
             extracted_variable_groups,
             resources_by_synopse_id,
             extracted_primary_sources["report-server"],
+            synopse_study_overviews,
         )
     )
 
