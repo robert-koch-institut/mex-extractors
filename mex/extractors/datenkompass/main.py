@@ -50,7 +50,7 @@ def extracted_merged_organizational_units_by_id() -> dict[
         organization.identifier: organization
         for organization in cast(
             "list[MergedOrganizationalUnit]",
-            get_merged_items(None, ["MergedOrganizationalUnit"], None),
+            get_merged_items(entity_type=["MergedOrganizationalUnit"]),
         )
     }
 
@@ -64,7 +64,7 @@ def extracted_merged_contact_points_by_id() -> dict[
         cp.identifier: cp
         for cp in cast(
             "list[MergedContactPoint]",
-            get_merged_items(None, ["MergedContactPoint"], None),
+            get_merged_items(entity_type=["MergedContactPoint"]),
         )
     }
 
@@ -76,7 +76,7 @@ def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
         bmg.identifier
         for bmg in cast(
             "list[MergedOrganization]",
-            get_merged_items("BMG", ["MergedOrganization"], None),
+            get_merged_items(query_string="BMG", entity_type=["MergedOrganization"]),
         )
     }
 
@@ -94,7 +94,7 @@ def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
             )
         )
         for person in cast(
-            "list[MergedPerson]", get_merged_items(None, ["MergedPerson"], None)
+            "list[MergedPerson]", get_merged_items(entity_type=["MergedPerson"])
         )
         if person.fullName or person.familyName
     }
@@ -114,7 +114,12 @@ def extracted_merged_activities() -> list[MergedActivity]:
     entity_type = ["MergedActivity"]
     primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
     return cast(
-        "list[MergedActivity]", get_merged_items(None, entity_type, primary_source_ids)
+        "list[MergedActivity]",
+        get_merged_items(
+            entity_type=entity_type,
+            referenced_identifier=primary_source_ids,
+            reference_field="hadPrimarySource",
+        ),
     )
 
 
@@ -132,10 +137,14 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
     """Get merged bibliographic resources."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
-    had_primary_source = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
     return cast(
         "list[MergedBibliographicResource]",
-        get_merged_items(None, entity_type, had_primary_source),
+        get_merged_items(
+            entity_type=entity_type,
+            referenced_identifier=primary_source_ids,
+            reference_field="hadPrimarySource",
+        ),
     )
 
 
@@ -146,11 +155,15 @@ def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResou
     entity_type = ["MergedResource"]
     merged_resources: dict[str, list[MergedResource]] = {}
     for rps in relevant_primary_sources:
-        had_primary_source = get_relevant_primary_source_ids([rps])
+        primary_source_ids = get_relevant_primary_source_ids([rps])
 
         merged_resources[rps] = cast(
             "list[MergedResource]",
-            get_merged_items(None, entity_type, had_primary_source),
+            get_merged_items(
+                entity_type=entity_type,
+                referenced_identifier=primary_source_ids,
+                reference_field="hadPrimarySource",
+            ),
         )
 
     return merged_resources
