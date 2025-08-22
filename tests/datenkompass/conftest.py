@@ -184,7 +184,7 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
         ),
         MergedOrganizationalUnit(
             name=[Text(value="andere Beispiel unit", language="de")],
-            parentUnit=MergedOrganizationalUnitIdentifier("identifierParentUnit"),
+            parentUnit=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             email=[],
             shortName=[Text(value="a.bsp. unit", language="en")],
             entityType="MergedOrganizationalUnit",

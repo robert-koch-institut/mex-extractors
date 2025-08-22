@@ -22,9 +22,9 @@ from mex.extractors.datenkompass.extract import (
     get_merged_items,
     get_relevant_primary_source_ids,
 )
-from mex.extractors.datenkompass.filter import filter_for_bmg
 from mex.extractors.datenkompass.filter import (
     filter_for_organization,
+    find_descendant_units,
 )
 from mex.extractors.datenkompass.load import (
     start_s3_client,
@@ -56,6 +56,16 @@ def extracted_merged_organizational_units_by_id() -> dict[
             get_merged_items(entity_type=["MergedOrganizationalUnit"]),
         )
     }
+
+
+@asset(group_name="datenkompass")
+def relevant_merged_organizational_unit_ids(
+    extracted_merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get child unit ids by filter setting for extraction filter."""
+    return find_descendant_units(extracted_merged_organizational_units_by_id)
 
 
 @asset(group_name="datenkompass")
@@ -177,7 +187,27 @@ def extracted_merged_resources_by_primary_source(
             ),
         )
 
-    return merged_resources
+    first_fetched_merged_resources_ids = {
+        mr.identifier
+        for merged_resources in merged_resources_by_primary_source.values()
+        for mr in merged_resources
+    }
+
+    merged_resources_of_units = cast(
+        "list[MergedResource]",
+        get_merged_items(
+            entity_type=entity_type,
+            referenced_identifier=relevant_merged_organizational_unit_ids,
+            reference_field="unitInCharge",
+        ),
+    )
+
+    merged_resources_by_primary_source["unit filter"] = [
+        mr
+        for mr in merged_resources_of_units
+        if mr.identifier not in first_fetched_merged_resources_ids
+    ]
+
     return merged_resources_by_primary_source
 
 
