@@ -141,7 +141,7 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": "Buch. Die Nutzung;The usage",
+        "beschreibung": "Buch. Die Nutzung; The usage",
         "kontakt": ["unit@example.org"],
         "organisationseinheit": ["e.g. unit"],
         "titel": (
@@ -152,10 +152,14 @@ def test_transform_bibliographic_resource(
         "datenbank": "https://doi.org/10.1234_find_this",
         "voraussetzungen": "Frei zugänglich",
         "datenhalter": "Robert Koch-Institut",
-        "frequenz": "Einmalig",
+        "frequenz": "Nicht zutreffend",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "herausgeber": "Robert Koch-Institut",
+        "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
+        "status": "Stabil",
+        "datennutzungszweck": "Sonstige",
+        "rechtsgrundlage": "Nicht zutreffend",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -202,16 +206,16 @@ def test_transform_resources(
         "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
         "datennutzungszweck_erweitert": ["has purpose"],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie", "word 1", "Wort 2"],
-        "dk_format": [],
+        "dk_format": "Sonstiges",
         "titel": ["some open data resource title"],
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Ja",
+        "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
         "datennutzungszweck": ["Themenspezifische Auswertung"],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -229,19 +233,19 @@ def test_transform_resources(
         "rechtsgrundlagen_benennung": [],
         "datennutzungszweck_erweitert": [],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie"],
-        "dk_format": [],
+        "dk_format": "Sonstiges",
         "titel": ["some synopse resource title"],
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Nicht bekannt",
+        "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
         "datennutzungszweck": [
             "Themenspezifische Auswertung",
             "Themenspezifisches Monitoring",
         ],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."

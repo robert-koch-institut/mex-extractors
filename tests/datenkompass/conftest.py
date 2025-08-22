@@ -276,6 +276,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenbank=[
                 "https://www.do-transform.org",
             ],
+            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -283,7 +284,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
@@ -300,6 +301,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
+            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -307,7 +309,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."

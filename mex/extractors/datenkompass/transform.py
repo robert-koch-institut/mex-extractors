@@ -18,8 +18,6 @@ from mex.common.types.vocabulary import (
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
     Theme,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -35,8 +33,6 @@ _VocabularyT = TypeVar(
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
 )
 
 
@@ -259,6 +255,7 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
+                voraussetzungen="Unbekannt",
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -266,7 +263,7 @@ def transform_activities(
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
                 datennutzungszweck="Themenspezifische Auswertung",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -334,10 +331,14 @@ def transform_bibliographic_resources(
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
-                frequenz="Einmalig",
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
-                herausgeber="Robert Koch-Institut",
+                datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
+                status="Stabil",
+                datennutzungszweck="Sonstige",
+                rechtsgrundlage="Nicht zutreffend",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -416,13 +417,6 @@ def transform_resources(
                 *get_vocabulary(item.theme),
                 *[entry.value for entry in item.keyword],
             ]
-            dk_format = [
-                *get_vocabulary(item.resourceCreationMethod),
-                *get_vocabulary(item.resourceTypeGeneral),
-            ]
-            rechtsgrundlage = (
-                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
-            )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -435,16 +429,16 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
-                    dk_format=dk_format,
+                    dk_format="Sonstiges",
                     titel=[fix_quotes(t.value) for t in item.title],
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
-                    rechtsgrundlage=rechtsgrundlage,
+                    rechtsgrundlage="Nicht zutreffend",
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber="Robert Koch-Institut",
+                    herausgeber="RKI - Robert Koch-Institut",
                     kommentar=(
                         "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                         "voraussichtlich Ende 2025 verfügbar sein."
