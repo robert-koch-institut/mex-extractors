@@ -217,7 +217,6 @@ def test_transform_resources(
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
         "identifier": "openDataResource",
-        "primary_source": "open-data",
     }
 
     assert result[1].model_dump() == {
@@ -248,5 +247,4 @@ def test_transform_resources(
             "voraussichtlich Ende 2025 verfügbar sein."
         ),
         "identifier": "SynopseResource",
-        "primary_source": "report-server",
     }

@@ -451,7 +451,6 @@ def transform_resources(
                     ),
                     identifier=item.identifier,
                     entityType=item.entityType,
-                    primary_source=primary_source,
                 ),
             )
     return datenkompass_recources
