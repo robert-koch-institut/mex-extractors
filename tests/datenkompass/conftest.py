@@ -61,7 +61,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
                 Link(language=None, url="https://www.dont-transform.de"),
-                Link(language="de", title="Yes", url="https://www.do-transform.org"),
+                Link(language="de", title="Ja", url="https://www.do-transform.org"),
             ],
             entityType="MergedActivity",
             identifier=MergedActivityIdentifier("MergedActivityWithORG2"),

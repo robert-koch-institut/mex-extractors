@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- improve usage of backend endpoints for merged items
 - add resources by unit filter to datenkompass
 
 ### Deprecated
