@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update synopse according to mapping changes
-- update datenkompass according to mapping changes and save items as xlsx
 - improve usage of backend endpoints for merged items
 
 ### Deprecated
@@ -21,9 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- igs test main
-
 ### Security
+
+## [0.41.0] - 2025-08-21
+
+### Changes
+
+- update synopse according to mapping changes
+- update datenkompass according to mapping changes and save items as xlsx
+
+### Fixed
+
+- igs test main
+- reading of xml-files for endnote
 
 ## [0.40.0] - 2025-07-30
 
