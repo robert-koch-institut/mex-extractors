@@ -23,6 +23,9 @@ from mex.extractors.datenkompass.extract import (
     get_relevant_primary_source_ids,
 )
 from mex.extractors.datenkompass.filter import filter_for_bmg
+from mex.extractors.datenkompass.filter import (
+    filter_for_organization,
+)
 from mex.extractors.datenkompass.load import (
     start_s3_client,
     write_items_to_xlsx,
@@ -59,7 +62,7 @@ def extracted_merged_organizational_units_by_id() -> dict[
 def extracted_merged_contact_points_by_id() -> dict[
     MergedContactPointIdentifier, MergedContactPoint
 ]:
-    """Get all organizational units as dict by id."""
+    """Get all contact points as dict by id."""
     return {
         cp.identifier: cp
         for cp in cast(
@@ -70,20 +73,24 @@ def extracted_merged_contact_points_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
-    """Get BMG identifiers as set."""
+def relevant_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
+    """Get relevant organization identifiers as set."""
+    settings = Settings()
     return {
-        bmg.identifier
-        for bmg in cast(
+        organization.identifier
+        for organization in cast(
             "list[MergedOrganization]",
-            get_merged_items(query_string="BMG", entity_type=["MergedOrganization"]),
+            get_merged_items(
+                query_string=settings.datenkompass.organization_filter,
+                entity_type=["MergedOrganization"],
+            ),
         )
     }
 
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
-    """Get person name by id."""
+    """Get person name as dictionary by id."""
     return {
         person.identifier: (
             person.fullName[0]
@@ -126,10 +133,12 @@ def extracted_merged_activities() -> list[MergedActivity]:
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities(
     extracted_merged_activities: list[MergedActivity],
-    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+    relevant_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter merged activities."""
-    return filter_for_bmg(extracted_merged_activities, extracted_merged_bmg_ids)
+    return filter_for_organization(
+        extracted_merged_activities, relevant_merged_organization_ids
+    )
 
 
 @asset(group_name="datenkompass")
@@ -149,15 +158,17 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResource]]:
+def extracted_merged_resources_by_primary_source(
+    relevant_merged_organizational_unit_ids: list[str],
+) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
     relevant_primary_sources = ["open-data", "report-server"]
     entity_type = ["MergedResource"]
-    merged_resources: dict[str, list[MergedResource]] = {}
+    merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
     for rps in relevant_primary_sources:
         primary_source_ids = get_relevant_primary_source_ids([rps])
 
-        merged_resources[rps] = cast(
+        merged_resources_by_primary_source[rps] = cast(
             "list[MergedResource]",
             get_merged_items(
                 entity_type=entity_type,
@@ -167,6 +178,7 @@ def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResou
         )
 
     return merged_resources
+    return merged_resources_by_primary_source
 
 
 @asset(group_name="datenkompass")

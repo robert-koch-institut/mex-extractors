@@ -3,17 +3,18 @@ from collections.abc import Sequence
 from mex.common.logging import logger
 from mex.common.models import MergedActivity
 from mex.common.types import MergedOrganizationIdentifier
+from mex.extractors.settings import Settings
 
 
-def filter_for_bmg(
+def filter_for_organization(
     extracted_merged_activities: Sequence[MergedActivity],
-    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+    relevant_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        extracted_merged_activities: list of merged activities as sequence.
-        extracted_merged_bmg_ids: set of extracted merged bmg identifiers.
+        extracted_merged_activities: merged activities as sequence.
+        relevant_merged_organization_ids: relevant merged organization identifiers.
 
     Returns:
         filtered list of merged activities.
@@ -22,7 +23,8 @@ def filter_for_bmg(
         item
         for item in extracted_merged_activities
         if any(
-            funder in extracted_merged_bmg_ids for funder in item.funderOrCommissioner
+            funder in relevant_merged_organization_ids
+            for funder in item.funderOrCommissioner
         )
     ]
 
