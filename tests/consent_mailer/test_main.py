@@ -14,6 +14,7 @@ from mex.extractors.settings import Settings
 
 
 @pytest.mark.usefixtures("mocked_consent_backend_api_connector")
+@pytest.mark.integration
 def test_job() -> None:
     assert run_job_in_process("consent_mailer")
 
