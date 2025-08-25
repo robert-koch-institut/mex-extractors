@@ -19,10 +19,10 @@ class ConsentMailerSettings(BaseSettings):
     mailpit_api_password: SecretStr = Field(
         SecretStr("password"),
         description="The password used for Basic HTTP auth against the mailpit api."
-        "USED FOR TESTS ONLY!",
+        " USED FOR TESTS ONLY!",
     )
     schedule: str = Field(
-        "0 0 * * *",
+        "0 0 29 2 *",
         description="A valid cron string defining when to run the consent mailer",
     )
     smtp_server: str = Field(

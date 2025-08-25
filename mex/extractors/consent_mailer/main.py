@@ -35,11 +35,11 @@ def send_consent_emails_to_persons(
     """Send consent emails to the given persons.
 
     Args:
-        all_ldap_persons_for_mailer (list[MergedPerson]): The list of persons that gets
+        all_ldap_persons_for_mailer: The list of persons that gets
         the consent email.
     """
     settings = Settings.get()
-    [host, port] = settings.consent_mailer.smtp_server.split(":")
+    host, port = settings.consent_mailer.smtp_server.split(":")
 
     mails_for_persons = [
         transform_person_to_sendable_email(person)

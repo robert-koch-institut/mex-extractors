@@ -1,4 +1,3 @@
-import base64
 from typing import Any
 
 import pytest
@@ -19,14 +18,12 @@ def test_job() -> None:
     assert run_job_in_process("consent_mailer")
 
 
-def _req_header() -> dict[str, str]:
+def _req_auth() -> tuple[str, str]:
     settings = Settings.get()
-    return {
-        "Authorization": "Basic "
-        + base64.b64encode(
-            f"{settings.consent_mailer.mailpit_api_user.get_secret_value()}:{settings.consent_mailer.mailpit_api_password.get_secret_value()}".encode()
-        ).decode()
-    }
+    return (
+        settings.consent_mailer.mailpit_api_user.get_secret_value(),
+        settings.consent_mailer.mailpit_api_password.get_secret_value(),
+    )
 
 
 def _req_verify() -> bool | str:
@@ -42,7 +39,7 @@ def _delete_messages() -> None:
         f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
-        headers=_req_header(),
+        auth=_req_auth(),
     )
 
 
@@ -52,11 +49,11 @@ def _get_messages() -> Any:  # noqa: ANN401
         f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
-        headers=_req_header() | {"accept": "application/json"},
+        auth=_req_auth(),
     ).json()
 
 
-@pytest.mark.integration  # disabled on gh cli due to no mailHog available
+@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
 def test_send_consent_emails_to_persons() -> None:
     _delete_messages()
     persons = [
@@ -87,7 +84,7 @@ def test_send_consent_emails_to_persons() -> None:
     )
 
 
-@pytest.mark.integration  # disabled on gh cli due to no mailHog available
+@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
 def test_send_consent_no_emails_for_no_rki_persons() -> None:
     _delete_messages()
 
