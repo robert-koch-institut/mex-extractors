@@ -16,7 +16,7 @@ class DatenkompassActivity(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    kontakt: str | None = Field(None, alias="Kontakt (Herausgeber)")
     organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: list[str] = Field([], alias="Titel")
     schlagwort: list[str] = Field([], alias="Schlagwort")
@@ -46,7 +46,7 @@ class DatenkompassBibliographicResource(BaseModel):
     model_config = {"populate_by_name": True}
 
     beschreibung: str | None = Field(None, alias="Beschreibung")
-    kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    kontakt: str | None = Field(None, alias="Kontakt (Herausgeber)")
     organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: str | None = Field(None, alias="Titel")
     datenhalter: str = Field(
@@ -83,7 +83,7 @@ class DatenkompassResource(BaseModel):
         None, alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
     frequenz: list[str] = Field([], alias="Frequenz der Aktualisierung")
-    kontakt: list[str] = Field([], alias="Kontakt (Herausgeber)")
+    kontakt: str | None = Field(None, alias="Kontakt (Herausgeber)")
     organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: list[str] = Field([], alias="Titel")
     schlagwort: list[str] = Field([], alias="Schlagwort")

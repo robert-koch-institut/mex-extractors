@@ -15,7 +15,7 @@ from mex.extractors.datenkompass.models.item import (
 from mex.extractors.datenkompass.transform import (
     get_datenbank,
     get_email,
-    get_resource_contact,
+    get_resource_email,
     get_title,
     get_unit_shortname,
     get_vocabulary,
@@ -51,10 +51,10 @@ def test_get_email(
     }
     result = get_email(responsible_unit_ids, merged_organizational_units_by_id)
 
-    assert sorted(result) == ["unit@example.org"]
+    assert result == "unit@example.org"
 
 
-def test_get_resource_contact(
+def test_get_resource_email(
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
@@ -68,16 +68,13 @@ def test_get_resource_contact(
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
-    result = get_resource_contact(
+    result = get_resource_email(
         responsible_unit_ids,
         merged_organizational_units_by_id,
         mocked_merged_contact_point_by_id,
     )
 
-    assert sorted(result) == [
-        "contactpoint@example.org",
-        "unit@example.org",
-    ]
+    assert result == "unit@example.org"
 
 
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
@@ -142,7 +139,7 @@ def test_transform_bibliographic_resource(
 
     assert result[0].model_dump() == {
         "beschreibung": "Buch. Die Nutzung; The usage",
-        "kontakt": ["unit@example.org"],
+        "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
@@ -196,10 +193,7 @@ def test_transform_resources(
     assert result[0].model_dump() == {
         "voraussetzungen": "Frei zugänglich",
         "frequenz": [],
-        "kontakt": [
-            "unit@example.org",
-            "contactpoint@example.org",
-        ],
+        "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
         "beschreibung": "deutsche Beschreibung",
         "datenbank": "https://doi.org/10.1234_example",
@@ -226,7 +220,7 @@ def test_transform_resources(
     assert result[1].model_dump() == {
         "voraussetzungen": "Zugang eingeschränkt",
         "frequenz": [],
-        "kontakt": [],
+        "kontakt": None,
         "organisationseinheit": ["a.bsp. unit"],
         "beschreibung": "n/a",
         "datenbank": None,
