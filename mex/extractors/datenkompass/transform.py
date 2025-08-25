@@ -325,6 +325,8 @@ def transform_bibliographic_resources(
                 beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
+                rechtsgrundlagen_benennung=None,
+                datennutzungszweck_erweitert=None,
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,

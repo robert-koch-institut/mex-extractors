@@ -56,6 +56,12 @@ class DatenkompassBibliographicResource(BaseModel):
     frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
     schlagwort: list[str] = Field([], alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
+    rechtsgrundlagen_benennung: str | None = Field(
+        None, alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
+    )
+    datennutzungszweck_erweitert: str | None = Field(
+        None, alias="Datennutzungszweck (erweitert)"
+    )
     voraussetzungen: str | None = Field(
         None, alias="Formelle Voraussetzungen für den Datenerhalt"
     )

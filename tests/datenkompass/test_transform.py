@@ -147,6 +147,8 @@ def test_transform_bibliographic_resource(
         ),
         "schlagwort": ["short en", "short de"],
         "datenbank": "https://doi.org/10.1234_find_this",
+        "rechtsgrundlagen_benennung": None,
+        "datennutzungszweck_erweitert": None,
         "voraussetzungen": "Frei zugänglich",
         "datenhalter": "Robert Koch-Institut",
         "frequenz": "Nicht zutreffend",
