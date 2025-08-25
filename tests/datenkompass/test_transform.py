@@ -107,7 +107,7 @@ def test_transform_activities(
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
-    ]  # item with no BMG filtered out
+    ]  # item with wrong organization filtered out
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }

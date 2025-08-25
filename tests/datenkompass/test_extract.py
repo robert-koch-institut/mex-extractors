@@ -19,11 +19,11 @@ def test_get_merged_items_mocked() -> None:
             Text(value="title en", language="en"),
         ],
         abstract=[Text(value="Without language", language=None)],
-        funderOrCommissioner=["Identifier1forBMG"],
+        funderOrCommissioner=["Identifier1forORG"],
         shortName=["short only english"],
         theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
         entityType="MergedActivity",
-        identifier="MergedActivityWithBMG1",
+        identifier="MergedActivityWithORG1",
     )
 
 
