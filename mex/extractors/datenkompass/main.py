@@ -83,7 +83,7 @@ def extracted_merged_contact_points_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def relevant_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
+def filtered_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
     """Get relevant organization identifiers as set."""
     settings = Settings()
     return {
