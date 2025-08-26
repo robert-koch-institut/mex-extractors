@@ -37,4 +37,4 @@ def test_find_descendant_units(
 
     result = find_descendant_units(mocked_merged_organizational_units_by_id)
 
-    assert result == ["IdentifierOrgUnitEG", "IdentifierOrgUnitZB"]
+    assert result == ["IdentifierOrgUnitZB", "IdentifierOrgUnitEG"]

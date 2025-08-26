@@ -143,11 +143,11 @@ def extracted_merged_activities() -> list[MergedActivity]:
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities(
     extracted_merged_activities: list[MergedActivity],
-    relevant_merged_organization_ids: set[MergedOrganizationIdentifier],
+    filtered_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter merged activities."""
     return filter_for_organization(
-        extracted_merged_activities, relevant_merged_organization_ids
+        extracted_merged_activities, filtered_merged_organization_ids
     )
 
 
@@ -169,7 +169,7 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 
 @asset(group_name="datenkompass")
 def extracted_merged_resources_by_primary_source(
-    relevant_merged_organizational_unit_ids: list[str],
+    filtered_merged_organizational_unit_ids: list[str],
 ) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
     relevant_primary_sources = ["open-data", "report-server"]
@@ -197,7 +197,7 @@ def extracted_merged_resources_by_primary_source(
         "list[MergedResource]",
         get_merged_items(
             entity_type=entity_type,
-            referenced_identifier=relevant_merged_organizational_unit_ids,
+            referenced_identifier=filtered_merged_organizational_unit_ids,
             reference_field="unitInCharge",
         ),
     )
