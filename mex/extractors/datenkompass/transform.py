@@ -1,5 +1,7 @@
 from typing import TypeVar, cast
 
+from bs4 import BeautifulSoup
+
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
@@ -408,6 +410,10 @@ def transform_resources(
                     if description_de
                     else [fix_quotes(d.value) for d in item.description]
                 )
+                beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
+                for a in beschreibung_soup.find_all("a", href=True):
+                    a.replace_with(a["href"])
+                beschreibung = str(beschreibung_soup)
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
                 *get_vocabulary([item.license] if item.license else []),
