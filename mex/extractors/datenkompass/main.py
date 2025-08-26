@@ -59,7 +59,7 @@ def extracted_merged_organizational_units_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def relevant_merged_organizational_unit_ids(
+def filtered_merged_organizational_unit_ids(
     extracted_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
