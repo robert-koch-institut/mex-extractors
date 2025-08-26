@@ -8,6 +8,7 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
+    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
@@ -95,7 +96,7 @@ def extracted_variables_odk(
     extracted_resources_odk: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_source_odk: ExtractedPrimarySource,
-) -> None:
+) -> list[ExtractedVariable]:
     """Transform odk data to mex variables and load to sinks."""
     extracted_variables = transform_odk_data_to_extracted_variables(
         extracted_resources_odk,
@@ -104,6 +105,7 @@ def extracted_variables_odk(
     )
 
     load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)

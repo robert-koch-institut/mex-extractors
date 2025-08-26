@@ -7,6 +7,7 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPrimarySource,
     ExtractedResource,
+    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
@@ -259,7 +260,7 @@ def extracted_ifsg_variable(  # noqa: PLR0913
     meta_item: list[MetaItem],
     meta_datatype: list[MetaDataType],
     meta_schema2field: list[MetaSchema2Field],
-) -> None:
+) -> list[ExtractedVariable]:
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
         filtered_variables,
@@ -273,6 +274,7 @@ def extracted_ifsg_variable(  # noqa: PLR0913
         meta_schema2field,
     )
     load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)
