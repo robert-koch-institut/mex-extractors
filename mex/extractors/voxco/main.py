@@ -12,6 +12,7 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
@@ -125,12 +126,13 @@ def extracted_variables_voxco(
     extracted_voxco_resources: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
     extracted_primary_source_voxco: ExtractedPrimarySource,
-) -> None:
+) -> list[ExtractedVariable]:
     """Transform voxco variables and load them to the sinks."""
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
         extracted_voxco_resources, voxco_variables, extracted_primary_source_voxco
     )
     load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)
