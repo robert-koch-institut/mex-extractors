@@ -27,13 +27,11 @@ from mex.extractors.datenkompass.transform import (
 
 def test_get_unit_shortname(
     mocked_merged_activities: list[MergedActivity],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
 ) -> None:
     responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
-    merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
-    result = get_unit_shortname(responsible_unit_ids, merged_organizational_units_by_id)
+    merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
+    result = get_unit_shortname(responsible_unit_ids, merged_units_by_id)
 
     assert sorted(result) == [
         "a.bsp. unit",
@@ -43,34 +41,30 @@ def test_get_unit_shortname(
 
 def test_get_email(
     mocked_merged_activities: list[MergedActivity],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
 ) -> None:
     responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
-    merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
-    result = get_email(responsible_unit_ids, merged_organizational_units_by_id)
+    merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
+    result = get_email(responsible_unit_ids, merged_units_by_id)
 
     assert result == "unit@example.org"
 
 
 def test_get_resource_email(
     mocked_merged_resource: list[MergedResource],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
     item = mocked_merged_resource[0]
     responsible_unit_ids = item.contact
-    merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
+    merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
     mocked_merged_contact_point_by_id = {
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
     result = get_resource_email(
         responsible_unit_ids,
-        merged_organizational_units_by_id,
+        merged_units_by_id,
         mocked_merged_contact_point_by_id,
     )
 
@@ -99,18 +93,16 @@ def test_get_datenbank(
 
 def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
     mocked_datenkompass_activity: list[DatenkompassActivity],
 ) -> None:
-    extracted_and_filtered_merged_activities = mocked_merged_activities[
+    fetched_and_filtered_merged_activities = mocked_merged_activities[
         :2
-    ]  # item with no BMG filtered out
-    merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
+    ]  # item with wrong organization filtered out
+    merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
 
     result = transform_activities(
-        extracted_and_filtered_merged_activities, merged_organizational_units_by_id
+        fetched_and_filtered_merged_activities, merged_units_by_id
     )
     assert result == mocked_datenkompass_activity
 
@@ -118,22 +110,20 @@ def test_transform_activities(
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_transform_bibliographic_resource(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
     mocked_merged_person: list[MergedPerson],
 ) -> None:
-    extracted_and_filtered_merged_bibliographic_resource = (
+    fetched_and_filtered_merged_bibliographic_resource = (
         mocked_merged_bibliographic_resource
     )
-    merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
+    merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
     person_name_by_id = {
         person.identifier: person.fullName[0] for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(
-        extracted_and_filtered_merged_bibliographic_resource,
-        merged_organizational_units_by_id,
+        fetched_and_filtered_merged_bibliographic_resource,
+        merged_units_by_id,
         person_name_by_id,
     )
 
@@ -171,24 +161,22 @@ def test_transform_bibliographic_resource(
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_transform_resources(
     mocked_merged_resource: list[MergedResource],
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
-    extracted_merged_resource = {
+    fetched_merged_resource = {
         "open-data": [mocked_merged_resource[0]],
         "report-server": [mocked_merged_resource[1]],
     }
-    extracted_merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
-    extracted_merged_contact_points_by_id = {
+    fetched_merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
+    fetched_merged_contact_points_by_id = {
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
     result = transform_resources(
-        extracted_merged_resource,
-        extracted_merged_organizational_units_by_id,
-        extracted_merged_contact_points_by_id,
+        fetched_merged_resource,
+        fetched_merged_units_by_id,
+        fetched_merged_contact_points_by_id,
     )
 
     assert len(result) == 2

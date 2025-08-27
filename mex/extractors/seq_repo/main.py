@@ -141,7 +141,6 @@ def seq_repo_extracted_access_platform(
         )
     )
     load([mex_access_platform])
-
     return mex_access_platform
 
 
@@ -164,7 +163,7 @@ def seq_repo_resource(  # noqa: PLR0913
         load_yaml(settings.seq_repo.mapping_path / "resource.yaml")
     )
 
-    return transform_seq_repo_resource_to_extracted_resource(
+    resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_latest_source,
         extracted_activity,
         seq_repo_extracted_access_platform,
@@ -175,12 +174,8 @@ def seq_repo_resource(  # noqa: PLR0913
         extracted_organization_rki,
         extracted_primary_source_seq_repo,
     )
-
-
-@asset(group_name="seq_repo")
-def load_seq_repo_resource(seq_repo_resource: list[ExtractedResource]) -> None:
-    """Load seq-repo resources."""
-    load(seq_repo_resource)
+    load(resources)
+    return resources
 
 
 @entrypoint(Settings)
