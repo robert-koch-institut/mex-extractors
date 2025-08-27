@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add return values to all assets for debugging and bookkeeping
+
 ### Changes
 
 - improve usage of backend endpoints for merged items
+- add resources by unit filter to datenkompass
 
 ### Deprecated
 

@@ -20,8 +20,6 @@ from mex.common.types.vocabulary import (
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
     Theme,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -37,8 +35,6 @@ _VocabularyT = TypeVar(
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
 )
 
 
@@ -59,7 +55,7 @@ def fix_quotes(string: str) -> str:
 
 def get_unit_shortname(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
@@ -67,7 +63,7 @@ def get_unit_shortname(
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
-        merged_organizational_units_by_id: dict of all merged organizational units by id
+        merged_units_by_id: dict of all merged organizational units by id
 
     Returns:
         List of short names of contact units as strings.
@@ -77,68 +73,68 @@ def get_unit_shortname(
         for org_id in responsible_unit_ids
         for shortname in [
             unit_short_name.value
-            for unit_short_name in merged_organizational_units_by_id[org_id].shortName
+            for unit_short_name in merged_units_by_id[org_id].shortName
         ]
     ]
 
 
 def get_email(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-) -> list[str]:
-    """Get email of merged units.
+) -> str | None:
+    """Get the first email address of referenced responsible units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
-        merged_organizational_units_by_id: dict of all merged organizational units by id
+        merged_units_by_id: dict of all merged organizational units by id
 
     Returns:
-        List of emails of contact units as strings.
+        first found email of a responsible unit as string, or None if no email is found.
     """
-    return [
-        email
-        for org_id in responsible_unit_ids
-        for email in [
-            str(unit_email)
-            for unit_email in merged_organizational_units_by_id[org_id].email
-        ]
-    ]
+    return next(
+        (
+            str(email)
+            for org_id in responsible_unit_ids
+            for email in merged_units_by_id[org_id].email
+        ),
+        None,
+    )
 
 
-def get_resource_contact(
-    responsible_unit_ids: list[
+def get_resource_email(
+    responsible_reference_ids: list[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
         | MergedContactPointIdentifier
     ],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
-) -> list[str]:
-    """Get email from units and contact points.
+) -> str | None:
+    """Get the first email address of referenced responsible units or contact points.
 
     Args:
-        responsible_unit_ids: Set of responsible unit identifiers
-        merged_organizational_units_by_id: dict of all merged organizational units by id
+        responsible_reference_ids: Sequence of referenced unit or contact point ids
+        merged_units_by_id: dict of all merged organizational units by id
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
-        List of email-addresses as strings.
+        first found email of a unit or contact as string, or None if no email is found.
     """
-    contact_details: list[str] = []
     combined_dict = cast(
         "dict[Identifier, MergedContactPoint | MergedOrganizationalUnit]",
-        {**merged_organizational_units_by_id, **merged_contact_points_by_id},
+        {**merged_units_by_id, **merged_contact_points_by_id},
     )
 
-    for contact_id in responsible_unit_ids:
-        if contact := combined_dict.get(contact_id):
-            contact_details.extend([str(email) for email in contact.email])
-
-    return contact_details
+    for reference_id in responsible_reference_ids:
+        if (
+            referenced_item := combined_dict.get(reference_id)
+        ) and referenced_item.email:
+            return next(str(email) for email in referenced_item.email)
+    return None
 
 
 def get_title(item: MergedActivity) -> list[str]:
@@ -211,7 +207,7 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
 
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
@@ -219,7 +215,7 @@ def transform_activities(
 
     Args:
         filtered_merged_activities: List of merged activities
-        merged_organizational_units_by_id: dict of merged organizational units by id
+        merged_units_by_id: dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -240,11 +236,11 @@ def transform_activities(
             )
         kontakt = get_email(
             item.responsibleUnit,
-            merged_organizational_units_by_id,
+            merged_units_by_id,
         )
         organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
-            merged_organizational_units_by_id,
+            merged_units_by_id,
         )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
@@ -261,6 +257,7 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
+                voraussetzungen="Unbekannt",
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -268,7 +265,7 @@ def transform_activities(
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
                 datennutzungszweck="Themenspezifische Auswertung",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -283,7 +280,7 @@ def transform_activities(
 
 def transform_bibliographic_resources(
     merged_bibliographic_resources: list[MergedBibliographicResource],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
@@ -292,7 +289,7 @@ def transform_bibliographic_resources(
 
     Args:
         merged_bibliographic_resources: List of merged bibliographic resources
-        merged_organizational_units_by_id: dict of merged organizational units by id
+        merged_units_by_id: dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
 
     Returns:
@@ -309,9 +306,9 @@ def transform_bibliographic_resources(
         else:
             voraussetzungen = None
         datenbank = get_datenbank(item)
-        kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
+        kontakt = get_email(item.contributingUnit, merged_units_by_id)
         organisationseinheit = get_unit_shortname(
-            item.contributingUnit, merged_organizational_units_by_id
+            item.contributingUnit, merged_units_by_id
         )
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
@@ -330,16 +327,22 @@ def transform_bibliographic_resources(
                 beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
+                rechtsgrundlagen_benennung=None,
+                datennutzungszweck_erweitert=None,
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
-                frequenz="Einmalig",
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
-                herausgeber="Robert Koch-Institut",
+                datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
+                status="Stabil",
+                datennutzungszweck="Sonstige",
+                rechtsgrundlage="Nicht zutreffend",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -353,7 +356,7 @@ def transform_bibliographic_resources(
 
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
@@ -362,7 +365,7 @@ def transform_resources(
 
     Args:
         merged_resources_by_primary_source: dictionary of merged resources
-        merged_organizational_units_by_id: dict of merged organizational units by id
+        merged_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
 
     Returns:
@@ -392,13 +395,13 @@ def transform_resources(
                 if item.accrualPeriodicity
                 else []
             )
-            kontakt = get_resource_contact(
+            kontakt = get_resource_email(
                 item.contact,
-                merged_organizational_units_by_id,
+                merged_units_by_id,
                 merged_contact_points_by_id,
             )
             organisationseinheit = get_unit_shortname(
-                item.unitInCharge, merged_organizational_units_by_id
+                item.unitInCharge, merged_units_by_id
             )
             beschreibung = "n/a"
             if item.description:
@@ -422,13 +425,6 @@ def transform_resources(
                 *get_vocabulary(item.theme),
                 *[entry.value for entry in item.keyword],
             ]
-            dk_format = [
-                *get_vocabulary(item.resourceCreationMethod),
-                *get_vocabulary(item.resourceTypeGeneral),
-            ]
-            rechtsgrundlage = (
-                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
-            )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -441,16 +437,16 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
-                    dk_format=dk_format,
+                    dk_format="Sonstiges",
                     titel=[fix_quotes(t.value) for t in item.title],
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
-                    rechtsgrundlage=rechtsgrundlage,
+                    rechtsgrundlage="Nicht zutreffend",
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber="Robert Koch-Institut",
+                    herausgeber="RKI - Robert Koch-Institut",
                     kommentar=(
                         "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                         "voraussichtlich Ende 2025 verfügbar sein."
