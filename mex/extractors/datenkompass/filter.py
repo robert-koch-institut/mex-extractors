@@ -11,13 +11,13 @@ from mex.extractors.settings import Settings
 
 
 def filter_for_organization(
-    extracted_merged_activities: Sequence[MergedActivity],
+    fetched_merged_activities: Sequence[MergedActivity],
     filtered_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        extracted_merged_activities: merged activities as sequence.
+        fetched_merged_activities: merged activities as sequence.
         filtered_merged_organization_ids: relevant merged organization ids.
 
     Returns:
@@ -25,7 +25,7 @@ def filter_for_organization(
     """
     filtered_items = [
         item
-        for item in extracted_merged_activities
+        for item in fetched_merged_activities
         if any(
             funder in filtered_merged_organization_ids
             for funder in item.funderOrCommissioner
@@ -38,32 +38,30 @@ def filter_for_organization(
 
 
 def find_descendant_units(
-    merged_organizational_units_by_id: dict[
+    merged_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
     """Based on filter settings find descendant unit ids.
 
     Args:
-        merged_organizational_units_by_id: merged organizational units by identifier.
+        merged_units_by_id: merged organizational units by identifier.
 
     Returns:
         identifier of units which are descendants of the unit filter setting.
     """
     settings = Settings()
-    extracted_merged_organizational_units = list(
-        merged_organizational_units_by_id.values()
-    )
+    fetched_merged_units = list(merged_units_by_id.values())
     parent_id = str(
         next(
             unit.identifier
-            for unit in extracted_merged_organizational_units
+            for unit in fetched_merged_units
             if unit.shortName
             and unit.shortName[0].value == settings.datenkompass.unit_filter
         )
     )
     descendants = find_descendants(
-        extracted_merged_organizational_units,
+        fetched_merged_units,
         str(parent_id),
     )
     descendants.append(parent_id)

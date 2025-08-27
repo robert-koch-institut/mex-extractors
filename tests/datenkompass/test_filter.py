@@ -29,12 +29,10 @@ def test_filter_for_organization(
 
 
 def test_find_descendant_units(
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_merged_units: list[MergedOrganizationalUnit],
 ) -> None:
-    mocked_merged_organizational_units_by_id = {
-        unit.identifier: unit for unit in mocked_merged_organizational_units
-    }
+    mocked_merged_units_by_id = {unit.identifier: unit for unit in mocked_merged_units}
 
-    result = find_descendant_units(mocked_merged_organizational_units_by_id)
+    result = find_descendant_units(mocked_merged_units_by_id)
 
     assert result == ["IdentifierOrgUnitZB", "IdentifierOrgUnitEG"]
