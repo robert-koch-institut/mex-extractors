@@ -5,6 +5,7 @@ import boto3
 import pandas as pd
 from botocore.client import BaseClient
 
+from mex.common.logging import logger
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
@@ -65,3 +66,4 @@ def write_items_to_xlsx(
         Body=xlsx_buf.getvalue(),
         ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
+    logger.info(f"Wrote {df.shape[0]} items to file {file_name}.")
