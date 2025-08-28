@@ -171,7 +171,7 @@ def mocked_merged_resource() -> list[MergedResource]:
 
 
 @pytest.fixture
-def mocked_merged_units() -> list[MergedOrganizationalUnit]:
+def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
         MergedOrganizationalUnit(
@@ -323,7 +323,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_resource: list[MergedResource],
-    mocked_merged_units: list[MergedOrganizationalUnit],
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_organization: list[MergedOrganization],
     mocked_merged_person: list[MergedPerson],
     mocked_merged_contact_point: list[MergedContactPoint],
@@ -335,7 +335,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
         "MergedPrimarySource": mocked_merged_primary_sources,
-        "MergedOrganizationalUnit": mocked_merged_units,
+        "MergedOrganizationalUnit": mocked_merged_organizational_units,
         "MergedOrganization": [mocked_merged_organization[1]],
         "MergedPerson": mocked_merged_person,
         "MergedContactPoint": mocked_merged_contact_point,

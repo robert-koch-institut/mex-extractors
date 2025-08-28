@@ -38,30 +38,32 @@ def filter_for_organization(
 
 
 def find_descendant_units(
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
     """Based on filter settings find descendant unit ids.
 
     Args:
-        merged_units_by_id: merged organizational units by identifier.
+        merged_organizational_units_by_id: merged organizational units by identifier.
 
     Returns:
         identifier of units which are descendants of the unit filter setting.
     """
     settings = Settings()
-    fetched_merged_units = list(merged_units_by_id.values())
+    fetched_merged_organizational_units = list(
+        merged_organizational_units_by_id.values()
+    )
     parent_id = str(
         next(
             unit.identifier
-            for unit in fetched_merged_units
+            for unit in fetched_merged_organizational_units
             if unit.shortName
             and unit.shortName[0].value == settings.datenkompass.unit_filter
         )
     )
     descendants = find_descendants(
-        fetched_merged_units,
+        fetched_merged_organizational_units,
         str(parent_id),
     )
     descendants.append(parent_id)

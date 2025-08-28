@@ -55,7 +55,7 @@ def fix_quotes(string: str) -> str:
 
 def get_unit_shortname(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[str]:
@@ -63,7 +63,7 @@ def get_unit_shortname(
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
-        merged_units_by_id: dict of all merged organizational units by id
+        merged_organizational_units_by_id: dict of all merged organizational units by id
 
     Returns:
         List of short names of contact units as strings.
@@ -73,14 +73,14 @@ def get_unit_shortname(
         for org_id in responsible_unit_ids
         for shortname in [
             unit_short_name.value
-            for unit_short_name in merged_units_by_id[org_id].shortName
+            for unit_short_name in merged_organizational_units_by_id[org_id].shortName
         ]
     ]
 
 
 def get_email(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> str | None:
@@ -88,7 +88,7 @@ def get_email(
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
-        merged_units_by_id: dict of all merged organizational units by id
+        merged_organizational_units_by_id: dict of all merged organizational units by id
 
     Returns:
         first found email of a responsible unit as string, or None if no email is found.
@@ -97,7 +97,7 @@ def get_email(
         (
             str(email)
             for org_id in responsible_unit_ids
-            for email in merged_units_by_id[org_id].email
+            for email in merged_organizational_units_by_id[org_id].email
         ),
         None,
     )
@@ -109,16 +109,18 @@ def get_resource_email(
         | MergedPersonIdentifier
         | MergedContactPointIdentifier
     ],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> str | None:
     """Get the first email address of referenced responsible units or contact points.
 
+    Ignore referenced Persons.
+
     Args:
-        responsible_reference_ids: Sequence of referenced unit or contact point ids
-        merged_units_by_id: dict of all merged organizational units by id
+        responsible_reference_ids: List of referenced unit, contact point or person ids
+        merged_organizational_units_by_id: dict of all merged organizational units by id
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
@@ -126,7 +128,7 @@ def get_resource_email(
     """
     combined_dict = cast(
         "dict[Identifier, MergedContactPoint | MergedOrganizationalUnit]",
-        {**merged_units_by_id, **merged_contact_points_by_id},
+        {**merged_organizational_units_by_id, **merged_contact_points_by_id},
     )
 
     for reference_id in responsible_reference_ids:
@@ -207,7 +209,7 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
 
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
@@ -215,7 +217,7 @@ def transform_activities(
 
     Args:
         filtered_merged_activities: List of merged activities
-        merged_units_by_id: dict of merged organizational units by id
+        merged_organizational_units_by_id: dict of merged organizational units by id
 
     Returns:
         list of DatenkompassActivity instances.
@@ -236,11 +238,11 @@ def transform_activities(
             )
         kontakt = get_email(
             item.responsibleUnit,
-            merged_units_by_id,
+            merged_organizational_units_by_id,
         )
         organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
-            merged_units_by_id,
+            merged_organizational_units_by_id,
         )
         titel = get_title(item)
         schlagwort = get_vocabulary(item.theme)
@@ -280,7 +282,7 @@ def transform_activities(
 
 def transform_bibliographic_resources(
     merged_bibliographic_resources: list[MergedBibliographicResource],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
@@ -289,7 +291,7 @@ def transform_bibliographic_resources(
 
     Args:
         merged_bibliographic_resources: List of merged bibliographic resources
-        merged_units_by_id: dict of merged organizational units by id
+        merged_organizational_units_by_id: dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
 
     Returns:
@@ -306,9 +308,9 @@ def transform_bibliographic_resources(
         else:
             voraussetzungen = None
         datenbank = get_datenbank(item)
-        kontakt = get_email(item.contributingUnit, merged_units_by_id)
+        kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
         organisationseinheit = get_unit_shortname(
-            item.contributingUnit, merged_units_by_id
+            item.contributingUnit, merged_organizational_units_by_id
         )
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
@@ -356,7 +358,7 @@ def transform_bibliographic_resources(
 
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    merged_units_by_id: dict[
+    merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
@@ -365,7 +367,7 @@ def transform_resources(
 
     Args:
         merged_resources_by_primary_source: dictionary of merged resources
-        merged_units_by_id: dict of merged organizational units by id
+        merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
 
     Returns:
@@ -398,11 +400,11 @@ def transform_resources(
             )
             kontakt = get_resource_email(
                 item.contact,
-                merged_units_by_id,
+                merged_organizational_units_by_id,
                 merged_contact_points_by_id,
             )
             organisationseinheit = get_unit_shortname(
-                item.unitInCharge, merged_units_by_id
+                item.unitInCharge, merged_organizational_units_by_id
             )
             beschreibung = "n/a"
             if item.description:
