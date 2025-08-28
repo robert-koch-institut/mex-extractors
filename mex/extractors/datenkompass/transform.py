@@ -375,6 +375,7 @@ def transform_resources(
             "Themenspezifisches Monitoring",
         ],
         "open-data": ["Themenspezifische Auswertung"],
+        "unit filter": ["Themenspezifisches Monitoring"],
     }
     for (
         primary_source,
