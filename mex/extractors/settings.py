@@ -6,6 +6,7 @@ from mex.common.types import AssetsPath
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
+from mex.extractors.consent_mailer.settings import ConsentMailerSettings
 from mex.extractors.contact_point.settings import ContactPointSettings
 from mex.extractors.datenkompass.settings import DatenkompassSettings
 from mex.extractors.datscha_web.settings import DatschaWebSettings
@@ -82,6 +83,7 @@ class Settings(BaseSettings):
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
+    consent_mailer: ConsentMailerSettings = ConsentMailerSettings()
     contact_point: ContactPointSettings = ContactPointSettings()
     datenkompass: DatenkompassSettings = DatenkompassSettings()
     datscha_web: DatschaWebSettings = DatschaWebSettings()

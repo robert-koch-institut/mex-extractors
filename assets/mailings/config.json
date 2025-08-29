@@ -1,0 +1,17 @@
+{
+    "consent": {
+        "subject": "Subject for CONSENT",
+        "template_args": {
+            "beta_launch_date": "11.01.2011",
+            "reply_deadline": "10.01.2011"
+        }
+    },
+    "reminder": {
+        "subject": "Subject for REMINDER",
+        "template_args": {
+            "beta_launch_date": "11.01.2011",
+            "first_mail_date": "01.01.2011",
+            "reply_deadline": "05.01.2011"
+        }
+    }
+}
