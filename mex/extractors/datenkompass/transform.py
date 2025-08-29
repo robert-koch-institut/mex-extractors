@@ -304,8 +304,6 @@ def transform_bibliographic_resources(
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
             voraussetzungen = "Frei zugänglich"
-        else:
-            voraussetzungen = None
         datenbank = get_datenbank(item)
         kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
         organisationseinheit = get_unit_shortname(
