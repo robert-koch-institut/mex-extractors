@@ -18,6 +18,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
     ExtractedResource,
+    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
 )
@@ -312,16 +313,19 @@ def extracted_synopse_variables(
         str, ExtractedResource
     ],
     synopse_study_overviews: list[SynopseStudyOverview],
-) -> None:
+) -> list[ExtractedVariable]:
     """Transforms Synopse data to extracted variables and load result."""
-    extracted_variables = transform_synopse_variables_to_mex_variables(
-        synopse_variables_by_thema,
-        extracted_synopse_variable_groups,
-        extracted_synopse_resources_by_identifier_in_primary_source,
-        extracted_primary_source_report_server,
-        synopse_study_overviews,
+    extracted_variables = list(
+        transform_synopse_variables_to_mex_variables(
+            synopse_variables_by_thema,
+            extracted_synopse_variable_groups,
+            extracted_synopse_resources_by_identifier_in_primary_source,
+            extracted_primary_source_report_server,
+            synopse_study_overviews,
+        )
     )
     load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)
