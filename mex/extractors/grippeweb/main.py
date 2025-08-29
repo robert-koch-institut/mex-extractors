@@ -15,6 +15,7 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
+    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
@@ -221,7 +222,7 @@ def grippeweb_extracted_variable(
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
     extracted_primary_source_grippeweb: ExtractedPrimarySource,
-) -> None:
+) -> list[ExtractedVariable]:
     """Transform Grippeweb default values to extracted variables and load to sinks."""
     extracted_variables = transform_grippeweb_variable_to_extracted_variables(
         VariableMapping.model_validate(grippeweb_variable),
@@ -231,6 +232,7 @@ def grippeweb_extracted_variable(
         extracted_primary_source_grippeweb,
     )
     load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)
