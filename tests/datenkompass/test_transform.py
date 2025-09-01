@@ -138,7 +138,7 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": "Buch. Die Nutzung; The usage",
+        "beschreibung": "Buch. Die Nutzung",
         "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
         "titel": (

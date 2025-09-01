@@ -15,6 +15,7 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    Text,
 )
 from mex.common.types.vocabulary import (
     BibliographicResourceType,
@@ -139,6 +140,23 @@ def get_resource_email(
     return None
 
 
+def get_german_text(text_entries: list[Text]) -> list[str]:
+    """Get german entries of list as strings, if any exist.
+
+     If no german entry exists, return original list entries as strings.
+     Always fix quotes in entries.
+
+    Args:
+        text_entries: list of text entries
+
+    Returns:
+        list of entries as strings
+    """
+    return [fix_quotes(t.value) for t in text_entries if t.language == "de"] or [
+        fix_quotes(t.value) for t in text_entries
+    ]
+
+
 def get_title(item: MergedActivity) -> list[str]:
     """Get shortName and title from merged activity item.
 
@@ -150,23 +168,9 @@ def get_title(item: MergedActivity) -> list[str]:
     """
     collected_titles = []
     if item.shortName:
-        shortname_de = [
-            fix_quotes(name.value) for name in item.shortName if name.language == "de"
-        ]
-        shortname = (
-            shortname_de
-            if shortname_de
-            else [fix_quotes(name.value) for name in item.shortName]
-        )
-        collected_titles.extend(shortname)
+        collected_titles.extend(get_german_text(item.shortName))
     if item.title:
-        title_de = [
-            fix_quotes(name.value) for name in item.title if name.language == "de"
-        ]
-        title = (
-            title_de if title_de else [fix_quotes(name.value) for name in item.title]
-        )
-        collected_titles.extend(title)
+        collected_titles.extend(get_german_text(item.title))
     return collected_titles
 
 
@@ -228,14 +232,7 @@ def transform_activities(
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
-            abstract_de = [
-                fix_quotes(a.value) for a in item.abstract if a.language == "de"
-            ]
-            beschreibung += delim.join(
-                abstract_de
-                if abstract_de
-                else [fix_quotes(a.value) for a in item.abstract]
-            )
+            beschreibung += delim.join(get_german_text(item.abstract))
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -322,7 +319,7 @@ def transform_bibliographic_resources(
         titel = f"{title_collection} ({creator_collection})"
         vocab = get_vocabulary(item.bibliographicResourceType)
         b1 = f"{delim.join(s for s in vocab if s is not None)}. "
-        b2 = delim.join([fix_quotes(abstract.value) for abstract in item.abstract])
+        b2 = delim.join(get_german_text(item.abstract))
         beschreibung = b1 + b2
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
@@ -408,14 +405,7 @@ def transform_resources(
             )
             beschreibung = "n/a"
             if item.description:
-                description_de = [
-                    fix_quotes(d.value) for d in item.description if d.language == "de"
-                ]
-                beschreibung = delim.join(
-                    description_de
-                    if description_de
-                    else [fix_quotes(d.value) for d in item.description]
-                )
+                beschreibung = delim.join(get_german_text(item.description))
                 beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
                 for a in beschreibung_soup.find_all("a", href=True):
                     a.replace_with(a["href"])
