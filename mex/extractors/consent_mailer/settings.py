@@ -21,8 +21,8 @@ class ConsentMailerSettings(BaseSettings):
         description="The password used for Basic HTTP auth against the mailpit api."
         " USED FOR TESTS ONLY!",
     )
-    schedule: str = Field(
-        "0 0 29 2 *",
+    schedule: str | None = Field(
+        None,
         description="A valid cron string defining when to run the consent mailer",
     )
     smtp_server: str = Field(

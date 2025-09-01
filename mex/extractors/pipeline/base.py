@@ -162,13 +162,14 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "consent_mailer"},
     )
     jobs.append(consent_mailer_job)
-    schedules.append(
-        ScheduleDefinition(
-            job=consent_mailer_job,
-            cron_schedule=settings.consent_mailer.schedule,
-            default_status=DefaultScheduleStatus.RUNNING,
+    if settings.consent_mailer.schedule:
+        schedules.append(
+            ScheduleDefinition(
+                job=consent_mailer_job,
+                cron_schedule=settings.consent_mailer.schedule,
+                default_status=DefaultScheduleStatus.RUNNING,
+            )
         )
-    )
 
     # Define the extra datenkompass job but without schedule or trigger
     datenkompass_job = define_asset_job(
