@@ -21,12 +21,13 @@ class DatenkompassActivity(BaseModel):
     titel: str = Field(..., alias="Titel")
     schlagwort: str | None = Field(None, alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
+    voraussetzungen: str = Field(
+        ..., alias="Formelle Voraussetzungen für den Datenerhalt"
+    )
     frequenz: str = Field(..., alias="Frequenz der Aktualisierung")
     hauptkategorie: str = Field(..., alias="Hauptkategorie")
     unterkategorie: str = Field(..., alias="Unterkategorie")
-    rechtsgrundlage: str = Field(
-        ..., alias="Rechtsgrundlage für die Zugangseröffnung"
-    )
+    rechtsgrundlage: str = Field(..., alias="Rechtsgrundlage für die Zugangseröffnung")
     datenerhalt: str = Field(..., alias="Weg des Datenerhalts")
     status: str = Field(..., alias="Status (planbare Verfügbarkeit der Daten)")
     datennutzungszweck: str = Field(..., alias="Datennutzungszweck")
@@ -47,17 +48,29 @@ class DatenkompassBibliographicResource(BaseModel):
     organisationseinheit: str | None = Field(None, alias="Organisationseinheit")
     titel: str = Field(..., alias="Titel")
     datenhalter: str = Field(
-        ..., alias="Datenhalter/ Beautragung durch Behörde im Geschäftsbereich"
+        ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
     dk_format: str = Field(..., alias="Format der Daten")
     frequenz: str = Field(..., alias="Frequenz der Aktualisierung")
     schlagwort: str | None = Field(None, alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
+    rechtsgrundlagen_benennung: str | None = Field(
+        None, alias="Rechtsgrundlage für die Zugangseröffnung (Benennung)"
+    )
+    datennutzungszweck_erweitert: str | None = Field(
+        None, alias="Datennutzungszweck (erweitert)"
+    )
     voraussetzungen: str | None = Field(
         None, alias="Formelle Voraussetzungen für den Datenerhalt"
     )
     hauptkategorie: str = Field(..., alias="Hauptkategorie")
     unterkategorie: str = Field(..., alias="Unterkategorie")
+    datenerhalt: str = Field(..., alias="Weg des Datenerhalts")
+    status: str = Field(..., alias="Status (planbare Verfügbarkeit der Daten)")
+    datennutzungszweck: str = Field(..., alias="Datennutzungszweck")
+    rechtsgrundlage: str = Field(
+        ..., alias="Rechtsgrundlage für die Zugangseröffnung"
+    )
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
@@ -88,14 +101,10 @@ class DatenkompassResource(BaseModel):
     datennutzungszweck_erweitert: str | None = Field(
         None, alias="Datennutzungszweck (erweitert)"
     )
-    dk_format: str | None = Field(
-        None, alias="Format der Daten"
-    )
+    dk_format: str | None = Field(None, alias="Format der Daten")
     hauptkategorie: str = Field(..., alias="Hauptkategorie")
     unterkategorie: str = Field(..., alias="Unterkategorie")
-    rechtsgrundlage: str = Field(
-        ..., alias="Rechtsgrundlage für die Zugangseröffnung"
-    )
+    rechtsgrundlage: str = Field(..., alias="Rechtsgrundlage für die Zugangseröffnung")
     datenerhalt: str = Field(..., alias="Weg des Datenerhalts")
     status: str = Field(..., alias="Status (planbare Verfügbarkeit der Daten)")
     datennutzungszweck: str = Field(..., alias="Datennutzungszweck")

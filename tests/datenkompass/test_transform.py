@@ -15,7 +15,7 @@ from mex.extractors.datenkompass.models.item import (
 from mex.extractors.datenkompass.transform import (
     get_datenbank,
     get_email,
-    get_resource_contact,
+    get_resource_email,
     get_title,
     get_unit_shortname,
     get_vocabulary,
@@ -51,10 +51,10 @@ def test_get_email(
     }
     result = get_email(responsible_unit_ids, merged_organizational_units_by_id)
 
-    assert sorted(result) == ["unit@example.org"]
+    assert result == "unit@example.org"
 
 
-def test_get_resource_contact(
+def test_get_resource_email(
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
@@ -68,16 +68,13 @@ def test_get_resource_contact(
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
-    result = get_resource_contact(
+    result = get_resource_email(
         responsible_unit_ids,
         merged_organizational_units_by_id,
         mocked_merged_contact_point_by_id,
     )
 
-    assert sorted(result) == [
-        "contactpoint@example.org",
-        "unit@example.org",
-    ]
+    assert result == "unit@example.org"
 
 
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
@@ -107,7 +104,7 @@ def test_transform_activities(
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
-    ]  # item with no BMG filtered out
+    ]  # item with wrong organization filtered out
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -141,8 +138,8 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": "Buch. Die Nutzung;The usage",
-        "kontakt": ["unit@example.org"],
+        "beschreibung": "Buch. Die Nutzung",
+        "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
@@ -150,12 +147,18 @@ def test_transform_bibliographic_resource(
         ),
         "schlagwort": ["short en", "short de"],
         "datenbank": "https://doi.org/10.1234_find_this",
+        "rechtsgrundlagen_benennung": "Nicht zutreffend",
+        "datennutzungszweck_erweitert": "Nicht zutreffend",
         "voraussetzungen": "Frei zugänglich",
         "datenhalter": "Robert Koch-Institut",
-        "frequenz": "Einmalig",
+        "frequenz": "Nicht zutreffend",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "herausgeber": "Robert Koch-Institut",
+        "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
+        "status": "Stabil",
+        "datennutzungszweck": "Sonstige",
+        "rechtsgrundlage": "Nicht zutreffend",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -171,47 +174,44 @@ def test_transform_resources(
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
-    extracted_merged_resource = {
+    fetched_merged_resource = {
         "open-data": [mocked_merged_resource[0]],
         "report-server": [mocked_merged_resource[1]],
     }
-    extracted_merged_organizational_units_by_id = {
+    fetched_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    extracted_merged_contact_points_by_id = {
+    fetched_merged_contact_points_by_id = {
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
     result = transform_resources(
-        extracted_merged_resource,
-        extracted_merged_organizational_units_by_id,
-        extracted_merged_contact_points_by_id,
+        fetched_merged_resource,
+        fetched_merged_organizational_units_by_id,
+        fetched_merged_contact_points_by_id,
     )
 
     assert len(result) == 2
     assert result[0].model_dump() == {
         "voraussetzungen": "Frei zugänglich",
         "frequenz": [],
-        "kontakt": [
-            "unit@example.org",
-            "contactpoint@example.org",
-        ],
+        "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
         "beschreibung": "deutsche Beschreibung",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
         "datennutzungszweck_erweitert": ["has purpose"],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie", "word 1", "Wort 2"],
-        "dk_format": [],
+        "dk_format": "Sonstiges",
         "titel": ["some open data resource title"],
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Ja",
+        "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
         "datennutzungszweck": ["Themenspezifische Auswertung"],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -222,26 +222,26 @@ def test_transform_resources(
     assert result[1].model_dump() == {
         "voraussetzungen": "Zugang eingeschränkt",
         "frequenz": [],
-        "kontakt": [],
+        "kontakt": None,
         "organisationseinheit": ["a.bsp. unit"],
         "beschreibung": "n/a",
         "datenbank": None,
         "rechtsgrundlagen_benennung": [],
         "datennutzungszweck_erweitert": [],
         "schlagwort": ["Infektionskrankheiten und -epidemiologie"],
-        "dk_format": [],
+        "dk_format": "Sonstiges",
         "titel": ["some synopse resource title"],
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Nicht bekannt",
+        "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
         "datennutzungszweck": [
             "Themenspezifische Auswertung",
             "Themenspezifisches Monitoring",
         ],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
