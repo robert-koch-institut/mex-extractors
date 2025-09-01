@@ -22,7 +22,10 @@ from mex.extractors.datenkompass.extract import (
     get_merged_items,
     get_relevant_primary_source_ids,
 )
-from mex.extractors.datenkompass.filter import filter_for_bmg
+from mex.extractors.datenkompass.filter import (
+    filter_for_organization,
+    find_descendant_units,
+)
 from mex.extractors.datenkompass.load import (
     start_s3_client,
     write_items_to_xlsx,
@@ -42,7 +45,7 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_organizational_units_by_id() -> dict[
+def fetched_merged_organizational_units_by_id() -> dict[
     MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
 ]:
     """Get all organizational units as dictionary by id."""
@@ -56,10 +59,20 @@ def extracted_merged_organizational_units_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_contact_points_by_id() -> dict[
+def filtered_merged_organizational_unit_ids(
+    fetched_merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get child unit ids by filter setting for extraction filter."""
+    return find_descendant_units(fetched_merged_organizational_units_by_id)
+
+
+@asset(group_name="datenkompass")
+def fetched_merged_contact_points_by_id() -> dict[
     MergedContactPointIdentifier, MergedContactPoint
 ]:
-    """Get all organizational units as dict by id."""
+    """Get all contact points as dict by id."""
     return {
         cp.identifier: cp
         for cp in cast(
@@ -70,20 +83,24 @@ def extracted_merged_contact_points_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_bmg_ids() -> set[MergedOrganizationIdentifier]:
-    """Get BMG identifiers as set."""
+def filtered_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
+    """Get relevant organization identifiers as set."""
+    settings = Settings()
     return {
-        bmg.identifier
-        for bmg in cast(
+        organization.identifier
+        for organization in cast(
             "list[MergedOrganization]",
-            get_merged_items(query_string="BMG", entity_type=["MergedOrganization"]),
+            get_merged_items(
+                query_string=settings.datenkompass.organization_filter,
+                entity_type=["MergedOrganization"],
+            ),
         )
     }
 
 
 @asset(group_name="datenkompass")
 def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
-    """Get person name by id."""
+    """Get person name as dictionary by id."""
     return {
         person.identifier: (
             person.fullName[0]
@@ -101,7 +118,7 @@ def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_activities() -> list[MergedActivity]:
+def fetched_merged_activities() -> list[MergedActivity]:
     """Get merged activities."""
     relevant_primary_sources = [
         "blueant",
@@ -125,15 +142,17 @@ def extracted_merged_activities() -> list[MergedActivity]:
 
 @asset(group_name="datenkompass")
 def extracted_and_filtered_merged_activities(
-    extracted_merged_activities: list[MergedActivity],
-    extracted_merged_bmg_ids: set[MergedOrganizationIdentifier],
+    fetched_merged_activities: list[MergedActivity],
+    filtered_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter merged activities."""
-    return filter_for_bmg(extracted_merged_activities, extracted_merged_bmg_ids)
+    return filter_for_organization(
+        fetched_merged_activities, filtered_merged_organization_ids
+    )
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
+def fetched_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
     relevant_primary_sources = ["endnote"]
     entity_type = ["MergedBibliographicResource"]
@@ -149,15 +168,17 @@ def extracted_merged_bibliographic_resources() -> list[MergedBibliographicResour
 
 
 @asset(group_name="datenkompass")
-def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResource]]:
+def fetched_merged_resources_by_primary_source(
+    filtered_merged_organizational_unit_ids: list[str],
+) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
     relevant_primary_sources = ["open-data", "report-server"]
     entity_type = ["MergedResource"]
-    merged_resources: dict[str, list[MergedResource]] = {}
+    merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
     for rps in relevant_primary_sources:
         primary_source_ids = get_relevant_primary_source_ids([rps])
 
-        merged_resources[rps] = cast(
+        merged_resources_by_primary_source[rps] = cast(
             "list[MergedResource]",
             get_merged_items(
                 entity_type=entity_type,
@@ -166,54 +187,75 @@ def extracted_merged_resources_by_primary_source() -> dict[str, list[MergedResou
             ),
         )
 
-    return merged_resources
+    first_fetched_merged_resources_ids = {
+        mr.identifier
+        for merged_resources in merged_resources_by_primary_source.values()
+        for mr in merged_resources
+    }
+
+    merged_resources_of_units = cast(
+        "list[MergedResource]",
+        get_merged_items(
+            entity_type=entity_type,
+            referenced_identifier=filtered_merged_organizational_unit_ids,
+            reference_field="unitInCharge",
+        ),
+    )
+
+    merged_resources_by_primary_source["unit filter"] = [
+        mr
+        for mr in merged_resources_of_units
+        if mr.identifier not in first_fetched_merged_resources_ids
+    ]
+
+    return merged_resources_by_primary_source
 
 
 @asset(group_name="datenkompass")
 def transform_activities_to_datenkompass_activities(
     extracted_and_filtered_merged_activities: list[MergedActivity],
-    extracted_merged_organizational_units_by_id: dict[
+    fetched_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
         extracted_and_filtered_merged_activities,
-        extracted_merged_organizational_units_by_id,
+        fetched_merged_organizational_units_by_id,
     )
 
 
 @asset(group_name="datenkompass")
 def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
-    extracted_merged_bibliographic_resources: list[MergedBibliographicResource],
-    extracted_merged_organizational_units_by_id: dict[
+    fetched_merged_bibliographic_resources: list[MergedBibliographicResource],
+    fetched_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
-        extracted_merged_bibliographic_resources,
-        extracted_merged_organizational_units_by_id,
+        fetched_merged_bibliographic_resources,
+        fetched_merged_organizational_units_by_id,
         person_name_by_id,
     )
 
 
 @asset(group_name="datenkompass")
 def transform_resources_to_datenkompass_resources(
-    extracted_merged_resources_by_primary_source: dict[str, list[MergedResource]],
-    extracted_merged_organizational_units_by_id: dict[
+    fetched_merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    fetched_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    extracted_merged_contact_points_by_id: dict[
+    fetched_merged_contact_points_by_id: dict[
         MergedContactPointIdentifier, MergedContactPoint
     ],
 ) -> list[DatenkompassResource]:
     """Transform resources to datenkompass items."""
     return transform_resources(
-        extracted_merged_resources_by_primary_source,
-        extracted_merged_organizational_units_by_id,
-        extracted_merged_contact_points_by_id,
+        fetched_merged_resources_by_primary_source,
+        fetched_merged_organizational_units_by_id,
+        fetched_merged_contact_points_by_id,
     )
 
 
