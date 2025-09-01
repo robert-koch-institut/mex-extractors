@@ -107,7 +107,7 @@ def test_transform_activities(
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
-    ]  # item with no BMG filtered out
+    ]  # item with wrong organization filtered out
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -171,21 +171,21 @@ def test_transform_resources(
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
 ) -> None:
-    extracted_merged_resource = {
+    fetched_merged_resource = {
         "open-data": [mocked_merged_resource[0]],
         "report-server": [mocked_merged_resource[1]],
     }
-    extracted_merged_organizational_units_by_id = {
+    fetched_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    extracted_merged_contact_points_by_id = {
+    fetched_merged_contact_points_by_id = {
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
     result = transform_resources(
-        extracted_merged_resource,
-        extracted_merged_organizational_units_by_id,
-        extracted_merged_contact_points_by_id,
+        fetched_merged_resource,
+        fetched_merged_organizational_units_by_id,
+        fetched_merged_contact_points_by_id,
     )
 
     assert len(result) == 2
