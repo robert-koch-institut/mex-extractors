@@ -68,9 +68,7 @@ class DatenkompassBibliographicResource(BaseModel):
     datenerhalt: str = Field(..., alias="Weg des Datenerhalts")
     status: str = Field(..., alias="Status (planbare Verfügbarkeit der Daten)")
     datennutzungszweck: str = Field(..., alias="Datennutzungszweck")
-    rechtsgrundlage: str = Field(
-        ..., alias="Rechtsgrundlage für die Zugangseröffnung"
-    )
+    rechtsgrundlage: str = Field(..., alias="Rechtsgrundlage für die Zugangseröffnung")
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
