@@ -165,7 +165,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
     variables = list(
         transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
             synopse_variables,
-            variable_group,
+            variable_group_by_identifier_in_primary_source,
             resources_by_synopse_id,
             extracted_primary_sources["report-server"],
             synopse_study_overviews,
@@ -183,10 +183,13 @@ def test_transform_synopse_variables_to_mex_variables(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
+    variable_group_by_identifier_in_primary_source = {
+        group.identifierInPrimarySource: group for group in extracted_variable_groups
+    }
     variables = list(
         transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
-            extracted_variable_groups,
+            variable_group_by_identifier_in_primary_source,
             resources_by_synopse_id,
             extracted_primary_sources["report-server"],
             synopse_study_overviews,
@@ -225,7 +228,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["bFQoRhcVH5DHYc"],
-        "contributingUnit": ["bFQoRhcVH5DHYc"],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],

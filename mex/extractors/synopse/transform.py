@@ -29,6 +29,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedVariableGroupIdentifier,
     TemporalEntity,
     Text,
     TextLanguage,
@@ -113,7 +114,9 @@ def transform_overviews_to_resource_lookup(
 @watch()
 def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     variables: Iterable[SynopseVariable],
-    belongs_to: ExtractedVariableGroup,
+    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+        str, ExtractedVariableGroup
+    ],
     extracted_synopse_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
@@ -124,7 +127,8 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
 
     Args:
         variables: Iterable of Synopse Variables
-        belongs_to: extracted variable group that the variables belong to
+        extracted_synopse_variable_groups_by_identifier_in_primary_source:
+            extracted variable groups by identifier in primary source
         extracted_synopse_resources_by_identifier_in_primary_source:
             Map from synopse ID to study resource
         extracted_primary_source: Extracted report server primary source
@@ -147,6 +151,19 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         resource_identifier = (
             f"{study.studien_id}-{study.titel_datenset}-{study.ds_typ_id}"
         )
+        variable_group_identifier = (
+            f"{variable.thema_und_fragebogenausschnitt}-{resource_identifier}"
+        )
+        belongs_to: list[MergedVariableGroupIdentifier] = []
+        if (
+            variable_group_identifier
+            in extracted_synopse_variable_groups_by_identifier_in_primary_source
+        ):
+            belongs_to = [
+                extracted_synopse_variable_groups_by_identifier_in_primary_source[
+                    variable_group_identifier
+                ].stableTargetId
+            ]
         if (
             resource_identifier
             in extracted_synopse_resources_by_identifier_in_primary_source
@@ -158,7 +175,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
             continue
 
         yield ExtractedVariable(
-            belongsTo=[belongs_to.stableTargetId] if belongs_to else [],
+            belongsTo=belongs_to,
             codingSystem=variable.val_instrument,
             dataType=variable.datentyp,
             description=(
@@ -177,7 +194,9 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
 @watch()
 def transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    variable_groups: Iterable[ExtractedVariableGroup],
+    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+        str, ExtractedVariableGroup
+    ],
     extracted_synopse_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
@@ -189,7 +208,8 @@ def transform_synopse_variables_to_mex_variables(
     Args:
         synopse_variables_by_thema: mapping from "Thema und Fragebogenausschnitt"
             to the variables having this value
-        variable_groups: extracted variable groups
+        extracted_synopse_variable_groups_by_identifier_in_primary_source:
+            extracted variable groups by identifier in primary source
         extracted_synopse_resources_by_identifier_in_primary_source:
             Map from synopse ID to study resource
         extracted_primary_source: Extracted report server primary source
@@ -201,15 +221,14 @@ def transform_synopse_variables_to_mex_variables(
     """
     variable_group_by_thema = {
         group.identifierInPrimarySource.split("-")[0]: group
-        for group in variable_groups
+        for group in extracted_synopse_variable_groups_by_identifier_in_primary_source.values()  # noqa: E501
     }
     for thema, variables in synopse_variables_by_thema.items():
         if thema not in variable_group_by_thema:
             continue
-        belongs_to = variable_group_by_thema[thema]
         yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501
             variables,
-            belongs_to,
+            extracted_synopse_variable_groups_by_identifier_in_primary_source,
             extracted_synopse_resources_by_identifier_in_primary_source,
             extracted_primary_source,
             study_overviews,
@@ -249,10 +268,10 @@ def transform_synopse_variables_to_mex_variable_groups(
             resource_identifier = (
                 f"{study.studien_id}-{study.titel_datenset}-{study.ds_typ_id}"
             )
-            if resource_identifier in seen:
-                continue
-            seen.append(resource_identifier)
             identifier_in_primary_source = f"{thema}-{resource_identifier}"
+            if identifier_in_primary_source in seen:
+                continue
+            seen.append(identifier_in_primary_source)
             if (
                 resource_identifier
                 in extracted_synopse_resources_by_identifier_in_primary_source
@@ -369,8 +388,12 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         else:
             continue
         contributing_unit: list[MergedOrganizationalUnitIdentifier] = []
-        if project.verantwortliche_oe in unit_merged_ids_by_synonym:
-            contributing_unit = [unit_merged_ids_by_synonym[project.verantwortliche_oe]]
+        if project.interne_partner:
+            contributing_unit = [
+                unit_merged_ids_by_synonym[unit]
+                for unit in project.interne_partner.split(", ")
+                if unit in unit_merged_ids_by_synonym
+            ]
         contributor: list[MergedPersonIdentifier] = []
         if (
             project.beitragende

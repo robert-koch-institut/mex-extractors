@@ -283,14 +283,14 @@ def extracted_synopse_activities(  # noqa: PLR0913
 
 
 @asset(group_name="synopse")
-def extracted_synopse_variable_groups(
+def extracted_synopse_variable_groups_by_identifier_in_primary_source(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
     extracted_synopse_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
     synopse_study_overviews: list[SynopseStudyOverview],
-) -> list[ExtractedVariableGroup]:
+) -> dict[str, ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
@@ -301,14 +301,16 @@ def extracted_synopse_variable_groups(
         )
     )
     load(transformed_variable_groups)
-    return transformed_variable_groups
+    return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
 
 
 @asset(group_name="synopse")
 def extracted_synopse_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    extracted_synopse_variable_groups: list[ExtractedVariableGroup],
+    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+        str, ExtractedVariableGroup
+    ],
     extracted_synopse_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
@@ -318,7 +320,7 @@ def extracted_synopse_variables(
     extracted_variables = list(
         transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
-            extracted_synopse_variable_groups,
+            extracted_synopse_variable_groups_by_identifier_in_primary_source,
             extracted_synopse_resources_by_identifier_in_primary_source,
             extracted_primary_source_report_server,
             synopse_study_overviews,
