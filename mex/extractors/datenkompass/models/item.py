@@ -85,7 +85,7 @@ class DatenkompassResource(BaseModel):
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
     frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
-    kontakt: str = Field(..., alias="Kontakt (Herausgeber)")
+    kontakt: str | None = Field(None, alias="Kontakt (Herausgeber)")
     organisationseinheit: str = Field(..., alias="Organisationseinheit")
     titel: str = Field(..., alias="Titel")
     schlagwort: str = Field(..., alias="Schlagwort")

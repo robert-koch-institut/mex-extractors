@@ -35,10 +35,7 @@ def test_get_unit_shortname(
     }
     result = get_unit_shortname(responsible_unit_ids, merged_organizational_units_by_id)
 
-    assert sorted(result) == [
-        "a.bsp. unit",
-        "e.g. unit",
-    ]
+    assert result == "a.bsp. unit; e.g. unit"
 
 
 def test_get_email(
@@ -108,7 +105,6 @@ def test_transform_activities(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-
     result = transform_activities(
         extracted_and_filtered_merged_activities, merged_organizational_units_by_id
     )
@@ -140,12 +136,12 @@ def test_transform_bibliographic_resource(
     assert result[0].model_dump() == {
         "beschreibung": "Buch. Die Nutzung",
         "kontakt": "unit@example.org",
-        "organisationseinheit": ["e.g. unit"],
+        "organisationseinheit": "e.g. unit",
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
             "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
         ),
-        "schlagwort": ["short en", "short de"],
+        "schlagwort": "short en; short de",
         "datenbank": "https://doi.org/10.1234_find_this",
         "rechtsgrundlagen_benennung": "Nicht zutreffend",
         "datennutzungszweck_erweitert": "Nicht zutreffend",
@@ -210,7 +206,7 @@ def test_transform_resources(
         "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
-        "datennutzungszweck": ["Themenspezifische Auswertung"],
+        "datennutzungszweck": "Themenspezifische Auswertung",
         "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
@@ -226,8 +222,8 @@ def test_transform_resources(
         "organisationseinheit": "a.bsp. unit",
         "beschreibung": "n/a",
         "datenbank": None,
-        "rechtsgrundlagen_benennung": "Nicht zutreffend",
-        "datennutzungszweck_erweitert": "Nicht zutreffend",
+        "rechtsgrundlagen_benennung": None,
+        "datennutzungszweck_erweitert": None,
         "schlagwort": "Infektionskrankheiten und -epidemiologie",
         "dk_format": "Sonstiges",
         "titel": "some synopse resource title",

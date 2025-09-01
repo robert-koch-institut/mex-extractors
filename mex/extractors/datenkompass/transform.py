@@ -81,7 +81,7 @@ def get_unit_shortname(
                     org_id
                 ].shortName
             ]
-        ],
+        ]
     )
 
 
@@ -259,6 +259,7 @@ def transform_activities(
         schlagwort = (
             delim.join(t for t in get_vocabulary(item.theme) if t is not None) or None
         )
+        datenbank = None
         if item.website:
             url_de = delim.join([w.url for w in item.website if w.language == "de"])
             datenbank = url_de if url_de else item.website[0].url
@@ -440,13 +441,17 @@ def transform_resources(
                 )
                 or None
             )
-            schlagwort_collection = [
+            schlagwort_collection = get_vocabulary(item.theme) + [
                 entry.value for entry in item.keyword
-            ] + get_vocabulary(item.theme)
+            ]
             schlagwort = (
                 delim.join(
-                    [entry for entry in schlagwort_collection if entry is not None],
+                    [entry for entry in schlagwort_collection if entry is not None]
                 )
+                or None
+            )
+            datennutzungszweck_erweitert = (
+                delim.join([hp.value for hp in item.hasPurpose if hp.value is not None])
                 or None
             )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
@@ -459,10 +464,10 @@ def transform_resources(
                     beschreibung=beschreibung,
                     datenbank=item.doi,
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
-                    datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
+                    datennutzungszweck_erweitert=datennutzungszweck_erweitert,
                     schlagwort=schlagwort,
                     dk_format="Sonstiges",
-                    titel=[fix_quotes(t.value) for t in item.title],
+                    titel=delim.join([fix_quotes(t.value) for t in item.title]),
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
