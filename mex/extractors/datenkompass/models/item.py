@@ -16,7 +16,7 @@ class DatenkompassActivity(BaseModel):
     datenhalter: str = Field(
         ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
-    kontakt: str = Field(..., alias="Kontakt (Herausgeber)")
+    kontakt: str | None = Field(None, alias="Kontakt (Herausgeber)")
     organisationseinheit: str = Field(..., alias="Organisationseinheit")
     titel: str = Field(..., alias="Titel")
     schlagwort: str | None = Field(None, alias="Schlagwort")
