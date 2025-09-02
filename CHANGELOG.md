@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `all_checks_path` added in `mex.extractors.settings` for rules
 
 
+- add return values to all assets for debugging and bookkeeping
+
 ### Changes
 
 
@@ -29,15 +31,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+- improve usage of backend endpoints for merged items
+- add resources by unit filter to datenkompass
+- update mex-common dependency to 1.2
+- update mex-artificial dependency to >1.0
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- igs test main
-
 ### Security
+
+## [0.41.0] - 2025-08-21
+
+### Changes
+
+- update synopse according to mapping changes
+- update datenkompass according to mapping changes and save items as xlsx
+
+### Fixed
+
+- igs test main
+- reading of xml-files for endnote
 
 ## [0.40.0] - 2025-07-30
 

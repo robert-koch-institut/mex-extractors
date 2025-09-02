@@ -10,15 +10,18 @@ from mex.extractors.sinks import load
 @asset(group_name="contact_point")
 def extracted_contact_point_mex(
     extracted_primary_source_mex: ExtractedPrimarySource,
-) -> None:
-    """Load and return blueant primary source."""
+) -> list[ExtractedContactPoint]:
+    """Load and return default contact points."""
     settings = Settings.get()
-    extracted_contact_point = ExtractedContactPoint(
-        identifierInPrimarySource=str(settings.contact_point.mex_email),
-        hadPrimarySource=extracted_primary_source_mex.stableTargetId,
-        email=[settings.contact_point.mex_email],
-    )
-    load([extracted_contact_point])
+    extracted_contact_points = [
+        ExtractedContactPoint(
+            identifierInPrimarySource=str(settings.contact_point.mex_email),
+            hadPrimarySource=extracted_primary_source_mex.stableTargetId,
+            email=[settings.contact_point.mex_email],
+        )
+    ]
+    load(extracted_contact_points)
+    return extracted_contact_points
 
 
 @entrypoint(Settings)

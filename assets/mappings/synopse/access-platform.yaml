@@ -1,40 +1,42 @@
-# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
+# yaml-language-server: $schema=../../__schema__/AccessPlatformMapping.json
 
+alternativeTitle:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: alternative test title
 contact:
   - mappingRules:
-      - forValues:
-          - C1
-      - rule:
+    - forValues:
+      - email@email.de
+      rule:
+description:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: test description
 hadPrimarySource:
   - mappingRules:
       - rule:
 identifierInPrimarySource:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - rule:
+  - mappingRules:
+      - setValues: test id
 landingPage:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - rule:
-      - forValues:
-        - https://asd.def
-        setValues:
+  - mappingRules:
+      - setValues:
         - language: de
-          title: ASD DEF
-          url: https://asd.def
+          title: test landing page
+          url: https://www.rki.de/test_landing_page
 technicalAccessibility:
   - mappingRules:
-      - setValues: https://mex.rki.de/item/technical-accessibility-1
-    comment:
+    - setValues: https://mex.rki.de/item/technical-accessibility-2 # external
 title:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - rule:
+  - mappingRules:
+      - setValues:
+        - language: de
+          value: test title
 unitInCharge:
   - mappingRules:
-      - forValues:
-          - C1
-      - rule:
+    - forValues:
+      - C1
+      rule:
