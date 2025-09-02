@@ -85,13 +85,13 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
         "rules": [
             {
                 "fail_if": "x_items_more_than",
-                "value": 10,
+                "value": 99,
                 "time_frame": "10d",
                 "target_type": None,
             },
             {
                 "fail_if": "x_items_less_than",
-                "value": 5,
+                "value": 42,
                 "time_frame": "2m",
                 "target_type": None,
             },

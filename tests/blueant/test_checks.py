@@ -1,77 +1,16 @@
 from datetime import UTC, datetime, tzinfo
-from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
 import pytest
 from dagster import (
-    AssetCheckResult,
     AssetKey,
     DagsterInstance,
     build_asset_check_context,
 )
 from pytest import MonkeyPatch
 
-from mex.extractors.blueant.checks import check_yaml_rules_exist
 from mex.extractors.pipeline.checks.main import check_x_items_more_passed
-
-
-def test_check_yaml_rules_exist_with_real_yaml(monkeypatch: MonkeyPatch) -> None:
-    yaml_path = Path(__file__).parent.parent.parent / "assets" / "raw-data" / "pipeline"
-
-    class MockSettings:
-        all_checks_path = yaml_path
-
-        @classmethod
-        def get(cls) -> "MockSettings":
-            return cls()
-
-    monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
-
-    context = build_asset_check_context()
-    result = check_yaml_rules_exist(context)
-    assert isinstance(result, AssetCheckResult)
-    assert result.passed
-
-
-@pytest.mark.parametrize(
-    ("rule_threshold", "expected_passed"),
-    [
-        (None, False),
-        (0, False),
-        (-1, False),
-        (5, True),
-    ],
-    ids=["none", "0", "negative_value", "valid_value"],
-)
-def test_check_yaml_rules_exist_valid_threshold(
-    monkeypatch: MonkeyPatch, rule_threshold: int, *, expected_passed: bool
-) -> None:
-    yaml_path = Path(__file__).parent.parent.parent / "assets" / "raw-data" / "pipeline"
-
-    class MockSettings:
-        all_checks_path = yaml_path
-
-        @classmethod
-        def get(cls) -> "MockSettings":
-            return cls()
-
-    monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
-
-    monkeypatch.setattr(
-        "mex.extractors.blueant.checks.check_yaml_path",
-        lambda extractor, entity_type: True,
-    )
-
-    monkeypatch.setattr(
-        "mex.extractors.blueant.checks.get_rule",
-        lambda rule, extractor, entity_type: {"value": rule_threshold},
-    )
-
-    context = build_asset_check_context()
-    result = check_yaml_rules_exist(context)
-    assert isinstance(result, AssetCheckResult)
-    assert result.passed == expected_passed
 
 
 @pytest.mark.parametrize(

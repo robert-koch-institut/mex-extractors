@@ -6,7 +6,6 @@ from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
-    ExtractedActivity,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )

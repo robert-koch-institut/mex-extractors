@@ -52,25 +52,21 @@ def parse_time_frame(time_frame: str) -> timedelta:
 
 def get_historical_events(events: list[EventLogRecord]) -> dict[datetime, int]:
     """Load all past events and refactor it to a dict."""
-    historical_events: list[EventLogRecord] = []
+    result = {}
 
     for e in events:
+        am = e.asset_materialization
         if (
-            e.asset_materialization is not None
-            and hasattr(e.asset_materialization, "metadata")
-            and "num_items" in e.asset_materialization.metadata
-            and hasattr(e.asset_materialization.metadata["num_items"], "value")
+            am is not None
+            and hasattr(am, "metadata")
+            and "num_items" in am.metadata
+            and hasattr(am.metadata["num_items"], "value")
         ):
-            value = e.asset_materialization.metadata["num_items"].value
+            value = am.metadata["num_items"].value
             if value is not None:
-                historical_events.append(e)
+                timestamp = datetime.fromtimestamp(e.timestamp, tz=UTC)
+                result[timestamp] = int(str(value))
 
-    result: dict[datetime, int] = {}
-    for e in historical_events:
-        if e.asset_materialization is not None:
-            timestamp = datetime.fromtimestamp(e.timestamp, tz=UTC)
-            value = e.asset_materialization.metadata["num_items"].value
-            result[timestamp] = int(str(value))
     return result
 
 
@@ -132,9 +128,9 @@ def check_x_items_more_passed(
     if events is None:
         return True
 
-    latest_count = asset_data
+    actual_count = asset_data
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
-    return latest_count <= (historic_count if historic_count > 0 else latest_count) + (
+    return actual_count <= (historic_count if historic_count > 0 else actual_count) + (
         rule["value"] or 0
     )

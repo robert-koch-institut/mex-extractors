@@ -4,7 +4,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
-    ExtractedBibliographicResource,
     ExtractedConsent,
     ExtractedPerson,
     ExtractedPrimarySource,
