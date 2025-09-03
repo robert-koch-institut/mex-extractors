@@ -1037,11 +1037,8 @@ files = [
 
 [[package]]
 name = "mex-common"
-version = "2.0.0"
-requires_python = ">=3.11,<3.12"
-git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "feature/mx-1964-more-languages"
-revision = "99c933890a7cedd797b4ba3b11cfa976f08528b4"
+version = "1.2.0"
+requires_python = "<3.12,>=3.11"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [
@@ -1057,6 +1054,10 @@ dependencies = [
     "pydantic<2.10,>=2",
     "pytz<2024.2,>=2024",
     "requests<3,>=2",
+]
+files = [
+    {file = "mex_common-1.2.0-py3-none-any.whl", hash = "sha256:fd542c25f02174d3032986ba074a5ebf34bcabd95526711c49213fbc474a95eb"},
+    {file = "mex_common-1.2.0.tar.gz", hash = "sha256:6d05989bdcacef17d414c194f79635f771e7571681d9a4418e45958ea4509de1"},
 ]
 
 [[package]]
