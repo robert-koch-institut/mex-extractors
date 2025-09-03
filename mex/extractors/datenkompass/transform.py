@@ -329,16 +329,22 @@ def transform_bibliographic_resources(
                 beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
+                rechtsgrundlagen_benennung="Nicht zutreffend",
+                datennutzungszweck_erweitert="Nicht zutreffend",
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
-                frequenz="Einmalig",
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
                 herausgeber="Robert Koch-Institut",
+                datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
+                status="Stabil",
+                datennutzungszweck="Sonstige",
+                rechtsgrundlage="Nicht zutreffend",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."

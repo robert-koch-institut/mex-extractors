@@ -150,12 +150,18 @@ def test_transform_bibliographic_resource(
         ),
         "schlagwort": ["short en", "short de"],
         "datenbank": "https://doi.org/10.1234_find_this",
+        "rechtsgrundlagen_benennung": "Nicht zutreffend",
+        "datennutzungszweck_erweitert": "Nicht zutreffend",
         "voraussetzungen": "Frei zugänglich",
         "datenhalter": "Robert Koch-Institut",
-        "frequenz": "Einmalig",
+        "frequenz": "Nicht zutreffend",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "herausgeber": "Robert Koch-Institut",
+        "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
+        "status": "Stabil",
+        "datennutzungszweck": "Sonstige",
+        "rechtsgrundlage": "Nicht zutreffend",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
