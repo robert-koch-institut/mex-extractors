@@ -265,7 +265,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Die Nutzung",
             datenhalter="Robert Koch-Institut",
-            kontakt=["unit@example.org"],
+            kontakt="unit@example.org",
             organisationseinheit=["a.bsp. unit", "e.g. unit"],
             titel=["short de", "title 'Act' no language", "title en"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
@@ -292,7 +292,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Without language",
             datenhalter="Robert Koch-Institut",
-            kontakt=["unit@example.org"],
+            kontakt="unit@example.org",
             organisationseinheit=["e.g. unit"],
             titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],

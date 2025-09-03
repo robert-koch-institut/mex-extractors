@@ -86,28 +86,28 @@ def get_email(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-) -> list[str]:
-    """Get email of merged units.
+) -> str | None:
+    """Get the first email address of referenced responsible units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
         merged_organizational_units_by_id: dict of all merged organizational units by id
 
     Returns:
-        List of emails of contact units as strings.
+        first found email of a responsible unit as string, or None if no email is found.
     """
-    return [
-        email
-        for org_id in responsible_unit_ids
-        for email in [
-            str(unit_email)
-            for unit_email in merged_organizational_units_by_id[org_id].email
-        ]
-    ]
+    return next(
+        (
+            str(email)
+            for org_id in responsible_unit_ids
+            for email in merged_organizational_units_by_id[org_id].email
+        ),
+        None,
+    )
 
 
-def get_resource_contact(
-    responsible_unit_ids: list[
+def get_resource_email(
+    responsible_reference_ids: list[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
         | MergedContactPointIdentifier
@@ -116,28 +116,30 @@ def get_resource_contact(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
-) -> list[str]:
-    """Get email from units and contact points.
+) -> str | None:
+    """Get the first email address of referenced responsible units or contact points.
+
+    Ignore referenced Persons.
 
     Args:
-        responsible_unit_ids: Set of responsible unit identifiers
+        responsible_reference_ids: List of referenced unit, contact point or person ids
         merged_organizational_units_by_id: dict of all merged organizational units by id
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
-        List of email-addresses as strings.
+        first found email of a unit or contact as string, or None if no email is found.
     """
-    contact_details: list[str] = []
     combined_dict = cast(
         "dict[Identifier, MergedContactPoint | MergedOrganizationalUnit]",
         {**merged_organizational_units_by_id, **merged_contact_points_by_id},
     )
 
-    for contact_id in responsible_unit_ids:
-        if contact := combined_dict.get(contact_id):
-            contact_details.extend([str(email) for email in contact.email])
-
-    return contact_details
+    for reference_id in responsible_reference_ids:
+        if (
+            referenced_item := combined_dict.get(reference_id)
+        ) and referenced_item.email:
+            return next(str(email) for email in referenced_item.email)
+    return None
 
 
 def get_german_text(text_entries: list[Text]) -> list[str]:
@@ -395,7 +397,7 @@ def transform_resources(
                 if item.accrualPeriodicity
                 else []
             )
-            kontakt = get_resource_contact(
+            kontakt = get_resource_email(
                 item.contact,
                 merged_organizational_units_by_id,
                 merged_contact_points_by_id,
