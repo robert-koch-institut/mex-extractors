@@ -19,8 +19,6 @@ from mex.common.types.vocabulary import (
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
     Theme,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -36,8 +34,6 @@ _VocabularyT = TypeVar(
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
 )
 
 
