@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2
 - update mex-artificial dependency to >1.0
+- update Datenkompass according to feedback #2
+- fix forgotten german PrefLabel in Beschreibung datenkompass
+- log number of published datenkompass items
+- fix some typos
 
 ### Deprecated
 

@@ -138,8 +138,8 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": "Buch. Die Nutzung",
         "kontakt": "unit@example.org",
+        "beschreibung": "Buch. Die Nutzung",
         "organisationseinheit": ["e.g. unit"],
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
@@ -154,11 +154,11 @@ def test_transform_bibliographic_resource(
         "frequenz": "Nicht zutreffend",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
         "status": "Stabil",
         "datennutzungszweck": "Sonstige",
         "rechtsgrundlage": "Nicht zutreffend",
-        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -197,7 +197,7 @@ def test_transform_resources(
         "frequenz": [],
         "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
-        "beschreibung": "deutsche Beschreibung",
+        "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
         "datennutzungszweck_erweitert": ["has purpose"],
