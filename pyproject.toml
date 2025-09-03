@@ -16,7 +16,7 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "faker>=37,<38",
     "mex-artificial>=1.0",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1964-more-languages",
+    "mex-common>=1.2,<1.3",
     "networkx>=3",
     "numpy>=2",
     "openpyxl>=3,<4",
