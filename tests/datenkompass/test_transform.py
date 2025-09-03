@@ -141,8 +141,8 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "beschreibung": "Buch. Die Nutzung;The usage",
         "kontakt": ["unit@example.org"],
+        "beschreibung": "Buch. Die Nutzung",
         "organisationseinheit": ["e.g. unit"],
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
