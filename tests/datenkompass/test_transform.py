@@ -157,7 +157,7 @@ def test_transform_bibliographic_resource(
         "frequenz": "Nicht zutreffend",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
         "status": "Stabil",
         "datennutzungszweck": "Sonstige",
@@ -217,7 +217,7 @@ def test_transform_resources(
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
         "datennutzungszweck": ["Themenspezifische Auswertung"],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."
@@ -247,7 +247,7 @@ def test_transform_resources(
             "Themenspezifische Auswertung",
             "Themenspezifisches Monitoring",
         ],
-        "herausgeber": "Robert Koch-Institut",
+        "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
             "voraussichtlich Ende 2025 verfügbar sein."

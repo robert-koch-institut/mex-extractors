@@ -280,7 +280,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
@@ -305,7 +305,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."

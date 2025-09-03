@@ -267,7 +267,7 @@ def transform_activities(
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
                 datennutzungszweck="Themenspezifische Auswertung",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -340,7 +340,7 @@ def transform_bibliographic_resources(
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
                 datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
                 status="Stabil",
                 datennutzungszweck="Sonstige",
@@ -445,7 +445,7 @@ def transform_resources(
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber="Robert Koch-Institut",
+                    herausgeber="RKI - Robert Koch-Institut",
                     kommentar=(
                         "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                         "voraussichtlich Ende 2025 verfügbar sein."
