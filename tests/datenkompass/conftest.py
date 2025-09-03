@@ -134,7 +134,10 @@ def mocked_merged_resource() -> list[MergedResource]:
             accessRestriction=AccessRestriction["OPEN"],
             description=[
                 Text(value="english description", language="en"),
-                Text(value="deutsche Beschreibung", language="de"),
+                Text(
+                    value=("deutsche Beschreibung <a href='http://mit.link'>skip</a>."),
+                    language="de",
+                ),
             ],
             contact=[
                 "PersonIdentifier4Peppa",

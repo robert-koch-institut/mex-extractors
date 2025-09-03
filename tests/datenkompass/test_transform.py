@@ -197,7 +197,7 @@ def test_transform_resources(
         "frequenz": [],
         "kontakt": "unit@example.org",
         "organisationseinheit": ["e.g. unit"],
-        "beschreibung": "deutsche Beschreibung",
+        "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
         "datennutzungszweck_erweitert": ["has purpose"],
