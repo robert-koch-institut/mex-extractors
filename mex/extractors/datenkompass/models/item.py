@@ -50,7 +50,7 @@ class DatenkompassBibliographicResource(BaseModel):
     organisationseinheit: list[str] = Field([], alias="Organisationseinheit")
     titel: str | None = Field(None, alias="Titel")
     datenhalter: str = Field(
-        ..., alias="Datenhalter/ Beautragung durch Behörde im Geschäftsbereich"
+        ..., alias="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich"
     )
     dk_format: str | None = Field(None, alias="Format der Daten")
     frequenz: str | None = Field(None, alias="Frequenz der Aktualisierung")
