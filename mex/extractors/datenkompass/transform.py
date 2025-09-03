@@ -259,6 +259,7 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
+                voraussetzungen="Unbekannt",
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
