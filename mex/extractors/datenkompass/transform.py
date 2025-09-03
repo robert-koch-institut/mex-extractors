@@ -418,13 +418,6 @@ def transform_resources(
                 *get_vocabulary(item.theme),
                 *[entry.value for entry in item.keyword],
             ]
-            dk_format = [
-                *get_vocabulary(item.resourceCreationMethod),
-                *get_vocabulary(item.resourceTypeGeneral),
-            ]
-            rechtsgrundlage = (
-                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
-            )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -437,12 +430,12 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
-                    dk_format=dk_format,
+                    dk_format="Sonstiges",
                     titel=[fix_quotes(t.value) for t in item.title],
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
-                    rechtsgrundlage=rechtsgrundlage,
+                    rechtsgrundlage="Nicht zutreffend",
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
                     datennutzungszweck=datennutzungszweck,

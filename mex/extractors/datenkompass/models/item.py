@@ -91,8 +91,8 @@ class DatenkompassResource(BaseModel):
     datennutzungszweck_erweitert: list[str] = Field(
         [], alias="Datennutzungszweck (erweitert)"
     )
-    dk_format: list[str] = Field(  # "format" would shadow a builtIn
-        [], alias="Format der Daten"
+    dk_format: str | None = Field(  # "format" would shadow a builtIn
+        None, alias="Format der Daten"
     )
     hauptkategorie: str | None = Field(None, alias="Hauptkategorie")
     unterkategorie: str | None = Field(None, alias="Unterkategorie")
