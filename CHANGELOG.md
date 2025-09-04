@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update Datenkompass according to feedback #2
+- fix forgotten german PrefLabel in Beschreibung datenkompass
+- log number of published datenkompass items
+- fix some typos
+
 ### Deprecated
 
 ### Removed
@@ -35,10 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2
 - update mex-artificial dependency to >1.0
-- update Datenkompass according to feedback #2
-- fix forgotten german PrefLabel in Beschreibung datenkompass
-- log number of published datenkompass items
-- fix some typos
 - wrap up synopse
 
 ## [0.41.0] - 2025-08-21
