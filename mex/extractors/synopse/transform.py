@@ -211,7 +211,7 @@ def transform_synopse_variables_to_mex_variables(
         extracted_synopse_variable_groups_by_identifier_in_primary_source:
             extracted variable groups by identifier in primary source
         extracted_synopse_resources_by_identifier_in_primary_source:
-            Map from synopse ID to study resource
+            Map from identifier in primary source to study resource
         extracted_primary_source: Extracted report server primary source
         study_overviews: list of synopse study overviews
 

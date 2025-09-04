@@ -224,7 +224,7 @@ def extracted_synopse_resources_by_identifier_in_primary_source(  # noqa: PLR091
         str, list[MergedPersonIdentifier]
     ],
 ) -> dict[str, ExtractedResource]:
-    """Get lookup from synopse_id to extracted resource stable target id.
+    """Get lookup from synopse_id to extracted resource identifier in primary source    .
 
     Also transforms Synopse data to extracted resources
     """
