@@ -209,7 +209,7 @@ def extracted_synopse_access_platform_id(
 
 
 @asset(group_name="synopse")
-def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
+def extracted_synopse_resources_by_identifier_in_primary_source(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
@@ -224,7 +224,7 @@ def extracted_synopse_resources_by_synopse_id(  # noqa: PLR0913
         str, list[MergedPersonIdentifier]
     ],
 ) -> dict[str, ExtractedResource]:
-    """Get lookup from synopse_id to extracted resource stable target id.
+    """Get lookup from synopse_id to extracted resource identifier in primary source.
 
     Also transforms Synopse data to extracted resources
     """
@@ -283,37 +283,47 @@ def extracted_synopse_activities(  # noqa: PLR0913
 
 
 @asset(group_name="synopse")
-def extracted_synopse_variable_groups(
+def extracted_synopse_variable_groups_by_identifier_in_primary_source(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    extracted_synopse_resources_by_synopse_id: dict[str, ExtractedResource],
-) -> list[ExtractedVariableGroup]:
+    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+        str, ExtractedResource
+    ],
+    synopse_study_overviews: list[SynopseStudyOverview],
+) -> dict[str, ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
             extracted_primary_source_report_server,
-            extracted_synopse_resources_by_synopse_id,
+            extracted_synopse_resources_by_identifier_in_primary_source,
+            synopse_study_overviews,
         )
     )
     load(transformed_variable_groups)
-    return transformed_variable_groups
+    return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
 
 
 @asset(group_name="synopse")
 def extracted_synopse_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    extracted_synopse_variable_groups: list[ExtractedVariableGroup],
-    extracted_synopse_resources_by_synopse_id: dict[str, ExtractedResource],
+    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+        str, ExtractedVariableGroup
+    ],
+    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+        str, ExtractedResource
+    ],
+    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> list[ExtractedVariable]:
     """Transforms Synopse data to extracted variables and load result."""
     extracted_variables = list(
         transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
-            extracted_synopse_variable_groups,
-            extracted_synopse_resources_by_synopse_id,
+            extracted_synopse_variable_groups_by_identifier_in_primary_source,
+            extracted_synopse_resources_by_identifier_in_primary_source,
             extracted_primary_source_report_server,
+            synopse_study_overviews,
         )
     )
     load(extracted_variables)

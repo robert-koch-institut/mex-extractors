@@ -134,7 +134,10 @@ def mocked_merged_resource() -> list[MergedResource]:
             accessRestriction=AccessRestriction["OPEN"],
             description=[
                 Text(value="english description", language="en"),
-                Text(value="deutsche Beschreibung", language="de"),
+                Text(
+                    value=("deutsche Beschreibung <a href='http://mit.link'>skip</a>."),
+                    language="de",
+                ),
             ],
             contact=[
                 "PersonIdentifier4Peppa",
@@ -265,13 +268,14 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Die Nutzung",
             datenhalter="Robert Koch-Institut",
-            kontakt=["unit@example.org"],
+            kontakt="unit@example.org",
             organisationseinheit=["a.bsp. unit", "e.g. unit"],
             titel=["short de", "title 'Act' no language", "title en"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[
                 "https://www.do-transform.org",
             ],
+            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -279,7 +283,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
@@ -291,11 +295,12 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Without language",
             datenhalter="Robert Koch-Institut",
-            kontakt=["unit@example.org"],
+            kontakt="unit@example.org",
             organisationseinheit=["e.g. unit"],
             titel=["short only english", "titel de"],
             schlagwort=["Infektionskrankheiten und -epidemiologie"],
             datenbank=[],
+            voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",
             unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -303,7 +308,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datenerhalt="Externe Zulieferung",
             status="Unbekannt",
             datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="Robert Koch-Institut",
+            herausgeber="RKI - Robert Koch-Institut",
             kommentar=(
                 "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                 "voraussichtlich Ende 2025 verfügbar sein."
