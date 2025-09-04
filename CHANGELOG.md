@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update Datenkompass according to feedback #2
+- fix forgotten german PrefLabel in Beschreibung datenkompass
+- log number of published datenkompass items
+- fix some typos
+
 ### Deprecated
 
 ### Removed
