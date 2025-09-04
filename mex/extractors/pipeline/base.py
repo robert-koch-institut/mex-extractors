@@ -109,7 +109,13 @@ def load_job_definitions() -> Definitions:
         for asset in assets
         for group in cast("AssetsDefinition", asset).group_names_by_key.values()
         if group
-        not in ["default", "publisher", "datenkompass", *settings.skip_extractors]
+        not in [
+            "default",
+            "publisher",
+            "consent_mailer",
+            "datenkompass",
+            *settings.skip_extractors,
+        ]
     }
     metadata: dict[str, Any] = {
         "settings": MetadataValue.md(
@@ -127,6 +133,7 @@ def load_job_definitions() -> Definitions:
         )
         for group_name in extractor_group_names
     ]
+
     sensors = []
 
     schedules = [
@@ -146,6 +153,23 @@ def load_job_definitions() -> Definitions:
             tags={"job_category": "extractor"},
         )
     )
+
+    # configure consent mailer
+    consent_mailer_job = define_asset_job(
+        "consent_mailer",
+        AssetSelection.groups("consent_mailer").upstream(),
+        metadata=metadata,
+        tags={"job_category": "consent_mailer"},
+    )
+    jobs.append(consent_mailer_job)
+    if settings.consent_mailer.schedule:
+        schedules.append(
+            ScheduleDefinition(
+                job=consent_mailer_job,
+                cron_schedule=settings.consent_mailer.schedule,
+                default_status=DefaultScheduleStatus.RUNNING,
+            )
+        )
 
     # Define the extra datenkompass job but without schedule or trigger
     datenkompass_job = define_asset_job(
