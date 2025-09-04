@@ -98,6 +98,7 @@ def get_email(
         (
             str(email)
             for org_id in responsible_unit_ids
+            if org_id in merged_organizational_units_by_id
             for email in merged_organizational_units_by_id[org_id].email
         ),
         None,
