@@ -16,7 +16,7 @@ class SynopseStudy(BaseModel):
     erstellungs_datum: str | None = Field(None, alias="ErstellungsDatum")
     feld_ende: str | None = Field(None, alias="Feldende")
     feld_start: str | None = Field(None, alias="Feldstart ")
-    herkunft_der_daten: str | None = Field(None, alias="HerkunfDerDaten")
+    herkunft_der_daten: str | None = Field(None, alias="HerkunftDerDaten")
     lizenz: str | None = Field(None, alias="Lizenz")
     datum_der_letzten_aenderung: str | None = Field(
         None, alias="DatumDerLetztenAenderung"
@@ -33,4 +33,4 @@ class SynopseStudy(BaseModel):
     typisches_alter_min: str | None = Field(None, alias="TypischesAlterMin")
     version: str | None = Field(None, alias="Version")
     zugangsbeschraenkung: str = Field(..., alias="Zugangsbeschraenkung")
-    zweck: str | None = Field(None, alias="Zweck der Datenverarbeitung")
+    zweck: str | None = Field(None, alias="ZweckDerDatenverarbeitung")

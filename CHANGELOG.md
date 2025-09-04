@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.42.0] - 2025-09-04
+
+### Added
+
 - finished consent-mailer pipeline
 - settings for the content-mailer
   - smtp server address for sending mails
@@ -25,14 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix forgotten german PrefLabel in Beschreibung datenkompass
 - log number of published datenkompass items
 - fix some typos
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+- wrap up synopse
 
 ## [0.41.0] - 2025-08-21
 
