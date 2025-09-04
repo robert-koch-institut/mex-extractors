@@ -92,9 +92,7 @@ def test_get_optional_string_from_cell() -> None:
     assert string is None
 
 
-@pytest.mark.usefixtures(
-    "mocked_wikidata",
-)
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_extract_ff_projects_organizations() -> None:
     organizations = extract_ff_projects_organizations(
         [next(extract_ff_projects_sources())]

@@ -5,7 +5,6 @@ import pytest
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
-    ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
@@ -19,7 +18,6 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedOrganizationIdentifier,
-    MergedResourceIdentifier,
     TemporalEntity,
     Text,
     TextLanguage,
@@ -114,54 +112,65 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
             "IntVar": True,
             "KeepVarname": False,
         },
-        {  # var 3, no auspraegung
-            "textbox49": None,
-            "Originalfrage": None,
-            "StudieID1": "STUDY1",
-            "StudieID2": 12345,
-            "SymopseID": 3,
-            "textbox51": None,
-            "textbox5": "Krankheiten (1101)",
-            "textbox2": "Krankheiten allgemein (110100)",
-            "valInstrument": None,
-            "textbox21": "no auspraegung",
-            "textbox24": "no_auspraegung",
-            "textbox11": "Text",
-            "IntVar": False,
-            "KeepVarname": False,
-        },
-        {  # var 4, different value in textbox5
-            "textbox49": None,
-            "Originalfrage": None,
-            "StudieID1": "STUDY1",
-            "StudieID2": 12345,
-            "SymopseID": 4,
-            "textbox51": None,
-            "textbox5": "Gesundheiten (1101)",
-            "textbox2": "Krankheiten allgemein (110100)",
-            "valInstrument": None,
-            "textbox21": "no auspraegung",
-            "textbox24": "no_auspraegung",
-            "textbox11": "Zahl",
-            "IntVar": False,
-            "KeepVarname": False,
-        },
-        {  # var 5, different studie_id, same thema
-            "textbox49": None,
-            "Originalfrage": None,
-            "StudieID1": "STUDY2",
-            "StudieID2": 23456,
-            "SymopseID": 5,
-            "textbox51": None,
-            "textbox5": "Krankheiten (1101)",
-            "textbox2": "Krankheiten allgemein (110100)",
-            "valInstrument": None,
-            "textbox21": "no auspraegung",
-            "textbox24": "no_auspraegung",
-            "textbox11": "Text",
-            "IntVar": False,
-            "KeepVarname": False,
-        },
+    ]
+
+
+@pytest.fixture
+def synopse_study_overviews() -> list[SynopseStudyOverview]:
+    """Return a list Synopse Study Overviews."""
+    return [
+        SynopseStudyOverview(
+            studien_id="studie1",
+            ds_typ_id=17,
+            titel_datenset="set1",
+            synopse_id="synopse1",
+        ),
+        SynopseStudyOverview(
+            studien_id="studie1",
+            ds_typ_id=18,
+            titel_datenset="set2",
+            synopse_id="synopse1",
+        ),
+        SynopseStudyOverview(
+            studien_id="studie2",
+            ds_typ_id=32,
+            titel_datenset="set2",
+            synopse_id="synopse2",
+        ),
+    ]
+
+
+@pytest.fixture
+def synopse_resources() -> list[ExtractedResource]:
+    """Return a list of synopse resources."""
+    return [
+        ExtractedResource(
+            title="Found in overview",
+            identifierInPrimarySource="studie1-set1-17",
+            hadPrimarySource=Identifier.generate(),
+            accessRestriction=AccessRestriction["OPEN"],
+            contact=[Identifier.generate()],
+            unitInCharge=[Identifier.generate()],
+            theme="https://mex.rki.de/item/theme-36",
+        ),
+        ExtractedResource(
+            title="Found in overview too",
+            identifierInPrimarySource="studie1-set2-18",
+            hadPrimarySource=Identifier.generate(),
+            accessRestriction=AccessRestriction["OPEN"],
+            contact=[Identifier.generate()],
+            unitInCharge=[Identifier.generate()],
+            theme="https://mex.rki.de/item/theme-36",
+        ),
+        ExtractedResource(
+            title="Not found in overview",
+            identifierInPrimarySource="not-found",
+            hadPrimarySource=Identifier.generate(),
+            accessRestriction=AccessRestriction["OPEN"],
+            contact=[Identifier.generate()],
+            unitInCharge=[Identifier.generate()],
+            theme="https://mex.rki.de/item/theme-36",
+        ),
     ]
 
 
@@ -208,6 +217,7 @@ def synopse_studies() -> list[SynopseStudy]:
     """Return a list of Synopse Studies."""
     return [
         SynopseStudy(
+            beitragende="Jane Doe",
             beschreibung="ein heikles Unterfangen.",
             dokumentation="Z:\\foo\\bar",
             ds_typ_id=17,
@@ -218,6 +228,7 @@ def synopse_studies() -> list[SynopseStudy]:
             studien_id="12345",
             titel_datenset="Titel",
             Studie="Studie123",
+            zugangsbeschraenkung="protected",
         ),
         SynopseStudy(
             beschreibung="ein zweites heikles Unterfangen.",
@@ -229,6 +240,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123456",
             titel_datenset="Titel 2",
+            zugangsbeschraenkung="open",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -240,6 +252,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123457",
             titel_datenset="Study ohne Referenzen",
+            zugangsbeschraenkung="sensitive",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -251,6 +264,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",
             titel_datenset="Study 2 ohne Referenzen",
+            zugangsbeschraenkung="protected",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -262,6 +276,7 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123457",
             titel_datenset="Study ohne Referenzen",
+            zugangsbeschraenkung="sensitive",
         ),
         SynopseStudy(
             beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
@@ -273,8 +288,18 @@ def synopse_studies() -> list[SynopseStudy]:
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
             studien_id="123458",
             titel_datenset="Study 2 ohne Referenzen",
+            zugangsbeschraenkung="open",
         ),
     ]
+
+
+@pytest.fixture
+def synopse_access_platform() -> AccessPlatformMapping:
+    """Return a list of extracted access platforms."""
+    settings = Settings.get()
+    return AccessPlatformMapping.model_validate(
+        load_yaml(settings.synopse.mapping_path / "access-platform.yaml")
+    )
 
 
 @pytest.fixture
@@ -296,7 +321,11 @@ def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, st
 @pytest.fixture
 def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
-    return {s.studien_id: s.dokumentation for s in synopse_studies if s.dokumentation}
+    return {
+        s.studien_id: Link(url=s.dokumentation)
+        for s in synopse_studies
+        if s.dokumentation
+    }
 
 
 @pytest.fixture
@@ -305,7 +334,7 @@ def keyword_text_by_study_id(
 ) -> dict[str, list[Text]]:
     """Return a lookup from study ID to list of keyword Text."""
     return {
-        s.studien_id: s.schlagworte_themen
+        s.studien_id: [Text(value=s.schlagworte_themen)]
         for s in synopse_studies
         if s.schlagworte_themen
     }
@@ -374,33 +403,6 @@ def synopse_project(synopse_projects: list[SynopseProject]) -> SynopseProject:
 
 
 @pytest.fixture
-def extracted_access_platforms(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> list[ExtractedAccessPlatform]:
-    """Return a list of extracted access platforms."""
-    return [
-        ExtractedAccessPlatform(
-            contact=[Identifier.generate(seed=234)],
-            hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="S:\\data",
-            landingPage=[Link(url="file:///Z:/data")],
-            technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
-            title=[Text(value="Z:\\data")],
-            unitInCharge=[Identifier.generate(seed=234)],
-        ),
-        ExtractedAccessPlatform(
-            contact=[Identifier.generate(seed=234)],
-            hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
-            identifierInPrimarySource="blabli blubb",
-            landingPage=[Link(url="blabli blubb")],
-            technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
-            title=[Text(value="blabli blubb")],
-            unitInCharge=[Identifier.generate(seed=234)],
-        ),
-    ]
-
-
-@pytest.fixture
 def extracted_activity(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedActivity:
@@ -428,139 +430,28 @@ def extracted_activity(
 
 
 @pytest.fixture
-def extracted_resources() -> list[ExtractedResource]:
-    """Return an list of extracted resources."""
-    return [
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="23456-17-set1",
-            theme="https://mex.rki.de/item/theme-11",
-            title="Found in overview",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="12345-12-set2",
-            theme="https://mex.rki.de/item/theme-11",
-            title="The other one",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-        ExtractedResource(
-            accessRestriction=AccessRestriction(
-                "https://mex.rki.de/item/access-restriction-1"
-            ),
-            contact=Identifier.generate(seed=5),
-            hadPrimarySource=Identifier.generate(seed=5),
-            identifierInPrimarySource="12345-13-set13",
-            theme="https://mex.rki.de/item/theme-11",
-            title="The other one",
-            unitInCharge=Identifier.generate(seed=6),
-        ),
-    ]
-
-
-@pytest.fixture
-def synopse_overviews() -> list[SynopseStudyOverview]:
-    """Return list of Synopse Overviews."""
-    return [
-        SynopseStudyOverview(
-            studien_id="23456",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="23456",
-        ),
-        SynopseStudyOverview(
-            studien_id="23456",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="5",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="12345",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="1",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=13,
-            titel_datenset="set13",
-            synopse_id="1",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="2",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="3",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=None,
-            titel_datenset="set2",
-            synopse_id="12345678901111",
-        ),
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=12,
-            titel_datenset="set2",
-            synopse_id="4",
-        ),
-    ]
-
-
-@pytest.fixture
-def resource_ids_by_synopse_id() -> dict[str, list[MergedResourceIdentifier]]:
-    """Return a lookup from study ID to list of resource IDs."""
+def resources_by_synopse_id(
+    synopse_resources: list[ExtractedResource],
+) -> dict[str, ExtractedResource]:
+    """Return a lookup from study ID to resources."""
     return {
-        "1": [MergedResourceIdentifier.generate(seed=42)],
-        "2": [MergedResourceIdentifier.generate(seed=43)],
-        "3": [MergedResourceIdentifier.generate(seed=42)],
-        "4": [MergedResourceIdentifier.generate(seed=42)],
-        "5": [MergedResourceIdentifier.generate(seed=45)],
+        "1": synopse_resources[0],
+        "2": synopse_resources[1],
+        "4": synopse_resources[2],
     }
 
 
 @pytest.fixture
 def extracted_variable_groups(
-    synopse_variables_by_thema: dict[int, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    resource_ids_by_synopse_id: dict[str, list[Identifier]],
+    resources_by_synopse_id: dict[str, ExtractedResource],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
-    return list(
-        transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_by_thema,
-            extracted_primary_sources["report-server"],
-            resource_ids_by_synopse_id,
-        )
-    )
-
-
-@pytest.fixture
-def synopse_access_platform(settings: Settings) -> AccessPlatformMapping:
-    """Return a mapping model with access platform default values."""
-    return AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform_mock.yaml")
+    return transform_synopse_variables_to_mex_variable_groups(
+        synopse_variables_by_thema,
+        extracted_primary_sources["report-server"],
+        resources_by_synopse_id,
     )
 
 

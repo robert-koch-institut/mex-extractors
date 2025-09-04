@@ -9,9 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- finished consent-mailer pipeline
+- settings for the content-mailer
+  - smtp server address for sending mails
+  - mailHog api endpoint url for testing mail sending
+- add return values to all assets for debugging and bookkeeping
 - assign fullName for endnote person
 
 ### Changes
+
+- improve usage of backend endpoints for merged items
+- add resources by unit filter to datenkompass
+- update mex-common dependency to 1.2
+- update mex-artificial dependency to >1.0
 
 ### Deprecated
 
@@ -20,6 +30,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.41.0] - 2025-08-21
+
+### Changes
+
+- update synopse according to mapping changes
+- update datenkompass according to mapping changes and save items as xlsx
+
+### Fixed
+
+- igs test main
+- reading of xml-files for endnote
+
+## [0.40.0] - 2025-07-30
+
+### Changes
+
+- update mex-common to 0.65
+
+## [0.39.0] - 2025-07-28
+
+### Added
+
+- add consent-mailer pipeline (unfinished)
+
+### Changes
+
+- bumped cookiecutter template to e886ec
+- try to remove broken person references in the publisher
+
+## [0.38.0] - 2025-07-24
+
+### Added
+
+- add RKI organization as unitOf to organigram units
+- enable mypy linting for tests folder
+- include persons from allowed primary sources in the publishing pipeline
+- add contact-point mini extractor to get default contact points
+- add mex-extractors version to asset and job metadata
+- publisher for datenkompass
+
+### Changes
+
+- ensure dagster definitions are resolved, for dagster 1.11 compat
+- summarize logging for synopse filtering functions
+- filter out unpublished persons from contact fields and set a fallback
+
+### Removed
+
+- remove unused pytest fixtures
+
+## [0.37.4] - 2025-07-11
+
+### Changes
+
+- increase zenodo connector patience with more backoff time
+
+## [0.37.3] - 2025-07-10
+
+### Changes
+
+- endnote extractor ignores records with 50 or more authors.
+- improve endnote reading from extracted raw record
+
+## [0.37.2] - 2025-07-10
+
+### Fixed
+
+- change endnote identifierInPrimarySource hyphenation
+- avoid identifier collision in endnote organizations and persons
+
+## [0.37.1] - 2025-07-01
+
+### Added
+
+- assign fullName for endnote person
+
+### Fixed
+
+- remove boto3 pin again
+- drop s3 signature version from client config
 
 ## [0.37.0] - 2025-07-01
 

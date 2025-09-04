@@ -1,7 +1,14 @@
+from typing import cast
+
 import pytest
 
-from mex.common.models import ExtractedPrimarySource
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.extractors.pipeline.organigram import (
     extracted_organizational_units,
     unit_stable_target_ids_by_synonym,
@@ -19,20 +26,32 @@ def extracted_primary_source_organigram() -> ExtractedPrimarySource:
 
 def test_extracted_organizational_units(
     extracted_primary_source_organigram: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    units = extracted_organizational_units(extracted_primary_source_organigram)
-    assert [u.identifierInPrimarySource for u in units] == [
-        "child-unit",
-        "parent-unit",
-        "fg99",
+    units = cast(
+        "list[ExtractedOrganizationalUnit]",
+        extracted_organizational_units(
+            extracted_primary_source_organigram, extracted_organization_rki
+        ),
+    )
+    assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
+        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
     ]
 
 
 def test_unit_stable_target_ids_by_synonym(
     extracted_primary_source_organigram: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    units_by_synonym = unit_stable_target_ids_by_synonym(
-        extracted_organizational_units(extracted_primary_source_organigram)
+    units_by_synonym = cast(
+        "dict[str, MergedOrganizationalUnitIdentifier]",
+        unit_stable_target_ids_by_synonym(
+            extracted_organizational_units(
+                extracted_primary_source_organigram, extracted_organization_rki
+            )
+        ),
     )
     assert sorted(units_by_synonym) == [
         "Abteilung",

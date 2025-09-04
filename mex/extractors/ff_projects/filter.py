@@ -1,6 +1,9 @@
 from collections.abc import Iterable
 
-from mex.common.types import Identifier, MergedOrganizationalUnitIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.common.utils import any_contains_any, contains_any
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.filters import filter_by_global_rules
@@ -10,7 +13,7 @@ from mex.extractors.settings import Settings
 
 def filter_and_log_ff_projects_sources(
     sources: Iterable[FFProjectsSource],
-    primary_source_id: Identifier,
+    primary_source_id: MergedPrimarySourceIdentifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[FFProjectsSource]:
     """Filter FF Projects sources and log filtered sources.
@@ -38,7 +41,7 @@ def filter_and_log_ff_projects_sources(
 
 def filter_and_log_ff_projects_source(  # noqa: PLR0911
     source: FFProjectsSource,
-    primary_source_id: Identifier,
+    primary_source_id: MergedPrimarySourceIdentifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> bool:
     """Filter a FFprojectSource according to settings and log filtering.

@@ -10,7 +10,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
@@ -21,11 +20,6 @@ from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.model import VoxcoVariable
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
-
-
-@pytest.fixture
-def extracted_mex_functional_units_voxco() -> dict[str, MergedContactPointIdentifier]:
-    return {"contactc@rki.de": MergedContactPointIdentifier.generate(42)}
 
 
 @pytest.fixture

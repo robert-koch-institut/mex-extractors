@@ -4,14 +4,14 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
+    ExtractedBibliographicResource,
+    ExtractedConsent,
     ExtractedPerson,
     ExtractedPrimarySource,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.endnote.extract import (
-    extract_endnote_records,
-)
+from mex.extractors.endnote.extract import extract_endnote_records
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
@@ -61,7 +61,7 @@ def extracted_endnote_persons_by_person_string(
 def extracted_endnote_consents(
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
     extracted_primary_source_endnote: ExtractedPrimarySource,
-) -> None:
+) -> list[ExtractedConsent]:
     """Extract records from endnote."""
     settings = Settings.get()
     endnote_consent_mapping = ConsentMapping.model_validate(
@@ -73,6 +73,7 @@ def extracted_endnote_consents(
         endnote_consent_mapping,
     )
     load(extracted_endnote_consents)
+    return extracted_endnote_consents
 
 
 @asset(group_name="endnote")
@@ -81,7 +82,7 @@ def extracted_endnote_bibliographic_resources(
     extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_endnote: ExtractedPrimarySource,
-) -> None:
+) -> list[ExtractedBibliographicResource]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
     endnote_bibliographic_resource_mapping = (
@@ -97,6 +98,7 @@ def extracted_endnote_bibliographic_resources(
         extracted_primary_source_endnote,
     )
     load(extracted_bibliographic_resource)
+    return extracted_bibliographic_resource
 
 
 @entrypoint(Settings)

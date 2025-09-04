@@ -13,7 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PDM_CHECK_UPDATE: False
   PIP_DISABLE_PIP_VERSION_CHECK: on
   PIP_NO_CLEAN: on
   PIP_NO_INPUT: on
@@ -81,7 +80,7 @@ jobs:
             printf '\n# Conflicts\n' >> .cruft-pr-body
           fi
           find . -type f -name "*.rej" | while read -r line ; do
-            printf '\n```' >> .cruft-pr-body
+            printf '\n```diff\n' >> .cruft-pr-body
             cat ${line} >> .cruft-pr-body
             printf '```\n' >> .cruft-pr-body
           done
