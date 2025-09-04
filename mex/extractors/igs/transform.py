@@ -19,11 +19,12 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.igs.model import IGSEnumSchema, IGSPropertiesSchema, IGSSchema
+from mex.extractors.igs.model import IGSEnumSchema, IGSInfo, IGSPropertiesSchema, IGSSchema
 
 
-def transform_igs_schemas_to_resources(
+def transform_igs_schemas_to_resources(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
+    igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: ResourceMapping,
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
@@ -33,6 +34,7 @@ def transform_igs_schemas_to_resources(
 
     Args:
         igs_schemas: IGS schema by name
+        igs_info: igs info
         extracted_primary_source_igs: extracted IGS primary source
         igs_resource_mapping: IGS resource mapping
         extracted_igs_contact_points_by_mail: extracted IGS contact points by mail
@@ -68,7 +70,7 @@ def transform_igs_schemas_to_resources(
             .setValues,
             contact=contact,
             hadPrimarySource=extracted_primary_source_igs.stableTargetId,
-            identifierInPrimarySource=f"IGS_{pathogen}",
+            identifierInPrimarySource=f"IGS_{igs_info.title}_v{igs_info.version}",
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
             title=title_by_pathogen.get(
                 pathogen,

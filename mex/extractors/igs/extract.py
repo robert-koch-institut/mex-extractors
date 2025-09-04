@@ -5,7 +5,7 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.extractors.igs.connector import IGSConnector
-from mex.extractors.igs.model import IGSEnumSchema, IGSPropertiesSchema, IGSSchema
+from mex.extractors.igs.model import IGSEnumSchema, IGSInfo, IGSPropertiesSchema, IGSSchema
 
 
 def extract_igs_schemas() -> dict[str, IGSSchema]:
@@ -24,6 +24,16 @@ def extract_igs_schemas() -> dict[str, IGSSchema]:
         if "properties" in value:
             igs_schemas[key] = IGSPropertiesSchema(**value)
     return igs_schemas
+
+def extract_igs_info() -> IGSInfo:
+    """Extract IGS info.
+
+    Returns:
+        IGS info by name
+    """
+    connector = IGSConnector.get()
+    raw_json = connector.get_json_from_api()
+    return IGSInfo(**raw_json.get("info", {}))
 
 
 def extract_ldap_actors_by_mail(

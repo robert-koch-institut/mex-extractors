@@ -21,10 +21,10 @@ from mex.common.types import (
 )
 from mex.extractors.igs.extract import (
     extract_igs_schemas,
-    extract_ldap_actors_by_mail,
+    extract_ldap_actors_by_mail,extract_igs_info
 )
 from mex.extractors.igs.filter import filter_creation_schemas
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_schemas_to_resources,
@@ -53,6 +53,12 @@ def extracted_primary_source_igs(
 def igs_schemas() -> dict[str, IGSSchema]:
     """Extract from IGS schemas."""
     return extract_igs_schemas()
+
+
+@asset(group_name="igs")
+def igs_info() -> IGSInfo:
+    """Extract from IGS info."""
+    return extract_igs_info()
 
 
 @asset(group_name="igs")
@@ -93,6 +99,7 @@ def extracted_igs_contact_points_by_mail(
 @asset(group_name="igs")
 def extracted_igs_resource_ids_by_pathogen(
     igs_schemas: dict[str, IGSSchema],
+    igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
@@ -101,6 +108,7 @@ def extracted_igs_resource_ids_by_pathogen(
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_schemas_to_resources(
         igs_schemas,
+        igs_info,
         extracted_primary_source_igs,
         ResourceMapping.model_validate(igs_resource_mapping),
         extracted_igs_contact_points_by_mail,
@@ -108,7 +116,7 @@ def extracted_igs_resource_ids_by_pathogen(
     )
     load(extracted_resources)
     return {
-        resource.identifierInPrimarySource.removeprefix("IGS_"): resource.stableTargetId
+        resource.identifierInPrimarySource: resource.stableTargetId
         for resource in extracted_resources
     }
 

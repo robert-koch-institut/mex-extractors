@@ -17,3 +17,8 @@ class IGSPropertiesSchema(IGSSchema):
     """Model class for IGS Properties Schemas."""
 
     properties: dict[str, Any]
+
+class IGSInfo(BaseModel):
+    """Model class for IGS Info."""
+    title: str
+    version: str
