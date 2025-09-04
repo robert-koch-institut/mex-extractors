@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - smtp server address for sending mails
   - mailHog api endpoint url for testing mail sending
 - add return values to all assets for debugging and bookkeeping
+- assign fullName for endnote person
 
 ### Changes
 
