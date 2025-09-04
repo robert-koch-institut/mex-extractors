@@ -20,8 +20,9 @@ from mex.common.types import (
     MergedVariableGroupIdentifier,
 )
 from mex.extractors.igs.extract import (
+    extract_igs_info,
     extract_igs_schemas,
-    extract_ldap_actors_by_mail,extract_igs_info
+    extract_ldap_actors_by_mail,
 )
 from mex.extractors.igs.filter import filter_creation_schemas
 from mex.extractors.igs.model import IGSInfo, IGSSchema
@@ -97,7 +98,7 @@ def extracted_igs_contact_points_by_mail(
 
 
 @asset(group_name="igs")
-def extracted_igs_resource_ids_by_pathogen(
+def extracted_igs_resource_ids_by_pathogen(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,

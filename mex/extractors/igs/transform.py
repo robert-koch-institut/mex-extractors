@@ -19,7 +19,12 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.igs.model import IGSEnumSchema, IGSInfo, IGSPropertiesSchema, IGSSchema
+from mex.extractors.igs.model import (
+    IGSEnumSchema,
+    IGSInfo,
+    IGSPropertiesSchema,
+    IGSSchema,
+)
 
 
 def transform_igs_schemas_to_resources(  # noqa: PLR0913
@@ -232,9 +237,7 @@ def transform_igs_schemas_to_variables(
                 in variable_mapping.dataType[1].mappingRules[0].forValues
                 else schema_property["type"]
             )
-            used_in = (
-                extracted_igs_resource_ids_by_pathogen.get(schema.get("enum"))
-            )
+            used_in = extracted_igs_resource_ids_by_pathogen.get(schema.get("enum"))
             value_set = enums_by_property_name.get(property_name, [])
             extracted_variables.append(
                 ExtractedVariable(
