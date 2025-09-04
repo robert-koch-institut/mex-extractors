@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2
 - update mex-artificial dependency to >1.0
+- wrap up synopse
 
 ### Deprecated
 
