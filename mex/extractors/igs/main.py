@@ -19,7 +19,6 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
-
 from mex.extractors.igs.extract import (
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
@@ -134,7 +133,7 @@ def extracted_igs_access_platform(
 def extracted_igs_variable_group_ids_by_identifier_in_primary_source(
     igs_schemas: dict[str, IGSSchema],
     extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
-    extracted_primary_s"ource_igs: ExtractedPrimarySource,
+    extracted_primary_source_igs: ExtractedPrimarySource,
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
     settings = Settings.get()
@@ -155,7 +154,7 @@ def extracted_igs_variable_group_ids_by_identifier_in_primary_source(
     }
 
 
-@asset(group_name="igs)
+@asset(group_name="igs")
 def extracted_igs_variables(
     igs_schemas: dict[str, IGSSchema],
     extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
@@ -164,6 +163,7 @@ def extracted_igs_variables(
         str, MergedVariableGroupIdentifier
     ],
 ) -> None:
+    """Transform igs schemas to extracted variables."""
     settings = Settings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.igs.mapping_path / "access-platform.yaml")
