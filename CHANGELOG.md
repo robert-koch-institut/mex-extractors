@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- html escape handling in open data extractor
+
 ### Security
 
 ## [0.42.0] - 2025-09-04
