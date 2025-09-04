@@ -26,5 +26,5 @@ def extracted_contact_point_mex(
 
 @entrypoint(Settings)
 def run() -> None:  # pragma: no cover
-    """Run the datscha-web extractor job in-process."""
+    """Run the contact-point extractor job in-process."""
     run_job_in_process("contact_point")
