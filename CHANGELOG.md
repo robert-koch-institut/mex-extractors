@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.42.0] - 2025-09-04
+
+### Added
+
 - finished consent-mailer pipeline
 - settings for the content-mailer
   - smtp server address for sending mails
@@ -22,14 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common dependency to 1.2
 - update mex-artificial dependency to >1.0
 - wrap up synopse
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.41.0] - 2025-08-21
 
