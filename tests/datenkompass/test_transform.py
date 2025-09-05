@@ -8,21 +8,33 @@ from mex.common.models import (
     MergedPerson,
     MergedResource,
 )
+from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
 from mex.extractors.datenkompass.transform import (
+    fix_quotes,
     get_datenbank,
     get_email,
+    get_german_text,
+    get_german_vocabulary,
     get_resource_email,
     get_title,
     get_unit_shortname,
-    get_vocabulary,
+    reformat_html_links,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
 )
+
+
+def test_fix_quotes() -> None:
+    test_str = '"Outer "double quotes" removed, inner "double quotes" replaced."'
+
+    assert fix_quotes(test_str) == (
+        "Outer 'double quotes' removed, inner 'double quotes' replaced."
+    )
 
 
 def test_get_unit_shortname(
@@ -77,6 +89,24 @@ def test_get_resource_email(
     assert result == "unit@example.org"
 
 
+def test_get_german_text() -> None:
+    test_texts = [
+        Text(value='deu "1"."', language="de"),
+        Text(value="deu 2", language="de"),
+        Text(value='"eng"li"sh"', language="en"),
+        Text(value="null", language=None),
+    ]
+
+    assert get_german_text(test_texts) == [  # get only 'de' entries, if available
+        "deu '1'.",
+        "deu 2",
+    ]
+    assert get_german_text(test_texts[2:]) == [  # return orig input, if no 'de' entry
+        "eng'li'sh",
+        "null",
+    ]
+
+
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_activities[0]
     result = get_title(item)
@@ -84,8 +114,8 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     assert result == ["short de", "title 'Act' no language", "title en"]
 
 
-def test_get_vocabulary() -> None:
-    result = get_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
+def test_get_german_vocabulary() -> None:
+    result = get_german_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
@@ -94,6 +124,15 @@ def test_get_datenbank(
 ) -> None:
     assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
         "https://doi.org/10.1234_find_this"
+    )
+
+
+def test_reformat_html_links() -> None:
+    test_string = (
+        'This is a <b>text</b> with <a href="https://link.url">Link text</a>, duh!'
+    )
+    assert reformat_html_links(test_string) == (
+        "This is a <b>text</b> with https://link.url, duh!"
     )
 
 
