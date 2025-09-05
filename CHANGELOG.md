@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- make consent mailer settings inherit from BaseModel
+
 ### Security
 
 ## [1.0.0] - 2025-09-04

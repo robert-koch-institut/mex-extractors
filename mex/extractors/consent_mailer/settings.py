@@ -1,10 +1,10 @@
 from pydantic import Field, SecretStr
 
-from mex.common.settings import BaseSettings
+from mex.common.models import BaseModel
 from mex.common.types import AssetsPath
 
 
-class ConsentMailerSettings(BaseSettings):
+class ConsentMailerSettings(BaseModel):
     """Settings definition class for the consent mailer."""
 
     mailpit_api_url: str = Field(
