@@ -8,13 +8,16 @@ from mex.common.models import (
     MergedPerson,
     MergedResource,
 )
+from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
 from mex.extractors.datenkompass.transform import (
+    fix_quotes,
     get_datenbank,
     get_email,
+    get_german_text,
     get_resource_email,
     get_title,
     get_unit_shortname,
@@ -24,6 +27,14 @@ from mex.extractors.datenkompass.transform import (
     transform_bibliographic_resources,
     transform_resources,
 )
+
+
+def test_fix_quotes() -> None:
+    test_str = '"Outer "double quotes" removed, inner "double quotes" replaced."'
+
+    assert fix_quotes(test_str) == (
+        "Outer 'double quotes' removed, inner 'double quotes' replaced."
+    )
 
 
 def test_get_unit_shortname(
@@ -76,6 +87,24 @@ def test_get_resource_email(
     )
 
     assert result == "unit@example.org"
+
+
+def test_get_german_text() -> None:
+    test_texts = [
+        Text(value='deu "1"."', language="de"),
+        Text(value="deu 2", language="de"),
+        Text(value='"eng"li"sh"', language="en"),
+        Text(value="null", language=None),
+    ]
+
+    assert get_german_text(test_texts) == [  # get only 'de' entries, if available
+        "deu '1'.",
+        "deu 2",
+    ]
+    assert get_german_text(test_texts[2:]) == [  # return orig input, if no 'de' entry
+        "eng'li'sh",
+        "null",
+    ]
 
 
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
