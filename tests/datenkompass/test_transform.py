@@ -19,6 +19,7 @@ from mex.extractors.datenkompass.transform import (
     get_title,
     get_unit_shortname,
     get_vocabulary,
+    reformat_html_links,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
@@ -94,6 +95,15 @@ def test_get_datenbank(
 ) -> None:
     assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
         "https://doi.org/10.1234_find_this"
+    )
+
+
+def test_reformat_html_links() -> None:
+    test_string = (
+        'This is a <b>text</b> with <a href="https://link.url">Link text</a>, duh!'
+    )
+    assert reformat_html_links(test_string) == (
+        "This is a <b>text</b> with https://link.url, duh!"
     )
 
 

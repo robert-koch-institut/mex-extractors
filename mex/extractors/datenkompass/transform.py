@@ -212,6 +212,21 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
     return None
 
 
+def reformat_html_links(string: str) -> str:
+    """Reformat html-formated links in string into plain text urls.
+
+    Args:
+        string: string with possible html-formated links
+
+    Returns:
+        string with reformated plain text urls.
+    """
+    soup_string = BeautifulSoup(string, "html.parser")
+    for a in soup_string.find_all("a", href=True):
+        a.replace_with(a["href"])
+    return str(soup_string)
+
+
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
@@ -233,11 +248,8 @@ def transform_activities(
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
-            beschreibung += delim.join(get_german_text(item.abstract))
-            beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
-            for a in beschreibung_soup.find_all("a", href=True):
-                a.replace_with(a["href"])
-            beschreibung = str(beschreibung_soup)
+            b2 = delim.join(get_german_text(item.abstract))
+            beschreibung += reformat_html_links(b2)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -326,10 +338,7 @@ def transform_bibliographic_resources(
         beschreibung = f"{delim.join(s for s in vocab if s is not None)}. "
         if item.abstract:
             b2 = delim.join(get_german_text(item.abstract))
-            beschreibung_soup = BeautifulSoup(b2, "html.parser")
-            for a in beschreibung_soup.find_all("a", href=True):
-                a.replace_with(a["href"])
-            beschreibung += str(beschreibung_soup)
+            beschreibung += reformat_html_links(b2)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -414,11 +423,8 @@ def transform_resources(
             )
             beschreibung = "n/a"
             if item.description:
-                beschreibung = delim.join(get_german_text(item.description))
-                beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
-                for a in beschreibung_soup.find_all("a", href=True):
-                    a.replace_with(a["href"])
-                beschreibung = str(beschreibung_soup)
+                b2 = delim.join(get_german_text(item.description))
+                beschreibung = reformat_html_links(b2)
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
                 *get_vocabulary([item.license] if item.license else []),
