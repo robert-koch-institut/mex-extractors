@@ -1,4 +1,3 @@
-import html
 import re
 
 from mex.common.exceptions import MExError
@@ -312,13 +311,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         contact = contact_open_data + creator
         # remove html tags(<p>,</p>,<br>,<em>...), '\n' but keep <a href> and </a>
         description = (
-            html.unescape(
-                re.sub(
-                    r"<(?!/?a(?:\s+href)?)[^>]+>|\n",
-                    "",
-                    str(resource.metadata.description),
-                ).strip()
-            )
+            re.sub(
+                r"<(?!/?a(?:\s+href)?)[^>]+>|\n", "", str(resource.metadata.description)
+            ).strip()
             if resource.metadata.description
             else None
         )
@@ -364,14 +359,14 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 hadPrimarySource=extracted_primary_source_open_data.stableTargetId,
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=str(resource.conceptrecid),
-                keyword=[html.unescape(kw) for kw in resource.metadata.keywords],
+                keyword=resource.metadata.keywords,
                 language=language,
                 license=ccby_license,
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
                 resourceTypeGeneral=resource_type_general,
                 theme=theme,
-                title=html.unescape(resource.title) if resource.title else None,
+                title=resource.title,
                 unitInCharge=unit_in_charge,
             )
         )
