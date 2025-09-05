@@ -42,19 +42,13 @@ def write_items_to_xlsx(
         s3: S3 session.
     """
     settings = Settings()
-    delim = settings.datenkompass.list_delimiter
     file_name = f"datenkompass_{datenkompassitems[0].entityType}.xlsx"
 
     dicts = [
-        item.model_dump(by_alias=True, exclude_none=True) for item in datenkompassitems
+        item.model_dump(by_alias=True, exclude_none=False) for item in datenkompassitems
     ]
 
     df = pd.DataFrame(dicts)
-
-    for col in df.columns:
-        df[col] = df[col].apply(
-            lambda v: delim.join(map(str, v)) if isinstance(v, list) else v
-        )
 
     xlsx_buf = io.BytesIO()
     df.to_excel(xlsx_buf, index=False)
