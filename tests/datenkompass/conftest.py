@@ -134,7 +134,10 @@ def mocked_merged_resource() -> list[MergedResource]:
             accessRestriction=AccessRestriction["OPEN"],
             description=[
                 Text(value="english description", language="en"),
-                Text(value="deutsche Beschreibung", language="de"),
+                Text(
+                    value=("deutsche Beschreibung <a href='http://mit.link'>skip</a>."),
+                    language="de",
+                ),
             ],
             contact=[
                 "PersonIdentifier4Peppa",
@@ -269,7 +272,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             organisationseinheit="a.bsp. unit; e.g. unit",
             titel="short de; title 'Act' no language; title en",
             schlagwort="Infektionskrankheiten und -epidemiologie",
-            datenbank= "https://www.do-transform.org",
+            datenbank="https://www.do-transform.org",
             voraussetzungen="Unbekannt",
             frequenz="Nicht zutreffend",
             hauptkategorie="Gesundheit",

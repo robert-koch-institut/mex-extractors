@@ -105,6 +105,7 @@ def get_email(
         (
             str(email)
             for org_id in responsible_unit_ids
+            if org_id in merged_organizational_units_by_id
             for email in merged_organizational_units_by_id[org_id].email
         ),
         None,
@@ -247,6 +248,10 @@ def transform_activities(
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
             beschreibung += delim.join(get_german_text(item.abstract))
+            beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
+            for a in beschreibung_soup.find_all("a", href=True):
+                a.replace_with(a["href"])
+            beschreibung = str(beschreibung_soup)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -334,9 +339,13 @@ def transform_bibliographic_resources(
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
         vocab = get_vocabulary(item.bibliographicResourceType)
-        b1 = f"{delim.join(s for s in vocab if s is not None)}. "
-        b2 = delim.join(get_german_text(item.abstract))
-        beschreibung = b1 + b2
+        beschreibung = f"{delim.join(s for s in vocab if s is not None)}. "
+        if item.abstract:
+            b2 = delim.join(get_german_text(item.abstract))
+            beschreibung_soup = BeautifulSoup(b2, "html.parser")
+            for a in beschreibung_soup.find_all("a", href=True):
+                a.replace_with(a["href"])
+            beschreibung += str(beschreibung_soup)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -353,11 +362,11 @@ def transform_bibliographic_resources(
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
+                herausgeber="RKI - Robert Koch-Institut",
                 datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
                 status="Stabil",
                 datennutzungszweck="Sonstige",
                 rechtsgrundlage="Nicht zutreffend",
-                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
