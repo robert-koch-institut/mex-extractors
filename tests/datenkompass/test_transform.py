@@ -18,10 +18,10 @@ from mex.extractors.datenkompass.transform import (
     get_datenbank,
     get_email,
     get_german_text,
+    get_german_vocabulary,
     get_resource_email,
     get_title,
     get_unit_shortname,
-    get_vocabulary,
     reformat_html_links,
     transform_activities,
     transform_bibliographic_resources,
@@ -114,8 +114,8 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     assert result == ["short de", "title 'Act' no language", "title en"]
 
 
-def test_get_vocabulary() -> None:
-    result = get_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
+def test_get_german_vocabulary() -> None:
+    result = get_german_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
