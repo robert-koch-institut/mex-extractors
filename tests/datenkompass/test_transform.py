@@ -89,22 +89,36 @@ def test_get_resource_email(
     assert result == "unit@example.org"
 
 
-def test_get_german_text() -> None:
-    test_texts = [
-        Text(value='deu "1"."', language="de"),
-        Text(value="deu 2", language="de"),
-        Text(value='"eng"li"sh"', language="en"),
-        Text(value="null", language=None),
-    ]
-
-    assert get_german_text(test_texts) == [  # get only 'de' entries, if available
-        "deu '1'.",
-        "deu 2",
-    ]
-    assert get_german_text(test_texts[2:]) == [  # return orig input, if no 'de' entry
-        "eng'li'sh",
-        "null",
-    ]
+@pytest.mark.parametrize(
+    ("text_entries", "expected"),
+    [
+        (
+            [
+                Text(value='deu "1"."', language="de"),
+                Text(value="deu 2", language="de"),
+                Text(value='"eng"li"sh"', language="en"),
+                Text(value="null", language=None),
+            ],
+            [
+                "deu '1'.",
+                "deu 2",
+            ],
+        ),
+        (
+            [
+                Text(value='"eng"li"sh"', language="en"),
+                Text(value="null", language=None),
+            ],
+            [
+                "eng'li'sh",
+                "null",
+            ],
+        ),
+    ],
+    ids=["german and other languages mixed", "only non-german entries"],
+)
+def test_get_german_text(text_entries: list[Text], expected: list[str]) -> None:
+    assert get_german_text(text_entries) == expected
 
 
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
