@@ -222,6 +222,8 @@ def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
     Returns:
         joined german strings with reformated plain text urls.
     """
+    if not abstracts:
+        return ""
     abstract_string = delim.join(get_german_text(abstracts))
     soup_string = BeautifulSoup(abstract_string, "html.parser")
     for a in soup_string.find_all("a", href=True):
@@ -249,8 +251,7 @@ def transform_activities(
     datenkompass_activities = []
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
-        if item.abstract:
-            beschreibung += get_abstract_or_description(item.abstract, delim)
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -337,8 +338,7 @@ def transform_bibliographic_resources(
         titel = f"{title_collection} ({creator_collection})"
         vocab = get_german_vocabulary(item.bibliographicResourceType)
         beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
-        if item.abstract:
-            beschreibung += get_abstract_or_description(item.abstract, delim)
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -421,9 +421,11 @@ def transform_resources(
             organisationseinheit = get_unit_shortname(
                 item.unitInCharge, merged_organizational_units_by_id
             )
-            beschreibung = "n/a"
-            if item.description:
-                beschreibung = get_abstract_or_description(item.description, delim)
+            beschreibung = (
+                get_abstract_or_description(item.description, delim)
+                if item.description
+                else "n/a"
+            )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
                 *get_german_vocabulary([item.license] if item.license else []),

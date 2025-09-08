@@ -150,6 +150,7 @@ def test_get_abstract_or_description() -> None:
     assert get_abstract_or_description(test_abstracts, delimiter) == (
         "This is a <b>text</b>; with a https://link.url."
     )
+    assert get_abstract_or_description([], delimiter) == ""
 
 
 def test_transform_activities(
