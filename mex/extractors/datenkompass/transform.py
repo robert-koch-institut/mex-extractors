@@ -175,7 +175,7 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
-def get_vocabulary(
+def get_german_vocabulary(
     entries: list[_VocabularyT],
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
@@ -212,6 +212,25 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
     return None
 
 
+def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
+    """Get German list entries, join them and reformat html-formated links.
+
+    Args:
+        abstracts: list of mixed language strings with possible html-formated links
+        delim: list delimiter for joining the strings in list
+
+    Returns:
+        joined german strings with reformated plain text urls.
+    """
+    if not abstracts:
+        return ""
+    abstract_string = delim.join(get_german_text(abstracts))
+    soup_string = BeautifulSoup(abstract_string, "html.parser")
+    for a in soup_string.find_all("a", href=True):
+        a.replace_with(a["href"])
+    return str(soup_string)
+
+
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
@@ -232,12 +251,7 @@ def transform_activities(
     datenkompass_activities = []
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
-        if item.abstract:
-            beschreibung += delim.join(get_german_text(item.abstract))
-            beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
-            for a in beschreibung_soup.find_all("a", href=True):
-                a.replace_with(a["href"])
-            beschreibung = str(beschreibung_soup)
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -247,7 +261,7 @@ def transform_activities(
             merged_organizational_units_by_id,
         )
         titel = get_title(item)
-        schlagwort = get_vocabulary(item.theme)
+        schlagwort = get_german_vocabulary(item.theme)
         datenbank = []
         if item.website:
             url_de = [w.url for w in item.website if w.language == "de"]
@@ -322,14 +336,9 @@ def transform_bibliographic_resources(
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
-        vocab = get_vocabulary(item.bibliographicResourceType)
-        beschreibung = f"{delim.join(s for s in vocab if s is not None)}. "
-        if item.abstract:
-            b2 = delim.join(get_german_text(item.abstract))
-            beschreibung_soup = BeautifulSoup(b2, "html.parser")
-            for a in beschreibung_soup.find_all("a", href=True):
-                a.replace_with(a["href"])
-            beschreibung += str(beschreibung_soup)
+        vocab = get_german_vocabulary(item.bibliographicResourceType)
+        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -400,7 +409,7 @@ def transform_resources(
             elif item.accessRestriction == AccessRestriction["OPEN"]:
                 voraussetzungen = "Frei zugänglich"
             frequenz = (
-                get_vocabulary([item.accrualPeriodicity])
+                get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
                 else []
             )
@@ -412,19 +421,17 @@ def transform_resources(
             organisationseinheit = get_unit_shortname(
                 item.unitInCharge, merged_organizational_units_by_id
             )
-            beschreibung = "n/a"
-            if item.description:
-                beschreibung = delim.join(get_german_text(item.description))
-                beschreibung_soup = BeautifulSoup(beschreibung, "html.parser")
-                for a in beschreibung_soup.find_all("a", href=True):
-                    a.replace_with(a["href"])
-                beschreibung = str(beschreibung_soup)
+            beschreibung = (
+                get_abstract_or_description(item.description, delim)
+                if item.description
+                else "n/a"
+            )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
-                *get_vocabulary([item.license] if item.license else []),
+                *get_german_vocabulary([item.license] if item.license else []),
             ]
             schlagwort = [
-                *get_vocabulary(item.theme),
+                *get_german_vocabulary(item.theme),
                 *[entry.value for entry in item.keyword],
             ]
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]

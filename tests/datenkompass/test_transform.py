@@ -8,21 +8,33 @@ from mex.common.models import (
     MergedPerson,
     MergedResource,
 )
+from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
 from mex.extractors.datenkompass.transform import (
+    fix_quotes,
+    get_abstract_or_description,
     get_datenbank,
     get_email,
+    get_german_text,
+    get_german_vocabulary,
     get_resource_email,
     get_title,
     get_unit_shortname,
-    get_vocabulary,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
 )
+
+
+def test_fix_quotes() -> None:
+    test_str = '"Outer "double quotes" removed, inner "double quotes" replaced."'
+
+    assert fix_quotes(test_str) == (
+        "Outer 'double quotes' removed, inner 'double quotes' replaced."
+    )
 
 
 def test_get_unit_shortname(
@@ -77,6 +89,38 @@ def test_get_resource_email(
     assert result == "unit@example.org"
 
 
+@pytest.mark.parametrize(
+    ("text_entries", "expected"),
+    [
+        (
+            [
+                Text(value='deu "1"."', language="de"),
+                Text(value="deu 2", language="de"),
+                Text(value='"eng"li"sh"', language="en"),
+                Text(value="null", language=None),
+            ],
+            [
+                "deu '1'.",
+                "deu 2",
+            ],
+        ),
+        (
+            [
+                Text(value='"eng"li"sh"', language="en"),
+                Text(value="null", language=None),
+            ],
+            [
+                "eng'li'sh",
+                "null",
+            ],
+        ),
+    ],
+    ids=["german and other languages mixed", "only non-german entries"],
+)
+def test_get_german_text(text_entries: list[Text], expected: list[str]) -> None:
+    assert get_german_text(text_entries) == expected
+
+
 def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_activities[0]
     result = get_title(item)
@@ -84,8 +128,8 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     assert result == ["short de", "title 'Act' no language", "title en"]
 
 
-def test_get_vocabulary() -> None:
-    result = get_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
+def test_get_german_vocabulary() -> None:
+    result = get_german_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
     assert result == ["Infektionskrankheiten und -epidemiologie"]
 
 
@@ -95,6 +139,18 @@ def test_get_datenbank(
     assert get_datenbank(mocked_merged_bibliographic_resource[0]) == (
         "https://doi.org/10.1234_find_this"
     )
+
+
+def test_get_abstract_or_description() -> None:
+    test_abstracts = [
+        Text(value="This is a <b>text</b>", language="de"),
+        Text(value='with a <a href="https://link.url">Link text</a>.', language="de"),
+    ]
+    delimiter = "; "
+    assert get_abstract_or_description(test_abstracts, delimiter) == (
+        "This is a <b>text</b>; with a https://link.url."
+    )
+    assert get_abstract_or_description([], delimiter) == ""
 
 
 def test_transform_activities(
