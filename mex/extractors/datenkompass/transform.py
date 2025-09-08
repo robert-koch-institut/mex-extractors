@@ -212,16 +212,18 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
     return None
 
 
-def reformat_html_links(string: str) -> str:
-    """Reformat html-formated links in string into plain text urls.
+def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
+    """Get German list entries, join them and reformat html-formated links.
 
     Args:
-        string: string with possible html-formated links
+        abstracts: list of mixed language strings with possible html-formated links
+        delim: list delimiter for joining the strings in list
 
     Returns:
-        string with reformated plain text urls.
+        joined german strings with reformated plain text urls.
     """
-    soup_string = BeautifulSoup(string, "html.parser")
+    abstract_string = delim.join(get_german_text(abstracts))
+    soup_string = BeautifulSoup(abstract_string, "html.parser")
     for a in soup_string.find_all("a", href=True):
         a.replace_with(a["href"])
     return str(soup_string)
@@ -248,8 +250,7 @@ def transform_activities(
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
         if item.abstract:
-            b2 = delim.join(get_german_text(item.abstract))
-            beschreibung += reformat_html_links(b2)
+            beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -337,8 +338,7 @@ def transform_bibliographic_resources(
         vocab = get_german_vocabulary(item.bibliographicResourceType)
         beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
         if item.abstract:
-            b2 = delim.join(get_german_text(item.abstract))
-            beschreibung += reformat_html_links(b2)
+            beschreibung += get_abstract_or_description(item.abstract, delim)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -423,8 +423,7 @@ def transform_resources(
             )
             beschreibung = "n/a"
             if item.description:
-                b2 = delim.join(get_german_text(item.description))
-                beschreibung = reformat_html_links(b2)
+                beschreibung = get_abstract_or_description(item.description, delim)
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
                 *get_german_vocabulary([item.license] if item.license else []),

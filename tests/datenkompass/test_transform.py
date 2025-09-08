@@ -15,6 +15,7 @@ from mex.extractors.datenkompass.models.item import (
 )
 from mex.extractors.datenkompass.transform import (
     fix_quotes,
+    get_abstract_or_description,
     get_datenbank,
     get_email,
     get_german_text,
@@ -22,7 +23,6 @@ from mex.extractors.datenkompass.transform import (
     get_resource_email,
     get_title,
     get_unit_shortname,
-    reformat_html_links,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
@@ -127,12 +127,14 @@ def test_get_datenbank(
     )
 
 
-def test_reformat_html_links() -> None:
-    test_string = (
-        'This is a <b>text</b> with <a href="https://link.url">Link text</a>, duh!'
-    )
-    assert reformat_html_links(test_string) == (
-        "This is a <b>text</b> with https://link.url, duh!"
+def test_get_abstract_or_description() -> None:
+    test_abstracts = [
+        Text(value="This is a <b>text</b>", language="de"),
+        Text(value='with a <a href="https://link.url">Link text</a>.', language="de"),
+    ]
+    delimiter = "; "
+    assert get_abstract_or_description(test_abstracts, delimiter) == (
+        "This is a <b>text</b>; with a https://link.url."
     )
 
 
