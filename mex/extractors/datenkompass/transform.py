@@ -1,5 +1,7 @@
 from typing import TypeVar, cast
 
+from bs4 import BeautifulSoup
+
 from mex.common.models import (
     MergedActivity,
     MergedBibliographicResource,
@@ -13,13 +15,12 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    Text,
 )
 from mex.common.types.vocabulary import (
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
     Theme,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -35,8 +36,6 @@ _VocabularyT = TypeVar(
     BibliographicResourceType,
     Frequency,
     License,
-    ResourceCreationMethod,
-    ResourceTypeGeneral,
 )
 
 
@@ -85,28 +84,29 @@ def get_email(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-) -> list[str]:
-    """Get email of merged units.
+) -> str | None:
+    """Get the first email address of referenced responsible units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
         merged_organizational_units_by_id: dict of all merged organizational units by id
 
     Returns:
-        List of emails of contact units as strings.
+        first found email of a responsible unit as string, or None if no email is found.
     """
-    return [
-        email
-        for org_id in responsible_unit_ids
-        for email in [
-            str(unit_email)
-            for unit_email in merged_organizational_units_by_id[org_id].email
-        ]
-    ]
+    return next(
+        (
+            str(email)
+            for org_id in responsible_unit_ids
+            if org_id in merged_organizational_units_by_id
+            for email in merged_organizational_units_by_id[org_id].email
+        ),
+        None,
+    )
 
 
-def get_resource_contact(
-    responsible_unit_ids: list[
+def get_resource_email(
+    responsible_reference_ids: list[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
         | MergedContactPointIdentifier
@@ -115,28 +115,47 @@ def get_resource_contact(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
-) -> list[str]:
-    """Get email from units and contact points.
+) -> str | None:
+    """Get the first email address of referenced responsible units or contact points.
+
+    Ignore referenced Persons.
 
     Args:
-        responsible_unit_ids: Set of responsible unit identifiers
+        responsible_reference_ids: List of referenced unit, contact point or person ids
         merged_organizational_units_by_id: dict of all merged organizational units by id
         merged_contact_points_by_id: Dict of all merged contact points by id
 
     Returns:
-        List of email-addresses as strings.
+        first found email of a unit or contact as string, or None if no email is found.
     """
-    contact_details: list[str] = []
     combined_dict = cast(
         "dict[Identifier, MergedContactPoint | MergedOrganizationalUnit]",
         {**merged_organizational_units_by_id, **merged_contact_points_by_id},
     )
 
-    for contact_id in responsible_unit_ids:
-        if contact := combined_dict.get(contact_id):
-            contact_details.extend([str(email) for email in contact.email])
+    for reference_id in responsible_reference_ids:
+        if (
+            referenced_item := combined_dict.get(reference_id)
+        ) and referenced_item.email:
+            return next(str(email) for email in referenced_item.email)
+    return None
 
-    return contact_details
+
+def get_german_text(text_entries: list[Text]) -> list[str]:
+    """Get german entries of list as strings, if any exist.
+
+     If no german entry exists, return original list entries as strings.
+     Always fix quotes in entries.
+
+    Args:
+        text_entries: list of text entries
+
+    Returns:
+        list of entries as strings
+    """
+    return [fix_quotes(t.value) for t in text_entries if t.language == "de"] or [
+        fix_quotes(t.value) for t in text_entries
+    ]
 
 
 def get_title(item: MergedActivity) -> list[str]:
@@ -150,27 +169,13 @@ def get_title(item: MergedActivity) -> list[str]:
     """
     collected_titles = []
     if item.shortName:
-        shortname_de = [
-            fix_quotes(name.value) for name in item.shortName if name.language == "de"
-        ]
-        shortname = (
-            shortname_de
-            if shortname_de
-            else [fix_quotes(name.value) for name in item.shortName]
-        )
-        collected_titles.extend(shortname)
+        collected_titles.extend(get_german_text(item.shortName))
     if item.title:
-        title_de = [
-            fix_quotes(name.value) for name in item.title if name.language == "de"
-        ]
-        title = (
-            title_de if title_de else [fix_quotes(name.value) for name in item.title]
-        )
-        collected_titles.extend(title)
+        collected_titles.extend(get_german_text(item.title))
     return collected_titles
 
 
-def get_vocabulary(
+def get_german_vocabulary(
     entries: list[_VocabularyT],
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
@@ -207,6 +212,25 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
     return None
 
 
+def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
+    """Get German list entries, join them and reformat html-formated links.
+
+    Args:
+        abstracts: list of mixed language strings with possible html-formated links
+        delim: list delimiter for joining the strings in list
+
+    Returns:
+        joined german strings with reformated plain text urls.
+    """
+    if not abstracts:
+        return ""
+    abstract_string = delim.join(get_german_text(abstracts))
+    soup_string = BeautifulSoup(abstract_string, "html.parser")
+    for a in soup_string.find_all("a", href=True):
+        a.replace_with(a["href"])
+    return str(soup_string)
+
+
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
@@ -227,15 +251,7 @@ def transform_activities(
     datenkompass_activities = []
     for item in filtered_merged_activities:
         beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
-        if item.abstract:
-            abstract_de = [
-                fix_quotes(a.value) for a in item.abstract if a.language == "de"
-            ]
-            beschreibung += delim.join(
-                abstract_de
-                if abstract_de
-                else [fix_quotes(a.value) for a in item.abstract]
-            )
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
             merged_organizational_units_by_id,
@@ -245,7 +261,7 @@ def transform_activities(
             merged_organizational_units_by_id,
         )
         titel = get_title(item)
-        schlagwort = get_vocabulary(item.theme)
+        schlagwort = get_german_vocabulary(item.theme)
         datenbank = []
         if item.website:
             url_de = [w.url for w in item.website if w.language == "de"]
@@ -259,6 +275,7 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
+                voraussetzungen="Unbekannt",
                 frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
@@ -266,7 +283,7 @@ def transform_activities(
                 datenerhalt="Externe Zulieferung",
                 status="Unbekannt",
                 datennutzungszweck="Themenspezifische Auswertung",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -319,25 +336,30 @@ def transform_bibliographic_resources(
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
-        vocab = get_vocabulary(item.bibliographicResourceType)
-        b1 = f"{delim.join(s for s in vocab if s is not None)}. "
-        b2 = delim.join([fix_quotes(abstract.value) for abstract in item.abstract])
-        beschreibung = b1 + b2
+        vocab = get_german_vocabulary(item.bibliographicResourceType)
+        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
+                rechtsgrundlagen_benennung="Nicht zutreffend",
+                datennutzungszweck_erweitert="Nicht zutreffend",
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 schlagwort=[word.value for word in item.keyword],
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
-                frequenz="Einmalig",
+                frequenz="Nicht zutreffend",
                 hauptkategorie="Gesundheit",
                 unterkategorie="Einflussfaktoren auf die Gesundheit",
-                herausgeber="Robert Koch-Institut",
+                herausgeber="RKI - Robert Koch-Institut",
+                datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
+                status="Stabil",
+                datennutzungszweck="Sonstige",
+                rechtsgrundlage="Nicht zutreffend",
                 kommentar=(
                     "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                     "voraussichtlich Ende 2025 verfügbar sein."
@@ -387,11 +409,11 @@ def transform_resources(
             elif item.accessRestriction == AccessRestriction["OPEN"]:
                 voraussetzungen = "Frei zugänglich"
             frequenz = (
-                get_vocabulary([item.accrualPeriodicity])
+                get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
                 else []
             )
-            kontakt = get_resource_contact(
+            kontakt = get_resource_email(
                 item.contact,
                 merged_organizational_units_by_id,
                 merged_contact_points_by_id,
@@ -399,31 +421,19 @@ def transform_resources(
             organisationseinheit = get_unit_shortname(
                 item.unitInCharge, merged_organizational_units_by_id
             )
-            beschreibung = "n/a"
-            if item.description:
-                description_de = [
-                    fix_quotes(d.value) for d in item.description if d.language == "de"
-                ]
-                beschreibung = delim.join(
-                    description_de
-                    if description_de
-                    else [fix_quotes(d.value) for d in item.description]
-                )
+            beschreibung = (
+                get_abstract_or_description(item.description, delim)
+                if item.description
+                else "n/a"
+            )
             rechtsgrundlagen_benennung = [
                 *[entry.value for entry in item.hasLegalBasis],
-                *get_vocabulary([item.license] if item.license else []),
+                *get_german_vocabulary([item.license] if item.license else []),
             ]
             schlagwort = [
-                *get_vocabulary(item.theme),
+                *get_german_vocabulary(item.theme),
                 *[entry.value for entry in item.keyword],
             ]
-            dk_format = [
-                *get_vocabulary(item.resourceCreationMethod),
-                *get_vocabulary(item.resourceTypeGeneral),
-            ]
-            rechtsgrundlage = (
-                "Ja" if (item.hasLegalBasis or item.license) else "Nicht bekannt"
-            )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -436,16 +446,16 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
                     schlagwort=schlagwort,
-                    dk_format=dk_format,
+                    dk_format="Sonstiges",
                     titel=[fix_quotes(t.value) for t in item.title],
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
-                    rechtsgrundlage=rechtsgrundlage,
+                    rechtsgrundlage="Nicht zutreffend",
                     datenerhalt="Externe Zulieferung",
                     status="Stabil",
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber="Robert Koch-Institut",
+                    herausgeber="RKI - Robert Koch-Institut",
                     kommentar=(
                         "Link zum Metadatensatz im RKI Metadatenkatalog wird "
                         "voraussichtlich Ende 2025 verfügbar sein."

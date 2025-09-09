@@ -9,6 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- datenkompass: add function for html-link handling, add tests
+
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- make consent mailer settings inherit from BaseModel
+
+### Security
+
+## [1.0.0] - 2025-09-04
+
+### Changes
+
+- update Datenkompass according to feedback #2
+- fix forgotten german PrefLabel in Beschreibung datenkompass
+- log number of published datenkompass items
+- fix some typos
+
+## [0.42.0] - 2025-09-04
+
+### Added
+
 - `AssetCheckRule` model into `mex.extractors.pipeline.checks.models.check`
 - assetcheck implementation for `x_items_more_than`-rule in `mex.extractors.pipeline.checks.main`
 - AssetChecks `x_items_more_than` for blueant `mex.extractors.blueant.checks` and endnote `mex.extractors.endnote.checks`
@@ -28,14 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2
 - update mex-artificial dependency to >1.0
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+- wrap up synopse
 
 ## [0.41.0] - 2025-08-21
 
