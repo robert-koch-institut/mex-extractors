@@ -60,18 +60,19 @@ def get_unit_shortname(
         MergedOrganizationalUnitIdentifier,
         MergedOrganizationalUnit,
     ],
+    delim: str,
 ) -> str:
     """Get shortName of merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
         merged_organizational_units_by_id: dict of all merged organizational units by id
+        delim: delimiter for joining short name entries
 
     Returns:
         List of short names of contact units as strings.
     """
-    settings = Settings()
-    return settings.datenkompass.list_delimiter.join(
+    return delim.join(
         [
             shortname
             for org_id in responsible_unit_ids
@@ -259,6 +260,7 @@ def transform_activities(
         organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
             merged_organizational_units_by_id,
+            delim,
         )
         titel = delim.join(get_title(item))
         schlagwort = (
@@ -329,6 +331,7 @@ def transform_bibliographic_resources(
         organisationseinheit = get_unit_shortname(
             item.contributingUnit,
             merged_organizational_units_by_id,
+            delim,
         )
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
@@ -429,6 +432,7 @@ def transform_resources(
             organisationseinheit = get_unit_shortname(
                 item.unitInCharge,
                 merged_organizational_units_by_id,
+                delim,
             )
             beschreibung = "n/a"
             if item.description:

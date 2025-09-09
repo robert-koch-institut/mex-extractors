@@ -33,7 +33,12 @@ def test_get_unit_shortname(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    result = get_unit_shortname(responsible_unit_ids, merged_organizational_units_by_id)
+    delim = "; "
+    result = get_unit_shortname(
+        responsible_unit_ids,
+        merged_organizational_units_by_id,
+        delim,
+    )
 
     assert result == "a.bsp. unit; e.g. unit"
 
