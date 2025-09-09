@@ -57,8 +57,7 @@ def fix_quotes(string: str) -> str:
 def get_unit_shortname(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier,
-        MergedOrganizationalUnit,
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     delim: str,
 ) -> str:
@@ -89,8 +88,7 @@ def get_unit_shortname(
 def get_email(
     responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier,
-        MergedOrganizationalUnit,
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> str | None:
     """Get the first email address of referenced responsible units.
@@ -120,8 +118,7 @@ def get_resource_email(
         | MergedContactPointIdentifier
     ],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier,
-        MergedOrganizationalUnit,
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> str | None:
@@ -318,8 +315,7 @@ def transform_activities(
 def transform_bibliographic_resources(
     merged_bibliographic_resources: list[MergedBibliographicResource],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier,
-        MergedOrganizationalUnit,
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
 ) -> list[DatenkompassBibliographicResource]:
