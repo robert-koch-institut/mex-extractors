@@ -9,7 +9,6 @@ from mex.common.models import (
     ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
-    VariableGroupMapping,
     VariableMapping,
 )
 from mex.common.types import (
@@ -134,34 +133,34 @@ def transform_igs_access_platform(
 
 def transformed_igs_schemas_to_variable_group(
     filtered_schemas: dict[str, IGSPropertiesSchema],
-    variable_group_mapping: VariableGroupMapping,
-    extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    extracted_igs_resource_ids_by_identifier_in_primary_source: dict[
+        str, MergedResourceIdentifier
+    ],
     extracted_primary_source_igs: ExtractedPrimarySource,
+    igs_info: IGSInfo,
 ) -> list[ExtractedVariableGroup]:
     """Transform IGS schema to extracted variable group.
 
     Args:
         filtered_schemas: filtered IGS schemas
-        variable_group_mapping: variable group mapping
-        extracted_igs_resource_ids_by_pathogen: dict of igs resource ids
+        extracted_igs_resource_ids_by_identifier_in_primary_source:
+            dict of igs resource ids
         extracted_primary_source_igs: extracted_primary source igs
+        igs_info: igs info
 
     Returns:
         list of extracted variable groups
     """
-    filtered_schema_keys = [
-        str(variable_group_mapping.containedBy[1].mappingRules[0].setValues)
-        if schema_key
-        == variable_group_mapping.containedBy[1].mappingRules[0].forValues[0]  # type: ignore[index]
-        else schema_key
-        for schema_key in filtered_schemas
-    ]
     extracted_variable_groups: list[ExtractedVariableGroup] = []
-    for schema_name in filtered_schema_keys:
-        contained_by = extracted_igs_resource_ids_by_pathogen[schema_name]
-        label = schema_name.removesuffix("Creation")
-        if schema_name == variable_group_mapping.label[0].mappingRules[1].forValues[0]:  # type: ignore[index]
-            label = str(variable_group_mapping.label[0].mappingRules[1].setValues[0])  # type: ignore[index]
+    for schema_name in filtered_schemas:
+        contained_by = extracted_igs_resource_ids_by_identifier_in_primary_source[
+            f"IGS_{igs_info.title}_v{igs_info.version}"
+        ]
+        label = (
+            [Text(value="Health Agency", language="EN")]
+            if "HaCreation" in schema_name
+            else [Text(value=schema_name.removesuffix("Creation"), language="EN")]
+        )
         extracted_variable_groups.append(
             ExtractedVariableGroup(
                 containedBy=contained_by,
@@ -190,39 +189,44 @@ def get_enums_by_property_name(
         if isinstance(schema, IGSEnumSchema)
     }
     return {
-        property_name: enum_by_schema_name[property_field["$ref"].split("/")[-1]]
+        property_name: enum_by_schema_name[properties["$ref"].split("/")[-1]]
         for schema in igs_schemas.values()
         if isinstance(schema, IGSPropertiesSchema)
         for property_name, properties in schema.properties.items()
-        for property_field in properties
-        if "$ref" in property_field
+        if "$ref" in properties
     }
 
 
-def transform_igs_schemas_to_variables(
+def transform_igs_schemas_to_variables(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
-    extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    extracted_igs_resource_ids_by_identifier_in_primary_source: dict[
+        str, MergedResourceIdentifier
+    ],
     extracted_primary_source_igs: ExtractedPrimarySource,
     extracted_igs_variable_group_ids_by_igs_identifier: dict[
         str, MergedVariableGroupIdentifier
     ],
     variable_mapping: VariableMapping,
+    igs_info: IGSInfo,
 ) -> list[ExtractedVariable]:
-    """_summary_.
+    """Transform igs schemas to variables.
 
     Args:
         igs_schemas: igs schemas by schema name
-        extracted_igs_resource_ids_by_pathogen: igs resources by pathogen
+        extracted_igs_resource_ids_by_identifier_in_primary_source:
+            igs resources by pathogen
         extracted_primary_source_igs: extracted primary source igs
         extracted_igs_variable_group_ids_by_igs_identifier:
             igs variable group by identifier in primary source
         variable_mapping: variable mapping default values
+        igs_info: igs info
 
     Returns:
         list of ExtractedVariable
     """
     enums_by_property_name = get_enums_by_property_name(igs_schemas)
     extracted_variables: list[ExtractedVariable] = []
+    resource_identifier = f"IGS_{igs_info.title}_v{igs_info.version}"
     for schema_name, schema in igs_schemas.items():
         if not isinstance(schema, IGSPropertiesSchema):
             continue
@@ -237,13 +241,15 @@ def transform_igs_schemas_to_variables(
                 in variable_mapping.dataType[1].mappingRules[0].forValues
                 else schema_property["type"]
             )
-            used_in = extracted_igs_resource_ids_by_pathogen.get(schema.get("enum"))
+            used_in = extracted_igs_resource_ids_by_identifier_in_primary_source[
+                resource_identifier
+            ]
             value_set = enums_by_property_name.get(property_name, [])
             extracted_variables.append(
                 ExtractedVariable(
                     belongsTo=belongs_to,
                     dataType=data_type,
-                    description=schema.properties["description"],
+                    description=schema_property["title"],
                     hadPrimarySource=extracted_primary_source_igs.stableTargetId,
                     identifierInPrimarySource=property_name,
                     label=property_name,

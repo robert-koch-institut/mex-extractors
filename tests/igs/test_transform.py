@@ -8,7 +8,7 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_schemas_to_resources,
@@ -25,14 +25,15 @@ def test_transform_igs_schemas_to_resources(
 ) -> None:
     extracted_resources = transform_igs_schemas_to_resources(
         igs_schemas,
+        IGSInfo(title="title", version="-1"),
         extracted_primary_sources["igs"],
         igs_resource_mapping,
         extracted_igs_contact_points_by_mail,
         unit_stable_target_ids_by_synonym,
     )
-    assert extracted_resources["PATHOGEN"].model_dump(exclude_defaults=True) == {
+    assert extracted_resources[0].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "IGS_PATHOGEN",
+        "identifierInPrimarySource": "IGS_title_v-1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "theme": ["https://mex.rki.de/item/theme-11"],

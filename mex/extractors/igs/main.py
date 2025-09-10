@@ -10,7 +10,6 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedPrimarySource,
     ResourceMapping,
-    VariableGroupMapping,
     VariableMapping,
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
@@ -98,7 +97,7 @@ def extracted_igs_contact_points_by_mail(
 
 
 @asset(group_name="igs")
-def extracted_igs_resource_ids_by_pathogen(  # noqa: PLR0913
+def extracted_igs_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
@@ -141,20 +140,19 @@ def extracted_igs_access_platform(
 @asset(group_name="igs")
 def extracted_igs_variable_group_ids_by_identifier_in_primary_source(
     igs_schemas: dict[str, IGSSchema],
-    extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    extracted_igs_resource_ids_by_identifier_in_primary_source: dict[
+        str, MergedResourceIdentifier
+    ],
     extracted_primary_source_igs: ExtractedPrimarySource,
+    igs_info: IGSInfo,
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
-    settings = Settings.get()
-    variable_group_mapping = VariableGroupMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "variable-group.yaml")
-    )
     filtered_schemas = filter_creation_schemas(igs_schemas)
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
         filtered_schemas,
-        variable_group_mapping,
-        extracted_igs_resource_ids_by_pathogen,
+        extracted_igs_resource_ids_by_identifier_in_primary_source,
         extracted_primary_source_igs,
+        igs_info,
     )
     load(extracted_variable_groups)
     return {
@@ -166,24 +164,28 @@ def extracted_igs_variable_group_ids_by_identifier_in_primary_source(
 @asset(group_name="igs")
 def extracted_igs_variables(
     igs_schemas: dict[str, IGSSchema],
-    extracted_igs_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    extracted_igs_resource_ids_by_identifier_in_primary_source: dict[
+        str, MergedResourceIdentifier
+    ],
     extracted_primary_source_igs: ExtractedPrimarySource,
     extracted_igs_variable_group_ids_by_identifier_in_primary_source: dict[
         str, MergedVariableGroupIdentifier
     ],
+    igs_info: IGSInfo,
 ) -> None:
     """Transform igs schemas to extracted variables."""
     settings = Settings.get()
     variable_mapping = VariableMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "access-platform.yaml")
+        load_yaml(settings.igs.mapping_path / "variable.yaml")
     )
     load(
         transform_igs_schemas_to_variables(
             igs_schemas,
-            extracted_igs_resource_ids_by_pathogen,
+            extracted_igs_resource_ids_by_identifier_in_primary_source,
             extracted_primary_source_igs,
             extracted_igs_variable_group_ids_by_identifier_in_primary_source,
             variable_mapping,
+            igs_info,
         )
     )
 
