@@ -67,3 +67,43 @@ def write_items_to_xlsx(
         ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
     logger.info(f"Wrote {df.shape[0]} items to file {file_name}.")
+
+    def write_items_xlsx_to_s3_passthrough(items, s3, file_name, delim=";"):
+        # Make two independent iterators from items
+        items_for_write, items_for_yield = tee(items)
+
+        dicts = [
+            (it.model_dump(by_alias=True, exclude_none=True)
+             if hasattr(it, "model_dump") else it)
+            for it in items_for_write
+        ]
+
+        df = pd.DataFrame(dicts)
+        if df.empty:
+            df = pd.DataFrame({"_empty": []})
+        df = df.reindex(sorted(df.columns), axis=1)
+
+        def norm(v):
+            if isinstance(v, list):
+                return delim.join("" if x is None else str(x) for x in v)
+            if isinstance(v, (dict, tuple, set)):
+                return json.dumps(v, ensure_ascii=False, sort_keys=True)
+            return v
+
+        for col in df.columns:
+            df[col] = df[col].map(norm)
+
+        xlsx_buf = io.BytesIO()
+        with pd.ExcelWriter(xlsx_buf, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="data")
+        xlsx_buf.seek(0)
+
+        s3.put_object(
+            Bucket=settings.s3_bucket_key,
+            Key=file_name,
+            Body=xlsx_buf.getvalue(),
+            ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
+        # Passthrough: yield the original items
+        yield from items_for_yield
