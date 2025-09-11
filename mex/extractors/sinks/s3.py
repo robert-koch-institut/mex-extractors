@@ -47,13 +47,10 @@ class S3Sink(BaseSink):
         settings = Settings.get()
         total_count = 0
         with BytesIO() as buffer:
-            for chunk in grouper(self.CHUNK_SIZE, items):
-                for item in chunk:
-                    if item is None:
-                        continue
-                    dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
-                    buffer.write(f"{dumped_json}\n".encode())
-                    total_count += 1
+            for item in items:
+                dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
+                buffer.write(f"{dumped_json}\n".encode())
+                total_count += 1
             buffer.seek(0)  # Reset buffer pointer before uploading
             self.client.put_object(
                 Body=buffer,
