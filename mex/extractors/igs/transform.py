@@ -157,9 +157,9 @@ def transformed_igs_schemas_to_variable_group(
             f"IGS_{igs_info.title}_v{igs_info.version}"
         ]
         label = (
-            [Text(value="Health Agency", language="EN")]
+            [Text(value="Health Agency", language="en")]
             if "HaCreation" in schema_name
-            else [Text(value=schema_name.removesuffix("Creation"), language="EN")]
+            else [Text(value=schema_name.removesuffix("Creation"), language="en")]
         )
         extracted_variable_groups.append(
             ExtractedVariableGroup(
@@ -189,11 +189,12 @@ def get_enums_by_property_name(
         if isinstance(schema, IGSEnumSchema)
     }
     return {
-        property_name: enum_by_schema_name[properties["$ref"].split("/")[-1]]
+        property_name: enum_by_schema_name[schema_name]
         for schema in igs_schemas.values()
         if isinstance(schema, IGSPropertiesSchema)
         for property_name, properties in schema.properties.items()
         if "$ref" in properties
+        and (schema_name := properties["$ref"].split("/")[-1]) in enum_by_schema_name
     }
 
 
@@ -231,16 +232,22 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
         if not isinstance(schema, IGSPropertiesSchema):
             continue
         for property_name, schema_property in schema.properties.items():
-            belongs_to = extracted_igs_variable_group_ids_by_igs_identifier[schema_name]
-            data_type = (
-                schema_property["format"]
-                if schema_property
+            belongs_to = (
+                [extracted_igs_variable_group_ids_by_igs_identifier[schema_name]]
+                if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
+                else []
+            )
+            data_type = None
+            if (
+                schema_property
                 and variable_mapping.dataType[1].mappingRules[0].forValues
                 and "format" in schema_property
                 and schema_property["format"]
                 in variable_mapping.dataType[1].mappingRules[0].forValues
-                else schema_property["type"]
-            )
+            ):
+                data_type = schema_property["format"]
+            elif "type" in schema_property:
+                data_type = schema_property["type"]
             used_in = extracted_igs_resource_ids_by_identifier_in_primary_source[
                 resource_identifier
             ]
@@ -249,7 +256,7 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                 ExtractedVariable(
                     belongsTo=belongs_to,
                     dataType=data_type,
-                    description=schema_property["title"],
+                    description=schema_property.get("title"),
                     hadPrimarySource=extracted_primary_source_igs.stableTargetId,
                     identifierInPrimarySource=property_name,
                     label=property_name,
