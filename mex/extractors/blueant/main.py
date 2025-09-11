@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
@@ -92,25 +92,26 @@ def extracted_blueant_activities(
     blueant_project_leaders_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-) -> list[ExtractedActivity]:
+) -> Output[int]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.blueant.mapping_path / "activity.yaml")
     )
 
-    extracted_activities = list(
-        transform_blueant_sources_to_extracted_activities(
-            blueant_sources,
-            extracted_primary_source_blueant,
-            blueant_project_leaders_by_employee_id,
-            unit_stable_target_ids_by_synonym,
-            activity,
-            blueant_organization_ids_by_query_string,
-        )
+    extracted_activities = transform_blueant_sources_to_extracted_activities(
+        blueant_sources,
+        extracted_primary_source_blueant,
+        blueant_project_leaders_by_employee_id,
+        unit_stable_target_ids_by_synonym,
+        activity,
+        blueant_organization_ids_by_query_string,
     )
+
+    extracted_activities_list: list[ExtractedActivity] = list(extracted_activities)
+    num_items = len(extracted_activities_list)
     load(extracted_activities)
-    return extracted_activities
+    return Output(value=num_items, metadata={"num_items": MetadataValue.int(num_items)})
 
 
 @entrypoint(Settings)

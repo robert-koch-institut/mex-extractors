@@ -1,0 +1,7 @@
+rules:
+  - fail_if: x_items_more_than
+    value: 1000
+    time_frame: 10m
+  - fail_if: x_items_less_than
+    value: 50
+    time_frame: 1m
