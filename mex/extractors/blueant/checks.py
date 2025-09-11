@@ -7,6 +7,7 @@ from dagster import (
 )
 
 from mex.extractors.pipeline.checks.main import (
+    check_x_items_less_passed,
     check_x_items_more_passed,
     check_yaml_path,
     get_rule,
@@ -39,6 +40,22 @@ def check_x_items_more_than(
     """Check that latest count is not more than threshold + historical count."""
     asset_key = AssetKey(["extracted_blueant_activities"])
     passed = check_x_items_more_passed(
+        context, asset_key, "blueant", "activity", extracted_blueant_activities
+    )
+    return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
+
+
+@asset_check(
+    asset="extracted_blueant_activities",
+    additional_deps=["check_yaml_rules_exist"],
+    blocking=True,
+)
+def check_x_items_less_than(
+    context: AssetCheckExecutionContext, extracted_blueant_activities: int
+) -> AssetCheckResult:
+    """Dagster asset check for 'x_items_less_than' rule."""
+    asset_key = AssetKey(["extracted_blueant_activities"])
+    passed = check_x_items_less_passed(
         context, asset_key, "blueant", "activity", extracted_blueant_activities
     )
     return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
