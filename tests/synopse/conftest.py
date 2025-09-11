@@ -120,7 +120,7 @@ def synopse_study_overviews() -> list[SynopseStudyOverview]:
     """Return a list Synopse Study Overviews."""
     return [
         SynopseStudyOverview(
-            studien_id="studie1",
+            studien_id="12345",
             ds_typ_id=17,
             titel_datenset="set1",
             synopse_id="synopse1",
@@ -146,7 +146,7 @@ def synopse_resources() -> list[ExtractedResource]:
     return [
         ExtractedResource(
             title="Found in overview",
-            identifierInPrimarySource="studie1-set1-17",
+            identifierInPrimarySource="12345-set1-17",
             hadPrimarySource=Identifier.generate(),
             accessRestriction=AccessRestriction["OPEN"],
             contact=[Identifier.generate()],
@@ -435,7 +435,7 @@ def resources_by_synopse_id(
 ) -> dict[str, ExtractedResource]:
     """Return a lookup from study ID to resources."""
     return {
-        "1": synopse_resources[0],
+        "12345-set1-17": synopse_resources[0],
         "2": synopse_resources[1],
         "4": synopse_resources[2],
     }
@@ -446,12 +446,14 @@ def extracted_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     resources_by_synopse_id: dict[str, ExtractedResource],
+    synopse_study_overviews: list[SynopseStudyOverview],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
     return transform_synopse_variables_to_mex_variable_groups(
         synopse_variables_by_thema,
         extracted_primary_sources["report-server"],
         resources_by_synopse_id,
+        synopse_study_overviews,
     )
 
 
