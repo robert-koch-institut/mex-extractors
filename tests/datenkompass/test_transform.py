@@ -45,12 +45,14 @@ def test_get_unit_shortname(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    result = get_unit_shortname(responsible_unit_ids, merged_organizational_units_by_id)
+    delim = "; "
+    result = get_unit_shortname(
+        responsible_unit_ids,
+        merged_organizational_units_by_id,
+        delim,
+    )
 
-    assert sorted(result) == [
-        "a.bsp. unit",
-        "e.g. unit",
-    ]
+    assert result == "a.bsp. unit; e.g. unit"
 
 
 def test_get_email(
@@ -164,7 +166,6 @@ def test_transform_activities(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-
     result = transform_activities(
         extracted_and_filtered_merged_activities, merged_organizational_units_by_id
     )
@@ -196,12 +197,12 @@ def test_transform_bibliographic_resource(
     assert result[0].model_dump() == {
         "kontakt": "unit@example.org",
         "beschreibung": "Buch. Die Nutzung",
-        "organisationseinheit": ["e.g. unit"],
+        "organisationseinheit": "e.g. unit",
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
             "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
         ),
-        "schlagwort": ["short en", "short de"],
+        "schlagwort": "short en; short de",
         "datenbank": "https://doi.org/10.1234_find_this",
         "rechtsgrundlagen_benennung": "Nicht zutreffend",
         "datennutzungszweck_erweitert": "Nicht zutreffend",
@@ -250,23 +251,23 @@ def test_transform_resources(
     assert len(result) == 2
     assert result[0].model_dump() == {
         "voraussetzungen": "Frei zugänglich",
-        "frequenz": [],
+        "frequenz": None,
         "kontakt": "unit@example.org",
-        "organisationseinheit": ["e.g. unit"],
+        "organisationseinheit": "e.g. unit",
         "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
-        "rechtsgrundlagen_benennung": ["has basis", "hat weitere Basis"],
-        "datennutzungszweck_erweitert": ["has purpose"],
-        "schlagwort": ["Infektionskrankheiten und -epidemiologie", "word 1", "Wort 2"],
+        "rechtsgrundlagen_benennung": "has basis; hat weitere Basis",
+        "datennutzungszweck_erweitert": "has purpose",
+        "schlagwort": "Infektionskrankheiten und -epidemiologie; word 1; Wort 2",
         "dk_format": "Sonstiges",
-        "titel": ["some open data resource title"],
+        "titel": "some open data resource title",
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
-        "datennutzungszweck": ["Themenspezifische Auswertung"],
+        "datennutzungszweck": "Themenspezifische Auswertung",
         "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
@@ -277,26 +278,23 @@ def test_transform_resources(
 
     assert result[1].model_dump() == {
         "voraussetzungen": "Zugang eingeschränkt",
-        "frequenz": [],
+        "frequenz": None,
         "kontakt": None,
-        "organisationseinheit": ["a.bsp. unit"],
+        "organisationseinheit": "a.bsp. unit",
         "beschreibung": "n/a",
         "datenbank": None,
-        "rechtsgrundlagen_benennung": [],
-        "datennutzungszweck_erweitert": [],
-        "schlagwort": ["Infektionskrankheiten und -epidemiologie"],
+        "rechtsgrundlagen_benennung": None,
+        "datennutzungszweck_erweitert": None,
+        "schlagwort": "Infektionskrankheiten und -epidemiologie",
         "dk_format": "Sonstiges",
-        "titel": ["some synopse resource title"],
+        "titel": "some synopse resource title",
         "datenhalter": "Robert Koch-Institut",
         "hauptkategorie": "Gesundheit",
         "unterkategorie": "Einflussfaktoren auf die Gesundheit",
         "rechtsgrundlage": "Nicht zutreffend",
         "datenerhalt": "Externe Zulieferung",
         "status": "Stabil",
-        "datennutzungszweck": [
-            "Themenspezifische Auswertung",
-            "Themenspezifisches Monitoring",
-        ],
+        "datennutzungszweck": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
         "herausgeber": "RKI - Robert Koch-Institut",
         "kommentar": (
             "Link zum Metadatensatz im RKI Metadatenkatalog wird "
