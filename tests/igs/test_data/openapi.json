@@ -8,14 +8,22 @@
                 "title": "enum",
                 "type": "string"
             },
-            "properties_schema": {
+            "schemaCreation": {
                 "description": "properties",
                 "properties": {
-                    "key": "value"
-                },
-                "title": "test_title",
-                "type": "string"
+                    "schemas": {
+                        "items": {
+                            "$ref": "#/components/schemas/Pathogen"
+                        },
+                        "title": "test_title",
+                        "type": "date"
+                    }
+                }
             }
         }
+    },
+    "info": {
+        "title": "info",
+        "version": "1"
     }
 }

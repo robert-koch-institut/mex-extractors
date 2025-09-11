@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - datenkompass: add function for html-link handling, add tests
+- extract mandatory fields for igs variables and variable groups
 
 ### Changes
 

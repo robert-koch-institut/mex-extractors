@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../__schema__/VariableMapping.json
+
+belongsTo:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+dataType:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+          - date
+        rule:
+    comment:
+description:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+label:
+  - fieldInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+usedIn:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+valueSet:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - rule:
+    comment:
