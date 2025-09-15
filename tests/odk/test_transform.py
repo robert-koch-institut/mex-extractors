@@ -138,31 +138,23 @@ def test_transform_odk_data_to_extracted_variables(
         extracted_primary_sources["odk"],
     )
     expected = {
-        "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "start",
-        "stableTargetId": Joker(),
-        "dataType": "yes_no",
-        "label": [{"value": "start"}],
-        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
-        "valueSet": [
-            "yes_no, Yes",
-            "yes_no",
-            "yes_no, No",
-            "yes_no",
+        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "identifierInPrimarySource": "gatekeeper",
+        "label": [{"value": "gatekeeper"}],
+        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
+        "description": [
+            {"value": "Introduction of study to gatekeeper", "language": "en"}
         ],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
-        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "username",
-        "dataType": "username",
-        "label": [{"value": "username", "language": TextLanguage.EN}],
-        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
-        "description": [
-            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
-            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
-        ],
+        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "identifierInPrimarySource": "selection",
+        "label": [{"value": "selection", "language": "en"}],
+        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
+        "description": [{"value": "Selection of respondent", "language": "en"}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

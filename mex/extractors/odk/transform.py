@@ -10,6 +10,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
+from mex.extractors.odk.filter import is_invalid_odk_variable
 from mex.extractors.odk.model import ODKData
 from mex.extractors.sinks import load
 
@@ -190,6 +191,8 @@ def transform_odk_data_to_extracted_variables(
         ]
         value_set: list[str] = []
         for row_index, type_row in enumerate(file.type_survey):
+            if is_invalid_odk_variable(type_row):
+                continue
             if type_row in ["begin_group", "end_group", "begin_repeat"]:
                 data_type = None
             elif "select_" in str(type_row):
