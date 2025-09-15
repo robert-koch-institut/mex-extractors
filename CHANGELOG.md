@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - datenkompass: add function for html-link handling, add tests
+- create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
 
 ### Changes
 
