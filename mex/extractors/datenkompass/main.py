@@ -120,11 +120,11 @@ def fetched_merged_activities() -> list[MergedActivity]:
     """Get merged activities."""
     relevant_primary_sources = [
         "blueant",
-        # "confluence-vvt",
-        # "datscha-web",
-        # "ff-projects",
-        # "international-projects",
-        # "report-server",  # synopse
+        "confluence-vvt",
+        "datscha-web",
+        "ff-projects",
+        "international-projects",
+        "report-server",  # synopse
     ]
     entity_type = ["MergedActivity"]
     primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
@@ -170,7 +170,7 @@ def fetched_merged_resources_by_primary_source(
     filtered_merged_organizational_unit_ids: list[str],
 ) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
-    relevant_primary_sources = ["open-data"]  # , "report-server"]
+    relevant_primary_sources = ["open-data", "report-server"]
     entity_type = ["MergedResource"]
     merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
     for rps in relevant_primary_sources:

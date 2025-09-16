@@ -1,6 +1,7 @@
 import json
 from collections.abc import Generator, Iterable
 from io import BytesIO
+from typing import TypeVar
 
 import boto3
 import pandas as pd
@@ -12,8 +13,10 @@ from mex.common.transform import MExEncoder
 from mex.common.utils import flatten_pydantic_model
 from mex.extractors.settings import Settings
 
+_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
-class S3Base(BaseSink):
+
+class S3BaseSink(BaseSink):
     """Base Sink to load models into S3 bucket."""
 
     SERVICE_NAME = "s3"
@@ -32,15 +35,15 @@ class S3Base(BaseSink):
         """Close the underlying boto client."""
         self.client.close()
 
-    def load(self, items: Iterable[BaseModel]) -> Generator[BaseModel, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
         """Force subclass to implement Load method."""
         raise NotImplementedError  # force subclass to implement
 
 
-class S3Sink(S3Base):
+class S3Sink(S3BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
-    def load(self, items: Iterable[BaseModel]) -> Generator[BaseModel, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
         """Write the incoming items as an NDJSON directly to S3.
 
         Args:
@@ -66,17 +69,18 @@ class S3Sink(S3Base):
         yield from items
 
 
-class S3XlsxSink(S3Base):
+class S3XlsxSink(S3BaseSink):
     """Special sink to load models as XLSX file into S3 bucket."""
 
     def __init__(
-        self, *, separator: str, sort_columns_alphabetically: bool = True
+        self, *, separator: str = ";", sort_columns_alphabetically: bool = True
     ) -> None:
         """Instantiate a new S3 xlsx sink with needed parameters."""
+        super().__init__()
         self.separator = separator
         self.sort_columns_alphabetically = sort_columns_alphabetically
 
-    def load(self, items: Iterable[BaseModel]) -> Generator[BaseModel, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
         """Write the incoming items as an XLSX directly to S3.
 
         Args:
@@ -88,9 +92,14 @@ class S3XlsxSink(S3Base):
             Generator for the loaded items
         """
         settings = Settings.get()
-        file_name = f"{items[0].entityType}.xlsx"
 
-        flat_dicts = [flatten_pydantic_model(item, self.separator) for item in items]
+        items_list = list(items)
+
+        file_name = f"{items_list[0].__class__.__name__}.xlsx"
+
+        flat_dicts = [
+            flatten_pydantic_model(item, self.separator) for item in items_list
+        ]
 
         df = pd.DataFrame(flat_dicts)
         if self.sort_columns_alphabetically:
@@ -112,4 +121,4 @@ class S3XlsxSink(S3Base):
             ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
         logger.info(f"Wrote {len(df)} items to {file_name}")
-        yield from items
+        yield from items_list

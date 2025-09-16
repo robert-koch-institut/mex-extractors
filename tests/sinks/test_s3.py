@@ -6,14 +6,14 @@ from pytest import MonkeyPatch
 
 from mex.common.models import ExtractedOrganization
 from mex.common.testing import Joker
-from mex.extractors.sinks.s3 import S3Base, S3Sink, S3XlsxSink
+from mex.extractors.sinks.s3 import S3BaseSink, S3Sink, S3XlsxSink
 
 
 @pytest.fixture
 def mocked_boto(monkeypatch: MonkeyPatch) -> MagicMock:
     mocked_client = MagicMock()
     monkeypatch.setattr(
-        S3Base, "__init__", lambda self: setattr(self, "client", mocked_client)
+        S3BaseSink, "__init__", lambda self: setattr(self, "client", mocked_client)
     )
     return mocked_client
 

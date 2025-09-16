@@ -1,5 +1,3 @@
-from typing import Annotated, Literal
-
 from pydantic import BaseModel, Field
 
 from mex.common.types import (
@@ -37,10 +35,7 @@ class DatenkompassActivity(BaseModel):
     kommentar: str = Field(..., alias="Kommentar")
     format: str = Field(..., alias="Format der Daten")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: Annotated[
-        Literal["DatenkompassActivity"],
-        Field(alias="$type", frozen=True, exclude=True),  # exclude when exporting
-    ] = "DatenkompassActivity"
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassBibliographicResource(BaseModel):
@@ -77,10 +72,7 @@ class DatenkompassBibliographicResource(BaseModel):
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: Annotated[
-        Literal["DatenkompassBibliographicResource"],
-        Field(alias="$type", frozen=True, exclude=True),  # exclude when exporting
-    ] = "DatenkompassBibliographicResource"
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassResource(BaseModel):
@@ -117,10 +109,7 @@ class DatenkompassResource(BaseModel):
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
-    entityType: Annotated[
-        Literal["DatenkompassResource"],
-        Field(alias="$type", frozen=True, exclude=True),  # exclude when exporting
-    ] = "DatenkompassResource"
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 AnyDatenkompassModel = (

@@ -306,6 +306,7 @@ def transform_activities(
                 ),
                 format="Sonstiges",
                 identifier=item.identifier,
+                entityType=item.entityType,
             ),
         )
     return datenkompass_activities
@@ -380,6 +381,7 @@ def transform_bibliographic_resources(
                     "voraussichtlich Ende 2025 verfügbar sein."
                 ),
                 identifier=item.identifier,
+                entityType=item.entityType,
             ),
         )
     return datenkompass_bibliographic_recources
@@ -496,6 +498,7 @@ def transform_resources(
                         "voraussichtlich Ende 2025 verfügbar sein."
                     ),
                     identifier=item.identifier,
+                    entityType=item.entityType,
                 ),
             )
     return datenkompass_recources
