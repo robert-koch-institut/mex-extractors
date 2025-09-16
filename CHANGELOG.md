@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- datenkompass: add function for html-link handling, add tests
 - create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
 
 ### Changes
@@ -20,9 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- make consent mailer settings inherit from BaseModel
-
 ### Security
+
+## [1.1.0] - 2025-09-11
+
+### Added
+
+- datenkompass: add function for html-link handling, add tests
+
+### Changes
+
+- update datenkompass models to not contain lists or unnecessarily optional fields
+
+### Fixed
+
+- make consent mailer settings inherit from BaseModel
 
 ## [1.0.0] - 2025-09-04
 
@@ -37,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `AssetCheckRule` model into `mex.extractors.pipeline.checks.models.check`
+- assetcheck implementation for `x_items_more_than`-rule in `mex.extractors.pipeline.checks.main`
+- AssetChecks `x_items_more_than` for blueant `mex.extractors.blueant.checks` and endnote `mex.extractors.endnote.checks`
+- tests for blueant, endnote and pipeline
+- yaml rule data for testing `assets\raw-data\pipeline\{extractor}\{entityType}`
+- `all_checks_path` added in `mex.extractors.settings` for rules
 - finished consent-mailer pipeline
 - settings for the content-mailer
   - smtp server address for sending mails
@@ -45,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- `extracted_endnote_bibliographic_resources()` and `extracted_blueant_activities()` return `Output`-object
 - improve usage of backend endpoints for merged items
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2

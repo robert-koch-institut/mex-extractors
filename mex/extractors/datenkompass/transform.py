@@ -59,24 +59,30 @@ def get_unit_shortname(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-) -> list[str]:
+    delim: str,
+) -> str:
     """Get shortName of merged units.
 
     Args:
         responsible_unit_ids: List of responsible unit identifiers
         merged_organizational_units_by_id: dict of all merged organizational units by id
+        delim: delimiter for joining short name entries
 
     Returns:
         List of short names of contact units as strings.
     """
-    return [
-        shortname
-        for org_id in responsible_unit_ids
-        for shortname in [
-            unit_short_name.value
-            for unit_short_name in merged_organizational_units_by_id[org_id].shortName
+    return delim.join(
+        [
+            shortname
+            for org_id in responsible_unit_ids
+            for shortname in [
+                unit_short_name.value
+                for unit_short_name in merged_organizational_units_by_id[
+                    org_id
+                ].shortName
+            ]
         ]
-    ]
+    )
 
 
 def get_email(
@@ -176,7 +182,7 @@ def get_title(item: MergedActivity) -> list[str]:
 
 
 def get_german_vocabulary(
-    entries: list[_VocabularyT],
+    entries: list[_VocabularyT] | None,
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
@@ -186,14 +192,19 @@ def get_german_vocabulary(
     Returns:
         list of german Vocabulary entries as strings.
     """
-    return [
-        next(
-            concept.prefLabel.de
-            for concept in type(entry).__concepts__
-            if str(concept.identifier) == entry.value
-        )
-        for entry in entries
-    ]
+    if entries:
+        return [
+            next(
+                (
+                    concept.prefLabel.de
+                    for concept in type(entry).__concepts__
+                    if str(concept.identifier) == entry.value
+                ),
+                None,
+            )
+            for entry in entries
+        ]
+    return []
 
 
 def get_datenbank(item: MergedBibliographicResource) -> str | None:
@@ -234,7 +245,8 @@ def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+        MergedOrganizationalUnitIdentifier,
+        MergedOrganizationalUnit,
     ],
 ) -> list[DatenkompassActivity]:
     """Transform merged to datenkompass activities.
@@ -259,13 +271,17 @@ def transform_activities(
         organisationseinheit = get_unit_shortname(
             item.responsibleUnit,
             merged_organizational_units_by_id,
+            delim,
         )
-        titel = get_title(item)
-        schlagwort = get_german_vocabulary(item.theme)
-        datenbank = []
+        titel = delim.join(get_title(item))
+        schlagwort = (
+            delim.join(t for t in get_german_vocabulary(item.theme) if t is not None)
+            or None
+        )
+        datenbank = None
         if item.website:
-            url_de = [w.url for w in item.website if w.language == "de"]
-            datenbank += url_de if url_de else [item.website[0].url]
+            url_de = delim.join([w.url for w in item.website if w.language == "de"])
+            datenbank = url_de if url_de else item.website[0].url
         datenkompass_activities.append(
             DatenkompassActivity(
                 datenhalter="Robert Koch-Institut",
@@ -320,12 +336,12 @@ def transform_bibliographic_resources(
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
             voraussetzungen = "Frei zugänglich"
-        else:
-            voraussetzungen = None
         datenbank = get_datenbank(item)
         kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
         organisationseinheit = get_unit_shortname(
-            item.contributingUnit, merged_organizational_units_by_id
+            item.contributingUnit,
+            merged_organizational_units_by_id,
+            delim,
         )
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
@@ -348,7 +364,7 @@ def transform_bibliographic_resources(
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
-                schlagwort=[word.value for word in item.keyword],
+                schlagwort=delim.join([word.value for word in item.keyword]),
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
                 frequenz="Nicht zutreffend",
@@ -372,7 +388,8 @@ def transform_bibliographic_resources(
 def transform_resources(
     merged_resources_by_primary_source: dict[str, list[MergedResource]],
     merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+        MergedOrganizationalUnitIdentifier,
+        MergedOrganizationalUnit,
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
 ) -> list[DatenkompassResource]:
@@ -390,12 +407,9 @@ def transform_resources(
     delim = settings.datenkompass.list_delimiter
     datenkompass_recources = []
     datennutzungszweck_by_primary_source = {
-        "report-server": [
-            "Themenspezifische Auswertung",
-            "Themenspezifisches Monitoring",
-        ],
-        "open-data": ["Themenspezifische Auswertung"],
-        "unit filter": ["Themenspezifisches Monitoring"],
+        "report-server": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
+        "open-data": "Themenspezifische Auswertung",
+        "unit filter": "Themenspezifisches Monitoring",
     }
     for (
         primary_source,
@@ -406,10 +420,13 @@ def transform_resources(
                 voraussetzungen = "Zugang eingeschränkt"
             elif item.accessRestriction == AccessRestriction["OPEN"]:
                 voraussetzungen = "Frei zugänglich"
-            frequenz = (
+            frequenz_vocabulary = (
                 get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
                 else []
+            )
+            frequenz = (
+                delim.join(f for f in frequenz_vocabulary if f is not None) or None
             )
             kontakt = get_resource_email(
                 item.contact,
@@ -417,21 +434,41 @@ def transform_resources(
                 merged_contact_points_by_id,
             )
             organisationseinheit = get_unit_shortname(
-                item.unitInCharge, merged_organizational_units_by_id
+                item.unitInCharge,
+                merged_organizational_units_by_id,
+                delim,
             )
             beschreibung = (
                 get_abstract_or_description(item.description, delim)
                 if item.description
                 else "n/a"
             )
-            rechtsgrundlagen_benennung = [
-                *[entry.value for entry in item.hasLegalBasis],
-                *get_german_vocabulary([item.license] if item.license else []),
+            rechtsgrundlagen_benennung_collection = [
+                entry.value for entry in item.hasLegalBasis
+            ] + get_german_vocabulary(
+                [item.license] if item.license else [],
+            )
+            rechtsgrundlagen_benennung = (
+                delim.join(
+                    entry
+                    for entry in rechtsgrundlagen_benennung_collection
+                    if entry is not None
+                )
+                or None
+            )
+            schlagwort_collection = get_german_vocabulary(item.theme) + [
+                entry.value for entry in item.keyword
             ]
-            schlagwort = [
-                *get_german_vocabulary(item.theme),
-                *[entry.value for entry in item.keyword],
-            ]
+            schlagwort = (
+                delim.join(
+                    [entry for entry in schlagwort_collection if entry is not None]
+                )
+                or None
+            )
+            datennutzungszweck_erweitert = (
+                delim.join([hp.value for hp in item.hasPurpose if hp.value is not None])
+                or None
+            )
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
@@ -442,10 +479,10 @@ def transform_resources(
                     beschreibung=beschreibung,
                     datenbank=item.doi,
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
-                    datennutzungszweck_erweitert=[hp.value for hp in item.hasPurpose],
+                    datennutzungszweck_erweitert=datennutzungszweck_erweitert,
                     schlagwort=schlagwort,
                     dk_format="Sonstiges",
-                    titel=[fix_quotes(t.value) for t in item.title],
+                    titel=delim.join([fix_quotes(t.value) for t in item.title]),
                     datenhalter="Robert Koch-Institut",
                     hauptkategorie="Gesundheit",
                     unterkategorie="Einflussfaktoren auf die Gesundheit",
