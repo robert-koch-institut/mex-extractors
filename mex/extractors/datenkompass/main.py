@@ -269,6 +269,7 @@ def publish_to_s3_xlsx(
     settings = Settings.get()
     sep = settings.datenkompass.list_delimiter
     s3xlsx = S3XlsxSink(separator=sep, sort_columns_alphabetically=False)
+
     deque(s3xlsx.load(transform_activities_to_datenkompass_activities), maxlen=0)
     deque(
         s3xlsx.load(
