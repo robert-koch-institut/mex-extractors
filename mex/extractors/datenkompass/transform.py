@@ -60,7 +60,7 @@ def get_unit_shortname(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     delim: str,
-) -> str:
+) -> str | None:
     """Get shortName of merged units.
 
     Args:
@@ -71,7 +71,9 @@ def get_unit_shortname(
     Returns:
         List of short names of contact units as strings.
     """
-    return delim.join(
+    if not responsible_unit_ids:
+        return None
+    result = delim.join(
         [
             shortname
             for org_id in responsible_unit_ids
@@ -83,6 +85,9 @@ def get_unit_shortname(
             ]
         ]
     )
+    if result:
+        return result
+    return None
 
 
 def get_email(
@@ -333,6 +338,9 @@ def transform_bibliographic_resources(
     delim = settings.datenkompass.list_delimiter
     datenkompass_bibliographic_recources = []
     for item in merged_bibliographic_resources:
+        vocab = get_german_vocabulary(item.bibliographicResourceType)
+        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
+        beschreibung += get_abstract_or_description(item.abstract, delim)
         if item.accessRestriction == AccessRestriction["RESTRICTED"]:
             voraussetzungen = "Zugang eingeschränkt"
         elif item.accessRestriction == AccessRestriction["OPEN"]:
@@ -352,9 +360,9 @@ def transform_bibliographic_resources(
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
-        vocab = get_german_vocabulary(item.bibliographicResourceType)
-        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
-        beschreibung += get_abstract_or_description(item.abstract, delim)
+        schlagwort = (
+            delim.join([word.value for word in item.keyword]) if item.keyword else None
+        )
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -365,7 +373,7 @@ def transform_bibliographic_resources(
                 dk_format="Sonstiges",
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
-                schlagwort=delim.join([word.value for word in item.keyword]),
+                schlagwort=schlagwort,
                 titel=titel,
                 datenhalter="Robert Koch-Institut",
                 frequenz="Nicht zutreffend",
