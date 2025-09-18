@@ -16,6 +16,6 @@ def filter_creation_schemas(
         name: schema
         for name, schema in igs_schemas.items()
         if (isinstance(schema, IGSPropertiesSchema))
-        and "Creation" in name
+        and name.endswith("Creation")
         and name != "UploadCreation"
     }
