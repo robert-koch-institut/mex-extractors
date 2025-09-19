@@ -13,6 +13,7 @@ from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
+from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.datenkompass.transform import (
     fix_quotes,
     get_abstract_or_description,
@@ -159,6 +160,7 @@ def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_datenkompass_activity: list[DatenkompassActivity],
+    mocked_activity_mapping: DatenkompassMapping,
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
@@ -167,7 +169,9 @@ def test_transform_activities(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     result = transform_activities(
-        extracted_and_filtered_merged_activities, merged_organizational_units_by_id
+        extracted_and_filtered_merged_activities,
+        merged_organizational_units_by_id,
+        mocked_activity_mapping,
     )
     assert result == mocked_datenkompass_activity
 
@@ -177,10 +181,8 @@ def test_transform_bibliographic_resource(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_person: list[MergedPerson],
+    mocked_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> None:
-    extracted_and_filtered_merged_bibliographic_resource = (
-        mocked_merged_bibliographic_resource
-    )
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -189,9 +191,10 @@ def test_transform_bibliographic_resource(
     }
 
     result = transform_bibliographic_resources(
-        extracted_and_filtered_merged_bibliographic_resource,
+        mocked_merged_bibliographic_resource,
         merged_organizational_units_by_id,
         person_name_by_id,
+        mocked_bibliographic_resource_mapping,
     )
 
     assert result[0].model_dump() == {
@@ -230,6 +233,7 @@ def test_transform_resources(
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
+    mocked_resource_mapping: DatenkompassMapping,
 ) -> None:
     fetched_merged_resource = {
         "open-data": [mocked_merged_resource[0]],
@@ -246,6 +250,7 @@ def test_transform_resources(
         fetched_merged_resource,
         fetched_merged_organizational_units_by_id,
         fetched_merged_contact_points_by_id,
+        mocked_resource_mapping,
     )
 
     assert len(result) == 2

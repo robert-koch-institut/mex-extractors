@@ -9,11 +9,12 @@ class MappingRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
-    setValues: Annotated[str | None, Field(title="setValues")] = None
+    setValues: Annotated[list[str] | str | None, Field(title="setValues")] = None
     rule: Annotated[str | None, Field(title="rule")] = None
     expectedOutputExample: Annotated[
         list[str] | None, Field(title="expectedOutputExample")
     ] = None
+    forPrimarySource: Annotated[str | None, Field(title="rule")] = None
 
 
 class DatenkompassMappingField(BaseMapping, extra="forbid"):

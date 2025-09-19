@@ -1,0 +1,77 @@
+fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'report-server'
+    - 'open-data'
+    rule: Only get items where 'hadPrimarySource' matches the identifiers in 'forValues'.
+- fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
+  fieldInMEx: accessRestriction
+  mappingRules:
+  - forValues:
+    - https://mex.rki.de/item/access-restriction-2 # restricted
+    setValues: Zugang eingeschränkt
+  - forValues:
+    - https://mex.rki.de/item/access-restriction-1 # open
+    setValues: Frei zugänglich
+- fieldInTarget: Beschreibung
+  fieldInMEx: description
+  mappingRules:
+  - forValues:
+    - null # no value is applicable for description
+    setValues:
+    - n/a
+  - rule: If values are available in multiple languages, preferably use 'de'.
+          If there are multiple values for the same language, use all values. Use whitespace between the values.
+          If values have additional surrounding (leading and trailing) quotation marks (""), delete them.
+          Replace escaped quotation marks (\") with single quotation marks(''), if they are somewhere within the description.
+    expectedOutputExample: ["This is the description with a 'highlighted' word. A second value."]
+  - rule: Values may contain html elements such as <a href>. Eliminate all html tags and only keep clean URLs.
+    expectedOutputExample: ["This is a description with a link to https://example.org with no html tags."]
+  comment: Description is not a required field in mex model, but in the target schema.
+          We agreed to send the info "n/a", if there is no value applicable.
+- fieldInTarget: Format der Daten
+  mappingRules:
+  - setValues: Sonstiges
+- fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
+  mappingRules:
+  - setValues: Robert Koch-Institut
+- fieldInTarget: Hauptkategorie
+  mappingRules:
+  - setValues: Gesundheit
+- fieldInTarget: Unterkategorie
+  mappingRules:
+  - setValues: Einflussfaktoren auf die Gesundheit
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
+  mappingRules:
+  - setValues: Nicht zutreffend
+    rule: If a value is applicable in either 'hasLegalBasis' or 'license', then set value as mentioned.
+  - forValues:
+    - null # if value is not applicable
+    setValues: Nicht bekannt
+    rule: If no value is applicable in either 'hasLegalBasis' or 'license', then set no value.
+- fieldInTarget: Weg des Datenerhalts
+  mappingRules:
+  - setValues:
+    - Externe Zulieferung
+- fieldInTarget: Status (planbare Verfügbarkeit der Daten)
+  mappingRules:
+  - setValues:
+    - Stabil
+- fieldInTarget: Datennutzungszweck
+  mappingRules:
+  - forPrimarySource: report-server
+    setValues:
+    - Themenspezifische Auswertung
+    - Themenspezifisches Monitoring
+  - forPrimarySource: open-data
+    setValues: Themenspezifische Auswertung
+  - forPrimarySource:  MergedResource items of abt. 2 and sub-units
+    setValues:
+    - Themenspezifisches Monitoring
+- fieldInTarget: Herausgeber
+  mappingRules:
+  - setValues: RKI - Robert Koch-Institut
+- fieldInTarget: Kommentar
+  mappingRules:
+  - setValues: Link zum Metadatensatz im RKI Metadatenkatalog wird voraussichtlich Ende 2025 verfügbar sein.

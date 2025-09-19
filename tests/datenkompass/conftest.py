@@ -30,6 +30,33 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
+from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
+
+
+@pytest.fixture
+def mocked_activity_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_bibliographic_resource_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_resource_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
+    )
 
 
 @pytest.fixture

@@ -1,0 +1,56 @@
+fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'blueant'
+- fieldInTarget: Beschreibung
+  fieldInMEx: abstract
+  mappingRules:
+    - setValues:
+      - "Es handelt sich um ein Projekt/ Vorhaben. "
+      rule: Use the value in forValues as value, if no value from fieldInPrimarySource 'abstract' is available.
+          If a value is available, that set value in forValues as prefix.
+      expectedOutputExample: ["Es handelt sich um ein Projekt/ Vorhaben. Ab hier folgt die extrahierte Beschreibung."]
+    - rule: If values are available in multiple languages, preferably use 'de'.
+            If there are multiple values for the same language, use all values. Use whitespace between the values.
+            If values have additional surrounding (leading and trailing) quotation marks (""), delete them.
+            Replace escaped quotation marks (\") with single quotation marks(''), if they are somewhere within the abstract.
+      expectedOutputExample: [ "This is the abstract with a 'highlighted' word." ]
+    - rule: Values may contain html elements such as <a href>. Eliminate all html tags and only keep clean URLs.
+      expectedOutputExample: [ "This is a description with a link to https://example.org with no html tags." ]
+- fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
+  mappingRules:
+  - setValues: Robert Koch-Institut
+- fieldInTarget: Frequenz der Aktualisierung
+  mappingRules:
+  - setValues: Nicht zutreffend
+- fieldInTarget: Hauptkategorie
+  mappingRules:
+  - setValues: Gesundheit
+- fieldInTarget: Unterkategorie
+  mappingRules:
+  - setValues: Einflussfaktoren auf die Gesundheit
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
+  mappingRules:
+  - setValues: Nicht bekannt
+- fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
+  mappingRules:
+  - setValues: Unbekannt
+- fieldInTarget: Weg des Datenerhalts
+  mappingRules:
+  - setValues: Externe Zulieferung
+- fieldInTarget: Status (planbare Verfügbarkeit der Daten)
+  mappingRules:
+  - setValues: Unbekannt
+- fieldInTarget: Datennutzungszweck
+  mappingRules:
+  - setValues: Themenspezifische Auswertung
+- fieldInTarget: Herausgeber
+  mappingRules:
+  - setValues: RKI - Robert Koch-Institut
+- fieldInTarget: Kommentar
+  mappingRules:
+  - setValues: Link zum Metadatensatz im RKI Metadatenkatalog wird voraussichtlich Ende 2025 verfügbar sein.
+- fieldInTarget: Format der Daten
+  mappingRules:
+  - setValues: Sonstiges

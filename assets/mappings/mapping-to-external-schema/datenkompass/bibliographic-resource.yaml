@@ -1,0 +1,56 @@
+fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'endnote'
+    - 'bla'
+    rule: Only get items where 'hadPrimarySource' matches the identifiers in 'forValues'.
+- fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
+  fieldInMEx: accessRestriction
+  mappingRules:
+  - forValues:
+    - https://mex.rki.de/item/access-restriction-2 # restricted
+    setValues: Zugang eingeschränkt
+  - forValues:
+    - https://mex.rki.de/item/access-restriction-1 # open
+    setValues: Frei zugänglich
+- fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
+  mappingRules:
+  - setValues: Robert Koch-Institut
+- fieldInTarget: Format der Daten
+  mappingRules:
+  - setValues:
+    - Sonstiges
+- fieldInTarget: Frequenz der Aktualisierung
+  mappingRules:
+  - setValues: Nicht zutreffend
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung (Benennung)
+  mappingRules:
+  - setValues: Nicht zutreffend
+- fieldInTarget: Datennutzungszweck (erweitert)
+  mappingRules:
+  - setValues: Nicht zutreffend
+- fieldInTarget: Hauptkategorie
+  mappingRules:
+  - setValues: Gesundheit
+- fieldInTarget: Unterkategorie
+  mappingRules:
+  - setValues: Einflussfaktoren auf die Gesundheit
+- fieldInTarget: Weg des Datenerhalts
+  mappingRules:
+  - setValues: Abruf über eine externe Internetseite oder eine Datenbank
+- fieldInTarget: Status (planbare Verfügbarkeit der Daten)
+  mappingRules:
+  - setValues: Stabil
+- fieldInTarget: Datennutzungszweck
+  mappingRules:
+  - setValues: Sonstige
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
+  mappingRules:
+  - setValues: Nicht zutreffend
+- fieldInTarget: Herausgeber
+  mappingRules:
+  - setValues: RKI - Robert Koch-Institut
+- fieldInTarget: Kommentar
+  mappingRules:
+  - setValues: Link zum Metadatensatz im RKI Metadatenkatalog wird voraussichtlich Ende 2025 verfügbar sein.
