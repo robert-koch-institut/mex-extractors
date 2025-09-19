@@ -9,12 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- datenkompass: add function for html-link handling, add tests
 - extract mandatory fields for igs variables and variable groups
 
 ### Changes
-
-- update datenkompass models to not contain lists or unnecessarily optional fields
 
 ### Deprecated
 
@@ -22,9 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- make consent mailer settings inherit from BaseModel
-
 ### Security
+
+## [1.1.0] - 2025-09-11
+
+### Added
+
+- datenkompass: add function for html-link handling, add tests
+
+### Changes
+
+- update datenkompass models to not contain lists or unnecessarily optional fields
+
+### Fixed
+
+- make consent mailer settings inherit from BaseModel
 
 ## [1.0.0] - 2025-09-04
 
