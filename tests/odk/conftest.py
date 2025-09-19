@@ -1,6 +1,11 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedResource, ResourceMapping
+from mex.common.models import (
+    ExtractedActivity,
+    ExtractedResource,
+    ResourceMapping,
+    VariableMapping,
+)
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -99,6 +104,14 @@ def odk_resource_mappings(settings: Settings) -> list[ResourceMapping]:
             load_yaml(settings.odk.mapping_path / "resource_mock.yaml")
         )
     ]
+
+
+@pytest.fixture
+def odk_variable_mapping(settings: Settings) -> VariableMapping:
+    """Mocked odk variable mappings."""
+    return VariableMapping.model_validate(
+        load_yaml(settings.odk.mapping_path / "variable.yaml")
+    )
 
 
 @pytest.fixture

@@ -5,6 +5,7 @@ from mex.common.models import (
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
+    VariableMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -169,6 +170,7 @@ def transform_odk_data_to_extracted_variables(
     extracted_resources_odk: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_source_odk: ExtractedPrimarySource,
+    variable_mapping: VariableMapping,
 ) -> list[ExtractedVariable]:
     """Transform odk variables to mex variables.
 
@@ -176,6 +178,7 @@ def transform_odk_data_to_extracted_variables(
         extracted_resources_odk: extracted mex resources
         odk_raw_data: raw data extracted from Excel files
         extracted_primary_source_odk: odk primary source
+        variable_mapping: variable mapping default values
 
     Returns:
         list of mex variables
@@ -193,7 +196,10 @@ def transform_odk_data_to_extracted_variables(
         for row_index, type_row in enumerate(file.type_survey):
             if is_invalid_odk_variable(type_row):
                 continue
-            if type_row in ["begin_group", "end_group", "begin_repeat"]:
+            if (
+                variable_mapping.dataType[0].mappingRules[0].forValues
+                and type_row in variable_mapping.dataType[0].mappingRules[0].forValues
+            ):
                 data_type = None
             elif "select_" in str(type_row):
                 data_type = "integer"

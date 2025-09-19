@@ -3,6 +3,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
+    VariableMapping,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -131,11 +132,13 @@ def test_transform_odk_data_to_extracted_variables(
     extracted_resources_odk: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    odk_variable_mapping: VariableMapping,
 ) -> None:
     extracted_variables = transform_odk_data_to_extracted_variables(
         extracted_resources_odk,
         odk_raw_data,
         extracted_primary_sources["odk"],
+        odk_variable_mapping,
     )
     expected = {
         "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
