@@ -11,6 +11,7 @@ class IGSEnumSchema(IGSSchema):
     """Model class for IGS Enum Schemas."""
 
     enum: list[str]
+    type: str
 
 
 class IGSPropertiesSchema(IGSSchema):

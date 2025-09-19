@@ -178,6 +178,9 @@ def extracted_igs_variables(
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.igs.mapping_path / "variable.yaml")
     )
+    variable_pathogen_mapping = VariableMapping.model_validate(
+        load_yaml(settings.igs.mapping_path / "variable_pathogen.yaml")
+    )
     load(
         transform_igs_schemas_to_variables(
             igs_schemas,
@@ -185,6 +188,7 @@ def extracted_igs_variables(
             extracted_primary_source_igs,
             extracted_igs_variable_group_ids_by_identifier_in_primary_source,
             variable_mapping,
+            variable_pathogen_mapping,
             igs_info,
         )
     )

@@ -132,7 +132,7 @@ def transform_igs_access_platform(
 
 
 def transformed_igs_schemas_to_variable_group(
-    filtered_schemas: dict[str, IGSPropertiesSchema],
+    filtered_schemas: dict[str, IGSSchema],
     extracted_igs_resource_ids_by_identifier_in_primary_source: dict[
         str, MergedResourceIdentifier
     ],
@@ -208,6 +208,7 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
         str, MergedVariableGroupIdentifier
     ],
     variable_mapping: VariableMapping,
+    variable_pathogen_mapping: VariableMapping,
     igs_info: IGSInfo,
 ) -> list[ExtractedVariable]:
     """Transform igs schemas to variables.
@@ -220,15 +221,47 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
         extracted_igs_variable_group_ids_by_igs_identifier:
             igs variable group by identifier in primary source
         variable_mapping: variable mapping default values
+        variable_pathogen_mapping: variable_pathogen mapping default values
         igs_info: igs info
 
     Returns:
         list of ExtractedVariable
     """
+    description_by_enum = {
+        rule.forValues[0]: rule.setValues
+        for rule in variable_pathogen_mapping.description[0].mappingRules
+        if rule.forValues
+    }
     enums_by_property_name = get_enums_by_property_name(igs_schemas)
     extracted_variables: list[ExtractedVariable] = []
-    resource_identifier = f"IGS_{igs_info.title}_v{igs_info.version}"
+    used_in = extracted_igs_resource_ids_by_identifier_in_primary_source[
+        f"IGS_{igs_info.title}_v{igs_info.version}"
+    ]
     for schema_name, schema in igs_schemas.items():
+        data_type: str | None = None
+        if schema_name == "Pathogen" and isinstance(schema, IGSEnumSchema):
+            for enum in schema.enum:
+                belongs_to = (
+                    [extracted_igs_variable_group_ids_by_igs_identifier[schema_name]]
+                    if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
+                    else []
+                )
+                data_type = schema.type
+                description = description_by_enum[enum]
+                identifier_in_primary_source = f"pathogen_{enum}"
+                label = enum
+                extracted_variables.append(
+                    ExtractedVariable(
+                        belongsTo=belongs_to,
+                        dataType=data_type,
+                        description=description,
+                        hadPrimarySource=extracted_primary_source_igs.stableTargetId,
+                        identifierInPrimarySource=identifier_in_primary_source,
+                        label=label,
+                        usedIn=used_in,
+                    )
+                )
+
         if not isinstance(schema, IGSPropertiesSchema):
             continue
         for property_name, schema_property in schema.properties.items():
@@ -237,7 +270,6 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                 if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
                 else []
             )
-            data_type = None
             if (
                 schema_property
                 and variable_mapping.dataType[1].mappingRules[0].forValues
@@ -248,9 +280,6 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                 data_type = schema_property["format"]
             elif "type" in schema_property:
                 data_type = schema_property["type"]
-            used_in = extracted_igs_resource_ids_by_identifier_in_primary_source[
-                resource_identifier
-            ]
             value_set = enums_by_property_name.get(property_name, [])
             extracted_variables.append(
                 ExtractedVariable(
@@ -261,7 +290,7 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                     identifierInPrimarySource=property_name,
                     label=property_name,
                     valueSet=value_set,
-                    usedIn=[used_in] if used_in else [],
+                    usedIn=used_in,
                 )
             )
     return extracted_variables
