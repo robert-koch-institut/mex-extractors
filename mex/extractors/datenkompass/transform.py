@@ -11,7 +11,6 @@ from mex.common.models import (
     MergedResource,
 )
 from mex.common.types import (
-    AccessRestriction,
     Identifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -244,13 +243,23 @@ def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
     return str(soup_string)
 
 
-def mapping_lookup(
+def mapping_lookup_default(
     model: type[BaseModel],
     mapping: DatenkompassMapping,
     delim: str,
     field_names: list[str],
 ) -> dict[str, str]:
-    """Lookup default values in Datenkompass mappings."""
+    """Lookup default values in Datenkompass mappings.
+
+    Args:
+        model: Datenkompass model.
+        mapping: Datenkompass mapping.
+        delim: list delimiter for joining the strings in list
+        field_names: list of field names to look up in mapping.
+
+    Returns:
+        dictionary of mapping field names to values.
+    """
     default_by_fieldname: dict[str, str] = {}
     for field_name in field_names:
         field_info = model.model_fields[field_name]
@@ -263,8 +272,43 @@ def mapping_lookup(
                 elif isinstance(set_value, str):
                     default_by_fieldname[field_name] = set_value
                 else:
-                    raise ValueError()
+                    raise ValueError
     return default_by_fieldname
+
+
+def mapping_lookup_for_Value(
+    model: type[BaseModel],
+    mapping: DatenkompassMapping,
+    delim: str,
+    field_name: str,
+) -> dict[str, str]:
+    """Lookup default values based on input value in Datenkompass mappings.
+
+    Args:
+        model: Datenkompass model.
+        mapping: Datenkompass mapping.
+        delim: list delimiter for joining the strings in list
+        field_name: field name to look up the value for.
+
+    Returns:
+        dictionary of mapping field names to values.
+    """
+    default_by_lookup_value: dict[str, str] = {}
+    field_info = model.model_fields[field_name]
+    alias_name = getattr(field_info, "alias", None)
+    for mapping_field in mapping.fields:
+        if alias_name == mapping_field.fieldInTarget:
+            for mapping_rule in mapping_field.mappingRules:
+                lookup_value = mapping_rule.forValues or mapping_rule.forPrimarySource
+                set_value = mapping_rule.setValues
+                if isinstance(set_value, list):
+                    default_by_lookup_value[lookup_value[0]] = delim.join(set_value)
+                elif isinstance(set_value, str):
+                    default_by_lookup_value[lookup_value[0]] = set_value
+                else:
+                    raise ValueError
+    return default_by_lookup_value
+
 
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
@@ -272,13 +316,14 @@ def transform_activities(
         MergedOrganizationalUnitIdentifier,
         MergedOrganizationalUnit,
     ],
-    activity_mapping: DatenkompassMapping
+    activity_mapping: DatenkompassMapping,
 ) -> list[DatenkompassActivity]:
     """Transform merged to datenkompass activities.
 
     Args:
         filtered_merged_activities: List of merged activities
         merged_organizational_units_by_id: dict of merged organizational units by id
+        activity_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassActivity instances.
@@ -286,7 +331,7 @@ def transform_activities(
     settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
     datenkompass_activities = []
-    default_by_fieldname = mapping_lookup(
+    default_by_fieldname = mapping_lookup_default(
         DatenkompassActivity,
         activity_mapping,
         delim,
@@ -304,7 +349,7 @@ def transform_activities(
             "herausgeber",
             "kommentar",
             "format",
-        ]
+        ],
     )
     for item in filtered_merged_activities:
         beschreibung = default_by_fieldname["beschreibung"]
@@ -345,7 +390,7 @@ def transform_activities(
                 status=default_by_fieldname["status"],
                 datennutzungszweck=default_by_fieldname["datennutzungszweck"],
                 herausgeber=default_by_fieldname["herausgeber"],
-                kommentar = default_by_fieldname["kommentar"],
+                kommentar=default_by_fieldname["kommentar"],
                 format=default_by_fieldname["format"],
                 identifier=item.identifier,
                 entityType=item.entityType,
@@ -368,6 +413,7 @@ def transform_bibliographic_resources(
         merged_bibliographic_resources: List of merged bibliographic resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
+        bibliographic_resource_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassBibliographicResource instances.
@@ -375,7 +421,7 @@ def transform_bibliographic_resources(
     settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
     datenkompass_bibliographic_recources = []
-    default_by_fieldname = mapping_lookup(
+    default_by_fieldname = mapping_lookup_default(
         DatenkompassBibliographicResource,
         bibliographic_resource_mapping,
         delim,
@@ -393,13 +439,15 @@ def transform_bibliographic_resources(
             "datennutzungszweck",
             "rechtsgrundlage",
             "kommentar",
-        ]
+        ],
+    )
+    voraussetzungen_by_entry = mapping_lookup_for_Value(
+        DatenkompassBibliographicResource,
+        bibliographic_resource_mapping,
+        delim,
+        "voraussetzungen",
     )
     for item in merged_bibliographic_resources:
-        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
-            voraussetzungen = "Zugang eingeschränkt"
-        elif item.accessRestriction == AccessRestriction["OPEN"]:
-            voraussetzungen = "Frei zugänglich"
         datenbank = get_datenbank(item)
         kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
         organisationseinheit = get_unit_shortname(
@@ -421,10 +469,14 @@ def transform_bibliographic_resources(
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
-                voraussetzungen=voraussetzungen,
+                voraussetzungen=voraussetzungen_by_entry[item.accessRestriction.name],
                 datenbank=datenbank,
-                rechtsgrundlagen_benennung=default_by_fieldname["rechtsgrundlagen_benennung"],
-                datennutzungszweck_erweitert=default_by_fieldname["datennutzungszweck_erweitert"],
+                rechtsgrundlagen_benennung=default_by_fieldname[
+                    "rechtsgrundlagen_benennung"
+                ],
+                datennutzungszweck_erweitert=default_by_fieldname[
+                    "datennutzungszweck_erweitert"
+                ],
                 dk_format=default_by_fieldname["dk_format"],
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
@@ -462,6 +514,7 @@ def transform_resources(
         merged_resources_by_primary_source: dictionary of merged resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
+        resource_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassResource instances.
@@ -469,11 +522,12 @@ def transform_resources(
     settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
     datenkompass_recources = []
-    default_by_fieldname = mapping_lookup(
+    default_by_fieldname = mapping_lookup_default(
         DatenkompassResource,
         resource_mapping,
         delim,
         [
+            "beschreibung",
             "dk_format",
             "datenhalter",
             "hauptkategorie",
@@ -483,22 +537,25 @@ def transform_resources(
             "status",
             "herausgeber",
             "kommentar",
-        ]
+        ],
     )
-    datennutzungszweck_by_primary_source = {
-        "report-server": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
-        "open-data": "Themenspezifische Auswertung",
-        "unit filter": "Themenspezifisches Monitoring",
-    }
+    datennutzungszweck_by_primary_source = mapping_lookup_for_Value(
+        DatenkompassResource,
+        resource_mapping,
+        delim,
+        "datennutzungszweck",
+    )
+    voraussetzungen_by_entry = mapping_lookup_for_Value(
+        DatenkompassResource,
+        resource_mapping,
+        delim,
+        "voraussetzungen",
+    )
     for (
         primary_source,
         merged_resources_list,
     ) in merged_resources_by_primary_source.items():
         for item in merged_resources_list:
-            if item.accessRestriction == AccessRestriction["RESTRICTED"]:
-                voraussetzungen = "Zugang eingeschränkt"
-            elif item.accessRestriction == AccessRestriction["OPEN"]:
-                voraussetzungen = "Frei zugänglich"
             frequenz_vocabulary = (
                 get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
@@ -520,7 +577,7 @@ def transform_resources(
             beschreibung = (
                 get_abstract_or_description(item.description, delim)
                 if item.description
-                else "n/a"
+                else default_by_fieldname["beschreibung"]
             )
             rechtsgrundlagen_benennung_collection = [
                 entry.value for entry in item.hasLegalBasis
@@ -551,7 +608,9 @@ def transform_resources(
             datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
             datenkompass_recources.append(
                 DatenkompassResource(
-                    voraussetzungen=voraussetzungen,
+                    voraussetzungen=voraussetzungen_by_entry[
+                        item.accessRestriction.name
+                    ],
                     frequenz=frequenz,
                     kontakt=kontakt,
                     organisationseinheit=organisationseinheit,

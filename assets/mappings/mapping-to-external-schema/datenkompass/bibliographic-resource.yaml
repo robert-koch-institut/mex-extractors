@@ -2,9 +2,8 @@ fields:
 - fieldInMEx: hadPrimarySource
   mappingRules:
   - forValues:
-    - 'endnote'
-    - 'bla'
-    rule: Only get items where 'hadPrimarySource' matches the identifiers in 'forValues'.
+    - 'Lorem'
+    - 'Ipsum'
 - fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
   fieldInMEx: accessRestriction
   mappingRules:
@@ -16,41 +15,40 @@ fields:
     setValues: Frei zugänglich
 - fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
   mappingRules:
-  - setValues: Robert Koch-Institut
+  - setValues: Datenhalter
 - fieldInTarget: Format der Daten
   mappingRules:
-  - setValues:
-    - Sonstiges
+  - setValues: Format
 - fieldInTarget: Frequenz der Aktualisierung
   mappingRules:
-  - setValues: Nicht zutreffend
+  - setValues: Frequenz
 - fieldInTarget: Rechtsgrundlage für die Zugangseröffnung (Benennung)
   mappingRules:
-  - setValues: Nicht zutreffend
+  - setValues: Rechtsgrundlage
 - fieldInTarget: Datennutzungszweck (erweitert)
   mappingRules:
-  - setValues: Nicht zutreffend
+  - setValues: Datennutzungszweck
 - fieldInTarget: Hauptkategorie
   mappingRules:
-  - setValues: Gesundheit
+  - setValues: Hauptkategorie
 - fieldInTarget: Unterkategorie
   mappingRules:
-  - setValues: Einflussfaktoren auf die Gesundheit
+  - setValues: Unterkategorie
 - fieldInTarget: Weg des Datenerhalts
   mappingRules:
-  - setValues: Abruf über eine externe Internetseite oder eine Datenbank
+  - setValues: Datenerhalt
 - fieldInTarget: Status (planbare Verfügbarkeit der Daten)
   mappingRules:
-  - setValues: Stabil
+  - setValues: Status
 - fieldInTarget: Datennutzungszweck
   mappingRules:
-  - setValues: Sonstige
+  - setValues: Datennutzungszweck
 - fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
   mappingRules:
-  - setValues: Nicht zutreffend
+  - setValues: Rechtsgrundlage
 - fieldInTarget: Herausgeber
   mappingRules:
-  - setValues: RKI - Robert Koch-Institut
+  - setValues: Herausgeber
 - fieldInTarget: Kommentar
   mappingRules:
-  - setValues: Link zum Metadatensatz im RKI Metadatenkatalog wird voraussichtlich Ende 2025 verfügbar sein.
+  - setValues: Kommentar
