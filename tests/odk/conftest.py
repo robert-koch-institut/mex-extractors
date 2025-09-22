@@ -183,35 +183,6 @@ def odk_raw_data() -> list[ODKData]:
     return [
         ODKData(
             file_name="test_raw_data.xlsx",
-            hint={
-                "hint": [
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "*(-88 = don't know, -99 = refused to answer)*",
-                    "*(-88 = don't know, -99 = refused to answer)*",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                ]
-            },
             label_choices={
                 "label::English (en)": [
                     "nan",
