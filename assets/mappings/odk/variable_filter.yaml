@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../__schema__/VariableFilter.json
+
+fields:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    filterRules:
+      - forValues:
+          - end_group
+        rule:

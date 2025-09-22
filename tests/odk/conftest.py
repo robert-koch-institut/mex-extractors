@@ -1,6 +1,11 @@
 import pytest
 
-from mex.common.models import ExtractedActivity, ExtractedResource, ResourceMapping
+from mex.common.models import (
+    ExtractedActivity,
+    ExtractedResource,
+    ResourceMapping,
+    VariableMapping,
+)
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -102,6 +107,14 @@ def odk_resource_mappings(settings: Settings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
+def odk_variable_mapping(settings: Settings) -> VariableMapping:
+    """Mocked odk variable mappings."""
+    return VariableMapping.model_validate(
+        load_yaml(settings.odk.mapping_path / "variable.yaml")
+    )
+
+
+@pytest.fixture
 def external_partner_and_publisher_by_label() -> dict[
     str, MergedOrganizationIdentifier
 ]:
@@ -170,35 +183,6 @@ def odk_raw_data() -> list[ODKData]:
     return [
         ODKData(
             file_name="test_raw_data.xlsx",
-            hint={
-                "hint": [
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "*(-88 = don't know, -99 = refused to answer)*",
-                    "*(-88 = don't know, -99 = refused to answer)*",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                    "nan",
-                ]
-            },
             label_choices={
                 "label::English (en)": [
                     "nan",
