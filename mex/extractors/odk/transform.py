@@ -5,11 +5,13 @@ from mex.common.models import (
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
+    VariableMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
+from mex.extractors.odk.filter import is_invalid_odk_variable
 from mex.extractors.odk.model import ODKData
 from mex.extractors.sinks import load
 
@@ -168,6 +170,7 @@ def transform_odk_data_to_extracted_variables(
     extracted_resources_odk: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_source_odk: ExtractedPrimarySource,
+    variable_mapping: VariableMapping,
 ) -> list[ExtractedVariable]:
     """Transform odk variables to mex variables.
 
@@ -175,6 +178,7 @@ def transform_odk_data_to_extracted_variables(
         extracted_resources_odk: extracted mex resources
         odk_raw_data: raw data extracted from Excel files
         extracted_primary_source_odk: odk primary source
+        variable_mapping: variable mapping default values
 
     Returns:
         list of mex variables
@@ -190,7 +194,12 @@ def transform_odk_data_to_extracted_variables(
         ]
         value_set: list[str] = []
         for row_index, type_row in enumerate(file.type_survey):
-            if type_row in ["begin_group", "end_group", "begin_repeat"]:
+            if is_invalid_odk_variable(type_row):
+                continue
+            if (
+                variable_mapping.dataType[0].mappingRules[0].forValues
+                and type_row in variable_mapping.dataType[0].mappingRules[0].forValues
+            ):
                 data_type = None
             elif "select_" in str(type_row):
                 data_type = "integer"
