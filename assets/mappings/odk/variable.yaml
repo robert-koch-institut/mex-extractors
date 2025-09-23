@@ -4,14 +4,14 @@ belongsTo:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 dataType:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "0"
-        rule:
+      - rule:
       - forValues:
           - "1"
         setValues: https://mex.rki.de/item/data-type-2
@@ -23,39 +23,39 @@ description:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 hadPrimarySource:
-  - mappingRules:
-        rule:
+    mappingRules:
+      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 label:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
       - forValues:
           - "3"
           - "4"
-        rule:
+      - rule:
     comment:
 usedIn:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
 valueSet:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-        rule:
+      - rule:
