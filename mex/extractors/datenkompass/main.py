@@ -232,7 +232,7 @@ def fetched_merged_resources_by_primary_source(
         ),
     )
 
-    merged_resources_by_primary_source["unit filter"] = [
+    merged_resources_by_primary_source["MergedResource items of unit filter"] = [
         mr
         for mr in merged_resources_of_units
         if mr.identifier not in first_fetched_merged_resources_ids

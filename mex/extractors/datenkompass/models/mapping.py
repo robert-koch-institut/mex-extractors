@@ -14,7 +14,8 @@ class MappingRule(BaseModel, extra="forbid"):
     expectedOutputExample: Annotated[
         str | None, Field(title="expectedOutputExample")
     ] = None
-    forPrimarySource: Annotated[str | None, Field(title="rule")] = None
+    forPrimarySource: Annotated[str | None, Field(title="forPrimarySource")] = None
+    comment: Annotated[str | None, Field(title="comment")] = None
 
 
 class DatenkompassMappingField(BaseMapping, extra="forbid"):
@@ -25,7 +26,7 @@ class DatenkompassMappingField(BaseMapping, extra="forbid"):
     mappingRules: Annotated[
         list[MappingRule], Field(min_length=1, title="mappingRules")
     ]
-    comment: Annotated[str | None, Field(title="fieldInTarget")] = None
+    comment: Annotated[str | None, Field(title="comment")] = None
 
 
 class DatenkompassMapping(BaseMapping, extra="forbid"):

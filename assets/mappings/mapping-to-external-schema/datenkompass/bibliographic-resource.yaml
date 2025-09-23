@@ -8,11 +8,11 @@ fields:
   fieldInMEx: accessRestriction
   mappingRules:
   - forValues:
-    - https://mex.rki.de/item/access-restriction-2 # restricted
-    setValues: Zugang eingeschränkt
+    - RESTRICTED
+    setValues: RESTRICTED
   - forValues:
-    - https://mex.rki.de/item/access-restriction-1 # open
-    setValues: Frei zugänglich
+    - OPEN
+    setValues: OPEN
 - fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
   mappingRules:
   - setValues: Datenhalter

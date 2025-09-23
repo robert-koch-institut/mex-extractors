@@ -2,18 +2,18 @@ fields:
 - fieldInMEx: hadPrimarySource
   mappingRules:
   - forValues:
-    - 'report-server'
-    - 'open-data'
+    - 'Source-1'
+    - 'Source-2'
     rule: Only get items where 'hadPrimarySource' matches the identifiers in 'forValues'.
 - fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
   fieldInMEx: accessRestriction
   mappingRules:
   - forValues:
-    - https://mex.rki.de/item/access-restriction-2 # restricted
-    setValues: Zugang eingeschränkt
+    - RESTRICTED
+    setValues: RESTRICTED
   - forValues:
-    - https://mex.rki.de/item/access-restriction-1 # open
-    setValues: Frei zugänglich
+    - OPEN
+    setValues: OPEN
 - fieldInTarget: Beschreibung
   fieldInMEx: description
   mappingRules:
@@ -46,15 +46,15 @@ fields:
     - Status
 - fieldInTarget: Datennutzungszweck
   mappingRules:
-  - forPrimarySource: report-server
+  - forPrimarySource: Source-1
     setValues:
-    - Themenspezifische Auswertung
-    - Themenspezifisches Monitoring
-  - forPrimarySource: open-data
-    setValues: Themenspezifische Auswertung
-  - forPrimarySource: Units
+    - TA
+    - TM
+  - forPrimarySource: Source-2
+    setValues: TA
+  - forPrimarySource: MergedResource items of unit filter
     setValues:
-    - Themenspezifisches Monitoring
+    - TM
 - fieldInTarget: Herausgeber
   mappingRules:
   - setValues: Herausgeber

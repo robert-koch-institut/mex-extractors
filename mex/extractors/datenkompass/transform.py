@@ -264,19 +264,20 @@ def mapping_lookup_default(
     for field_name in field_names:
         field_info = model.model_fields[field_name]
         alias_name = getattr(field_info, "alias", None)
-        for mapping_field in mapping.fields:
-            if alias_name == mapping_field.fieldInTarget:
-                set_value = mapping_field.mappingRules[0].setValues
-                if isinstance(set_value, list):
-                    default_by_fieldname[field_name] = delim.join(set_value)
-                elif isinstance(set_value, str):
-                    default_by_fieldname[field_name] = set_value
-                else:
-                    raise ValueError
+        for field in mapping.fields:
+            if alias_name != field.fieldInTarget:
+                continue
+
+            set_value = field.mappingRules[0].setValues
+            if isinstance(set_value, list):
+                default_by_fieldname[field_name] = delim.join(set_value)
+            elif isinstance(set_value, str):
+                default_by_fieldname[field_name] = set_value
+            break
     return default_by_fieldname
 
 
-def mapping_lookup_for_Value(
+def mapping_lookup_for_value(
     model: type[BaseModel],
     mapping: DatenkompassMapping,
     delim: str,
@@ -296,17 +297,22 @@ def mapping_lookup_for_Value(
     default_by_lookup_value: dict[str, str] = {}
     field_info = model.model_fields[field_name]
     alias_name = getattr(field_info, "alias", None)
-    for mapping_field in mapping.fields:
-        if alias_name == mapping_field.fieldInTarget:
-            for mapping_rule in mapping_field.mappingRules:
-                lookup_value = mapping_rule.forValues or mapping_rule.forPrimarySource
-                set_value = mapping_rule.setValues
-                if isinstance(set_value, list):
-                    default_by_lookup_value[lookup_value[0]] = delim.join(set_value)
-                elif isinstance(set_value, str):
-                    default_by_lookup_value[lookup_value[0]] = set_value
-                else:
-                    raise ValueError
+    for field in mapping.fields:
+        if alias_name != field.fieldInTarget:
+            continue
+
+        for rule in field.mappingRules:
+            lookup_value = (
+                rule.forValues[0] if rule.forValues else rule.forPrimarySource
+            )
+            if not lookup_value:
+                raise ValueError
+
+            set_value = rule.setValues
+            if isinstance(set_value, list):
+                default_by_lookup_value[lookup_value] = delim.join(set_value)
+            elif isinstance(set_value, str):
+                default_by_lookup_value[lookup_value] = set_value
     return default_by_lookup_value
 
 
@@ -441,7 +447,7 @@ def transform_bibliographic_resources(
             "kommentar",
         ],
     )
-    voraussetzungen_by_entry = mapping_lookup_for_Value(
+    voraussetzungen_by_entry = mapping_lookup_for_value(
         DatenkompassBibliographicResource,
         bibliographic_resource_mapping,
         delim,
@@ -539,13 +545,13 @@ def transform_resources(
             "kommentar",
         ],
     )
-    datennutzungszweck_by_primary_source = mapping_lookup_for_Value(
+    datennutzungszweck_by_primary_source = mapping_lookup_for_value(
         DatenkompassResource,
         resource_mapping,
         delim,
         "datennutzungszweck",
     )
-    voraussetzungen_by_entry = mapping_lookup_for_Value(
+    voraussetzungen_by_entry = mapping_lookup_for_value(
         DatenkompassResource,
         resource_mapping,
         delim,

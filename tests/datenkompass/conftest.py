@@ -183,19 +183,19 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="Wort 2", language="de"),
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some open data resource title"],
+            title=["some Source-2 resource title"],
             wasGeneratedBy=["MergedActivityWithORG2"],
             unitInCharge=["IdentifierOrgUnitEG"],
-            identifier=["openDataResource"],
+            identifier=["Source2Resource"],
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
             contact=["PersonIdentifier4Peppa"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some synopse resource title"],
+            title=["some Source-1 resource title"],
             wasGeneratedBy=["MergedActivityNoORG"],
             unitInCharge=["IdentifierOrgUnitZB"],
-            identifier=["SynopseResource"],
+            identifier=["Source1Resource"],
         ),
     ]
 
@@ -310,7 +310,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datennutzungszweck="Datennutzungszweck",
             herausgeber="Herausgeber",
             kommentar="Kommentar",
-            format="Format",
+            format="Format; der; Daten",
             identifier="MergedActivityWithORG2",
             entityType="MergedActivity",
         ),
@@ -332,7 +332,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
             datennutzungszweck="Datennutzungszweck",
             herausgeber="Herausgeber",
             kommentar="Kommentar",
-            format="Format",
+            format="Format; der; Daten",
             identifier="MergedActivityWithORG1",
             entityType="MergedActivity",
         ),

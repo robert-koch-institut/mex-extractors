@@ -12,6 +12,7 @@ from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
+    DatenkompassResource,
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.datenkompass.transform import (
@@ -24,6 +25,8 @@ from mex.extractors.datenkompass.transform import (
     get_resource_email,
     get_title,
     get_unit_shortname,
+    mapping_lookup_default,
+    mapping_lookup_for_value,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
@@ -156,6 +159,32 @@ def test_get_abstract_or_description() -> None:
     assert get_abstract_or_description([], delimiter) == ""
 
 
+def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) -> None:
+    model = DatenkompassActivity
+    delim = ","
+    field_names = ["herausgeber", "kommentar", "format"]
+
+    result = mapping_lookup_default(model, mocked_activity_mapping, delim, field_names)
+    assert result == {
+        "herausgeber": "Herausgeber",
+        "kommentar": "Kommentar",
+        "format": "Format,der,Daten",
+    }
+
+
+def test_mapping_lookup_for_value(mocked_resource_mapping: DatenkompassMapping) -> None:
+    model = DatenkompassResource
+    delim = ","
+    field_name = "datennutzungszweck"
+
+    result = mapping_lookup_for_value(model, mocked_resource_mapping, delim, field_name)
+    assert result == {
+        "Source-1": "TA,TM",
+        "Source-2": "TA",
+        "MergedResource items of unit filter": "TM",
+    }
+
+
 def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
@@ -209,7 +238,7 @@ def test_transform_bibliographic_resource(
         "datenbank": "https://doi.org/10.1234_find_this",
         "rechtsgrundlagen_benennung": "Rechtsgrundlage",
         "datennutzungszweck_erweitert": "Datennutzungszweck",
-        "voraussetzungen": "Frei zugänglich",
+        "voraussetzungen": "OPEN",
         "datenhalter": "Datenhalter",
         "frequenz": "Frequenz",
         "hauptkategorie": "Hauptkategorie",
@@ -233,8 +262,8 @@ def test_transform_resources(
     mocked_resource_mapping: DatenkompassMapping,
 ) -> None:
     fetched_merged_resource = {
-        "open-data": [mocked_merged_resource[0]],
-        "report-server": [mocked_merged_resource[1]],
+        "Source-2": [mocked_merged_resource[0]],
+        "Source-1": [mocked_merged_resource[1]],
     }
     fetched_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
@@ -252,7 +281,7 @@ def test_transform_resources(
 
     assert len(result) == 2
     assert result[0].model_dump() == {
-        "voraussetzungen": "Frei zugänglich",
+        "voraussetzungen": "OPEN",
         "frequenz": None,
         "kontakt": "unit@example.org",
         "organisationseinheit": "e.g. unit",
@@ -262,21 +291,21 @@ def test_transform_resources(
         "datennutzungszweck_erweitert": "has purpose",
         "schlagwort": "Infektionskrankheiten und -epidemiologie; word 1; Wort 2",
         "dk_format": "Format",
-        "titel": "some open data resource title",
+        "titel": "some Source-2 resource title",
         "datenhalter": "Datenhalter",
         "hauptkategorie": "Hauptkategorie",
         "unterkategorie": "Unterkategorie",
         "rechtsgrundlage": "Rechtsgrundlage",
         "datenerhalt": "Datenerhalt",
         "status": "Status",
-        "datennutzungszweck": "Themenspezifische Auswertung",
+        "datennutzungszweck": "TA",
         "herausgeber": "Herausgeber",
         "kommentar": "Kommentar",
-        "identifier": "openDataResource",
+        "identifier": "Source2Resource",
     }
 
     assert result[1].model_dump() == {
-        "voraussetzungen": "Zugang eingeschränkt",
+        "voraussetzungen": "RESTRICTED",
         "frequenz": None,
         "kontakt": None,
         "organisationseinheit": "a.bsp. unit",
@@ -286,15 +315,15 @@ def test_transform_resources(
         "datennutzungszweck_erweitert": None,
         "schlagwort": "Infektionskrankheiten und -epidemiologie",
         "dk_format": "Format",
-        "titel": "some synopse resource title",
+        "titel": "some Source-1 resource title",
         "datenhalter": "Datenhalter",
         "hauptkategorie": "Hauptkategorie",
         "unterkategorie": "Unterkategorie",
         "rechtsgrundlage": "Rechtsgrundlage",
         "datenerhalt": "Datenerhalt",
         "status": "Status",
-        "datennutzungszweck": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
+        "datennutzungszweck": "TA; TM",
         "herausgeber": "Herausgeber",
         "kommentar": "Kommentar",
-        "identifier": "SynopseResource",
+        "identifier": "Source1Resource",
     }
