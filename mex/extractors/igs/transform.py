@@ -240,13 +240,13 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
     for schema_name, schema in igs_schemas.items():
         data_type: str | None = None
         if schema_name == "Pathogen" and isinstance(schema, IGSEnumSchema):
+            data_type = schema.type
             for enum in schema.enum:
                 belongs_to = (
                     [extracted_igs_variable_group_ids_by_igs_identifier[schema_name]]
                     if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
                     else []
                 )
-                data_type = schema.type
                 description = description_by_enum[enum]
                 identifier_in_primary_source = f"pathogen_{enum}"
                 label = enum
