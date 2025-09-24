@@ -16,7 +16,6 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     Text,
-    TextLanguage,
 )
 from mex.extractors.igs.model import (
     IGSEnumSchema,
@@ -76,13 +75,7 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
             hadPrimarySource=extracted_primary_source_igs.stableTargetId,
             identifierInPrimarySource=f"IGS_{igs_info.title}_v{igs_info.version}",
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
-            title=title_by_pathogen.get(
-                pathogen,
-                Text(
-                    value=f"Integrierte Genomische Surveillance {pathogen}",
-                    language=TextLanguage.DE,
-                ),
-            ),
+            title=title_by_pathogen.get(pathogen),
             unitInCharge=unit_in_charge,
         )
         for pathogen in pathogen_schema.enum
