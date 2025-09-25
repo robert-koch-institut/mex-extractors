@@ -142,13 +142,13 @@ def test_transform_odk_data_to_extracted_variables(
     )
     expected = {
         "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
-        "identifierInPrimarySource": "start",
+        "identifierInPrimarySource": "start_test_raw_data",
         "dataType": "yes_no",
         "label": [{"value": "start"}],
         "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
         "valueSet": ["yes_no, Yes", "yes_no", "yes_no, No", "yes_no"],
-        "identifier": "bZYVXbdLoPxGfIH4uyDoNN",
-        "stableTargetId": "bPp4m2YyZE8MwJdjB0ohR2",
+        "identifier": "f0Z6CTv27SJfNkeDGQ7YIc",
+        "stableTargetId": "eoVaPy606Odw2eGyrHv8W",
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
