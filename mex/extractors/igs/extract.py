@@ -1,5 +1,5 @@
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor
+from mex.common.ldap.models import LDAPFunctionalAccount
 from mex.common.models import (
     AccessPlatformMapping,
     ResourceMapping,
@@ -29,7 +29,7 @@ def extract_igs_schemas() -> dict[str, IGSSchema]:
 def extract_ldap_actors_by_mail(
     igs_resource_mapping: ResourceMapping,
     igs_access_platform_mapping: AccessPlatformMapping,
-) -> dict[str, LDAPActor]:
+) -> dict[str, LDAPFunctionalAccount]:
     """Extract ldap actors from default values by mail.
 
     Args:
