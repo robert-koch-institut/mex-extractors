@@ -4,8 +4,8 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
-    transform_ldap_actors_to_mex_contact_points,
-    transform_ldap_persons_with_query_to_mex_persons,
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
@@ -87,7 +87,7 @@ def transformed_sumo_access_platform(
     ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
         sumo_access_platform
     )
-    mex_actors_access_platform = transform_ldap_persons_with_query_to_mex_persons(
+    mex_actors_access_platform = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_contact_points_access_platform,
         extracted_primary_source_ldap,
         extracted_organizational_units,
@@ -126,8 +126,10 @@ def contact_merged_ids_by_emails_sumo(
             ]
         )
     )
-    mex_actors_resources = transform_ldap_actors_to_mex_contact_points(
-        ldap_contact_points_resources, extracted_primary_source_ldap
+    mex_actors_resources = (
+        transform_ldap_functional_accounts_to_extracted_contact_points(
+            ldap_contact_points_resources, extracted_primary_source_ldap
+        )
     )
     load(mex_actors_resources)
     return get_contact_merged_ids_by_emails(mex_actors_resources)
