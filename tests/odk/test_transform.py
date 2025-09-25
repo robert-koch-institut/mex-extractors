@@ -148,7 +148,7 @@ def test_transform_odk_data_to_extracted_variables(
         "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
         "valueSet": ["yes_no, Yes", "yes_no", "yes_no, No", "yes_no"],
         "identifier": "f0Z6CTv27SJfNkeDGQ7YIc",
-        "stableTargetId": "eoVaPy606Odw2eGyrHv8W",
+        "stableTargetId": "eoVaPy606Odw2eGyrHv8WY",
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
