@@ -2,7 +2,7 @@ import re
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import transform_ldap_person_to_mex_person
+from mex.common.ldap.transform import transform_ldap_person_to_extracted_person
 from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
@@ -120,8 +120,8 @@ def lookup_person_in_ldap_and_transform(
     """
     ldap = LDAPConnector.get()
     try:
-        ldap_person = ldap.get_person(displayName=person.name)
-        return transform_ldap_person_to_mex_person(
+        ldap_person = ldap.get_person(display_name=person.name)
+        return transform_ldap_person_to_extracted_person(
             ldap_person,
             extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
