@@ -189,9 +189,8 @@ def transform_odk_data_to_extracted_variables(
         for resource in extracted_resources_odk
     }
     for file in odk_raw_data:
-        used_in = resource_id_by_identifier_in_primary_source[
-            file.file_name.split(".")[0]
-        ]
+        file_name = file.file_name.split(".")[0]
+        used_in = resource_id_by_identifier_in_primary_source[file_name]
         value_set: list[str] = []
         for row_index, type_row in enumerate(file.type_survey):
             if is_invalid_odk_variable(type_row):
@@ -208,7 +207,7 @@ def transform_odk_data_to_extracted_variables(
             name = str(file.name_survey[row_index])
             if name == "nan":
                 continue
-            identifier_in_primary_source = name
+            identifier_in_primary_source = f"{name}_{file_name}"
             description = [
                 str(label_column[row_index])
                 for label_column in file.label_survey.values()
