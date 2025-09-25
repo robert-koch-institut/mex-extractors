@@ -2,7 +2,9 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.ldap.transform import (
+    transform_ldap_persons_with_query_to_extracted_persons,
+)
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganizationalUnit,
@@ -64,7 +66,7 @@ def datscha_web_person_ids_by_query_string(
     ldap_source_contacts = list(
         extract_datscha_web_source_contacts(extracted_datscha_web_items)
     )
-    mex_source_contacts = transform_ldap_persons_with_query_to_mex_persons(
+    mex_source_contacts = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_source_contacts,
         extracted_primary_source_ldap,
         extracted_organizational_units,

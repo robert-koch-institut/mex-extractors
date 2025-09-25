@@ -4,7 +4,7 @@ import numpy as np
 from pandas import ExcelFile
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.settings import Settings
@@ -144,7 +144,7 @@ def extract_cc2_feat_projection() -> Generator[Cc2FeatProjection, None, None]:
 
 def extract_ldap_contact_points_by_emails(
     resources: list[ResourceMapping],
-) -> Generator[LDAPActor, None, None]:
+) -> Generator[LDAPFunctionalAccount, None, None]:
     """Extract contact points from ldap for email in resource contacts.
 
     Args:
