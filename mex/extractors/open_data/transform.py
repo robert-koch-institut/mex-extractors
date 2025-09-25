@@ -120,7 +120,7 @@ def lookup_person_in_ldap_and_transform(
     """
     ldap = LDAPConnector.get()
     try:
-        ldap_person = ldap.get_person(displayName=person.name)
+        ldap_person = ldap.get_person(display_name=person.name)
         return transform_ldap_person_to_mex_person(
             ldap_person,
             extracted_primary_source_ldap,
