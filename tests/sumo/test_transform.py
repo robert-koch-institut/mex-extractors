@@ -386,7 +386,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
                 "value": "Core groups as defined in the CEDIS reporting standard",
             }
         ],
-        "label": [{"value": "aux_cedis_group"}],
+        "label": [{"language": "fr", "value": "aux_cedis_group"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
         "valueSet": Joker(),
     }
