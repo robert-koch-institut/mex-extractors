@@ -135,6 +135,7 @@ def check_x_items_more_passed(
         rule["value"] or 0
     )
 
+
 def check_x_items_less_passed(
     context: AssetCheckExecutionContext,
     asset_key: AssetKey,
@@ -169,7 +170,6 @@ def check_x_items_less_passed(
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
 
-    if historic_count == 0:
-            return True
-
-    return actual_count>= (historic_count - rule["value"])
+    return actual_count >= (historic_count if historic_count > 0 else actual_count) - (
+        rule["value"] or 0
+    )

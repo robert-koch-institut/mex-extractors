@@ -117,7 +117,7 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
             self.timestamp = timestamp
             self.asset_materialization = DummyMaterialization(metadata)
 
-    dummy_event_records = [DummyEvent(e["timestamp"], e["metadata"]) for e in events]
+    mocked_event_records = [DummyEvent(e["timestamp"], e["metadata"]) for e in events]
 
     monkeypatch.setattr(
         "mex.extractors.pipeline.checks.main.get_historical_events",
@@ -130,7 +130,7 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     )
 
     context = build_asset_check_context(instance=DagsterInstance.ephemeral())
-    context.instance.get_event_records = lambda *_, **__: dummy_event_records
+    context.instance.get_event_records = lambda *_, **__: mocked_event_records
 
     result = check_x_items_more_passed(
         context=context,
@@ -244,7 +244,7 @@ def test_check_x_items_less_passed_parametrized(  # noqa: PLR0913
             self.timestamp = timestamp
             self.asset_materialization = DummyMaterialization(metadata)
 
-    dummy_event_records = [DummyEvent(e["timestamp"], e["metadata"]) for e in events]
+    mocked_event_records = [DummyEvent(e["timestamp"], e["metadata"]) for e in events]
 
     monkeypatch.setattr(
         "mex.extractors.pipeline.checks.main.get_historical_events",
@@ -257,7 +257,7 @@ def test_check_x_items_less_passed_parametrized(  # noqa: PLR0913
     )
 
     context = build_asset_check_context(instance=DagsterInstance.ephemeral())
-    context.instance.get_event_records = lambda *_, **__: dummy_event_records
+    context.instance.get_event_records = lambda *_, **__: mocked_event_records
     result = check_x_items_less_passed(
         context=context,
         asset_key=AssetKey(["test_asset"]),
