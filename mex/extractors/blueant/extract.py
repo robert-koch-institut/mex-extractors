@@ -71,7 +71,7 @@ def extract_blueant_project_leaders(
             continue
         seen.add(employee_id)
         try:
-            yield ldap.get_person(employeeID=employee_id)
+            yield ldap.get_person(employee_id=employee_id)
         except MExError:
             continue
 

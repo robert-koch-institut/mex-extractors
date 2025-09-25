@@ -2,7 +2,9 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import transform_ldap_actor_to_mex_contact_point
+from mex.common.ldap.transform import (
+    transform_ldap_functional_account_to_extracted_contact_point,
+)
 from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
@@ -107,7 +109,7 @@ def open_data_contact_point(
     """Convert open data email address to contact point and load to sink."""
     ldap = LDAPConnector.get()
     contact_point = [
-        transform_ldap_actor_to_mex_contact_point(
+        transform_ldap_functional_account_to_extracted_contact_point(
             ldap.get_functional_account(mail="opendata@rki.de"),
             extracted_primary_source_ldap,
         )
