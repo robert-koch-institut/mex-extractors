@@ -147,13 +147,13 @@ def test_transform_odk_data_to_extracted_variables(
         "label": [{"value": "start"}],
         "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
         "valueSet": ["yes_no, Yes", "yes_no", "yes_no, No", "yes_no"],
-        "identifier": "f0Z6CTv27SJfNkeDGQ7YIc",
-        "stableTargetId": "eoVaPy606Odw2eGyrHv8WY",
+        "identifier": Joker()
+        "stableTargetId": Joker(),
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
         "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
-        "identifierInPrimarySource": "username",
+        "identifierInPrimarySource": "username_test_raw_data",
         "dataType": "username",
         "label": [{"value": "username", "language": "en"}],
         "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
@@ -161,7 +161,7 @@ def test_transform_odk_data_to_extracted_variables(
             {"value": "Store username of interviewer.", "language": "en"},
             {"value": "Store username of interviewer.", "language": "en"},
         ],
-        "identifier": "eqJ8AA0d93lnhRWbcdC2t6",
-        "stableTargetId": "v3z7QkmdMgyPABPQXHZlY",
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
     }
     assert extracted_variables[1].model_dump(exclude_defaults=True) == expected
