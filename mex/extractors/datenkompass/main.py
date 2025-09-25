@@ -266,10 +266,7 @@ def publish_to_s3_xlsx(
     transform_resources_to_datenkompass_resources: list[DatenkompassResource],
 ) -> None:
     """Write items to S3 xlsx."""
-    settings = Settings.get()
-    sep = settings.datenkompass.list_delimiter
-    s3xlsx = S3XlsxSink(separator=sep, sort_columns_alphabetically=False)
-
+    s3xlsx = S3XlsxSink()
     deque(s3xlsx.load(transform_activities_to_datenkompass_activities), maxlen=0)
     deque(
         s3xlsx.load(

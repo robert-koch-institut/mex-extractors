@@ -35,7 +35,7 @@ def test_s3_load(
 def test_s3xlsx_load(
     extracted_organization_rki: ExtractedOrganization, mocked_boto: MagicMock
 ) -> None:
-    s3xlsx = S3XlsxSink(separator=";")
+    s3xlsx = S3XlsxSink()
     deque(s3xlsx.load([extracted_organization_rki]), maxlen=0)
 
     assert mocked_boto.put_object.call_args.kwargs == {
