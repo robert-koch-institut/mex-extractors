@@ -19,8 +19,8 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
+    get_filtered_primary_source_ids,
     get_merged_items,
-    get_relevant_primary_source_ids,
 )
 from mex.extractors.datenkompass.filter import (
     filter_for_organization,
@@ -151,9 +151,9 @@ def fetched_merged_activities(
     activity_mapping: DatenkompassMapping,
 ) -> list[MergedActivity]:
     """Get merged activities."""
-    relevant_primary_sources = activity_mapping.fields[0].mappingRules[0].forValues
+    filtered_primary_sources = activity_mapping.fields[0].mappingRules[0].forValues
     entity_type = ["MergedActivity"]
-    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
     return cast(
         "list[MergedActivity]",
         get_merged_items(
@@ -180,11 +180,11 @@ def fetched_merged_bibliographic_resources(
     bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
-    relevant_primary_sources = (
+    filtered_primary_sources = (
         bibliographic_resource_mapping.fields[0].mappingRules[0].forValues
     )
     entity_type = ["MergedBibliographicResource"]
-    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
     return cast(
         "list[MergedBibliographicResource]",
         get_merged_items(
@@ -201,14 +201,14 @@ def fetched_merged_resources_by_primary_source(
     resource_mapping: DatenkompassMapping,
 ) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
-    relevant_primary_sources = resource_mapping.fields[0].mappingRules[0].forValues
+    filtered_primary_sources = resource_mapping.fields[0].mappingRules[0].forValues
     entity_type = ["MergedResource"]
     merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
-    if relevant_primary_sources:
-        for rps in relevant_primary_sources:
-            primary_source_ids = get_relevant_primary_source_ids([rps])
+    if filtered_primary_sources:
+        for fps in filtered_primary_sources:
+            primary_source_ids = get_filtered_primary_source_ids([fps])
 
-            merged_resources_by_primary_source[rps] = cast(
+            merged_resources_by_primary_source[fps] = cast(
                 "list[MergedResource]",
                 get_merged_items(
                     entity_type=entity_type,
