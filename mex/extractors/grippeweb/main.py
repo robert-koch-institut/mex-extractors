@@ -5,8 +5,8 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
-    transform_ldap_actors_to_mex_contact_points,
-    transform_ldap_persons_to_mex_persons,
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_persons_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
@@ -109,7 +109,7 @@ def extracted_mex_functional_units_grippeweb(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
     mex_actors_resources = list(
-        transform_ldap_actors_to_mex_contact_points(
+        transform_ldap_functional_accounts_to_extracted_contact_points(
             ldap_actors, extracted_primary_source_ldap
         )
     )
@@ -130,7 +130,7 @@ def extracted_mex_persons_grippeweb(
         AccessPlatformMapping.model_validate(grippeweb_access_platform),
     )
     mex_persons = list(
-        transform_ldap_persons_to_mex_persons(
+        transform_ldap_persons_to_extracted_persons(
             ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
         )
     )
