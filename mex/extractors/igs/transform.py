@@ -186,8 +186,17 @@ def get_enums_by_property_name(
         for schema in igs_schemas.values()
         if isinstance(schema, IGSPropertiesSchema)
         for property_name, properties in schema.properties.items()
-        if "$ref" in properties
-        and (schema_name := properties["$ref"].split("/")[-1]) in enum_by_schema_name
+        if (
+            "$ref" in properties
+            and (schema_name := properties["$ref"].split("/")[-1])
+            in enum_by_schema_name
+        )
+        or (
+            "items" in properties
+            and "$ref" in properties["items"]
+            and (schema_name := properties["items"]["$ref"].split("/")[-1])
+            in enum_by_schema_name
+        )
     }
 
 
