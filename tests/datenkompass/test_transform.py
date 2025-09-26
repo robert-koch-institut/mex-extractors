@@ -12,9 +12,12 @@ from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
-    DatenkompassResource,
 )
-from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
+from mex.extractors.datenkompass.models.mapping import (
+    DatenkompassMapping,
+    DatenkompassMappingField,
+    MappingRule,
+)
 from mex.extractors.datenkompass.transform import (
     fix_quotes,
     get_abstract_or_description,
@@ -25,8 +28,8 @@ from mex.extractors.datenkompass.transform import (
     get_resource_email,
     get_title,
     get_unit_shortname,
+    handle_setval,
     mapping_lookup_default,
-    mapping_lookup_for_value,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
@@ -161,28 +164,240 @@ def test_get_abstract_or_description() -> None:
 
 def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) -> None:
     model = DatenkompassActivity
-    delim = ","
-    field_names = ["herausgeber", "kommentar", "format"]
 
-    result = mapping_lookup_default(model, mocked_activity_mapping, delim, field_names)
+    result = mapping_lookup_default(model, mocked_activity_mapping)
     assert result == {
-        "herausgeber": "Herausgeber",
-        "kommentar": "Kommentar",
-        "format": "Format,der,Daten",
+        "beschreibung": DatenkompassMappingField(
+            fieldInTarget="Beschreibung",
+            fieldInMEx="abstract",
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues=["Es handelt. "],
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datenerhalt": DatenkompassMappingField(
+            fieldInTarget="Weg des Datenerhalts",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datenerhalt",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datenhalter": DatenkompassMappingField(
+            fieldInTarget="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datenhalter",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datennutzungszweck": DatenkompassMappingField(
+            fieldInTarget="Datennutzungszweck",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datennutzungszweck",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "entityType": DatenkompassMappingField(
+            fieldInTarget=None,
+            fieldInMEx="hadPrimarySource",
+            mappingRules=[
+                MappingRule(
+                    forValues=["Lorem Ipsum"],
+                    setValues=None,
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "dk_format": DatenkompassMappingField(
+            fieldInTarget="Format der Daten",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Format",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "frequenz": DatenkompassMappingField(
+            fieldInTarget="Frequenz der Aktualisierung",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Frequenz",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "hauptkategorie": DatenkompassMappingField(
+            fieldInTarget="Hauptkategorie",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Hauptkategorie",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "herausgeber": DatenkompassMappingField(
+            fieldInTarget="Herausgeber",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Herausgeber",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "kommentar": DatenkompassMappingField(
+            fieldInTarget="Kommentar",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Kommentar",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "rechtsgrundlage": DatenkompassMappingField(
+            fieldInTarget="Rechtsgrundlage für die Zugangseröffnung",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Rechtsgrundlage",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "status": DatenkompassMappingField(
+            fieldInTarget="Status (planbare Verfügbarkeit der Daten)",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Status",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "unterkategorie": DatenkompassMappingField(
+            fieldInTarget="Unterkategorie",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Unterkategorie",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "voraussetzungen": DatenkompassMappingField(
+            fieldInTarget="Formelle Voraussetzungen für den Datenerhalt",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Voraussetzungen",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
     }
 
 
-def test_mapping_lookup_for_value(mocked_resource_mapping: DatenkompassMapping) -> None:
-    model = DatenkompassResource
-    delim = ","
-    field_name = "datennutzungszweck"
+@pytest.mark.parametrize(
+    ("input_value", "expected_output"),
+    [
+        (["a", "b", "c"], "a; b; c"),
+        (["a"], "a"),
+        ("abc", "abc"),
+    ],
+    ids=["3 items list", "1 item list", "string"],
+)
+def test_handle_setval_valid(
+    input_value: list[str] | str, expected_output: str
+) -> None:
+    assert handle_setval(input_value) == expected_output
 
-    result = mapping_lookup_for_value(model, mocked_resource_mapping, delim, field_name)
-    assert result == {
-        "Source-1": "TA,TM",
-        "Source-2": "TA",
-        "MergedResource items of unit filter": "TM",
-    }
+
+def test_handle_setval_none_raises_error() -> None:
+    with pytest.raises(ValueError, match="no default value set in mapping."):
+        handle_setval(None)
 
 
 def test_transform_activities(

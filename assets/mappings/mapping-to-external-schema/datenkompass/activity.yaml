@@ -43,7 +43,4 @@ fields:
   - setValues: Kommentar
 - fieldInTarget: Format der Daten
   mappingRules:
-  - setValues:
-    - Format
-    - der
-    - Daten
+  - setValues: Format

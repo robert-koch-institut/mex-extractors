@@ -18,7 +18,8 @@ fields:
   - setValues: Datenhalter
 - fieldInTarget: Format der Daten
   mappingRules:
-  - setValues: Format
+  - setValues:
+    - Format
 - fieldInTarget: Frequenz der Aktualisierung
   mappingRules:
   - setValues: Frequenz

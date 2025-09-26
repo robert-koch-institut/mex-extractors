@@ -28,7 +28,10 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
-from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
+from mex.extractors.datenkompass.models.mapping import (
+    DatenkompassMapping,
+    DatenkompassMappingField,
+)
 from mex.extractors.settings import Settings
 
 _VocabularyT = TypeVar(
@@ -246,74 +249,49 @@ def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
 def mapping_lookup_default(
     model: type[BaseModel],
     mapping: DatenkompassMapping,
-    delim: str,
-    field_names: list[str],
-) -> dict[str, str]:
-    """Lookup default values in Datenkompass mappings.
+) -> dict[str, DatenkompassMappingField]:
+    """Create a dictionary of fields by field name of Datenkompass mappings.
+
+    For this the alias name needs to be used as intermediate step, because the alias
+    (not the field name) is the identificatior in the mapping.
 
     Args:
         model: Datenkompass model.
         mapping: Datenkompass mapping.
-        delim: list delimiter for joining the strings in list
-        field_names: list of field names to look up in mapping.
 
     Returns:
         dictionary of mapping field names to values.
     """
-    default_by_fieldname: dict[str, str] = {}
-    for field_name in field_names:
+    default_by_alias_name: dict[str, DatenkompassMappingField] = {}
+    for field_name in model.model_fields:
         field_info = model.model_fields[field_name]
         alias_name = getattr(field_info, "alias", None)
         for field in mapping.fields:
             if alias_name != field.fieldInTarget:
                 continue
-
-            set_value = field.mappingRules[0].setValues
-            if isinstance(set_value, list):
-                default_by_fieldname[field_name] = delim.join(set_value)
-            elif isinstance(set_value, str):
-                default_by_fieldname[field_name] = set_value
+            default_by_alias_name[field_name] = field
             break
-    return default_by_fieldname
+    return default_by_alias_name
 
 
-def mapping_lookup_for_value(
-    model: type[BaseModel],
-    mapping: DatenkompassMapping,
-    delim: str,
-    field_name: str,
-) -> dict[str, str]:
-    """Lookup default values based on input value in Datenkompass mappings.
+def handle_setval(set_value: list[str] | str | None) -> str:
+    """Return value of mapping setValues as string, even if setValues is a list.
 
     Args:
-        model: Datenkompass model.
-        mapping: Datenkompass mapping.
-        delim: list delimiter for joining the strings in list
-        field_name: field name to look up the value for.
+        set_value: setValues value of mapping
 
     Returns:
-        dictionary of mapping field names to values.
+        stringified value of setValues.
     """
-    default_by_lookup_value: dict[str, str] = {}
-    field_info = model.model_fields[field_name]
-    alias_name = getattr(field_info, "alias", None)
-    for field in mapping.fields:
-        if alias_name != field.fieldInTarget:
-            continue
+    settings = Settings.get()
+    delim = settings.datenkompass.list_delimiter
 
-        for rule in field.mappingRules:
-            lookup_value = (
-                rule.forValues[0] if rule.forValues else rule.forPrimarySource
-            )
-            if not lookup_value:
-                raise ValueError
-
-            set_value = rule.setValues
-            if isinstance(set_value, list):
-                default_by_lookup_value[lookup_value] = delim.join(set_value)
-            elif isinstance(set_value, str):
-                default_by_lookup_value[lookup_value] = set_value
-    return default_by_lookup_value
+    if isinstance(set_value, str):
+        return set_value
+    if isinstance(set_value, list):
+        return delim.join(set_value)
+    msg = "no default value set in mapping."
+    raise ValueError(msg)
 
 
 def transform_activities(
@@ -340,25 +318,11 @@ def transform_activities(
     default_by_fieldname = mapping_lookup_default(
         DatenkompassActivity,
         activity_mapping,
-        delim,
-        [
-            "datenhalter",
-            "beschreibung",
-            "voraussetzungen",
-            "frequenz",
-            "hauptkategorie",
-            "unterkategorie",
-            "rechtsgrundlage",
-            "datenerhalt",
-            "status",
-            "datennutzungszweck",
-            "herausgeber",
-            "kommentar",
-            "format",
-        ],
     )
     for item in filtered_merged_activities:
-        beschreibung = default_by_fieldname["beschreibung"]
+        beschreibung = handle_setval(
+            default_by_fieldname["beschreibung"].mappingRules[0].setValues
+        )
         beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
@@ -378,26 +342,60 @@ def transform_activities(
         if item.website:
             url_de = delim.join([w.url for w in item.website if w.language == "de"])
             datenbank = url_de if url_de else item.website[0].url
+        datenhalter = handle_setval(
+            default_by_fieldname["datenhalter"].mappingRules[0].setValues
+        )
+        voraussetzungen = handle_setval(
+            default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
+        )
+        frequenz = handle_setval(
+            default_by_fieldname["frequenz"].mappingRules[0].setValues
+        )
+        hauptkategorie = handle_setval(
+            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+        )
+        unterkategorie = handle_setval(
+            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+        )
+        rechtsgrundlage = handle_setval(
+            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+        )
+        datenerhalt = handle_setval(
+            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+        )
+        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+        datennutzungszweck = handle_setval(
+            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+        )
+        herausgeber = handle_setval(
+            default_by_fieldname["herausgeber"].mappingRules[0].setValues
+        )
+        kommentar = handle_setval(
+            default_by_fieldname["kommentar"].mappingRules[0].setValues
+        )
+        dk_format = handle_setval(
+            default_by_fieldname["dk_format"].mappingRules[0].setValues
+        )
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter=default_by_fieldname["datenhalter"],
+                datenhalter=datenhalter,
                 beschreibung=beschreibung,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
-                voraussetzungen=default_by_fieldname["voraussetzungen"],
-                frequenz=default_by_fieldname["frequenz"],
-                hauptkategorie=default_by_fieldname["hauptkategorie"],
-                unterkategorie=default_by_fieldname["unterkategorie"],
-                rechtsgrundlage=default_by_fieldname["rechtsgrundlage"],
-                datenerhalt=default_by_fieldname["datenerhalt"],
-                status=default_by_fieldname["status"],
-                datennutzungszweck=default_by_fieldname["datennutzungszweck"],
-                herausgeber=default_by_fieldname["herausgeber"],
-                kommentar=default_by_fieldname["kommentar"],
-                format=default_by_fieldname["format"],
+                voraussetzungen=voraussetzungen,
+                frequenz=frequenz,
+                hauptkategorie=hauptkategorie,
+                unterkategorie=unterkategorie,
+                rechtsgrundlage=rechtsgrundlage,
+                datenerhalt=datenerhalt,
+                status=status,
+                datennutzungszweck=datennutzungszweck,
+                herausgeber=herausgeber,
+                kommentar=kommentar,
+                dk_format=dk_format,
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
@@ -430,28 +428,6 @@ def transform_bibliographic_resources(
     default_by_fieldname = mapping_lookup_default(
         DatenkompassBibliographicResource,
         bibliographic_resource_mapping,
-        delim,
-        [
-            "rechtsgrundlagen_benennung",
-            "datennutzungszweck_erweitert",
-            "dk_format",
-            "datenhalter",
-            "frequenz",
-            "hauptkategorie",
-            "unterkategorie",
-            "herausgeber",
-            "datenerhalt",
-            "status",
-            "datennutzungszweck",
-            "rechtsgrundlage",
-            "kommentar",
-        ],
-    )
-    voraussetzungen_by_entry = mapping_lookup_for_value(
-        DatenkompassBibliographicResource,
-        bibliographic_resource_mapping,
-        delim,
-        "voraussetzungen",
     )
     for item in merged_bibliographic_resources:
         datenbank = get_datenbank(item)
@@ -472,32 +448,72 @@ def transform_bibliographic_resources(
         vocab = get_german_vocabulary(item.bibliographicResourceType)
         beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
         beschreibung += get_abstract_or_description(item.abstract, delim)
+        voraussetzungen = next(
+            handle_setval(rule.setValues)
+            for rule in default_by_fieldname["voraussetzungen"].mappingRules
+            if rule.forValues and rule.forValues[0] == item.accessRestriction.name
+        )
+        rechtsgrundlagen_benennung = handle_setval(
+            default_by_fieldname["rechtsgrundlagen_benennung"].mappingRules[0].setValues
+        )
+        datennutzungszweck_erweitert = handle_setval(
+            default_by_fieldname["datennutzungszweck_erweitert"]
+            .mappingRules[0]
+            .setValues
+        )
+        dk_format = handle_setval(
+            default_by_fieldname["dk_format"].mappingRules[0].setValues
+        )
+        datenhalter = handle_setval(
+            default_by_fieldname["datenhalter"].mappingRules[0].setValues
+        )
+        frequenz = handle_setval(
+            default_by_fieldname["frequenz"].mappingRules[0].setValues
+        )
+        hauptkategorie = handle_setval(
+            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+        )
+        unterkategorie = handle_setval(
+            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+        )
+        herausgeber = handle_setval(
+            default_by_fieldname["herausgeber"].mappingRules[0].setValues
+        )
+        datenerhalt = handle_setval(
+            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+        )
+        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+        datennutzungszweck = handle_setval(
+            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+        )
+        rechtsgrundlage = handle_setval(
+            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+        )
+        kommentar = handle_setval(
+            default_by_fieldname["kommentar"].mappingRules[0].setValues
+        )
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
-                voraussetzungen=voraussetzungen_by_entry[item.accessRestriction.name],
+                voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
-                rechtsgrundlagen_benennung=default_by_fieldname[
-                    "rechtsgrundlagen_benennung"
-                ],
-                datennutzungszweck_erweitert=default_by_fieldname[
-                    "datennutzungszweck_erweitert"
-                ],
-                dk_format=default_by_fieldname["dk_format"],
+                rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
+                datennutzungszweck_erweitert=datennutzungszweck_erweitert,
+                dk_format=dk_format,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 schlagwort=delim.join([word.value for word in item.keyword]),
                 titel=titel,
-                datenhalter=default_by_fieldname["datenhalter"],
-                frequenz=default_by_fieldname["frequenz"],
-                hauptkategorie=default_by_fieldname["hauptkategorie"],
-                unterkategorie=default_by_fieldname["unterkategorie"],
-                herausgeber=default_by_fieldname["herausgeber"],
-                datenerhalt=default_by_fieldname["datenerhalt"],
-                status=default_by_fieldname["status"],
-                datennutzungszweck=default_by_fieldname["datennutzungszweck"],
-                rechtsgrundlage=default_by_fieldname["rechtsgrundlage"],
-                kommentar=default_by_fieldname["kommentar"],
+                datenhalter=datenhalter,
+                frequenz=frequenz,
+                hauptkategorie=hauptkategorie,
+                unterkategorie=unterkategorie,
+                herausgeber=herausgeber,
+                datenerhalt=datenerhalt,
+                status=status,
+                datennutzungszweck=datennutzungszweck,
+                rechtsgrundlage=rechtsgrundlage,
+                kommentar=kommentar,
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
@@ -527,41 +543,26 @@ def transform_resources(
     """
     settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
-    datenkompass_recources = []
+    datenkompass_resources = []
     default_by_fieldname = mapping_lookup_default(
         DatenkompassResource,
         resource_mapping,
-        delim,
-        [
-            "beschreibung",
-            "dk_format",
-            "datenhalter",
-            "hauptkategorie",
-            "unterkategorie",
-            "rechtsgrundlage",
-            "datenerhalt",
-            "status",
-            "herausgeber",
-            "kommentar",
-        ],
-    )
-    datennutzungszweck_by_primary_source = mapping_lookup_for_value(
-        DatenkompassResource,
-        resource_mapping,
-        delim,
-        "datennutzungszweck",
-    )
-    voraussetzungen_by_entry = mapping_lookup_for_value(
-        DatenkompassResource,
-        resource_mapping,
-        delim,
-        "voraussetzungen",
     )
     for (
         primary_source,
         merged_resources_list,
     ) in merged_resources_by_primary_source.items():
+        datennutzungszweck = next(
+            handle_setval(rule.setValues)
+            for rule in default_by_fieldname["datennutzungszweck"].mappingRules
+            if rule.forPrimarySource and rule.forPrimarySource == primary_source
+        )
         for item in merged_resources_list:
+            voraussetzungen = next(
+                handle_setval(rule.setValues)
+                for rule in default_by_fieldname["voraussetzungen"].mappingRules
+                if rule.forValues and rule.forValues[0] == item.accessRestriction.name
+            )
             frequenz_vocabulary = (
                 get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
@@ -583,7 +584,9 @@ def transform_resources(
             beschreibung = (
                 get_abstract_or_description(item.description, delim)
                 if item.description
-                else default_by_fieldname["beschreibung"]
+                else handle_setval(
+                    default_by_fieldname["beschreibung"].mappingRules[0].setValues
+                )
             )
             rechtsgrundlagen_benennung_collection = [
                 entry.value for entry in item.hasLegalBasis
@@ -611,12 +614,36 @@ def transform_resources(
                 delim.join([hp.value for hp in item.hasPurpose if hp.value is not None])
                 or None
             )
-            datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
-            datenkompass_recources.append(
+            dk_format = handle_setval(
+                default_by_fieldname["dk_format"].mappingRules[0].setValues
+            )
+            datenhalter = handle_setval(
+                default_by_fieldname["datenhalter"].mappingRules[0].setValues
+            )
+            hauptkategorie = handle_setval(
+                default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+            )
+            unterkategorie = handle_setval(
+                default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+            )
+            rechtsgrundlage = handle_setval(
+                default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+            )
+            datenerhalt = handle_setval(
+                default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+            )
+            status = handle_setval(
+                default_by_fieldname["status"].mappingRules[0].setValues
+            )
+            herausgeber = handle_setval(
+                default_by_fieldname["herausgeber"].mappingRules[0].setValues
+            )
+            kommentar = handle_setval(
+                default_by_fieldname["kommentar"].mappingRules[0].setValues
+            )
+            datenkompass_resources.append(
                 DatenkompassResource(
-                    voraussetzungen=voraussetzungen_by_entry[
-                        item.accessRestriction.name
-                    ],
+                    voraussetzungen=voraussetzungen,
                     frequenz=frequenz,
                     kontakt=kontakt,
                     organisationseinheit=organisationseinheit,
@@ -625,19 +652,19 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=datennutzungszweck_erweitert,
                     schlagwort=schlagwort,
-                    dk_format=default_by_fieldname["dk_format"],
+                    dk_format=dk_format,
                     titel=delim.join([fix_quotes(t.value) for t in item.title]),
-                    datenhalter=default_by_fieldname["datenhalter"],
-                    hauptkategorie=default_by_fieldname["hauptkategorie"],
-                    unterkategorie=default_by_fieldname["unterkategorie"],
-                    rechtsgrundlage=default_by_fieldname["rechtsgrundlage"],
-                    datenerhalt=default_by_fieldname["datenerhalt"],
-                    status=default_by_fieldname["status"],
+                    datenhalter=datenhalter,
+                    hauptkategorie=hauptkategorie,
+                    unterkategorie=unterkategorie,
+                    rechtsgrundlage=rechtsgrundlage,
+                    datenerhalt=datenerhalt,
+                    status=status,
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber=default_by_fieldname["herausgeber"],
-                    kommentar=default_by_fieldname["kommentar"],
+                    herausgeber=herausgeber,
+                    kommentar=kommentar,
                     identifier=item.identifier,
                     entityType=item.entityType,
                 ),
             )
-    return datenkompass_recources
+    return datenkompass_resources
