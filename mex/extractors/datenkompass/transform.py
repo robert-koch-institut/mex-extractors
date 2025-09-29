@@ -253,7 +253,7 @@ def mapping_lookup_default(
     """Create a dictionary of fields by field name of Datenkompass mappings.
 
     For this the alias name needs to be used as intermediate step, because the alias
-    (not the field name) is the identificatior in the mapping.
+    (not the field name) is the identifier in the mapping.
 
     Args:
         model: Datenkompass model.
@@ -262,16 +262,13 @@ def mapping_lookup_default(
     Returns:
         dictionary of mapping field names to values.
     """
-    default_by_alias_name: dict[str, DatenkompassMappingField] = {}
-    for field_name in model.model_fields:
-        field_info = model.model_fields[field_name]
-        alias_name = getattr(field_info, "alias", None)
-        for field in mapping.fields:
-            if alias_name != field.fieldInTarget:
-                continue
-            default_by_alias_name[field_name] = field
-            break
-    return default_by_alias_name
+    return {
+        field_name: field
+        for field_name in model.model_fields
+        for field in mapping.fields
+        if (alias_name := model.model_fields[field_name].alias)
+        and alias_name == field.fieldInTarget
+    }
 
 
 def handle_setval(set_value: list[str] | str | None) -> str:
