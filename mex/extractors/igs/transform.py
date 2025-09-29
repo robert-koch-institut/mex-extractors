@@ -54,11 +54,7 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
         for for_value in rule.forValues
         if isinstance(for_value, str)
     ]
-    title_by_pathogen = {
-        rule.forValues[0]: rule.setValues
-        for rule in igs_resource_mapping.title[0].mappingRules
-        if rule.setValues and rule.forValues
-    }
+    title = igs_resource_mapping.title[0].mappingRules[0].setValues
     unit_in_charge = (
         unit_stable_target_ids_by_synonym[for_value[0]]
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
@@ -75,7 +71,7 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
             hadPrimarySource=extracted_primary_source_igs.stableTargetId,
             identifierInPrimarySource=f"IGS_{igs_info.title}_v{igs_info.version}",
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
-            title=title_by_pathogen.get(pathogen),
+            title=title,
             unitInCharge=unit_in_charge,
         )
         for pathogen in pathogen_schema.enum
@@ -249,7 +245,7 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                     if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
                     else []
                 )
-                description = description_by_enum[enum]
+                description = description_by_enum.get(enum)
                 identifier_in_primary_source = f"pathogen_{enum}"
                 label = enum
                 extracted_variables.append(
