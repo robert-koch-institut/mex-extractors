@@ -60,7 +60,6 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
         else []
     )
-    pathogen_schema = cast("IGSEnumSchema", igs_schemas["Pathogen"])
 
     return [
         ExtractedResource(
