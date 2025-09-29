@@ -189,7 +189,7 @@ def transform_odk_data_to_extracted_variables(
         for resource in extracted_resources_odk
     }
     for file in odk_raw_data:
-        file_name = file.file_name.split(".")[0]
+        file_name = file.file_name.split(".xlsx")[0]
         used_in = resource_id_by_identifier_in_primary_source[file_name]
         value_set: list[str] = []
         for row_index, type_row in enumerate(file.type_survey):
