@@ -74,7 +74,6 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
             title=title,
             unitInCharge=unit_in_charge,
         )
-        for pathogen in pathogen_schema.enum
     ]
 
 
