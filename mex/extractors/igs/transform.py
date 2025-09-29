@@ -25,8 +25,7 @@ from mex.extractors.igs.model import (
 )
 
 
-def transform_igs_schemas_to_resources(  # noqa: PLR0913
-    igs_schemas: dict[str, IGSSchema],
+def transform_igs_schemas_to_resources(
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: ResourceMapping,
@@ -36,7 +35,6 @@ def transform_igs_schemas_to_resources(  # noqa: PLR0913
     """Transform IGS schemas to extracted resources.
 
     Args:
-        igs_schemas: IGS schema by name
         igs_info: igs info
         extracted_primary_source_igs: extracted IGS primary source
         igs_resource_mapping: IGS resource mapping

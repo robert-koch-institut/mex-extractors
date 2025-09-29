@@ -99,8 +99,7 @@ def extracted_igs_contact_points_by_mail(
 
 
 @asset(group_name="igs")
-def extracted_igs_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
-    igs_schemas: dict[str, IGSSchema],
+def extracted_igs_resource_ids_by_identifier_in_primary_source(
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
@@ -109,7 +108,6 @@ def extracted_igs_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
 ) -> dict[str, MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_schemas_to_resources(
-        igs_schemas,
         igs_info,
         extracted_primary_source_igs,
         ResourceMapping.model_validate(igs_resource_mapping),
