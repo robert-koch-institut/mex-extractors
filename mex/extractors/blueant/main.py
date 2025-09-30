@@ -2,7 +2,7 @@ from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
-from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
+from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
@@ -68,7 +68,7 @@ def blueant_project_leaders_by_employee_id(
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to mex-persons with stable target ID and group them by employee ID."""  # noqa: E501
     ldap_project_leaders = list(extract_blueant_project_leaders(blueant_sources))
-    mex_project_leaders = transform_ldap_persons_to_mex_persons(
+    mex_project_leaders = transform_ldap_persons_to_extracted_persons(
         ldap_project_leaders,
         extracted_primary_source_ldap,
         extracted_organizational_units,

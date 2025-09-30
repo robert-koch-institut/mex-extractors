@@ -3,7 +3,9 @@ from dagster import asset
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
-from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.ldap.transform import (
+    transform_ldap_persons_with_query_to_extracted_persons,
+)
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -81,7 +83,7 @@ def project_coordinators_merged_ids_by_query_string(
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Get project coordinators merged ids."""
     extracted_persons = list(
-        transform_ldap_persons_with_query_to_mex_persons(
+        transform_ldap_persons_with_query_to_extracted_persons(
             seq_repo_source_resolved_project_coordinators,
             extracted_primary_source_ldap,
             extracted_organizational_units,
