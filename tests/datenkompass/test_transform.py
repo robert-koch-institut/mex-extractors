@@ -227,21 +227,6 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             ],
             comment=None,
         ),
-        "entityType": DatenkompassMappingField(
-            fieldInTarget=None,
-            fieldInMEx="hadPrimarySource",
-            mappingRules=[
-                MappingRule(
-                    forValues=["Lorem Ipsum"],
-                    setValues=None,
-                    rule=None,
-                    expectedOutputExample=None,
-                    forPrimarySource=None,
-                    comment=None,
-                )
-            ],
-            comment=None,
-        ),
         "dk_format": DatenkompassMappingField(
             fieldInTarget="Format der Daten",
             fieldInMEx=None,

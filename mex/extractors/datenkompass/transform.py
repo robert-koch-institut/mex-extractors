@@ -266,8 +266,8 @@ def mapping_lookup_default(
         field_name: field
         for field_name in model.model_fields
         for field in mapping.fields
-        if (alias_name := model.model_fields[field_name].alias)
-        and alias_name == field.fieldInTarget
+        if field.fieldInTarget is not None
+        and field.fieldInTarget == model.model_fields[field_name].alias
     }
 
 
