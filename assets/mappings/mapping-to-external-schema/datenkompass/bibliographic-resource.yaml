@@ -1,0 +1,55 @@
+fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'Lorem'
+    - 'Ipsum'
+- fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
+  fieldInMEx: accessRestriction
+  mappingRules:
+  - forValues:
+    - RESTRICTED
+    setValues: RESTRICTED
+  - forValues:
+    - OPEN
+    setValues: OPEN
+- fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
+  mappingRules:
+  - setValues: Datenhalter
+- fieldInTarget: Format der Daten
+  mappingRules:
+  - setValues:
+    - Format
+- fieldInTarget: Frequenz der Aktualisierung
+  mappingRules:
+  - setValues: Frequenz
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung (Benennung)
+  mappingRules:
+  - setValues: Rechtsgrundlage
+- fieldInTarget: Datennutzungszweck (erweitert)
+  mappingRules:
+  - setValues: Datennutzungszweck
+- fieldInTarget: Hauptkategorie
+  mappingRules:
+  - setValues: Hauptkategorie
+- fieldInTarget: Unterkategorie
+  mappingRules:
+  - setValues: Unterkategorie
+- fieldInTarget: Weg des Datenerhalts
+  mappingRules:
+  - setValues: Datenerhalt
+- fieldInTarget: Status (planbare Verfügbarkeit der Daten)
+  mappingRules:
+  - setValues: Status
+- fieldInTarget: Datennutzungszweck
+  mappingRules:
+  - setValues: Datennutzungszweck
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
+  mappingRules:
+  - setValues: Rechtsgrundlage
+- fieldInTarget: Herausgeber
+  mappingRules:
+  - setValues: Herausgeber
+- fieldInTarget: Kommentar
+  mappingRules:
+  - setValues: Kommentar

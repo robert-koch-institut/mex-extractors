@@ -1,0 +1,63 @@
+fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'Source-1'
+    - 'Source-2'
+    rule: Only get items where 'hadPrimarySource' matches the identifiers in 'forValues'.
+- fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
+  fieldInMEx: accessRestriction
+  mappingRules:
+  - forValues:
+    - RESTRICTED
+    setValues: RESTRICTED
+  - forValues:
+    - OPEN
+    setValues: OPEN
+- fieldInTarget: Beschreibung
+  fieldInMEx: description
+  mappingRules:
+    - forValues:
+        - None # no value is applicable for description
+      setValues:
+        - n/a
+- fieldInTarget: Format der Daten
+  mappingRules:
+  - setValues: Format
+- fieldInTarget: Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich
+  mappingRules:
+  - setValues: Datenhalter
+- fieldInTarget: Hauptkategorie
+  mappingRules:
+  - setValues: Hauptkategorie
+- fieldInTarget: Unterkategorie
+  mappingRules:
+  - setValues: Unterkategorie
+- fieldInTarget: Rechtsgrundlage für die Zugangseröffnung
+  mappingRules:
+  - setValues: Rechtsgrundlage
+- fieldInTarget: Weg des Datenerhalts
+  mappingRules:
+  - setValues:
+    - Datenerhalt
+- fieldInTarget: Status (planbare Verfügbarkeit der Daten)
+  mappingRules:
+  - setValues:
+    - Status
+- fieldInTarget: Datennutzungszweck
+  mappingRules:
+  - forPrimarySource: Source-1
+    setValues:
+    - TA
+    - TM
+  - forPrimarySource: Source-2
+    setValues: TA
+  - forPrimarySource: MergedResource items of unit filter
+    setValues:
+    - TM
+- fieldInTarget: Herausgeber
+  mappingRules:
+  - setValues: Herausgeber
+- fieldInTarget: Kommentar
+  mappingRules:
+  - setValues: Kommentar
