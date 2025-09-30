@@ -102,6 +102,7 @@ def test_lookup_person_in_ldap_and_transform(
         mocked_open_data_creator_with_affiliation_to_ignore,
         extracted_primary_sources["ldap"],
         mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
