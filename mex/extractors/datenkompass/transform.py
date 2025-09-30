@@ -1,6 +1,7 @@
 from typing import TypeVar, cast
 
 from bs4 import BeautifulSoup
+from pydantic import BaseModel
 
 from mex.common.models import (
     MergedActivity,
@@ -10,7 +11,6 @@ from mex.common.models import (
     MergedResource,
 )
 from mex.common.types import (
-    AccessRestriction,
     Identifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -27,6 +27,10 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
     DatenkompassResource,
+)
+from mex.extractors.datenkompass.models.mapping import (
+    DatenkompassMapping,
+    DatenkompassMappingField,
 )
 from mex.extractors.settings import Settings
 
@@ -247,27 +251,80 @@ def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
     return str(soup_string)
 
 
+def mapping_lookup_default(
+    model: type[BaseModel],
+    mapping: DatenkompassMapping,
+) -> dict[str, DatenkompassMappingField]:
+    """Create a dictionary of fields by field name of Datenkompass mappings.
+
+    For this the alias name needs to be used as intermediate step, because the alias
+    (not the field name) is the identifier in the mapping.
+
+    Args:
+        model: Datenkompass model.
+        mapping: Datenkompass mapping.
+
+    Returns:
+        dictionary of mapping field names to values.
+    """
+    return {
+        field_name: field
+        for field_name in model.model_fields
+        for field in mapping.fields
+        if field.fieldInTarget
+        and field.fieldInTarget == model.model_fields[field_name].alias
+    }
+
+
+def handle_setval(set_value: list[str] | str | None) -> str:
+    """Return value of mapping setValues as string, even if setValues is a list.
+
+    Args:
+        set_value: setValues value of mapping
+
+    Returns:
+        stringified value of setValues.
+    """
+    settings = Settings.get()
+    delim = settings.datenkompass.list_delimiter
+
+    if isinstance(set_value, str):
+        return set_value
+    if isinstance(set_value, list):
+        return delim.join(set_value)
+    msg = "no default value set in mapping."
+    raise ValueError(msg)
+
+
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier,
         MergedOrganizationalUnit,
     ],
+    activity_mapping: DatenkompassMapping,
 ) -> list[DatenkompassActivity]:
     """Transform merged to datenkompass activities.
 
     Args:
         filtered_merged_activities: List of merged activities
         merged_organizational_units_by_id: dict of merged organizational units by id
+        activity_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassActivity instances.
     """
-    settings = Settings()
+    settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
     datenkompass_activities = []
+    default_by_fieldname = mapping_lookup_default(
+        DatenkompassActivity,
+        activity_mapping,
+    )
     for item in filtered_merged_activities:
-        beschreibung = "Es handelt sich um ein Projekt/ Vorhaben. "
+        beschreibung = handle_setval(
+            default_by_fieldname["beschreibung"].mappingRules[0].setValues
+        )
         beschreibung += get_abstract_or_description(item.abstract, delim)
         kontakt = get_email(
             item.responsibleUnit,
@@ -287,29 +344,60 @@ def transform_activities(
         if item.website:
             url_de = delim.join([w.url for w in item.website if w.language == "de"])
             datenbank = url_de if url_de else item.website[0].url
+        datenhalter = handle_setval(
+            default_by_fieldname["datenhalter"].mappingRules[0].setValues
+        )
+        voraussetzungen = handle_setval(
+            default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
+        )
+        frequenz = handle_setval(
+            default_by_fieldname["frequenz"].mappingRules[0].setValues
+        )
+        hauptkategorie = handle_setval(
+            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+        )
+        unterkategorie = handle_setval(
+            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+        )
+        rechtsgrundlage = handle_setval(
+            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+        )
+        datenerhalt = handle_setval(
+            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+        )
+        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+        datennutzungszweck = handle_setval(
+            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+        )
+        herausgeber = handle_setval(
+            default_by_fieldname["herausgeber"].mappingRules[0].setValues
+        )
+        kommentar = handle_setval(
+            default_by_fieldname["kommentar"].mappingRules[0].setValues
+        )
+        dk_format = handle_setval(
+            default_by_fieldname["dk_format"].mappingRules[0].setValues
+        )
         datenkompass_activities.append(
             DatenkompassActivity(
-                datenhalter="Robert Koch-Institut",
+                datenhalter=datenhalter,
                 beschreibung=beschreibung,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
-                voraussetzungen="Unbekannt",
-                frequenz="Nicht zutreffend",
-                hauptkategorie="Gesundheit",
-                unterkategorie="Einflussfaktoren auf die Gesundheit",
-                rechtsgrundlage="Nicht bekannt",
-                datenerhalt="Externe Zulieferung",
-                status="Unbekannt",
-                datennutzungszweck="Themenspezifische Auswertung",
-                herausgeber="RKI - Robert Koch-Institut",
-                kommentar=(
-                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein."
-                ),
-                format="Sonstiges",
+                voraussetzungen=voraussetzungen,
+                frequenz=frequenz,
+                hauptkategorie=hauptkategorie,
+                unterkategorie=unterkategorie,
+                rechtsgrundlage=rechtsgrundlage,
+                datenerhalt=datenerhalt,
+                status=status,
+                datennutzungszweck=datennutzungszweck,
+                herausgeber=herausgeber,
+                kommentar=kommentar,
+                dk_format=dk_format,
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
@@ -323,6 +411,7 @@ def transform_bibliographic_resources(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
+    bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
 
@@ -330,21 +419,19 @@ def transform_bibliographic_resources(
         merged_bibliographic_resources: List of merged bibliographic resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         person_name_by_id: dictionary of merged person names by id
+        bibliographic_resource_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassBibliographicResource instances.
     """
-    settings = Settings()
+    settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
     datenkompass_bibliographic_recources = []
+    default_by_fieldname = mapping_lookup_default(
+        DatenkompassBibliographicResource,
+        bibliographic_resource_mapping,
+    )
     for item in merged_bibliographic_resources:
-        vocab = get_german_vocabulary(item.bibliographicResourceType)
-        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
-        beschreibung += get_abstract_or_description(item.abstract, delim)
-        if item.accessRestriction == AccessRestriction["RESTRICTED"]:
-            voraussetzungen = "Zugang eingeschränkt"
-        elif item.accessRestriction == AccessRestriction["OPEN"]:
-            voraussetzungen = "Frei zugänglich"
         datenbank = get_datenbank(item)
         kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
         organisationseinheit = get_unit_shortname(
@@ -360,6 +447,53 @@ def transform_bibliographic_resources(
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
+        vocab = get_german_vocabulary(item.bibliographicResourceType)
+        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
+        beschreibung += get_abstract_or_description(item.abstract, delim)
+        voraussetzungen = next(
+            handle_setval(rule.setValues)
+            for rule in default_by_fieldname["voraussetzungen"].mappingRules
+            if rule.forValues and rule.forValues[0] == item.accessRestriction.name
+        )
+        rechtsgrundlagen_benennung = handle_setval(
+            default_by_fieldname["rechtsgrundlagen_benennung"].mappingRules[0].setValues
+        )
+        datennutzungszweck_erweitert = handle_setval(
+            default_by_fieldname["datennutzungszweck_erweitert"]
+            .mappingRules[0]
+            .setValues
+        )
+        dk_format = handle_setval(
+            default_by_fieldname["dk_format"].mappingRules[0].setValues
+        )
+        datenhalter = handle_setval(
+            default_by_fieldname["datenhalter"].mappingRules[0].setValues
+        )
+        frequenz = handle_setval(
+            default_by_fieldname["frequenz"].mappingRules[0].setValues
+        )
+        hauptkategorie = handle_setval(
+            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+        )
+        unterkategorie = handle_setval(
+            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+        )
+        herausgeber = handle_setval(
+            default_by_fieldname["herausgeber"].mappingRules[0].setValues
+        )
+        datenerhalt = handle_setval(
+            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+        )
+        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+        datennutzungszweck = handle_setval(
+            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+        )
+        rechtsgrundlage = handle_setval(
+            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+        )
+        kommentar = handle_setval(
+            default_by_fieldname["kommentar"].mappingRules[0].setValues
+        )
         schlagwort = (
             delim.join([word.value for word in item.keyword]) if item.keyword else None
         )
@@ -368,26 +502,23 @@ def transform_bibliographic_resources(
                 beschreibung=beschreibung,
                 voraussetzungen=voraussetzungen,
                 datenbank=datenbank,
-                rechtsgrundlagen_benennung="Nicht zutreffend",
-                datennutzungszweck_erweitert="Nicht zutreffend",
-                dk_format="Sonstiges",
+                rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
+                datennutzungszweck_erweitert=datennutzungszweck_erweitert,
+                dk_format=dk_format,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 schlagwort=schlagwort,
                 titel=titel,
-                datenhalter="Robert Koch-Institut",
-                frequenz="Nicht zutreffend",
-                hauptkategorie="Gesundheit",
-                unterkategorie="Einflussfaktoren auf die Gesundheit",
-                herausgeber="RKI - Robert Koch-Institut",
-                datenerhalt="Abruf über eine externe Internetseite oder eine Datenbank",
-                status="Stabil",
-                datennutzungszweck="Sonstige",
-                rechtsgrundlage="Nicht zutreffend",
-                kommentar=(
-                    "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                    "voraussichtlich Ende 2025 verfügbar sein."
-                ),
+                datenhalter=datenhalter,
+                frequenz=frequenz,
+                hauptkategorie=hauptkategorie,
+                unterkategorie=unterkategorie,
+                herausgeber=herausgeber,
+                datenerhalt=datenerhalt,
+                status=status,
+                datennutzungszweck=datennutzungszweck,
+                rechtsgrundlage=rechtsgrundlage,
+                kommentar=kommentar,
                 identifier=item.identifier,
                 entityType=item.entityType,
             ),
@@ -402,6 +533,7 @@ def transform_resources(
         MergedOrganizationalUnit,
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
+    resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassResource]:
     """Transform merged to datenkompass resources.
 
@@ -409,27 +541,33 @@ def transform_resources(
         merged_resources_by_primary_source: dictionary of merged resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
+        resource_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassResource instances.
     """
-    settings = Settings()
+    settings = Settings.get()
     delim = settings.datenkompass.list_delimiter
-    datenkompass_recources = []
-    datennutzungszweck_by_primary_source = {
-        "report-server": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
-        "open-data": "Themenspezifische Auswertung",
-        "unit filter": "Themenspezifisches Monitoring",
-    }
+    datenkompass_resources = []
+    default_by_fieldname = mapping_lookup_default(
+        DatenkompassResource,
+        resource_mapping,
+    )
     for (
         primary_source,
         merged_resources_list,
     ) in merged_resources_by_primary_source.items():
+        datennutzungszweck = next(
+            handle_setval(rule.setValues)
+            for rule in default_by_fieldname["datennutzungszweck"].mappingRules
+            if rule.forPrimarySource and rule.forPrimarySource == primary_source
+        )
         for item in merged_resources_list:
-            if item.accessRestriction == AccessRestriction["RESTRICTED"]:
-                voraussetzungen = "Zugang eingeschränkt"
-            elif item.accessRestriction == AccessRestriction["OPEN"]:
-                voraussetzungen = "Frei zugänglich"
+            voraussetzungen = next(
+                handle_setval(rule.setValues)
+                for rule in default_by_fieldname["voraussetzungen"].mappingRules
+                if rule.forValues and rule.forValues[0] == item.accessRestriction.name
+            )
             frequenz_vocabulary = (
                 get_german_vocabulary([item.accrualPeriodicity])
                 if item.accrualPeriodicity
@@ -451,7 +589,9 @@ def transform_resources(
             beschreibung = (
                 get_abstract_or_description(item.description, delim)
                 if item.description
-                else "n/a"
+                else handle_setval(
+                    default_by_fieldname["beschreibung"].mappingRules[0].setValues
+                )
             )
             rechtsgrundlagen_benennung_collection = [
                 entry.value for entry in item.hasLegalBasis
@@ -479,8 +619,34 @@ def transform_resources(
                 delim.join([hp.value for hp in item.hasPurpose if hp.value is not None])
                 or None
             )
-            datennutzungszweck = datennutzungszweck_by_primary_source[primary_source]
-            datenkompass_recources.append(
+            dk_format = handle_setval(
+                default_by_fieldname["dk_format"].mappingRules[0].setValues
+            )
+            datenhalter = handle_setval(
+                default_by_fieldname["datenhalter"].mappingRules[0].setValues
+            )
+            hauptkategorie = handle_setval(
+                default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+            )
+            unterkategorie = handle_setval(
+                default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+            )
+            rechtsgrundlage = handle_setval(
+                default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+            )
+            datenerhalt = handle_setval(
+                default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+            )
+            status = handle_setval(
+                default_by_fieldname["status"].mappingRules[0].setValues
+            )
+            herausgeber = handle_setval(
+                default_by_fieldname["herausgeber"].mappingRules[0].setValues
+            )
+            kommentar = handle_setval(
+                default_by_fieldname["kommentar"].mappingRules[0].setValues
+            )
+            datenkompass_resources.append(
                 DatenkompassResource(
                     voraussetzungen=voraussetzungen,
                     frequenz=frequenz,
@@ -491,22 +657,19 @@ def transform_resources(
                     rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
                     datennutzungszweck_erweitert=datennutzungszweck_erweitert,
                     schlagwort=schlagwort,
-                    dk_format="Sonstiges",
+                    dk_format=dk_format,
                     titel=delim.join([fix_quotes(t.value) for t in item.title]),
-                    datenhalter="Robert Koch-Institut",
-                    hauptkategorie="Gesundheit",
-                    unterkategorie="Einflussfaktoren auf die Gesundheit",
-                    rechtsgrundlage="Nicht zutreffend",
-                    datenerhalt="Externe Zulieferung",
-                    status="Stabil",
+                    datenhalter=datenhalter,
+                    hauptkategorie=hauptkategorie,
+                    unterkategorie=unterkategorie,
+                    rechtsgrundlage=rechtsgrundlage,
+                    datenerhalt=datenerhalt,
+                    status=status,
                     datennutzungszweck=datennutzungszweck,
-                    herausgeber="RKI - Robert Koch-Institut",
-                    kommentar=(
-                        "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                        "voraussichtlich Ende 2025 verfügbar sein."
-                    ),
+                    herausgeber=herausgeber,
+                    kommentar=kommentar,
                     identifier=item.identifier,
                     entityType=item.entityType,
                 ),
             )
-    return datenkompass_recources
+    return datenkompass_resources

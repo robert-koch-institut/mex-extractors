@@ -34,7 +34,7 @@ class DatenkompassActivity(BaseModel):
     datennutzungszweck: str = Field(..., alias="Datennutzungszweck")
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
-    format: str = Field(..., alias="Format der Daten")
+    dk_format: str = Field(..., alias="Format der Daten")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
     entityType: str = Field(exclude=True)  # ignore when writing to json
 
