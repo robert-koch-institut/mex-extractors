@@ -17,20 +17,20 @@ from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     get_enums_by_property_name,
     transform_igs_access_platform,
-    transform_igs_schemas_to_resources,
+    transform_igs_info_to_resources,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
 
 
 @pytest.mark.usefixtures("mocked_igs")
-def test_transform_igs_schemas_to_resources(
+def test_transform_igs_info_to_resources(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_resource_mapping: ResourceMapping,
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
-    extracted_resources = transform_igs_schemas_to_resources(
+    extracted_resources = transform_igs_info_to_resources(
         IGSInfo(title="title", version="-1"),
         extracted_primary_sources["igs"],
         igs_resource_mapping,

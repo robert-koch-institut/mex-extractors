@@ -4,7 +4,7 @@ from mex.extractors.igs.connector import IGSConnector
 
 
 @pytest.mark.integration
-def test_igs_connector_item_urls() -> None:
+def test_igs_connector_json_from_api() -> None:
     igs_schemas = IGSConnector.get()
     raw_json = igs_schemas.get_json_from_api()
 

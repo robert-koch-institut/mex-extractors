@@ -25,7 +25,7 @@ from mex.extractors.igs.model import (
 )
 
 
-def transform_igs_schemas_to_resources(
+def transform_igs_info_to_resources(
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: ResourceMapping,

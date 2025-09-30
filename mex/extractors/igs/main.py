@@ -29,7 +29,7 @@ from mex.extractors.igs.filter import filter_creation_schemas
 from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
-    transform_igs_schemas_to_resources,
+    transform_igs_info_to_resources,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
@@ -107,7 +107,7 @@ def extracted_igs_resource_ids_by_identifier_in_primary_source(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> dict[str, MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
-    extracted_resources = transform_igs_schemas_to_resources(
+    extracted_resources = transform_igs_info_to_resources(
         igs_info,
         extracted_primary_source_igs,
         ResourceMapping.model_validate(igs_resource_mapping),
