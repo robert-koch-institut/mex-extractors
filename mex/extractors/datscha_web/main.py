@@ -5,6 +5,7 @@ from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
 from mex.common.models import (
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -59,6 +60,7 @@ def datscha_web_person_ids_by_query_string(
     extracted_datscha_web_items: list[DatschaWebItem],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract Datscha Web contact persons from LDAP and return them by query string."""
     ldap_source_contacts = list(
@@ -68,6 +70,7 @@ def datscha_web_person_ids_by_query_string(
         ldap_source_contacts,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_source_contacts)
 

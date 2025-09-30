@@ -77,6 +77,7 @@ def project_coordinators_merged_ids_by_query_string(
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Get project coordinators merged ids."""
     extracted_persons = list(
@@ -84,6 +85,7 @@ def project_coordinators_merged_ids_by_query_string(
             seq_repo_source_resolved_project_coordinators,
             extracted_primary_source_ldap,
             extracted_organizational_units,
+            extracted_organization_rki,
         )
     )
     load(extracted_persons)

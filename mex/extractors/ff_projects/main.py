@@ -6,6 +6,7 @@ from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_p
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -67,6 +68,7 @@ def ff_projects_person_ids_by_query_string(
     ff_projects_sources: list[FFProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract authors for FF Projects from LDAP and group them by query."""
     ff_projects_authors = list(extract_ff_project_authors(ff_projects_sources))
@@ -74,6 +76,7 @@ def ff_projects_person_ids_by_query_string(
         ff_projects_authors,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(extracted_persons)
     return {

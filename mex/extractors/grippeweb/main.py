@@ -11,6 +11,7 @@ from mex.common.ldap.transform import (
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
@@ -123,6 +124,7 @@ def extracted_mex_persons_grippeweb(
     grippeweb_access_platform: dict[str, Any],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for grippeweb from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
     ldap_persons = extract_ldap_persons(
@@ -131,7 +133,10 @@ def extracted_mex_persons_grippeweb(
     )
     mex_persons = list(
         transform_ldap_persons_to_mex_persons(
-            ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
+            ldap_persons,
+            extracted_primary_source_ldap,
+            extracted_organizational_units,
+            extracted_organization_rki,
         )
     )
     load(mex_persons)

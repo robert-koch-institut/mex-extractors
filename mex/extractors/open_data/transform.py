@@ -29,6 +29,7 @@ from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
 )
+from mex.extractors.pipeline.wikidata import extracted_organization_rki
 from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -114,10 +115,12 @@ def lookup_person_in_ldap_and_transform(
         person: Open Data person (Creator Or Contributor),
         extracted_primary_source_ldap: primary Source for ldap
         units_by_identifier_in_primary_source: dict of primary sources by ID
+        extracted_organization_rki: ExtractedOrganization of RKI,
 
     Returns:
         ExtractedPerson if matched or None if match fails
     """
+    rki_organization = extracted_organization_rki()
     ldap = LDAPConnector.get()
     try:
         ldap_person = ldap.get_person(displayName=person.name)
@@ -125,6 +128,7 @@ def lookup_person_in_ldap_and_transform(
             ldap_person,
             extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
+            rki_organization, # type: ignore  [arg-type]
         )
     except MExError:
         return None

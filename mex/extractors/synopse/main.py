@@ -128,6 +128,7 @@ def extracted_synopse_contributor_stable_target_ids_by_name(
     synopse_project_contributors: list[LDAPPersonWithQuery],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Get lookup from contributor name to extracted person stable target id.
 
@@ -137,6 +138,7 @@ def extracted_synopse_contributor_stable_target_ids_by_name(
         synopse_project_contributors,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(transformed_project_contributors)
     return get_merged_ids_by_query_string(  # only works after contributors are loaded
