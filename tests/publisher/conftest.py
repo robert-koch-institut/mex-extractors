@@ -17,7 +17,50 @@ from mex.common.models import (
     MergedPrimarySource,
     PaginatedItemsContainer,
 )
-from mex.common.types import AccessRestriction
+from mex.common.types import (
+    AccessRestriction,
+    Email,
+    MergedPersonIdentifier,
+    MergedOrganizationalUnitIdentifier,
+)
+
+@pytest.fixture
+def merged_ldap_person_list() -> list[MergedPerson]:
+    return [
+        MergedPerson(
+            identifier="PersonWithFallbackUnit",
+            memberOf=["ValidUnitWithEmail", "InvalidUnitIdentifier"],
+        ),
+        MergedPerson(
+            identifier="PersonWithoutFallback",
+            memberOf=[],
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_unit_list() -> list[MergedOrganizationalUnit]:
+    return [
+        MergedOrganizationalUnit(
+            identifier="ValidUnitWithEmail",
+            name="unit with email",
+            email=[Email("unit@e.mail")],
+        ),
+        MergedOrganizationalUnit(
+            identifier="InvalidUnitIdentifier",
+            name="unit without email",
+            email=[],
+        ),
+    ]
+
+
+@pytest.fixture
+def mocked_fallback_unit_identifiers_by_person() -> dict[
+    MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
+]:
+    return {
+        "PersonWithFallbackUnit": ["ValidUnitWithEmail"]
+    }
 
 
 def fetch_merged_items(  # noqa: PLR0913

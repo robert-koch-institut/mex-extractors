@@ -3,11 +3,15 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.types import MergedContactPointIdentifier
+from mex.common.types import (
+    MergedContactPointIdentifier,
+    MergedPersonIdentifier,
+    MergedOrganizationalUnitIdentifier,
+)
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
-    fallback_contact_identifiers,
     publishable_contact_points_and_units,
+    publishable_fallback_mex_contact_identifier,
     publishable_items,
     publishable_items_without_actors,
     publishable_persons,
@@ -91,20 +95,25 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 @pytest.mark.usefixtures("mocked_backend")
 def test_fallback_contact_identifiers() -> None:
     identifiers = cast(
-        "list[MergedContactPointIdentifier]", fallback_contact_identifiers()
+        "list[MergedContactPointIdentifier]",
+        publishable_fallback_mex_contact_identifier(),
     )
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_publishable_items() -> None:
+def test_publishable_items(
+    mocked_fallback_unit_identifiers_by_person: dict[
+        MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
+    ],
+) -> None:
     container = cast(
         "ItemsContainer[AnyMergedModel]",
         publishable_items(
             publishable_items_without_actors(),
             publishable_persons(),
             publishable_contact_points_and_units(),
-            fallback_contact_identifiers(),
+            publishable_fallback_mex_contact_identifier(),
         ),
     )
     assert len(container.items) == 4
