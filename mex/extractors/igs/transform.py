@@ -101,11 +101,26 @@ def transform_igs_access_platform(
     )
     unit_in_charge = unit_stable_target_ids_by_synonym[unit_string[0]]
     return ExtractedAccessPlatform(
+        endpointDescription=igs_access_platform_mapping.endpointDescription[0]
+        .mappingRules[0]
+        .setValues,
+        endpointType=igs_access_platform_mapping.endpointType[0]
+        .mappingRules[0]
+        .setValues,
+        endpointURL=igs_access_platform_mapping.endpointURL[0]
+        .mappingRules[0]
+        .setValues,
         contact=contact,
+        description=igs_access_platform_mapping.description[0]
+        .mappingRules[0]
+        .setValues,
         hadPrimarySource=extracted_primary_source_igs.stableTargetId,
         identifierInPrimarySource=igs_access_platform_mapping.identifierInPrimarySource[
             0
         ]
+        .mappingRules[0]
+        .setValues,
+        landingPage=igs_access_platform_mapping.landingPage[0]
         .mappingRules[0]
         .setValues,
         technicalAccessibility=igs_access_platform_mapping.technicalAccessibility[0]
