@@ -50,7 +50,7 @@ def find_descendant_units(
     Returns:
         identifier of units which are descendants of the unit filter setting.
     """
-    settings = Settings()
+    settings = Settings.get()
     fetched_merged_organizational_units = list(
         merged_organizational_units_by_id.values()
     )

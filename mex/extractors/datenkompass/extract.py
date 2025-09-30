@@ -1,6 +1,7 @@
 from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.exceptions import MExError
 from mex.common.identity import get_provider
 from mex.common.models import AnyMergedModel, MergedPrimarySource
 
@@ -35,15 +36,21 @@ def get_merged_items(
     return list(response)
 
 
-def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list[str]:
+def get_filtered_primary_source_ids(
+    filtered_primary_sources: list[str] | None,
+) -> list[str]:
     """Get the IDs of the relevant primary sources.
 
     Args:
-        relevant_primary_sources: List of primary sources.
+        filtered_primary_sources: List of primary sources.
 
     Returns:
-        List of IDs of the relevant primary sources.
+        List of IDs of the filtered relevant primary sources.
     """
+    msg = "Primary sources not found."
+    if not filtered_primary_sources:
+        raise MExError(msg)
+
     merged_primary_sources = cast(
         "list[MergedPrimarySource]",
         get_merged_items(entity_type=["MergedPrimarySource"]),
@@ -55,5 +62,5 @@ def get_relevant_primary_source_ids(relevant_primary_sources: list[str]) -> list
         str(mps.identifier)
         for mps in merged_primary_sources
         if provider.fetch(stable_target_id=mps.identifier)[0].identifierInPrimarySource
-        in relevant_primary_sources
+        in filtered_primary_sources
     ]

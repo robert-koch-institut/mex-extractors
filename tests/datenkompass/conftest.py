@@ -30,6 +30,33 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
+from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
+from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
+
+
+@pytest.fixture
+def mocked_activity_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_bibliographic_resource_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+    )
+
+
+@pytest.fixture
+def mocked_resource_mapping() -> DatenkompassMapping:
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
+    )
 
 
 @pytest.fixture
@@ -156,19 +183,19 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="Wort 2", language="de"),
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some open data resource title"],
+            title=["some Source-2 resource title"],
             wasGeneratedBy=["MergedActivityWithORG2"],
             unitInCharge=["IdentifierOrgUnitEG"],
-            identifier=["openDataResource"],
+            identifier=["Source2Resource"],
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
             contact=["PersonIdentifier4Peppa"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some synopse resource title"],
+            title=["some Source-1 resource title"],
             wasGeneratedBy=["MergedActivityNoORG"],
             unitInCharge=["IdentifierOrgUnitZB"],
-            identifier=["SynopseResource"],
+            identifier=["Source1Resource"],
         ),
     ]
 
@@ -266,52 +293,46 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
         DatenkompassActivity(
-            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Die Nutzung",
-            datenhalter="Robert Koch-Institut",
+            beschreibung="Es handelt. Die Nutzung",
+            datenhalter="Datenhalter",
             kontakt="unit@example.org",
             organisationseinheit="a.bsp. unit; e.g. unit",
             titel="short de; title 'Act' no language; title en",
             schlagwort="Infektionskrankheiten und -epidemiologie",
             datenbank="https://www.do-transform.org",
-            voraussetzungen="Unbekannt",
-            frequenz="Nicht zutreffend",
-            hauptkategorie="Gesundheit",
-            unterkategorie="Einflussfaktoren auf die Gesundheit",
-            rechtsgrundlage="Nicht bekannt",
-            datenerhalt="Externe Zulieferung",
-            status="Unbekannt",
-            datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="RKI - Robert Koch-Institut",
-            kommentar=(
-                "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein."
-            ),
-            format="Sonstiges",
+            voraussetzungen="Voraussetzungen",
+            frequenz="Frequenz",
+            hauptkategorie="Hauptkategorie",
+            unterkategorie="Unterkategorie",
+            rechtsgrundlage="Rechtsgrundlage",
+            datenerhalt="Datenerhalt",
+            status="Status",
+            datennutzungszweck="Datennutzungszweck",
+            herausgeber="Herausgeber",
+            kommentar="Kommentar",
+            dk_format="Format",
             identifier="MergedActivityWithORG2",
             entityType="MergedActivity",
         ),
         DatenkompassActivity(
-            beschreibung="Es handelt sich um ein Projekt/ Vorhaben. Without language",
-            datenhalter="Robert Koch-Institut",
+            beschreibung="Es handelt. Without language",
+            datenhalter="Datenhalter",
             kontakt="unit@example.org",
             organisationseinheit="e.g. unit",
             titel="short only english; titel de",
             schlagwort="Infektionskrankheiten und -epidemiologie",
             datenbank=None,
-            voraussetzungen="Unbekannt",
-            frequenz="Nicht zutreffend",
-            hauptkategorie="Gesundheit",
-            unterkategorie="Einflussfaktoren auf die Gesundheit",
-            rechtsgrundlage="Nicht bekannt",
-            datenerhalt="Externe Zulieferung",
-            status="Unbekannt",
-            datennutzungszweck="Themenspezifische Auswertung",
-            herausgeber="RKI - Robert Koch-Institut",
-            kommentar=(
-                "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-                "voraussichtlich Ende 2025 verfügbar sein."
-            ),
-            format="Sonstiges",
+            voraussetzungen="Voraussetzungen",
+            frequenz="Frequenz",
+            hauptkategorie="Hauptkategorie",
+            unterkategorie="Unterkategorie",
+            rechtsgrundlage="Rechtsgrundlage",
+            datenerhalt="Datenerhalt",
+            status="Status",
+            datennutzungszweck="Datennutzungszweck",
+            herausgeber="Herausgeber",
+            kommentar="Kommentar",
+            dk_format="Format",
             identifier="MergedActivityWithORG1",
             entityType="MergedActivity",
         ),
