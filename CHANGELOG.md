@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - extract mandatory fields for igs variables and variable groups
 - update mex-common dependency to 1.4
+- optional value fields for igs access platform and resource
 
 ### Changes
 
