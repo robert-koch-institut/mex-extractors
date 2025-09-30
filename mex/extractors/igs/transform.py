@@ -4,6 +4,7 @@ from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedContactPoint,
+    ExtractedOrganization,
     ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
@@ -25,12 +26,14 @@ from mex.extractors.igs.model import (
 )
 
 
-def transform_igs_info_to_resources(
+def transform_igs_info_to_resources(  # noqa: PLR0913
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: ResourceMapping,
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_igs_access_platform: ExtractedAccessPlatform,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Transform IGS schemas to extracted resources.
 
@@ -40,7 +43,8 @@ def transform_igs_info_to_resources(
         igs_resource_mapping: IGS resource mapping
         extracted_igs_contact_points_by_mail: extracted IGS contact points by mail
         unit_stable_target_ids_by_synonym: merged organizational units by name
-
+        extracted_igs_access_platform: extracted access platform
+        extracted_organization_rki: extracted organization RKI
 
     Returns:
         extracted resource by enum
@@ -52,21 +56,78 @@ def transform_igs_info_to_resources(
         for for_value in rule.forValues
         if isinstance(for_value, str)
     ]
+    contributing_unit = (
+        unit_stable_target_ids_by_synonym[for_value[0]]
+        if (
+            for_value := igs_resource_mapping.contributingUnit[0]
+            .mappingRules[0]
+            .forValues
+        )
+        else []
+    )
     title = igs_resource_mapping.title[0].mappingRules[0].setValues
     unit_in_charge = (
         unit_stable_target_ids_by_synonym[for_value[0]]
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
         else []
     )
+    keyword = [
+        set_value
+        for rule in igs_resource_mapping.keyword[0].mappingRules[1:]
+        if rule.setValues
+        for set_value in rule.setValues
+    ]
+    if igs_resource_mapping.keyword[0].mappingRules[0].setValues:
+        keyword.extend(igs_resource_mapping.keyword[0].mappingRules[0].setValues)
 
     return [
         ExtractedResource(
+            accessPlatform=extracted_igs_access_platform.stableTargetId,
             accessRestriction=igs_resource_mapping.accessRestriction[0]
             .mappingRules[0]
             .setValues,
+            accrualPeriodicity=igs_resource_mapping.accrualPeriodicity[0]
+            .mappingRules[0]
+            .setValues,
+            alternativeTitle=igs_resource_mapping.alternativeTitle[0]
+            .mappingRules[0]
+            .setValues,
+            anonymizationPseudonymization=igs_resource_mapping.anonymizationPseudonymization[
+                0
+            ]
+            .mappingRules[0]
+            .setValues,
             contact=contact,
+            contributingUnit=contributing_unit,
+            description=igs_resource_mapping.description[0].mappingRules[0].setValues,
+            documentation=igs_resource_mapping.documentation[0]
+            .mappingRules[0]
+            .setValues,
             hadPrimarySource=extracted_primary_source_igs.stableTargetId,
+            hasLegalBasis=igs_resource_mapping.hasLegalBasis[0]
+            .mappingRules[0]
+            .setValues,
+            hasPersonalData=igs_resource_mapping.hasPersonalData[0]
+            .mappingRules[0]
+            .setValues,
             identifierInPrimarySource=f"IGS_{igs_info.title}_v{igs_info.version}",
+            keyword=keyword,
+            language=igs_resource_mapping.language[0].mappingRules[0].setValues,
+            meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
+            method=igs_resource_mapping.method[0].mappingRules[0].setValues,
+            publisher=extracted_organization_rki.stableTargetId,
+            resourceCreationMethod=igs_resource_mapping.resourceCreationMethod[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific[0]
+            .mappingRules[0]
+            .setValues,
+            rights=igs_resource_mapping.rights[0].mappingRules[0].setValues,
+            spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
+            temporal=igs_resource_mapping.temporal[0].mappingRules[0].setValues,
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
             title=title,
             unitInCharge=unit_in_charge,
