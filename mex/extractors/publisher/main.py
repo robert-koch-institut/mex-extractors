@@ -44,8 +44,8 @@ def publishable_items_without_actors() -> ItemsContainer[AnyMergedModel]:
         not in [
             *settings.publisher.skip_entity_types,
             "MergedPerson",
-            "MergedOrganizationalUnit",
             "MergedContactPoint",
+            "MergedOrganizationalUnit",
         ]
     ]
     merged_items = get_publishable_merged_items(
@@ -114,7 +114,7 @@ def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def fallback_mex_contact_identifier() -> list[MergedContactPointIdentifier]:
+def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
     connector = BackendApiConnector.get()
@@ -148,7 +148,7 @@ def publishable_items(
     publishable_items_without_actors: ItemsContainer[AnyMergedModel],
     publishable_persons: ItemsContainer[AnyMergedModel],
     publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
-    fallback_mex_contact_identifier: list[MergedContactPointIdentifier],
+    fallback_contact_identifiers: list[MergedContactPointIdentifier],
     fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
@@ -163,7 +163,7 @@ def publishable_items(
         update_actor_references_where_needed(
             item,
             allowed_actors,
-            fallback_mex_contact_identifier,
+            fallback_contact_identifiers,
             fallback_unit_identifiers_by_person,
         )
     return ItemsContainer[AnyMergedModel](

@@ -11,7 +11,7 @@ from mex.common.types import (
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
-    fallback_mex_contact_identifier,
+    fallback_contact_identifiers,
     publishable_contact_points_and_units,
     publishable_items,
     publishable_items_without_actors,
@@ -98,7 +98,7 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 def test_fallback_contact_identifiers() -> None:
     identifiers = cast(
         "list[MergedContactPointIdentifier]",
-        fallback_mex_contact_identifier(),
+        fallback_contact_identifiers(),
     )
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
@@ -115,7 +115,7 @@ def test_publishable_items(
             publishable_items_without_actors(),
             publishable_persons(),
             publishable_contact_points_and_units(),
-            fallback_mex_contact_identifier(),
+            fallback_contact_identifiers(),
             mocked_fallback_unit_identifiers_by_person,
         ),
     )

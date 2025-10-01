@@ -55,8 +55,8 @@ def update_actor_references_where_needed(
 ) -> None:
     """Update references to actors, where needed.
 
-    We filter all fields (that allow Person references (among others)) to only contain
-    references to publishable actors. For fields that also allow organizational units,
+    We filter all fields that allow Person references to only contain references to
+    publishable actors. For fields that also allow organizational units,
     non-consenting persons can get replaced by their organizational unit if the unit
     provides an email address. Fields that allow contact points, but contain no valid
     references are set to a fallback contact point.

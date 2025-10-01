@@ -18,19 +18,19 @@ from mex.extractors.publisher.transform import (
 
 
 @pytest.fixture
-def merged_activity_contacts_blocked() -> MergedActivity:
+def merged_activity_contacts_with_contactpoint_fallback() -> MergedActivity:
     return MergedActivity(
-        identifier="activityMExFallback",
+        identifier="activityCPointFallback",
         contact=["thisIdIsBlocked"],
         externalAssociate=["thisIdIsBlocked", "thisIdentifierIsOkay"],
         involvedPerson=["thisIdentifierIsOkay"],
         responsibleUnit=["thisUnitIsResponsible"],
-        title=["Activity with MEx contact point Fallback"],
+        title=["Activity with contact point Fallback"],
     )
 
 
 @pytest.fixture
-def merged_activity_contacts_with_fallback() -> MergedActivity:
+def merged_activity_contacts_with_unit_fallback() -> MergedActivity:
     return MergedActivity(
         identifier="activityUnitFallback",
         contact=["PersonWithFallbackUnit", "PersonWithoutFallback"],
@@ -54,11 +54,11 @@ def test_get_unit_id_per_person(
     ) == {"PersonWithFallbackUnit": ["ValidUnitWithEmail"]}
 
 
-def test_update_actor_references_where_needed_with_mex_contact_fallback(
-    merged_activity_contacts_blocked: MergedActivity,
+def test_update_actor_references_where_needed_with_contactpoint_fallback(
+    merged_activity_contacts_with_contactpoint_fallback: MergedActivity,
 ) -> None:
     update_actor_references_where_needed(
-        merged_activity_contacts_blocked,
+        merged_activity_contacts_with_contactpoint_fallback,
         allowed_actors=[
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
@@ -72,11 +72,11 @@ def test_update_actor_references_where_needed_with_mex_contact_fallback(
             ]
         },
     )
-    assert merged_activity_contacts_blocked.model_dump(
+    assert merged_activity_contacts_with_contactpoint_fallback.model_dump(
         exclude_defaults=True, mode="json"
     ) == {
-        "identifier": "activityMExFallback",
-        # contact fallback applied to MEx contact point
+        "identifier": "activityCPointFallback",
+        # contact fallback applied to contact point
         "contact": ["thisIsTheFallbackId"],
         # externalAssociate is filtered to exclude invalid references
         "externalAssociate": ["thisIdentifierIsOkay"],
@@ -84,21 +84,20 @@ def test_update_actor_references_where_needed_with_mex_contact_fallback(
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
         "responsibleUnit": ["thisUnitIsResponsible"],
-        "title": [
-            {"value": "Activity with MEx contact point Fallback", "language": "en"}
-        ],
+        "title": [{"value": "Activity with contact point Fallback", "language": "en"}],
     }
 
 
 def test_update_actor_references_where_needed_with_unit_fallback(
-    merged_activity_contacts_with_fallback: MergedActivity,
+    merged_activity_contacts_with_unit_fallback: MergedActivity,
 ) -> None:
     update_actor_references_where_needed(
-        merged_activity_contacts_with_fallback,
+        merged_activity_contacts_with_unit_fallback,
         allowed_actors=[
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
             MergedOrganizationalUnitIdentifier("ValidUnitWithEmail"),
+            MergedOrganizationalUnitIdentifier("InvalidUnitIdentifier"),
         ],
         fallback_contact_identifiers=[
             MergedContactPointIdentifier("thisIsTheFallbackId")
@@ -109,13 +108,13 @@ def test_update_actor_references_where_needed_with_unit_fallback(
             ]
         },
     )
-    assert merged_activity_contacts_with_fallback.model_dump(
+    assert merged_activity_contacts_with_unit_fallback.model_dump(
         exclude_defaults=True, mode="json"
     ) == {
         "identifier": "activityUnitFallback",
         # contact fallback applied to unit with email
         "contact": ["ValidUnitWithEmail"],
-        # externalAssociate is just filtered, because no unit IDs allowed
+        # externalAssociate is just filtered, because no unit IDs allowed in that field
         "externalAssociate": ["thisIdentifierIsOkay"],
         # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
