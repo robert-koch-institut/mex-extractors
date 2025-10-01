@@ -13,8 +13,16 @@ from mex.extractors.igs.extract import (
 @pytest.mark.usefixtures("mocked_igs")
 def test_extract_igs_schemas() -> None:
     schemas = extract_igs_schemas()
-    assert schemas["Pathogen"].model_dump() == {"enum": ["PATHOGEN"]}
-    assert schemas["properties_schema"].model_dump() == {"properties": {"key": "value"}}
+    assert schemas["Pathogen"].model_dump() == {"enum": ["PATHOGEN"], "type": "string"}
+    assert schemas["schemaCreation"].model_dump() == {
+        "properties": {
+            "schemas": {
+                "type": "date",
+                "items": {"$ref": "#/components/schemas/Pathogen"},
+                "title": "test_title",
+            },
+        }
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap")

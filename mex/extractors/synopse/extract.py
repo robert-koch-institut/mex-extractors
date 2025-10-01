@@ -2,7 +2,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.extract import parse_csv
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import watch
 from mex.common.models import AccessPlatformMapping
@@ -102,7 +102,7 @@ def extract_synopse_project_contributors(
 
 def extract_synopse_contact(
     access_platform_mapping: AccessPlatformMapping,
-) -> list[LDAPActor]:
+) -> list[LDAPFunctionalAccount]:
     """Extract LDAP persons for Synopse project contact.
 
     Args:

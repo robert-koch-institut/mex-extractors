@@ -7,8 +7,8 @@ from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import (
-    transform_ldap_actors_to_mex_contact_points,
-    transform_ldap_persons_with_query_to_mex_persons,
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
@@ -133,10 +133,12 @@ def extracted_synopse_contributor_stable_target_ids_by_name(
 
     Also transforms Synopse data to extracted persons
     """
-    transformed_project_contributors = transform_ldap_persons_with_query_to_mex_persons(
-        synopse_project_contributors,
-        extracted_primary_source_ldap,
-        extracted_organizational_units,
+    transformed_project_contributors = (
+        transform_ldap_persons_with_query_to_extracted_persons(
+            synopse_project_contributors,
+            extracted_primary_source_ldap,
+            extracted_organizational_units,
+        )
     )
     load(transformed_project_contributors)
     return get_merged_ids_by_query_string(  # only works after contributors are loaded
@@ -173,7 +175,7 @@ def contact_merged_id_by_query_string(
     )
 
     synopse_contact = extract_synopse_contact(synopse_access_platform)
-    contact_points = transform_ldap_actors_to_mex_contact_points(
+    contact_points = transform_ldap_functional_accounts_to_extracted_contact_points(
         synopse_contact,
         extracted_primary_source_ldap,
     )

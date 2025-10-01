@@ -13,6 +13,11 @@ from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
 )
+from mex.extractors.datenkompass.models.mapping import (
+    DatenkompassMapping,
+    DatenkompassMappingField,
+    MappingRule,
+)
 from mex.extractors.datenkompass.transform import (
     fix_quotes,
     get_abstract_or_description,
@@ -23,6 +28,8 @@ from mex.extractors.datenkompass.transform import (
     get_resource_email,
     get_title,
     get_unit_shortname,
+    handle_setval,
+    mapping_lookup_default,
     transform_activities,
     transform_bibliographic_resources,
     transform_resources,
@@ -155,10 +162,234 @@ def test_get_abstract_or_description() -> None:
     assert get_abstract_or_description([], delimiter) == ""
 
 
+def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) -> None:
+    model = DatenkompassActivity
+
+    result = mapping_lookup_default(model, mocked_activity_mapping)
+    assert result == {
+        "beschreibung": DatenkompassMappingField(
+            fieldInTarget="Beschreibung",
+            fieldInMEx="abstract",
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues=["Es handelt. "],
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datenerhalt": DatenkompassMappingField(
+            fieldInTarget="Weg des Datenerhalts",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datenerhalt",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datenhalter": DatenkompassMappingField(
+            fieldInTarget="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datenhalter",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "datennutzungszweck": DatenkompassMappingField(
+            fieldInTarget="Datennutzungszweck",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Datennutzungszweck",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "dk_format": DatenkompassMappingField(
+            fieldInTarget="Format der Daten",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Format",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "frequenz": DatenkompassMappingField(
+            fieldInTarget="Frequenz der Aktualisierung",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Frequenz",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "hauptkategorie": DatenkompassMappingField(
+            fieldInTarget="Hauptkategorie",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Hauptkategorie",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "herausgeber": DatenkompassMappingField(
+            fieldInTarget="Herausgeber",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Herausgeber",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "kommentar": DatenkompassMappingField(
+            fieldInTarget="Kommentar",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Kommentar",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "rechtsgrundlage": DatenkompassMappingField(
+            fieldInTarget="Rechtsgrundlage für die Zugangseröffnung",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Rechtsgrundlage",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "status": DatenkompassMappingField(
+            fieldInTarget="Status (planbare Verfügbarkeit der Daten)",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Status",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "unterkategorie": DatenkompassMappingField(
+            fieldInTarget="Unterkategorie",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Unterkategorie",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+        "voraussetzungen": DatenkompassMappingField(
+            fieldInTarget="Formelle Voraussetzungen für den Datenerhalt",
+            fieldInMEx=None,
+            mappingRules=[
+                MappingRule(
+                    forValues=None,
+                    setValues="Voraussetzungen",
+                    rule=None,
+                    expectedOutputExample=None,
+                    forPrimarySource=None,
+                    comment=None,
+                )
+            ],
+            comment=None,
+        ),
+    }
+
+
+@pytest.mark.parametrize(
+    ("input_value", "expected_output"),
+    [
+        (["a", "b", "c"], "a; b; c"),
+        (["a"], "a"),
+        ("abc", "abc"),
+    ],
+    ids=["3 items list", "1 item list", "string"],
+)
+def test_handle_setval_valid(
+    input_value: list[str] | str, expected_output: str
+) -> None:
+    assert handle_setval(input_value) == expected_output
+
+
+def test_handle_setval_none_raises_error() -> None:
+    with pytest.raises(ValueError, match="no default value set in mapping."):
+        handle_setval(None)
+
+
 def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_datenkompass_activity: list[DatenkompassActivity],
+    mocked_activity_mapping: DatenkompassMapping,
 ) -> None:
     extracted_and_filtered_merged_activities = mocked_merged_activities[
         :2
@@ -167,7 +398,9 @@ def test_transform_activities(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     result = transform_activities(
-        extracted_and_filtered_merged_activities, merged_organizational_units_by_id
+        extracted_and_filtered_merged_activities,
+        merged_organizational_units_by_id,
+        mocked_activity_mapping,
     )
     assert result == mocked_datenkompass_activity
 
@@ -177,10 +410,8 @@ def test_transform_bibliographic_resource(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_person: list[MergedPerson],
+    mocked_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> None:
-    extracted_and_filtered_merged_bibliographic_resource = (
-        mocked_merged_bibliographic_resource
-    )
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
@@ -189,9 +420,10 @@ def test_transform_bibliographic_resource(
     }
 
     result = transform_bibliographic_resources(
-        extracted_and_filtered_merged_bibliographic_resource,
+        mocked_merged_bibliographic_resource,
         merged_organizational_units_by_id,
         person_name_by_id,
+        mocked_bibliographic_resource_mapping,
     )
 
     assert result[0].model_dump() == {
@@ -204,23 +436,20 @@ def test_transform_bibliographic_resource(
         ),
         "schlagwort": "short en; short de",
         "datenbank": "https://doi.org/10.1234_find_this",
-        "rechtsgrundlagen_benennung": "Nicht zutreffend",
-        "datennutzungszweck_erweitert": "Nicht zutreffend",
-        "voraussetzungen": "Frei zugänglich",
-        "datenhalter": "Robert Koch-Institut",
-        "frequenz": "Nicht zutreffend",
-        "hauptkategorie": "Gesundheit",
-        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "herausgeber": "RKI - Robert Koch-Institut",
-        "datenerhalt": "Abruf über eine externe Internetseite oder eine Datenbank",
-        "status": "Stabil",
-        "datennutzungszweck": "Sonstige",
-        "rechtsgrundlage": "Nicht zutreffend",
-        "kommentar": (
-            "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-            "voraussichtlich Ende 2025 verfügbar sein."
-        ),
-        "dk_format": "Sonstiges",
+        "rechtsgrundlagen_benennung": "Rechtsgrundlage",
+        "datennutzungszweck_erweitert": "Datennutzungszweck",
+        "voraussetzungen": "OPEN",
+        "datenhalter": "Datenhalter",
+        "frequenz": "Frequenz",
+        "hauptkategorie": "Hauptkategorie",
+        "unterkategorie": "Unterkategorie",
+        "herausgeber": "Herausgeber",
+        "datenerhalt": "Datenerhalt",
+        "status": "Status",
+        "datennutzungszweck": "Datennutzungszweck",
+        "rechtsgrundlage": "Rechtsgrundlage",
+        "kommentar": "Kommentar",
+        "dk_format": "Format",
         "identifier": "MergedBibResource1",
     }
 
@@ -230,10 +459,11 @@ def test_transform_resources(
     mocked_merged_resource: list[MergedResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_contact_point: list[MergedContactPoint],
+    mocked_resource_mapping: DatenkompassMapping,
 ) -> None:
     fetched_merged_resource = {
-        "open-data": [mocked_merged_resource[0]],
-        "report-server": [mocked_merged_resource[1]],
+        "Source-2": [mocked_merged_resource[0]],
+        "Source-1": [mocked_merged_resource[1]],
     }
     fetched_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
@@ -246,11 +476,12 @@ def test_transform_resources(
         fetched_merged_resource,
         fetched_merged_organizational_units_by_id,
         fetched_merged_contact_points_by_id,
+        mocked_resource_mapping,
     )
 
     assert len(result) == 2
     assert result[0].model_dump() == {
-        "voraussetzungen": "Frei zugänglich",
+        "voraussetzungen": "OPEN",
         "frequenz": None,
         "kontakt": "unit@example.org",
         "organisationseinheit": "e.g. unit",
@@ -259,25 +490,22 @@ def test_transform_resources(
         "rechtsgrundlagen_benennung": "has basis; hat weitere Basis",
         "datennutzungszweck_erweitert": "has purpose",
         "schlagwort": "Infektionskrankheiten und -epidemiologie; word 1; Wort 2",
-        "dk_format": "Sonstiges",
-        "titel": "some open data resource title",
-        "datenhalter": "Robert Koch-Institut",
-        "hauptkategorie": "Gesundheit",
-        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Nicht zutreffend",
-        "datenerhalt": "Externe Zulieferung",
-        "status": "Stabil",
-        "datennutzungszweck": "Themenspezifische Auswertung",
-        "herausgeber": "RKI - Robert Koch-Institut",
-        "kommentar": (
-            "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-            "voraussichtlich Ende 2025 verfügbar sein."
-        ),
-        "identifier": "openDataResource",
+        "dk_format": "Format",
+        "titel": "some Source-2 resource title",
+        "datenhalter": "Datenhalter",
+        "hauptkategorie": "Hauptkategorie",
+        "unterkategorie": "Unterkategorie",
+        "rechtsgrundlage": "Rechtsgrundlage",
+        "datenerhalt": "Datenerhalt",
+        "status": "Status",
+        "datennutzungszweck": "TA",
+        "herausgeber": "Herausgeber",
+        "kommentar": "Kommentar",
+        "identifier": "Source2Resource",
     }
 
     assert result[1].model_dump() == {
-        "voraussetzungen": "Zugang eingeschränkt",
+        "voraussetzungen": "RESTRICTED",
         "frequenz": None,
         "kontakt": None,
         "organisationseinheit": "a.bsp. unit",
@@ -286,19 +514,16 @@ def test_transform_resources(
         "rechtsgrundlagen_benennung": None,
         "datennutzungszweck_erweitert": None,
         "schlagwort": "Infektionskrankheiten und -epidemiologie",
-        "dk_format": "Sonstiges",
-        "titel": "some synopse resource title",
-        "datenhalter": "Robert Koch-Institut",
-        "hauptkategorie": "Gesundheit",
-        "unterkategorie": "Einflussfaktoren auf die Gesundheit",
-        "rechtsgrundlage": "Nicht zutreffend",
-        "datenerhalt": "Externe Zulieferung",
-        "status": "Stabil",
-        "datennutzungszweck": "Themenspezifische Auswertung; Themenspezifisches Monitoring",
-        "herausgeber": "RKI - Robert Koch-Institut",
-        "kommentar": (
-            "Link zum Metadatensatz im RKI Metadatenkatalog wird "
-            "voraussichtlich Ende 2025 verfügbar sein."
-        ),
-        "identifier": "SynopseResource",
+        "dk_format": "Format",
+        "titel": "some Source-1 resource title",
+        "datenhalter": "Datenhalter",
+        "hauptkategorie": "Hauptkategorie",
+        "unterkategorie": "Unterkategorie",
+        "rechtsgrundlage": "Rechtsgrundlage",
+        "datenerhalt": "Datenerhalt",
+        "status": "Status",
+        "datennutzungszweck": "TA; TM",
+        "herausgeber": "Herausgeber",
+        "kommentar": "Kommentar",
+        "identifier": "Source1Resource",
     }

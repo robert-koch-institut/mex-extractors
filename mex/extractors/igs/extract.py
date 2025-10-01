@@ -1,11 +1,16 @@
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor
+from mex.common.ldap.models import LDAPFunctionalAccount
 from mex.common.models import (
     AccessPlatformMapping,
     ResourceMapping,
 )
 from mex.extractors.igs.connector import IGSConnector
-from mex.extractors.igs.model import IGSEnumSchema, IGSPropertiesSchema, IGSSchema
+from mex.extractors.igs.model import (
+    IGSEnumSchema,
+    IGSInfo,
+    IGSPropertiesSchema,
+    IGSSchema,
+)
 
 
 def extract_igs_schemas() -> dict[str, IGSSchema]:
@@ -26,10 +31,21 @@ def extract_igs_schemas() -> dict[str, IGSSchema]:
     return igs_schemas
 
 
+def extract_igs_info() -> IGSInfo:
+    """Extract IGS info.
+
+    Returns:
+        IGS info by name
+    """
+    connector = IGSConnector.get()
+    raw_json = connector.get_json_from_api()
+    return IGSInfo(**raw_json.get("info", {}))
+
+
 def extract_ldap_actors_by_mail(
     igs_resource_mapping: ResourceMapping,
     igs_access_platform_mapping: AccessPlatformMapping,
-) -> dict[str, LDAPActor]:
+) -> dict[str, LDAPFunctionalAccount]:
     """Extract ldap actors from default values by mail.
 
     Args:
