@@ -1,6 +1,11 @@
 import pytest
 
-from mex.common.models import MergedActivity, MergedOrganizationalUnit, MergedPerson
+from mex.common.models import (
+    AnyMergedModel,
+    ItemsContainer,
+    MergedActivity,
+    MergedPerson,
+)
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -42,15 +47,15 @@ def merged_activity_contacts_with_fallback() -> MergedActivity:
 
 def test_get_unit_id_per_person(
     merged_ldap_person_list: list[MergedPerson],
-    merged_unit_list: list[MergedOrganizationalUnit],
+    merged_unit_contactpoint_container: ItemsContainer[AnyMergedModel],
 ) -> None:
-    assert get_unit_id_per_person(merged_ldap_person_list, merged_unit_list) == {
-        "PersonWithFallbackUnit": ["ValidUnitWithEmail"]
-    }
+    assert get_unit_id_per_person(
+        merged_ldap_person_list, merged_unit_contactpoint_container
+    ) == {"PersonWithFallbackUnit": ["ValidUnitWithEmail"]}
 
 
 def test_update_actor_references_where_needed_with_mex_contact_fallback(
-    merged_activity_contacts_blocked: MergedActivity
+    merged_activity_contacts_blocked: MergedActivity,
 ) -> None:
     update_actor_references_where_needed(
         merged_activity_contacts_blocked,
@@ -67,7 +72,9 @@ def test_update_actor_references_where_needed_with_mex_contact_fallback(
             ]
         },
     )
-    assert merged_activity_contacts_blocked.model_dump(exclude_defaults=True, mode="json") == {
+    assert merged_activity_contacts_blocked.model_dump(
+        exclude_defaults=True, mode="json"
+    ) == {
         "identifier": "activityMExFallback",
         # contact fallback applied to MEx contact point
         "contact": ["thisIsTheFallbackId"],
@@ -77,12 +84,14 @@ def test_update_actor_references_where_needed_with_mex_contact_fallback(
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
         "responsibleUnit": ["thisUnitIsResponsible"],
-        "title": [{"value": "Activity with MEx contact point Fallback", "language": "en"}],
+        "title": [
+            {"value": "Activity with MEx contact point Fallback", "language": "en"}
+        ],
     }
 
 
 def test_update_actor_references_where_needed_with_unit_fallback(
-        merged_activity_contacts_with_fallback: MergedActivity
+    merged_activity_contacts_with_fallback: MergedActivity,
 ) -> None:
     update_actor_references_where_needed(
         merged_activity_contacts_with_fallback,
@@ -102,15 +111,15 @@ def test_update_actor_references_where_needed_with_unit_fallback(
     )
     assert merged_activity_contacts_with_fallback.model_dump(
         exclude_defaults=True, mode="json"
-        ) == {
-               "identifier": "activityUnitFallback",
-               # contact fallback applied to unit with email
-               "contact": ["ValidUnitWithEmail"],
-               # externalAssociate is just filtered, because no unit IDs allowed
-               "externalAssociate": ["thisIdentifierIsOkay"],
-               # involvedPerson not updated because identifier not blocked
-               "involvedPerson": ["thisIdentifierIsOkay"],
-               # responsibleUnit not updated because not relating to persons
-               "responsibleUnit": ["thisUnitIsResponsible"],
-               "title": [{"value": "Activity with Unit ID Fallback", "language": "en"}],
-           }
+    ) == {
+        "identifier": "activityUnitFallback",
+        # contact fallback applied to unit with email
+        "contact": ["ValidUnitWithEmail"],
+        # externalAssociate is just filtered, because no unit IDs allowed
+        "externalAssociate": ["thisIdentifierIsOkay"],
+        # involvedPerson not updated because identifier not blocked
+        "involvedPerson": ["thisIdentifierIsOkay"],
+        # responsibleUnit not updated because not relating to persons
+        "responsibleUnit": ["thisUnitIsResponsible"],
+        "title": [{"value": "Activity with Unit ID Fallback", "language": "en"}],
+    }

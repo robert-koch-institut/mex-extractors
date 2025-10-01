@@ -3,15 +3,16 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
+from mex.common.models import MergedBibliographicResource
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
+    fallback_mex_contact_identifier,
     publishable_contact_points_and_units,
-    publishable_fallback_mex_contact_identifier,
     publishable_items,
     publishable_items_without_actors,
     publishable_persons,
@@ -42,6 +43,7 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
         "ItemsContainer[AnyMergedModel]", publishable_items_without_actors()
     )
     assert len(container.items) == 1
+    assert isinstance(container.items[0], MergedBibliographicResource)
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
@@ -96,7 +98,7 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 def test_fallback_contact_identifiers() -> None:
     identifiers = cast(
         "list[MergedContactPointIdentifier]",
-        publishable_fallback_mex_contact_identifier(),
+        fallback_mex_contact_identifier(),
     )
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
@@ -113,7 +115,8 @@ def test_publishable_items(
             publishable_items_without_actors(),
             publishable_persons(),
             publishable_contact_points_and_units(),
-            publishable_fallback_mex_contact_identifier(),
+            fallback_mex_contact_identifier(),
+            mocked_fallback_unit_identifiers_by_person,
         ),
     )
     assert len(container.items) == 4

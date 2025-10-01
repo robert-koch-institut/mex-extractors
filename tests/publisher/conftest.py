@@ -9,6 +9,7 @@ from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
     ExtractedPrimarySource,
+    ItemsContainer,
     MergedBibliographicResource,
     MergedConsent,
     MergedContactPoint,
@@ -20,9 +21,10 @@ from mex.common.models import (
 from mex.common.types import (
     AccessRestriction,
     Email,
-    MergedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
+
 
 @pytest.fixture
 def merged_ldap_person_list() -> list[MergedPerson]:
@@ -39,19 +41,21 @@ def merged_ldap_person_list() -> list[MergedPerson]:
 
 
 @pytest.fixture
-def merged_unit_list() -> list[MergedOrganizationalUnit]:
-    return [
-        MergedOrganizationalUnit(
-            identifier="ValidUnitWithEmail",
-            name="unit with email",
-            email=[Email("unit@e.mail")],
-        ),
-        MergedOrganizationalUnit(
-            identifier="InvalidUnitIdentifier",
-            name="unit without email",
-            email=[],
-        ),
-    ]
+def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
+    return ItemsContainer[AnyMergedModel](
+        items=[
+            MergedOrganizationalUnit(
+                identifier="ValidUnitWithEmail",
+                name="unit with email",
+                email=[Email("unit@e.mail")],
+            ),
+            MergedOrganizationalUnit(
+                identifier="InvalidUnitIdentifier",
+                name="unit without email",
+                email=[],
+            ),
+        ]
+    )
 
 
 @pytest.fixture
@@ -59,7 +63,9 @@ def mocked_fallback_unit_identifiers_by_person() -> dict[
     MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
 ]:
     return {
-        "PersonWithFallbackUnit": ["ValidUnitWithEmail"]
+        MergedPersonIdentifier("PersonWithFallbackUnit"): [
+            MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
+        ]
     }
 
 

@@ -12,7 +12,6 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ItemsContainer,
     MergedContactPoint,
-    MergedOrganizationalUnit,
     MergedPerson,
     PaginatedItemsContainer,
 )
@@ -46,6 +45,7 @@ def publishable_items_without_actors() -> ItemsContainer[AnyMergedModel]:
             *settings.publisher.skip_entity_types,
             "MergedPerson",
             "MergedOrganizationalUnit",
+            "MergedContactPoint",
         ]
     ]
     merged_items = get_publishable_merged_items(
@@ -114,7 +114,7 @@ def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publishable_fallback_mex_contact_identifier() -> list[MergedContactPointIdentifier]:
+def fallback_mex_contact_identifier() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
     connector = BackendApiConnector.get()
@@ -134,12 +134,12 @@ def publishable_fallback_mex_contact_identifier() -> list[MergedContactPointIden
 @asset(group_name="publisher")
 def fallback_unit_identifiers_by_person(
     merged_ldap_persons: list[MergedPerson],
-    publishable_organizational_units: list[MergedOrganizationalUnit],
+    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address."""
     return get_unit_id_per_person(
         merged_ldap_persons,
-        publishable_organizational_units,
+        publishable_contact_points_and_units,
     )
 
 
@@ -148,7 +148,7 @@ def publishable_items(
     publishable_items_without_actors: ItemsContainer[AnyMergedModel],
     publishable_persons: ItemsContainer[AnyMergedModel],
     publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
-    publishable_fallback_mex_contact_identifier: list[MergedContactPointIdentifier],
+    fallback_mex_contact_identifier: list[MergedContactPointIdentifier],
     fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
@@ -163,14 +163,13 @@ def publishable_items(
         update_actor_references_where_needed(
             item,
             allowed_actors,
-            publishable_fallback_mex_contact_identifier,
+            fallback_mex_contact_identifier,
             fallback_unit_identifiers_by_person,
         )
     return ItemsContainer[AnyMergedModel](
         items=publishable_items_without_actors.items
         + publishable_persons.items
         + publishable_contact_points_and_units.items
-        + publishable_fallback_mex_contact_identifier
     )
 
 
