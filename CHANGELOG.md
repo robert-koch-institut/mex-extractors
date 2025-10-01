@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - extract mandatory fields for igs variables and variable groups
 - update mex-common dependency to 1.4
+- publisher: replace references to non-consenting person ids with their respective unit ids
 
 ### Changes
 
