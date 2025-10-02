@@ -59,7 +59,7 @@ def extracted_mex_persons(
         ldap_persons,
         extracted_primary_source_ldap,
         extracted_organizational_units,
-        extracted_organization_rki
+        extracted_organization_rki,
     )
     load(mex_persons)
     return mex_persons

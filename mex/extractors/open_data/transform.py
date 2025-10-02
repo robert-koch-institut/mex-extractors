@@ -165,7 +165,7 @@ def transform_open_data_persons(  # noqa: PLR0913
             person,
             extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
-            extracted_organization_rki
+            extracted_organization_rki,
         ) or transform_open_data_persons_not_in_ldap(
             person,
             extracted_primary_source_open_data,
