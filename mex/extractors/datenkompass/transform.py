@@ -87,7 +87,6 @@ def get_unit_shortname(
             ]
         ]
     )
-    if result:
         return result
     return None
 
