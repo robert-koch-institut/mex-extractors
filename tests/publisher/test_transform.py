@@ -97,7 +97,7 @@ def test_update_actor_references_where_needed_with_unit_fallback(
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
             MergedOrganizationalUnitIdentifier("ValidUnitWithEmail"),
-            MergedOrganizationalUnitIdentifier("InvalidUnitIdentifier"),
+            MergedOrganizationalUnitIdentifier("InvalidUnitNoEmail"),
         ],
         fallback_contact_identifiers=[
             MergedContactPointIdentifier("thisIsTheFallbackId")

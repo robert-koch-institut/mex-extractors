@@ -31,7 +31,7 @@ def merged_ldap_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonWithFallbackUnit",
-            memberOf=["ValidUnitWithEmail", "InvalidUnitIdentifier"],
+            memberOf=["ValidUnitWithEmail", "InvalidUnitNoEmail"],
         ),
         MergedPerson(
             identifier="PersonWithoutFallback",
@@ -50,9 +50,15 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
                 email=[Email("unit@e.mail")],
             ),
             MergedOrganizationalUnit(
-                identifier="InvalidUnitIdentifier",
+                identifier="InvalidUnitNoEmail",
                 name="unit without email",
                 email=[],
+            ),
+            MergedContactPoint(
+                # even if they have an email address, contact points should not
+                # be added to fallback_unit_identifiers_by_person,
+                identifier="CPShouldBeIgnored",
+                email=[Email("contactpoint@e.mail")],
             ),
         ]
     )
