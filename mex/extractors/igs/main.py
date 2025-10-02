@@ -134,12 +134,14 @@ def extracted_igs_access_platform(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
-    return transform_igs_access_platform(
+    extracted_access_platform = transform_igs_access_platform(
         extracted_primary_source_igs,
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         extracted_igs_contact_points_by_mail,
         unit_stable_target_ids_by_synonym,
     )
+    load([extracted_access_platform])
+    return extracted_access_platform
 
 
 @asset(group_name="igs")
