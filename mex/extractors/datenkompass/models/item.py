@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
+from mex.common.models import BaseModel
 from mex.common.types import (
     MergedIdentifier,
 )
