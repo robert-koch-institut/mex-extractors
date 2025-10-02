@@ -75,9 +75,7 @@ def get_unit_shortname(
     Returns:
         List of short names of contact units as strings.
     """
-    if not responsible_unit_ids:
-        return None
-    result = delim.join(
+    if not responsible_unit_ids and  result := delim.join(
         [
             shortname
             for org_id in responsible_unit_ids
