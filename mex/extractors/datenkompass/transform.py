@@ -75,18 +75,20 @@ def get_unit_shortname(
     Returns:
         List of short names of contact units as strings.
     """
-    if not responsible_unit_ids and  result := delim.join(
-        [
-            shortname
-            for org_id in responsible_unit_ids
-            for shortname in [
-                unit_short_name.value
-                for unit_short_name in merged_organizational_units_by_id[
-                    org_id
-                ].shortName
+    if responsible_unit_ids and (
+        result := delim.join(
+            [
+                shortname
+                for org_id in responsible_unit_ids
+                for shortname in [
+                    unit_short_name.value
+                    for unit_short_name in merged_organizational_units_by_id[
+                        org_id
+                    ].shortName
+                ]
             ]
-        ]
-    )
+        )
+    ):
         return result
     return None
 
