@@ -22,6 +22,7 @@ from mex.extractors.publisher.settings import PublisherSettings
 from mex.extractors.seq_repo.settings import SeqRepoSettings
 from mex.extractors.sumo.settings import SumoSettings
 from mex.extractors.synopse.settings import SynopseSettings
+from mex.extractors.system.settings import SystemSettings
 from mex.extractors.voxco.settings import VoxcoSettings
 from mex.extractors.wikidata.settings import WikidataSettings
 
@@ -107,5 +108,6 @@ class Settings(BaseSettings):
     seq_repo: SeqRepoSettings = SeqRepoSettings()
     sumo: SumoSettings = SumoSettings()
     synopse: SynopseSettings = SynopseSettings()
+    system: SystemSettings = SystemSettings()
     voxco: VoxcoSettings = VoxcoSettings()
     wikidata: WikidataSettings = WikidataSettings()
