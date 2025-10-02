@@ -49,7 +49,7 @@ def transform_open_data_person_affiliations_to_organizations(
         list of Extracted Organization Ids by affiliation name
     """
     unique_affiliations = {
-        person.affiliation
+        person.affiliation: None
         for person in extracted_open_data_creators_contributors
         if person.affiliation
     }
