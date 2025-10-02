@@ -286,7 +286,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     for resource in open_data_parent_resource:
         contributing_unit = list(
             {
-                unit_id
+                unit_id: None
                 for person in resource.metadata.contributors
                 + resource.metadata.creators
                 if (
