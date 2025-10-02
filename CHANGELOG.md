@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - extract mandatory fields for igs variables and variable groups
 - update mex-common dependency to 1.5
 - persons have rki org as affiliation
+- create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
 
 ### Changes
 
@@ -23,7 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- empty list handling in datenkompass
 - odk variable identifier in primary source
+- random list element order in some extracted entity attributes
 
 ### Security
 

@@ -15,7 +15,7 @@ def extract_parent_resources() -> list[OpenDataParentResource]:
     Returns:
         list of parent resources
     """
-    connector = OpenDataConnector()
+    connector = OpenDataConnector.get()
 
     return connector.get_parent_resources()
 
@@ -29,7 +29,7 @@ def extract_oldest_record_version_creationdate(record_id: int) -> str | None:
     Returns:
         OpenDataResourceVersion
     """
-    connector = OpenDataConnector()
+    connector = OpenDataConnector.get()
 
     return connector.get_oldest_resource_version_creation_date(record_id)
 
@@ -45,7 +45,7 @@ def extract_files_for_parent_resource(
     Returns:
         OpenDataVersionFiles
     """
-    connector = OpenDataConnector()
+    connector = OpenDataConnector.get()
 
     return connector.get_files_for_resource_version(version_id)
 
@@ -63,7 +63,7 @@ def extract_open_data_persons_from_open_data_parent_resources(
     """
     return list(
         {
-            person
+            person: None
             for resource in open_data_parent_resource
             for person in (resource.metadata.creators + resource.metadata.contributors)
         }

@@ -64,7 +64,7 @@ def get_unit_shortname(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     delim: str,
-) -> str:
+) -> str | None:
     """Get shortName of merged units.
 
     Args:
@@ -75,18 +75,22 @@ def get_unit_shortname(
     Returns:
         List of short names of contact units as strings.
     """
-    return delim.join(
-        [
-            shortname
-            for org_id in responsible_unit_ids
-            for shortname in [
-                unit_short_name.value
-                for unit_short_name in merged_organizational_units_by_id[
-                    org_id
-                ].shortName
+    if responsible_unit_ids and (
+        result := delim.join(
+            [
+                shortname
+                for org_id in responsible_unit_ids
+                for shortname in [
+                    unit_short_name.value
+                    for unit_short_name in merged_organizational_units_by_id[
+                        org_id
+                    ].shortName
+                ]
             ]
-        ]
-    )
+        )
+    ):
+        return result
+    return None
 
 
 def get_email(
@@ -489,6 +493,9 @@ def transform_bibliographic_resources(
         kommentar = handle_setval(
             default_by_fieldname["kommentar"].mappingRules[0].setValues
         )
+        schlagwort = (
+            delim.join([word.value for word in item.keyword]) if item.keyword else None
+        )
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
                 beschreibung=beschreibung,
@@ -499,7 +506,7 @@ def transform_bibliographic_resources(
                 dk_format=dk_format,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
-                schlagwort=delim.join([word.value for word in item.keyword]),
+                schlagwort=schlagwort,
                 titel=titel,
                 datenhalter=datenhalter,
                 frequenz=frequenz,
