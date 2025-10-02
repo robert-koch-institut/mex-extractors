@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from mex.common.models import BaseModel
 
 
 class OpenDataCreatorsOrContributors(BaseModel):
