@@ -91,7 +91,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
     )
     involved_unit_merged_ids = list(
         {
-            unit_id
+            unit_id: None
             for oe in get_involved_units_from_page(
                 page, confluence_vvt_activity_mapping
             )
