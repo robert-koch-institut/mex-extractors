@@ -107,6 +107,7 @@ def lookup_person_in_ldap_and_transform(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_ldap: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedPerson | None:
     """Lookup person in ldap. and transform to ExtractedPerson.
 
@@ -114,6 +115,7 @@ def lookup_person_in_ldap_and_transform(
         person: Open Data person (Creator Or Contributor),
         extracted_primary_source_ldap: primary Source for ldap
         units_by_identifier_in_primary_source: dict of primary sources by ID
+        extracted_organization_rki: ExtractedOrganization of RKI,
 
     Returns:
         ExtractedPerson if matched or None if match fails
@@ -125,6 +127,7 @@ def lookup_person_in_ldap_and_transform(
             ldap_person,
             extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
+            extracted_organization_rki,
         )
     except MExError:
         return None
@@ -159,7 +162,10 @@ def transform_open_data_persons(  # noqa: PLR0913
 
     for person in extracted_open_data_creators_contributors:
         extracted_person = lookup_person_in_ldap_and_transform(
-            person, extracted_primary_source_ldap, units_by_identifier_in_primary_source
+            person,
+            extracted_primary_source_ldap,
+            units_by_identifier_in_primary_source,
+            extracted_organization_rki,
         ) or transform_open_data_persons_not_in_ldap(
             person,
             extracted_primary_source_open_data,
