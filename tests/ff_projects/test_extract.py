@@ -64,7 +64,6 @@ def test_get_clean_names(name: str, expected_clean_name: str) -> None:
 
 
 def test_get_temporal_entity_from_cell() -> None:
-    breakpoint()
     cell_value = datetime(2018, 1, 1, 0, 0)  # noqa: DTZ001
     ts = get_temporal_entity_from_cell(cell_value)
     expected_ts = TemporalEntity("2017-12-31T23:42:00Z")
