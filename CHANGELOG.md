@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- implemented asset checks for the `x_items_less_than` rule
 - extract mandatory fields for igs variables and variable groups
 - update mex-common dependency to 1.4
 
