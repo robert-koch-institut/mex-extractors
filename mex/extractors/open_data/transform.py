@@ -49,7 +49,7 @@ def transform_open_data_person_affiliations_to_organizations(
         list of Extracted Organization Ids by affiliation name
     """
     unique_affiliations = {
-        person.affiliation
+        person.affiliation: None
         for person in extracted_open_data_creators_contributors
         if person.affiliation
     }
@@ -286,7 +286,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     for resource in open_data_parent_resource:
         contributing_unit = list(
             {
-                unit_id
+                unit_id: None
                 for person in resource.metadata.contributors
                 + resource.metadata.creators
                 if (

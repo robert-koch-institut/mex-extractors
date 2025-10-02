@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - odk variable identifier in primary source
+- random list element order in some extracted entity attributes
 
 ### Security
 
