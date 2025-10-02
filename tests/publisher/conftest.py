@@ -9,6 +9,7 @@ from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
     ExtractedPrimarySource,
+    ItemsContainer,
     MergedBibliographicResource,
     MergedConsent,
     MergedContactPoint,
@@ -17,7 +18,61 @@ from mex.common.models import (
     MergedPrimarySource,
     PaginatedItemsContainer,
 )
-from mex.common.types import AccessRestriction
+from mex.common.types import (
+    AccessRestriction,
+    Email,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
+)
+
+
+@pytest.fixture
+def merged_ldap_person_list() -> list[MergedPerson]:
+    return [
+        MergedPerson(
+            identifier="PersonWithFallbackUnit",
+            memberOf=["ValidUnitWithEmail", "InvalidUnitNoEmail"],
+        ),
+        MergedPerson(
+            identifier="PersonWithoutFallback",
+            memberOf=[],
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
+    return ItemsContainer[AnyMergedModel](
+        items=[
+            MergedOrganizationalUnit(
+                identifier="ValidUnitWithEmail",
+                name="unit with email",
+                email=[Email("unit@e.mail")],
+            ),
+            MergedOrganizationalUnit(
+                identifier="InvalidUnitNoEmail",
+                name="unit without email",
+                email=[],
+            ),
+            MergedContactPoint(
+                # even if they have an email address, contact points should not
+                # be added to fallback_unit_identifiers_by_person,
+                identifier="CPShouldBeIgnored",
+                email=[Email("contactpoint@e.mail")],
+            ),
+        ]
+    )
+
+
+@pytest.fixture
+def mocked_fallback_unit_identifiers_by_person() -> dict[
+    MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
+]:
+    return {
+        MergedPersonIdentifier("PersonWithFallbackUnit"): [
+            MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
+        ]
+    }
 
 
 def fetch_merged_items(  # noqa: PLR0913
