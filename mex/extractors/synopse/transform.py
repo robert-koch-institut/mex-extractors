@@ -411,7 +411,10 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             # add unique values of all textbox 2 entries from variable set for this
             # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
             keywords_plain.extend(
-                {re.sub(r"\s\(\d+\)", "", var.unterthema) for var in synopse_variables}
+                {
+                    re.sub(r"\s\(\d+\)", "", var.unterthema): None
+                    for var in synopse_variables
+                }
             )
         keyword = [
             Text(value=word, language=TextLanguage.DE) for word in keywords_plain

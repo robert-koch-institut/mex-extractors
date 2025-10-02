@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - empty list handling in datenkompass
 - odk variable identifier in primary source
+- random list element order in some extracted entity attributes
 
 ### Security
 
