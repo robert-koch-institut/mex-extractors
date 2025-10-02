@@ -1,7 +1,7 @@
 from typing import Any
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor, LDAPPerson
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
@@ -25,7 +25,7 @@ def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]
 
 def extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
-) -> list[LDAPActor]:
+) -> list[LDAPFunctionalAccount]:
     """Extract LDAP actors functional accounts from grippeweb resource mapping contacts.
 
     Args:

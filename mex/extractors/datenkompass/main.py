@@ -19,8 +19,8 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
+    get_filtered_primary_source_ids,
     get_merged_items,
-    get_relevant_primary_source_ids,
 )
 from mex.extractors.datenkompass.filter import (
     filter_for_organization,
@@ -35,6 +35,7 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
+from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.datenkompass.transform import (
     transform_activities,
     transform_bibliographic_resources,
@@ -42,6 +43,7 @@ from mex.extractors.datenkompass.transform import (
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="datenkompass")
@@ -85,7 +87,7 @@ def fetched_merged_contact_points_by_id() -> dict[
 @asset(group_name="datenkompass")
 def filtered_merged_organization_ids() -> set[MergedOrganizationIdentifier]:
     """Get relevant organization identifiers as set."""
-    settings = Settings()
+    settings = Settings.get()
     return {
         organization.identifier
         for organization in cast(
@@ -118,18 +120,40 @@ def person_name_by_id() -> dict[MergedPersonIdentifier, str]:
 
 
 @asset(group_name="datenkompass")
-def fetched_merged_activities() -> list[MergedActivity]:
+def activity_mapping() -> DatenkompassMapping:
+    """Load the Datenkompass activity mapping."""
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+    )
+
+
+@asset(group_name="datenkompass")
+def bibliographic_resource_mapping() -> DatenkompassMapping:
+    """Load the Datenkompass activity mapping."""
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+    )
+
+
+@asset(group_name="datenkompass")
+def resource_mapping() -> DatenkompassMapping:
+    """Load the Datenkompass activity mapping."""
+    settings = Settings.get()
+    return DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
+    )
+
+
+@asset(group_name="datenkompass")
+def fetched_merged_activities(
+    activity_mapping: DatenkompassMapping,
+) -> list[MergedActivity]:
     """Get merged activities."""
-    relevant_primary_sources = [
-        "blueant",
-        "confluence-vvt",
-        "datscha-web",
-        "ff-projects",
-        "international-projects",
-        "report-server",  # synopse
-    ]
+    filtered_primary_sources = activity_mapping.fields[0].mappingRules[0].forValues
     entity_type = ["MergedActivity"]
-    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
     return cast(
         "list[MergedActivity]",
         get_merged_items(
@@ -152,11 +176,15 @@ def extracted_and_filtered_merged_activities(
 
 
 @asset(group_name="datenkompass")
-def fetched_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
+def fetched_merged_bibliographic_resources(
+    bibliographic_resource_mapping: DatenkompassMapping,
+) -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
-    relevant_primary_sources = ["endnote"]
+    filtered_primary_sources = (
+        bibliographic_resource_mapping.fields[0].mappingRules[0].forValues
+    )
     entity_type = ["MergedBibliographicResource"]
-    primary_source_ids = get_relevant_primary_source_ids(relevant_primary_sources)
+    primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
     return cast(
         "list[MergedBibliographicResource]",
         get_merged_items(
@@ -170,22 +198,24 @@ def fetched_merged_bibliographic_resources() -> list[MergedBibliographicResource
 @asset(group_name="datenkompass")
 def fetched_merged_resources_by_primary_source(
     filtered_merged_organizational_unit_ids: list[str],
+    resource_mapping: DatenkompassMapping,
 ) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
-    relevant_primary_sources = ["open-data", "report-server"]
+    filtered_primary_sources = resource_mapping.fields[0].mappingRules[0].forValues
     entity_type = ["MergedResource"]
     merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
-    for rps in relevant_primary_sources:
-        primary_source_ids = get_relevant_primary_source_ids([rps])
+    if filtered_primary_sources:
+        for fps in filtered_primary_sources:
+            primary_source_ids = get_filtered_primary_source_ids([fps])
 
-        merged_resources_by_primary_source[rps] = cast(
-            "list[MergedResource]",
-            get_merged_items(
-                entity_type=entity_type,
-                referenced_identifier=primary_source_ids,
-                reference_field="hadPrimarySource",
-            ),
-        )
+            merged_resources_by_primary_source[fps] = cast(
+                "list[MergedResource]",
+                get_merged_items(
+                    entity_type=entity_type,
+                    referenced_identifier=primary_source_ids,
+                    reference_field="hadPrimarySource",
+                ),
+            )
 
     first_fetched_merged_resources_ids = {
         mr.identifier
@@ -202,7 +232,7 @@ def fetched_merged_resources_by_primary_source(
         ),
     )
 
-    merged_resources_by_primary_source["unit filter"] = [
+    merged_resources_by_primary_source["MergedResource items of unit filter"] = [
         mr
         for mr in merged_resources_of_units
         if mr.identifier not in first_fetched_merged_resources_ids
@@ -217,11 +247,13 @@ def transform_activities_to_datenkompass_activities(
     fetched_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
+    activity_mapping: DatenkompassMapping,
 ) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
     return transform_activities(
         extracted_and_filtered_merged_activities,
         fetched_merged_organizational_units_by_id,
+        activity_mapping,
     )
 
 
@@ -232,12 +264,14 @@ def transform_bibliographic_resources_to_datenkompass_bibliographic_resources(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     person_name_by_id: dict[MergedPersonIdentifier, str],
+    bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         fetched_merged_bibliographic_resources,
         fetched_merged_organizational_units_by_id,
         person_name_by_id,
+        bibliographic_resource_mapping,
     )
 
 
@@ -250,12 +284,14 @@ def transform_resources_to_datenkompass_resources(
     fetched_merged_contact_points_by_id: dict[
         MergedContactPointIdentifier, MergedContactPoint
     ],
+    resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassResource]:
     """Transform resources to datenkompass items."""
     return transform_resources(
         fetched_merged_resources_by_primary_source,
         fetched_merged_organizational_units_by_id,
         fetched_merged_contact_points_by_id,
+        resource_mapping,
     )
 
 
