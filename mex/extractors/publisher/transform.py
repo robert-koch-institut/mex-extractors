@@ -1,4 +1,3 @@
-from collections import defaultdict
 from collections.abc import Collection
 
 from mex.common.logging import logger
@@ -36,13 +35,12 @@ def get_unit_id_per_person(
         )
     }
 
-    unit_id_per_person_id = defaultdict(list)
-    for person in merged_ldap_persons:
-        for unit_id in person.memberOf:
-            if unit_id in unit_id_if_email:
-                unit_id_per_person_id[person.identifier].append(unit_id)
-
-    return unit_id_per_person_id
+    return {
+        person.identifier: [
+            unit_id for unit_id in person.memberOf if unit_id in unit_id_if_email
+        ]
+        for person in merged_ldap_persons
+    }
 
 
 def update_actor_references_where_needed(

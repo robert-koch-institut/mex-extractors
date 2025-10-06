@@ -51,7 +51,7 @@ def test_get_unit_id_per_person(
 ) -> None:
     assert get_unit_id_per_person(
         merged_ldap_person_list, merged_unit_contactpoint_container
-    ) == {"PersonWithFallbackUnit": ["ValidUnitWithEmail"]}
+    ) == {"PersonWithFallbackUnit": ["ValidUnitWithEmail"], "PersonWithoutFallback": []}
 
 
 def test_update_actor_references_where_needed_with_contactpoint_fallback(
@@ -69,7 +69,8 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
         fallback_unit_identifiers_by_person={
             MergedPersonIdentifier("PersonWithFallbackUnit"): [
                 MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
-            ]
+            ],
+            MergedPersonIdentifier("PersonWithoutFallback"): [],
         },
     )
     assert merged_activity_contacts_with_contactpoint_fallback.model_dump(
@@ -105,7 +106,8 @@ def test_update_actor_references_where_needed_with_unit_fallback(
         fallback_unit_identifiers_by_person={
             MergedPersonIdentifier("PersonWithFallbackUnit"): [
                 MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
-            ]
+            ],
+            MergedPersonIdentifier("PersonWithoutFallback"): [],
         },
     )
     assert merged_activity_contacts_with_unit_fallback.model_dump(
