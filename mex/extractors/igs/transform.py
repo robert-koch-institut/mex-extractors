@@ -73,7 +73,7 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
     )
     keyword = [
         set_value
-        for rule in igs_resource_mapping.keyword[0].mappingRules[1:]
+        for rule in igs_resource_mapping.keyword[1].mappingRules[1:]
         if rule.setValues
         for set_value in rule.setValues
     ]
