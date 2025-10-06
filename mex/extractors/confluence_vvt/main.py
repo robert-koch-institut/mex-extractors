@@ -11,6 +11,7 @@ from mex.common.ldap.transform import (
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -74,6 +75,7 @@ def extracted_confluence_vvt_person_ids_by_query_string(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     confluence_vvt_activity_mapping: dict[str, Any],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Return mapping from query string to person IDs.
 
@@ -95,6 +97,7 @@ def extracted_confluence_vvt_person_ids_by_query_string(
         ldap_author_gens[0],
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_authors)
 

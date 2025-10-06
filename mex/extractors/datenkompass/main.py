@@ -1,3 +1,4 @@
+from collections import deque
 from typing import cast
 
 from dagster import asset
@@ -26,10 +27,6 @@ from mex.extractors.datenkompass.filter import (
     filter_for_organization,
     find_descendant_units,
 )
-from mex.extractors.datenkompass.load import (
-    start_s3_client,
-    write_items_to_xlsx,
-)
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
@@ -43,6 +40,7 @@ from mex.extractors.datenkompass.transform import (
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
+from mex.extractors.sinks.s3 import S3XlsxSink
 from mex.extractors.utils import load_yaml
 
 
@@ -296,21 +294,23 @@ def transform_resources_to_datenkompass_resources(
 
 
 @asset(group_name="datenkompass")
-def load_activities(
+def publish_to_s3_xlsx(
     transform_activities_to_datenkompass_activities: list[DatenkompassActivity],
     transform_bibliographic_resources_to_datenkompass_bibliographic_resources: list[
         DatenkompassBibliographicResource
     ],
     transform_resources_to_datenkompass_resources: list[DatenkompassResource],
 ) -> None:
-    """Write items to S3."""
-    s3_client = start_s3_client()
-    write_items_to_xlsx(transform_activities_to_datenkompass_activities, s3_client)
-    write_items_to_xlsx(
-        transform_bibliographic_resources_to_datenkompass_bibliographic_resources,
-        s3_client,
+    """Write items to S3 xlsx."""
+    s3xlsx = S3XlsxSink()
+    deque(s3xlsx.load(transform_activities_to_datenkompass_activities), maxlen=0)
+    deque(
+        s3xlsx.load(
+            transform_bibliographic_resources_to_datenkompass_bibliographic_resources,
+        ),
+        maxlen=0,
     )
-    write_items_to_xlsx(transform_resources_to_datenkompass_resources, s3_client)
+    deque(s3xlsx.load(transform_resources_to_datenkompass_resources), maxlen=0)
 
 
 @entrypoint(Settings)
