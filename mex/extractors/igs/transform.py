@@ -57,9 +57,9 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
         if isinstance(for_value, str)
     ]
     contributing_unit = (
-        unit_stable_target_ids_by_synonym[for_value[0]]
+        [unit_stable_target_ids_by_synonym[for_value] for for_value in for_values]
         if (
-            for_value := igs_resource_mapping.contributingUnit[0]
+            for_values := igs_resource_mapping.contributingUnit[0]
             .mappingRules[0]
             .forValues
         )
