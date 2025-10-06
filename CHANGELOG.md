@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - extract mandatory fields for igs variables and variable groups
-- update mex-common dependency to 1.4
+- update mex-common dependency to 1.5
+- persons have rki org as affiliation
 - create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
 - publisher: replace references to non-consenting person ids with their respective unit ids
 
