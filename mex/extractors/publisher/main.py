@@ -134,12 +134,12 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
 @asset(group_name="publisher")
 def publisher_fallback_unit_identifiers_by_person(
     publisher_merged_ldap_persons: list[MergedPerson],
-    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address."""
     return get_unit_id_per_person(
         publisher_merged_ldap_persons,
-        publishable_contact_points_and_units,
+        publisher_contact_points_and_units,
     )
 
 

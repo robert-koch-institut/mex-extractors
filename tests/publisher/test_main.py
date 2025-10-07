@@ -6,6 +6,8 @@ import pytest
 from mex.common.models import MergedBibliographicResource
 from mex.common.types import (
     MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
@@ -100,7 +102,11 @@ def test_publisher_fallback_contact_identifiers() -> None:
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_publisher_items() -> None:
+def test_publisher_items(
+    mocked_publisher_fallback_unit_identifiers_by_person: dict[
+        MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
+    ],
+) -> None:
     container = cast(
         "ItemsContainer[AnyMergedModel]",
         publisher_items(
@@ -108,6 +114,7 @@ def test_publisher_items() -> None:
             publisher_persons(),
             publisher_contact_points_and_units(),
             publisher_fallback_contact_identifiers(),
+            mocked_publisher_fallback_unit_identifiers_by_person,
         ),
     )
     assert len(container.items) == 4
