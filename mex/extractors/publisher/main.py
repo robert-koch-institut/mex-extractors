@@ -9,14 +9,23 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyMergedModel,
+    ExtractedPrimarySource,
     ItemsContainer,
     MergedContactPoint,
+    MergedPerson,
     PaginatedItemsContainer,
 )
-from mex.common.types import MergedContactPointIdentifier
+from mex.common.types import (
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.extract import get_publishable_merged_items
-from mex.extractors.publisher.transform import update_actor_references_where_needed
+from mex.extractors.publisher.transform import (
+    get_unit_id_per_person,
+    update_actor_references_where_needed,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
 
@@ -46,8 +55,24 @@ def publisher_items_without_actors() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
+def publisher_merged_ldap_persons(
+    extracted_primary_source_ldap: ExtractedPrimarySource,
+) -> list[MergedPerson]:
+    """Fetch all MergedPersons with Primary source = ldap."""
+    return cast(
+        "list[MergedPerson]",
+        get_publishable_merged_items(
+            entity_type=["MergedPerson"],
+            referenced_identifier=[str(extracted_primary_source_ldap.stableTargetId)],
+            reference_field="hadPrimarySource",
+        ),
+    )
+
+
+@asset(group_name="publisher")
 def publisher_persons() -> ItemsContainer[AnyMergedModel]:
     """Get publishable persons from green-lit primary sources."""
+    # TODO(MX-1939): add persons with consent
     settings = Settings.get()
     connector = BackendApiConnector.get()
     limit = 100
@@ -107,11 +132,26 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
 
 
 @asset(group_name="publisher")
+def publisher_fallback_unit_identifiers_by_person(
+    publisher_merged_ldap_persons: list[MergedPerson],
+    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
+) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
+    """For each Person get their unit IDs if the unit has an email address."""
+    return get_unit_id_per_person(
+        publisher_merged_ldap_persons,
+        publishable_contact_points_and_units,
+    )
+
+
+@asset(group_name="publisher")
 def publisher_items(
     publisher_items_without_actors: ItemsContainer[AnyMergedModel],
     publisher_persons: ItemsContainer[AnyMergedModel],
     publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
     publisher_fallback_contact_identifiers: list[MergedContactPointIdentifier],
+    publisher_fallback_unit_identifiers_by_person: dict[
+        MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
+    ],
 ) -> ItemsContainer[AnyMergedModel]:
     """All publishable items with updated contact references, where needed."""
     allowed_actors = {
@@ -120,7 +160,10 @@ def publisher_items(
     }
     for item in publisher_items_without_actors.items:
         update_actor_references_where_needed(
-            item, allowed_actors, publisher_fallback_contact_identifiers
+            item,
+            allowed_actors,
+            publisher_fallback_contact_identifiers,
+            publisher_fallback_unit_identifiers_by_person,
         )
     return ItemsContainer[AnyMergedModel](
         items=publisher_items_without_actors.items

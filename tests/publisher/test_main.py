@@ -3,7 +3,10 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.types import MergedContactPointIdentifier
+from mex.common.models import MergedBibliographicResource
+from mex.common.types import (
+    MergedContactPointIdentifier,
+)
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
     publisher_contact_points_and_units,
@@ -36,6 +39,7 @@ def test_run() -> None:
 def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
     container = cast("ItemsContainer[AnyMergedModel]", publisher_items_without_actors())
     assert len(container.items) == 1
+    assert isinstance(container.items[0], MergedBibliographicResource)
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
@@ -89,7 +93,8 @@ def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
 @pytest.mark.usefixtures("mocked_backend")
 def test_publisher_fallback_contact_identifiers() -> None:
     identifiers = cast(
-        "list[MergedContactPointIdentifier]", publisher_fallback_contact_identifiers()
+        "list[MergedContactPointIdentifier]",
+        publisher_fallback_contact_identifiers(),
     )
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
