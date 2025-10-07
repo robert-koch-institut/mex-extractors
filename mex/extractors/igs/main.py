@@ -10,6 +10,7 @@ from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedContactPoint,
+    ExtractedOrganization,
     ExtractedPrimarySource,
     ResourceMapping,
     VariableMapping,
@@ -99,12 +100,14 @@ def extracted_igs_contact_points_by_mail(
 
 
 @asset(group_name="igs")
-def extracted_igs_resource_ids_by_identifier_in_primary_source(
+def extracted_igs_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
     igs_info: IGSInfo,
     extracted_primary_source_igs: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
     extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_igs_access_platform: ExtractedAccessPlatform,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_info_to_resources(
@@ -113,6 +116,8 @@ def extracted_igs_resource_ids_by_identifier_in_primary_source(
         ResourceMapping.model_validate(igs_resource_mapping),
         extracted_igs_contact_points_by_mail,
         unit_stable_target_ids_by_synonym,
+        extracted_igs_access_platform,
+        extracted_organization_rki,
     )
     load(extracted_resources)
     return {
@@ -129,12 +134,14 @@ def extracted_igs_access_platform(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
-    return transform_igs_access_platform(
+    extracted_access_platform = transform_igs_access_platform(
         extracted_primary_source_igs,
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         extracted_igs_contact_points_by_mail,
         unit_stable_target_ids_by_synonym,
     )
+    load([extracted_access_platform])
+    return extracted_access_platform
 
 
 @asset(group_name="igs")

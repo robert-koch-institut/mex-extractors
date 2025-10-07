@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - extract mandatory fields for igs variables and variable groups
+- optional value fields for igs access platform and resource
 - update mex-common dependency to 1.5
 - persons have rki org as affiliation
 - create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
