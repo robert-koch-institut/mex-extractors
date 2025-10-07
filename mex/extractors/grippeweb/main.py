@@ -49,7 +49,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="grippeweb", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_grippeweb(
+def grippeweb_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return Grippeweb primary source."""
@@ -157,7 +157,7 @@ def grippeweb_organization_ids_by_query_string(
 def extracted_access_platform_grippeweb(
     grippeweb_access_platform: dict[str, Any],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source_grippeweb: ExtractedPrimarySource,
+    grippeweb_extracted_primary_source: ExtractedPrimarySource,
     extracted_mex_persons_grippeweb: list[ExtractedPerson],
 ) -> ExtractedAccessPlatform:
     """Transform Grippeweb mappings to extracted access platform and load to sinks."""
@@ -165,7 +165,7 @@ def extracted_access_platform_grippeweb(
         transform_grippeweb_access_platform_to_extracted_access_platform(
             AccessPlatformMapping.model_validate(grippeweb_access_platform),
             unit_stable_target_ids_by_synonym,
-            extracted_primary_source_grippeweb,
+            grippeweb_extracted_primary_source,
             extracted_mex_persons_grippeweb,
         )
     )
@@ -178,7 +178,7 @@ def grippeweb_extracted_parent_resource(  # noqa: PLR0913
     grippeweb_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_access_platform_grippeweb: ExtractedAccessPlatform,
-    extracted_primary_source_grippeweb: ExtractedPrimarySource,
+    grippeweb_extracted_primary_source: ExtractedPrimarySource,
     extracted_mex_persons_grippeweb: list[ExtractedPerson],
     grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
     extracted_mex_functional_units_grippeweb: dict[Email, MergedContactPointIdentifier],
@@ -189,7 +189,7 @@ def grippeweb_extracted_parent_resource(  # noqa: PLR0913
             [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
             unit_stable_target_ids_by_synonym,
             extracted_access_platform_grippeweb,
-            extracted_primary_source_grippeweb,
+            grippeweb_extracted_primary_source,
             extracted_mex_persons_grippeweb,
             grippeweb_organization_ids_by_query_string,
             extracted_mex_functional_units_grippeweb,
@@ -205,7 +205,7 @@ def grippeweb_extracted_variable_group(
     grippeweb_variable_group: dict[str, Any],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-    extracted_primary_source_grippeweb: ExtractedPrimarySource,
+    grippeweb_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariableGroup]:
     """Transform Grippeweb values to extracted variable groups and load to sinks."""
     extracted_variable_groups = (
@@ -213,7 +213,7 @@ def grippeweb_extracted_variable_group(
             VariableGroupMapping.model_validate(grippeweb_variable_group),
             grippeweb_columns,
             grippeweb_extracted_parent_resource,
-            extracted_primary_source_grippeweb,
+            grippeweb_extracted_primary_source,
         )
     )
     load(extracted_variable_groups)
@@ -226,7 +226,7 @@ def grippeweb_extracted_variable(
     grippeweb_extracted_variable_group: list[ExtractedVariableGroup],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-    extracted_primary_source_grippeweb: ExtractedPrimarySource,
+    grippeweb_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform Grippeweb default values to extracted variables and load to sinks."""
     extracted_variables = transform_grippeweb_variable_to_extracted_variables(
@@ -234,7 +234,7 @@ def grippeweb_extracted_variable(
         grippeweb_extracted_variable_group,
         grippeweb_columns,
         grippeweb_extracted_parent_resource,
-        extracted_primary_source_grippeweb,
+        grippeweb_extracted_primary_source,
     )
     load(extracted_variables)
     return extracted_variables

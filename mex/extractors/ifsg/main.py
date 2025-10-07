@@ -45,111 +45,111 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="ifsg", deps=["extracted_primary_source_mex"])
-def extracted_primary_sources_ifsg(
+def ifsg_extracted_primary_sources(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return ifsg primary source."""
-    (extracted_primary_sources_ifsg,) = get_primary_sources_by_name(
+    (ifsg_extracted_primary_sources,) = get_primary_sources_by_name(
         extracted_primary_sources, "ifsg"
     )
-    load([extracted_primary_sources_ifsg])
+    load([ifsg_extracted_primary_sources])
 
-    return extracted_primary_sources_ifsg
+    return ifsg_extracted_primary_sources
 
 
 @asset(group_name="ifsg")
-def meta_catalogue2item() -> list[MetaCatalogue2Item]:
+def ifsg_meta_catalogue2item() -> list[MetaCatalogue2Item]:
     """Extract `Catalogue2Item` table."""
     return extract_sql_table(MetaCatalogue2Item)
 
 
 @asset(group_name="ifsg")
-def meta_datatype() -> list[MetaDataType]:
+def ifsg_meta_datatype() -> list[MetaDataType]:
     """Extract `MetaDataType` table."""
     return extract_sql_table(MetaDataType)
 
 
 @asset(group_name="ifsg")
-def meta_catalogue2item2schema() -> list[MetaCatalogue2Item2Schema]:
+def ifsg_meta_catalogue2item2schema() -> list[MetaCatalogue2Item2Schema]:
     """Extract `Catalogue2Item2Schema` table."""
     return extract_sql_table(MetaCatalogue2Item2Schema)
 
 
 @asset(group_name="ifsg")
-def meta_disease() -> list[MetaDisease]:
+def ifsg_meta_disease() -> list[MetaDisease]:
     """Extract `Disease` table."""
     return extract_sql_table(MetaDisease)
 
 
 @asset(group_name="ifsg")
-def meta_field() -> list[MetaField]:
+def ifsg_meta_field() -> list[MetaField]:
     """Extract `Field` table."""
     return extract_sql_table(MetaField)
 
 
 @asset(group_name="ifsg")
-def filtered_empty_statement_area_group(meta_field: list[MetaField]) -> list[MetaField]:
+def ifsg_filtered_meta_fields(ifsg_meta_field: list[MetaField]) -> list[MetaField]:
     """Filter Metafield list for empty statement_area_group."""
-    return filter_empty_statement_area_group(meta_field)
+    return filter_empty_statement_area_group(ifsg_meta_field)
 
 
 @asset(group_name="ifsg")
-def filtered_variables(
-    meta_field: list[MetaField],
+def ifsg_filtered_variables(
+    ifsg_meta_field: list[MetaField],
     id_types_of_diseases: list[int],
 ) -> list[MetaField]:
     """Filter MetaField list."""
-    return filter_variables(meta_field, id_types_of_diseases)
+    return filter_variables(ifsg_meta_field, id_types_of_diseases)
 
 
 @asset(group_name="ifsg")
-def meta_item() -> list[MetaItem]:
+def ifsg_meta_item() -> list[MetaItem]:
     """Extract `Item` table."""
     return extract_sql_table(MetaItem)
 
 
 @asset(group_name="ifsg")
-def meta_schema2field() -> list[MetaSchema2Field]:
+def ifsg_meta_schema2field() -> list[MetaSchema2Field]:
     """Extract `Schema2Field` table."""
     return extract_sql_table(MetaSchema2Field)
 
 
 @asset(group_name="ifsg")
-def meta_schema2type() -> list[MetaSchema2Type]:
+def ifsg_meta_schema2type() -> list[MetaSchema2Type]:
     """Extract `Schema2Type` table."""
     return extract_sql_table(MetaSchema2Type)
 
 
 @asset(group_name="ifsg")
 def id_types_of_diseases(
-    meta_schema2type: list[MetaSchema2Type], meta_type: list[MetaType]
+    ifsg_meta_schema2type: list[MetaSchema2Type], ifsg_meta_type: list[MetaType]
 ) -> list[int]:
     """Extract id_types that correspond to a disease."""
-    return filter_id_type_of_diseases(meta_schema2type, meta_type)
+    return filter_id_type_of_diseases(ifsg_meta_schema2type, ifsg_meta_type)
 
 
 @asset(group_name="ifsg")
-def meta_type() -> list[MetaType]:
+def ifsg_meta_type() -> list[MetaType]:
     """Extract `Type` table."""
     return extract_sql_table(MetaType)
 
 
 @asset(group_name="ifsg")
-def resource_disease() -> dict[str, Any]:
+def ifsg_resource_disease_dict() -> dict[str, Any]:
     """Extract `resource_disease` default values."""
     settings = Settings.get()
     return load_yaml(settings.ifsg.mapping_path / "resource_disease.yaml")
 
 
 @asset(group_name="ifsg")
-def resource_parent() -> dict[str, Any]:
+def ifsg_resource_parent_dict() -> dict[str, Any]:
     """Extract `resource_parent` default values."""
     settings = Settings.get()
     return load_yaml(settings.ifsg.mapping_path / "resource_parent.yaml")
 
 
 @asset(group_name="ifsg")
-def resource_state() -> dict[str, Any]:
+def ifsg_resource_state_dict() -> dict[str, Any]:
     """Extract `resource_state` default values."""
     settings = Settings.get()
     return load_yaml(settings.ifsg.mapping_path / "resource_state.yaml")
@@ -163,15 +163,15 @@ def ifsg_variable_group() -> dict[str, Any]:
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_resource_parent(
-    resource_parent: dict[str, Any],
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
+def ifsg_extracted_resource_parent(
+    ifsg_resource_parent_dict: dict[str, Any],
+    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedResource:
     """Extracted and loaded ifsg resource parent."""
     mex_resource_parent = transform_resource_parent_to_mex_resource(
-        ResourceMapping.model_validate(resource_parent),
-        extracted_primary_sources_ifsg,
+        ResourceMapping.model_validate(ifsg_resource_parent_dict),
+        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
     )
 
@@ -181,17 +181,17 @@ def extracted_ifsg_resource_parent(
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_resource_state(
-    resource_state: dict[str, Any],
-    extracted_ifsg_resource_parent: ExtractedResource,
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
+def ifsg_extracted_resource_state(
+    ifsg_resource_state_dict: dict[str, Any],
+    ifsg_extracted_resource_parent: ExtractedResource,
+    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
-        ResourceMapping.model_validate(resource_state),
-        extracted_ifsg_resource_parent,
-        extracted_primary_sources_ifsg,
+        ResourceMapping.model_validate(ifsg_resource_state_dict),
+        ifsg_extracted_resource_parent,
+        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
     )
     load(mex_resource_state)
@@ -200,26 +200,26 @@ def extracted_ifsg_resource_state(
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_resource_disease(  # noqa: PLR0913
-    resource_disease: dict[str, Any],
-    extracted_ifsg_resource_parent: ExtractedResource,
-    extracted_ifsg_resource_state: list[ExtractedResource],
-    meta_disease: list[MetaDisease],
-    meta_type: list[MetaType],
+def ifsg_extracted_resource_disease(  # noqa: PLR0913
+    ifsg_resource_disease_dict: dict[str, Any],
+    ifsg_extracted_resource_parent: ExtractedResource,
+    ifsg_extracted_resource_state: list[ExtractedResource],
+    ifsg_meta_disease: list[MetaDisease],
+    ifsg_meta_type: list[MetaType],
     id_types_of_diseases: list[int],
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
+    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_disease = transform_resource_disease_to_mex_resource(
-        ResourceMapping.model_validate(resource_disease),
-        extracted_ifsg_resource_parent,
-        extracted_ifsg_resource_state,
-        meta_disease,
-        meta_type,
+        ResourceMapping.model_validate(ifsg_resource_disease_dict),
+        ifsg_extracted_resource_parent,
+        ifsg_extracted_resource_state,
+        ifsg_meta_disease,
+        ifsg_meta_type,
         id_types_of_diseases,
-        extracted_primary_sources_ifsg,
+        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
     )
@@ -229,19 +229,19 @@ def extracted_ifsg_resource_disease(  # noqa: PLR0913
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_variable_group(
+def ifsg_extracted_variable_group(
     ifsg_variable_group: dict[str, Any],
-    extracted_ifsg_resource_disease: list[ExtractedResource],
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
-    filtered_empty_statement_area_group: list[MetaField],
+    ifsg_extracted_resource_disease: list[ExtractedResource],
+    ifsg_extracted_primary_sources: ExtractedPrimarySource,
+    ifsg_filtered_meta_fields: list[MetaField],
     id_types_of_diseases: list[int],
 ) -> list[ExtractedVariableGroup]:
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         VariableGroupMapping.model_validate(ifsg_variable_group),
-        extracted_ifsg_resource_disease,
-        extracted_primary_sources_ifsg,
-        filtered_empty_statement_area_group,
+        ifsg_extracted_resource_disease,
+        ifsg_extracted_primary_sources,
+        ifsg_filtered_meta_fields,
         id_types_of_diseases,
     )
     load(extracted_variable_group)
@@ -250,28 +250,28 @@ def extracted_ifsg_variable_group(
 
 
 @asset(group_name="ifsg")
-def extracted_ifsg_variable(  # noqa: PLR0913
-    filtered_variables: list[MetaField],
-    extracted_ifsg_resource_disease: list[ExtractedResource],
-    extracted_ifsg_variable_group: list[ExtractedVariableGroup],
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
-    meta_catalogue2item: list[MetaCatalogue2Item],
-    meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
-    meta_item: list[MetaItem],
-    meta_datatype: list[MetaDataType],
-    meta_schema2field: list[MetaSchema2Field],
+def ifsg_extracted_variable(  # noqa: PLR0913
+    ifsg_filtered_variables: list[MetaField],
+    ifsg_extracted_resource_disease: list[ExtractedResource],
+    ifsg_extracted_variable_group: list[ExtractedVariableGroup],
+    ifsg_extracted_primary_sources: ExtractedPrimarySource,
+    ifsg_meta_catalogue2item: list[MetaCatalogue2Item],
+    ifsg_meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
+    ifsg_meta_item: list[MetaItem],
+    ifsg_meta_datatype: list[MetaDataType],
+    ifsg_meta_schema2field: list[MetaSchema2Field],
 ) -> list[ExtractedVariable]:
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
-        filtered_variables,
-        extracted_ifsg_resource_disease,
-        extracted_ifsg_variable_group,
-        extracted_primary_sources_ifsg,
-        meta_catalogue2item,
-        meta_catalogue2item2schema,
-        meta_item,
-        meta_datatype,
-        meta_schema2field,
+        ifsg_filtered_variables,
+        ifsg_extracted_resource_disease,
+        ifsg_extracted_variable_group,
+        ifsg_extracted_primary_sources,
+        ifsg_meta_catalogue2item,
+        ifsg_meta_catalogue2item2schema,
+        ifsg_meta_item,
+        ifsg_meta_datatype,
+        ifsg_meta_schema2field,
     )
     load(extracted_variables)
     return extracted_variables

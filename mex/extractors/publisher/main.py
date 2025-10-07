@@ -22,7 +22,7 @@ from mex.extractors.sinks.s3 import S3Sink
 
 
 @asset(group_name="publisher")
-def publishable_items_without_actors() -> ItemsContainer[AnyMergedModel]:
+def publisher_items_without_actors() -> ItemsContainer[AnyMergedModel]:
     """All items with entity types that are neither an actor nor skipped.
 
     Actor types are: Person, ContactPoint and OrganizationalUnit.
@@ -46,7 +46,7 @@ def publishable_items_without_actors() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publishable_persons() -> ItemsContainer[AnyMergedModel]:
+def publisher_persons() -> ItemsContainer[AnyMergedModel]:
     """Get publishable persons from green-lit primary sources."""
     settings = Settings.get()
     connector = BackendApiConnector.get()
@@ -73,7 +73,7 @@ def publishable_persons() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
+def publisher_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
     """Get publishable contact points and organizational units."""
     settings = Settings.get()
     allowed_entity_types = [
@@ -89,7 +89,7 @@ def publishable_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
+def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
     connector = BackendApiConnector.get()
@@ -107,34 +107,33 @@ def fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
 
 
 @asset(group_name="publisher")
-def publishable_items(
-    publishable_items_without_actors: ItemsContainer[AnyMergedModel],
-    publishable_persons: ItemsContainer[AnyMergedModel],
-    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
-    fallback_contact_identifiers: list[MergedContactPointIdentifier],
+def publisher_items(
+    publisher_items_without_actors: ItemsContainer[AnyMergedModel],
+    publisher_persons: ItemsContainer[AnyMergedModel],
+    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_fallback_contact_identifiers: list[MergedContactPointIdentifier],
 ) -> ItemsContainer[AnyMergedModel]:
     """All publishable items with updated contact references, where needed."""
     allowed_actors = {
         person.identifier
-        for person in publishable_persons.items
-        + publishable_contact_points_and_units.items
+        for person in publisher_persons.items + publisher_contact_points_and_units.items
     }
-    for item in publishable_items_without_actors.items:
+    for item in publisher_items_without_actors.items:
         update_actor_references_where_needed(
-            item, allowed_actors, fallback_contact_identifiers
+            item, allowed_actors, publisher_fallback_contact_identifiers
         )
     return ItemsContainer[AnyMergedModel](
-        items=publishable_items_without_actors.items
-        + publishable_persons.items
-        + publishable_contact_points_and_units.items
+        items=publisher_items_without_actors.items
+        + publisher_persons.items
+        + publisher_contact_points_and_units.items
     )
 
 
 @asset(group_name="publisher")
-def publish_to_s3(publishable_items: ItemsContainer[AnyMergedModel]) -> None:
+def publisher_s3_load(publisher_items: ItemsContainer[AnyMergedModel]) -> None:
     """Write received merged items to s3 sink."""
     s3 = S3Sink.get()
-    deque(s3.load(publishable_items.items), maxlen=0)
+    deque(s3.load(publisher_items.items), maxlen=0)
 
 
 @entrypoint(Settings)

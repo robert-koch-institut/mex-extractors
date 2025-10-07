@@ -18,7 +18,7 @@ from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
-def extracted_international_projects_activities() -> list[ExtractedActivity]:
+def international_projects_extracted_activities() -> list[ExtractedActivity]:
     return [
         ExtractedActivity(
             hadPrimarySource="fSwk5o6nXHVMdFuPHH0hRk",
@@ -115,7 +115,7 @@ def odk_variable_mapping(settings: Settings) -> VariableMapping:
 
 
 @pytest.fixture
-def external_partner_and_publisher_by_label() -> dict[
+def odk_external_partner_and_publisher_by_label() -> dict[
     str, MergedOrganizationIdentifier
 ]:
     """Mocked external partner and publisher dict for OrganizationIDs."""
@@ -126,7 +126,7 @@ def external_partner_and_publisher_by_label() -> dict[
 
 
 @pytest.fixture
-def extracted_resources_odk() -> list[ExtractedResource]:
+def odk_extracted_resources() -> list[ExtractedResource]:
     """Mocked odk mex resources."""
     return [
         ExtractedResource(

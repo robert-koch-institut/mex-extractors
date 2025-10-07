@@ -26,12 +26,12 @@ from mex.extractors.seq_repo.transform import (
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    project_coordinators_merged_ids_by_query_string: dict[
+    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
         str, list[MergedPersonIdentifier]
     ],
 ) -> None:
@@ -63,8 +63,8 @@ def test_transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
             seq_repo_activity,
             seq_repo_source_resolved_project_coordinators,
             unit_stable_target_ids_by_synonym,
-            project_coordinators_merged_ids_by_query_string,
-            extracted_primary_source_seq_repo,
+            seq_repo_project_coordinators_merged_ids_by_query_string,
+            seq_repo_extracted_primary_source,
         )
     )
     assert (
@@ -74,14 +74,14 @@ def test_transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
 
 
 def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     extracted_mex_activities_dict: dict[str, ExtractedActivity],
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    project_coordinators_merged_ids_by_query_string: dict[
+    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
         str, list[MergedPersonIdentifier]
     ],
     extracted_organization_rki: ExtractedOrganization,
@@ -150,9 +150,9 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         seq_repo_resource,
         seq_repo_source_resolved_project_coordinators,
         unit_stable_target_ids_by_synonym,
-        project_coordinators_merged_ids_by_query_string,
+        seq_repo_project_coordinators_merged_ids_by_query_string,
         extracted_organization_rki,
-        extracted_primary_source_seq_repo,
+        seq_repo_extracted_primary_source,
     )
 
     assert (
@@ -162,12 +162,12 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 
 def test_transform_seq_repo_access_platform_to_extracted_access_platform(
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     expected = {
-        "hadPrimarySource": extracted_primary_source_seq_repo.stableTargetId,
+        "hadPrimarySource": seq_repo_extracted_primary_source.stableTargetId,
         "identifierInPrimarySource": "https://dummy.url.com/",
         "alternativeTitle": [{"language": "es", "value": "SeqRepo"}],
         "contact": [str(unit_stable_target_ids_by_synonym["FG99"])],
@@ -190,7 +190,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         transform_seq_repo_access_platform_to_extracted_access_platform(
             seq_repo_access_platform,
             unit_stable_target_ids_by_synonym,
-            extracted_primary_source_seq_repo,
+            seq_repo_extracted_primary_source,
         )
     )
 

@@ -42,15 +42,15 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="open_data", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_open_data(
+def open_data_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return open data primary source and load it to sinks."""
-    (extracted_primary_source_open_data,) = get_primary_sources_by_name(
+    (open_data_extracted_primary_source,) = get_primary_sources_by_name(
         extracted_primary_sources, "open-data"
     )
-    load([extracted_primary_source_open_data])
-    return extracted_primary_source_open_data
+    load([open_data_extracted_primary_source])
+    return open_data_extracted_primary_source
 
 
 @asset(group_name="open_data")
@@ -60,7 +60,7 @@ def open_data_parent_resources() -> list[OpenDataParentResource]:
 
 
 @asset(group_name="open_data")
-def extracted_open_data_creators_contributors(
+def open_data_creators_contributors(
     open_data_parent_resources: list[OpenDataParentResource],
 ) -> list[OpenDataCreatorsOrContributors]:
     """Return unique open Data persons from open data parent resources."""
@@ -70,36 +70,36 @@ def extracted_open_data_creators_contributors(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_organizations(
-    extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    extracted_primary_source_open_data: ExtractedPrimarySource,
+def open_data_organizations(
+    open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
+    open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Transform affiliations of open data persons to extracted organizations."""
     return transform_open_data_person_affiliations_to_organizations(
-        extracted_open_data_creators_contributors, extracted_primary_source_open_data
+        open_data_creators_contributors, open_data_extracted_primary_source
     )
 
 
 @asset(group_name="open_data")
-def extracted_open_data_persons(  # noqa: PLR0913
-    extracted_open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
+def open_data_persons(  # noqa: PLR0913
+    open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_ldap: ExtractedPrimarySource,
-    extracted_primary_source_open_data: ExtractedPrimarySource,
+    open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_open_data_organizations: dict[str, MergedOrganizationIdentifier],
+    open_data_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons and load them to sinks."""
-    extracted_open_data_persons = transform_open_data_persons(
-        extracted_open_data_creators_contributors,
+    open_data_persons = transform_open_data_persons(
+        open_data_creators_contributors,
         extracted_primary_source_ldap,
-        extracted_primary_source_open_data,
+        open_data_extracted_primary_source,
         extracted_organizational_units,
         extracted_organization_rki,
-        extracted_open_data_organizations,
+        open_data_organizations,
     )
-    load(extracted_open_data_persons)
-    return extracted_open_data_persons
+    load(open_data_persons)
+    return open_data_persons
 
 
 @asset(group_name="open_data")
@@ -120,9 +120,9 @@ def open_data_contact_point(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_distribution(
+def open_data_distribution(
     open_data_parent_resources: list[OpenDataParentResource],
-    extracted_primary_source_open_data: ExtractedPrimarySource,
+    open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedDistribution]:
     """Extract distributions for open data & transform and load them to sinks."""
     settings = Settings.get()
@@ -131,7 +131,7 @@ def extracted_open_data_distribution(
     )
     mex_distributions = transform_open_data_distributions(
         open_data_parent_resources,
-        extracted_primary_source_open_data,
+        open_data_extracted_primary_source,
         distribution_mapping,
     )
 
@@ -140,12 +140,12 @@ def extracted_open_data_distribution(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_parent_resources(  # noqa: PLR0913
+def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_persons: list[ExtractedPerson],
+    open_data_extracted_primary_source: ExtractedPrimarySource,
+    open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_open_data_distribution: list[ExtractedDistribution],
+    open_data_distribution: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_contact_point: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
@@ -157,10 +157,10 @@ def extracted_open_data_parent_resources(  # noqa: PLR0913
 
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
-        extracted_primary_source_open_data,
-        extracted_open_data_persons,
+        open_data_extracted_primary_source,
+        open_data_persons,
         unit_stable_target_ids_by_synonym,
-        extracted_open_data_distribution,
+        open_data_distribution,
         resource_mapping,
         extracted_organization_rki,
         open_data_contact_point,

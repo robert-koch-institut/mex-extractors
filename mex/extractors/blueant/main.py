@@ -34,7 +34,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="blueant", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_blueant(
+def blueant_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return blueant primary source."""
@@ -47,15 +47,15 @@ def extracted_primary_source_blueant(
 
 @asset(group_name="blueant")
 def blueant_sources(
-    extracted_primary_source_blueant: ExtractedPrimarySource,
+    blueant_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[BlueAntSource]:
     """Extract from blueant sources and filter content."""
     sources = extract_blueant_sources()
     sources = filter_and_log_blueant_sources(
-        sources, extracted_primary_source_blueant.stableTargetId
+        sources, blueant_extracted_primary_source.stableTargetId
     )
     return filter_by_global_rules(
-        extracted_primary_source_blueant.stableTargetId, sources
+        blueant_extracted_primary_source.stableTargetId, sources
     )
 
 
@@ -89,9 +89,9 @@ def blueant_organization_ids_by_query_string(
 
 
 @asset(group_name="blueant")
-def extracted_blueant_activities(
+def blueant_extracted_activities(
     blueant_sources: list[BlueAntSource],
-    extracted_primary_source_blueant: ExtractedPrimarySource,
+    blueant_extracted_primary_source: ExtractedPrimarySource,
     blueant_project_leaders_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
@@ -104,7 +104,7 @@ def extracted_blueant_activities(
 
     extracted_activities = transform_blueant_sources_to_extracted_activities(
         blueant_sources,
-        extracted_primary_source_blueant,
+        blueant_extracted_primary_source,
         blueant_project_leaders_by_employee_id,
         unit_stable_target_ids_by_synonym,
         activity,

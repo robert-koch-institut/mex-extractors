@@ -21,21 +21,23 @@ from mex.extractors.odk.transform import (
 def test_transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    external_partner_and_publisher_by_label: dict[str, MergedOrganizationIdentifier],
-    extracted_international_projects_activities: list[ExtractedActivity],
+    odk_external_partner_and_publisher_by_label: dict[
+        str, MergedOrganizationIdentifier
+    ],
+    international_projects_extracted_activities: list[ExtractedActivity],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     international_project_stable_target_id = next(
         filter(
             lambda x: x.identifierInPrimarySource == "0000-1000",
-            extracted_international_projects_activities,
+            international_projects_extracted_activities,
         )
     ).stableTargetId
     resources = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
-        external_partner_and_publisher_by_label,
-        extracted_international_projects_activities,
+        odk_external_partner_and_publisher_by_label,
+        international_projects_extracted_activities,
         extracted_primary_sources["mex"],
         extracted_primary_sources["odk"],
     )
@@ -59,8 +61,8 @@ def test_transform_odk_resources_to_mex_resources(
         "contributingUnit": [str(unit_stable_target_ids_by_synonym["C1"])],
         "description": [{"value": "amet", "language": TextLanguage.EN}],
         "externalPartner": [
-            str(external_partner_and_publisher_by_label["consetetur"]),
-            str(external_partner_and_publisher_by_label["invidunt"]),
+            str(odk_external_partner_and_publisher_by_label["consetetur"]),
+            str(odk_external_partner_and_publisher_by_label["invidunt"]),
             "gnhGhU3ATowGuV0KJwGuxB",
         ],
         "keyword": [
@@ -76,8 +78,8 @@ def test_transform_odk_resources_to_mex_resources(
         ],
         "methodDescription": [{"value": "tempor", "language": TextLanguage.EN}],
         "publisher": [
-            str(external_partner_and_publisher_by_label["invidunt"]),
-            str(external_partner_and_publisher_by_label["consetetur"]),
+            str(odk_external_partner_and_publisher_by_label["invidunt"]),
+            str(odk_external_partner_and_publisher_by_label["consetetur"]),
         ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -112,7 +114,7 @@ def test_transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
         {},
-        extracted_international_projects_activities,
+        international_projects_extracted_activities,
         extracted_primary_sources["mex"],
         extracted_primary_sources["odk"],
     )
@@ -129,13 +131,13 @@ def test_transform_odk_resources_to_mex_resources(
 
 
 def test_transform_odk_data_to_extracted_variables(
-    extracted_resources_odk: list[ExtractedResource],
+    odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     odk_variable_mapping: VariableMapping,
 ) -> None:
     extracted_variables = transform_odk_data_to_extracted_variables(
-        extracted_resources_odk,
+        odk_extracted_resources,
         odk_raw_data,
         extracted_primary_sources["odk"],
         odk_variable_mapping,

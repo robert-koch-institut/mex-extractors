@@ -24,7 +24,7 @@ def test_update_actor_references_where_needed(merged_activity: MergedActivity) -
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
         ],
-        fallback_contact_identifiers=[
+        publisher_fallback_contact_identifiers=[
             MergedContactPointIdentifier("thisIsTheFallbackId")
         ],
     )

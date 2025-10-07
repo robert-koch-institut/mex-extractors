@@ -11,7 +11,7 @@ from mex.extractors.publisher.fields import (
 def update_actor_references_where_needed(
     item: AnyMergedModel,
     allowed_actors: Collection[AnyMergedIdentifier],
-    fallback_contact_identifiers: list[MergedContactPointIdentifier],
+    publisher_fallback_contact_identifiers: list[MergedContactPointIdentifier],
 ) -> None:
     """Update references to actors, where needed.
 
@@ -33,7 +33,7 @@ def update_actor_references_where_needed(
                 if identifier in allowed_actors
             ]
             if not identifiers and "MergedContactPoint" in ref_types:
-                identifiers = fallback_contact_identifiers
+                identifiers = publisher_fallback_contact_identifiers
             if not identifiers and item.model_fields[field].is_required():
                 logger.error(
                     "%s(identifier='%s') has no valid references "

@@ -38,7 +38,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="international_projects", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_international_projects(
+def international_projects_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return international projects primary source."""
@@ -51,11 +51,11 @@ def extracted_primary_source_international_projects(
 
 @asset(group_name="international_projects")
 def international_projects_sources(
-    extracted_primary_source_international_projects: ExtractedPrimarySource,
+    international_projects_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[InternationalProjectsSource]:
     """Extract from international project sources."""
     return filter_by_global_rules(
-        extracted_primary_source_international_projects.stableTargetId,
+        international_projects_extracted_primary_source.stableTargetId,
         extract_international_projects_sources(),
     )
 
@@ -104,9 +104,9 @@ def international_projects_partner_organization_ids_by_query(
 
 
 @asset(group_name="international_projects")
-def extracted_international_projects_activities(  # noqa: PLR0913
+def international_projects_extracted_activities(  # noqa: PLR0913
     international_projects_sources: list[InternationalProjectsSource],
-    extracted_primary_source_international_projects: ExtractedPrimarySource,
+    international_projects_extracted_primary_source: ExtractedPrimarySource,
     international_projects_person_ids_by_query: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     international_projects_funding_sources_ids_by_query: dict[
@@ -125,7 +125,7 @@ def extracted_international_projects_activities(  # noqa: PLR0913
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             activity,
-            extracted_primary_source_international_projects,
+            international_projects_extracted_primary_source,
             international_projects_person_ids_by_query,
             unit_stable_target_ids_by_synonym,
             international_projects_funding_sources_ids_by_query,

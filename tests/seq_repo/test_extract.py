@@ -57,10 +57,10 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, extracted_primary_source_seq_repo
+        seq_repo_sources, seq_repo_extracted_primary_source
     )
     project_coordinators = list(
         extract_source_project_coordinator(seq_repo_sources_dict)

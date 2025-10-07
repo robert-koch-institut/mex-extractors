@@ -46,7 +46,7 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_open_data_organizations = {
+    open_data_organizations = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
     }
 
@@ -54,7 +54,7 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
         mocked_open_data_creator_with_processed_affiliation,
         extracted_primary_sources["open-data"],
         extracted_organization_rki,
-        extracted_open_data_organizations,
+        open_data_organizations,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
@@ -70,7 +70,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_open_data_organizations = {
+    open_data_organizations = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354),
         "RKI": extracted_organization_rki.stableTargetId,
     }
@@ -78,7 +78,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
         mocked_open_data_creator_with_affiliation_to_ignore,
         extracted_primary_sources["open-data"],
         extracted_organization_rki,
-        extracted_open_data_organizations,
+        open_data_organizations,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
@@ -126,7 +126,7 @@ def test_transform_open_data_persons(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_open_data_organizations = {
+    open_data_organizations = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
     }
     results = transform_open_data_persons(
@@ -135,7 +135,7 @@ def test_transform_open_data_persons(
         extracted_primary_sources["open-data"],
         mocked_extracted_organizational_units,
         extracted_organization_rki,
-        extracted_open_data_organizations,
+        open_data_organizations,
     )
 
     assert results == [

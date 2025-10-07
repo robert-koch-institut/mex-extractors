@@ -31,18 +31,18 @@ from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture(autouse=True)
-def extracted_primary_source_seq_repo() -> ExtractedPrimarySource:
+def seq_repo_extracted_primary_source() -> ExtractedPrimarySource:
     seed_primary_sources = extract_seed_primary_sources()
     extracted_primary_sources = (
         transform_seed_primary_sources_to_extracted_primary_sources(
             seed_primary_sources
         )
     )
-    (extracted_primary_source_seq_repo,) = get_primary_sources_by_name(
+    (seq_repo_extracted_primary_source,) = get_primary_sources_by_name(
         extracted_primary_sources,
         "seq-repo",
     )
-    return extracted_primary_source_seq_repo
+    return seq_repo_extracted_primary_source
 
 
 @pytest.fixture
@@ -76,10 +76,10 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 @pytest.fixture
 def seq_repo_latest_sources(
     seq_repo_sources: list[SeqRepoSource],
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, SeqRepoSource]:
     return filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, extracted_primary_source_seq_repo
+        seq_repo_sources, seq_repo_extracted_primary_source
     )
 
 
@@ -106,25 +106,25 @@ def seq_repo_resource(settings: Settings) -> ResourceMapping:
 
 @pytest.fixture
 def extracted_mex_access_platform(
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
         seq_repo_access_platform,
         unit_stable_target_ids_by_synonym,
-        extracted_primary_source_seq_repo,
+        seq_repo_extracted_primary_source,
     )
 
 
 @pytest.fixture
 def extracted_mex_activities_dict(  # noqa: PLR0913
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    project_coordinators_merged_ids_by_query_string: dict[
+    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
         str, list[MergedPersonIdentifier]
     ],
 ) -> dict[str, ExtractedActivity]:
@@ -133,8 +133,8 @@ def extracted_mex_activities_dict(  # noqa: PLR0913
         seq_repo_activity,
         seq_repo_source_resolved_project_coordinators,
         unit_stable_target_ids_by_synonym,
-        project_coordinators_merged_ids_by_query_string,
-        extracted_primary_source_seq_repo,
+        seq_repo_project_coordinators_merged_ids_by_query_string,
+        seq_repo_extracted_primary_source,
     )
     return {
         activity.identifierInPrimarySource: activity
@@ -182,7 +182,7 @@ def seq_repo_source_resolved_project_coordinators() -> list[LDAPPersonWithQuery]
 
 
 @pytest.fixture
-def project_coordinators_merged_ids_by_query_string() -> dict[
+def seq_repo_project_coordinators_merged_ids_by_query_string() -> dict[
     str, list[MergedPersonIdentifier]
 ]:
     """Get project coordinators merged ids."""

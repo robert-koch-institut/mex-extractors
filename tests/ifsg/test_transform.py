@@ -87,14 +87,14 @@ def test_transform_resource_parent_to_mex_resource(
 
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
-    extracted_ifsg_resource_parent: ExtractedResource,
+    ifsg_extracted_resource_parent: ExtractedResource,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
             resource_state,
-            extracted_ifsg_resource_parent,
+            ifsg_extracted_resource_parent,
             extracted_primary_sources["ifsg"],
             unit_stable_target_ids,
         )
@@ -123,7 +123,7 @@ def test_transform_resource_state_to_mex_resource(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "isPartOf": [str(extracted_ifsg_resource_parent.stableTargetId)],
+        "isPartOf": [str(ifsg_extracted_resource_parent.stableTargetId)],
         "keyword": [
             {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
         ],
@@ -157,8 +157,8 @@ def test_get_instrument_tool_or_apparatus(
 
 def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     resource_diseases: list[ResourceMapping],
-    extracted_ifsg_resource_parent: ExtractedResource,
-    extracted_ifsg_resource_state: list[ExtractedResource],
+    ifsg_extracted_resource_parent: ExtractedResource,
+    ifsg_extracted_resource_state: list[ExtractedResource],
     meta_type: list[MetaType],
     meta_disease: list[MetaDisease],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
@@ -168,8 +168,8 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     extracted_resource = [
         transform_resource_disease_to_mex_resource(
             resource_disease,
-            extracted_ifsg_resource_parent,
-            extracted_ifsg_resource_state,
+            ifsg_extracted_resource_parent,
+            ifsg_extracted_resource_state,
             meta_disease,
             meta_type,
             [101, 102, 103],
@@ -206,9 +206,9 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             {"value": "Falldefinition C", "language": TextLanguage.DE},
         ],
         "isPartOf": [
-            str(extracted_ifsg_resource_parent.stableTargetId),
-            str(extracted_ifsg_resource_state[0].stableTargetId),
-            str(extracted_ifsg_resource_state[1].stableTargetId),
+            str(ifsg_extracted_resource_parent.stableTargetId),
+            str(ifsg_extracted_resource_state[0].stableTargetId),
+            str(ifsg_extracted_resource_state[1].stableTargetId),
         ],
         "keyword": [
             {"value": "virus"},
@@ -247,13 +247,13 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
 
 def test_transform_ifsg_data_to_mex_variable_group(
     ifsg_variable_group: VariableGroupMapping,
-    extracted_ifsg_resource_disease: list[ExtractedResource],
+    ifsg_extracted_resource_disease: list[ExtractedResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     meta_field: list[MetaField],
 ) -> None:
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         ifsg_variable_group,
-        extracted_ifsg_resource_disease,
+        ifsg_extracted_resource_disease,
         extracted_primary_sources["ifsg"],
         [meta_field[0]],
         [101],
@@ -263,7 +263,7 @@ def test_transform_ifsg_data_to_mex_variable_group(
         "hadPrimarySource": extracted_primary_sources["ifsg"].stableTargetId,
         "identifierInPrimarySource": "101_Epi",
         "stableTargetId": Joker(),
-        "containedBy": [extracted_ifsg_resource_disease[0].stableTargetId],
+        "containedBy": [ifsg_extracted_resource_disease[0].stableTargetId],
         "label": [
             {"value": "Epidemiologische Informationen", "language": TextLanguage.DE}
         ],
@@ -273,8 +273,8 @@ def test_transform_ifsg_data_to_mex_variable_group(
 
 def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
     meta_field: list[MetaField],
-    extracted_ifsg_resource_disease: list[ExtractedResource],
-    extracted_ifsg_variable_group: list[ExtractedVariableGroup],
+    ifsg_extracted_resource_disease: list[ExtractedResource],
+    ifsg_extracted_variable_group: list[ExtractedVariableGroup],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
@@ -284,8 +284,8 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
 ) -> None:
     extracted_variable = transform_ifsg_data_to_mex_variables(
         meta_field,
-        extracted_ifsg_resource_disease,
-        extracted_ifsg_variable_group,
+        ifsg_extracted_resource_disease,
+        ifsg_extracted_variable_group,
         extracted_primary_sources["ifsg"],
         meta_catalogue2item,
         meta_catalogue2item2schema,
@@ -300,12 +300,12 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
         "dataType": "DummyType",
         "identifierInPrimarySource": "variable_1_10",
         "stableTargetId": Joker(),
-        "belongsTo": [str(extracted_ifsg_variable_group[0].stableTargetId)],
+        "belongsTo": [str(ifsg_extracted_variable_group[0].stableTargetId)],
         "description": [{"value": "lokaler"}],
         "label": [
             {"value": "Id der Version (berechneter Wert)", "language": TextLanguage.DE}
         ],
-        "usedIn": [str(extracted_ifsg_resource_disease[0].stableTargetId)],
+        "usedIn": [str(ifsg_extracted_resource_disease[0].stableTargetId)],
         "valueSet": ["NullItem", "NullItem2"],
     }
     assert extracted_variable[0].model_dump(exclude_defaults=True) == expected

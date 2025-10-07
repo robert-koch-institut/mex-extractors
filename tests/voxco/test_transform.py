@@ -21,32 +21,32 @@ from mex.extractors.voxco.transform import (
 
 def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0913
     voxco_resource_mappings: list[ResourceMapping],
-    organization_stable_target_id_by_query_voxco: dict[
+    voxco_organization_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
     ],
-    extracted_mex_persons_voxco: list[ExtractedPerson],
+    voxco_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_international_projects_activities: list[ExtractedActivity],
+    international_projects_extracted_activities: list[ExtractedActivity],
 ) -> None:
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
         voxco_resource_mappings,
-        organization_stable_target_id_by_query_voxco,
-        extracted_mex_persons_voxco,
+        voxco_organization_stable_target_id_by_query,
+        voxco_persons,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         extracted_primary_sources["voxco"],
-        extracted_international_projects_activities,
+        international_projects_extracted_activities,
     )
     expected = {
         "hadPrimarySource": str(extracted_primary_sources["voxco"].stableTargetId),
         "identifierInPrimarySource": "voxco-plus",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "externalPartner": [
-            str(organization_stable_target_id_by_query_voxco["Robert Koch-Institut"])
+            str(voxco_organization_stable_target_id_by_query["Robert Koch-Institut"])
         ],
-        "contact": [str(extracted_mex_persons_voxco[0].stableTargetId)],
+        "contact": [str(voxco_persons[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
         "unitInCharge": [str(unit_stable_target_ids_by_synonym["C1"])],
@@ -81,7 +81,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
         "identifier": Joker(),
         "stableTargetId": Joker(),
         "wasGeneratedBy": str(
-            extracted_international_projects_activities[0].stableTargetId
+            international_projects_extracted_activities[0].stableTargetId
         ),
     }
 
@@ -92,18 +92,18 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
 
 
 def test_transform_voxco_variable_mappings_to_extracted_variables(
-    extracted_voxco_resources: dict[str, ExtractedResource],
+    voxco_resources: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
-        extracted_voxco_resources, voxco_variables, extracted_primary_sources["voxco"]
+        voxco_resources, voxco_variables, extracted_primary_sources["voxco"]
     )
     expected = {
         "hadPrimarySource": extracted_primary_sources["voxco"].stableTargetId,
         "identifierInPrimarySource": "50614",
         "label": [{"value": "Monat"}],
-        "usedIn": [extracted_voxco_resources["voxco-plus"].stableTargetId],
+        "usedIn": [voxco_resources["voxco-plus"].stableTargetId],
         "dataType": "Text",
         "description": [{"value": "Discrete", "language": TextLanguage.DE}],
         "valueSet": ["Januar", "Februar"],

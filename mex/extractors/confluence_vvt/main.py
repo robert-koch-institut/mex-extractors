@@ -37,21 +37,21 @@ from mex.extractors.utils import load_yaml
 
 @asset(group_name="confluence_vvt")
 def confluence_vvt_pages(
-    extracted_primary_source_confluence_vvt: ExtractedPrimarySource,
+    confluence_vvt_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ConfluenceVvtPage]:
     """Extract Confluence VVT sources."""
     page_ids = fetch_all_vvt_pages_ids()
     unfiltered_activities = get_page_data_by_id(page_ids)
     return list(
         filter_by_global_rules(
-            extracted_primary_source_confluence_vvt.stableTargetId,
+            confluence_vvt_extracted_primary_source.stableTargetId,
             unfiltered_activities,
         )
     )
 
 
 @asset(group_name="confluence_vvt", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_confluence_vvt(
+def confluence_vvt_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return Confluence VVT primary source."""
@@ -70,7 +70,7 @@ def confluence_vvt_activity_mapping() -> dict[str, Any]:
 
 
 @asset(group_name="confluence_vvt")
-def extracted_confluence_vvt_person_ids_by_query_string(
+def confluence_vvt_person_ids_by_query_string(
     confluence_vvt_pages: list[ConfluenceVvtPage],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
@@ -109,10 +109,8 @@ def extracted_confluence_vvt_person_ids_by_query_string(
 @asset(group_name="confluence_vvt")
 def extracted_confluence_vvt_activities(
     confluence_vvt_pages: list[ConfluenceVvtPage],
-    extracted_confluence_vvt_person_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
-    extracted_primary_source_confluence_vvt: ExtractedPrimarySource,
+    confluence_vvt_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    confluence_vvt_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     confluence_vvt_activity_mapping: dict[str, Any],
 ) -> list[ExtractedActivity]:
@@ -120,9 +118,9 @@ def extracted_confluence_vvt_activities(
     mex_activities = list(
         transform_confluence_vvt_activities_to_extracted_activities(
             confluence_vvt_pages,
-            extracted_primary_source_confluence_vvt,
+            confluence_vvt_extracted_primary_source,
             ActivityMapping.model_validate(confluence_vvt_activity_mapping),
-            extracted_confluence_vvt_person_ids_by_query_string,
+            confluence_vvt_person_ids_by_query_string,
             unit_stable_target_ids_by_synonym,
         )
     )
