@@ -1,7 +1,11 @@
 from collections.abc import Collection
 
 from mex.common.logging import logger
-from mex.common.models import AnyMergedModel, ItemsContainer, MergedPerson
+from mex.common.models import (
+    AnyMergedModel,
+    ItemsContainer,
+    MergedPerson,
+)
 from mex.common.types import (
     AnyMergedIdentifier,
     MergedContactPointIdentifier,
@@ -66,29 +70,38 @@ def update_actor_references_where_needed(
     for field, ref_types in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[
         item.entityType
     ].items():
-        if "MergedPerson" in ref_types:
-            seen = set()
-            identifiers = []
-            for identifier in getattr(item, field):
-                if identifier in allowed_actors and identifier not in seen:
-                    seen.add(identifier)
-                    identifiers.append(identifier)
-                elif "MergedOrganizationalUnit" in ref_types:
-                    unit_ids = fallback_unit_identifiers_by_person.get(identifier, [])
-                    for u_id in unit_ids:
-                        if u_id in allowed_actors and u_id not in seen:
-                            seen.add(u_id)
-                            identifiers.append(u_id)
+        if "MergedPerson" not in ref_types:
+            continue
 
-            if not identifiers and "MergedContactPoint" in ref_types:
-                identifiers = fallback_contact_identifiers
-            if not identifiers and item.model_fields[field].is_required():
-                logger.error(
-                    "%s(identifier='%s') has no valid references "
-                    "for required field %s, publishing broken references",
-                    item.entityType,
-                    item.identifier,
-                    field,
-                )
-            else:
-                setattr(item, field, identifiers)
+            # keep allowed actors (contact points and units)
+        allowed_field_identifiers = [
+            identifier
+            for identifier in getattr(item, field)
+            if identifier in allowed_actors
+        ]
+
+        # replace un-allowed persons with their unit id if unit has email
+        replacement_field_identifiers: set[MergedOrganizationalUnitIdentifier] = set()
+        if "MergedOrganizationalUnit" in ref_types:
+            replacement_field_identifiers = {
+                unit_id
+                for identifier in getattr(item, field)
+                if identifier not in allowed_actors
+                for unit_id in fallback_unit_identifiers_by_person.get(identifier, [])
+                if unit_id in allowed_actors
+            }
+
+        identifiers = allowed_field_identifiers + sorted(replacement_field_identifiers)
+        # if there is still no allowed actor: set to fallback contact point, if possible
+        if not identifiers and "MergedContactPoint" in ref_types:
+            identifiers = fallback_contact_identifiers
+        if not identifiers and item.model_fields[field].is_required():
+            logger.error(
+                "%s(identifier='%s') has no valid references "
+                "for required field %s, publishing broken references",
+                item.entityType,
+                item.identifier,
+                field,
+            )
+        else:
+            setattr(item, field, identifiers)
