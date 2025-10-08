@@ -96,16 +96,18 @@ def test_lookup_person_in_ldap_and_transform(
     mocked_units_by_identifier_in_primary_source: dict[
         str, ExtractedOrganizationalUnit
     ],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     results = lookup_person_in_ldap_and_transform(
         mocked_open_data_creator_with_affiliation_to_ignore,
         extracted_primary_sources["ldap"],
         mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
         identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
-        affiliation=[],
+        affiliation=[extracted_organization_rki.stableTargetId],
         email=["test_person@email.de"],
         familyName=["Resolved"],
         fullName=["Resolved, Roland"],
@@ -140,7 +142,7 @@ def test_transform_open_data_persons(
         ExtractedPerson(
             hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
             identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
-            affiliation=[],
+            affiliation=[extracted_organization_rki.stableTargetId],
             email=["test_person@email.de"],
             familyName=["Resolved"],
             fullName=["Resolved, Roland"],

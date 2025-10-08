@@ -2,6 +2,7 @@ import pytest
 
 from mex.common.models import (
     AccessPlatformMapping,
+    ExtractedAccessPlatform,
     ExtractedContactPoint,
     ResourceMapping,
     VariableMapping,
@@ -70,3 +71,25 @@ def igs_schemas() -> dict[str, IGSSchema]:
 @pytest.fixture
 def igs_info() -> IGSInfo:
     return IGSInfo(title="test_title", version="test_version")
+
+
+@pytest.fixture
+def extracted_access_platform() -> ExtractedAccessPlatform:
+    return ExtractedAccessPlatform.model_validate(
+        {
+            "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+            "identifierInPrimarySource": "https://igs",
+            "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
+            "endpointDescription": {
+                "language": "en",
+                "title": "test title",
+                "url": "https://rki.de:4200/api",
+            },
+            "endpointType": "https://mex.rki.de/item/api-type-1",
+            "endpointURL": {"url": "https://rki.de:4100"},
+            "contact": ["cGyT8sVLtQTF7vK24LoOk6"],
+            "description": [{"value": "test description", "language": "en"}],
+            "landingPage": [{"url": "https://rki.de:4100/docs"}],
+            "unitInCharge": ["bFQoRhcVH5DHU8"],
+        }
+    )

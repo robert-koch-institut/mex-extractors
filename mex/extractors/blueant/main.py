@@ -6,6 +6,7 @@ from mex.common.ldap.transform import transform_ldap_persons_to_extracted_person
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -63,6 +64,7 @@ def blueant_project_leaders_by_employee_id(
     blueant_sources: list[BlueAntSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to mex-persons with stable target ID and group them by employee ID."""  # noqa: E501
     ldap_project_leaders = list(extract_blueant_project_leaders(blueant_sources))
@@ -70,6 +72,7 @@ def blueant_project_leaders_by_employee_id(
         ldap_project_leaders,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_project_leaders)
     return get_merged_ids_by_employee_ids(
