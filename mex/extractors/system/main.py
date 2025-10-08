@@ -18,21 +18,34 @@ def system_fetch_old_dagster_run_ids() -> list[str]:
         days=settings.system.max_run_age_in_days
     )
 
-    # Get old runs
-    old_run_records = instance.get_run_records(
-        filters=RunsFilter(created_before=cutoff_date),
-        limit=100,  # Process in batches
-        ascending=True,
-    )
+    collected_old_run_records: list[str] = []
+    cursor = None
 
-    return [record.dagster_run.run_id for record in old_run_records]
+    while True:
+        # Get old runs
+        old_run_records = instance.get_run_records(
+            filters=RunsFilter(created_before=cutoff_date),
+            limit=100,  # Process in batches
+            ascending=True,  # start with oldest
+            cursor=cursor,
+        )
+
+        if not old_run_records:
+            break
+
+        collected_old_run_records.extend(r.dagster_run.run_id for r in old_run_records)
+
+        # Update cursor to continue pagination
+        cursor = old_run_records[-1].dagster_run.run_id
+
+    return collected_old_run_records
 
 
 @asset(group_name="system_clean_up")
 def system_clean_up_dagster_files(
     system_fetch_old_dagster_run_ids: list[str],
 ) -> list[str]:
-    """Clean up dagster files of old runs and return the id of the deleted files."""
+    """Clean up dagster files of old runs and return the id of the deleted run files."""
     instance = DagsterInstance.get()
     storage_path = Path(instance.storage_directory())
 
@@ -40,8 +53,12 @@ def system_clean_up_dagster_files(
 
     for run_id in system_fetch_old_dagster_run_ids:
         run_storage_path = storage_path / run_id
-        shutil.rmtree(run_storage_path)
-        deleted_file_ids.append(run_id)
+        try:
+            shutil.rmtree(run_storage_path)
+            deleted_file_ids.append(run_id)
+        except FileNotFoundError:
+            logger.warning("File not found for: %s", run_id)
+            continue
 
     logger.info(
         "Deleted %s folders of old runs from %s.",
@@ -53,7 +70,7 @@ def system_clean_up_dagster_files(
 
 
 @asset(group_name="system_clean_up")
-def system_clean_up_dagster_runs(system_clean_up_dagster_files: list[str]) -> None:
+def system_clean_up_dagster_runs(system_clean_up_dagster_files: list[str]) -> list[str]:
     """Take ids of deleted dagster files and clean up the according dagster runs."""
     instance = DagsterInstance.get()
 
@@ -63,4 +80,6 @@ def system_clean_up_dagster_runs(system_clean_up_dagster_files: list[str]) -> No
         instance.delete_run(run_id)
         deleted_run_ids.append(run_id)
 
-    logger.info("Deleted %s runs", len(deleted_run_ids))
+    logger.info("Deleted %s old runs", len(deleted_run_ids))
+
+    return deleted_run_ids
