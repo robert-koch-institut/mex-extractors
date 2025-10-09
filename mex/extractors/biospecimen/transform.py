@@ -28,7 +28,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
-    synopse_activities: Iterable[ExtractedActivity],
+    synopse_extracted_activities: Iterable[ExtractedActivity],
     resource_mapping: ResourceMapping,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> Generator[ExtractedResource, None, None]:
@@ -39,7 +39,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         biospecimen_extracted_primary_source: Extracted platform for Biospecimen
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         mex_persons: Iterable of ExtractedPersons
-        synopse_activities: extracted synopse activities
+        synopse_extracted_activities: extracted synopse activities
         extracted_organization_rki: extracted organization
         resource_mapping: resource mapping model with default values
         extracted_organizations: extracted organizations by label
@@ -52,7 +52,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     }
     synopse_stable_target_id_by_studien_id = {
         activity.identifierInPrimarySource: activity.stableTargetId
-        for activity in synopse_activities
+        for activity in synopse_extracted_activities
     }
     access_restriction_by_zugriffsbeschraenkung = {
         rule.forValues[0]: rule.setValues

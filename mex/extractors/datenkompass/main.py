@@ -59,7 +59,7 @@ def datenkompass_merged_organizational_units_by_id() -> dict[
 
 
 @asset(group_name="datenkompass")
-def datenkompass_filtered_merged_organizational_unit_ids(
+def datenkompass_filtered_merged_organizational_units_by_id(
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -101,7 +101,7 @@ def datenkompass_filtered_merged_organization_ids() -> set[
 
 
 @asset(group_name="datenkompass")
-def datenkompass_person_name_by_id() -> dict[MergedPersonIdentifier, str]:
+def datenkompass_person_str_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get person name as dictionary by id."""
     return {
         person.identifier: (
@@ -198,8 +198,8 @@ def datenkompass_merged_bibliographic_resources(
 
 
 @asset(group_name="datenkompass")
-def datenkompass_merged_resources_by_primary_source(
-    datenkompass_filtered_merged_organizational_unit_ids: list[str],
+def datenkompass_merged_resources_by_primary_source_str(
+    datenkompass_filtered_merged_organizational_units_by_id: list[str],
     datenkompass_resource_mapping: DatenkompassMapping,
 ) -> dict[str, list[MergedResource]]:
     """Get merged resources as dictionary."""
@@ -231,7 +231,7 @@ def datenkompass_merged_resources_by_primary_source(
         "list[MergedResource]",
         get_merged_items(
             entity_type=entity_type,
-            referenced_identifier=datenkompass_filtered_merged_organizational_unit_ids,
+            referenced_identifier=datenkompass_filtered_merged_organizational_units_by_id,
             reference_field="unitInCharge",
         ),
     )
@@ -267,21 +267,23 @@ def datenkompass_bibliographic_resources(
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    datenkompass_person_name_by_id: dict[MergedPersonIdentifier, str],
+    datenkompass_person_str_by_id: dict[MergedPersonIdentifier, str],
     datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         datenkompass_merged_bibliographic_resources,
         datenkompass_merged_organizational_units_by_id,
-        datenkompass_person_name_by_id,
+        datenkompass_person_str_by_id,
         datenkompass_bibliographic_resource_mapping,
     )
 
 
 @asset(group_name="datenkompass")
 def datenkompass_resources(
-    datenkompass_merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    datenkompass_merged_resources_by_primary_source_str: dict[
+        str, list[MergedResource]
+    ],
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
@@ -292,7 +294,7 @@ def datenkompass_resources(
 ) -> list[DatenkompassResource]:
     """Transform resources to datenkompass items."""
     return transform_resources(
-        datenkompass_merged_resources_by_primary_source,
+        datenkompass_merged_resources_by_primary_source_str,
         datenkompass_merged_organizational_units_by_id,
         datenkompass_merged_contact_points_by_id,
         datenkompass_resource_mapping,

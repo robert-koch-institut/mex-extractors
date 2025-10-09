@@ -265,7 +265,7 @@ def ifsg_extracted_resource_parent() -> ExtractedResource:
 
 
 @pytest.fixture
-def ifsg_extracted_resource_state() -> list[ExtractedResource]:
+def ifsg_extracted_resources_state() -> list[ExtractedResource]:
     return [
         ExtractedResource(
             hadPrimarySource="dU8TU9RAX8EsYCFIde5NUu",
@@ -415,7 +415,7 @@ def ifsg_extracted_resource_state() -> list[ExtractedResource]:
 
 
 @pytest.fixture
-def ifsg_extracted_resource_disease() -> list[ExtractedResource]:
+def ifsg_extracted_resources_disease() -> list[ExtractedResource]:
     return [
         ExtractedResource(
             hadPrimarySource="fU5a2ZiWXu9ItMX7gYuuPv",
@@ -468,7 +468,7 @@ def ifsg_extracted_resource_disease() -> list[ExtractedResource]:
 
 
 @pytest.fixture
-def ifsg_extracted_variable_group() -> list[ExtractedVariableGroup]:
+def ifsg_extracted_variable_groups() -> list[ExtractedVariableGroup]:
     return [
         ExtractedVariableGroup(
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(23),

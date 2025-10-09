@@ -142,7 +142,7 @@ def get_doi(
 def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_records: list[EndnoteRecord],
     endnote_bib_resource_mapping: BibliographicResourceMapping,
-    endnote_extracted_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedBibliographicResource]:
@@ -151,7 +151,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     Args:
         endnote_records: list of endnote record
         endnote_bib_resource_mapping: bibliographical resource mapping
-        endnote_extracted_persons_by_person_string: extracted endnote persons by name
+        endnote_extracted_persons_by_person_str: extracted endnote persons by name
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         endnote_extracted_primary_source: primary source for endnote
 
@@ -260,19 +260,19 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
             else []
         )
         creator = [
-            endnote_extracted_persons_by_person_string[author].stableTargetId
+            endnote_extracted_persons_by_person_str[author].stableTargetId
             for author in record.authors
-            if author in endnote_extracted_persons_by_person_string
+            if author in endnote_extracted_persons_by_person_str
         ]
         if len(creator) == 0:
             continue
         doi = get_doi(record.electronic_resource_num, endnote_bib_resource_mapping)
         editor = [
-            endnote_extracted_persons_by_person_string[author].stableTargetId
+            endnote_extracted_persons_by_person_str[author].stableTargetId
             for author in record.secondary_authors
         ]
         editor_of_series = [
-            endnote_extracted_persons_by_person_string[author].stableTargetId
+            endnote_extracted_persons_by_person_str[author].stableTargetId
             for author in record.tertiary_authors
         ]
         issued: TemporalEntity | None = None

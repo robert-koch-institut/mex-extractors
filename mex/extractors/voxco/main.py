@@ -50,7 +50,7 @@ def voxco_extracted_primary_source(
 
 
 @asset(group_name="voxco")
-def voxco_variables() -> dict[str, list[VoxcoVariable]]:
+def voxco_variables_by_str() -> dict[str, list[VoxcoVariable]]:
     """Extract voxco variables by json file names."""
     return extract_voxco_variables()
 
@@ -66,7 +66,7 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
 
 
 @asset(group_name="voxco")
-def voxco_organization_stable_target_id_by_query(
+def voxco_merged_organization_ids_by_query_string(
     voxco_resource_mappings: list[dict[str, Any]],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract and load voxco organizations and group them by query."""
@@ -76,7 +76,7 @@ def voxco_organization_stable_target_id_by_query(
 
 
 @asset(group_name="voxco")
-def voxco_persons(
+def voxco_extracted_persons(
     voxco_resource_mappings: list[dict[str, Any]],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -97,12 +97,12 @@ def voxco_persons(
 
 
 @asset(group_name="voxco")
-def voxco_resources(  # noqa: PLR0913
+def voxco_extracted_resources_by_str(  # noqa: PLR0913
     voxco_resource_mappings: list[dict[str, Any]],
-    voxco_organization_stable_target_id_by_query: dict[
+    voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_persons: list[ExtractedPerson],
+    voxco_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     voxco_extracted_primary_source: ExtractedPrimarySource,
@@ -111,8 +111,8 @@ def voxco_resources(  # noqa: PLR0913
     """Transform mex resources, load to them to the sinks and return."""
     mex_resources = transform_voxco_resource_mappings_to_extracted_resources(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings],
-        voxco_organization_stable_target_id_by_query,
-        voxco_persons,
+        voxco_merged_organization_ids_by_query_string,
+        voxco_extracted_persons,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         voxco_extracted_primary_source,
@@ -125,13 +125,15 @@ def voxco_resources(  # noqa: PLR0913
 
 @asset(group_name="voxco")
 def voxco_extracted_variables(
-    voxco_resources: dict[str, ExtractedResource],
-    voxco_variables: dict[str, list[VoxcoVariable]],
+    voxco_extracted_resources_by_str: dict[str, ExtractedResource],
+    voxco_variables_by_str: dict[str, list[VoxcoVariable]],
     voxco_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform voxco variables and load them to the sinks."""
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
-        voxco_resources, voxco_variables, voxco_extracted_primary_source
+        voxco_extracted_resources_by_str,
+        voxco_variables_by_str,
+        voxco_extracted_primary_source,
     )
     load(extracted_variables)
     return extracted_variables

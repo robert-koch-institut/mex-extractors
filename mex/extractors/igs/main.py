@@ -79,7 +79,7 @@ def igs_access_platform_mapping() -> dict[str, Any]:
 
 
 @asset(group_name="igs")
-def igs_extracted_contact_points_by_mail(
+def igs_extracted_contact_points_by_mail_str(
     igs_extracted_primary_source: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
     igs_access_platform_mapping: dict[str, Any],
@@ -104,7 +104,7 @@ def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
     igs_info: IGSInfo,
     igs_extracted_primary_source: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -114,7 +114,7 @@ def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
         igs_info,
         igs_extracted_primary_source,
         ResourceMapping.model_validate(igs_resource_mapping),
-        igs_extracted_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
         igs_extracted_access_platform,
         extracted_organization_rki,
@@ -130,14 +130,14 @@ def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
 def igs_extracted_access_platform(
     igs_extracted_primary_source: ExtractedPrimarySource,
     igs_access_platform_mapping: dict[str, Any],
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
     extracted_access_platform = transform_igs_access_platform(
         igs_extracted_primary_source,
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
-        igs_extracted_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
     )
     load([extracted_access_platform])

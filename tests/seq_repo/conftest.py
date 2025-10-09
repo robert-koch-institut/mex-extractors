@@ -122,18 +122,16 @@ def extracted_mex_activities_dict(  # noqa: PLR0913
     seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_latest_sources,
         seq_repo_activity,
-        seq_repo_source_resolved_project_coordinators,
+        seq_repo_ldap_persons_with_query,
         unit_stable_target_ids_by_synonym,
-        seq_repo_project_coordinators_merged_ids_by_query_string,
+        seq_repo_merged_person_ids_by_query_string,
         seq_repo_extracted_primary_source,
     )
     return {
@@ -143,7 +141,7 @@ def extracted_mex_activities_dict(  # noqa: PLR0913
 
 
 @pytest.fixture
-def seq_repo_source_resolved_project_coordinators() -> list[LDAPPersonWithQuery]:
+def seq_repo_ldap_persons_with_query() -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
     return [
         LDAPPersonWithQuery(
@@ -182,7 +180,7 @@ def seq_repo_source_resolved_project_coordinators() -> list[LDAPPersonWithQuery]
 
 
 @pytest.fixture
-def seq_repo_project_coordinators_merged_ids_by_query_string() -> dict[
+def seq_repo_merged_person_ids_by_query_string() -> dict[
     str, list[MergedPersonIdentifier]
 ]:
     """Get project coordinators merged ids."""

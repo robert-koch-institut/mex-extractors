@@ -181,7 +181,7 @@ def ifsg_extracted_resource_parent(
 
 
 @asset(group_name="ifsg")
-def ifsg_extracted_resource_state(
+def ifsg_extracted_resources_state(
     ifsg_resource_state_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
     ifsg_extracted_primary_sources: ExtractedPrimarySource,
@@ -200,10 +200,10 @@ def ifsg_extracted_resource_state(
 
 
 @asset(group_name="ifsg")
-def ifsg_extracted_resource_disease(  # noqa: PLR0913
+def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_resource_disease_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
-    ifsg_extracted_resource_state: list[ExtractedResource],
+    ifsg_extracted_resources_state: list[ExtractedResource],
     ifsg_meta_disease: list[MetaDisease],
     ifsg_meta_type: list[MetaType],
     id_types_of_diseases: list[int],
@@ -215,7 +215,7 @@ def ifsg_extracted_resource_disease(  # noqa: PLR0913
     mex_resource_disease = transform_resource_disease_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_disease_dict),
         ifsg_extracted_resource_parent,
-        ifsg_extracted_resource_state,
+        ifsg_extracted_resources_state,
         ifsg_meta_disease,
         ifsg_meta_type,
         id_types_of_diseases,
@@ -229,9 +229,9 @@ def ifsg_extracted_resource_disease(  # noqa: PLR0913
 
 
 @asset(group_name="ifsg")
-def ifsg_extracted_variable_group(
+def ifsg_extracted_variable_groups(
     ifsg_variable_group: dict[str, Any],
-    ifsg_extracted_resource_disease: list[ExtractedResource],
+    ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_primary_sources: ExtractedPrimarySource,
     ifsg_filtered_meta_fields: list[MetaField],
     id_types_of_diseases: list[int],
@@ -239,7 +239,7 @@ def ifsg_extracted_variable_group(
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         VariableGroupMapping.model_validate(ifsg_variable_group),
-        ifsg_extracted_resource_disease,
+        ifsg_extracted_resources_disease,
         ifsg_extracted_primary_sources,
         ifsg_filtered_meta_fields,
         id_types_of_diseases,
@@ -250,10 +250,10 @@ def ifsg_extracted_variable_group(
 
 
 @asset(group_name="ifsg")
-def ifsg_extracted_variable(  # noqa: PLR0913
+def ifsg_extracted_variables(  # noqa: PLR0913
     ifsg_filtered_variables: list[MetaField],
-    ifsg_extracted_resource_disease: list[ExtractedResource],
-    ifsg_extracted_variable_group: list[ExtractedVariableGroup],
+    ifsg_extracted_resources_disease: list[ExtractedResource],
+    ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
     ifsg_extracted_primary_sources: ExtractedPrimarySource,
     ifsg_meta_catalogue2item: list[MetaCatalogue2Item],
     ifsg_meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
@@ -264,8 +264,8 @@ def ifsg_extracted_variable(  # noqa: PLR0913
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
         ifsg_filtered_variables,
-        ifsg_extracted_resource_disease,
-        ifsg_extracted_variable_group,
+        ifsg_extracted_resources_disease,
+        ifsg_extracted_variable_groups,
         ifsg_extracted_primary_sources,
         ifsg_meta_catalogue2item,
         ifsg_meta_catalogue2item2schema,

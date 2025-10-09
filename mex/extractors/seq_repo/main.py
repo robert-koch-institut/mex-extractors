@@ -67,7 +67,7 @@ def seq_repo_latest_source(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_source_resolved_project_coordinators(
+def seq_repo_ldap_persons_with_query(
     seq_repo_latest_source: dict[str, SeqRepoSource],
 ) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
@@ -75,8 +75,8 @@ def seq_repo_source_resolved_project_coordinators(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_project_coordinators_merged_ids_by_query_string(
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+def seq_repo_merged_person_ids_by_query_string(
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
@@ -84,7 +84,7 @@ def seq_repo_project_coordinators_merged_ids_by_query_string(
     """Get project coordinators merged ids."""
     extracted_persons = list(
         transform_ldap_persons_with_query_to_extracted_persons(
-            seq_repo_source_resolved_project_coordinators,
+            seq_repo_ldap_persons_with_query,
             extracted_primary_source_ldap,
             extracted_organizational_units,
             extracted_organization_rki,
@@ -94,20 +94,18 @@ def seq_repo_project_coordinators_merged_ids_by_query_string(
     return {
         str(query_string): [MergedPersonIdentifier(id_) for id_ in merged_ids]
         for query_string, merged_ids in get_merged_ids_by_query_string(
-            seq_repo_source_resolved_project_coordinators, extracted_primary_source_ldap
+            seq_repo_ldap_persons_with_query, extracted_primary_source_ldap
         ).items()
     }
 
 
 @asset(group_name="seq_repo")
-def seq_repo_extracted_activity(
+def seq_repo_extracted_activities_by_str(
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_extracted_primary_source: ExtractedPrimarySource,
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
     settings = Settings.get()
@@ -118,9 +116,9 @@ def seq_repo_extracted_activity(
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_latest_source,
         activity,
-        seq_repo_source_resolved_project_coordinators,
+        seq_repo_ldap_persons_with_query,
         unit_stable_target_ids_by_synonym,
-        seq_repo_project_coordinators_merged_ids_by_query_string,
+        seq_repo_merged_person_ids_by_query_string,
         seq_repo_extracted_primary_source,
     )
     load(mex_activities)
@@ -149,15 +147,13 @@ def seq_repo_extracted_access_platform(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_resource(  # noqa: PLR0913
+def seq_repo_resources(  # noqa: PLR0913
     seq_repo_latest_source: dict[str, SeqRepoSource],
-    seq_repo_extracted_activity: dict[str, ExtractedActivity],
+    seq_repo_extracted_activities_by_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
     seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
@@ -169,12 +165,12 @@ def seq_repo_resource(  # noqa: PLR0913
 
     resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_latest_source,
-        seq_repo_extracted_activity,
+        seq_repo_extracted_activities_by_str,
         seq_repo_extracted_access_platform,
         resource,
-        seq_repo_source_resolved_project_coordinators,
+        seq_repo_ldap_persons_with_query,
         unit_stable_target_ids_by_synonym,
-        seq_repo_project_coordinators_merged_ids_by_query_string,
+        seq_repo_merged_person_ids_by_query_string,
         extracted_organization_rki,
         seq_repo_extracted_primary_source,
     )

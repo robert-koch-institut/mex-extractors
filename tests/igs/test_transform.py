@@ -29,7 +29,7 @@ from mex.extractors.igs.transform import (
 def test_transform_igs_info_to_resources(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_resource_mapping: ResourceMapping,
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -38,7 +38,7 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
         IGSInfo(title="title", version="-1"),
         extracted_primary_sources["igs"],
         igs_resource_mapping,
-        igs_extracted_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
         extracted_access_platform,
         extracted_organization_rki,
@@ -65,13 +65,13 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
 def test_transform_igs_access_platform(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_access_platform_mapping: AccessPlatformMapping,
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_access_platform = transform_igs_access_platform(
         extracted_primary_sources["igs"],
         igs_access_platform_mapping,
-        igs_extracted_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
     )
 

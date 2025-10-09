@@ -43,7 +43,7 @@ def endnote_records() -> list[EndnoteRecord]:
 
 
 @asset(group_name="endnote")
-def endnote_extracted_persons_by_person_string(
+def endnote_extracted_persons_by_person_str(
     endnote_records: list[EndnoteRecord],
     endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, ExtractedPerson]:
@@ -58,7 +58,7 @@ def endnote_extracted_persons_by_person_string(
 
 @asset(group_name="endnote")
 def endnote_extracted_consents(
-    endnote_extracted_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedConsent]:
     """Extract records from endnote."""
@@ -67,7 +67,7 @@ def endnote_extracted_consents(
         load_yaml(settings.endnote.mapping_path / "consent.yaml")
     )
     endnote_extracted_consents = extract_endnote_consents(
-        list(endnote_extracted_persons_by_person_string.values()),
+        list(endnote_extracted_persons_by_person_str.values()),
         endnote_extracted_primary_source,
         endnote_consent_mapping,
     )
@@ -76,9 +76,9 @@ def endnote_extracted_consents(
 
 
 @asset(group_name="endnote")
-def extracted_endnote_bibliographic_resources(
+def endnote_extracted_bibliographic_resources(
     endnote_records: list[EndnoteRecord],
-    endnote_extracted_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> Output[int]:
@@ -92,7 +92,7 @@ def extracted_endnote_bibliographic_resources(
     extracted_bibliographic_resource = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
-        endnote_extracted_persons_by_person_string,
+        endnote_extracted_persons_by_person_str,
         unit_stable_target_ids_by_synonym,
         endnote_extracted_primary_source,
     )

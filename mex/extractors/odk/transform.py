@@ -19,9 +19,7 @@ from mex.extractors.sinks import load
 def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    odk_external_partner_and_publisher_by_label: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
     odk_extracted_primary_source: ExtractedPrimarySource,
@@ -32,7 +30,7 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
         odk_resource_mappings: list of resource mapping models
         unit_stable_target_ids_by_synonym: dict of OrganizationalUnitIds
         international_projects_extracted_primary_source: primary source
-        odk_external_partner_and_publisher_by_label: dict of wikidata OrganizationIDs
+        odk_merged_organization_ids_by_str: dict of wikidata OrganizationIDs
         international_projects_extracted_activities: list of extracted international
                                                      projects activities
         extracted_primary_source_mex: mex primary source
@@ -82,10 +80,8 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
         )
         external_partner: list[MergedOrganizationIdentifier] = []
         for partner in resource.externalPartner[0].mappingRules[0].forValues or []:
-            if partner in odk_external_partner_and_publisher_by_label:
-                external_partner.append(
-                    odk_external_partner_and_publisher_by_label[partner]
-                )
+            if partner in odk_merged_organization_ids_by_str:
+                external_partner.append(odk_merged_organization_ids_by_str[partner])
             else:
                 organization = ExtractedOrganization(
                     identifierInPrimarySource=partner,
@@ -97,7 +93,7 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
         publisher = [
             partner
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
-            if (partner := odk_external_partner_and_publisher_by_label.get(name))  # type: ignore[assignment]
+            if (partner := odk_merged_organization_ids_by_str.get(name))  # type: ignore[assignment]
         ]
         resources_tuple[bool(resource.isPartOf)].append(
             ExtractedResource(

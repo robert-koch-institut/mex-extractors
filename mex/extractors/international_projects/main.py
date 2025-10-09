@@ -61,7 +61,7 @@ def international_projects_sources(
 
 
 @asset(group_name="international_projects")
-def international_projects_person_ids_by_query(
+def international_projects_person_ids_by_query_string(
     international_projects_sources: list[InternationalProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -84,7 +84,7 @@ def international_projects_person_ids_by_query(
 
 
 @asset(group_name="international_projects")
-def international_projects_funding_sources_ids_by_query(
+def international_projects_funding_sources_ids_by_query_string(
     international_projects_sources: list[InternationalProjectsSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract funding sources and return their stable target IDs by query string."""
@@ -94,7 +94,7 @@ def international_projects_funding_sources_ids_by_query(
 
 
 @asset(group_name="international_projects")
-def international_projects_partner_organization_ids_by_query(
+def international_projects_partner_organization_ids_by_query_string(
     international_projects_sources: list[InternationalProjectsSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
@@ -107,12 +107,14 @@ def international_projects_partner_organization_ids_by_query(
 def international_projects_extracted_activities(  # noqa: PLR0913
     international_projects_sources: list[InternationalProjectsSource],
     international_projects_extracted_primary_source: ExtractedPrimarySource,
-    international_projects_person_ids_by_query: dict[str, list[MergedPersonIdentifier]],
+    international_projects_person_ids_by_query_string: dict[
+        str, list[MergedPersonIdentifier]
+    ],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    international_projects_funding_sources_ids_by_query: dict[
+    international_projects_funding_sources_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    international_projects_partner_organization_ids_by_query: dict[
+    international_projects_partner_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
 ) -> list[ExtractedActivity]:
@@ -126,10 +128,10 @@ def international_projects_extracted_activities(  # noqa: PLR0913
             international_projects_sources,
             activity,
             international_projects_extracted_primary_source,
-            international_projects_person_ids_by_query,
+            international_projects_person_ids_by_query_string,
             unit_stable_target_ids_by_synonym,
-            international_projects_funding_sources_ids_by_query,
-            international_projects_partner_organization_ids_by_query,
+            international_projects_funding_sources_ids_by_query_string,
+            international_projects_partner_organization_ids_by_query_string,
         )
     )
     load(mex_sources)

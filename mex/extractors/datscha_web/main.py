@@ -88,7 +88,7 @@ def datscha_web_organization_ids_by_query_string(
 
 
 @asset(group_name="datscha_web")
-def datscha_web_activities(
+def datscha_web_extracted_activities(
     datscha_web_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     datscha_web_items: list[DatschaWebItem],

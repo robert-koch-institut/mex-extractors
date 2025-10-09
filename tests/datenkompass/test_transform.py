@@ -415,14 +415,14 @@ def test_transform_bibliographic_resource(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    datenkompass_person_name_by_id = {
+    datenkompass_person_str_by_id = {
         person.identifier: person.fullName[0] for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(
         mocked_merged_bibliographic_resource,
         merged_organizational_units_by_id,
-        datenkompass_person_name_by_id,
+        datenkompass_person_str_by_id,
         mocked_bibliographic_resource_mapping,
     )
 

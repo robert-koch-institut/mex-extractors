@@ -29,11 +29,9 @@ def test_transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
     seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> None:
     expected = {
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
@@ -61,9 +59,9 @@ def test_transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
         transform_seq_repo_activities_to_extracted_activities(
             seq_repo_latest_sources,
             seq_repo_activity,
-            seq_repo_source_resolved_project_coordinators,
+            seq_repo_ldap_persons_with_query,
             unit_stable_target_ids_by_synonym,
-            seq_repo_project_coordinators_merged_ids_by_query_string,
+            seq_repo_merged_person_ids_by_query_string,
             seq_repo_extracted_primary_source,
         )
     )
@@ -79,11 +77,9 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     extracted_mex_activities_dict: dict[str, ExtractedActivity],
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
-    seq_repo_source_resolved_project_coordinators: list[LDAPPersonWithQuery],
+    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    seq_repo_project_coordinators_merged_ids_by_query_string: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     expected_resource = {
@@ -148,9 +144,9 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         extracted_mex_activities_dict,
         extracted_mex_access_platform,
         seq_repo_resource,
-        seq_repo_source_resolved_project_coordinators,
+        seq_repo_ldap_persons_with_query,
         unit_stable_target_ids_by_synonym,
-        seq_repo_project_coordinators_merged_ids_by_query_string,
+        seq_repo_merged_person_ids_by_query_string,
         extracted_organization_rki,
         seq_repo_extracted_primary_source,
     )

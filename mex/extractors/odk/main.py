@@ -62,7 +62,7 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
 
 
 @asset(group_name="odk")
-def odk_external_partner_and_publisher_by_label(
+def odk_merged_organization_ids_by_str(
     odk_resource_mappings: list[dict[str, Any]],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract partner organizations and return their IDs grouped by query string."""
@@ -75,9 +75,7 @@ def odk_external_partner_and_publisher_by_label(
 def odk_extracted_resources(  # noqa: PLR0913
     odk_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    odk_external_partner_and_publisher_by_label: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
     extracted_primary_source_mex: ExtractedPrimarySource,
     odk_extracted_primary_source: ExtractedPrimarySource,
@@ -86,7 +84,7 @@ def odk_extracted_resources(  # noqa: PLR0913
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
         [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
         unit_stable_target_ids_by_synonym,
-        odk_external_partner_and_publisher_by_label,
+        odk_merged_organization_ids_by_str,
         international_projects_extracted_activities,
         extracted_primary_source_mex,
         odk_extracted_primary_source,

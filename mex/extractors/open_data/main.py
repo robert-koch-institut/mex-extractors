@@ -70,7 +70,7 @@ def open_data_creators_contributors(
 
 
 @asset(group_name="open_data")
-def open_data_organizations(
+def open_data_organization_ids_by_str(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
@@ -81,13 +81,13 @@ def open_data_organizations(
 
 
 @asset(group_name="open_data")
-def open_data_persons(  # noqa: PLR0913
+def open_extracted_data_persons(  # noqa: PLR0913
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
-    open_data_organizations: dict[str, MergedOrganizationIdentifier],
+    open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons and load them to sinks."""
     open_data_persons = transform_open_data_persons(
@@ -96,14 +96,14 @@ def open_data_persons(  # noqa: PLR0913
         open_data_extracted_primary_source,
         extracted_organizational_units,
         extracted_organization_rki,
-        open_data_organizations,
+        open_data_organization_ids_by_str,
     )
     load(open_data_persons)
     return open_data_persons
 
 
 @asset(group_name="open_data")
-def open_data_contact_point(
+def open_data_extracted_contact_points(
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> list[ExtractedContactPoint]:
     """Convert open data email address to contact point and load to sink."""
@@ -120,7 +120,7 @@ def open_data_contact_point(
 
 
 @asset(group_name="open_data")
-def open_data_distribution(
+def open_data_extracted_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedDistribution]:
@@ -143,11 +143,11 @@ def open_data_distribution(
 def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_primary_source: ExtractedPrimarySource,
-    open_data_persons: list[ExtractedPerson],
+    open_extracted_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    open_data_distribution: list[ExtractedDistribution],
+    open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
-    open_data_contact_point: list[ExtractedContactPoint],
+    open_data_extracted_contact_points: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
@@ -158,12 +158,12 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
         open_data_extracted_primary_source,
-        open_data_persons,
+        open_extracted_data_persons,
         unit_stable_target_ids_by_synonym,
-        open_data_distribution,
+        open_data_extracted_distributions,
         resource_mapping,
         extracted_organization_rki,
-        open_data_contact_point,
+        open_data_extracted_contact_points,
     )
 
     load(mex_sources)

@@ -72,7 +72,7 @@ def transform_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
     open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organization_rki: ExtractedOrganization,
-    open_data_organizations: dict[str, MergedOrganizationIdentifier],
+    open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> ExtractedPerson:
     """Create ExtractedPerson for a person not matched with ldap.
 
@@ -80,16 +80,16 @@ def transform_open_data_persons_not_in_ldap(
         person: list[OpenDataCreatorsOrContributors],
         open_data_extracted_primary_source: open data primary source,
         extracted_organization_rki: ExtractedOrganization of RKI,
-        open_data_organizations: dictionary with ID by affiliation name
+        open_data_organization_ids_by_str: dictionary with ID by affiliation name
 
     Returns:
         ExtractedPerson
     """
     affiliation = (
-        open_data_organizations[person.affiliation]
+        open_data_organization_ids_by_str[person.affiliation]
         if (
             person.affiliation
-            and open_data_organizations[person.affiliation]
+            and open_data_organization_ids_by_str[person.affiliation]
             != extracted_organization_rki.stableTargetId
         )
         else None
@@ -139,7 +139,7 @@ def transform_open_data_persons(  # noqa: PLR0913
     open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
-    open_data_organizations: dict[str, MergedOrganizationIdentifier],
+    open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Lookup persons in ldap or create ExtractedPerson if match fails.
 
@@ -149,7 +149,7 @@ def transform_open_data_persons(  # noqa: PLR0913
         open_data_extracted_primary_source: Extracted Primary Sources for open-data
         extracted_organizational_units: list of Extracted Organizational Units
         extracted_organization_rki: ExtractedOrganization of RKI,
-        open_data_organizations: dictionary with ID by affiliation name
+        open_data_organization_ids_by_str: dictionary with ID by affiliation name
 
     Returns:
         list of Extracted Persons
@@ -170,7 +170,7 @@ def transform_open_data_persons(  # noqa: PLR0913
             person,
             open_data_extracted_primary_source,
             extracted_organization_rki,
-            open_data_organizations,
+            open_data_organization_ids_by_str,
         )
 
         if extracted_person.stableTargetId not in extracted_persons:
@@ -244,7 +244,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
-    open_data_contact_point: list[ExtractedContactPoint],
+    open_data_extracted_contact_points: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
     """Transform open_data parent resources to extracted resources.
 
@@ -256,7 +256,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
-        open_data_contact_point: list[ExtractedContactPoint]
+        open_data_extracted_contact_points: list[ExtractedContactPoint]
 
     Returns:
         list of ExtractedResource instances
@@ -274,7 +274,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     anonymization_pseudonymization = (
         resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    contact_open_data = [contact.stableTargetId for contact in open_data_contact_point]
+    contact_open_data = [
+        contact.stableTargetId for contact in open_data_extracted_contact_points
+    ]
     distribution_by_id = {
         distribution.identifierInPrimarySource: distribution.stableTargetId
         for distribution in open_data_distribution

@@ -115,9 +115,7 @@ def odk_variable_mapping(settings: Settings) -> VariableMapping:
 
 
 @pytest.fixture
-def odk_external_partner_and_publisher_by_label() -> dict[
-    str, MergedOrganizationIdentifier
-]:
+def odk_merged_organization_ids_by_str() -> dict[str, MergedOrganizationIdentifier]:
     """Mocked external partner and publisher dict for OrganizationIDs."""
     return {
         "invidunt": MergedOrganizationIdentifier.generate(42),

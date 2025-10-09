@@ -409,7 +409,7 @@ def transform_bibliographic_resources(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    datenkompass_person_name_by_id: dict[MergedPersonIdentifier, str],
+    datenkompass_person_str_by_id: dict[MergedPersonIdentifier, str],
     bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
@@ -417,7 +417,7 @@ def transform_bibliographic_resources(
     Args:
         merged_bibliographic_resources: List of merged bibliographic resources
         merged_organizational_units_by_id: dict of merged organizational units by id
-        datenkompass_person_name_by_id: dictionary of merged person names by id
+        datenkompass_person_str_by_id: dictionary of merged person names by id
         bibliographic_resource_mapping: Datenkompass mapping.
 
     Returns:
@@ -442,7 +442,7 @@ def transform_bibliographic_resources(
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
         creator_collection = " / ".join(
             [
-                datenkompass_person_name_by_id[c]
+                datenkompass_person_str_by_id[c]
                 for c in item.creator[:max_number_authors_cutoff]
             ]
         )

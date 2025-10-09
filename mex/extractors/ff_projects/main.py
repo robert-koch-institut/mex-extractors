@@ -66,7 +66,7 @@ def ff_projects_sources(
 
 
 @asset(group_name="ff_projects")
-def ff_projects_person_ids_by_query_string(
+def ff_projects_person_ids_by_query_str(
     ff_projects_sources: list[FFProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -90,7 +90,7 @@ def ff_projects_person_ids_by_query_string(
 
 
 @asset(group_name="ff_projects")
-def ff_projects_organization_ids_by_query_string(
+def ff_projects_organization_ids_by_query_str(
     ff_projects_sources: list[FFProjectsSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
@@ -101,11 +101,9 @@ def ff_projects_organization_ids_by_query_string(
 def ff_projects_activities(
     ff_projects_sources: list[FFProjectsSource],
     ff_projects_extracted_primary_source: ExtractedPrimarySource,
-    ff_projects_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    ff_projects_organization_ids_by_query_string: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
     settings = Settings.get()
@@ -116,9 +114,9 @@ def ff_projects_activities(
         transform_ff_projects_source_to_extracted_activity(
             ff_projects_source,
             ff_projects_extracted_primary_source,
-            ff_projects_person_ids_by_query_string,
+            ff_projects_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
-            ff_projects_organization_ids_by_query_string,
+            ff_projects_organization_ids_by_query_str,
             ff_projects_activity,
         )
         for ff_projects_source in ff_projects_sources

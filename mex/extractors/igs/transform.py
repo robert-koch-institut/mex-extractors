@@ -30,7 +30,7 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
     igs_info: IGSInfo,
     igs_extracted_primary_source: ExtractedPrimarySource,
     igs_resource_mapping: ResourceMapping,
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -41,7 +41,7 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
         igs_info: igs info
         igs_extracted_primary_source: extracted IGS primary source
         igs_resource_mapping: IGS resource mapping
-        igs_extracted_contact_points_by_mail: extracted IGS contact points by mail
+        igs_extracted_contact_points_by_mail_str: extracted IGS contact points by mail
         unit_stable_target_ids_by_synonym: merged organizational units by name
         igs_extracted_access_platform: extracted access platform
         extracted_organization_rki: extracted organization RKI
@@ -50,7 +50,7 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
         extracted resource by enum
     """
     contact = [
-        igs_extracted_contact_points_by_mail[for_value].stableTargetId
+        igs_extracted_contact_points_by_mail_str[for_value].stableTargetId
         for rule in igs_resource_mapping.contact[0].mappingRules
         if rule.forValues
         for for_value in rule.forValues
@@ -138,7 +138,7 @@ def transform_igs_info_to_resources(  # noqa: PLR0913
 def transform_igs_access_platform(
     igs_extracted_primary_source: ExtractedPrimarySource,
     igs_access_platform_mapping: AccessPlatformMapping,
-    igs_extracted_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS extracted access platform.
@@ -146,7 +146,7 @@ def transform_igs_access_platform(
     Args:
         igs_extracted_primary_source: extracted IGS primary source
         igs_access_platform_mapping: IGS resource mapping
-        igs_extracted_contact_points_by_mail: extracted IGS contact points by mail
+        igs_extracted_contact_points_by_mail_str: extracted IGS contact points by mail
         unit_stable_target_ids_by_synonym: merged organizational units by name
 
     Returns:
@@ -155,7 +155,7 @@ def transform_igs_access_platform(
     contact_mail = cast(
         "list[str]", igs_access_platform_mapping.contact[0].mappingRules[0].forValues
     )
-    contact = igs_extracted_contact_points_by_mail[contact_mail[0]].stableTargetId
+    contact = igs_extracted_contact_points_by_mail_str[contact_mail[0]].stableTargetId
     unit_string = cast(
         "list[str]",
         igs_access_platform_mapping.unitInCharge[0].mappingRules[0].forValues,

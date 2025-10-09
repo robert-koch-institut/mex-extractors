@@ -47,7 +47,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 
 
 @asset(group_name="biospecimen")
-def biospecimen_extracted_mex_persons(
+def biospecimen_extracted_persons(
     biospecimen_resources: list[BiospecimenResource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -69,10 +69,10 @@ def biospecimen_extracted_mex_persons(
 def biospecimen_extracted_resources(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_primary_source: ExtractedPrimarySource,
-    biospecimen_extracted_mex_persons: list[ExtractedPerson],
+    biospecimen_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
-    synopse_activities: list[ExtractedActivity],
+    synopse_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = Settings.get()
@@ -86,9 +86,9 @@ def biospecimen_extracted_resources(  # noqa: PLR0913
             biospecimen_resources,
             biospecimen_extracted_primary_source,
             unit_stable_target_ids_by_synonym,
-            biospecimen_extracted_mex_persons,
+            biospecimen_extracted_persons,
             extracted_organization_rki,
-            synopse_activities,
+            synopse_extracted_activities,
             resource_mapping,
             extracted_organizations,
         )

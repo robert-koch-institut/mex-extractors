@@ -66,7 +66,7 @@ def synopse_projects() -> list[SynopseProject]:
 
 
 @asset(group_name="synopse")
-def synopse_project_contributors(
+def synopse_ldap_persons_with_query(
     synopse_projects: list[SynopseProject],
 ) -> list[LDAPPersonWithQuery]:
     """Extract project contributors from Synopse."""
@@ -124,8 +124,8 @@ def synopse_variables_by_thema(
 
 
 @asset(group_name="synopse")
-def synopse_contributor_stable_target_ids_by_name(
-    synopse_project_contributors: list[LDAPPersonWithQuery],
+def synopse_merged_person_ids_by_str(
+    synopse_ldap_persons_with_query: list[LDAPPersonWithQuery],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organization_rki: ExtractedOrganization,
@@ -136,7 +136,7 @@ def synopse_contributor_stable_target_ids_by_name(
     """
     transformed_project_contributors = (
         transform_ldap_persons_with_query_to_extracted_persons(
-            synopse_project_contributors,
+            synopse_ldap_persons_with_query,
             extracted_primary_source_ldap,
             extracted_organizational_units,
             extracted_organization_rki,
@@ -146,13 +146,13 @@ def synopse_contributor_stable_target_ids_by_name(
     return get_merged_ids_by_query_string(  # only works after contributors are loaded
         # reason: backend is queried for identities of contributors, contributors not
         # in backend are skipped
-        synopse_project_contributors,
+        synopse_ldap_persons_with_query,
         extracted_primary_source_ldap,
     )
 
 
 @asset(group_name="synopse")
-def synopse_organization_ids_by_query_string(
+def synopse_merged_organization_ids_by_query_string(
     synopse_projects: list[SynopseProject],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
@@ -167,7 +167,7 @@ def synopse_resource() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def synopse_contact_merged_id_by_query_string(
+def synopse_merged_contact_point_ids_by_query_string(
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> dict[str, MergedContactPointIdentifier]:
     """Get lookup of ldap functional accounts by email."""
@@ -193,7 +193,9 @@ def synopse_contact_merged_id_by_query_string(
 def synopse_access_platform_id(
     extracted_primary_source_report_server: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    synopse_contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    synopse_merged_contact_point_ids_by_query_string: dict[
+        str, MergedContactPointIdentifier
+    ],
 ) -> MergedAccessPlatformIdentifier:
     """Transform Synopse data to extracted access platforms and load result."""
     settings = Settings.get()
@@ -204,7 +206,7 @@ def synopse_access_platform_id(
     transformed_access_platforms = transform_synopse_studies_into_access_platforms(
         unit_stable_target_ids_by_synonym,
         extracted_primary_source_report_server,
-        synopse_contact_merged_id_by_query_string,
+        synopse_merged_contact_point_ids_by_query_string,
         synopse_access_platform,
     )
 
@@ -213,20 +215,18 @@ def synopse_access_platform_id(
 
 
 @asset(group_name="synopse")
-def synopse_resources_by_identifier_in_primary_source(  # noqa: PLR0913
+def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    synopse_activities: list[ExtractedActivity],
+    synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    synopse_contributor_stable_target_ids_by_name: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource identifier in primary source.
 
@@ -236,13 +236,13 @@ def synopse_resources_by_identifier_in_primary_source(  # noqa: PLR0913
         synopse_studies,
         synopse_projects,
         synopse_variables_by_study_id,
-        synopse_activities,
+        synopse_extracted_activities,
         extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         synopse_access_platform_id,
-        synopse_contributor_stable_target_ids_by_name,
+        synopse_merged_person_ids_by_str,
     )
     load(transformed_study_data_resources)
     return transform_overviews_to_resource_lookup(
@@ -259,14 +259,14 @@ def synopse_activity() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def synopse_activities(  # noqa: PLR0913
+def synopse_extracted_activities(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    synopse_contributor_stable_target_ids_by_name: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    synopse_merged_organization_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
     synopse_activity: dict[str, Any],
 ) -> list[ExtractedActivity]:
     """Transforms Synopse data to extracted activities and load result."""
@@ -274,10 +274,10 @@ def synopse_activities(  # noqa: PLR0913
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_source_report_server,
-            synopse_contributor_stable_target_ids_by_name,
+            synopse_merged_person_ids_by_str,
             unit_stable_target_ids_by_synonym,
             ActivityMapping.model_validate(synopse_activity),
-            synopse_organization_ids_by_query_string,
+            synopse_merged_organization_ids_by_query_string,
         )
     )
 
@@ -290,7 +290,9 @@ def synopse_activities(  # noqa: PLR0913
 def synopse_variable_groups_by_identifier_in_primary_source(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    synopse_resources_by_identifier_in_primary_source: dict[str, ExtractedResource],
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
+        str, ExtractedResource
+    ],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> dict[str, ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
@@ -298,7 +300,7 @@ def synopse_variable_groups_by_identifier_in_primary_source(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
             extracted_primary_source_report_server,
-            synopse_resources_by_identifier_in_primary_source,
+            synopse_extracted_resources_by_identifier_in_primary_source,
             synopse_study_overviews,
         )
     )
@@ -313,7 +315,9 @@ def synopse_extracted_variables(
     synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
     ],
-    synopse_resources_by_identifier_in_primary_source: dict[str, ExtractedResource],
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
+        str, ExtractedResource
+    ],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> list[ExtractedVariable]:
     """Transforms Synopse data to extracted variables and load result."""
@@ -321,7 +325,7 @@ def synopse_extracted_variables(
         transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
             synopse_variable_groups_by_identifier_in_primary_source,
-            synopse_resources_by_identifier_in_primary_source,
+            synopse_extracted_resources_by_identifier_in_primary_source,
             extracted_primary_source_report_server,
             synopse_study_overviews,
         )

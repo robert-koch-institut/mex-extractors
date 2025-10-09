@@ -24,7 +24,7 @@ from mex.extractors.biospecimen.transform import (
 
 
 @pytest.fixture
-def synopse_activities() -> list[ExtractedActivity]:
+def synopse_extracted_activities() -> list[ExtractedActivity]:
     return [
         ExtractedActivity(
             hadPrimarySource="bVro4tpIg0kIjZubkhTmtE",
@@ -78,7 +78,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
     mex_persons: list[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
-    synopse_activities: list[ExtractedActivity],
+    synopse_extracted_activities: list[ExtractedActivity],
     resource_mapping: ResourceMapping,
 ) -> None:
     unit_stable_target_ids = MagicMock()
@@ -87,7 +87,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     synopse_merged_id = next(
         filter(
             lambda x: x.identifierInPrimarySource == "1234567",
-            synopse_activities,
+            synopse_extracted_activities,
         )
     ).stableTargetId
 
@@ -97,7 +97,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         unit_stable_target_ids,
         mex_persons,
         extracted_organization_rki,
-        synopse_activities,
+        synopse_extracted_activities,
         resource_mapping,
         {},
     )

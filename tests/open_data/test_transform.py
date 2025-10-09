@@ -46,7 +46,7 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    open_data_organizations = {
+    open_data_organization_ids_by_str = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
     }
 
@@ -54,7 +54,7 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
         mocked_open_data_creator_with_processed_affiliation,
         extracted_primary_sources["open-data"],
         extracted_organization_rki,
-        open_data_organizations,
+        open_data_organization_ids_by_str,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
@@ -70,7 +70,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    open_data_organizations = {
+    open_data_organization_ids_by_str = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354),
         "RKI": extracted_organization_rki.stableTargetId,
     }
@@ -78,7 +78,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
         mocked_open_data_creator_with_affiliation_to_ignore,
         extracted_primary_sources["open-data"],
         extracted_organization_rki,
-        open_data_organizations,
+        open_data_organization_ids_by_str,
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
@@ -126,7 +126,7 @@ def test_transform_open_data_persons(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    open_data_organizations = {
+    open_data_organization_ids_by_str = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
     }
     results = transform_open_data_persons(
@@ -135,7 +135,7 @@ def test_transform_open_data_persons(
         extracted_primary_sources["open-data"],
         mocked_extracted_organizational_units,
         extracted_organization_rki,
-        open_data_organizations,
+        open_data_organization_ids_by_str,
     )
 
     assert results == [
@@ -188,7 +188,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
-    mocked_open_data_contact_point: list[ExtractedContactPoint],
+    mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
@@ -205,7 +205,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             mocked_open_data_distribution,
             mocked_open_data_parent_resource_mapping,
             extracted_organization_rki,
-            mocked_open_data_contact_point,
+            mocked_open_data_extracted_contact_points,
         )
     )
 
@@ -217,7 +217,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "created": "2021",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
-        "contact": [str(mocked_open_data_contact_point[0].stableTargetId)],
+        "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": ["bFQoRhcVH5DIax"],

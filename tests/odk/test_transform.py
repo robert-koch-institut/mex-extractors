@@ -21,9 +21,7 @@ from mex.extractors.odk.transform import (
 def test_transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    odk_external_partner_and_publisher_by_label: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
@@ -36,7 +34,7 @@ def test_transform_odk_resources_to_mex_resources(
     resources = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         unit_stable_target_ids_by_synonym,
-        odk_external_partner_and_publisher_by_label,
+        odk_merged_organization_ids_by_str,
         international_projects_extracted_activities,
         extracted_primary_sources["mex"],
         extracted_primary_sources["odk"],
@@ -61,8 +59,8 @@ def test_transform_odk_resources_to_mex_resources(
         "contributingUnit": [str(unit_stable_target_ids_by_synonym["C1"])],
         "description": [{"value": "amet", "language": TextLanguage.EN}],
         "externalPartner": [
-            str(odk_external_partner_and_publisher_by_label["consetetur"]),
-            str(odk_external_partner_and_publisher_by_label["invidunt"]),
+            str(odk_merged_organization_ids_by_str["consetetur"]),
+            str(odk_merged_organization_ids_by_str["invidunt"]),
             "gnhGhU3ATowGuV0KJwGuxB",
         ],
         "keyword": [
@@ -78,8 +76,8 @@ def test_transform_odk_resources_to_mex_resources(
         ],
         "methodDescription": [{"value": "tempor", "language": TextLanguage.EN}],
         "publisher": [
-            str(odk_external_partner_and_publisher_by_label["invidunt"]),
-            str(odk_external_partner_and_publisher_by_label["consetetur"]),
+            str(odk_merged_organization_ids_by_str["invidunt"]),
+            str(odk_merged_organization_ids_by_str["consetetur"]),
         ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",

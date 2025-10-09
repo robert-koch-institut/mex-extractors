@@ -16,10 +16,10 @@ from mex.extractors.voxco.model import VoxcoVariable
 
 def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, PLR0913
     voxco_resource_mappings: list[ResourceMapping],
-    voxco_organization_stable_target_id_by_query: dict[
+    voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_persons: list[ExtractedPerson],
+    voxco_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     voxco_extracted_primary_source: ExtractedPrimarySource,
@@ -29,8 +29,9 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
 
     Args:
         voxco_resource_mappings: voxco resource mapping models
-        voxco_organization_stable_target_id_by_query: extracted voxco organizations dict
-        voxco_persons: extracted voxco mex persons
+        voxco_merged_organization_ids_by_query_string: extracted voxco organizations
+                                                       dict
+        voxco_extracted_persons: extracted voxco mex persons
         unit_stable_target_ids_by_synonym: merged organizational units by name
         extracted_organization_rki: extracted rki organization
         voxco_extracted_primary_source: extracted voxco primary source
@@ -41,7 +42,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
     """
     resource_dict = {}
     mex_persons_stable_target_id_by_email = {
-        person.email[0]: person.stableTargetId for person in voxco_persons
+        person.email[0]: person.stableTargetId for person in voxco_extracted_persons
     }
     international_project_by_identifier_in_primary_source = {
         activity.identifierInPrimarySource: activity.stableTargetId
@@ -69,7 +70,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
             description = None
 
         if (ep := resource.externalPartner) and ep[0].mappingRules[0].forValues:
-            external_partner = voxco_organization_stable_target_id_by_query.get(
+            external_partner = voxco_merged_organization_ids_by_query_string.get(
                 ep[0].mappingRules[0].forValues[0]
             )
         else:
@@ -140,14 +141,14 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
 
 
 def transform_voxco_variable_mappings_to_extracted_variables(
-    voxco_resources: dict[str, ExtractedResource],
+    voxco_extracted_resources_by_str: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
     voxco_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform voxco variable mappings to extracted variables.
 
     Args:
-        voxco_resources: extracted voxco resources
+        voxco_extracted_resources_by_str: extracted voxco resources
         voxco_variables: list of voxco variables by associated resource
         voxco_extracted_primary_source: extracted voxco primary source
 
@@ -166,6 +167,6 @@ def transform_voxco_variable_mappings_to_extracted_variables(
                 choice.split("Text=")[1].split(";")[0] for choice in variable.Choices
             ],
         )
-        for resource in voxco_resources.values()
+        for resource in voxco_extracted_resources_by_str.values()
         for variable in voxco_variables[f"project_{resource.identifierInPrimarySource}"]
     ]
