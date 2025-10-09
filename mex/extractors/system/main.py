@@ -9,6 +9,7 @@ from mex.common.logging import logger
 from mex.extractors.settings import Settings
 
 
+@asset(group_name="system_clean_up")
 def system_fetch_old_dagster_run_ids() -> list[str]:
     """Fetch ids of Dagster runs, which are old enough to be deleted."""
     instance = DagsterInstance.get()

@@ -1,5 +1,6 @@
 import tempfile
 from pathlib import Path
+from typing import cast
 from unittest.mock import Mock, call, patch
 
 from mex.extractors.system.main import (
@@ -20,10 +21,11 @@ def test_system_fetch_old_dagster_run_ids() -> None:
     mock_instance = Mock()
     mock_instance.get_run_records.side_effect = [batch_1, batch_2, batch_3]
 
-    with patch("dagster.DagsterInstance.get", return_value=mock_instance):
-        result = system_fetch_old_dagster_run_ids()
+    with patch(
+        "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
+    ):
+        result = cast("list[str]", system_fetch_old_dagster_run_ids())
 
-    # Assertions
     assert len(result) == 150
     assert result[0] == "run_0"
     assert result[-1] == "run_149"
@@ -58,7 +60,9 @@ def test_system_clean_up_dagster_files() -> None:
         mock_instance = Mock()
         mock_instance.storage_directory.return_value = str(temp_path)
 
-        with patch("dagster.DagsterInstance.get", return_value=mock_instance):
+        with patch(
+            "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
+        ):
             deleted_ids = system_clean_up_dagster_files(old_ids)
 
         assert deleted_ids == old_ids
@@ -103,7 +107,9 @@ def test_system_clean_up_dagster_files_with_empty_list() -> None:
     mock_instance = Mock()
     mock_instance.storage_directory.return_value = "/some/path"
 
-    with patch("dagster.DagsterInstance.get", return_value=mock_instance):
+    with patch(
+        "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
+    ):
         deleted_ids = system_clean_up_dagster_files([])
 
     assert deleted_ids == []  # no deleted files logged
@@ -117,7 +123,9 @@ def test_system_clean_up_dagster_runs() -> None:
 
     run_ids = ["run_1", "run_2", "run_3"]
 
-    with patch("dagster.DagsterInstance.get", return_value=mock_instance):
+    with patch(
+        "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
+    ):
         deleted_runs = system_clean_up_dagster_runs(run_ids)
 
     assert mock_instance.delete_run.call_count == 3
@@ -131,7 +139,9 @@ def test_system_clean_up_dagster_runs_with_empty_list() -> None:
     """Test function handles empty input correctly."""
     mock_instance = Mock()
 
-    with patch("dagster.DagsterInstance.get", return_value=mock_instance):
+    with patch(
+        "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
+    ):
         deleted_runs = system_clean_up_dagster_runs([])
 
     mock_instance.delete_run.assert_not_called()  # delete_run was never called
