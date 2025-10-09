@@ -2,7 +2,7 @@ import datetime
 import shutil
 from pathlib import Path
 
-from dagster import DagsterInstance, RunsFilter, asset
+from dagster import AssetKey, DagsterInstance, RunsFilter, asset
 from pytz import UTC
 
 from mex.common.logging import logger
@@ -46,7 +46,7 @@ def system_fetch_old_dagster_run_ids() -> list[str]:
 def system_clean_up_dagster_files(
     system_fetch_old_dagster_run_ids: list[str],
 ) -> list[str]:
-    """Clean up dagster files of old runs and return the id of the deleted run files."""
+    """Clean up dagster files of old runs. Note: not all runs have files."""
     instance = DagsterInstance.get()
     storage_path = Path(instance.storage_directory())
 
@@ -66,18 +66,18 @@ def system_clean_up_dagster_files(
         len(deleted_file_ids),
         storage_path,
     )
-
     return deleted_file_ids
 
 
-@asset(group_name="system_clean_up")
-def system_clean_up_dagster_runs(system_clean_up_dagster_files: list[str]) -> list[str]:
-    """Take ids of deleted dagster files and clean up the according dagster runs."""
+@asset(group_name="system_clean_up", deps=[AssetKey("system_clean_up_dagster_files")])
+def system_clean_up_dagster_runs(
+    system_fetch_old_dagster_run_ids: list[str],
+) -> list[str]:
+    """Take ids of fetched old runs and clean them up."""
     instance = DagsterInstance.get()
 
     deleted_run_ids: list[str] = []
-
-    for run_id in system_clean_up_dagster_files:
+    for run_id in system_fetch_old_dagster_run_ids:
         instance.delete_run(run_id)
         deleted_run_ids.append(run_id)
 
