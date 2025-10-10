@@ -133,7 +133,6 @@ dmypy.json
 *.ndjson
 assets/external/
 data/
-history/
 identity.csv
 logs/
 payload
