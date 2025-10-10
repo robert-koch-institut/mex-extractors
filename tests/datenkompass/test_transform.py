@@ -381,7 +381,7 @@ def test_handle_setval_valid(
 
 
 def test_handle_setval_none_raises_error() -> None:
-    with pytest.raises(ValueError, match="no default value set in mapping."):
+    with pytest.raises(ValueError, match=r"no default value set in mapping."):
         handle_setval(None)
 
 
