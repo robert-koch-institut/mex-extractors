@@ -66,7 +66,7 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
 @pytest.mark.usefixtures("mocked_backend")
 def test_publishable_persons(mocked_backend: MagicMock) -> None:
     container = cast("ItemsContainer[AnyMergedModel]", publishable_persons())
-    # assert len(container.items) == 1
+    assert len(container.items) == 1
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
             entity_type=["MergedPerson"],

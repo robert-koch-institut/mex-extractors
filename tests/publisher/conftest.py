@@ -152,8 +152,8 @@ def fetch_all_merged_items(
             identifier="fakeFakeContact",
         ),
         MergedConsent(
-            identifier="fakeFakeConsent",
-            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            identifier="fakePositiveConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-2",
             hasDataSubject="fakeFakePerson",
             isIndicatedAtTime="2014-05-21T19:38:51Z",
         ),
