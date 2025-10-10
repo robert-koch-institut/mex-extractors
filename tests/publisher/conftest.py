@@ -23,6 +23,7 @@ from mex.common.types import (
     Email,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    YearMonthDayTime,
 )
 
 
@@ -36,6 +37,41 @@ def merged_ldap_person_list() -> list[MergedPerson]:
         MergedPerson(
             identifier="PersonWithoutFallback",
             memberOf=[],
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_person_list() -> list[MergedPerson]:
+    return [
+        MergedPerson(
+            identifier="PersonPositiveConsent",
+            fullName=["Consent, Positive"],
+            memberOf=["SomeUnitIdentifier"],
+        ),
+        MergedPerson(
+            identifier="PersonNegativeConsent",
+        ),
+        MergedPerson(
+            identifier="PersonNoConsentLink",
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_consent_list() -> list[MergedConsent]:
+    return [
+        MergedConsent(
+            identifier="PositiveConsent",
+            hasDataSubject="PersonPositiveConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-2",
+            isIndicatedAtTime=YearMonthDayTime("1999-12-31T23:59:59Z"),
+        ),
+        MergedConsent(
+            identifier="NegativeConsent",
+            hasDataSubject="PersonNegativeConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            isIndicatedAtTime=YearMonthDayTime("2000-01-01T00:00:00Z"),
         ),
     ]
 
