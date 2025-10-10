@@ -46,7 +46,7 @@ def test_get_json_from_api_mocked_error(mocked_blueant: MagicMock) -> None:
     )
     mocked_blueant.request = MagicMock(return_value=mocked_response)
     connector = BlueAntConnector.get()
-    with pytest.raises(MExError, match="NOT_FOUND"):
+    with pytest.raises(MExError, match=r"NOT_FOUND"):
         connector._get_json_from_api("foo")
 
 
