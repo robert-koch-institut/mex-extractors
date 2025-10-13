@@ -9,6 +9,7 @@ from dagster import (
     EventRecordsFilter,
 )
 
+from mex.common.transform import dromedary_to_kebab
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
@@ -19,6 +20,7 @@ def check_yaml_path(extractor: str, entity_type: str) -> bool:
 
     Returns a bool.
     """
+    entity_type = dromedary_to_kebab(entity_type)
     settings = Settings.get()
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
     return path.exists()
@@ -103,7 +105,6 @@ def check_x_items_more_passed(
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
-    asset_data: int,
 ) -> bool:
     """Checks whether latest extracted items nr is exceeding the rule threshold.
 
@@ -124,11 +125,11 @@ def check_x_items_more_passed(
             asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
         )
     )
-
+    print(events)
     if events is None:
         return True
 
-    actual_count = asset_data
+    actual_count = events[0].asset_materialization.metadata["num_items"].value
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
     return actual_count <= (historic_count if historic_count > 0 else actual_count) + (
@@ -141,7 +142,6 @@ def check_x_items_less_passed(
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
-    asset_data: int,
 ) -> bool:
     """Checks whether latest extracted items number is lower than historical count.
 
@@ -166,7 +166,7 @@ def check_x_items_less_passed(
     if events is None:
         return True
 
-    actual_count = asset_data
+    actual_count = events[0].asset_materialization.metadata["num_items"].value
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
 

@@ -128,7 +128,7 @@ def load_job_definitions() -> Definitions:
         define_asset_job(
             group_name,
             AssetSelection.groups(group_name).upstream(),
-            metadata=metadata,
+            metadata={**metadata, "group_name": group_name},
             tags={"job_category": "extractor"},
         )
         for group_name in extractor_group_names

@@ -1,4 +1,10 @@
-from dagster import MetadataValue, Output, asset
+from dagster import (
+    MetadataValue,
+    Output,
+    asset,
+    AssetExecutionContext,
+    AssetObservation,
+)
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
@@ -11,9 +17,15 @@ from mex.common.models import (
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
+    ActivityType,
+    ExtractedActivityIdentifier,
+    Identifier,
+    MergedActivityIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
+    YearMonthDay,
 )
 from mex.extractors.blueant.extract import (
     extract_blueant_organizations,
@@ -85,14 +97,36 @@ def blueant_organization_ids_by_query_string(
     return extract_blueant_organizations(blueant_sources)
 
 
+def create_output(
+    context: AssetExecutionContext,
+    entity_type: str,
+    num_items: int,
+) -> Output:
+    """Creates Observation for asset key and an Output for values."""
+    context.log_event(
+        AssetObservation(
+            asset_key=context.asset_key,
+            metadata={"entity_type": MetadataValue.text(entity_type)},
+        )
+    )
+    return Output(
+        value=num_items,
+        metadata={
+            # "entity_type": entity_type,
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
+
+
 @asset(group_name="blueant")
-def extracted_blueant_activities(
+def extracted_blueant_activities(  # noqa: PLR0913
+    context: AssetExecutionContext,
     blueant_sources: list[BlueAntSource],
     extracted_primary_source_blueant: ExtractedPrimarySource,
     blueant_project_leaders_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     blueant_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-) -> Output[int]:
+) -> Output:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
@@ -111,7 +145,11 @@ def extracted_blueant_activities(
     extracted_activities_list: list[ExtractedActivity] = list(extracted_activities)
     num_items = len(extracted_activities_list)
     load(extracted_activities)
-    return Output(value=num_items, metadata={"num_items": MetadataValue.int(num_items)})
+    return create_output(
+        context=context,
+        entity_type=extracted_activities_list[0].stemType,
+        num_items=num_items,
+    )
 
 
 @entrypoint(Settings)
