@@ -12,6 +12,8 @@ from dagster import (
     multi_asset_check,
 )
 
+from mex.common.logging import logger
+from mex.extractors.pipeline.base import load_job_definitions
 from mex.extractors.pipeline.checks.main import (
     check_x_items_less_passed,
     check_x_items_more_passed,
@@ -74,6 +76,12 @@ def check_x_items_less_than(context: AssetCheckExecutionContext) -> AssetCheckRe
 )
 def blueant_checks(context: AssetCheckExecutionContext) -> Iterable[AssetCheckResult]:
     """Run all checks."""
+
+    # get all assets by current job
+    selected_keys = context.selected_asset_check_keys
+    asset_keys = [check_key.asset_key for check_key in selected_keys]
+
+    #current asset_key
     asset_key = list(context.selected_asset_check_keys)[0].asset_key
     extractor = context.job_def.metadata["group_name"].text
 
