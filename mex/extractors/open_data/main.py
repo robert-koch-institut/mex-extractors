@@ -13,6 +13,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariableGroup,
+    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -32,6 +34,7 @@ from mex.extractors.open_data.transform import (
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
+    transform_variable_group,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -146,6 +149,24 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     load(mex_sources)
     return mex_sources
+
+
+@asset(group_name="open_data")
+def extracted_open_data_Variable_groups_and_variables(
+        extracted_open_data_parent_resources: list[ExtractedResource],
+) -> list[ExtractedVariableGroup]:
+    """Extract and transform metadata zip tableschemas to variable groups."""
+
+    transform_variable_group(extracted_open_data_parent_resources)
+
+
+@asset(group_name="open_data")
+def extracted_open_data_Variable_groups(
+    extracted_open_data_parent_resources: list[ExtractedResource],
+) -> list[ExtractedVariableGroup]:
+    """Extract and transform metadata zip tableschemas to variable groups."""
+
+    transform_variable_group(extracted_open_data_parent_resources)
 
 
 @entrypoint(Settings)

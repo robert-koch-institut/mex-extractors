@@ -11,6 +11,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariableGroup,
+    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -23,6 +25,7 @@ from mex.common.types import (
 from mex.extractors.open_data.extract import (
     extract_files_for_parent_resource,
     extract_oldest_record_version_creationdate,
+    extract_metadata_tableschema_name, extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
@@ -376,3 +379,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             )
         )
     return extracted_resource
+
+def transform_variable_group(
+    extracted_open_data_parent_resources: list[ExtractedResource]
+) -> list [ExtractedVariableGroup]:
+    for resource in extracted_open_data_parent_resources:
+        schema_collection = extract_tableschema(resource.id)
+        for filename, json in schema_collection:
