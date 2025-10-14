@@ -2,12 +2,14 @@ import pytest
 
 from mex.common.models import (
     AccessPlatformMapping,
+    ExtractedAccessPlatform,
     ExtractedContactPoint,
     ResourceMapping,
+    VariableMapping,
 )
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.igs.extract import extract_igs_schemas
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -25,6 +27,22 @@ def igs_resource_mapping() -> ResourceMapping:
     settings = Settings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.igs.mapping_path / "resource.yaml")
+    )
+
+
+@pytest.fixture
+def igs_variable_mapping() -> VariableMapping:
+    settings = Settings.get()
+    return VariableMapping.model_validate(
+        load_yaml(settings.igs.mapping_path / "variable.yaml")
+    )
+
+
+@pytest.fixture
+def igs_variable_pathogen_mapping() -> VariableMapping:
+    settings = Settings.get()
+    return VariableMapping.model_validate(
+        load_yaml(settings.igs.mapping_path / "variable_pathogen.yaml")
     )
 
 
@@ -48,3 +66,30 @@ def extracted_igs_contact_points_by_mail() -> dict[str, ExtractedContactPoint]:
 @pytest.fixture
 def igs_schemas() -> dict[str, IGSSchema]:
     return extract_igs_schemas()
+
+
+@pytest.fixture
+def igs_info() -> IGSInfo:
+    return IGSInfo(title="test_title", version="test_version")
+
+
+@pytest.fixture
+def extracted_access_platform() -> ExtractedAccessPlatform:
+    return ExtractedAccessPlatform.model_validate(
+        {
+            "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+            "identifierInPrimarySource": "https://igs",
+            "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
+            "endpointDescription": {
+                "language": "en",
+                "title": "test title",
+                "url": "https://rki.de:4200/api",
+            },
+            "endpointType": "https://mex.rki.de/item/api-type-1",
+            "endpointURL": {"url": "https://rki.de:4100"},
+            "contact": ["cGyT8sVLtQTF7vK24LoOk6"],
+            "description": [{"value": "test description", "language": "en"}],
+            "landingPage": [{"url": "https://rki.de:4100/docs"}],
+            "unitInCharge": ["bFQoRhcVH5DHU8"],
+        }
+    )

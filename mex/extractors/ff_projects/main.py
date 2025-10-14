@@ -2,10 +2,13 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.ldap.transform import (
+    transform_ldap_persons_with_query_to_extracted_persons,
+)
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -67,13 +70,15 @@ def ff_projects_person_ids_by_query_string(
     ff_projects_sources: list[FFProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract authors for FF Projects from LDAP and group them by query."""
     ff_projects_authors = list(extract_ff_project_authors(ff_projects_sources))
-    extracted_persons = transform_ldap_persons_with_query_to_mex_persons(
+    extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
         ff_projects_authors,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(extracted_persons)
     return {

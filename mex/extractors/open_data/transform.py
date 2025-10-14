@@ -2,7 +2,7 @@ import re
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import transform_ldap_person_to_mex_person
+from mex.common.ldap.transform import transform_ldap_person_to_extracted_person
 from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
@@ -49,7 +49,7 @@ def transform_open_data_person_affiliations_to_organizations(
         list of Extracted Organization Ids by affiliation name
     """
     unique_affiliations = {
-        person.affiliation
+        person.affiliation: None
         for person in extracted_open_data_creators_contributors
         if person.affiliation
     }
@@ -107,6 +107,7 @@ def lookup_person_in_ldap_and_transform(
     person: OpenDataCreatorsOrContributors,
     extracted_primary_source_ldap: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedPerson | None:
     """Lookup person in ldap. and transform to ExtractedPerson.
 
@@ -114,17 +115,19 @@ def lookup_person_in_ldap_and_transform(
         person: Open Data person (Creator Or Contributor),
         extracted_primary_source_ldap: primary Source for ldap
         units_by_identifier_in_primary_source: dict of primary sources by ID
+        extracted_organization_rki: ExtractedOrganization of RKI,
 
     Returns:
         ExtractedPerson if matched or None if match fails
     """
     ldap = LDAPConnector.get()
     try:
-        ldap_person = ldap.get_person(displayName=person.name)
-        return transform_ldap_person_to_mex_person(
+        ldap_person = ldap.get_person(display_name=person.name)
+        return transform_ldap_person_to_extracted_person(
             ldap_person,
             extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
+            extracted_organization_rki,
         )
     except MExError:
         return None
@@ -159,7 +162,10 @@ def transform_open_data_persons(  # noqa: PLR0913
 
     for person in extracted_open_data_creators_contributors:
         extracted_person = lookup_person_in_ldap_and_transform(
-            person, extracted_primary_source_ldap, units_by_identifier_in_primary_source
+            person,
+            extracted_primary_source_ldap,
+            units_by_identifier_in_primary_source,
+            extracted_organization_rki,
         ) or transform_open_data_persons_not_in_ldap(
             person,
             extracted_primary_source_open_data,
@@ -286,7 +292,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     for resource in open_data_parent_resource:
         contributing_unit = list(
             {
-                unit_id
+                unit_id: None
                 for person in resource.metadata.contributors
                 + resource.metadata.creators
                 if (

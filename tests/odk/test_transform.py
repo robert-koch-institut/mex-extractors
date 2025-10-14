@@ -3,6 +3,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
+    VariableMapping,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -131,37 +132,34 @@ def test_transform_odk_data_to_extracted_variables(
     extracted_resources_odk: list[ExtractedResource],
     odk_raw_data: list[ODKData],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    odk_variable_mapping: VariableMapping,
 ) -> None:
     extracted_variables = transform_odk_data_to_extracted_variables(
         extracted_resources_odk,
         odk_raw_data,
         extracted_primary_sources["odk"],
+        odk_variable_mapping,
     )
     expected = {
-        "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "start",
-        "stableTargetId": Joker(),
+        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "identifierInPrimarySource": "start_test_raw_data",
         "dataType": "yes_no",
         "label": [{"value": "start"}],
-        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
-        "valueSet": [
-            "yes_no, Yes",
-            "yes_no",
-            "yes_no, No",
-            "yes_no",
-        ],
+        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
+        "valueSet": ["yes_no, Yes", "yes_no", "yes_no, No", "yes_no"],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
-        "hadPrimarySource": str(extracted_primary_sources["odk"].stableTargetId),
-        "identifierInPrimarySource": "username",
+        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "identifierInPrimarySource": "username_test_raw_data",
         "dataType": "username",
-        "label": [{"value": "username", "language": TextLanguage.EN}],
-        "usedIn": [str(extracted_resources_odk[0].stableTargetId)],
+        "label": [{"value": "username", "language": "en"}],
+        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
         "description": [
-            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
-            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
+            {"value": "Store username of interviewer.", "language": "en"},
+            {"value": "Store username of interviewer.", "language": "en"},
         ],
         "identifier": Joker(),
         "stableTargetId": Joker(),

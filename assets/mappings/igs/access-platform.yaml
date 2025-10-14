@@ -3,12 +3,16 @@
 endpointDescription:
   - mappingRules:
       - setValues:
+          language: en
+          title: test title
+          url: https://rki.de:4200/api
 endpointType:
   - mappingRules:
-      - setValues:
+      - setValues: https://mex.rki.de/item/api-type-1 # REST
 endpointURL:
   - mappingRules:
       - setValues:
+          url: https://rki.de:4100
 contact:
   - mappingRules:
       - forValues:
@@ -16,6 +20,8 @@ contact:
 description:
   - mappingRules:
       - setValues:
+          - language: en
+            value: test description
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -25,6 +31,7 @@ identifierInPrimarySource:
 landingPage:
   - mappingRules:
       - setValues:
+          - url: https://rki.de:4100/docs
 technicalAccessibility:
   - mappingRules:
       - setValues: https://mex.rki.de/item/technical-accessibility-1 # internal

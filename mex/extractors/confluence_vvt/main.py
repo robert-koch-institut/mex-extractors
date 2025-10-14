@@ -5,10 +5,13 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import transform_ldap_persons_with_query_to_mex_persons
+from mex.common.ldap.transform import (
+    transform_ldap_persons_with_query_to_extracted_persons,
+)
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
@@ -72,6 +75,7 @@ def extracted_confluence_vvt_person_ids_by_query_string(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     confluence_vvt_activity_mapping: dict[str, Any],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Return mapping from query string to person IDs.
 
@@ -89,10 +93,11 @@ def extracted_confluence_vvt_person_ids_by_query_string(
 
     ldap_authors = extract_confluence_vvt_authors(contacts + involved_persons)
     ldap_author_gens = tee(ldap_authors, 2)
-    mex_authors = transform_ldap_persons_with_query_to_mex_persons(
+    mex_authors = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_author_gens[0],
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_authors)
 

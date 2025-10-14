@@ -28,8 +28,8 @@ def test_get_merged_items_mocked() -> None:
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
-def test_get_relevant_primary_source_ids_mocked() -> None:
-    result = extract_module.get_relevant_primary_source_ids(["relevant primary source"])
+def test_get_filtered_primary_source_ids_mocked() -> None:
+    result = extract_module.get_filtered_primary_source_ids(["relevant primary source"])
 
     assert len(result) == 1
     assert result[0] == "identifierRelevantPS"

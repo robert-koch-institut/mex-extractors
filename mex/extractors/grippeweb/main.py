@@ -5,12 +5,13 @@ from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
-    transform_ldap_actors_to_mex_contact_points,
-    transform_ldap_persons_to_mex_persons,
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_persons_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
@@ -109,7 +110,7 @@ def extracted_mex_functional_units_grippeweb(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
     mex_actors_resources = list(
-        transform_ldap_actors_to_mex_contact_points(
+        transform_ldap_functional_accounts_to_extracted_contact_points(
             ldap_actors, extracted_primary_source_ldap
         )
     )
@@ -123,6 +124,7 @@ def extracted_mex_persons_grippeweb(
     grippeweb_access_platform: dict[str, Any],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for grippeweb from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
     ldap_persons = extract_ldap_persons(
@@ -130,8 +132,11 @@ def extracted_mex_persons_grippeweb(
         AccessPlatformMapping.model_validate(grippeweb_access_platform),
     )
     mex_persons = list(
-        transform_ldap_persons_to_mex_persons(
-            ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
+        transform_ldap_persons_to_extracted_persons(
+            ldap_persons,
+            extracted_primary_source_ldap,
+            extracted_organizational_units,
+            extracted_organization_rki,
         )
     )
     load(mex_persons)

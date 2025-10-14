@@ -431,13 +431,15 @@ def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
     }
 
     for variable in extracted_cc2_aux_model:
-        value_set = value_set_by_sheet_and_variable_name[
-            f"{variable.depends_on_nokeda_variable}_{variable.variable_name}"
-        ]
+        value_set = dict.fromkeys(
+            value_set_by_sheet_and_variable_name[
+                f"{variable.depends_on_nokeda_variable}_{variable.variable_name}"
+            ]
+        )
         if variable.variable_name == "aux_cedis_group":
             for row in value_sets:
-                value_set.append(row.label_de)
-                value_set.append(row.label_en)
+                value_set[row.label_de] = None
+                value_set[row.label_en] = None
         yield ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[variable.domain],
             description=Text(value=variable.element_description),
@@ -445,7 +447,7 @@ def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
             identifierInPrimarySource=variable.variable_name,
             label=[Text(value=variable.variable_name)],
             usedIn=used_in,
-            valueSet=list(set(value_set)),
+            valueSet=list(value_set),
         )
 
 

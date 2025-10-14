@@ -1,7 +1,7 @@
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
+from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -51,11 +51,15 @@ def extracted_mex_persons(
     biospecimen_resources: list[BiospecimenResource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for biospecimen from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
     ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
-    mex_persons = transform_ldap_persons_to_mex_persons(
-        ldap_persons, extracted_primary_source_ldap, extracted_organizational_units
+    mex_persons = transform_ldap_persons_to_extracted_persons(
+        ldap_persons,
+        extracted_primary_source_ldap,
+        extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_persons)
     return mex_persons

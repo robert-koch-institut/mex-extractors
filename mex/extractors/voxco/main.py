@@ -4,7 +4,7 @@ from typing import Any
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import transform_ldap_persons_to_mex_persons
+from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -80,15 +80,17 @@ def extracted_mex_persons_voxco(
     voxco_resource_mappings: list[dict[str, Any]],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
     """Extract ldap persons for voxco, transform them and load them to sinks."""
     ldap_persons = extract_ldap_persons_voxco(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
-    mex_persons = transform_ldap_persons_to_mex_persons(
+    mex_persons = transform_ldap_persons_to_extracted_persons(
         ldap_persons,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_persons)
     return mex_persons

@@ -38,11 +38,9 @@ def extract_odk_raw_data() -> list[ODKData]:
         label_survey = get_column_dict_by_pattern(survey_sheet, "English")
         type_survey = survey_sheet["type"].to_list()
         name_survey = survey_sheet["name"].to_list()
-        hint = get_column_dict_by_pattern(survey_sheet, "hint")
         raw_data.append(
             ODKData(
                 file_name=file.name,
-                hint=hint,
                 label_survey=label_survey,
                 label_choices=label_choices,
                 list_name_choices=list_name_choices,
