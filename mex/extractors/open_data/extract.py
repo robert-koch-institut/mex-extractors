@@ -2,14 +2,13 @@ import json
 from io import BytesIO, TextIOWrapper
 from zipfile import ZipFile
 
-from mex.extractors.open_data.connector import (
-    OpenDataConnector,
-    OpenDataMetadataZipConnector,
-)
+from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
-    OpenDataVersionFiles, OpenDataSchemaCollection,
+    OpenDataTableSchema,
+    OpenDataTableSchemaJson,
+    OpenDataVersionFiles,
 )
 
 
@@ -76,7 +75,8 @@ def extract_open_data_persons_from_open_data_parent_resources(
         }
     )
 
-def extract_tableschema(version_id: str) -> list[OpenDataSchemaCollection]:
+
+def extract_tableschema(version_id: str) -> list[dict[str, OpenDataTableSchema]]:
     """Extract the metadata zip tableschemas.
 
     Args:
@@ -85,25 +85,24 @@ def extract_tableschema(version_id: str) -> list[OpenDataSchemaCollection]:
     Returns:
         name of tableschema json as string
     """
-    connector = OpenDataMetadataZipConnector.get()
+    connector = OpenDataConnector.get()
 
-    zip_file = connector.zipfile_request(version_id)
+    zip_file = connector.get_schema_zipfile(version_id)
 
-    schema_collection: list[OpenDataSchemaCollection] = []
+    schema_collection: list[dict[str, OpenDataTableSchema]] = []
     with ZipFile(BytesIO(zip_file.content)) as zf:
         schema_file_paths = [
-            n for n in zf.namelist()
+            n
+            for n in zf.namelist()
             if n.lower().startswith("schemas/tableschema_")
-               and n.lower().endswith(".json")
+            and n.lower().endswith(".json")
         ]
-
+        breakpoint()
         for file_path in schema_file_paths:
             with zf.open(file_path) as f:
-                data = json.load(TextIOWrapper(f, encoding="utf-8"))
-            schema_collection.append(
-                OpenDataSchemaCollection(
-                    filename=file_path.removeprefix("schemas/"), json=data.fields
+                data = OpenDataTableSchemaJson.model_validate(
+                    json.load(TextIOWrapper(f, encoding="utf-8"))
                 )
-            )
+            schema_collection.append({file_path.removeprefix("schemas/"): data.fields})
 
     return schema_collection

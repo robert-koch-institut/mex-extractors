@@ -14,27 +14,29 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
-    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedResourceIdentifier,
 )
 from mex.extractors.open_data.extract import (
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
+    extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
-    transform_variable_group,
+    transform_open_data_variable_groups,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -152,21 +154,51 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
 
 @asset(group_name="open_data")
-def extracted_open_data_Variable_groups_and_variables(
-        extracted_open_data_parent_resources: list[ExtractedResource],
-) -> list[ExtractedVariableGroup]:
-    """Extract and transform metadata zip tableschemas to variable groups."""
-
-    transform_variable_group(extracted_open_data_parent_resources)
+def open_data_version_id_by_resource_id(
+    extracted_open_data_parent_resources: list[ExtractedResource],
+    open_data_parent_resources: list[OpenDataParentResource],
+    extracted_open_data_distribution: list[ExtractedDistribution],
+) -> dict[MergedResourceIdentifier, str]:
+    """Get version id (to download tableschema zip per Resource), if zip available."""
+    return {
+        resource.stableTargetId: str(parent_resource.id)
+        for parent_resource in open_data_parent_resources
+        for resource in extracted_open_data_parent_resources
+        if resource.identifierInPrimarySource == parent_resource.conceptrecid
+        for distribution in extracted_open_data_distribution
+        if (
+            distribution.stableTargetId in resource.distribution
+            and distribution.title[0].value == "datapackage.json"
+        )
+    }
 
 
 @asset(group_name="open_data")
-def extracted_open_data_Variable_groups(
-    extracted_open_data_parent_resources: list[ExtractedResource],
-) -> list[ExtractedVariableGroup]:
-    """Extract and transform metadata zip tableschemas to variable groups."""
+def extracted_open_data_tableschema(
+    open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, str],
+) -> dict[MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]]:
+    """Extract and collect metadata zip tableschemas by extracted resource id."""
+    return {
+        resource_key: extract_tableschema(
+            open_data_version_id_by_resource_id[resource_key]
+        )
+        for resource_key in open_data_version_id_by_resource_id
+    }
 
-    transform_variable_group(extracted_open_data_parent_resources)
+
+@asset(group_name="open_data")
+def extracted_open_data_variable_group(
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_open_data_tableschema: dict[
+        MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    """Transform tableschema filenames to variable groups."""
+    breakpoint()
+    return transform_open_data_variable_groups(
+        extracted_primary_source_open_data,
+        extracted_open_data_tableschema,
+    )
 
 
 @entrypoint(Settings)

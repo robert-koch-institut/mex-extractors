@@ -3,15 +3,14 @@ from collections.abc import Mapping
 from typing import Any
 
 import backoff
-import requests
 from requests import HTTPError, Response
 
-from mex.common.connector import HTTPConnector, BaseConnector
+from mex.common.connector import HTTPConnector
 from mex.common.logging import logger
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataResourceVersion,
-    OpenDataVersionFiles, OpenDataSchemaCollection,
+    OpenDataVersionFiles,
 )
 from mex.extractors.settings import Settings
 
@@ -108,13 +107,6 @@ class OpenDataConnector(HTTPConnector):
 
         return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
 
-
-class OpenDataMetadataZipConnector(BaseConnector):
-    def _set_url(self) -> None:
-        """Set url of the host."""
-        settings = Settings.get()
-        self.url = settings.open_data.url
-
-    def zipfile_request(self, version_id: str) -> Response:
-        zip_url = f"{self.url}/api/records/{version_id}/files/Metadaten.zip/content"
-        return requests.get(zip_url)
+    def get_schema_zipfile(self, version_id: str) -> Response:
+        zip_url = f"/api/records/{version_id}/files/Metadaten.zip/content"
+        return self.request_raw("GET", zip_url)

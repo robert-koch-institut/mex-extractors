@@ -12,7 +12,6 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
-    ExtractedVariable,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -20,16 +19,17 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedResourceIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
     extract_files_for_parent_resource,
     extract_oldest_record_version_creationdate,
-    extract_metadata_tableschema_name, extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -346,7 +346,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
-            else None
+            else unit_stable_target_ids_by_synonym.get(FALLBACK_UNIT)
         )
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []
@@ -380,9 +380,26 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         )
     return extracted_resource
 
-def transform_variable_group(
-    extracted_open_data_parent_resources: list[ExtractedResource]
-) -> list [ExtractedVariableGroup]:
-    for resource in extracted_open_data_parent_resources:
-        schema_collection = extract_tableschema(resource.id)
-        for filename, json in schema_collection:
+
+def transform_open_data_variable_groups(
+    extracted_primary_source_open_data: ExtractedPrimarySource,
+    extracted_open_data_tableschema: dict[
+        MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    merged_primary_source_id_open_data = (
+        extracted_primary_source_open_data.stableTargetId
+    )
+    extracted_variable_groups: list[ExtractedVariableGroup] = []
+    breakpoint()
+    for resource_stableTargetId, schema_dict in extracted_open_data_tableschema:
+        for filename in schema_dict:
+            extracted_variable_groups.append(
+                ExtractedVariableGroup.model_validate(
+                    hadPrimarySource=merged_primary_source_id_open_data,
+                    identifierInPrimarySource=filename,
+                    containedBy=resource_stableTargetId,
+                    label=filename.removesuffix(".json"),
+                )
+            )
+    return extracted_variable_groups

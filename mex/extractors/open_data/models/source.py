@@ -1,5 +1,3 @@
-from typing import Any
-
 from mex.common.models import BaseModel
 
 
@@ -83,17 +81,20 @@ class OpenDataVersionFiles(BaseModel):
 
 class OpenDataTableSchemaConstraints(BaseModel):
     """Model subclass for Zenodo table schema property 'constraints'."""
-    enum: list[str]
+
+    enum: list[str | int] | None = None
 
 
 class OpenDataTableSchemaCategories(BaseModel):
     """Model subclass for Zenodo table schema property 'categories'."""
+
     value: str
     label: str
 
 
 class OpenDataTableSchema(BaseModel):
-    """Model subclass for a Zenodo table schema json."""
+    """Model subclass for single table schemas in a json."""
+
     name: str
     type: str
     description: str
@@ -101,7 +102,13 @@ class OpenDataTableSchema(BaseModel):
     categories: list[OpenDataTableSchemaCategories] | None = None
 
 
-class OpenDataSchemaCollection(BaseModel):
-    """Model class for Zenodo table schemas."""
-    filename: str
-    json: list[dict[str, OpenDataTableSchema]]
+class OpenDataTableSchemaJson(BaseModel):
+    """Model class for Zenodo table schema jsons."""
+
+    fields: list[OpenDataTableSchema]
+
+
+# class OpenDataSchemaCollection(BaseModel):
+#     """Model class for Zenodo table schemas."""
+#     version_id: str
+#     json: list[dict[str, OpenDataTableSchema]]
