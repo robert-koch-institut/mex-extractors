@@ -19,27 +19,13 @@ def system_fetch_old_dagster_run_ids() -> list[str]:
         days=settings.system.max_run_age_in_days
     )
 
-    collected_old_run_records: list[str] = []
-    cursor = None
+    old_run_records = instance.get_run_records(
+        filters=RunsFilter(created_before=cutoff_date),
+        limit=100,  # Process in batches
+        ascending=True,  # start with oldest
+    )
 
-    while True:
-        # Get old runs
-        old_run_records = instance.get_run_records(
-            filters=RunsFilter(created_before=cutoff_date),
-            limit=100,  # Process in batches
-            ascending=True,  # start with oldest
-            cursor=cursor,
-        )
-
-        if not old_run_records:
-            break
-
-        collected_old_run_records.extend(r.dagster_run.run_id for r in old_run_records)
-
-        # Update cursor to continue pagination
-        cursor = old_run_records[-1].dagster_run.run_id
-
-    return collected_old_run_records
+    return [r.dagster_run.run_id for r in old_run_records]
 
 
 @asset(group_name="system_clean_up")

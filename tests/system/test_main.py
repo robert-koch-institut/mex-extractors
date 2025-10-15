@@ -13,32 +13,23 @@ from tests.system.conftest import create_mock_dagster_run_records
 
 def test_system_fetch_old_dagster_run_ids() -> None:
     # Simulate pagination behavior
-    batch_1 = [create_mock_dagster_run_records(f"run_{i}") for i in range(100)]
-    batch_2 = [create_mock_dagster_run_records(f"run_{i}") for i in range(100, 150)]
-    batch_3: list[Mock] = []  # Empty batch to signal end
+    mocked_old_runs = [create_mock_dagster_run_records(f"run_{i}") for i in range(42)]
 
     # Mock Dagster instance
     mock_instance = Mock()
-    mock_instance.get_run_records.side_effect = [batch_1, batch_2, batch_3]
+    mock_instance.get_run_records.side_effect = [mocked_old_runs]
 
     with patch(
         "mex.extractors.system.main.DagsterInstance.get", return_value=mock_instance
     ):
         result = cast("list[str]", system_fetch_old_dagster_run_ids())
 
-    assert len(result) == 150
+    assert len(result) == 42
     assert result[0] == "run_0"
-    assert result[-1] == "run_149"
-
-    # 3 calls due to pagination
-    assert mock_instance.get_run_records.call_count == 3
+    assert result[-1] == "run_41"
 
     calls = mock_instance.get_run_records.call_args_list
-    # Verify cursor was used correctly in subsequent calls
-    assert calls[0].kwargs["cursor"] is None
-    assert calls[1].kwargs["cursor"] == "run_99"  # last ID from first batch
-    assert calls[2].kwargs["cursor"] == "run_149"  # last ID from second batch
-    # Assert that a cutoff date filter was passed for all batches
+    # Assert that a cutoff date filter was passed
     assert all(c.kwargs["filters"].created_before for c in calls)
 
 
