@@ -1,9 +1,9 @@
 from dagster import (
+    AssetExecutionContext,
+    AssetObservation,
     MetadataValue,
     Output,
     asset,
-    AssetExecutionContext,
-    AssetObservation,
 )
 
 from mex.common.cli import entrypoint
@@ -17,15 +17,9 @@ from mex.common.models import (
 )
 from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
-    ActivityType,
-    ExtractedActivityIdentifier,
-    Identifier,
-    MergedActivityIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    MergedPrimarySourceIdentifier,
-    YearMonthDay,
 )
 from mex.extractors.blueant.extract import (
     extract_blueant_organizations,
@@ -118,7 +112,10 @@ def create_output(
     )
 
 
-@asset(group_name="blueant")
+@asset(
+    group_name="blueant",
+    metadata={"entity_type": "activity"},
+)
 def extracted_blueant_activities(  # noqa: PLR0913
     context: AssetExecutionContext,
     blueant_sources: list[BlueAntSource],

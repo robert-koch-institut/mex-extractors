@@ -125,7 +125,6 @@ def check_x_items_more_passed(
             asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
         )
     )
-    print(events)
     if events is None:
         return True
 
