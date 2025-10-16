@@ -12,6 +12,7 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
+    check_x_items_less_passed,
     check_x_items_more_passed,
     check_yaml_path,
     get_historic_count,
@@ -295,4 +296,115 @@ def test_check_x_items_more_passed(  # noqa: PLR0913
     context = build_asset_check_context(instance=instance)
     asset_key = AssetKey(["some_asset"])
     result = check_x_items_more_passed(context, asset_key, "ext", "type", current_count)
+    assert result is passed
+
+
+@pytest.mark.parametrize(
+    (
+        "current_count",
+        "historical_events",
+        "rule_threshold",
+        "time_frame_str",
+        "passed",
+    ),
+    [
+        (
+            8,
+            {
+                datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 10,
+            },
+            5,
+            "7d",
+            True,  # 8 >= (10 - 5)
+        ),
+        (
+            2,
+            {
+                datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 10,
+            },
+            5,
+            "7d",
+            False,  # 2 < (10 - 5)
+        ),
+        (
+            15,
+            {
+                datetime(2025, 7, 10, 12, 0, tzinfo=UTC): 12,
+                datetime(2025, 7, 25, 12, 0, tzinfo=UTC): 14,
+            },
+            5,
+            "20d",
+            True,  # 15 >= (14 - 5)
+        ),
+        (
+            15,
+            {
+                datetime(2025, 6, 15, 12, 0, tzinfo=UTC): 19,
+            },
+            5,
+            "7d",
+            True,  # 15>= (19-5)
+        ),
+        (
+            30,
+            {},
+            5,
+            "30d",
+            True,  # no history → passes
+        ),
+    ],
+    ids=[
+        "passes_within_threshold",
+        "fails_below_threshold",
+        "passes_with_multiple_events",
+        "passes_old_history_only",
+        "passes_no_historical_events",
+    ],
+)
+def test_check_x_items_less_passed(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    historical_events: dict[datetime, int],
+    rule_threshold: int,
+    time_frame_str: str,
+    *,
+    passed: bool,
+) -> None:
+    mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
+
+    class FixedDatetime(datetime):
+        @classmethod
+        def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
+            dt = mocked_now.astimezone(tz) if tz else mocked_now.replace(tzinfo=None)
+            return cls(
+                dt.year,
+                dt.month,
+                dt.day,
+                dt.hour,
+                dt.minute,
+                dt.second,
+                dt.microsecond,
+                dt.tzinfo,
+            )
+
+    # Patch dependencies
+    monkeypatch.setattr("mex.extractors.pipeline.checks.main.datetime", FixedDatetime)
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_rule",
+        lambda *args, **kwargs: {"value": rule_threshold, "time_frame": time_frame_str},
+    )
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.check_yaml_path",
+        lambda *args, **kwargs: True,
+    )
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_historical_events",
+        lambda *args, **kwargs: historical_events,
+    )
+
+    instance = DagsterInstance.ephemeral()
+    context = build_asset_check_context(instance=instance)
+    asset_key = AssetKey(["some_asset"])
+
+    result = check_x_items_less_passed(context, asset_key, "ext", "type", current_count)
     assert result is passed
