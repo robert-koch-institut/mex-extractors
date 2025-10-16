@@ -70,7 +70,7 @@ def confluence_vvt_activity_mapping() -> dict[str, Any]:
 
 
 @asset(group_name="confluence_vvt")
-def confluence_vvt_merged_person_ids_by_query_string(
+def confluence_vvt_merged_person_ids_by_query_str(
     confluence_vvt_pages: list[ConfluenceVvtPage],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
@@ -109,7 +109,7 @@ def confluence_vvt_merged_person_ids_by_query_string(
 @asset(group_name="confluence_vvt")
 def extracted_confluence_vvt_activities(
     confluence_vvt_pages: list[ConfluenceVvtPage],
-    confluence_vvt_merged_person_ids_by_query_string: dict[
+    confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
     confluence_vvt_extracted_primary_source: ExtractedPrimarySource,
@@ -122,7 +122,7 @@ def extracted_confluence_vvt_activities(
             confluence_vvt_pages,
             confluence_vvt_extracted_primary_source,
             ActivityMapping.model_validate(confluence_vvt_activity_mapping),
-            confluence_vvt_merged_person_ids_by_query_string,
+            confluence_vvt_merged_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
         )
     )

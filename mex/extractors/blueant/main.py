@@ -81,7 +81,7 @@ def blueant_merged_person_id_by_employee_id(
 
 
 @asset(group_name="blueant")
-def blueant_merged_organization_ids_by_query_string(
+def blueant_merged_organization_ids_by_query_str(
     blueant_sources: list[BlueAntSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for blueant from wikidata and group them by query."""
@@ -94,7 +94,7 @@ def blueant_extracted_activities(
     blueant_extracted_primary_source: ExtractedPrimarySource,
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    blueant_merged_organization_ids_by_query_string: dict[
+    blueant_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
 ) -> Output[int]:
@@ -110,7 +110,7 @@ def blueant_extracted_activities(
         blueant_merged_person_id_by_employee_id,
         unit_stable_target_ids_by_synonym,
         activity,
-        blueant_merged_organization_ids_by_query_string,
+        blueant_merged_organization_ids_by_query_str,
     )
 
     extracted_activities_list: list[ExtractedActivity] = list(extracted_activities)

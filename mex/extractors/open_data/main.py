@@ -70,7 +70,7 @@ def open_data_creators_contributors(
 
 
 @asset(group_name="open_data")
-def open_data_organization_ids_by_str(
+def open_data_organization_ids_by_name_str(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
@@ -87,7 +87,7 @@ def open_extracted_data_persons(  # noqa: PLR0913
     open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
-    open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
+    open_data_organization_ids_by_name_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons and load them to sinks."""
     open_data_persons = transform_open_data_persons(
@@ -96,7 +96,7 @@ def open_extracted_data_persons(  # noqa: PLR0913
         open_data_extracted_primary_source,
         extracted_organizational_units,
         extracted_organization_rki,
-        open_data_organization_ids_by_str,
+        open_data_organization_ids_by_name_str,
     )
     load(open_data_persons)
     return open_data_persons

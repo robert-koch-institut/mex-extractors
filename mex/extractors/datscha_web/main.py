@@ -58,7 +58,7 @@ def datscha_web_items(
 
 
 @asset(group_name="datscha_web")
-def datscha_web_person_ids_by_query_string(
+def datscha_web_person_ids_by_query_str(
     datscha_web_items: list[DatschaWebItem],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -80,7 +80,7 @@ def datscha_web_person_ids_by_query_string(
 
 
 @asset(group_name="datscha_web")
-def datscha_web_organization_ids_by_query_string(
+def datscha_web_organization_ids_by_query_str(
     datscha_web_items: list[DatschaWebItem],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for Datscha Web from wikidata and group them by query."""
@@ -92,19 +92,17 @@ def datscha_web_extracted_activities(
     datscha_web_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     datscha_web_items: list[DatschaWebItem],
-    datscha_web_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    datscha_web_organization_ids_by_query_string: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    datscha_web_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
+    datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform Datscha Web to extracted sources and load them to the sinks."""
     mex_sources = list(
         transform_datscha_web_items_to_mex_activities(
             datscha_web_items,
             datscha_web_extracted_primary_source,
-            datscha_web_person_ids_by_query_string,
+            datscha_web_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
-            datscha_web_organization_ids_by_query_string,
+            datscha_web_organization_ids_by_query_str,
         )
     )
     load(mex_sources)

@@ -50,7 +50,7 @@ def voxco_extracted_primary_source(
 
 
 @asset(group_name="voxco")
-def voxco_variables_by_str() -> dict[str, list[VoxcoVariable]]:
+def voxco_variables_by_name_str() -> dict[str, list[VoxcoVariable]]:
     """Extract voxco variables by json file names."""
     return extract_voxco_variables()
 
@@ -126,13 +126,13 @@ def voxco_extracted_resources_by_str(  # noqa: PLR0913
 @asset(group_name="voxco")
 def voxco_extracted_variables(
     voxco_extracted_resources_by_str: dict[str, ExtractedResource],
-    voxco_variables_by_str: dict[str, list[VoxcoVariable]],
+    voxco_variables_by_name_str: dict[str, list[VoxcoVariable]],
     voxco_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform voxco variables and load them to the sinks."""
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
         voxco_extracted_resources_by_str,
-        voxco_variables_by_str,
+        voxco_variables_by_name_str,
         voxco_extracted_primary_source,
     )
     load(extracted_variables)

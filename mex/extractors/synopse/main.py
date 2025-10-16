@@ -124,7 +124,7 @@ def synopse_variables_by_thema(
 
 
 @asset(group_name="synopse")
-def synopse_merged_person_ids_by_str(
+def synopse_merged_person_ids_by_name_str(
     synopse_ldap_persons_with_query: list[LDAPPersonWithQuery],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_primary_source_ldap: ExtractedPrimarySource,
@@ -226,7 +226,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
+    synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource identifier in primary source.
 
@@ -242,7 +242,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         synopse_access_platform_id,
-        synopse_merged_person_ids_by_str,
+        synopse_merged_person_ids_by_name_str,
     )
     load(transformed_study_data_resources)
     return transform_overviews_to_resource_lookup(
@@ -262,7 +262,7 @@ def synopse_activity() -> dict[str, Any]:
 def synopse_extracted_activities(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     extracted_primary_source_report_server: ExtractedPrimarySource,
-    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
+    synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -274,7 +274,7 @@ def synopse_extracted_activities(  # noqa: PLR0913
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             extracted_primary_source_report_server,
-            synopse_merged_person_ids_by_str,
+            synopse_merged_person_ids_by_name_str,
             unit_stable_target_ids_by_synonym,
             ActivityMapping.model_validate(synopse_activity),
             synopse_merged_organization_ids_by_query_string,

@@ -101,7 +101,7 @@ def datenkompass_filtered_merged_organization_ids() -> set[
 
 
 @asset(group_name="datenkompass")
-def datenkompass_person_str_by_id() -> dict[MergedPersonIdentifier, str]:
+def datenkompass_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get person name as dictionary by id."""
     return {
         person.identifier: (
@@ -267,14 +267,14 @@ def datenkompass_bibliographic_resources(
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    datenkompass_person_str_by_id: dict[MergedPersonIdentifier, str],
+    datenkompass_name_str_by_id: dict[MergedPersonIdentifier, str],
     datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         datenkompass_merged_bibliographic_resources,
         datenkompass_merged_organizational_units_by_id,
-        datenkompass_person_str_by_id,
+        datenkompass_name_str_by_id,
         datenkompass_bibliographic_resource_mapping,
     )
 

@@ -100,7 +100,7 @@ def seq_repo_merged_person_ids_by_query_string(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_extracted_activities_by_str(
+def seq_repo_extracted_activities_by_id_str(
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
@@ -149,7 +149,7 @@ def seq_repo_extracted_access_platform(
 @asset(group_name="seq_repo")
 def seq_repo_resources(  # noqa: PLR0913
     seq_repo_latest_source: dict[str, SeqRepoSource],
-    seq_repo_extracted_activities_by_str: dict[str, ExtractedActivity],
+    seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -165,7 +165,7 @@ def seq_repo_resources(  # noqa: PLR0913
 
     resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_latest_source,
-        seq_repo_extracted_activities_by_str,
+        seq_repo_extracted_activities_by_id_str,
         seq_repo_extracted_access_platform,
         resource,
         seq_repo_ldap_persons_with_query,

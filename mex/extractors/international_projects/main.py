@@ -61,7 +61,7 @@ def international_projects_sources(
 
 
 @asset(group_name="international_projects")
-def international_projects_person_ids_by_query_string(
+def international_projects_person_ids_by_query_str(
     international_projects_sources: list[InternationalProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -107,7 +107,7 @@ def international_projects_partner_organization_ids_by_query_string(
 def international_projects_extracted_activities(  # noqa: PLR0913
     international_projects_sources: list[InternationalProjectsSource],
     international_projects_extracted_primary_source: ExtractedPrimarySource,
-    international_projects_person_ids_by_query_string: dict[
+    international_projects_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -128,7 +128,7 @@ def international_projects_extracted_activities(  # noqa: PLR0913
             international_projects_sources,
             activity,
             international_projects_extracted_primary_source,
-            international_projects_person_ids_by_query_string,
+            international_projects_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
             international_projects_funding_sources_ids_by_query_string,
             international_projects_partner_organization_ids_by_query_string,
