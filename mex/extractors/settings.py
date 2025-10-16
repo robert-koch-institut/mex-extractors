@@ -1,5 +1,4 @@
-from pydantic import AnyUrl, Field, SecretStr
-from pydantic_core import Url
+from pydantic import Field, HttpUrl, SecretStr
 
 from mex.common.settings import BaseSettings
 from mex.common.types import AssetsPath
@@ -53,8 +52,8 @@ class Settings(BaseSettings):
         description="Drop API key with admin access to call all GET endpoints",
         validation_alias="MEX_DROP_API_KEY",
     )
-    drop_api_url: AnyUrl = Field(
-        Url("http://localhost:8081/"),
+    drop_api_url: HttpUrl = Field(
+        HttpUrl("http://localhost:8081/"),
         description="MEx drop API url.",
         validation_alias="MEX_DROP_API_URL",
     )
@@ -71,8 +70,8 @@ class Settings(BaseSettings):
         SecretStr("password"),
         description="Kerberos password to authenticate against MSSQL server.",
     )
-    s3_endpoint_url: AnyUrl = Field(
-        AnyUrl("https://s3"),
+    s3_endpoint_url: HttpUrl = Field(
+        HttpUrl("https://s3"),
         description="The complete URL to use for the constructed client.",
     )
     s3_access_key_id: SecretStr = Field(
