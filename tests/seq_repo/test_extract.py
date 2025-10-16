@@ -50,7 +50,7 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
         lambda _self, x_system: [],
     )
 
-    with pytest.raises(MExError, match="Expected exactly one seq-repo file"):
+    with pytest.raises(MExError, match=r"Expected exactly one seq-repo file"):
         list(extract_sources())
 
 

@@ -187,7 +187,7 @@ def transform_igs_access_platform(
         technicalAccessibility=igs_access_platform_mapping.technicalAccessibility[0]
         .mappingRules[0]
         .setValues,
-        title=igs_access_platform_mapping.title[0].mappingRules[0].forValues,
+        title=igs_access_platform_mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,
     )
 
@@ -265,6 +265,12 @@ def get_enums_by_property_name(
             and (schema_name := properties["items"]["$ref"].split("/")[-1])
             in enum_by_schema_name
         )
+        or (
+            "anyOf" in properties
+            and "$ref" in properties["anyOf"][0]
+            and (schema_name := properties["anyOf"][0]["$ref"].split("/")[-1])
+            in enum_by_schema_name
+        )
     }
 
 
@@ -312,11 +318,12 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
         if schema_name == "Pathogen" and isinstance(schema, IGSEnumSchema):
             data_type = schema.type
             for enum in schema.enum:
-                belongs_to = (
-                    [extracted_igs_variable_group_ids_by_igs_identifier[schema_name]]
-                    if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
-                    else []
-                )
+                if schema_name in extracted_igs_variable_group_ids_by_igs_identifier:
+                    belongs_to = [
+                        extracted_igs_variable_group_ids_by_igs_identifier[schema_name]
+                    ]
+                else:
+                    continue
                 description = description_by_enum.get(enum)
                 identifier_in_primary_source = f"pathogen_{enum}"
                 label = enum
@@ -335,11 +342,12 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
         if not isinstance(schema, IGSPropertiesSchema):
             continue
         for property_name, schema_property in schema.properties.items():
-            belongs_to = (
-                [extracted_igs_variable_group_ids_by_igs_identifier[schema_name]]
-                if schema_name in extracted_igs_variable_group_ids_by_igs_identifier
-                else []
-            )
+            if schema_name in extracted_igs_variable_group_ids_by_igs_identifier:
+                belongs_to = [
+                    extracted_igs_variable_group_ids_by_igs_identifier[schema_name]
+                ]
+            else:
+                continue
             if (
                 schema_property
                 and variable_mapping.dataType[1].mappingRules[0].forValues
@@ -357,7 +365,7 @@ def transform_igs_schemas_to_variables(  # noqa: PLR0913
                     dataType=data_type,
                     description=schema_property.get("title"),
                     hadPrimarySource=igs_extracted_primary_source.stableTargetId,
-                    identifierInPrimarySource=property_name,
+                    identifierInPrimarySource=f"{schema_name}_{property_name}",
                     label=property_name,
                     valueSet=value_set,
                     usedIn=used_in,

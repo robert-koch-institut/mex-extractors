@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - streamline dagster asset names
+- bump mex-common dependency to 1.16.0
 
 ### Deprecated
 
@@ -20,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.3.0] - 2025-10-14
+
+### Changes
+
+- igs wrap up
 
 ## [1.2.0] - 2025-10-07
 

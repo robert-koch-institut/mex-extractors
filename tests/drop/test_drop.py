@@ -20,7 +20,7 @@ def test_list_files() -> None:
 def test_list_files_of_non_existing_x_system() -> None:
     connector = DropApiConnector.get()
     with pytest.raises(
-        HTTPError, match="404.*The requested x-system was not found on this server"
+        HTTPError, match=r"404.*The requested x-system was not found on this server"
     ):
         connector.list_files("does-not-exist")
 
@@ -49,7 +49,7 @@ def test_get_file() -> None:
 def test_get_file_that_does_not_exist() -> None:
     connector = DropApiConnector.get()
     with pytest.raises(
-        HTTPError, match="404 .*The requested data was not found on this server"
+        HTTPError, match=r"404 .*The requested data was not found on this server"
     ):
         connector.get_file("test", "does-not-exist")
 
