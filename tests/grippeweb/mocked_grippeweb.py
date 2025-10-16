@@ -27,7 +27,7 @@ from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
-def extracted_mex_functional_units_grippeweb() -> dict[
+def grippeweb_merged_contact_point_id_by_email() -> dict[
     str, MergedContactPointIdentifier
 ]:
     return {"contactc@rki.de": MergedContactPointIdentifier.generate(42)}
@@ -42,7 +42,7 @@ def unit_stable_target_ids_by_synonym() -> dict[
 
 
 @pytest.fixture
-def extracted_mex_persons_grippeweb() -> list[ExtractedPerson]:
+def grippeweb_extracted_persons() -> list[ExtractedPerson]:
     """Return an extracted person with static dummy values."""
     return [
         ExtractedPerson(
@@ -57,7 +57,7 @@ def extracted_mex_persons_grippeweb() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
-def grippeweb_organization_ids_by_query_string() -> dict[
+def grippeweb_merged_organization_ids_by_query_str() -> dict[
     str, MergedOrganizationIdentifier
 ]:
     return {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(42)}

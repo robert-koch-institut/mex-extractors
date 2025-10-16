@@ -44,7 +44,9 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 def transform_synopse_studies_into_access_platforms(
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source: ExtractedPrimarySource,
-    contact_merged_id_by_query_string: dict[str, MergedContactPointIdentifier],
+    synopse_merged_contact_point_ids_by_query_string: dict[
+        str, MergedContactPointIdentifier
+    ],
     access_platform_mapping: AccessPlatformMapping,
 ) -> ExtractedAccessPlatform:
     """Transform synopse studies into access platforms.
@@ -52,7 +54,7 @@ def transform_synopse_studies_into_access_platforms(
     Args:
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_primary_source: Extracted report server primary source
-        contact_merged_id_by_query_string: contact person lookup by email
+        synopse_merged_contact_point_ids_by_query_string: contact person lookup by email
         access_platform_mapping: mapping default values for access platform
     Returns:
         extracted access platform
@@ -61,7 +63,7 @@ def transform_synopse_studies_into_access_platforms(
         alternativeTitle=access_platform_mapping.alternativeTitle[0]
         .mappingRules[0]
         .setValues,
-        contact=contact_merged_id_by_query_string[
+        contact=synopse_merged_contact_point_ids_by_query_string[
             access_platform_mapping.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         description=access_platform_mapping.description[0].mappingRules[0].setValues,
@@ -96,28 +98,28 @@ def transform_overviews_to_resource_lookup(
     resource_by_identifier_in_platform = {
         resource.identifierInPrimarySource: resource for resource in study_resources
     }
-    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ] = {}
     for study in study_overviews:
         if resource := resource_by_identifier_in_platform.get(
             f"{study.studien_id}-{study.titel_datenset}-{study.ds_typ_id}"
         ):
-            extracted_synopse_resources_by_identifier_in_primary_source[
+            synopse_extracted_resources_by_identifier_in_primary_source[
                 resource.identifierInPrimarySource
             ] = resource
         else:
             continue
-    return extracted_synopse_resources_by_identifier_in_primary_source
+    return synopse_extracted_resources_by_identifier_in_primary_source
 
 
 @watch()
 def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     variables: Iterable[SynopseVariable],
-    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+    synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
     ],
-    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
     extracted_primary_source: ExtractedPrimarySource,
@@ -127,9 +129,9 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
 
     Args:
         variables: Iterable of Synopse Variables
-        extracted_synopse_variable_groups_by_identifier_in_primary_source:
+        synopse_variable_groups_by_identifier_in_primary_source:
             extracted variable groups by identifier in primary source
-        extracted_synopse_resources_by_identifier_in_primary_source:
+        synopse_extracted_resources_by_identifier_in_primary_source:
             Map from synopse ID to study resource
         extracted_primary_source: Extracted report server primary source
         study_overviews: list of synopse study overviews
@@ -157,18 +159,18 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         belongs_to: list[MergedVariableGroupIdentifier] = []
         if (
             variable_group_identifier
-            in extracted_synopse_variable_groups_by_identifier_in_primary_source
+            in synopse_variable_groups_by_identifier_in_primary_source
         ):
             belongs_to = [
-                extracted_synopse_variable_groups_by_identifier_in_primary_source[
+                synopse_variable_groups_by_identifier_in_primary_source[
                     variable_group_identifier
                 ].stableTargetId
             ]
         if (
             resource_identifier
-            in extracted_synopse_resources_by_identifier_in_primary_source
+            in synopse_extracted_resources_by_identifier_in_primary_source
         ):
-            used_in = extracted_synopse_resources_by_identifier_in_primary_source[
+            used_in = synopse_extracted_resources_by_identifier_in_primary_source[
                 resource_identifier
             ].stableTargetId
         else:
@@ -194,10 +196,10 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
 @watch()
 def transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_synopse_variable_groups_by_identifier_in_primary_source: dict[
+    synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
     ],
-    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
     extracted_primary_source: ExtractedPrimarySource,
@@ -208,9 +210,9 @@ def transform_synopse_variables_to_mex_variables(
     Args:
         synopse_variables_by_thema: mapping from "Thema und Fragebogenausschnitt"
             to the variables having this value
-        extracted_synopse_variable_groups_by_identifier_in_primary_source:
+        synopse_variable_groups_by_identifier_in_primary_source:
             extracted variable groups by identifier in primary source
-        extracted_synopse_resources_by_identifier_in_primary_source:
+        synopse_extracted_resources_by_identifier_in_primary_source:
             Map from identifier in primary source to study resource
         extracted_primary_source: Extracted report server primary source
         study_overviews: list of synopse study overviews
@@ -221,15 +223,15 @@ def transform_synopse_variables_to_mex_variables(
     """
     variable_group_by_thema = {
         group.identifierInPrimarySource.split("-")[0]: group
-        for group in extracted_synopse_variable_groups_by_identifier_in_primary_source.values()  # noqa: E501
+        for group in synopse_variable_groups_by_identifier_in_primary_source.values()
     }
     for thema, variables in synopse_variables_by_thema.items():
         if thema not in variable_group_by_thema:
             continue
         yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501
             variables,
-            extracted_synopse_variable_groups_by_identifier_in_primary_source,
-            extracted_synopse_resources_by_identifier_in_primary_source,
+            synopse_variable_groups_by_identifier_in_primary_source,
+            synopse_extracted_resources_by_identifier_in_primary_source,
             extracted_primary_source,
             study_overviews,
         )
@@ -238,7 +240,7 @@ def transform_synopse_variables_to_mex_variables(
 def transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_primary_source: ExtractedPrimarySource,
-    extracted_synopse_resources_by_identifier_in_primary_source: dict[
+    synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
     study_overviews: list[SynopseStudyOverview],
@@ -249,7 +251,7 @@ def transform_synopse_variables_to_mex_variable_groups(
         synopse_variables_by_thema: mapping from "Thema und Fragebogenausschnitt"
             to the variables having this value
         extracted_primary_source: Extracted report server primary source
-        extracted_synopse_resources_by_identifier_in_primary_source: Map from synopse ID
+        synopse_extracted_resources_by_identifier_in_primary_source: Map from synopse ID
             to list of study resources
         study_overviews: list of Synopse Overviews
 
@@ -274,10 +276,10 @@ def transform_synopse_variables_to_mex_variable_groups(
             seen.append(identifier_in_primary_source)
             if (
                 resource_identifier
-                in extracted_synopse_resources_by_identifier_in_primary_source
+                in synopse_extracted_resources_by_identifier_in_primary_source
             ):
                 contained_by = [
-                    extracted_synopse_resources_by_identifier_in_primary_source[
+                    synopse_extracted_resources_by_identifier_in_primary_source[
                         resource_identifier
                     ].stableTargetId
                 ]
@@ -307,10 +309,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
-    extracted_synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    extracted_synopse_contributor_stable_target_ids_by_name: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    synopse_access_platform_id: MergedAccessPlatformIdentifier,
+    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
 ) -> list[ExtractedResource]:
     """Transform Synopse Studies to MEx resources.
 
@@ -324,9 +324,9 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_organization: extracted organization
         synopse_resource: resource default values
-        contact_merged_id_by_query_string: contact person lookup by email
-        extracted_synopse_access_platform_id: synopse access platform id
-        extracted_synopse_contributor_stable_target_ids_by_name: person ids by name
+        synopse_merged_contact_point_ids_by_query_string: contact person lookup by email
+        synopse_access_platform_id: synopse access platform id
+        synopse_merged_person_ids_by_str: person ids by name
 
     Returns:
         list for extracted resources
@@ -363,7 +363,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             str(study.ds_typ_id)
             in synopse_resource.accessPlatform[0].mappingRules[0].forValues
         ):
-            access_platform.append(extracted_synopse_access_platform_id)
+            access_platform.append(synopse_access_platform_id)
         if (
             zugangsbeschraenkung := study.zugangsbeschraenkung.split(":")[0]
         ) and zugangsbeschraenkung in access_restriction_by_zugangsbeschraenkung:
@@ -395,13 +395,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 if unit in unit_merged_ids_by_synonym
             ]
         contributor: list[MergedPersonIdentifier] = []
-        if (
-            project.beitragende
-            in extracted_synopse_contributor_stable_target_ids_by_name
-        ):
-            contributor = extracted_synopse_contributor_stable_target_ids_by_name[
-                project.beitragende
-            ]
+        if project.beitragende in synopse_merged_person_ids_by_str:
+            contributor = synopse_merged_person_ids_by_str[project.beitragende]
         description_by_study_id[study.studien_id] = study.beschreibung
         synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
         keywords_plain = []
@@ -523,7 +518,9 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
-    synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    synopse_merged_organization_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
 ) -> tuple[list[ExtractedActivity], list[ExtractedActivity]]:
     """Transform synopse projects into MEx activities.
 
@@ -534,7 +531,8 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
-        synopse_organization_ids_by_query_string: merged organization ids by org name
+        synopse_merged_organization_ids_by_query_string: merged organization ids by org
+                                                         name
 
     Returns:
         tuple of non-child and child extracted activities
@@ -557,7 +555,7 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,
-            synopse_organization_ids_by_query_string,
+            synopse_merged_organization_ids_by_query_string,
         )
         if not activity:
             continue
@@ -595,7 +593,9 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
-    synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    synopse_merged_organization_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
 ) -> ExtractedActivity | None:
     """Transform a synopse project into a MEx activity.
 
@@ -606,7 +606,8 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
-        synopse_organization_ids_by_query_string: merged organization ids by org name
+        synopse_merged_organization_ids_by_query_string: merged organization ids by org
+                                                         name
 
     Returns:
         extracted activity
@@ -645,8 +646,10 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
     external_associate = []
     if synopse_project.externe_partner:
         for org in synopse_project.externe_partner.split(", "):
-            if org in synopse_organization_ids_by_query_string:
-                external_associate.append(synopse_organization_ids_by_query_string[org])
+            if org in synopse_merged_organization_ids_by_query_string:
+                external_associate.append(
+                    synopse_merged_organization_ids_by_query_string[org]
+                )
             else:
                 extracted_organization = ExtractedOrganization(
                     officialName=org,
@@ -660,10 +663,10 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
 
     if (
         synopse_project.foerderinstitution_oder_auftraggeber
-        in synopse_organization_ids_by_query_string
+        in synopse_merged_organization_ids_by_query_string
     ):
         funder_or_commissioner = [
-            synopse_organization_ids_by_query_string[
+            synopse_merged_organization_ids_by_query_string[
                 synopse_project.foerderinstitution_oder_auftraggeber
             ]
         ]

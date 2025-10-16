@@ -18,21 +18,21 @@ from mex.extractors.publisher.fields import (
 
 
 def get_unit_id_per_person(
-    merged_ldap_persons: list[MergedPerson],
-    publishable_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_merged_persons: list[MergedPerson],
+    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address.
 
     Args:
-        merged_ldap_persons: Merged Persons with primary source ldap
-        publishable_contact_points_and_units: Items container of units + contact points
+        publisher_merged_persons: Merged Persons with primary source ldap
+        publisher_contact_points_and_units: Items container of units + contact points
 
     Returns:
         dictionary of unit identifiers by person identifier
     """
     unit_id_if_email = {
         unit.identifier
-        for unit in publishable_contact_points_and_units.items
+        for unit in publisher_contact_points_and_units.items
         if (
             isinstance(unit.identifier, MergedOrganizationalUnitIdentifier)
             and unit.email
@@ -43,7 +43,7 @@ def get_unit_id_per_person(
         person.identifier: [
             unit_id for unit_id in person.memberOf if unit_id in unit_id_if_email
         ]
-        for person in merged_ldap_persons
+        for person in publisher_merged_persons
     }
 
 

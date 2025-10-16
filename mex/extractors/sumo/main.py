@@ -61,7 +61,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="sumo", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_sumo(
+def sumo_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return SUMO primary source."""
@@ -73,11 +73,11 @@ def extracted_primary_source_sumo(
 
 
 @asset(group_name="sumo")
-def transformed_sumo_access_platform(
+def sumo_extracted_access_platform(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_ldap: ExtractedPrimarySource,
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+    sumo_extracted_primary_source: ExtractedPrimarySource,
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
@@ -103,7 +103,7 @@ def transformed_sumo_access_platform(
         sumo_access_platform,
         unit_stable_target_ids_by_synonym,
         contact_merged_ids_by_name,
-        extracted_primary_source_sumo,
+        sumo_extracted_primary_source,
     )
     load([transformed_access_platform])
 
@@ -111,9 +111,9 @@ def transformed_sumo_access_platform(
 
 
 @asset(group_name="sumo")
-def contact_merged_ids_by_emails_sumo(
-    extracted_resources_nokeda_sumo: dict[str, Any],
-    extracted_resources_feat_sumo: dict[str, Any],
+def sumo_merged_contact_ids_by_email(
+    sumo_extracted_resources_nokeda: dict[str, Any],
+    sumo_extracted_resources_feat: dict[str, Any],
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> dict[Email, MergedContactPointIdentifier]:
     """Load contacts related to resources and return them by their e-mail addresses."""
@@ -122,8 +122,8 @@ def contact_merged_ids_by_emails_sumo(
             [
                 ResourceMapping.model_validate(r)
                 for r in [
-                    extracted_resources_nokeda_sumo,
-                    extracted_resources_feat_sumo,
+                    sumo_extracted_resources_nokeda,
+                    sumo_extracted_resources_feat,
                 ]
             ]
         )
@@ -138,10 +138,10 @@ def contact_merged_ids_by_emails_sumo(
 
 
 @asset(group_name="sumo")
-def transformed_activity_sumo(
+def sumo_extracted_activity(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails_sumo: dict[Email, MergedContactPointIdentifier],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+    sumo_merged_contact_ids_by_email: dict[Email, MergedContactPointIdentifier],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
 ) -> ExtractedActivity:
     """Extract, transform and load SUMO activity."""
     settings = Settings.get()
@@ -151,110 +151,110 @@ def transformed_activity_sumo(
     transformed_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
         unit_stable_target_ids_by_synonym,
-        contact_merged_ids_by_emails_sumo,
-        extracted_primary_source_sumo,
+        sumo_merged_contact_ids_by_email,
+        sumo_extracted_primary_source,
     )
     load([transformed_activity])
     return transformed_activity
 
 
 @asset(group_name="sumo")
-def extracted_resources_nokeda_sumo() -> dict[str, Any]:
+def sumo_extracted_resources_nokeda() -> dict[str, Any]:
     """Extract Nokeda Resource from SUMO."""
     settings = Settings.get()
     return load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
 
 
 @asset(group_name="sumo")
-def extracted_resources_feat_sumo() -> dict[str, Any]:
+def sumo_extracted_resources_feat() -> dict[str, Any]:
     """Extract Resource feat from SUMO."""
     settings = Settings.get()
     return load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
 
 
 @asset(group_name="sumo")
-def extracted_cc1_data_model_nokeda_sumo() -> list[Cc1DataModelNoKeda]:
+def sumo_extracted_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
     """Extract Cc1 data model from SUMO."""
     return list(extract_cc1_data_model_nokeda())
 
 
 @asset(group_name="sumo")
-def extracted_cc2_aux_model_sumo(
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_cc2_aux_model(
+    sumo_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[Cc2AuxModel]:
     """Extract Cc2 auxiliary model from SUMO."""
     sumo_cc2_aux_model = list(extract_cc2_aux_model())
     return list(
-        filter_and_log_cc2_aux_model(sumo_cc2_aux_model, extracted_primary_source_sumo)
+        filter_and_log_cc2_aux_model(sumo_cc2_aux_model, sumo_extracted_primary_source)
     )
 
 
 @asset(group_name="sumo")
-def extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
+def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
     """Extract Cc2 features from SUMO data."""
     return list(extract_cc2_feat_projection())
 
 
 @asset(group_name="sumo")
-def transformed_resource_nokeda_sumo(  # noqa: PLR0913
-    extracted_resources_nokeda_sumo: dict[str, Any],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_resource_nokeda(  # noqa: PLR0913
+    sumo_extracted_resources_nokeda: dict[str, Any],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails_sumo: dict[Email, MergedContactPointIdentifier],
+    sumo_merged_contact_ids_by_email: dict[Email, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
-    transformed_activity_sumo: ExtractedActivity,
-    transformed_sumo_access_platform: ExtractedAccessPlatform,
+    sumo_extracted_activity: ExtractedActivity,
+    sumo_extracted_access_platform: ExtractedAccessPlatform,
 ) -> ExtractedResource:
     """Transform and load extracted Nokeda Resource from SUMO."""
     mex_resource_nokeda = transform_resource_nokeda_to_mex_resource(
-        ResourceMapping.model_validate(extracted_resources_nokeda_sumo),
-        extracted_primary_source_sumo,
+        ResourceMapping.model_validate(sumo_extracted_resources_nokeda),
+        sumo_extracted_primary_source,
         unit_stable_target_ids_by_synonym,
-        contact_merged_ids_by_emails_sumo,
+        sumo_merged_contact_ids_by_email,
         extracted_organization_rki,
-        transformed_activity_sumo,
-        transformed_sumo_access_platform,
+        sumo_extracted_activity,
+        sumo_extracted_access_platform,
     )
     load([mex_resource_nokeda])
     return mex_resource_nokeda
 
 
 @asset(group_name="sumo")
-def transformed_resource_feat_sumo(  # noqa: PLR0913
-    extracted_resources_feat_sumo: dict[str, Any],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_resource_feat(  # noqa: PLR0913
+    sumo_extracted_resources_feat: dict[str, Any],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails_sumo: dict[Email, MergedContactPointIdentifier],
-    transformed_resource_nokeda_sumo: ExtractedResource,
-    transformed_activity_sumo: ExtractedActivity,
-    transformed_sumo_access_platform: ExtractedAccessPlatform,
+    sumo_merged_contact_ids_by_email: dict[Email, MergedContactPointIdentifier],
+    sumo_extracted_resource_nokeda: ExtractedResource,
+    sumo_extracted_activity: ExtractedActivity,
+    sumo_extracted_access_platform: ExtractedAccessPlatform,
 ) -> ExtractedResource:
     """Transform and load extracted SUMO Resource feat."""
     mex_resource_feat = transform_resource_feat_model_to_mex_resource(
-        ResourceMapping.model_validate(extracted_resources_feat_sumo),
-        extracted_primary_source_sumo,
+        ResourceMapping.model_validate(sumo_extracted_resources_feat),
+        sumo_extracted_primary_source,
         unit_stable_target_ids_by_synonym,
-        contact_merged_ids_by_emails_sumo,
-        transformed_resource_nokeda_sumo,
-        transformed_activity_sumo,
-        transformed_sumo_access_platform,
+        sumo_merged_contact_ids_by_email,
+        sumo_extracted_resource_nokeda,
+        sumo_extracted_activity,
+        sumo_extracted_access_platform,
     )
     load([mex_resource_feat])
     return mex_resource_feat
 
 
 @asset(group_name="sumo")
-def transformed_nokeda_aux_variable_group(
-    extracted_cc2_aux_model_sumo: list[Cc2AuxModel],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
-    transformed_resource_nokeda_sumo: ExtractedResource,
+def sumo_extracted_variable_groups_nokeda_aux(
+    sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
+    sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     """Transform Nokeda auxiliary variables to MeX variable groups and load them."""
     mex_variable_groups_nokeda_aux = list(
         transform_nokeda_aux_variable_to_mex_variable_group(
-            extracted_cc2_aux_model_sumo,
-            extracted_primary_source_sumo,
-            transformed_resource_nokeda_sumo,
+            sumo_extracted_cc2_aux_model,
+            sumo_extracted_primary_source,
+            sumo_extracted_resource_nokeda,
         )
     )
     load(mex_variable_groups_nokeda_aux)
@@ -262,17 +262,17 @@ def transformed_nokeda_aux_variable_group(
 
 
 @asset(group_name="sumo")
-def transformed_nokeda_variable_group(
-    extracted_cc1_data_model_nokeda_sumo: list[Cc1DataModelNoKeda],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
-    transformed_resource_nokeda_sumo: ExtractedResource,
+def sumo_extracted_variable_groups_nokeda(
+    sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
+    sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     """Transform Nokeda variables to MeX variable groups and load them."""
     mex_variable_groups_model_nokeda = list(
         transform_model_nokeda_variable_to_mex_variable_group(
-            extracted_cc1_data_model_nokeda_sumo,
-            extracted_primary_source_sumo,
-            transformed_resource_nokeda_sumo,
+            sumo_extracted_cc1_data_model_nokeda,
+            sumo_extracted_primary_source,
+            sumo_extracted_resource_nokeda,
         )
     )
     load(mex_variable_groups_model_nokeda)
@@ -280,17 +280,17 @@ def transformed_nokeda_variable_group(
 
 
 @asset(group_name="sumo")
-def transformed_sumo_feat_variable_group(
-    extracted_cc2_feat_projection: list[Cc2FeatProjection],
-    extracted_primary_source_sumo: ExtractedPrimarySource,
-    transformed_resource_nokeda_sumo: ExtractedResource,
+def sumo_extracted_variable_group_feat(
+    sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
+    sumo_extracted_primary_source: ExtractedPrimarySource,
+    sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     """Transform SUMO Resource feat to MEx variable groups and load them."""
     mex_variable_groups_feat = list(
         transform_feat_variable_to_mex_variable_group(
-            extracted_cc2_feat_projection,
-            extracted_primary_source_sumo,
-            transformed_resource_nokeda_sumo,
+            sumo_extracted_cc2_feat_projection,
+            sumo_extracted_primary_source,
+            sumo_extracted_resource_nokeda,
         )
     )
     load(mex_variable_groups_feat)
@@ -298,21 +298,21 @@ def transformed_sumo_feat_variable_group(
 
 
 @asset(group_name="sumo")
-def transformed_nokeda_model_variables(
-    extracted_cc1_data_model_nokeda_sumo: list[Cc1DataModelNoKeda],
-    transformed_nokeda_variable_group: list[ExtractedVariableGroup],
-    transformed_resource_nokeda_sumo: ExtractedResource,
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_variables_nokeda(
+    sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
+    sumo_extracted_variable_groups_nokeda: list[ExtractedVariableGroup],
+    sumo_extracted_resource_nokeda: ExtractedResource,
+    sumo_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform Nokeda variables to extracted variables and load them."""
     sumo_cc1_data_valuesets = extract_cc1_data_valuesets()
     transformed_nokeda_model_variable = list(
         transform_nokeda_model_variable_to_mex_variable(
-            extracted_cc1_data_model_nokeda_sumo,
+            sumo_extracted_cc1_data_model_nokeda,
             sumo_cc1_data_valuesets,
-            transformed_nokeda_variable_group,
-            transformed_resource_nokeda_sumo,
-            extracted_primary_source_sumo,
+            sumo_extracted_variable_groups_nokeda,
+            sumo_extracted_resource_nokeda,
+            sumo_extracted_primary_source,
         )
     )
     load(transformed_nokeda_model_variable)
@@ -320,44 +320,44 @@ def transformed_nokeda_model_variables(
 
 
 @asset(group_name="sumo")
-def transformed_nokeda_aux_variables(
-    extracted_cc2_aux_model_sumo: list[Cc2AuxModel],
-    transformed_nokeda_aux_variable_group: list[ExtractedVariableGroup],
-    transformed_resource_nokeda_sumo: ExtractedResource,
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_variables_nokeda_aux(
+    sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
+    sumo_extracted_variable_groups_nokeda_aux: list[ExtractedVariableGroup],
+    sumo_extracted_resource_nokeda: ExtractedResource,
+    sumo_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform Nokeda aux variables to extracted variables and load them."""
-    sumo_cc2_aux_mapping = extract_cc2_aux_mapping(extracted_cc2_aux_model_sumo)
+    sumo_cc2_aux_mapping = extract_cc2_aux_mapping(sumo_extracted_cc2_aux_model)
     sumo_cc2_aux_valuesets = extract_cc2_aux_valuesets()
 
-    transformed_nokeda_aux_variables = list(
+    sumo_extracted_variables_nokeda_aux = list(
         transform_nokeda_aux_variable_to_mex_variable(
-            extracted_cc2_aux_model_sumo,
+            sumo_extracted_cc2_aux_model,
             sumo_cc2_aux_mapping,
             sumo_cc2_aux_valuesets,
-            transformed_nokeda_aux_variable_group,
-            transformed_resource_nokeda_sumo,
-            extracted_primary_source_sumo,
+            sumo_extracted_variable_groups_nokeda_aux,
+            sumo_extracted_resource_nokeda,
+            sumo_extracted_primary_source,
         )
     )
-    load(transformed_nokeda_aux_variables)
-    return transformed_nokeda_aux_variables
+    load(sumo_extracted_variables_nokeda_aux)
+    return sumo_extracted_variables_nokeda_aux
 
 
 @asset(group_name="sumo")
-def transformed_sumo_feat_projection_variables(
-    extracted_cc2_feat_projection: list[Cc2FeatProjection],
-    transformed_sumo_feat_variable_group: list[ExtractedVariableGroup],
-    transformed_resource_feat_sumo: ExtractedResource,
-    extracted_primary_source_sumo: ExtractedPrimarySource,
+def sumo_extracted_variables_feat_projection(
+    sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
+    sumo_extracted_variable_group_feat: list[ExtractedVariableGroup],
+    sumo_extracted_resource_feat: ExtractedResource,
+    sumo_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform SUMO feat projection variables to extracted variables and load them."""
     transformed_feat_projection_variable = list(
         transform_feat_projection_variable_to_mex_variable(
-            extracted_cc2_feat_projection,
-            transformed_sumo_feat_variable_group,
-            transformed_resource_feat_sumo,
-            extracted_primary_source_sumo,
+            sumo_extracted_cc2_feat_projection,
+            sumo_extracted_variable_group_feat,
+            sumo_extracted_resource_feat,
+            sumo_extracted_primary_source,
         )
     )
     load(transformed_feat_projection_variable)

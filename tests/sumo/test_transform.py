@@ -72,7 +72,7 @@ def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     sumo_resources_nokeda: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
-    transformed_sumo_access_platform: ExtractedAccessPlatform,
+    sumo_extracted_access_platform: ExtractedAccessPlatform,
 ) -> None:
     contact_merged_ids_by_emails = {
         Email("email@email.de"): MergedContactPointIdentifier.generate(43)
@@ -84,7 +84,7 @@ def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
         contact_merged_ids_by_emails,
         extracted_organization_rki,
         transformed_activity,
-        transformed_sumo_access_platform,
+        sumo_extracted_access_platform,
     )
     expected = {
         "identifier": Joker(),
@@ -94,7 +94,7 @@ def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "test_project",
         "stableTargetId": Joker(),
-        "accessPlatform": [transformed_sumo_access_platform.stableTargetId],
+        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "contact": [MergedPersonIdentifier.generate(43)],
@@ -151,7 +151,7 @@ def test_transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
     sumo_resources_feat: ResourceMapping,
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
-    transformed_sumo_access_platform: ExtractedAccessPlatform,
+    sumo_extracted_access_platform: ExtractedAccessPlatform,
 ) -> None:
     contact_merged_ids_by_emails = {
         Email("email@email.de"): MergedContactPointIdentifier.generate(43)
@@ -163,10 +163,10 @@ def test_transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
         contact_merged_ids_by_emails,
         mex_resources_nokeda,
         transformed_activity,
-        transformed_sumo_access_platform,
+        sumo_extracted_access_platform,
     )
     expected = {
-        "accessPlatform": [transformed_sumo_access_platform.stableTargetId],
+        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "identifier": Joker(),
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             extracted_primary_sources["nokeda"].stableTargetId

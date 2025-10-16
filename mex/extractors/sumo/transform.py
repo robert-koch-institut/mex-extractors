@@ -312,14 +312,14 @@ def transform_model_nokeda_variable_to_mex_variable_group(
 
 @watch()
 def transform_feat_variable_to_mex_variable_group(
-    extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
+    sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     extracted_primary_source: ExtractedPrimarySource,
     mex_resource_feat: ExtractedResource,
 ) -> Generator[ExtractedVariableGroup, None, None]:
     """Transform feat projection variables to ExtractedVariableGroups.
 
     Args:
-        extracted_cc2_feat_projection: Cc2FeatProjection variables
+        sumo_extracted_cc2_feat_projection: Cc2FeatProjection variables
         extracted_primary_source: Extracted primary source
         mex_resource_feat: ExtractedResource
 
@@ -328,7 +328,7 @@ def transform_feat_variable_to_mex_variable_group(
     """
     contained_by = mex_resource_feat.stableTargetId
     used_identifier_in_primary_source = set()
-    for variable in extracted_cc2_feat_projection:
+    for variable in sumo_extracted_cc2_feat_projection:
         identifier_in_primary_source = (
             f"{variable.feature_domain} {variable.feature_subdomain}"
         )
@@ -453,7 +453,7 @@ def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
 
 @watch()
 def transform_feat_projection_variable_to_mex_variable(
-    extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
+    sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     mex_variable_groups_feat: Iterable[ExtractedVariableGroup],
     mex_resource_feat: ExtractedResource,
     extracted_primary_source: ExtractedPrimarySource,
@@ -461,7 +461,7 @@ def transform_feat_projection_variable_to_mex_variable(
     """Transform feat projection variable to ExtractedVariables.
 
     Args:
-        extracted_cc2_feat_projection: Cc2FeatProjection variables
+        sumo_extracted_cc2_feat_projection: Cc2FeatProjection variables
         mex_variable_groups_feat: variable group feat
         mex_resource_feat: mex resource feat
         extracted_primary_source: Extracted report server primary source
@@ -473,7 +473,7 @@ def transform_feat_projection_variable_to_mex_variable(
     stable_target_id_by_label_values = {
         m.label[0].value: m.stableTargetId for m in mex_variable_groups_feat
     }
-    for variable in extracted_cc2_feat_projection:
+    for variable in sumo_extracted_cc2_feat_projection:
         yield ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[
                 f"{variable.feature_domain} {variable.feature_subdomain}" or ""

@@ -87,11 +87,9 @@ def get_external_partner_and_publisher_by_label(
         ]
         for value in for_values  # type: ignore[union-attr]
     }
-    external_partner_and_publisher_by_label: dict[
-        str, MergedOrganizationIdentifier
-    ] = {}
+    odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier] = {}
     for label in labels:
         if organization_id := get_wikidata_extracted_organization_id_by_name(label):
-            external_partner_and_publisher_by_label[label] = organization_id
+            odk_merged_organization_ids_by_str[label] = organization_id
 
-    return external_partner_and_publisher_by_label
+    return odk_merged_organization_ids_by_str

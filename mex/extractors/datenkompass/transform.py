@@ -409,7 +409,7 @@ def transform_bibliographic_resources(
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    person_name_by_id: dict[MergedPersonIdentifier, str],
+    datenkompass_person_str_by_id: dict[MergedPersonIdentifier, str],
     bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
@@ -417,7 +417,7 @@ def transform_bibliographic_resources(
     Args:
         merged_bibliographic_resources: List of merged bibliographic resources
         merged_organizational_units_by_id: dict of merged organizational units by id
-        person_name_by_id: dictionary of merged person names by id
+        datenkompass_person_str_by_id: dictionary of merged person names by id
         bibliographic_resource_mapping: Datenkompass mapping.
 
     Returns:
@@ -441,7 +441,10 @@ def transform_bibliographic_resources(
         max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
         creator_collection = " / ".join(
-            [person_name_by_id[c] for c in item.creator[:max_number_authors_cutoff]]
+            [
+                datenkompass_person_str_by_id[c]
+                for c in item.creator[:max_number_authors_cutoff]
+            ]
         )
         if len(item.creator) > max_number_authors_cutoff:
             creator_collection += " / et al."

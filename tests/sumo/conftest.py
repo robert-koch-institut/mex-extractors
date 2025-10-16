@@ -98,7 +98,7 @@ def sumo_access_platform(settings: Settings) -> AccessPlatformMapping:
 
 
 @pytest.fixture
-def transformed_sumo_access_platform() -> ExtractedAccessPlatform:
+def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
     return ExtractedAccessPlatform(
         identifierInPrimarySource="sumo",
         hadPrimarySource=MergedPrimarySourceIdentifier("eOURPBjMZDfyhAVRo5N4mv"),

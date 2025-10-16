@@ -8,7 +8,7 @@ from mex.extractors.sinks import load
 
 
 @asset(group_name="contact_point")
-def extracted_contact_point_mex(
+def contact_point_extracted_contact_points(
     extracted_primary_source_mex: ExtractedPrimarySource,
 ) -> list[ExtractedContactPoint]:
     """Load and return default contact points."""

@@ -59,14 +59,12 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
 ) -> None:
     update_actor_references_where_needed(
         merged_activity_contacts_with_contactpoint_fallback,
-        allowed_actors=[
+        [
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
         ],
-        fallback_contact_identifiers=[
-            MergedContactPointIdentifier("thisIsTheFallbackId")
-        ],
-        fallback_unit_identifiers_by_person={
+        [MergedContactPointIdentifier("thisIsTheFallbackId")],
+        {
             MergedPersonIdentifier("PersonWithFallbackUnit"): [
                 MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
             ],
@@ -94,16 +92,14 @@ def test_update_actor_references_where_needed_with_unit_fallback(
 ) -> None:
     update_actor_references_where_needed(
         merged_activity_contacts_with_unit_fallback,
-        allowed_actors=[
+        [
             MergedPersonIdentifier("thisIdentifierIsOkay"),
             MergedPersonIdentifier("thisIdWouldBeOkayToo"),
             MergedOrganizationalUnitIdentifier("ValidUnitWithEmail"),
             MergedOrganizationalUnitIdentifier("InvalidUnitNoEmail"),
         ],
-        fallback_contact_identifiers=[
-            MergedContactPointIdentifier("thisIsTheFallbackId")
-        ],
-        fallback_unit_identifiers_by_person={
+        [MergedContactPointIdentifier("thisIsTheFallbackId")],
+        {
             MergedPersonIdentifier("PersonWithFallbackUnit"): [
                 MergedOrganizationalUnitIdentifier("ValidUnitWithEmail")
             ],

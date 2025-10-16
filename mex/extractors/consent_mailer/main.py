@@ -17,7 +17,7 @@ from mex.extractors.settings import Settings
 
 
 @asset(group_name="consent_mailer")
-def all_ldap_persons_for_mailer(
+def consent_mailer_merged_persons_without_consent(
     extracted_primary_source_ldap: ExtractedPrimarySource,
 ) -> list[MergedPerson]:
     """Get LDAP persons without consent for mailer ."""
@@ -29,13 +29,13 @@ def all_ldap_persons_for_mailer(
 
 
 @asset(group_name="consent_mailer")
-def send_consent_emails_to_persons(
-    all_ldap_persons_for_mailer: list[MergedPerson],
+def consent_mailer_send_emails(
+    consent_mailer_merged_persons_without_consent: list[MergedPerson],
 ) -> None:
     """Send consent emails to the given persons.
 
     Args:
-        all_ldap_persons_for_mailer: The list of persons that gets
+        consent_mailer_merged_persons_without_consent: The list of persons that gets
         the consent email.
     """
     settings = Settings.get()
@@ -43,7 +43,7 @@ def send_consent_emails_to_persons(
 
     mails_for_persons = [
         transform_person_to_sendable_email(person)
-        for person in all_ldap_persons_for_mailer
+        for person in consent_mailer_merged_persons_without_consent
     ]
 
     with smtplib.SMTP(host, int(port)) as s:

@@ -33,20 +33,20 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_mex_persons_grippeweb: list[ExtractedPerson],
+    grippeweb_extracted_persons: list[ExtractedPerson],
 ) -> None:
     extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             grippeweb_access_platform,
             unit_stable_target_ids_by_synonym,
             extracted_primary_sources["grippeweb"],
-            extracted_mex_persons_grippeweb,
+            grippeweb_extracted_persons,
         )
     )
     expected = {
         "hadPrimarySource": extracted_primary_sources["grippeweb"].stableTargetId,
         "identifierInPrimarySource": "primary-source",
-        "contact": [extracted_mex_persons_grippeweb[0].stableTargetId],
+        "contact": [grippeweb_extracted_persons[0].stableTargetId],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "primary-source", "language": "en"}],
         "unitInCharge": [unit_stable_target_ids_by_synonym["C1"]],
@@ -64,18 +64,22 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_mex_persons_grippeweb: list[ExtractedPerson],
-    grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-    extracted_mex_functional_units_grippeweb: dict[Email, MergedContactPointIdentifier],
+    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_merged_organization_ids_by_query_str: dict[
+        str, MergedOrganizationIdentifier
+    ],
+    grippeweb_merged_contact_point_id_by_email: dict[
+        Email, MergedContactPointIdentifier
+    ],
 ) -> None:
     parent_resource, _ = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
         unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
         extracted_primary_sources["grippeweb"],
-        extracted_mex_persons_grippeweb,
-        grippeweb_organization_ids_by_query_string,
-        extracted_mex_functional_units_grippeweb,
+        grippeweb_extracted_persons,
+        grippeweb_merged_organization_ids_by_query_str,
+        grippeweb_merged_contact_point_id_by_email,
     )
     expected = {
         "hadPrimarySource": str(extracted_primary_sources["grippeweb"].stableTargetId),
@@ -87,10 +91,10 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "contact": [
-            str(extracted_mex_functional_units_grippeweb[Email("contactc@rki.de")])
+            str(grippeweb_merged_contact_point_id_by_email[Email("contactc@rki.de")])
         ],
         "contributingUnit": [str(unit_stable_target_ids_by_synonym["C1"])],
-        "contributor": [str(extracted_mex_persons_grippeweb[0].stableTargetId)],
+        "contributor": [str(grippeweb_extracted_persons[0].stableTargetId)],
         "created": "2011",
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "documentation": [
@@ -124,7 +128,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
             }
         ],
         "publisher": [
-            str(grippeweb_organization_ids_by_query_string["Robert Koch-Institut"])
+            str(grippeweb_merged_organization_ids_by_query_str["Robert Koch-Institut"])
         ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
@@ -157,9 +161,13 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_mex_persons_grippeweb: list[ExtractedPerson],
-    grippeweb_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
-    extracted_mex_functional_units_grippeweb: dict[Email, MergedContactPointIdentifier],
+    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_merged_organization_ids_by_query_str: dict[
+        str, MergedOrganizationIdentifier
+    ],
+    grippeweb_merged_contact_point_id_by_email: dict[
+        Email, MergedContactPointIdentifier
+    ],
 ) -> None:
     parent_resource, child_resource = (
         transform_grippeweb_resource_mappings_to_extracted_resources(
@@ -167,9 +175,9 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
             unit_stable_target_ids_by_synonym,
             grippeweb_extracted_access_platform,
             extracted_primary_sources["grippeweb"],
-            extracted_mex_persons_grippeweb,
-            grippeweb_organization_ids_by_query_string,
-            extracted_mex_functional_units_grippeweb,
+            grippeweb_extracted_persons,
+            grippeweb_merged_organization_ids_by_query_str,
+            grippeweb_merged_contact_point_id_by_email,
         )
     )
     assert child_resource.isPartOf == [parent_resource.stableTargetId]

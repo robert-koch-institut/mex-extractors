@@ -70,7 +70,7 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
 
 
 @pytest.fixture
-def mocked_open_data_contact_point() -> list[ExtractedContactPoint]:
+def mocked_open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
     """Mock the opendata contact point."""
     return [
         ExtractedContactPoint(

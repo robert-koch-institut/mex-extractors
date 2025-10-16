@@ -13,7 +13,7 @@ from mex.extractors.pipeline.checks.main import (
 )
 
 
-@asset_check(asset="extracted_blueant_activities", blocking=True)
+@asset_check(asset="blueant_extracted_activities", blocking=True)
 def check_yaml_rules_exist() -> AssetCheckResult:
     """Check if any rules exist for blueant activity with valid threshold."""
     extractor = "blueant"
@@ -29,16 +29,16 @@ def check_yaml_rules_exist() -> AssetCheckResult:
 
 
 @asset_check(
-    asset="extracted_blueant_activities",
+    asset="blueant_extracted_activities",
     additional_deps=["check_yaml_rules_exist"],
     blocking=True,
 )
 def check_x_items_more_than(
-    context: AssetCheckExecutionContext, extracted_blueant_activities: int
+    context: AssetCheckExecutionContext, blueant_extracted_activities: int
 ) -> AssetCheckResult:
     """Check that latest count is not more than threshold + historical count."""
-    asset_key = AssetKey(["extracted_blueant_activities"])
+    asset_key = AssetKey(["blueant_extracted_activities"])
     passed = check_x_items_more_passed(
-        context, asset_key, "blueant", "activity", extracted_blueant_activities
+        context, asset_key, "blueant", "activity", blueant_extracted_activities
     )
     return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)

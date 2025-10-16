@@ -42,12 +42,12 @@ def test_extract_endnote_persons_by_person_string(
 
 
 def test_extract_endnote_consents(
-    extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     endnote_consent_mapping: ConsentMapping,
 ) -> None:
     extracted_consents = extract_endnote_consents(
-        list(extracted_endnote_persons_by_person_string.values()),
+        list(endnote_extracted_persons_by_person_str.values()),
         extracted_primary_sources["endnote"],
         endnote_consent_mapping,
     )
@@ -86,14 +86,14 @@ def test_get_doi(
 def test_extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
-    extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     bibliographic_resources = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
-        extracted_endnote_persons_by_person_string,
+        endnote_extracted_persons_by_person_str,
         unit_stable_target_ids_by_synonym,
         extracted_primary_sources["endnote"],
     )

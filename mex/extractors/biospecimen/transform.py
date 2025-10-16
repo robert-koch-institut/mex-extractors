@@ -24,11 +24,11 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 @watch()
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
-    extracted_primary_source_biospecimen: ExtractedPrimarySource,
+    biospecimen_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_synopse_activities: Iterable[ExtractedActivity],
+    synopse_extracted_activities: Iterable[ExtractedActivity],
     resource_mapping: ResourceMapping,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> Generator[ExtractedResource, None, None]:
@@ -36,10 +36,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         biospecimen_resources: Biospecimen resources
-        extracted_primary_source_biospecimen: Extracted platform for Biospecimen
+        biospecimen_extracted_primary_source: Extracted platform for Biospecimen
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         mex_persons: Iterable of ExtractedPersons
-        extracted_synopse_activities: extracted synopse activities
+        synopse_extracted_activities: extracted synopse activities
         extracted_organization_rki: extracted organization
         resource_mapping: resource mapping model with default values
         extracted_organizations: extracted organizations by label
@@ -52,7 +52,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     }
     synopse_stable_target_id_by_studien_id = {
         activity.identifierInPrimarySource: activity.stableTargetId
-        for activity in extracted_synopse_activities
+        for activity in synopse_extracted_activities
     }
     access_restriction_by_zugriffsbeschraenkung = {
         rule.forValues[0]: rule.setValues
@@ -81,7 +81,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             get_or_create_externe_partner(
                 resource.externe_partner,
                 extracted_organizations,
-                extracted_primary_source_biospecimen,
+                biospecimen_extracted_primary_source,
             )
             if resource.externe_partner
             else []
@@ -152,7 +152,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             description=resource.beschreibung,
             documentation=documentation,
             externalPartner=external_partner,
-            hadPrimarySource=extracted_primary_source_biospecimen.stableTargetId,
+            hadPrimarySource=biospecimen_extracted_primary_source.stableTargetId,
             hasLegalBasis=has_legal_basis,
             hasPersonalData=has_personal_data,
             identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
@@ -181,14 +181,14 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 def get_or_create_externe_partner(
     externe_partner: str,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
-    extracted_primary_source_biospecimen: ExtractedPrimarySource,
+    biospecimen_extracted_primary_source: ExtractedPrimarySource,
 ) -> MergedOrganizationIdentifier:
     """Get extracted organization for label or create new organization.
 
     Args:
         externe_partner: externe partner label
         extracted_organizations: merged organization identifier extracted from wikidata
-        extracted_primary_source_biospecimen: extracted primary source
+        biospecimen_extracted_primary_source: extracted primary source
 
     Returns:
         matched or created merged organization identifier
@@ -198,5 +198,5 @@ def get_or_create_externe_partner(
     return ExtractedOrganization(
         officialName=externe_partner,
         identifierInPrimarySource=externe_partner,
-        hadPrimarySource=extracted_primary_source_biospecimen.stableTargetId,
+        hadPrimarySource=biospecimen_extracted_primary_source.stableTargetId,
     ).stableTargetId

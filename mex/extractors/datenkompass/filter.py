@@ -11,23 +11,23 @@ from mex.extractors.settings import Settings
 
 
 def filter_for_organization(
-    fetched_merged_activities: Sequence[MergedActivity],
-    filtered_merged_organization_ids: set[MergedOrganizationIdentifier],
+    datenkompass_merged_activities: Sequence[MergedActivity],
+    datenkompass_filtered_merged_organization_ids: set[MergedOrganizationIdentifier],
 ) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        fetched_merged_activities: merged activities as sequence.
-        filtered_merged_organization_ids: relevant merged organization ids.
+        datenkompass_merged_activities: merged activities as sequence.
+        datenkompass_filtered_merged_organization_ids: relevant merged organization ids.
 
     Returns:
         filtered list of merged activities.
     """
     filtered_items = [
         item
-        for item in fetched_merged_activities
+        for item in datenkompass_merged_activities
         if any(
-            funder in filtered_merged_organization_ids
+            funder in datenkompass_filtered_merged_organization_ids
             for funder in item.funderOrCommissioner
         )
     ]
