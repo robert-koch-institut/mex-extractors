@@ -77,5 +77,5 @@ def test_topological_sort_circular_error() -> None:
         Item(id="South", child=["West"]),
         Item(id="West", child=["North"]),
     ]
-    with pytest.raises(MExError, match="Found graph cycles while sorting"):
+    with pytest.raises(MExError, match=r"Found graph cycles while sorting"):
         topological_sort(items, "id", child_key="child")

@@ -78,6 +78,7 @@ def transformed_sumo_access_platform(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_primary_source_sumo: ExtractedPrimarySource,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
     settings = Settings.get()
@@ -91,6 +92,7 @@ def transformed_sumo_access_platform(
         ldap_contact_points_access_platform,
         extracted_primary_source_ldap,
         extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_actors_access_platform)
 

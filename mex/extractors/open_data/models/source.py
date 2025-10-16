@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from mex.common.models import BaseModel
 
 
 class OpenDataCreatorsOrContributors(BaseModel):
@@ -7,10 +7,6 @@ class OpenDataCreatorsOrContributors(BaseModel):
     name: str
     affiliation: str | None = None
     orcid: str | None = None
-
-    def __hash__(self) -> int:
-        """Calculates a hash value to make the object cacheable."""
-        return hash(f"{self.name}")
 
 
 class OpenDataRelatedIdentifiers(BaseModel):

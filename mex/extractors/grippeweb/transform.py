@@ -370,17 +370,23 @@ def transform_grippeweb_variable_to_extracted_variables(
                     variable_group_by_location["vMasterDataMEx"],
                     variable_group_by_location["vWeeklyResponsesMEx"],
                 ]
-                value_set = {
-                    *grippeweb_columns["vMasterDataMEx"][column_name],
-                    *grippeweb_columns["vWeeklyResponsesMEx"][column_name],
-                }
+                value_set = list(
+                    {
+                        k: None
+                        for k in (
+                            grippeweb_columns["vMasterDataMEx"][column_name]
+                            + grippeweb_columns["vWeeklyResponsesMEx"][column_name]
+                        )
+                        if k is not None
+                    }
+                )
             else:
                 belongs_to = [variable_group_by_location[table_name]]
-                column_strings = {cell for cell in column if isinstance(cell, str)}
+                column_strings = list(
+                    {cell: None for cell in column if isinstance(cell, str)}
+                )
                 value_set = (
-                    column_strings
-                    if column_name in valueset_locations_by_field
-                    else set()
+                    column_strings if column_name in valueset_locations_by_field else []
                 )
             extracted_variables.append(
                 ExtractedVariable(
@@ -389,7 +395,7 @@ def transform_grippeweb_variable_to_extracted_variables(
                     identifierInPrimarySource=column_name,
                     label=column_name,
                     usedIn=grippeweb_extracted_parent_resource.stableTargetId,
-                    valueSet=list(value_set - {None}),
+                    valueSet=value_set,
                 )
             )
     return extracted_variables

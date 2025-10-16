@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- read datenkompass default values from mapping
+- bump mex-common dependency to 1.16.0
 
 ### Deprecated
 
@@ -23,9 +23,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- odk variable identifier in primary source
-
 ### Security
+
+## [1.3.0] - 2025-10-14
+
+### Changes
+
+- igs wrap up
+
+## [1.2.0] - 2025-10-07
+
+### Added
+
+- extract mandatory fields for igs variables and variable groups
+- optional value fields for igs access platform and resource
+- update mex-common dependency to 1.5
+- persons have rki org as affiliation
+- create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
+- publisher: replace references to non-consenting person ids with their respective unit ids
+
+### Changes
+
+- read datenkompass default values from mapping
+
+### Fixed
+
+- empty list handling in datenkompass
+- odk variable identifier in primary source
+- random list element order in some extracted entity attributes
 
 ## [1.1.1] - 2025-09-22
 
