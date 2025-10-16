@@ -18,14 +18,10 @@ class AssetCheckRule(BaseModel):
         "x_percent_more_than",
     ]
     value: int | float | None
-    time_frame: Annotated[str, Field(pattern="^[0-9]{1,2}[dmy]$")] | None = None
-    target_type: Literal[
-        "Distribution",
-        "Resource",
-        "Variable",
-        "VariableGroup",
-        None,
-    ] = None
+    time_frame: Annotated[str, Field(pattern=r"^[0-9]{1,2}[dmy]$")] | None = None
+    target_type: (
+        Literal["Distribution", "Resource", "Variable", "VariableGroup"] | None
+    ) = None
 
 
 class AssetCheck(BaseModel):
