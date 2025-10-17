@@ -3,20 +3,20 @@ from collections.abc import Generator
 import pytest
 
 from mex.common.backend_api import connector
-from mex.common.identity.models import Identity
 from mex.common.models import (
     AnyMergedModel,
     MergedConsent,
     MergedPerson,
 )
 from mex.common.types import (
-    MergedPrimarySourceIdentifier,
     TemporalEntity,
 )
 
 
 @pytest.fixture
-def mocked_consent_backend_api_connector(monkeypatch: pytest.MonkeyPatch) -> None:
+def mocked_consent_backend_api_connector(
+    monkeypatch: pytest.MonkeyPatch,
+) -> dict[str, int]:
     """Mock the backendAPIConnector to return dummy variables."""
     person_store = [
         MergedPerson(
@@ -45,19 +45,9 @@ def mocked_consent_backend_api_connector(monkeypatch: pytest.MonkeyPatch) -> Non
         )
     ]
 
-    class FakeConnector:
-        def assign_identity(
-            self,
-            had_primary_source: MergedPrimarySourceIdentifier,
-            identifier_in_primary_source: str,
-        ) -> Identity:
-            return Identity(
-                identifierInPrimarySource=identifier_in_primary_source,
-                identifier="efVXbcoxxMAiA5IqT1d11H",
-                stableTargetId="efVXbcoxxMAiA5IqT1d11S",
-                hadPrimarySource=had_primary_source,
-            )
+    call_counter = {"count": 0}
 
+    class FakeConnector:
         def fetch_all_merged_items(
             self,
             _: str | None = None,
@@ -71,6 +61,7 @@ def mocked_consent_backend_api_connector(monkeypatch: pytest.MonkeyPatch) -> Non
                 and "MergedPerson" in entity_type
                 and reference_field == "hadPrimarySource"
             ):
+                call_counter["count"] += 1
                 return (x for x in person_store)
 
             if (
@@ -85,9 +76,12 @@ def mocked_consent_backend_api_connector(monkeypatch: pytest.MonkeyPatch) -> Non
                         consent_store,
                     )
                 )
+                call_counter["count"] += 1
                 return (x for x in consents)
 
             empty: list[AnyMergedModel] = []
+            call_counter["count"] += 1
             return (x for x in empty)
 
     monkeypatch.setattr(connector.BackendApiConnector, "get", lambda: FakeConnector())
+    return call_counter
