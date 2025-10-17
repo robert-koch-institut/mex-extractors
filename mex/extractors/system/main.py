@@ -1,0 +1,72 @@
+import datetime
+import shutil
+from pathlib import Path
+
+from dagster import AssetKey, DagsterInstance, RunsFilter, asset
+from pytz import UTC
+
+from mex.common.logging import logger
+from mex.extractors.settings import Settings
+
+
+@asset(group_name="system_clean_up")
+def system_fetch_old_dagster_run_ids() -> list[str]:
+    """Fetch ids of Dagster runs, which are old enough to be deleted."""
+    instance = DagsterInstance.get()
+    settings = Settings.get()
+    # Define the time threshold
+    cutoff_date = datetime.datetime.now(tz=UTC) - datetime.timedelta(
+        days=settings.system.max_run_age_in_days
+    )
+
+    old_run_records = instance.get_run_records(
+        filters=RunsFilter(created_before=cutoff_date),
+        limit=100,  # Process in batches
+        ascending=True,  # start with oldest
+    )
+
+    return [r.dagster_run.run_id for r in old_run_records]
+
+
+@asset(group_name="system_clean_up")
+def system_clean_up_dagster_files(
+    system_fetch_old_dagster_run_ids: list[str],
+) -> list[str]:
+    """Clean up dagster files of old runs. Note: not all runs have files."""
+    instance = DagsterInstance.get()
+    storage_path = Path(instance.storage_directory())
+
+    deleted_file_ids: list[str] = []
+
+    for run_id in system_fetch_old_dagster_run_ids:
+        run_storage_path = storage_path / run_id
+        try:
+            shutil.rmtree(run_storage_path)
+            deleted_file_ids.append(run_id)
+        except FileNotFoundError:
+            logger.warning("File not found for: %s", run_id)
+            continue
+
+    logger.info(
+        "Deleted %s folders of old runs from %s.",
+        len(deleted_file_ids),
+        storage_path,
+    )
+    return deleted_file_ids
+
+
+@asset(group_name="system_clean_up", deps=[AssetKey("system_clean_up_dagster_files")])
+def system_clean_up_dagster_runs(
+    system_fetch_old_dagster_run_ids: list[str],
+) -> list[str]:
+    """Take ids of fetched old runs and clean them up."""
+    instance = DagsterInstance.get()
+
+    deleted_run_ids: list[str] = []
+    for run_id in system_fetch_old_dagster_run_ids:
+        instance.delete_run(run_id)
+        deleted_run_ids.append(run_id)
+
+    logger.info("Deleted %s old runs", len(deleted_run_ids))
+
+    return deleted_run_ids

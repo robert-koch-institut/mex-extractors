@@ -17,6 +17,7 @@ pytest_plugins = (
     "tests.igs.mocked_igs",
     "tests.ldap.mocked_ldap",
     "tests.open_data.mocked_open_data",
+    "tests.system.mocked_dagster_instance",
 )
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
