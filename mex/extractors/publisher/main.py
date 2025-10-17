@@ -11,6 +11,7 @@ from mex.common.models import (
     AnyMergedModel,
     ExtractedPrimarySource,
     ItemsContainer,
+    MergedConsent,
     MergedContactPoint,
     MergedPerson,
     PaginatedItemsContainer,
@@ -22,6 +23,7 @@ from mex.common.types import (
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.extract import get_publishable_merged_items
+from mex.extractors.publisher.filter import filter_persons_with_consent
 from mex.extractors.publisher.transform import (
     get_unit_id_per_person,
     update_actor_references_where_needed,
@@ -71,30 +73,17 @@ def merged_ldap_persons(
 
 @asset(group_name="publisher")
 def publishable_persons() -> ItemsContainer[AnyMergedModel]:
-    """Get publishable persons from green-lit primary sources."""
-    # TODO(MX-1939): add persons with consent
-    settings = Settings.get()
-    connector = BackendApiConnector.get()
-    limit = 100
-    primary_sources = connector.fetch_extracted_items(
-        entity_type=["ExtractedPrimarySource"]
+    """Get publishable persons with positive consent."""
+    merged_persons = cast(
+        "list[MergedPerson]",
+        get_publishable_merged_items(entity_type=["MergedPerson"]),
     )
-    if primary_sources.total > limit:
-        raise NotImplementedError
-    allowed_primary_sources = sorted(
-        {
-            str(primary_source.stableTargetId)
-            for primary_source in primary_sources.items
-            if primary_source.identifierInPrimarySource
-            in settings.publisher.allowed_person_primary_sources
-        }
+    merged_consent = cast(
+        "list[MergedConsent]",
+        get_publishable_merged_items(entity_type=["MergedConsent"]),
     )
-    merged_items = get_publishable_merged_items(
-        entity_type=["MergedPerson"],
-        referenced_identifier=allowed_primary_sources,
-        reference_field="hadPrimarySource",
-    )
-    return ItemsContainer[AnyMergedModel](items=merged_items)
+    filtered_persons = filter_persons_with_consent(merged_persons, merged_consent)
+    return ItemsContainer[AnyMergedModel](items=filtered_persons)
 
 
 @asset(group_name="publisher")

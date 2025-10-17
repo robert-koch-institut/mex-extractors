@@ -67,14 +67,16 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
 def test_publishable_persons(mocked_backend: MagicMock) -> None:
     container = cast("ItemsContainer[AnyMergedModel]", publishable_persons())
     assert len(container.items) == 1
-    assert mocked_backend.fetch_extracted_items.call_args_list == [
-        call(entity_type=["ExtractedPrimarySource"])
-    ]
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
             entity_type=["MergedPerson"],
-            referenced_identifier=["hSHhxBonhhI8TpMqFqSFKl"],
-            reference_field="hadPrimarySource",
+            referenced_identifier=None,
+            reference_field=None,
+        ),
+        call(
+            entity_type=["MergedConsent"],
+            referenced_identifier=None,
+            reference_field=None,
         ),
     ]
 
