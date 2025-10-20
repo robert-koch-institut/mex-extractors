@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - streamline dagster asset names
+- publish all consenting persons in publisher
 - bump mex-common dependency to 1.16.0
 
 ### Deprecated
