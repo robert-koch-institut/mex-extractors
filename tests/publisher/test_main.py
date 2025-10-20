@@ -11,11 +11,11 @@ from mex.common.types import (
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
-    fallback_contact_identifiers,
-    publishable_contact_points_and_units,
-    publishable_items,
-    publishable_items_without_actors,
-    publishable_persons,
+    publisher_contact_points_and_units,
+    publisher_fallback_contact_identifiers,
+    publisher_items,
+    publisher_items_without_actors,
+    publisher_persons,
 )
 from mex.extractors.sinks.s3 import S3Sink
 
@@ -38,10 +38,8 @@ def test_run() -> None:
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
-    container = cast(
-        "ItemsContainer[AnyMergedModel]", publishable_items_without_actors()
-    )
+def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
+    container = cast("ItemsContainer[AnyMergedModel]", publisher_items_without_actors())
     assert len(container.items) == 1
     assert isinstance(container.items[0], MergedBibliographicResource)
     mocked_backend.fetch_extracted_items.assert_not_called()
@@ -64,8 +62,8 @@ def test_publishable_items_without_actors(mocked_backend: MagicMock) -> None:
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_publishable_persons(mocked_backend: MagicMock) -> None:
-    container = cast("ItemsContainer[AnyMergedModel]", publishable_persons())
+def test_publisher_persons(mocked_backend: MagicMock) -> None:
+    container = cast("ItemsContainer[AnyMergedModel]", publisher_persons())
     assert len(container.items) == 1
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
@@ -81,9 +79,9 @@ def test_publishable_persons(mocked_backend: MagicMock) -> None:
     ]
 
 
-def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None:
+def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
     container = cast(
-        "ItemsContainer[AnyMergedModel]", publishable_contact_points_and_units()
+        "ItemsContainer[AnyMergedModel]", publisher_contact_points_and_units()
     )
     assert len(container.items) == 2
     mocked_backend.fetch_extracted_items.assert_not_called()
@@ -97,28 +95,28 @@ def test_publishable_contact_points_and_units(mocked_backend: MagicMock) -> None
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_fallback_contact_identifiers() -> None:
+def test_publisher_fallback_contact_identifiers() -> None:
     identifiers = cast(
         "list[MergedContactPointIdentifier]",
-        fallback_contact_identifiers(),
+        publisher_fallback_contact_identifiers(),
     )
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
 
 @pytest.mark.usefixtures("mocked_backend")
-def test_publishable_items(
-    mocked_fallback_unit_identifiers_by_person: dict[
+def test_publisher_items(
+    mocked_publisher_fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
 ) -> None:
     container = cast(
         "ItemsContainer[AnyMergedModel]",
-        publishable_items(
-            publishable_items_without_actors(),
-            publishable_persons(),
-            publishable_contact_points_and_units(),
-            fallback_contact_identifiers(),
-            mocked_fallback_unit_identifiers_by_person,
+        publisher_items(
+            publisher_items_without_actors(),
+            publisher_persons(),
+            publisher_contact_points_and_units(),
+            publisher_fallback_contact_identifiers(),
+            mocked_publisher_fallback_unit_identifiers_by_person,
         ),
     )
     assert len(container.items) == 4

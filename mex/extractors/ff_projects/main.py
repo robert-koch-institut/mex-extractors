@@ -38,21 +38,21 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="ff_projects", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_ff_projects(
+def ff_projects_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return FF Projects extracted primary source."""
-    (extracted_primary_source_ff_projects,) = get_primary_sources_by_name(
+    (ff_projects_extracted_primary_source,) = get_primary_sources_by_name(
         extracted_primary_sources,
         "ff-projects",
     )
-    load([extracted_primary_source_ff_projects])
-    return extracted_primary_source_ff_projects
+    load([ff_projects_extracted_primary_source])
+    return ff_projects_extracted_primary_source
 
 
 @asset(group_name="ff_projects")
 def ff_projects_sources(
-    extracted_primary_source_ff_projects: ExtractedPrimarySource,
+    ff_projects_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[FFProjectsSource]:
     """Extract FF Projects sources and filter out invalid items."""
@@ -60,13 +60,13 @@ def ff_projects_sources(
     filtered_sources = filter_out_duplicate_source_ids(ff_projects_sources)
     return filter_and_log_ff_projects_sources(
         filtered_sources,
-        extracted_primary_source_ff_projects.stableTargetId,
+        ff_projects_extracted_primary_source.stableTargetId,
         unit_stable_target_ids_by_synonym,
     )
 
 
 @asset(group_name="ff_projects")
-def ff_projects_person_ids_by_query_string(
+def ff_projects_person_ids_by_query_str(
     ff_projects_sources: list[FFProjectsSource],
     extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
@@ -90,7 +90,7 @@ def ff_projects_person_ids_by_query_string(
 
 
 @asset(group_name="ff_projects")
-def ff_projects_organization_ids_by_query_string(
+def ff_projects_organization_ids_by_query_str(
     ff_projects_sources: list[FFProjectsSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
@@ -98,14 +98,12 @@ def ff_projects_organization_ids_by_query_string(
 
 
 @asset(group_name="ff_projects")
-def extract_ff_projects(
+def ff_projects_activities(
     ff_projects_sources: list[FFProjectsSource],
-    extracted_primary_source_ff_projects: ExtractedPrimarySource,
-    ff_projects_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    ff_projects_extracted_primary_source: ExtractedPrimarySource,
+    ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    ff_projects_organization_ids_by_query_string: dict[
-        str, MergedOrganizationIdentifier
-    ],
+    ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
     settings = Settings.get()
@@ -115,10 +113,10 @@ def extract_ff_projects(
     extracted_activities = [
         transform_ff_projects_source_to_extracted_activity(
             ff_projects_source,
-            extracted_primary_source_ff_projects,
-            ff_projects_person_ids_by_query_string,
+            ff_projects_extracted_primary_source,
+            ff_projects_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
-            ff_projects_organization_ids_by_query_string,
+            ff_projects_organization_ids_by_query_str,
             ff_projects_activity,
         )
         for ff_projects_source in ff_projects_sources
