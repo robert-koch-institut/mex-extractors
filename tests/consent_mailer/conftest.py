@@ -48,7 +48,16 @@ def mocked_consent_backend_api_connector(
     call_counter = {"count": 0}
 
     class FakeConnector:
-        def fetch_all_merged_items(
+    ...
+    ) -> Generator[AnyMergedModel, None, None]:
+        call_counter["count"] += 1
+        if (
+            entity_type
+            and "MergedPerson" in entity_type
+            and reference_field == "hadPrimarySource"
+        ):
+        ...
+    ...
             self,
             _: str | None = None,
             __: str | None = None,
