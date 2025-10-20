@@ -34,7 +34,7 @@ def extract_consents_for_persons(
     if not person_ids:
         return []
 
-    chunk_size = settings.consent_mailer.request_filter_chunck_size
+    chunk_size = settings.consent_mailer.backend_fetch_chunk_size
     collected_merged_consents: list[MergedConsent] = []
     for i in range(0, len(person_ids), chunk_size):
         partial_person_ids = person_ids[i : i + chunk_size]

@@ -48,16 +48,7 @@ def mocked_consent_backend_api_connector(
     call_counter = {"count": 0}
 
     class FakeConnector:
-    ...
-    ) -> Generator[AnyMergedModel, None, None]:
-        call_counter["count"] += 1
-        if (
-            entity_type
-            and "MergedPerson" in entity_type
-            and reference_field == "hadPrimarySource"
-        ):
-        ...
-    ...
+        def fetch_all_merged_items(
             self,
             _: str | None = None,
             __: str | None = None,
@@ -65,12 +56,12 @@ def mocked_consent_backend_api_connector(
             referenced_identifier: list[str] | None = None,
             reference_field: str | None = None,
         ) -> Generator[AnyMergedModel, None, None]:
+            call_counter["count"] += 1
             if (
                 entity_type
                 and "MergedPerson" in entity_type
                 and reference_field == "hadPrimarySource"
             ):
-                call_counter["count"] += 1
                 return (x for x in person_store)
 
             if (
@@ -85,11 +76,9 @@ def mocked_consent_backend_api_connector(
                         consent_store,
                     )
                 )
-                call_counter["count"] += 1
                 return (x for x in consents)
 
             empty: list[AnyMergedModel] = []
-            call_counter["count"] += 1
             return (x for x in empty)
 
     monkeypatch.setattr(connector.BackendApiConnector, "get", lambda: FakeConnector())
