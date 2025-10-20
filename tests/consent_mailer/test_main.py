@@ -6,7 +6,7 @@ import requests
 from mex.common.models import MergedPerson
 from mex.common.types import AssetsPath
 from mex.extractors.consent_mailer.main import (
-    send_consent_emails_to_persons,
+    consent_mailer_send_emails,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
@@ -54,7 +54,7 @@ def _get_messages() -> Any:  # noqa: ANN401
 
 
 @pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
-def test_send_consent_emails_to_persons() -> None:
+def test_consent_mailer_send_emails() -> None:
     _delete_messages()
     persons = [
         MergedPerson(
@@ -74,7 +74,7 @@ def test_send_consent_emails_to_persons() -> None:
         ),
     ]
 
-    send_consent_emails_to_persons(persons)
+    consent_mailer_send_emails(persons)
 
     envelop = _get_messages()
     assert envelop["total"] == 1
@@ -106,7 +106,7 @@ def test_send_consent_no_emails_for_no_rki_persons() -> None:
         ),
     ]
 
-    send_consent_emails_to_persons(persons)
+    consent_mailer_send_emails(persons)
 
     envelop = _get_messages()
     assert envelop["total"] == 0

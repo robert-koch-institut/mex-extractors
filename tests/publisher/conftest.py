@@ -92,7 +92,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
             ),
             MergedContactPoint(
                 # even if they have an email address, contact points should not
-                # be added to fallback_unit_identifiers_by_person,
+                # be added to publisher_fallback_unit_identifiers_by_person,
                 identifier="CPShouldBeIgnored",
                 email=[Email("contactpoint@e.mail")],
             ),
@@ -101,7 +101,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
 
 
 @pytest.fixture
-def mocked_fallback_unit_identifiers_by_person() -> dict[
+def mocked_publisher_fallback_unit_identifiers_by_person() -> dict[
     MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
 ]:
     return {

@@ -5,10 +5,10 @@ from mex.extractors.seq_repo.model import SeqRepoSource
 
 def test_filter_sources_on_latest_sequencing_date(
     seq_repo_sources: list[SeqRepoSource],
-    extracted_primary_source_seq_repo: ExtractedPrimarySource,
+    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> None:
     seq_repo_sources_filtered = filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, extracted_primary_source_seq_repo
+        seq_repo_sources, seq_repo_extracted_primary_source
     )
 
     expected = {
