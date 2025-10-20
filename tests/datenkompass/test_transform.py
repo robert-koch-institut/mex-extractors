@@ -391,14 +391,14 @@ def test_transform_activities(
     mocked_datenkompass_activity: list[DatenkompassActivity],
     mocked_activity_mapping: DatenkompassMapping,
 ) -> None:
-    extracted_and_filtered_merged_activities = mocked_merged_activities[
+    datenkompass_filtered_merged_activities = mocked_merged_activities[
         :2
     ]  # item with wrong organization filtered out
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     result = transform_activities(
-        extracted_and_filtered_merged_activities,
+        datenkompass_filtered_merged_activities,
         merged_organizational_units_by_id,
         mocked_activity_mapping,
     )
@@ -415,14 +415,14 @@ def test_transform_bibliographic_resource(
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    person_name_by_id = {
+    datenkompass_person_str_by_id = {
         person.identifier: person.fullName[0] for person in mocked_merged_person
     }
 
     result = transform_bibliographic_resources(
         mocked_merged_bibliographic_resource,
         merged_organizational_units_by_id,
-        person_name_by_id,
+        datenkompass_person_str_by_id,
         mocked_bibliographic_resource_mapping,
     )
 
@@ -465,17 +465,17 @@ def test_transform_resources(
         "Source-2": [mocked_merged_resource[0]],
         "Source-1": [mocked_merged_resource[1]],
     }
-    fetched_merged_organizational_units_by_id = {
+    datenkompass_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    fetched_merged_contact_points_by_id = {
+    datenkompass_merged_contact_points_by_id = {
         cp.identifier: cp for cp in mocked_merged_contact_point
     }
 
     result = transform_resources(
         fetched_merged_resource,
-        fetched_merged_organizational_units_by_id,
-        fetched_merged_contact_points_by_id,
+        datenkompass_merged_organizational_units_by_id,
+        datenkompass_merged_contact_points_by_id,
         mocked_resource_mapping,
     )
 
