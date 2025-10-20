@@ -7,7 +7,10 @@ from mex.common.types import AssetsPath
 class ConsentMailerSettings(BaseModel):
     """Settings definition class for the consent mailer."""
 
-    request_filter_chunck_size: int = 1
+    backend_fetch_chunk_size: int = Field(
+        1,
+        description="The chunk size for fetching against the backend.",
+    )
     mailpit_api_url: str = Field(
         "localhost:8025",
         description="The url to the api endpoint for mailpit. USED FOR TESTS ONLY!",
