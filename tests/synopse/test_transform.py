@@ -294,7 +294,9 @@ def test_transform_synopse_projects_to_mex_activities(
     synopse_projects: list[SynopseProject],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_activity: ActivityMapping,
-    synopse_organization_ids_by_query_string: dict[str, MergedOrganizationIdentifier],
+    synopse_merged_organization_ids_by_query_string: dict[
+        str, MergedOrganizationIdentifier
+    ],
 ) -> None:
     synopse_project = synopse_projects[0]
     contributor_merged_ids_by_name = {
@@ -339,7 +341,7 @@ def test_transform_synopse_projects_to_mex_activities(
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,
-            synopse_organization_ids_by_query_string,
+            synopse_merged_organization_ids_by_query_string,
         )
     )
 

@@ -65,7 +65,7 @@ def endnote_bibliographic_resource_mapping(
 
 
 @pytest.fixture
-def extracted_endnote_persons_by_person_string(
+def endnote_extracted_persons_by_person_str(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> dict[str, ExtractedPerson]:
     return {

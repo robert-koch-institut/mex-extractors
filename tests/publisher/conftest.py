@@ -23,6 +23,7 @@ from mex.common.types import (
     Email,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    YearMonthDayTime,
 )
 
 
@@ -36,6 +37,41 @@ def merged_ldap_person_list() -> list[MergedPerson]:
         MergedPerson(
             identifier="PersonWithoutFallback",
             memberOf=[],
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_person_list() -> list[MergedPerson]:
+    return [
+        MergedPerson(
+            identifier="PersonPositiveConsent",
+            fullName=["Consent, Positive"],
+            memberOf=["SomeUnitIdentifier"],
+        ),
+        MergedPerson(
+            identifier="PersonNegativeConsent",
+        ),
+        MergedPerson(
+            identifier="PersonNoConsentLink",
+        ),
+    ]
+
+
+@pytest.fixture
+def merged_consent_list() -> list[MergedConsent]:
+    return [
+        MergedConsent(
+            identifier="PositiveConsent",
+            hasDataSubject="PersonPositiveConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-2",
+            isIndicatedAtTime=YearMonthDayTime("1999-12-31T23:59:59Z"),
+        ),
+        MergedConsent(
+            identifier="NegativeConsent",
+            hasDataSubject="PersonNegativeConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            isIndicatedAtTime=YearMonthDayTime("2000-01-01T00:00:00Z"),
         ),
     ]
 
@@ -56,7 +92,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
             ),
             MergedContactPoint(
                 # even if they have an email address, contact points should not
-                # be added to fallback_unit_identifiers_by_person,
+                # be added to publisher_fallback_unit_identifiers_by_person,
                 identifier="CPShouldBeIgnored",
                 email=[Email("contactpoint@e.mail")],
             ),
@@ -65,7 +101,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
 
 
 @pytest.fixture
-def mocked_fallback_unit_identifiers_by_person() -> dict[
+def mocked_publisher_fallback_unit_identifiers_by_person() -> dict[
     MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
 ]:
     return {
@@ -116,8 +152,8 @@ def fetch_all_merged_items(
             identifier="fakeFakeContact",
         ),
         MergedConsent(
-            identifier="fakeFakeConsent",
-            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            identifier="fakePositiveConsent",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-2",
             hasDataSubject="fakeFakePerson",
             isIndicatedAtTime="2014-05-21T19:38:51Z",
         ),

@@ -14,7 +14,7 @@ from mex.extractors.pipeline.checks.main import (
 )
 
 
-@asset_check(asset="extracted_endnote_bibliographic_resources", blocking=True)
+@asset_check(asset="endnote_extracted_bibliographic_resources", blocking=True)
 def check_yaml_rules_exist() -> AssetCheckResult:
     """Check if any rules exist for endnote with valid threshold."""
     extractor = "endnote"
@@ -30,21 +30,21 @@ def check_yaml_rules_exist() -> AssetCheckResult:
 
 
 @asset_check(
-    asset="extracted_endnote_bibliographic_resources",
+    asset="endnote_extracted_bibliographic_resources",
     additional_deps=["check_yaml_rules_exist"],
     blocking=True,
 )
 def check_x_items_more_than(
-    context: AssetCheckExecutionContext, extracted_endnote_bibliographic_resources: int
+    context: AssetCheckExecutionContext, endnote_extracted_bibliographic_resources: int
 ) -> AssetCheckResult:
     """Check that latest count is not more than threshold + historical count."""
-    asset_key = AssetKey(["extracted_endnote_bibliographic_resources"])
+    asset_key = AssetKey(["endnote_extracted_bibliographic_resources"])
     passed = check_x_items_more_passed(
         context,
         asset_key,
         "endnote",
         "bibliographic-resource",
-        extracted_endnote_bibliographic_resources,
+        endnote_extracted_bibliographic_resources,
     )
     return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
 

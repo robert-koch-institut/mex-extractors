@@ -1,5 +1,4 @@
-from pydantic import AnyUrl, Field, SecretStr
-from pydantic_core import Url
+from pydantic import Field, HttpUrl, SecretStr
 
 from mex.common.settings import BaseSettings
 from mex.common.types import AssetsPath
@@ -22,6 +21,7 @@ from mex.extractors.publisher.settings import PublisherSettings
 from mex.extractors.seq_repo.settings import SeqRepoSettings
 from mex.extractors.sumo.settings import SumoSettings
 from mex.extractors.synopse.settings import SynopseSettings
+from mex.extractors.system.settings import SystemSettings
 from mex.extractors.voxco.settings import VoxcoSettings
 from mex.extractors.wikidata.settings import WikidataSettings
 
@@ -52,8 +52,8 @@ class Settings(BaseSettings):
         description="Drop API key with admin access to call all GET endpoints",
         validation_alias="MEX_DROP_API_KEY",
     )
-    drop_api_url: AnyUrl = Field(
-        Url("http://localhost:8081/"),
+    drop_api_url: HttpUrl = Field(
+        HttpUrl("http://localhost:8081/"),
         description="MEx drop API url.",
         validation_alias="MEX_DROP_API_URL",
     )
@@ -70,8 +70,8 @@ class Settings(BaseSettings):
         SecretStr("password"),
         description="Kerberos password to authenticate against MSSQL server.",
     )
-    s3_endpoint_url: AnyUrl = Field(
-        AnyUrl("https://s3"),
+    s3_endpoint_url: HttpUrl = Field(
+        HttpUrl("https://s3"),
         description="The complete URL to use for the constructed client.",
     )
     s3_access_key_id: SecretStr = Field(
@@ -107,5 +107,6 @@ class Settings(BaseSettings):
     seq_repo: SeqRepoSettings = SeqRepoSettings()
     sumo: SumoSettings = SumoSettings()
     synopse: SynopseSettings = SynopseSettings()
+    system: SystemSettings = SystemSettings()
     voxco: VoxcoSettings = VoxcoSettings()
     wikidata: WikidataSettings = WikidataSettings()

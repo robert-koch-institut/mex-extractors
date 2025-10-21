@@ -29,7 +29,7 @@ from mex.extractors.igs.transform import (
 def test_transform_igs_info_to_resources(  # noqa: PLR0913
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_resource_mapping: ResourceMapping,
-    extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -38,7 +38,7 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
         IGSInfo(title="title", version="-1"),
         extracted_primary_sources["igs"],
         igs_resource_mapping,
-        extracted_igs_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
         extracted_access_platform,
         extracted_organization_rki,
@@ -65,13 +65,13 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
 def test_transform_igs_access_platform(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_access_platform_mapping: AccessPlatformMapping,
-    extracted_igs_contact_points_by_mail: dict[str, ExtractedContactPoint],
+    igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_access_platform = transform_igs_access_platform(
         extracted_primary_sources["igs"],
         igs_access_platform_mapping,
-        extracted_igs_contact_points_by_mail,
+        igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
     )
 
@@ -89,6 +89,7 @@ def test_transform_igs_access_platform(
         "contact": ["cGyT8sVLtQTF7vK24LoOk6"],
         "description": [{"value": "test description", "language": "en"}],
         "landingPage": [{"url": "https://rki.de:4100/docs"}],
+        "title": [{"language": "en", "value": "IGS Open API"}],
         "unitInCharge": ["bFQoRhcVH5DHU8"],
         "identifier": Joker(),
         "stableTargetId": Joker(),

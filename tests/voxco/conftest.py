@@ -31,7 +31,7 @@ def unit_stable_target_ids_by_synonym() -> dict[
 
 
 @pytest.fixture
-def extracted_mex_persons_voxco() -> list[ExtractedPerson]:
+def voxco_extracted_persons() -> list[ExtractedPerson]:
     """Return an extracted person with static dummy values."""
     return [
         ExtractedPerson(
@@ -46,7 +46,7 @@ def extracted_mex_persons_voxco() -> list[ExtractedPerson]:
 
 
 @pytest.fixture
-def organization_stable_target_id_by_query_voxco() -> dict[
+def voxco_merged_organization_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:
     return {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(42)}
@@ -62,7 +62,7 @@ def voxco_resource_mappings(settings: Settings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def extracted_voxco_resources() -> dict[str, ExtractedResource]:
+def voxco_extracted_resources_by_str() -> dict[str, ExtractedResource]:
     return {
         "voxco-plus": ExtractedResource(
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(21),
@@ -119,7 +119,7 @@ def voxco_variables() -> dict[str, list[VoxcoVariable]]:
 
 
 @pytest.fixture
-def extracted_international_projects_activities() -> list[ExtractedActivity]:
+def international_projects_extracted_activities() -> list[ExtractedActivity]:
     return [
         ExtractedActivity(
             contact=MergedOrganizationalUnitIdentifier.generate(30),

@@ -47,7 +47,7 @@ def igs_variable_pathogen_mapping() -> VariableMapping:
 
 
 @pytest.fixture
-def extracted_igs_contact_points_by_mail() -> dict[str, ExtractedContactPoint]:
+def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoint]:
     """Mock IGS actor."""
     return {
         "email@email.de": ExtractedContactPoint(

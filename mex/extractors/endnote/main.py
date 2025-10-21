@@ -24,7 +24,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="endnote", deps=["extracted_primary_source_mex"])
-def extracted_primary_source_endnote(
+def endnote_extracted_primary_source(
     extracted_primary_sources: list[ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     """Load and return endnote primary source."""
@@ -43,44 +43,44 @@ def endnote_records() -> list[EndnoteRecord]:
 
 
 @asset(group_name="endnote")
-def extracted_endnote_persons_by_person_string(
+def endnote_extracted_persons_by_name_str(
     endnote_records: list[EndnoteRecord],
-    extracted_primary_source_endnote: ExtractedPrimarySource,
+    endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, ExtractedPerson]:
     """Extract endnote persons by person string."""
     extracted_persons = extract_endnote_persons_by_person_string(
         endnote_records,
-        extracted_primary_source_endnote,
+        endnote_extracted_primary_source,
     )
     load(extracted_persons.values())
     return extracted_persons
 
 
 @asset(group_name="endnote")
-def extracted_endnote_consents(
-    extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
-    extracted_primary_source_endnote: ExtractedPrimarySource,
+def endnote_extracted_consents(
+    endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
+    endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedConsent]:
     """Extract records from endnote."""
     settings = Settings.get()
     endnote_consent_mapping = ConsentMapping.model_validate(
         load_yaml(settings.endnote.mapping_path / "consent.yaml")
     )
-    extracted_endnote_consents = extract_endnote_consents(
-        list(extracted_endnote_persons_by_person_string.values()),
-        extracted_primary_source_endnote,
+    endnote_extracted_consents = extract_endnote_consents(
+        list(endnote_extracted_persons_by_name_str.values()),
+        endnote_extracted_primary_source,
         endnote_consent_mapping,
     )
-    load(extracted_endnote_consents)
-    return extracted_endnote_consents
+    load(endnote_extracted_consents)
+    return endnote_extracted_consents
 
 
 @asset(group_name="endnote")
-def extracted_endnote_bibliographic_resources(
+def endnote_extracted_bibliographic_resources(
     endnote_records: list[EndnoteRecord],
-    extracted_endnote_persons_by_person_string: dict[str, ExtractedPerson],
+    endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source_endnote: ExtractedPrimarySource,
+    endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> Output[int]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
@@ -92,9 +92,9 @@ def extracted_endnote_bibliographic_resources(
     extracted_bibliographic_resource = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
-        extracted_endnote_persons_by_person_string,
+        endnote_extracted_persons_by_name_str,
         unit_stable_target_ids_by_synonym,
-        extracted_primary_source_endnote,
+        endnote_extracted_primary_source,
     )
     num_items = len(extracted_bibliographic_resource)
     load(extracted_bibliographic_resource)
