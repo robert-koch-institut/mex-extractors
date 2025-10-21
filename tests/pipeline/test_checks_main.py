@@ -12,7 +12,7 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
-    check_x_items_less_passed,
+    fail_if_item_count_is_x_items_less_than,
     check_x_items_more_passed,
     check_yaml_path,
     get_historic_count,
@@ -406,5 +406,5 @@ def test_check_x_items_less_passed(  # noqa: PLR0913
     context = build_asset_check_context(instance=instance)
     asset_key = AssetKey(["some_asset"])
 
-    result = check_x_items_less_passed(context, asset_key, "ext", "type", current_count)
+    result = fail_if_item_count_is_x_items_less_than(context, asset_key, "ext", "type", current_count)
     assert result is passed

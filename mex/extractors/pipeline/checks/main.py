@@ -9,27 +9,19 @@ from dagster import (
     EventRecordsFilter,
 )
 
+from mex.common.logging import logger
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-def check_yaml_path(extractor: str, entity_type: str) -> bool:
-    """Checks if there are rules given the extractor and entityType.
-
-    Returns a bool.
-    """
-    settings = Settings.get()
-    path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
-    if not path.exists():
-        raise FileNotFoundError
-    return path.exists()
 
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
     settings = Settings.get()
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
+    if not path.exists():
+        msg = "No asset check YAML found at %s"
+        raise FileNotFoundError(msg, path)
     return AssetCheck.model_validate(load_yaml(path))
 
 
@@ -105,18 +97,23 @@ def check_x_items_more_passed(
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
-    asset_data: int,
 ) -> bool:
     """Checks whether latest extracted items nr is exceeding the rule threshold.
+
+    Args:
+        context: The Dagster asset execution context for this check.
+        asset_key: Dagster AssetKey object.
+        extractor: Name of the extractor that produced the asset.
+        entity_type: Entity Type for the asset check.
 
     Returns bool to AssetCheck.
     """
     try:
-        check_yaml_path(extractor, entity_type)
-    except FileNotFoundError as e:
-        context.log.info(str(e))
+        rule = get_rule("x_items_more_than", extractor, entity_type)
+    except FileNotFoundError:
+        logger.error("No asset check rules found for %s", asset_key)
+        return True
 
-    rule = get_rule("x_items_more_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
     current_time = datetime.now(UTC)
     time_frame = current_time - time_delta
@@ -126,35 +123,43 @@ def check_x_items_more_passed(
             asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
         )
     )
-
     if events is None:
         return True
 
-    actual_count = asset_data
+    current_number_of_extracted_items = (
+        events[0].asset_materialization.metadata["num_items"].value
+    )
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
-    return actual_count <= (historic_count if historic_count > 0 else actual_count) + (
-        rule["value"] or 0
-    )
+    return current_number_of_extracted_items <= (
+        historic_count if historic_count > 0 else current_number_of_extracted_items
+    ) + (rule["value"] or 0)
 
 
-def check_x_items_less_passed(
+def fail_if_item_count_is_x_items_less_than(
     context: AssetCheckExecutionContext,
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
-    asset_data: int,
 ) -> bool:
-    """Checks whether latest extracted items number is lower than historical count.
+    """Checks whether current number of extracted items is lower than historical count minus x.
+
+    The point in time of the historic count and the and x are read from the asset check rule.
+
+    Args:
+        context: The Dagster asset execution context for this check.
+        asset_key: Dagster AssetKey object.
+        extractor: Name of the extractor that produced the asset.
+        entity_type: Entity Type for the asset check.
 
     Returns bool to AssetCheck.
     """
     try:
-        check_yaml_path(extractor, entity_type)
-    except FileNotFoundError as e:
-        context.log.info(str(e))
+        rule = get_rule("x_items_less_than", extractor, entity_type)
+    except FileNotFoundError:
+        logger.error("No asset check rules found for %s", asset_key)
+        return True
 
-    rule = get_rule("x_items_less_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
     current_time = datetime.now(UTC)
     time_frame = current_time - time_delta
@@ -168,10 +173,24 @@ def check_x_items_less_passed(
     if events is None:
         return True
 
-    actual_count = asset_data
+    current_number_of_extracted_items = (
+        events[0].asset_materialization.metadata["num_items"].value
+    )
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
 
-    return actual_count >= (historic_count if historic_count > 0 else actual_count) - (
-        rule["value"] or 0
-    )
+    # if historic_count == 0:
+    #     return True
+    # return current_number_of_extracted_items >= historic_count - rule["value"]
+
+    threshold = historic_count - (rule["value"] or 0)
+    if current_number_of_extracted_items < threshold:
+        msg = (
+            f"Asset {asset_key} failed x_items_less_than check: "
+            f"{current_number_of_extracted_items} < threshold {threshold}"
+        )
+        raise ValueError(
+            msg
+        )
+
+    return True

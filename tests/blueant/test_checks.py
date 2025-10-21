@@ -11,7 +11,7 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
-    check_x_items_less_passed,
+    fail_if_item_count_is_x_items_less_than,
     check_x_items_more_passed,
 )
 
@@ -258,7 +258,7 @@ def test_check_x_items_less_passed_parametrized(  # noqa: PLR0913
 
     context = build_asset_check_context(instance=DagsterInstance.ephemeral())
     context.instance.get_event_records = lambda *_, **__: mocked_event_records
-    result = check_x_items_less_passed(
+    result = fail_if_item_count_is_x_items_less_than(
         context=context,
         asset_key=AssetKey(["test_asset"]),
         extractor="some_ext",
