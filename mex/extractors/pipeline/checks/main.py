@@ -21,6 +21,8 @@ def check_yaml_path(extractor: str, entity_type: str) -> bool:
     """
     settings = Settings.get()
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
+    if not path.exists():
+        raise FileNotFoundError
     return path.exists()
 
 
@@ -109,10 +111,10 @@ def check_x_items_more_passed(
 
     Returns bool to AssetCheck.
     """
-    yaml_exists = check_yaml_path(extractor, entity_type)
-
-    if not yaml_exists:
-        return True
+    try:
+        check_yaml_path(extractor, entity_type)
+    except FileNotFoundError as e:
+        context.log.info(str(e))
 
     rule = get_rule("x_items_more_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
@@ -147,10 +149,10 @@ def check_x_items_less_passed(
 
     Returns bool to AssetCheck.
     """
-    yaml_exists = check_yaml_path(extractor, entity_type)
-
-    if not yaml_exists:
-        return True
+    try:
+        check_yaml_path(extractor, entity_type)
+    except FileNotFoundError as e:
+        context.log.info(str(e))
 
     rule = get_rule("x_items_less_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
