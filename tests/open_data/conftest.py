@@ -1,5 +1,4 @@
 import pytest
-from pytest import MonkeyPatch
 
 from mex.common.models import (
     DistributionMapping,
@@ -19,7 +18,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
 )
-from mex.extractors.open_data import transform
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -139,9 +137,3 @@ def mocked_units_by_identifier_in_primary_source(
         unit.identifierInPrimarySource: unit
         for unit in mocked_extracted_organizational_units
     }
-
-
-# TODO @MX-2075: remove
-@pytest.fixture
-def mocked_fallback_unit(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")

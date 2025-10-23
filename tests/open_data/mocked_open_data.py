@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
+from mex.extractors.open_data import transform
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
@@ -108,3 +109,6 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
         self.url = "https://mock-opendata"
 
     monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
+
+    # TODO @MX-2075: remove
+    monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")
