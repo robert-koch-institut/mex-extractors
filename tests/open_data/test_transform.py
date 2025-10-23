@@ -82,8 +82,8 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
-        identifierInPrimarySource="Pattern, Peppa",
-        fullName="Pattern, Peppa",
+        identifierInPrimarySource="Muster, Maxi",
+        fullName="Muster, Maxi",
         affiliation=None,
         orcidId=[],
     )

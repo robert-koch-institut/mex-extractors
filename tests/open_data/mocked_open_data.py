@@ -37,7 +37,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                     "metadata": {
                         "creators": [
                             {
-                                "name": "Pattern, Peppa",
+                                "name": "Muster, Maxi",
                                 "affiliation": "RKI",
                                 "orcid": "1234567890",
                             },

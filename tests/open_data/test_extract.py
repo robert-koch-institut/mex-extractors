@@ -38,7 +38,7 @@ def test_extract_parent_resources_mocked() -> None:
         "metadata": {
             "creators": [
                 {
-                    "name": "Pattern, Peppa",
+                    "name": "Muster, Maxi",
                     "affiliation": "RKI",
                     "orcid": "1234567890",
                 },
