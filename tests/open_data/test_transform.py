@@ -82,8 +82,8 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     )
     assert results == ExtractedPerson(
         hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
-        identifierInPrimarySource="Muster, Maxi",
-        fullName="Muster, Maxi",
+        identifierInPrimarySource="Pattern, Peppa",
+        fullName="Pattern, Peppa",
         affiliation=None,
         orcidId=[],
     )
@@ -181,7 +181,7 @@ def test_transform_open_data_distributions(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_open_data", "mocked_fallback_unit")
 def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_parent_resource: list[OpenDataParentResource],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
@@ -220,11 +220,14 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": ["bFQoRhcVH5DIax"],
+        "unitInCharge": [  # Unit of Maxi Muster = XY
+            MergedOrganizationalUnitIdentifier.generate(seed=959)
+        ],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
         "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
+        "contributingUnit": ["bFQoRhcVH5DIax"],  # default, always unit "C1"
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}
         ],

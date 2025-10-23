@@ -27,6 +27,7 @@ def test_extract_parent_resources_mocked() -> None:
             "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
             "license": {"id": "cc-by-4.0"},
             "contributors": [{"name": "Muster, Maxi", "orcid": "1234567890"}],
+            "resource_type": {"type": "dataset"},
         },
         "files": [{"id": "file_test_id"}],
     }
@@ -37,7 +38,7 @@ def test_extract_parent_resources_mocked() -> None:
         "metadata": {
             "creators": [
                 {
-                    "name": "Muster, Maxi",
+                    "name": "Pattern, Peppa",
                     "affiliation": "RKI",
                     "orcid": "1234567890",
                 },
@@ -47,6 +48,7 @@ def test_extract_parent_resources_mocked() -> None:
                     "orcid": "9876543210",
                 },
             ],
+            "resource_type": {"type": "something else"},
             "license": {"id": "no license"},
         },
         "files": [],

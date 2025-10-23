@@ -26,6 +26,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                         "contributors": [
                             {"name": "Muster, Maxi", "orcid": "1234567890"}
                         ],
+                        "resource_type": {"name": "test1", "type": "dataset"},
                     },
                     "files": [{"id": "file_test_id"}],
                 },
@@ -36,7 +37,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                     "metadata": {
                         "creators": [
                             {
-                                "name": "Muster, Maxi",
+                                "name": "Pattern, Peppa",
                                 "affiliation": "RKI",
                                 "orcid": "1234567890",
                             },
@@ -46,6 +47,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                                 "orcid": "9876543210",
                             },
                         ],
+                        "resource_type": {"name": "test2", "type": "something else"},
                         "license": {"id": "no license"},
                     },
                     "files": [],

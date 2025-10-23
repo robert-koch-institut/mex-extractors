@@ -1,20 +1,25 @@
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
     ResourceMapping,
 )
-from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
+)
+from mex.extractors.open_data import transform
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -43,6 +48,7 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
             familyName=["Muster"],
             fullName=["Muster, Maxi"],
             givenName=["Maxi"],
+            memberOf=[MergedOrganizationalUnitIdentifier.generate(seed=959)],  # Unit XY
         )
     ]
 
@@ -133,3 +139,8 @@ def mocked_units_by_identifier_in_primary_source(
         unit.identifierInPrimarySource: unit
         for unit in mocked_extracted_organizational_units
     }
+
+
+@pytest.fixture
+def mocked_fallback_unit(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")

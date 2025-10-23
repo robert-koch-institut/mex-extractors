@@ -34,6 +34,8 @@ from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
+FALLBACK_UNIT = "mf4"
+
 
 def transform_open_data_person_affiliations_to_organizations(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
@@ -282,9 +284,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         for distribution in open_data_distribution
     }
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
-    resource_type_general = (
-        resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
-    )
+    resource_type_general_lookup = {
+        rule.forValues[0]: rule.setValues
+        for rule in resource_mapping.resourceTypeGeneral[0].mappingRules
+        if rule.forValues
+    }
     theme = resource_mapping.theme[0].mappingRules[0].setValues
     language_by_keyword = {
         rule.forValues[0]: rule.setValues[0]
@@ -292,7 +296,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         if rule.forValues and rule.setValues
     }
     for resource in open_data_parent_resource:
-        contributing_unit = list(
+        unit_in_charge = list(
             {
                 unit_id: None
                 for person in resource.metadata.contributors
@@ -305,6 +309,8 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 for unit_id in unit_list
             }
         )
+        if not unit_in_charge:
+            unit_in_charge = [unit_stable_target_ids_by_synonym[FALLBACK_UNIT]]
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -344,12 +350,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             in resource_mapping.license[0].mappingRules[0].forValues
             else None
         )
-        unit_in_charge = (
-            unit_stable_target_ids_by_synonym.get(
-                resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+        if resource_mapping.contributingUnit[0].mappingRules[0].forValues:
+            contributing_unit = unit_stable_target_ids_by_synonym.get(
+                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
-            if resource_mapping.unitInCharge[0].mappingRules[0].forValues
-            else None
+        resource_type_general = resource_type_general_lookup.get(
+            resource.metadata.resource_type.type, []
         )
         extracted_resource.append(
             ExtractedResource(
