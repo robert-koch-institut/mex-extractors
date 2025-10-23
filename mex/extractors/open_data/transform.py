@@ -351,10 +351,13 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             in resource_mapping.license[0].mappingRules[0].forValues
             else None
         )
-        if resource_mapping.contributingUnit[0].mappingRules[0].forValues:
-            contributing_unit = unit_stable_target_ids_by_synonym.get(
+        contributing_unit = (
+            unit_stable_target_ids_by_synonym.get(
                 resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
+            if resource_mapping.contributingUnit[0].mappingRules[0].forValues
+            else None
+        )
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []
         )
