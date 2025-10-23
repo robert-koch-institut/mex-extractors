@@ -6,7 +6,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -14,13 +13,15 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.blueant.models.source import BlueAntSource
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 
 
 @watch()
-def transform_blueant_sources_to_extracted_activities(  # noqa: PLR0913
+def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
-    primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     activity: ActivityMapping,
@@ -32,7 +33,6 @@ def transform_blueant_sources_to_extracted_activities(  # noqa: PLR0913
 
     Args:
         blueant_sources: Blue Ant sources
-        primary_source: MEx primary_source for Blue Ant
         person_stable_target_ids_by_employee_id: Mapping from LDAP employeeIDs
                                                  to person stable target IDs
         unit_stable_target_ids_by_synonym: Map from unit acronyms and labels
@@ -63,7 +63,7 @@ def transform_blueant_sources_to_extracted_activities(  # noqa: PLR0913
                 extracted_organization = ExtractedOrganization(
                     officialName=name,
                     identifierInPrimarySource=name,
-                    hadPrimarySource=primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
                 )
                 load([extracted_organization])
                 funder_or_commissioner.append(
@@ -98,7 +98,7 @@ def transform_blueant_sources_to_extracted_activities(  # noqa: PLR0913
             involvedPerson=person_stable_target_ids_by_employee_id.get(
                 source.projectLeaderEmployeeId  # type: ignore[arg-type]
             ),
-            hadPrimarySource=primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
             responsibleUnit=department_id,
             funderOrCommissioner=funder_or_commissioner,
             title=title or [],

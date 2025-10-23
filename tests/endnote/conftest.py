@@ -4,9 +4,11 @@ from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
     ExtractedPerson,
-    ExtractedPrimarySource,
 )
 from mex.extractors.endnote.model import EndnoteRecord
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -65,13 +67,11 @@ def endnote_bibliographic_resource_mapping(
 
 
 @pytest.fixture
-def endnote_extracted_persons_by_person_str(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> dict[str, ExtractedPerson]:
+def endnote_extracted_persons_by_person_str() -> dict[str, ExtractedPerson]:
     return {
         "Mustermann, J.": ExtractedPerson.model_validate(
             {
-                "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+                "hadPrimarySource": get_extracted_primary_source_id_by_name("endnote"),
                 "identifierInPrimarySource": "00000000-0000-4000-8000-000000000001",
                 "email": ["test_person@email.de"],
                 "familyName": ["Resolved"],
@@ -82,7 +82,7 @@ def endnote_extracted_persons_by_person_str(
         ),
         "Erika Mustermann": ExtractedPerson.model_validate(
             {
-                "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+                "hadPrimarySource": get_extracted_primary_source_id_by_name("endnote"),
                 "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
                 "email": ["test_person@email.de"],
                 "familyName": ["Secondary"],
@@ -93,7 +93,7 @@ def endnote_extracted_persons_by_person_str(
         ),
         "Mustermann, I.": ExtractedPerson.model_validate(
             {
-                "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+                "hadPrimarySource": get_extracted_primary_source_id_by_name("endnote"),
                 "identifierInPrimarySource": "00000000-0000-4000-8000-000000000003",
                 "email": ["test_person@email.de"],
                 "familyName": ["Tertiary"],

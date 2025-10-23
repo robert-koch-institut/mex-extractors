@@ -8,8 +8,6 @@ from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
-from mex.common.models import ExtractedPrimarySource
-from mex.common.types import Email
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator,
@@ -57,11 +55,8 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> None:
-    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, seq_repo_extracted_primary_source
-    )
+    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
     project_coordinators = list(
         extract_source_project_coordinator(seq_repo_sources_dict)
     )
@@ -70,7 +65,7 @@ def test_extract_source_project_coordinator(
             person=LDAPPerson(
                 sAMAccountName=None,
                 objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=[Email("test_person@email.de")],
+                mail=["test_person@email.de"],
                 company=None,
                 department="PARENT-UNIT",
                 departmentNumber=None,
@@ -86,7 +81,7 @@ def test_extract_source_project_coordinator(
             person=LDAPPerson(
                 sAMAccountName=None,
                 objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=[Email("test_person@email.de")],
+                mail=["test_person@email.de"],
                 company=None,
                 department="PARENT-UNIT",
                 departmentNumber=None,

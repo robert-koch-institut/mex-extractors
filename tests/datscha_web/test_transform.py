@@ -2,7 +2,6 @@ from collections.abc import Hashable
 
 import pytest
 
-from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -12,6 +11,9 @@ from mex.common.types import (
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.datscha_web.transform import (
     transform_datscha_web_items_to_mex_activities,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 
 
@@ -57,12 +59,10 @@ def test_transform_datscha_web_items_to_mex_activities(
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     mex_sources = list(
         transform_datscha_web_items_to_mex_activities(
             [datscha_web_item],
-            extracted_primary_sources["datscha-web"],
             person_stable_target_ids_by_query_string,
             unit_stable_target_ids_by_synonym,
             organizations_stable_target_ids_by_query_string,
@@ -82,9 +82,7 @@ def test_transform_datscha_web_items_to_mex_activities(
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "contact": ["ID000000001111", "ID000000002222"],
         "externalAssociate": ["ID000000000077"],
-        "hadPrimarySource": str(
-            extracted_primary_sources["datscha-web"].stableTargetId
-        ),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("datscha-web")),
         "identifier": Joker(),
         "identifierInPrimarySource": "17",
         "involvedPerson": ["ID000000001111", "ID000000002222"],
@@ -102,12 +100,10 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     mex_sources = list(
         transform_datscha_web_items_to_mex_activities(
             [datscha_web_item_without_contributors],
-            extracted_primary_sources["datscha-web"],
             person_stable_target_ids_by_query_string,
             unit_stable_target_ids_by_synonym,
             organizations_stable_target_ids_by_query_string,
@@ -127,9 +123,7 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "contact": ["ID000000000033", "ID000000000044"],
         "externalAssociate": ["ID000000000077"],
-        "hadPrimarySource": str(
-            extracted_primary_sources["datscha-web"].stableTargetId
-        ),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("datscha-web")),
         "identifier": Joker(),
         "identifierInPrimarySource": "92",
         "responsibleUnit": ["ID000000000033", "ID000000000044"],

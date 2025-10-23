@@ -7,11 +7,9 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
 )
-from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
@@ -23,21 +21,12 @@ from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
 from mex.extractors.pipeline import run_job_in_process
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
-
-
-@asset(group_name="biospecimen", deps=["extracted_primary_source_mex"])
-def biospecimen_extracted_primary_source(
-    extracted_primary_sources: list[ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    """Load and return biospecimen primary source and load them to sinks."""
-    (biospecimen_extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources, "biospecimen"
-    )
-    load([biospecimen_extracted_primary_source])
-    return biospecimen_extracted_primary_source
 
 
 @asset(group_name="biospecimen")
@@ -49,7 +38,6 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 @asset(group_name="biospecimen")
 def biospecimen_extracted_persons(
     biospecimen_resources: list[BiospecimenResource],
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
@@ -57,7 +45,7 @@ def biospecimen_extracted_persons(
     ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
     mex_persons = transform_ldap_persons_to_extracted_persons(
         ldap_persons,
-        extracted_primary_source_ldap,
+        get_extracted_primary_source_id_by_name("ldap"),
         extracted_organizational_units,
         extracted_organization_rki,
     )
@@ -66,9 +54,8 @@ def biospecimen_extracted_persons(
 
 
 @asset(group_name="biospecimen")
-def biospecimen_extracted_resources(  # noqa: PLR0913
+def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
-    biospecimen_extracted_primary_source: ExtractedPrimarySource,
     biospecimen_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
@@ -84,7 +71,6 @@ def biospecimen_extracted_resources(  # noqa: PLR0913
     mex_sources = list(
         transform_biospecimen_resource_to_mex_resource(
             biospecimen_resources,
-            biospecimen_extracted_primary_source,
             unit_stable_target_ids_by_synonym,
             biospecimen_extracted_persons,
             extracted_organization_rki,

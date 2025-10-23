@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.models import ActivityMapping, ExtractedPrimarySource
+from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
@@ -19,13 +19,15 @@ from mex.extractors.confluence_vvt.transform import (
     transform_confluence_vvt_activities_to_extracted_activities,
     transform_confluence_vvt_page_to_extracted_activity,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
 @pytest.mark.integration
 def test_transform_confluence_vvt_page_to_extracted_activity(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
@@ -55,12 +57,11 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 
     ldap_authors = extract_confluence_vvt_authors(contacts + involved_persons)
     merged_ids_by_query_string = get_merged_ids_by_query_string(
-        ldap_authors, extracted_primary_sources["ldap"]
+        ldap_authors, get_extracted_primary_source_id_by_name("ldap")
     )
 
     extracted_activity = transform_confluence_vvt_page_to_extracted_activity(
         page_data,
-        extracted_primary_sources["confluence-vvt"],
         confluence_vvt_activity_mapping,
         merged_ids_by_query_string,
         unit_merged_ids_by_synonym,
@@ -74,7 +75,6 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 
 @pytest.mark.integration
 def test_transform_confluence_vvt_page_to_extracted_activities(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
@@ -86,11 +86,10 @@ def test_transform_confluence_vvt_page_to_extracted_activities(
 
     ldap_authors = extract_confluence_vvt_authors(all_persons)
     merged_ids_by_query_string = get_merged_ids_by_query_string(
-        ldap_authors, extracted_primary_sources["ldap"]
+        ldap_authors, get_extracted_primary_source_id_by_name("ldap")
     )
     extracted_activities = transform_confluence_vvt_activities_to_extracted_activities(
         all_pages,
-        extracted_primary_sources["confluence-vvt"],
         confluence_vvt_activity_mapping,
         merged_ids_by_query_string,
         unit_merged_ids_by_synonym,

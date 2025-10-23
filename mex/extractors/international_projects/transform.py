@@ -6,7 +6,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     MappingField,
 )
 from mex.common.types import (
@@ -21,13 +20,15 @@ from mex.common.types import (
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 
 
 def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0913
     source: InternationalProjectsSource,
     international_projects_activity: ActivityMapping,
-    extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
@@ -40,7 +41,6 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     Args:
         source: international projects sources
         international_projects_activity: activity mapping model with default values
-        extracted_primary_source: Extracted primary_source for international Projects
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
         unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
@@ -117,12 +117,13 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
             get_or_create_partner_organization(
                 source.partner_organization,
                 partner_organizations_stable_target_id_by_query,
-                extracted_primary_source,
             )
             if source.partner_organization
             else []
         ),
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name(
+            "international-projects"
+        ),
         fundingProgram=source.funding_program if source.funding_program else [],
         shortName=source.project_abbreviation,
         theme=get_theme_for_activity_or_topic(
@@ -148,7 +149,6 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
 def transform_international_projects_sources_to_extracted_activities(  # noqa: PLR0913
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
-    extracted_primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
@@ -161,7 +161,6 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
     Args:
         international_projects_sources: international projects sources
         international_projects_activity: activity mapping model with default values
-        extracted_primary_source: Extracted primary_source for FF Projects
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
         unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
@@ -178,7 +177,6 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
         if activity := transform_international_projects_source_to_extracted_activity(
             source,
             international_projects_activity,
-            extracted_primary_source,
             person_stable_target_ids_by_query_string,
             unit_stable_target_id_by_synonym,
             funding_sources_stable_target_id_by_query,
@@ -236,14 +234,12 @@ def get_theme_for_activity_or_topic(
 def get_or_create_partner_organization(
     partner_organization: list[str],
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> list[MergedOrganizationIdentifier]:
     """Get partner organizations merged ids.
 
     Args:
         partner_organization: partner organizations from the source
         extracted_organizations: merged organization identifier extracted from wikidata
-        extracted_primary_source: Extracted primary_source for international projects
 
     Returns:
         list of matched or created merged organization identifier
@@ -256,7 +252,9 @@ def get_or_create_partner_organization(
             extracted_organization = ExtractedOrganization(
                 officialName=[Text(value=partner_org)],
                 identifierInPrimarySource=partner_org,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name(
+                    "international-projects"
+                ),
             )
             load([extracted_organization])
             final_partner_organizations.append(

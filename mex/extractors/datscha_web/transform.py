@@ -4,7 +4,6 @@ from mex.common.logging import watch
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -12,13 +11,15 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 
 
 @watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
-    primary_source: ExtractedPrimarySource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     organizations_stable_target_ids_by_query_string: dict[
@@ -29,7 +30,6 @@ def transform_datscha_web_items_to_mex_activities(
 
     Args:
         datscha_web_items: Datscha-web items
-        primary_source: MEx primary_source for datscha-web
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target IDs
         unit_stable_target_ids_by_synonym: Mapping from unit acronyms and labels
@@ -74,7 +74,9 @@ def transform_datscha_web_items_to_mex_activities(
                     extracted_organization = ExtractedOrganization(
                         officialName=partner,
                         identifierInPrimarySource=partner,
-                        hadPrimarySource=primary_source.stableTargetId,
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "datscha-web"
+                        ),
                     )
                     load([extracted_organization])
                     external_associate.append(
@@ -88,7 +90,7 @@ def transform_datscha_web_items_to_mex_activities(
             activityType="https://mex.rki.de/item/activity-type-6",
             contact=contact,
             externalAssociate=external_associate,
-            hadPrimarySource=primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("datscha-web"),
             identifierInPrimarySource=str(datscha_web_item.item_id),
             involvedPerson=involved_person,
             involvedUnit=involved_unit,

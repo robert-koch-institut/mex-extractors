@@ -10,9 +10,7 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
-    ExtractedPrimarySource,
 )
-from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -32,30 +30,19 @@ from mex.extractors.international_projects.transform import (
     transform_international_projects_sources_to_extracted_activities,
 )
 from mex.extractors.pipeline import run_job_in_process
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
 
-@asset(group_name="international_projects", deps=["extracted_primary_source_mex"])
-def international_projects_extracted_primary_source(
-    extracted_primary_sources: list[ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    """Load and return international projects primary source."""
-    (extracted_primary_source_international,) = get_primary_sources_by_name(
-        extracted_primary_sources, "international-projects"
-    )
-    load([extracted_primary_source_international])
-    return extracted_primary_source_international
-
-
 @asset(group_name="international_projects")
-def international_projects_sources(
-    international_projects_extracted_primary_source: ExtractedPrimarySource,
-) -> list[InternationalProjectsSource]:
+def international_projects_sources() -> list[InternationalProjectsSource]:
     """Extract from international project sources."""
     return filter_by_global_rules(
-        international_projects_extracted_primary_source.stableTargetId,
+        get_extracted_primary_source_id_by_name("international-projects"),
         extract_international_projects_sources(),
     )
 
@@ -63,7 +50,6 @@ def international_projects_sources(
 @asset(group_name="international_projects")
 def international_projects_person_ids_by_query_str(
     international_projects_sources: list[InternationalProjectsSource],
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
@@ -73,13 +59,13 @@ def international_projects_person_ids_by_query_str(
     )
     mex_authors = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_project_leaders,
-        extracted_primary_source_ldap,
+        get_extracted_primary_source_id_by_name("ldap"),
         extracted_organizational_units,
         extracted_organization_rki,
     )
     load(mex_authors)
     return get_merged_ids_by_query_string(
-        ldap_project_leaders, extracted_primary_source_ldap
+        ldap_project_leaders, get_extracted_primary_source_id_by_name("ldap")
     )
 
 
@@ -104,9 +90,8 @@ def international_projects_partner_organization_ids_by_query_string(
 
 
 @asset(group_name="international_projects")
-def international_projects_extracted_activities(  # noqa: PLR0913
+def international_projects_extracted_activities(
     international_projects_sources: list[InternationalProjectsSource],
-    international_projects_extracted_primary_source: ExtractedPrimarySource,
     international_projects_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
@@ -127,7 +112,6 @@ def international_projects_extracted_activities(  # noqa: PLR0913
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             activity,
-            international_projects_extracted_primary_source,
             international_projects_person_ids_by_query_str,
             unit_stable_target_ids_by_synonym,
             international_projects_funding_sources_ids_by_query_string,

@@ -7,7 +7,6 @@ from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -22,6 +21,9 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.grippeweb.connector import GrippewebConnector
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -84,11 +86,9 @@ def grippeweb_resource_mappings() -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def grippeweb_extracted_access_platform(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> ExtractedAccessPlatform:
+def grippeweb_extracted_access_platform() -> ExtractedAccessPlatform:
     return ExtractedAccessPlatform(
-        hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
         identifierInPrimarySource="primary-source",
         contact=[MergedContactPointIdentifier.generate(seed=234)],
         technicalAccessibility="https://mex.rki.de/item/technical-accessibility-1",
@@ -159,11 +159,9 @@ def grippeweb_variable() -> VariableMapping:
 
 
 @pytest.fixture
-def grippeweb_extracted_parent_resource(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> ExtractedResource:
+def grippeweb_extracted_parent_resource() -> ExtractedResource:
     return ExtractedResource(
-        hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
         identifierInPrimarySource="grippeweb",
         accessRestriction="https://mex.rki.de/item/access-restriction-2",
         accrualPeriodicity="https://mex.rki.de/item/frequency-15",
@@ -194,26 +192,25 @@ def grippeweb_extracted_parent_resource(
 
 @pytest.fixture
 def extracted_variable_groups(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     grippeweb_extracted_parent_resource: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     return [
         ExtractedVariableGroup(
-            hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             identifierInPrimarySource="vActualQuestion",
             containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Additional Questions", language="en")],
             entityType="ExtractedVariableGroup",
         ),
         ExtractedVariableGroup(
-            hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             identifierInPrimarySource="vWeeklyResponsesMEx",
             containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Weekly Responses", language="en")],
             entityType="ExtractedVariableGroup",
         ),
         ExtractedVariableGroup(
-            hadPrimarySource=extracted_primary_sources["grippeweb"].stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             identifierInPrimarySource="vMasterDataMEx",
             containedBy=[grippeweb_extracted_parent_resource.stableTargetId],
             label=[Text(value="Master Data", language="en")],

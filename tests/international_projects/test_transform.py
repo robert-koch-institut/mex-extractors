@@ -1,6 +1,6 @@
 from pytz import timezone
 
-from mex.common.models import ActivityMapping, ExtractedPrimarySource
+from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -15,10 +15,12 @@ from mex.extractors.international_projects.extract import (
 from mex.extractors.international_projects.transform import (
     transform_international_projects_sources_to_extracted_activities,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_international_projects_source_to_mex_source(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:
@@ -36,7 +38,6 @@ def test_transform_international_projects_source_to_mex_source(
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             international_projects_mapping_activity,
-            extracted_primary_sources["international-projects"],
             person_stable_target_ids_by_query_string,
             unit_stable_target_ids_by_synonym,
             funding_source_stable_target_ids_by_synonym,
@@ -46,9 +47,9 @@ def test_transform_international_projects_source_to_mex_source(
 
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources[
+        "hadPrimarySource": get_extracted_primary_source_id_by_name(
             "international-projects"
-        ].stableTargetId,
+        ),
         "identifierInPrimarySource": "0000-1000",
         "stableTargetId": Joker(),
         "activityType": ["https://mex.rki.de/item/activity-type-1"],

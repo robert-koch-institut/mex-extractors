@@ -2,13 +2,13 @@ from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MergedConsent, MergedPerson
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 
 
-def extract_ldap_persons(
-    extracted_primary_source_ldap_identifier: MergedPrimarySourceIdentifier,
-) -> list[MergedPerson]:
+def extract_ldap_persons() -> list[MergedPerson]:
     """Get all persons from primary source LDAP."""
     connector = BackendApiConnector.get()
     return cast(
@@ -17,7 +17,7 @@ def extract_ldap_persons(
             connector.fetch_all_merged_items(
                 entity_type=["MergedPerson"],
                 reference_field="hadPrimarySource",
-                referenced_identifier=[extracted_primary_source_ldap_identifier],
+                referenced_identifier=[get_extracted_primary_source_id_by_name("ldap")],
             )
         ),
     )

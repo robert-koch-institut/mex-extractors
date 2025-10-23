@@ -1,14 +1,12 @@
-from mex.common.models import ExtractedPrimarySource
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 def test_filter_sources_on_latest_sequencing_date(
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> None:
     seq_repo_sources_filtered = filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, seq_repo_extracted_primary_source
+        seq_repo_sources
     )
 
     expected = {

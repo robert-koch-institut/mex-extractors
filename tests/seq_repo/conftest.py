@@ -8,13 +8,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedPrimarySource,
     ResourceMapping,
-)
-from mex.common.primary_source.extract import extract_seed_primary_sources
-from mex.common.primary_source.transform import (
-    get_primary_sources_by_name,
-    transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -28,21 +22,6 @@ from mex.extractors.seq_repo.transform import (
 )
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture(autouse=True)
-def seq_repo_extracted_primary_source() -> ExtractedPrimarySource:
-    seed_primary_sources = extract_seed_primary_sources()
-    extracted_primary_sources = (
-        transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    )
-    (seq_repo_extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources,
-        "seq-repo",
-    )
-    return seq_repo_extracted_primary_source
 
 
 @pytest.fixture
@@ -76,11 +55,8 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 @pytest.fixture
 def seq_repo_latest_sources(
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, SeqRepoSource]:
-    return filter_sources_on_latest_sequencing_date(
-        seq_repo_sources, seq_repo_extracted_primary_source
-    )
+    return filter_sources_on_latest_sequencing_date(seq_repo_sources)
 
 
 @pytest.fixture
@@ -106,20 +82,17 @@ def seq_repo_resource(settings: Settings) -> ResourceMapping:
 
 @pytest.fixture
 def extracted_mex_access_platform(
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
     seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
         seq_repo_access_platform,
         unit_stable_target_ids_by_synonym,
-        seq_repo_extracted_primary_source,
     )
 
 
 @pytest.fixture
-def extracted_mex_activities_dict(  # noqa: PLR0913
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
+def extracted_mex_activities_dict(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
@@ -132,7 +105,6 @@ def extracted_mex_activities_dict(  # noqa: PLR0913
         seq_repo_ldap_persons_with_query,
         unit_stable_target_ids_by_synonym,
         seq_repo_merged_person_ids_by_query_string,
-        seq_repo_extracted_primary_source,
     )
     return {
         activity.identifierInPrimarySource: activity

@@ -8,7 +8,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -21,6 +20,9 @@ from mex.common.types import (
     TemporalEntity,
     Text,
     TextLanguage,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
@@ -403,9 +405,7 @@ def synopse_project(synopse_projects: list[SynopseProject]) -> SynopseProject:
 
 
 @pytest.fixture
-def extracted_activity(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> ExtractedActivity:
+def extracted_activity() -> ExtractedActivity:
     """Return an extracted activity."""
     return ExtractedActivity(
         abstract=[{"value": "Die Studie untersucht die Laune."}],
@@ -418,7 +418,7 @@ def extracted_activity(
             )
         ],
         end=[TemporalEntity("2013")],
-        hadPrimarySource=extracted_primary_sources["report-server"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         identifierInPrimarySource="12345",
         involvedPerson=[Identifier.generate(seed=12)],
         responsibleUnit=[Identifier.generate(seed=13)],
@@ -444,14 +444,12 @@ def resources_by_synopse_id(
 @pytest.fixture
 def extracted_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     resources_by_synopse_id: dict[str, ExtractedResource],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
     return transform_synopse_variables_to_mex_variable_groups(
         synopse_variables_by_thema,
-        extracted_primary_sources["report-server"],
         resources_by_synopse_id,
         synopse_study_overviews,
     )
