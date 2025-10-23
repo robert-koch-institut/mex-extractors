@@ -25,8 +25,8 @@ from mex.extractors.pipeline.checks.main import (
         "current_count",
         "expected_passed",
     ),
-    [
-        (
+   [
+        pytest.param(
             True,
             5,
             "7d",
@@ -38,8 +38,9 @@ from mex.extractors.pipeline.checks.main import (
             ],
             14,
             True,
+            id="passes_within_threshold",
         ),
-        (
+        pytest.param(
             True,
             5,
             "7d",
@@ -51,30 +52,28 @@ from mex.extractors.pipeline.checks.main import (
             ],
             20,
             False,
+            id="fails_exceeds_threshold",
         ),
-        (
+        pytest.param(
             True,
             0,
             "1d",
             [],
             99,
             True,
+            id="no_history_fallback",
         ),
-        (
+        pytest.param(
             False,
             None,
             None,
             [],
             999,
             True,
+            id="yaml_not_found_should_pass",
         ),
     ],
-    ids=[
-        "passes_within_threshold",
-        "fails_exceeds_threshold",
-        "no_history_fallback",
-        "yaml_not_found_should_pass",
-    ],
+
 )
 def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
@@ -144,7 +143,7 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
 
 
 @pytest.mark.parametrize(
-    (
+     (
         "yaml_exists",
         "rule_threshold",
         "time_frame_str",
@@ -153,7 +152,7 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
         "expected_passed",
     ),
     [
-        (
+        pytest.param(
             True,
             5,
             "7d",
@@ -165,8 +164,9 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
             ],
             14,
             True,
+            id="passes_within_threshold",
         ),
-        (
+        pytest.param(
             True,
             5,
             "7d",
@@ -178,29 +178,26 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
             ],
             4,
             False,
+            id="fails_exceeds_threshold",
         ),
-        (
+        pytest.param(
             True,
             0,
             "1d",
             [],
             99,
             True,
+            id="no_history_fallback",
         ),
-        (
+        pytest.param(
             False,
             None,
             None,
             [],
             999,
             True,
+            id="yaml_not_found_should_pass",
         ),
-    ],
-    ids=[
-        "passes_within_threshold",
-        "fails_exceeds_threshold",
-        "no_history_fallback",
-        "yaml_not_found_should_pass",
     ],
 )
 def test_check_x_items_less_passed_parametrized(  # noqa: PLR0913

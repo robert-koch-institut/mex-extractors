@@ -189,8 +189,91 @@ def fail_if_item_count_is_x_items_less_than(
             f"Asset {asset_key} failed x_items_less_than check: "
             f"{current_number_of_extracted_items} < threshold {threshold}"
         )
-        raise ValueError(
-            msg
-        )
+        raise ValueError(msg)
 
     return True
+
+
+def check_item_count_rule(
+    context: AssetCheckExecutionContext,
+    rule_name: str,
+    asset_key: AssetKey,
+    extractor: str,
+    entity_type: str,
+) -> bool:
+    """Asset Check...
+
+    Args:
+        context: The Dagster asset execution context for this check.
+        asset_key: Dagster AssetKey object.
+        extractor: Name of the extractor that produced the asset.
+        entity_type: Entity Type for the asset check.
+        rule_name: Name of asset check rule.
+
+    Returns bool to AssetCheck.
+    """
+    try:
+        rule = get_rule(rule_name, extractor, entity_type)
+    except FileNotFoundError:
+        logger.error("No asset check rules found for %s", asset_key)
+        return True
+
+    time_delta = parse_time_frame(rule["time_frame"])
+    current_time = datetime.now(UTC)
+    time_frame = current_time - time_delta
+
+    events = context.instance.get_event_records(
+        EventRecordsFilter(
+            asset_key=asset_key,
+            event_type=DagsterEventType.ASSET_MATERIALIZATION,
+        )
+    )
+    if events is None:
+        return True
+
+    current_number_of_extracted_items = (
+        events[0].asset_materialization.metadata["num_items"].value
+    )
+    historical_events = get_historical_events(events)
+    historic_count = get_historic_count(historical_events, time_frame)
+
+    if rule_name == "x_items_less_than":
+        threshold = historic_count - (rule["value"] or 0)
+        if current_number_of_extracted_items < threshold:
+            raise ValueError
+            # TODO: log error
+    else:
+        threshold = (
+            historic_count if historic_count > 0 else current_number_of_extracted_items
+        ) + (rule["value"] or 0)
+        if current_number_of_extracted_items > threshold:
+            raise ValueError
+            # TODO: log error
+
+    return True
+
+
+def check_x_items_more_passed(context, asset_key, extractor, entity_type):
+    """Checks whether current number of extracted items is lower than historical count minus x.
+
+    The point in time of the historic count and the and x are read from the asset check rule.
+    """
+    return check_item_count_rule(
+        context,
+        asset_key,
+        extractor,
+        entity_type,
+        "x_items_more_than",
+        fail_if_less_than=False,
+    )
+
+
+def fail_if_item_count_is_x_items_less_than(context, asset_key, extractor, entity_type):
+    return check_item_count_rule(
+        context,
+        asset_key,
+        extractor,
+        entity_type,
+        "x_items_less_than",
+        fail_if_less_than=True,
+    )
