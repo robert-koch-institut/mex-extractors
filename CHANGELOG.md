@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- consent-mailer: fetch consent from DB in batches, to fix "URL too long" error
+
 ### Security
 
 ## [1.3.0] - 2025-10-14
