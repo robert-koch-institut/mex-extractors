@@ -141,6 +141,7 @@ def mocked_units_by_identifier_in_primary_source(
     }
 
 
+# TODO @MX-2075: remove
 @pytest.fixture
 def mocked_fallback_unit(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")

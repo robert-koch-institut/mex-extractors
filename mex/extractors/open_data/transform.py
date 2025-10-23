@@ -34,6 +34,7 @@ from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
+# TODO @MX-2075: remove
 FALLBACK_UNIT = "mf4"
 
 
