@@ -227,7 +227,9 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
         "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
-        "contributingUnit": ["bFQoRhcVH5DIax"],  # default, always unit "C1"
+        "contributingUnit": [  # default, always unit "C1"
+            MergedOrganizationalUnitIdentifier.generate(seed=999)
+        ],
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}
         ],
