@@ -2,53 +2,52 @@ from collections.abc import Iterable
 
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
-    MergedPrimarySourceIdentifier,
 )
 from mex.common.utils import any_contains_any, contains_any
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.logging import log_filter
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 
 
 def filter_and_log_ff_projects_sources(
     sources: Iterable[FFProjectsSource],
-    primary_source_id: MergedPrimarySourceIdentifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[FFProjectsSource]:
     """Filter FF Projects sources and log filtered sources.
 
     Args:
         sources: Iterable of FFProjectSources
-        primary_source_id: Identifier of primary source
         unit_stable_target_ids_by_synonym: Unit IDs grouped by synonyms
 
     Returns:
        List of filtered FF Projects sources
     """
+    ff_projects_primary_source_id = get_extracted_primary_source_id_by_name(
+        "ff-projects"
+    )
     sources_filtered_by_global_rules = filter_by_global_rules(
-        primary_source_id,
+        ff_projects_primary_source_id,
         sources,
     )
     return [
         source
         for source in sources_filtered_by_global_rules
-        if filter_and_log_ff_projects_source(
-            source, primary_source_id, unit_stable_target_ids_by_synonym
-        )
+        if filter_and_log_ff_projects_source(source, unit_stable_target_ids_by_synonym)
     ]
 
 
 def filter_and_log_ff_projects_source(  # noqa: PLR0911
     source: FFProjectsSource,
-    primary_source_id: MergedPrimarySourceIdentifier,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> bool:
     """Filter a FFprojectSource according to settings and log filtering.
 
     Args:
         source: FFProjectSource
-        primary_source_id: Identifier of primary source
         unit_stable_target_ids_by_synonym: Unit IDs grouped by synonyms
 
     Settings:
@@ -60,13 +59,16 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     Returns:
         False if source is filtered out, else True
     """
+    ff_projects_primary_source_id = get_extracted_primary_source_id_by_name(
+        "ff-projects"
+    )
     settings = Settings.get()
     identifier_in_primary_source = source.lfd_nr
 
     if source.foerderprogr in settings.ff_projects.skip_funding:
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"Foerderprogr. [{source.foerderprogr}] in "
             f"settings.ff_projects.skip_funding",
         )
@@ -77,7 +79,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     ):
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"Thema des Projekts [{source.thema_des_projekts}] "
             "is None or in settings.ff_projects.skip_topics",
         )
@@ -86,7 +88,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     if source.rki_az is None:
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"RKI-AZ [{source.rki_az}] is None",
         )
         return False
@@ -94,7 +96,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     if any_contains_any(source.laufzeit_cells, settings.ff_projects.skip_years_strings):
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"Laufzeit von/bis [{source.laufzeit_cells}] "
             "in settings.ff_projects.skip_years_strings",
         )
@@ -105,7 +107,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     ):
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"Zuwendungs-/ Auftraggeber [{source.zuwendungs_oder_auftraggeber}] "
             "is None or in settings.ff_projects.skip_clients",
         )
@@ -114,7 +116,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     if source.lfd_nr is None:
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"lfd. Nr. [{source.lfd_nr}] is None",
         )
         return False
@@ -122,7 +124,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     if not source.rki_oe:
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             "RKI- OE is None",
         )
         return False
@@ -133,7 +135,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     ):
         log_filter(
             identifier_in_primary_source,
-            primary_source_id,
+            ff_projects_primary_source_id,
             f"RKI- OE [{source.rki_oe.replace('/', ',')}] are all not valid units",
         )
         return False

@@ -1,17 +1,17 @@
 from mex.common.logging import logger
-from mex.common.models import ExtractedPrimarySource
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def filter_and_log_synopse_variables(
     synopse_variables: list[SynopseVariable],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> list[SynopseVariable]:
     """Filter out and log variables used for internal context.
 
     Args:
         synopse_variables: list of synopse variables
-        extracted_primary_source: primary source for report server platform
 
     Returns:
         list of filtered synopse variables
@@ -28,7 +28,7 @@ def filter_and_log_synopse_variables(
         "had_primary_source: %s, "
         "amount of skipped variables: %s",
         skipped_variable_ids[:10],
-        extracted_primary_source.stableTargetId,
+        get_extracted_primary_source_id_by_name("report-server"),
         len(skipped_variable_ids),
     )
     return filtered_variables

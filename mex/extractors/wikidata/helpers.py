@@ -28,7 +28,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
         msg = "Primary source for wikidata not found"
         raise MExError(msg)
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
-        wikidata_organization, wikidata_primary_source
+        wikidata_organization, wikidata_primary_source.stableTargetId
     )
     if extracted_organization:
         load([extracted_organization])

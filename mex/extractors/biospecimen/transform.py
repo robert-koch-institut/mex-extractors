@@ -6,7 +6,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
 )
@@ -19,12 +18,14 @@ from mex.common.types import (
     TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 @watch()
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
-    biospecimen_extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
@@ -36,7 +37,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         biospecimen_resources: Biospecimen resources
-        biospecimen_extracted_primary_source: Extracted platform for Biospecimen
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         mex_persons: Iterable of ExtractedPersons
         synopse_extracted_activities: extracted synopse activities
@@ -81,7 +81,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             get_or_create_externe_partner(
                 resource.externe_partner,
                 extracted_organizations,
-                biospecimen_extracted_primary_source,
             )
             if resource.externe_partner
             else []
@@ -152,7 +151,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             description=resource.beschreibung,
             documentation=documentation,
             externalPartner=external_partner,
-            hadPrimarySource=biospecimen_extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
             hasLegalBasis=has_legal_basis,
             hasPersonalData=has_personal_data,
             identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
@@ -181,15 +180,12 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 def get_or_create_externe_partner(
     externe_partner: str,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
-    biospecimen_extracted_primary_source: ExtractedPrimarySource,
 ) -> MergedOrganizationIdentifier:
     """Get extracted organization for label or create new organization.
 
     Args:
         externe_partner: externe partner label
         extracted_organizations: merged organization identifier extracted from wikidata
-        biospecimen_extracted_primary_source: extracted primary source
-
     Returns:
         matched or created merged organization identifier
     """
@@ -198,5 +194,5 @@ def get_or_create_externe_partner(
     return ExtractedOrganization(
         officialName=externe_partner,
         identifierInPrimarySource=externe_partner,
-        hadPrimarySource=biospecimen_extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
     ).stableTargetId

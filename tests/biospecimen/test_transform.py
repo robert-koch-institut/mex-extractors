@@ -6,7 +6,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ResourceMapping,
 )
 from mex.common.testing import Joker
@@ -20,6 +19,9 @@ from mex.common.types import (
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 
 
@@ -73,8 +75,7 @@ def synopse_extracted_activities() -> list[ExtractedActivity]:
     ]
 
 
-def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+def test_transform_biospecimen_resource_to_mex_resource(
     biospecimen_resources: list[BiospecimenResource],
     mex_persons: list[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
@@ -93,7 +94,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     mex_sources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        extracted_primary_sources["biospecimen"],
         unit_stable_target_ids,
         mex_persons,
         extracted_organization_rki,
@@ -124,9 +124,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             }
         ],
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
-        "hadPrimarySource": str(
-            extracted_primary_sources["biospecimen"].stableTargetId
-        ),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("biospecimen")),
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,

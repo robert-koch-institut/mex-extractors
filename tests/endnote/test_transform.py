@@ -4,7 +4,6 @@ from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
     ExtractedPerson,
-    ExtractedPrimarySource,
 )
 from mex.common.testing import Joker
 from mex.common.types import MergedOrganizationalUnitIdentifier, TextLanguage
@@ -15,15 +14,16 @@ from mex.extractors.endnote.transform import (
     extract_endnote_persons_by_person_string,
     get_doi,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_extract_endnote_persons_by_person_string(
     endnote_records: list[EndnoteRecord],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     person_dict = extract_endnote_persons_by_person_string(
         endnote_records,
-        extracted_primary_sources["endnote"],
     )
     assert sorted(person_dict.keys()) == [
         "Erika Mustermann",
@@ -31,7 +31,7 @@ def test_extract_endnote_persons_by_person_string(
         "Mustermann, J.",
     ]
     assert person_dict["Mustermann, J."].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": extracted_primary_sources["endnote"].stableTargetId,
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("endnote"),
         "identifierInPrimarySource": "Person_Mustermann, J.",
         "familyName": ["Mustermann"],
         "fullName": ["Mustermann, J."],
@@ -43,17 +43,15 @@ def test_extract_endnote_persons_by_person_string(
 
 def test_extract_endnote_consents(
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     endnote_consent_mapping: ConsentMapping,
 ) -> None:
     extracted_consents = extract_endnote_consents(
         list(endnote_extracted_persons_by_person_str.values()),
-        extracted_primary_sources["endnote"],
         endnote_consent_mapping,
     )
 
     assert extracted_consents[0].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": str(extracted_primary_sources["endnote"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("endnote")),
         "identifierInPrimarySource": "ccSc9u7Kjps1nNBxTw7y3l_consent",
         "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
         "hasDataSubject": "ccSc9u7Kjps1nNBxTw7y3l",
@@ -88,18 +86,16 @@ def test_extract_endnote_bibliographic_resource(
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     bibliographic_resources = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
         endnote_extracted_persons_by_person_str,
         unit_stable_target_ids_by_synonym,
-        extracted_primary_sources["endnote"],
     )
 
     assert bibliographic_resources[0].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": str(extracted_primary_sources["endnote"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("endnote")),
         "identifierInPrimarySource": "1890-Converted.enl::1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "doi": "https://doi.org/10.3456/qad.00",

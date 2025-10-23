@@ -2,7 +2,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
 )
@@ -11,6 +10,9 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TextLanguage,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.voxco.transform import (
@@ -27,7 +29,6 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
     voxco_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> None:
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
@@ -36,11 +37,10 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
         voxco_extracted_persons,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
-        extracted_primary_sources["voxco"],
         international_projects_extracted_activities,
     )
     expected = {
-        "hadPrimarySource": str(extracted_primary_sources["voxco"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("voxco")),
         "identifierInPrimarySource": "voxco-plus",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "externalPartner": [
@@ -94,15 +94,13 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
 def test_transform_voxco_variable_mappings_to_extracted_variables(
     voxco_extracted_resources_by_str: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_variables = transform_voxco_variable_mappings_to_extracted_variables(
         voxco_extracted_resources_by_str,
         voxco_variables,
-        extracted_primary_sources["voxco"],
     )
     expected = {
-        "hadPrimarySource": extracted_primary_sources["voxco"].stableTargetId,
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("voxco"),
         "identifierInPrimarySource": "50614",
         "label": [{"value": "Monat"}],
         "usedIn": [voxco_extracted_resources_by_str["voxco-plus"].stableTargetId],

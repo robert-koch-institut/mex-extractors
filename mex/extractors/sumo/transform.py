@@ -9,14 +9,12 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
-    Email,
     Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -24,6 +22,9 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
     TextLanguage,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
@@ -36,7 +37,7 @@ from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 def get_contact_merged_ids_by_emails(
     mex_actor_resources: Iterable[ExtractedContactPoint],
-) -> dict[Email, MergedContactPointIdentifier]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Get merged id by emails lookup.
 
     Args:
@@ -46,7 +47,7 @@ def get_contact_merged_ids_by_emails(
         dict of contact merged ids by email
     """
     return {
-        Email(email.lower()): MergedContactPointIdentifier(actor.stableTargetId)
+        email.lower(): MergedContactPointIdentifier(actor.stableTargetId)
         for actor in mex_actor_resources
         for email in actor.email
     }
@@ -71,9 +72,8 @@ def get_contact_merged_ids_by_names(
 
 def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
     sumo_resource_feat: ResourceMapping,
-    extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails: dict[Email, MergedContactPointIdentifier],
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
     mex_resource_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
     sumo_access_platform: ExtractedAccessPlatform,
@@ -82,7 +82,6 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
 
     Args:
         sumo_resource_feat: sumo_resource_feat mapping model
-        extracted_primary_source: Extracted primary source
         unit_merged_ids_by_synonym: Mapping from synonyms to merged IDs of units
         contact_merged_ids_by_emails: Mapping from emails to merged IDs of contact
                                       points
@@ -113,7 +112,7 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
             ]
         ],
         hasPersonalData=sumo_resource_feat.hasPersonalData[0].mappingRules[0].setValues,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         identifierInPrimarySource=sumo_resource_feat.title[0]
         .mappingRules[0]
         .setValues[0]  # type: ignore[index]
@@ -144,9 +143,8 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
 
 def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     sumo_resource_nokeda: ResourceMapping,
-    extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails: dict[Email, MergedContactPointIdentifier],
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
     sumo_access_platform: ExtractedAccessPlatform,
@@ -155,7 +153,6 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
 
     Args:
         sumo_resource_nokeda: nokeda resource mapping model with defaults
-        extracted_primary_source: Extracted primary source
         unit_merged_ids_by_synonym: Mapping from synonyms to merged IDs of units
         contact_merged_ids_by_emails: Mapping from emails to merged IDs of contact
                                       points
@@ -199,13 +196,12 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
         externalPartner=[
             create_new_organization_with_official_name(
                 sumo_resource_nokeda.externalPartner[0].mappingRules[0].forValues[0],  # type: ignore[index]
-                extracted_primary_source,
             )
         ],
         hasPersonalData=sumo_resource_nokeda.hasPersonalData[0]
         .mappingRules[0]
         .setValues,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         identifierInPrimarySource=sumo_resource_nokeda.title[0]
         .mappingRules[0]
         .setValues[0]  # type: ignore[index]
@@ -246,14 +242,12 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
 @watch()
 def transform_nokeda_aux_variable_to_mex_variable_group(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
-    extracted_primary_source: ExtractedPrimarySource,
     mex_resource_nokeda: ExtractedResource,
 ) -> Generator[ExtractedVariableGroup, None, None]:
     """Transform nokeda aux variables to ExtractedVariableGroups.
 
     Args:
         extracted_cc2_aux_model: Cc2AuxModel variables
-        extracted_primary_source: Extracted primary source
         mex_resource_nokeda: ExtractedResource for nokeda
 
     Returns:
@@ -267,7 +261,7 @@ def transform_nokeda_aux_variable_to_mex_variable_group(
             used_identifier_in_primary_source.add(identifier_in_primary_source)
             yield ExtractedVariableGroup(
                 containedBy=contained_by,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
                 identifierInPrimarySource=identifier_in_primary_source,
                 label=[
                     Text(
@@ -280,14 +274,12 @@ def transform_nokeda_aux_variable_to_mex_variable_group(
 @watch()
 def transform_model_nokeda_variable_to_mex_variable_group(
     extracted_cc1_data_model_nokeda: Iterable[Cc1DataModelNoKeda],
-    extracted_primary_source: ExtractedPrimarySource,
     mex_resource_nokeda: ExtractedResource,
 ) -> Generator[ExtractedVariableGroup, None, None]:
     """Transform model nokeda variables to ExtractedVariableGroups.
 
     Args:
         extracted_cc1_data_model_nokeda: Cc1DataModelNoKeda variables
-        extracted_primary_source: Extracted primary source
         mex_resource_nokeda: ExtractedResource
 
     Returns:
@@ -301,7 +293,7 @@ def transform_model_nokeda_variable_to_mex_variable_group(
             used_identifier_in_primary_source.add(identifier_in_primary_source)
             yield ExtractedVariableGroup(
                 containedBy=contained_by,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
                 identifierInPrimarySource=identifier_in_primary_source,
                 label=[
                     Text(value=variable.domain, language=TextLanguage("de")),
@@ -313,14 +305,12 @@ def transform_model_nokeda_variable_to_mex_variable_group(
 @watch()
 def transform_feat_variable_to_mex_variable_group(
     sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
-    extracted_primary_source: ExtractedPrimarySource,
     mex_resource_feat: ExtractedResource,
 ) -> Generator[ExtractedVariableGroup, None, None]:
     """Transform feat projection variables to ExtractedVariableGroups.
 
     Args:
         sumo_extracted_cc2_feat_projection: Cc2FeatProjection variables
-        extracted_primary_source: Extracted primary source
         mex_resource_feat: ExtractedResource
 
     Returns:
@@ -336,7 +326,7 @@ def transform_feat_variable_to_mex_variable_group(
             used_identifier_in_primary_source.add(identifier_in_primary_source)
             yield ExtractedVariableGroup(
                 containedBy=contained_by,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
                 identifierInPrimarySource=identifier_in_primary_source,
                 label=identifier_in_primary_source,
             )
@@ -348,7 +338,6 @@ def transform_nokeda_model_variable_to_mex_variable(
     extracted_cc1_data_valuesets: Iterable[Cc1DataValuesets],
     mex_variable_groups_model_nokeda: Iterable[ExtractedVariableGroup],
     mex_resource_nokeda: ExtractedResource,
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform nokeda model variable to ExtractedVariables.
 
@@ -357,7 +346,6 @@ def transform_nokeda_model_variable_to_mex_variable(
         extracted_cc1_data_valuesets: Cc1DataValuesets variables
         mex_variable_groups_model_nokeda: variable group nokeda
         mex_resource_nokeda: mex resource nokeda
-        extracted_primary_source: Extracted primary source
 
     Returns:
         Generator for ExtractedVariable
@@ -383,7 +371,7 @@ def transform_nokeda_model_variable_to_mex_variable(
                 Text(value=variable.element_description, language=TextLanguage.DE),
                 Text(value=variable.element_description_en, language=TextLanguage.EN),
             ],
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
             identifierInPrimarySource=variable.variable_name,
             label=[
                 Text(value=variable.element_label, language=TextLanguage.DE),
@@ -395,13 +383,12 @@ def transform_nokeda_model_variable_to_mex_variable(
 
 
 @watch()
-def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
+def transform_nokeda_aux_variable_to_mex_variable(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     extracted_cc2_aux_mapping: Iterable[Cc2AuxMapping],
     extracted_cc2_aux_valuesets: Iterable[Cc2AuxValuesets],
     mex_variable_groups_nokeda_aux: Iterable[ExtractedVariableGroup],
     mex_resource_nokeda: ExtractedResource,
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform nokeda aux variable to ExtractedVariables.
 
@@ -411,7 +398,6 @@ def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
         extracted_cc2_aux_valuesets: Cc2AuxValuesets variables
         mex_variable_groups_nokeda_aux: variable group nokeda aux
         mex_resource_nokeda: extracted resource
-        extracted_primary_source: Extracted primary source
 
     Returns:
         Generator for ExtractedVariable
@@ -443,7 +429,7 @@ def transform_nokeda_aux_variable_to_mex_variable(  # noqa: PLR0913
         yield ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[variable.domain],
             description=Text(value=variable.element_description),
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
             identifierInPrimarySource=variable.variable_name,
             label=[Text(value=variable.variable_name)],
             usedIn=used_in,
@@ -456,7 +442,6 @@ def transform_feat_projection_variable_to_mex_variable(
     sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     mex_variable_groups_feat: Iterable[ExtractedVariableGroup],
     mex_resource_feat: ExtractedResource,
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform feat projection variable to ExtractedVariables.
 
@@ -464,7 +449,6 @@ def transform_feat_projection_variable_to_mex_variable(
         sumo_extracted_cc2_feat_projection: Cc2FeatProjection variables
         mex_variable_groups_feat: variable group feat
         mex_resource_feat: mex resource feat
-        extracted_primary_source: Extracted report server primary source
 
     Returns:
         Generator for ExtractedVariable
@@ -479,7 +463,7 @@ def transform_feat_projection_variable_to_mex_variable(
                 f"{variable.feature_domain} {variable.feature_subdomain}" or ""
             ],
             description=Text(value=variable.feature_description),
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
             identifierInPrimarySource=(
                 f"{variable.feature_domain} {variable.feature_subdomain} "
                 f"{variable.feature_abbr}"
@@ -496,7 +480,6 @@ def transform_sumo_access_platform_to_mex_access_platform(
     sumo_access_platform: AccessPlatformMapping,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     person_stable_target_ids_by_query_string: dict[str, MergedPersonIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> ExtractedAccessPlatform:
     """Transform sumo access platform info to ExtractedAccessPlatform.
 
@@ -505,7 +488,6 @@ def transform_sumo_access_platform_to_mex_access_platform(
         unit_merged_ids_by_synonym: Mapping from synonyms to merged IDs of units
         person_stable_target_ids_by_query_string: Mapping from contact person query to
                                                   person stable target ID
-        extracted_primary_source: Extracted primary source for sumo
 
     Returns:
         ExtractedAccessPlatform
@@ -528,7 +510,7 @@ def transform_sumo_access_platform_to_mex_access_platform(
         identifierInPrimarySource=sumo_access_platform.identifierInPrimarySource[0]
         .mappingRules[0]
         .setValues,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         title=sumo_access_platform.title[0].mappingRules[0].setValues,
         technicalAccessibility=sumo_access_platform.technicalAccessibility[0]
         .mappingRules[0]
@@ -541,8 +523,7 @@ def transform_sumo_access_platform_to_mex_access_platform(
 def transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    contact_merged_ids_by_emails: dict[Email, MergedContactPointIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Transform sumo activity to ExtractedActivity.
 
@@ -551,14 +532,13 @@ def transform_sumo_activity_to_extracted_activity(
         unit_merged_ids_by_synonym: Mapping from synonyms to merged IDs of units
         contact_merged_ids_by_emails: Mapping from contact person query to
                                       person stable target ID
-        extracted_primary_source: Extracted primary source
 
     Returns:
         ExtractedActivity
     """
     abstract = sumo_activity.abstract[0].mappingRules[0].setValues
     contact = [
-        contact_merged_ids_by_emails[Email(contact)]
+        contact_merged_ids_by_emails[contact]
         for contact in (sumo_activity.contact[0].mappingRules[0].forValues or ())
     ]
     documentation = sumo_activity.documentation[0].mappingRules[0].setValues
@@ -586,7 +566,7 @@ def transform_sumo_activity_to_extracted_activity(
         activityType=activity_type,
         contact=contact,
         documentation=documentation,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         identifierInPrimarySource=identifier_in_primary_source,
         involvedUnit=involved_unit,
         publication=[],  # TODO(KA): add bibliographic resource item
@@ -597,21 +577,18 @@ def transform_sumo_activity_to_extracted_activity(
         title=title,
         website=website,
         externalAssociate=[
-            create_new_organization_with_official_name(
-                external_associate, extracted_primary_source
-            )
+            create_new_organization_with_official_name(external_associate)
         ],
     )
 
 
 def create_new_organization_with_official_name(
-    name: str, extracted_primary_source: ExtractedPrimarySource
+    name: str,
 ) -> MergedOrganizationIdentifier:
     """Create a new extracted organization with provided name.
 
     Args:
         name: name of the organization, will be used as official name
-        extracted_primary_source: Extracted primary source
 
     Returns:
         Merged identifier of the organization
@@ -619,7 +596,7 @@ def create_new_organization_with_official_name(
     extracted_organization = ExtractedOrganization(
         officialName=[Text(value=name)],
         identifierInPrimarySource=name,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
     )
     load([extracted_organization])
     return MergedOrganizationIdentifier(extracted_organization.stableTargetId)

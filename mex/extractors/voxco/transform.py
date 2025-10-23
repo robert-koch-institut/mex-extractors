@@ -2,7 +2,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
@@ -10,6 +9,9 @@ from mex.common.models import (
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.voxco.model import VoxcoVariable
 
@@ -22,7 +24,6 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
     voxco_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
-    voxco_extracted_primary_source: ExtractedPrimarySource,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:
     """Transform voxco resource mappings to extracted resources.
@@ -61,7 +62,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
         else:
             alternative_title = None
         if contact_values := resource.contact[0].mappingRules[0].forValues:
-            contact = mex_persons_stable_target_id_by_email[contact_values[1]]  # type: ignore[index]
+            contact = mex_persons_stable_target_id_by_email[contact_values[1]]
         else:
             contact = None
         if description_top_level := resource.description:
@@ -119,7 +120,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
             contact=contact,
             description=description,
             externalPartner=external_partner,
-            hadPrimarySource=voxco_extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("voxco"),
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=language,
@@ -143,21 +144,19 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
 def transform_voxco_variable_mappings_to_extracted_variables(
     voxco_extracted_resources_by_str: dict[str, ExtractedResource],
     voxco_variables: dict[str, list[VoxcoVariable]],
-    voxco_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform voxco variable mappings to extracted variables.
 
     Args:
         voxco_extracted_resources_by_str: extracted voxco resources
         voxco_variables: list of voxco variables by associated resource
-        voxco_extracted_primary_source: extracted voxco primary source
 
     Returns:
         list of extracted variables
     """
     return [
         ExtractedVariable(
-            hadPrimarySource=voxco_extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("voxco"),
             identifierInPrimarySource=str(variable.Id),
             dataType=variable.DataType,
             description=variable.Type,

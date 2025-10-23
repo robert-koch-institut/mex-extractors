@@ -11,11 +11,9 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedContactPoint,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ResourceMapping,
     VariableMapping,
 )
-from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
@@ -35,21 +33,12 @@ from mex.extractors.igs.transform import (
     transformed_igs_schemas_to_variable_group,
 )
 from mex.extractors.pipeline.base import run_job_in_process
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
-
-
-@asset(group_name="igs", deps=["extracted_primary_source_mex"])
-def igs_extracted_primary_source(
-    extracted_primary_sources: list[ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    """Load and return IGS primary source."""
-    (extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources, "igs"
-    )
-    load([extracted_primary_source])
-    return extracted_primary_source
 
 
 @asset(group_name="igs")
@@ -80,7 +69,6 @@ def igs_access_platform_mapping() -> dict[str, Any]:
 
 @asset(group_name="igs")
 def igs_extracted_contact_points_by_mail_str(
-    igs_extracted_primary_source: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
     igs_access_platform_mapping: dict[str, Any],
 ) -> dict[str, ExtractedContactPoint]:
@@ -91,7 +79,7 @@ def igs_extracted_contact_points_by_mail_str(
     )
     extracted_contact_points = {
         mail: transform_ldap_functional_account_to_extracted_contact_point(
-            actor, igs_extracted_primary_source
+            actor, get_extracted_primary_source_id_by_name("ldap")
         )
         for mail, actor in igs_actors_by_mail.items()
     }
@@ -102,7 +90,6 @@ def igs_extracted_contact_points_by_mail_str(
 @asset(group_name="igs")
 def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
     igs_info: IGSInfo,
-    igs_extracted_primary_source: ExtractedPrimarySource,
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -112,7 +99,6 @@ def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_info_to_resources(
         igs_info,
-        igs_extracted_primary_source,
         ResourceMapping.model_validate(igs_resource_mapping),
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
@@ -128,14 +114,12 @@ def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
 
 @asset(group_name="igs")
 def igs_extracted_access_platform(
-    igs_extracted_primary_source: ExtractedPrimarySource,
     igs_access_platform_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
     extracted_access_platform = transform_igs_access_platform(
-        igs_extracted_primary_source,
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
@@ -150,7 +134,6 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     igs_extracted_resource_ids_by_identifier_in_primary_source: dict[
         str, MergedResourceIdentifier
     ],
-    igs_extracted_primary_source: ExtractedPrimarySource,
     igs_info: IGSInfo,
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
@@ -158,7 +141,6 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
         filtered_schemas,
         igs_extracted_resource_ids_by_identifier_in_primary_source,
-        igs_extracted_primary_source,
         igs_info,
     )
     load(extracted_variable_groups)
@@ -174,7 +156,6 @@ def igs_extracted_variables(
     igs_extracted_resource_ids_by_identifier_in_primary_source: dict[
         str, MergedResourceIdentifier
     ],
-    igs_extracted_primary_source: ExtractedPrimarySource,
     igs_extracted_variable_group_ids_by_identifier_in_primary_source: dict[
         str, MergedVariableGroupIdentifier
     ],
@@ -192,7 +173,6 @@ def igs_extracted_variables(
         transform_igs_schemas_to_variables(
             igs_schemas,
             igs_extracted_resource_ids_by_identifier_in_primary_source,
-            igs_extracted_primary_source,
             igs_extracted_variable_group_ids_by_identifier_in_primary_source,
             variable_mapping,
             variable_pathogen_mapping,

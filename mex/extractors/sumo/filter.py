@@ -1,13 +1,14 @@
 from collections.abc import Generator, Iterable
 
-from mex.common.models import ExtractedPrimarySource
 from mex.extractors.logging import log_filter
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 
 
 def filter_and_log_cc2_aux_model(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> Generator[Cc2AuxModel, None, None]:
     """Filter out and log cc2 aux model variables which are not in_database_static.
 
@@ -24,6 +25,6 @@ def filter_and_log_cc2_aux_model(
         else:
             log_filter(
                 variable.variable_name,
-                extracted_primary_source.stableTargetId,
+                get_extracted_primary_source_id_by_name("nokeda"),
                 "in_database_static is False for cc2_aux_model variable.",
             )
