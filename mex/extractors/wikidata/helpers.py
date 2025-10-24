@@ -9,7 +9,6 @@ from mex.common.wikidata.transform import (
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
-    load_extracted_primary_source_by_name,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
@@ -26,10 +25,6 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
         extracted organization if found in wikidata
     """
     wikidata_organization = get_wikidata_organization(wikidata_id.split("/")[-1])
-    wikidata_primary_source = load_extracted_primary_source_by_name("wikidata")
-    if not wikidata_primary_source:
-        msg = "Primary source for wikidata not found"
-        raise MExError(msg)
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
         wikidata_organization, get_extracted_primary_source_id_by_name("wikidata")
     )
