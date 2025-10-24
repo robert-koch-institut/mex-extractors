@@ -16,6 +16,12 @@ class OpenDataRelatedIdentifiers(BaseModel):
     relation: str | None = None
 
 
+class OpenDataResourceType(BaseModel):
+    """Model subclass for Zenodo metadata resource type."""
+
+    type: str
+
+
 class OpenDataLicenseOrFile(BaseModel):
     """Model subclass for Zenodo metadata license."""
 
@@ -37,6 +43,7 @@ class OpenDataMetadata(BaseModel):
     keywords: list[str] = []
     related_identifiers: list[OpenDataRelatedIdentifiers] = []
     language: str | None = None
+    resource_type: OpenDataResourceType
     license: OpenDataLicenseOrFile
     publication_date: str | None = None
 

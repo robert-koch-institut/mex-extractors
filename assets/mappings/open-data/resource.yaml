@@ -10,6 +10,11 @@ anonymizationPseudonymization:
 contact:
   - mappingRules:
       - rule:
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - "C1"
+        rule:
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -36,7 +41,9 @@ language:
           - https://mex.rki.de/item/language-2 # English
 resourceTypeGeneral:
   - mappingRules:
-      - setValues:
+      - forValues:
+          - dataset
+        setValues:
           - https://mex.rki.de/item/resource-type-general-14 # Dataset
 theme:
   - mappingRules:
@@ -47,6 +54,4 @@ title:
       - rule:
 unitInCharge:
   - mappingRules:
-      - forValues:
-          - "C1"
-        rule:
+      - rule:
