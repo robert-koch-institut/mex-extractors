@@ -4,16 +4,19 @@ from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
+    ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -45,6 +48,7 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
             familyName=["Muster"],
             fullName=["Muster, Maxi"],
             givenName=["Maxi"],
+            memberOf=[MergedOrganizationalUnitIdentifier.generate(seed=959)],  # Unit XY
         )
     ]
 
