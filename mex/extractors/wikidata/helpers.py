@@ -1,6 +1,5 @@
 from functools import lru_cache
 
-from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganization, OrganizationMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.common.wikidata.extract import get_wikidata_organization
