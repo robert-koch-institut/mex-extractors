@@ -7,7 +7,10 @@ from mex.common.wikidata.extract import get_wikidata_organization
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
 )
-from mex.extractors.primary_source.helpers import load_extracted_primary_source_by_name
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+    load_extracted_primary_source_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
