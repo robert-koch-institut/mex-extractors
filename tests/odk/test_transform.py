@@ -1,6 +1,5 @@
 from mex.common.models import (
     ExtractedActivity,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
     VariableMapping,
@@ -16,6 +15,9 @@ from mex.extractors.odk.transform import (
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_odk_resources_to_mex_resources(
@@ -23,7 +25,6 @@ def test_transform_odk_resources_to_mex_resources(
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     international_project_stable_target_id = next(
         filter(
@@ -36,12 +37,10 @@ def test_transform_odk_resources_to_mex_resources(
         unit_stable_target_ids_by_synonym,
         odk_merged_organization_ids_by_str,
         international_projects_extracted_activities,
-        extracted_primary_sources["mex"],
-        extracted_primary_sources["odk"],
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources["odk"].stableTargetId,
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("odk"),
         "hasLegalBasis": [
             {
                 "language": TextLanguage.EN,
@@ -113,8 +112,6 @@ def test_transform_odk_resources_to_mex_resources(
         unit_stable_target_ids_by_synonym,
         {},
         international_projects_extracted_activities,
-        extracted_primary_sources["mex"],
-        extracted_primary_sources["odk"],
     )
     assert (
         resources_organizations_empty_or_created[0][0].model_dump()["publisher"] == []
@@ -131,13 +128,11 @@ def test_transform_odk_resources_to_mex_resources(
 def test_transform_odk_data_to_extracted_variables(
     odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     odk_variable_mapping: VariableMapping,
 ) -> None:
     extracted_variables = transform_odk_data_to_extracted_variables(
         odk_extracted_resources,
         odk_raw_data,
-        extracted_primary_sources["odk"],
         odk_variable_mapping,
     )
     expected = {

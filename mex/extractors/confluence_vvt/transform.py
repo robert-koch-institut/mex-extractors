@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from pydantic import ValidationError
 
 from mex.common.logging import logger
-from mex.common.models import ActivityMapping, ExtractedActivity, ExtractedPrimarySource
+from mex.common.models import ActivityMapping, ExtractedActivity
 from mex.common.types import (
     ActivityType,
     Link,
@@ -19,12 +19,14 @@ from mex.extractors.confluence_vvt.extract import (
     get_responsible_unit_from_page,
 )
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 
 
 def transform_confluence_vvt_page_to_extracted_activity(
     page: ConfluenceVvtPage,
-    extracted_primary_source: ExtractedPrimarySource,
     confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -33,7 +35,6 @@ def transform_confluence_vvt_page_to_extracted_activity(
 
     Args:
         page: Confluence-vvt page
-        extracted_primary_source: Extracted primary source for Confluence-vvt
         confluence_vvt_activity_mapping: activity mapping for confluence-vvt
         merged_ids_by_query_string: Mapping from author query to merged IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
@@ -118,13 +119,12 @@ def transform_confluence_vvt_page_to_extracted_activity(
         involvedUnit=involved_unit_merged_ids,
         responsibleUnit=responsible_unit_merged_ids or involved_unit_merged_ids,
         title=page.title,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("confluence-vvt"),
     )
 
 
 def transform_confluence_vvt_activities_to_extracted_activities(
     pages: Iterable[ConfluenceVvtPage],
-    extracted_primary_source: ExtractedPrimarySource,
     confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -133,7 +133,6 @@ def transform_confluence_vvt_activities_to_extracted_activities(
 
     Args:
         pages: All Confluence-vvt pages
-        extracted_primary_source: Extracted primary source for Confluence-vvt
         confluence_vvt_activity_mapping: activity mapping for confluence-vvt
         merged_ids_by_query_string: Mapping from author query to merged IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
@@ -146,7 +145,6 @@ def transform_confluence_vvt_activities_to_extracted_activities(
         try:
             extracted_activity = transform_confluence_vvt_page_to_extracted_activity(
                 page,
-                extracted_primary_source,
                 confluence_vvt_activity_mapping,
                 merged_ids_by_query_string,
                 unit_merged_ids_by_synonym,

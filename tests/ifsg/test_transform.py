@@ -1,6 +1,5 @@
 from mex.common.models import (
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -31,19 +30,21 @@ from mex.extractors.ifsg.transform import (
     transform_resource_parent_to_mex_resource,
     transform_resource_state_to_mex_resource,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_resource = transform_resource_parent_to_mex_resource(
-        resource_parent, extracted_primary_sources["ifsg"], unit_stable_target_ids
+        resource_parent, unit_stable_target_ids
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["ifsg"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "ifsg-parent",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -88,21 +89,19 @@ def test_transform_resource_parent_to_mex_resource(
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
             resource_state,
             ifsg_extracted_resource_parent,
-            extracted_primary_sources["ifsg"],
             unit_stable_target_ids,
         )
         for resource_state in resource_states
     ]
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["ifsg"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "01",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -161,7 +160,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     ifsg_extracted_resources_state: list[ExtractedResource],
     meta_type: list[MetaType],
     meta_disease: list[MetaDisease],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
@@ -173,7 +171,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             meta_disease,
             meta_type,
             [101, 102, 103],
-            extracted_primary_sources["ifsg"],
             unit_stable_target_ids,
             extracted_organization_rki,
         )
@@ -181,7 +178,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     ]
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["ifsg"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "resource_disease_101_1",
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -248,19 +245,17 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
 def test_transform_ifsg_data_to_mex_variable_group(
     ifsg_variable_group: VariableGroupMapping,
     ifsg_extracted_resources_disease: list[ExtractedResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     meta_field: list[MetaField],
 ) -> None:
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         ifsg_variable_group,
         ifsg_extracted_resources_disease,
-        extracted_primary_sources["ifsg"],
         [meta_field[0]],
         [101],
     )
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources["ifsg"].stableTargetId,
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("ifsg"),
         "identifierInPrimarySource": "101_Epi",
         "stableTargetId": Joker(),
         "containedBy": [ifsg_extracted_resources_disease[0].stableTargetId],
@@ -275,7 +270,6 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
     meta_field: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     meta_item: list[MetaItem],
@@ -286,7 +280,6 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
         meta_field,
         ifsg_extracted_resources_disease,
         ifsg_extracted_variable_groups,
-        extracted_primary_sources["ifsg"],
         meta_catalogue2item,
         meta_catalogue2item2schema,
         meta_item,
@@ -296,7 +289,7 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
 
     expected = {
         "identifier": Joker(),
-        "hadPrimarySource": str(extracted_primary_sources["ifsg"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "dataType": "DummyType",
         "identifierInPrimarySource": "variable_1_10",
         "stableTargetId": Joker(),

@@ -20,7 +20,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     AccessRestriction,
-    Email,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     YearMonthDayTime,
@@ -83,7 +82,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
             MergedOrganizationalUnit(
                 identifier="ValidUnitWithEmail",
                 name="unit with email",
-                email=[Email("unit@e.mail")],
+                email=["unit@e.mail"],
             ),
             MergedOrganizationalUnit(
                 identifier="InvalidUnitNoEmail",
@@ -94,7 +93,7 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
                 # even if they have an email address, contact points should not
                 # be added to publisher_fallback_unit_identifiers_by_person,
                 identifier="CPShouldBeIgnored",
-                email=[Email("contactpoint@e.mail")],
+                email=["contactpoint@e.mail"],
             ),
         ]
     )

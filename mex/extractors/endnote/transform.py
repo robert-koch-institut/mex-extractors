@@ -10,7 +10,6 @@ from mex.common.models import (
     ExtractedConsent,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
 )
 from mex.common.models.bibliographic_resource import DoiStr
 from mex.common.types import (
@@ -24,6 +23,9 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.extractors.endnote.model import EndnoteRecord
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -32,13 +34,11 @@ from mex.extractors.wikidata.helpers import (
 
 def extract_endnote_persons_by_person_string(
     endnote_records: list[EndnoteRecord],
-    endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, ExtractedPerson]:
     """Extract endnote persons.
 
     Args:
         endnote_records: list of endnote record
-        endnote_extracted_primary_source: primary source for endnote
 
     Returns:
         extracted persons by person string
@@ -59,7 +59,7 @@ def extract_endnote_persons_by_person_string(
                 family_name, given_name = split_name
                 extracted_persons[person] = ExtractedPerson(
                     identifierInPrimarySource=f"Person_{person}",
-                    hadPrimarySource=endnote_extracted_primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
                     familyName=family_name,
                     givenName=given_name,
                     fullName=person,
@@ -69,7 +69,7 @@ def extract_endnote_persons_by_person_string(
         else:
             extracted_persons[person] = ExtractedPerson(
                 identifierInPrimarySource=f"Person_{person}",
-                hadPrimarySource=endnote_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
                 fullName=person,
             )
 
@@ -78,14 +78,12 @@ def extract_endnote_persons_by_person_string(
 
 def extract_endnote_consents(
     extracted_endnote_persons: list[ExtractedPerson],
-    endnote_extracted_primary_source: ExtractedPrimarySource,
     endnote_consent_mapping: ConsentMapping,
 ) -> list[ExtractedConsent]:
     """Extract endnote consent.
 
     Args:
         extracted_endnote_persons: list of endnote  persons
-        endnote_extracted_primary_source: primary source for endnote
         endnote_consent_mapping: endnote consent mapping default values
 
     Returns:
@@ -93,10 +91,10 @@ def extract_endnote_consents(
     """
     return [
         ExtractedConsent(
-            hadPrimarySource=endnote_extracted_primary_source.stableTargetId,
             hasConsentStatus=endnote_consent_mapping.hasConsentStatus[0]
             .mappingRules[0]
             .setValues,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=f"{person.stableTargetId}_consent",
             isIndicatedAtTime=datetime.now(tz=UTC),
@@ -144,7 +142,6 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_bib_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    endnote_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedBibliographicResource]:
     """Extract endnote bibliographic resources.
 
@@ -153,7 +150,6 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         endnote_bib_resource_mapping: bibliographical resource mapping
         endnote_extracted_persons_by_person_str: extracted endnote persons by name
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        endnote_extracted_primary_source: primary source for endnote
 
     Return:
         list of extracted bibliographic resource
@@ -320,7 +316,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 )
             else:
                 created_org = ExtractedOrganization(
-                    hadPrimarySource=endnote_extracted_primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
                     identifierInPrimarySource=f"Organization_{publisher_string}",
                     officialName=[publisher_string],
                 )
@@ -357,7 +353,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 doi=doi,
                 editor=editor,
                 editorOfSeries=editor_of_series,
-                hadPrimarySource=endnote_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
                 identifierInPrimarySource=f"{record.database}::{record.rec_number}",
                 isbnIssn=[record.isbn] if record.isbn else [],
                 issue=record.number,

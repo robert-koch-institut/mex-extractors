@@ -31,16 +31,17 @@ def load_extracted_primary_source_by_name(
 
 def get_extracted_primary_source_id_by_name(
     name: str,
-) -> MergedPrimarySourceIdentifier | None:
-    """Use helper function to return the stableTargetId of a found primary source .
+) -> MergedPrimarySourceIdentifier:
+    """Use helper function to return the stableTargetId of a found primary source.
 
     Args:
         name: name of the primary source
 
     Returns:
         ExtractedPrimarySource stableTargetId if one matching primary source is found.
-        None if multiple matches / no match is found
+        raise error if multiple matches / no match is found
     """
     if extracted_primary_source := load_extracted_primary_source_by_name(name):
         return extracted_primary_source.stableTargetId
-    return None
+    msg = f"Primary source name {name} not found."
+    raise NameError(msg)

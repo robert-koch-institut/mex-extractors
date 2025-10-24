@@ -14,7 +14,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -34,6 +33,9 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -43,7 +45,6 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 
 def transform_synopse_studies_into_access_platforms(
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
     ],
@@ -53,7 +54,6 @@ def transform_synopse_studies_into_access_platforms(
 
     Args:
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
-        extracted_primary_source: Extracted report server primary source
         synopse_merged_contact_point_ids_by_query_string: contact person lookup by email
         access_platform_mapping: mapping default values for access platform
     Returns:
@@ -67,7 +67,7 @@ def transform_synopse_studies_into_access_platforms(
             access_platform_mapping.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         description=access_platform_mapping.description[0].mappingRules[0].setValues,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource[0]
         .mappingRules[0]
         .setValues[0],  # type: ignore[index]
@@ -122,7 +122,6 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
-    extracted_primary_source: ExtractedPrimarySource,
     study_overviews: list[SynopseStudyOverview],
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform Synopse variables to extracted variables.
@@ -133,7 +132,6 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
             extracted variable groups by identifier in primary source
         synopse_extracted_resources_by_identifier_in_primary_source:
             Map from synopse ID to study resource
-        extracted_primary_source: Extracted report server primary source
         study_overviews: list of synopse study overviews
 
     Returns:
@@ -185,7 +183,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
                 if variable.originalfrage
                 else []
             ),
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
             identifierInPrimarySource=synopse_id,
             label=variable.varlabel or variable.varname,
             usedIn=used_in,
@@ -202,7 +200,6 @@ def transform_synopse_variables_to_mex_variables(
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
-    extracted_primary_source: ExtractedPrimarySource,
     study_overviews: list[SynopseStudyOverview],
 ) -> Generator[ExtractedVariable, None, None]:
     """Transform Synopse Variable Sets to MEx datums.
@@ -214,7 +211,6 @@ def transform_synopse_variables_to_mex_variables(
             extracted variable groups by identifier in primary source
         synopse_extracted_resources_by_identifier_in_primary_source:
             Map from identifier in primary source to study resource
-        extracted_primary_source: Extracted report server primary source
         study_overviews: list of synopse study overviews
 
 
@@ -232,14 +228,12 @@ def transform_synopse_variables_to_mex_variables(
             variables,
             synopse_variable_groups_by_identifier_in_primary_source,
             synopse_extracted_resources_by_identifier_in_primary_source,
-            extracted_primary_source,
             study_overviews,
         )
 
 
 def transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_primary_source: ExtractedPrimarySource,
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
@@ -250,7 +244,6 @@ def transform_synopse_variables_to_mex_variable_groups(
     Args:
         synopse_variables_by_thema: mapping from "Thema und Fragebogenausschnitt"
             to the variables having this value
-        extracted_primary_source: Extracted report server primary source
         synopse_extracted_resources_by_identifier_in_primary_source: Map from synopse ID
             to list of study resources
         study_overviews: list of Synopse Overviews
@@ -292,7 +285,9 @@ def transform_synopse_variables_to_mex_variable_groups(
                 variable_groups.append(
                     ExtractedVariableGroup(
                         containedBy=contained_by,
-                        hadPrimarySource=extracted_primary_source.stableTargetId,
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "report-server"
+                        ),
                         identifierInPrimarySource=identifier_in_primary_source,
                         label=label,
                     )
@@ -305,7 +300,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     synopse_projects: Iterable[SynopseProject],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activities: Iterable[ExtractedActivity],
-    extracted_primary_source: ExtractedPrimarySource,
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
@@ -320,7 +314,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         synopse_variables_by_study_id: mapping from synopse studie id to the variables
             with this studie id
         extracted_activities: Iterable of extracted activities
-        extracted_primary_source: Extracted report server platform
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_organization: extracted organization
         synopse_resource: resource default values
@@ -478,7 +471,9 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 contributor=contributor,
                 description=description,
                 hasLegalBasis=has_legal_basis,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name(
+                    "report-server"
+                ),
                 hasPurpose=has_purpose,
                 identifierInPrimarySource=identifier_in_primary_source_by_study_id[
                     study.studien_id
@@ -512,9 +507,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     return extracted_resources
 
 
-def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
+def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
-    extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
@@ -526,7 +520,6 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
 
     Args:
         synopse_projects: Iterable of synopse projects
-        extracted_primary_source: Extracted report server primary sources
         contact_merged_ids_by_emails: Mapping from LDAP emails to contact IDs
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
@@ -551,7 +544,6 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
         )
         activity = transform_synopse_project_to_activity(
             project,
-            extracted_primary_source,
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,
@@ -587,9 +579,8 @@ def transform_synopse_projects_to_mex_activities(  # noqa: PLR0913
     return non_child_activities, child_activities
 
 
-def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
+def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     synopse_project: SynopseProject,
-    extracted_primary_source: ExtractedPrimarySource,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_activity: ActivityMapping,
@@ -601,7 +592,6 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
 
     Args:
         synopse_project: a synopse project
-        extracted_primary_source: Extracted report server primary sources
         contact_merged_ids_by_emails: Mapping from LDAP emails to contact IDs
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
         unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
@@ -654,7 +644,9 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
                 extracted_organization = ExtractedOrganization(
                     officialName=org,
                     identifierInPrimarySource=org,
-                    hadPrimarySource=extracted_primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name(
+                        "report-server"
+                    ),
                 )
                 load([extracted_organization])
                 external_associate.append(
@@ -674,7 +666,7 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
         extracted_organization = ExtractedOrganization(
             officialName=synopse_project.foerderinstitution_oder_auftraggeber,
             identifierInPrimarySource=synopse_project.foerderinstitution_oder_auftraggeber,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         )
         load([extracted_organization])
         funder_or_commissioner = [
@@ -707,7 +699,7 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912, PLR0913
         ),
         externalAssociate=external_associate,
         funderOrCommissioner=funder_or_commissioner,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         identifierInPrimarySource=synopse_project.studien_id,
         involvedPerson=involved_person,
         involvedUnit=involved_units,

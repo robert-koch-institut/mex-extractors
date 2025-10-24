@@ -16,7 +16,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -30,6 +29,9 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.synopse.extract import (
@@ -86,13 +88,9 @@ def synopse_study_overviews() -> list[SynopseStudyOverview]:
 
 
 @asset(group_name="synopse")
-def synopse_variables(
-    extracted_primary_source_report_server: ExtractedPrimarySource,
-) -> list[SynopseVariable]:
+def synopse_variables() -> list[SynopseVariable]:
     """Extract variables from Synopse."""
-    return filter_and_log_synopse_variables(
-        extract_variables(), extracted_primary_source_report_server
-    )
+    return filter_and_log_synopse_variables(extract_variables())
 
 
 @asset(group_name="synopse")
@@ -127,7 +125,6 @@ def synopse_variables_by_thema(
 def synopse_merged_person_ids_by_name_str(
     synopse_ldap_persons_with_query: list[LDAPPersonWithQuery],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Get lookup from contributor name to extracted person stable target id.
@@ -137,7 +134,7 @@ def synopse_merged_person_ids_by_name_str(
     transformed_project_contributors = (
         transform_ldap_persons_with_query_to_extracted_persons(
             synopse_ldap_persons_with_query,
-            extracted_primary_source_ldap,
+            get_extracted_primary_source_id_by_name("ldap"),
             extracted_organizational_units,
             extracted_organization_rki,
         )
@@ -147,7 +144,7 @@ def synopse_merged_person_ids_by_name_str(
         # reason: backend is queried for identities of contributors, contributors not
         # in backend are skipped
         synopse_ldap_persons_with_query,
-        extracted_primary_source_ldap,
+        get_extracted_primary_source_id_by_name("ldap"),
     )
 
 
@@ -167,9 +164,9 @@ def synopse_resource() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def synopse_merged_contact_point_ids_by_query_string(
-    extracted_primary_source_ldap: ExtractedPrimarySource,
-) -> dict[str, MergedContactPointIdentifier]:
+def synopse_merged_contact_point_ids_by_query_string() -> dict[
+    str, MergedContactPointIdentifier
+]:
     """Get lookup of ldap functional accounts by email."""
     settings = Settings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
@@ -178,8 +175,7 @@ def synopse_merged_contact_point_ids_by_query_string(
 
     synopse_contact = extract_synopse_contact(synopse_access_platform)
     contact_points = transform_ldap_functional_accounts_to_extracted_contact_points(
-        synopse_contact,
-        extracted_primary_source_ldap,
+        synopse_contact, get_extracted_primary_source_id_by_name("ldap")
     )
     load(contact_points)
 
@@ -191,7 +187,6 @@ def synopse_merged_contact_point_ids_by_query_string(
 
 @asset(group_name="synopse")
 def synopse_access_platform_id(
-    extracted_primary_source_report_server: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
@@ -205,7 +200,6 @@ def synopse_access_platform_id(
 
     transformed_access_platforms = transform_synopse_studies_into_access_platforms(
         unit_stable_target_ids_by_synonym,
-        extracted_primary_source_report_server,
         synopse_merged_contact_point_ids_by_query_string,
         synopse_access_platform,
     )
@@ -223,7 +217,6 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
@@ -237,7 +230,6 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_projects,
         synopse_variables_by_study_id,
         synopse_extracted_activities,
-        extracted_primary_source_report_server,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
@@ -259,9 +251,8 @@ def synopse_activity() -> dict[str, Any]:
 
 
 @asset(group_name="synopse")
-def synopse_extracted_activities(  # noqa: PLR0913
+def synopse_extracted_activities(
     synopse_projects: list[SynopseProject],
-    extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     synopse_merged_organization_ids_by_query_string: dict[
@@ -273,7 +264,6 @@ def synopse_extracted_activities(  # noqa: PLR0913
     non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
-            extracted_primary_source_report_server,
             synopse_merged_person_ids_by_name_str,
             unit_stable_target_ids_by_synonym,
             ActivityMapping.model_validate(synopse_activity),
@@ -289,7 +279,6 @@ def synopse_extracted_activities(  # noqa: PLR0913
 @asset(group_name="synopse")
 def synopse_variable_groups_by_identifier_in_primary_source(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
@@ -299,7 +288,6 @@ def synopse_variable_groups_by_identifier_in_primary_source(
     transformed_variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
-            extracted_primary_source_report_server,
             synopse_extracted_resources_by_identifier_in_primary_source,
             synopse_study_overviews,
         )
@@ -311,7 +299,6 @@ def synopse_variable_groups_by_identifier_in_primary_source(
 @asset(group_name="synopse")
 def synopse_extracted_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_primary_source_report_server: ExtractedPrimarySource,
     synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
     ],
@@ -326,7 +313,6 @@ def synopse_extracted_variables(
             synopse_variables_by_thema,
             synopse_variable_groups_by_identifier_in_primary_source,
             synopse_extracted_resources_by_identifier_in_primary_source,
-            extracted_primary_source_report_server,
             synopse_study_overviews,
         )
     )

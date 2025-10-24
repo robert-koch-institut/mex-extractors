@@ -5,7 +5,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -20,6 +19,9 @@ from mex.common.types import (
     MergedPersonIdentifier,
     TemporalEntity,
     TextLanguage,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -38,7 +40,6 @@ from mex.extractors.synopse.transform import (
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_studies_into_access_platforms(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_access_platform: AccessPlatformMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {
@@ -66,7 +67,6 @@ def test_transform_synopse_studies_into_access_platforms(
 
     access_platforms = transform_synopse_studies_into_access_platforms(
         unit_merged_ids_by_synonym,
-        extracted_primary_sources["report-server"],
         {"email@email.de": MergedContactPointIdentifier.generate(seed=234)},
         synopse_access_platform,
     )
@@ -87,7 +87,6 @@ def test_transform_overviews_to_resource_lookup(
 
 def test_transform_synopse_variables_to_mex_variable_groups(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     resources_by_synopse_id: dict[str, ExtractedResource],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
@@ -103,7 +102,6 @@ def test_transform_synopse_variables_to_mex_variable_groups(
     variable_groups = list(
         transform_synopse_variables_to_mex_variable_groups(
             synopse_variables_by_thema,
-            extracted_primary_sources["report-server"],
             resources_by_synopse_id,
             synopse_study_overviews,
         )
@@ -121,7 +119,6 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
     synopse_variables: list[SynopseVariable],
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
@@ -140,7 +137,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "codingSystem": "Health Questionnaire , Frage 18",
         "dataType": "Zahl",
         "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
+            get_extracted_primary_source_id_by_name("report-server")
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": "1",
@@ -153,7 +150,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "belongsTo": [str(variable_group.stableTargetId)],
         "dataType": "Zahl",
         "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
+            get_extracted_primary_source_id_by_name("report-server")
         ),
         "identifier": Joker(),
         "label": [{"value": "KHEfiebB", "language": TextLanguage.DE}],
@@ -167,7 +164,6 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
             synopse_variables,
             variable_group_by_identifier_in_primary_source,
             resources_by_synopse_id,
-            extracted_primary_sources["report-server"],
             synopse_study_overviews,
         )
     )
@@ -180,7 +176,6 @@ def test_transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
@@ -191,7 +186,6 @@ def test_transform_synopse_variables_to_mex_variables(
             synopse_variables_by_thema,
             variable_group_by_identifier_in_primary_source,
             resources_by_synopse_id,
-            extracted_primary_sources["report-server"],
             synopse_study_overviews,
         )
     )
@@ -213,7 +207,6 @@ def test_transform_synopse_variables_to_mex_variables(
 
 
 def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
@@ -232,7 +225,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
         "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
+            get_extracted_primary_source_id_by_name("report-server")
         ),
         "hasLegalBasis": [
             {
@@ -278,7 +271,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         [synopse_project],
         synopse_variables_by_study_id,
         [extracted_activity],
-        extracted_primary_sources["report-server"],
         unit_merged_ids_by_synonym,
         extracted_organization[0],
         synopse_resource,
@@ -292,7 +284,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_projects_to_mex_activities(
     synopse_projects: list[SynopseProject],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -320,7 +311,7 @@ def test_transform_synopse_projects_to_mex_activities(
         "end": [str(TemporalEntity(synopse_project.projektende))],
         "externalAssociate": ["bWt8MuXvqsiYEDpjwYIT2S"],
         "hadPrimarySource": str(
-            extracted_primary_sources["report-server"].stableTargetId
+            get_extracted_primary_source_id_by_name("report-server")
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
@@ -337,7 +328,6 @@ def test_transform_synopse_projects_to_mex_activities(
     activities = list(
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
-            extracted_primary_sources["report-server"],
             contributor_merged_ids_by_name,
             unit_merged_ids_by_synonym,
             synopse_activity,

@@ -1,4 +1,4 @@
-from mex.common.models import ActivityMapping, ExtractedPrimarySource
+from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -11,10 +11,12 @@ from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.ff_projects.transform import (
     transform_ff_projects_source_to_extracted_activity,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_ff_projects_source_to_extracted_activity(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     ff_projects_activity: ActivityMapping,
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
@@ -42,7 +44,6 @@ def test_transform_ff_projects_source_to_extracted_activity(
 
     extracted_activity = transform_ff_projects_source_to_extracted_activity(
         ff_projects_source,
-        extracted_primary_sources["ff-projects"],
         person_stable_target_ids_by_query_string,
         unit_stable_target_ids_by_synonym,
         organizations_stable_target_ids_by_synonym,
@@ -55,7 +56,7 @@ def test_transform_ff_projects_source_to_extracted_activity(
         "end": [laufzeit_bis],
         "funderOrCommissioner": [organization_id],
         "fundingProgram": ["Funding"],
-        "hadPrimarySource": extracted_primary_sources["ff-projects"].stableTargetId,
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("ff-projects"),
         "identifier": Joker(),
         "identifierInPrimarySource": "19",
         "involvedPerson": [person_id],

@@ -6,13 +6,11 @@ from dagster import asset
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedActivity,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
     VariableMapping,
 )
-from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -31,18 +29,6 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
-
-
-@asset(group_name="odk", deps=["extracted_primary_source_mex"])
-def odk_extracted_primary_source(
-    extracted_primary_sources: list[ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    """Load and return odk primary source and load them to sinks."""
-    (odk_extracted_primary_source,) = get_primary_sources_by_name(
-        extracted_primary_sources, "odk"
-    )
-    load([odk_extracted_primary_source])
-    return odk_extracted_primary_source
 
 
 @asset(group_name="odk")
@@ -72,13 +58,11 @@ def odk_merged_organization_ids_by_query_str(
 
 
 @asset(group_name="odk")
-def odk_extracted_resources(  # noqa: PLR0913
+def odk_extracted_resources(
     odk_resource_mappings: list[dict[str, Any]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     odk_merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
-    extracted_primary_source_mex: ExtractedPrimarySource,
-    odk_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
@@ -86,8 +70,6 @@ def odk_extracted_resources(  # noqa: PLR0913
         unit_stable_target_ids_by_synonym,
         odk_merged_organization_ids_by_query_str,
         international_projects_extracted_activities,
-        extracted_primary_source_mex,
-        odk_extracted_primary_source,
     )
     return assign_resource_relations_and_load(extracted_resources_tuple)
 
@@ -96,7 +78,6 @@ def odk_extracted_resources(  # noqa: PLR0913
 def odk_extracted_variables(
     odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
-    odk_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform odk data to mex variables and load to sinks."""
     settings = Settings.get()
@@ -107,7 +88,6 @@ def odk_extracted_variables(
     extracted_variables = transform_odk_data_to_extracted_variables(
         odk_extracted_resources,
         odk_raw_data,
-        odk_extracted_primary_source,
         variable_mapping,
     )
 

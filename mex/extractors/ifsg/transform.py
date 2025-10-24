@@ -1,6 +1,5 @@
 from mex.common.models import (
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -22,18 +21,19 @@ from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_type import MetaType
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
-    extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedResource:
     """Transform resource parent to mex resource.
 
     Args:
         resource_parent: resource parent mapping model
-        extracted_primary_source: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
 
@@ -52,7 +52,7 @@ def transform_resource_parent_to_mex_resource(
             resource_parent.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         description=resource_parent.description[0].mappingRules[0].setValues,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_parent.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_parent.hasPersonalData[0].mappingRules[0].setValues,
         identifierInPrimarySource=resource_parent.identifierInPrimarySource[0]
@@ -79,7 +79,6 @@ def transform_resource_parent_to_mex_resource(
 def transform_resource_state_to_mex_resource(
     resource_state: ResourceMapping,
     ifsg_extracted_resource_parent: ExtractedResource,
-    extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[ExtractedResource]:
     """Transform resource state to mex resource.
@@ -87,7 +86,6 @@ def transform_resource_state_to_mex_resource(
     Args:
         resource_state: resource state mapping model
         ifsg_extracted_resource_parent: ExtractedResource
-        extracted_primary_source: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
         meta_disease: list of MetaDisease table rows
@@ -138,7 +136,7 @@ def transform_resource_state_to_mex_resource(
                     resource_state.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
                 ],
                 documentation=documentation,
-                hadPrimarySource=extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
                 hasLegalBasis=resource_state.hasLegalBasis[0].mappingRules[0].setValues,
                 hasPersonalData=resource_state.hasPersonalData[0]
                 .mappingRules[0]
@@ -213,7 +211,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     meta_disease: list[MetaDisease],
     meta_type: list[MetaType],
     id_type_of_diseases: list[int],
-    extracted_primary_source: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -226,7 +223,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         meta_disease: list of MetaDisease table rows
         meta_type: MetaType
         id_type_of_diseases: list of disease related id_types
-        extracted_primary_source: ExtractedPrimarySource
         unit_stable_target_ids_by_synonym: mapping unit synonyms to
                                            MergedOrganizationalUnitIdentifier
         extracted_organization_rki: extracted organization for RKI
@@ -248,7 +244,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             meta_disease_row,
             resource_disease,
             ifsg_extracted_resource_parent,
-            extracted_primary_source,
             stable_target_id_by_bundesland_id,
             bundesland_by_in_bundesland,
             code_by_id_type,
@@ -264,7 +259,6 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
     meta_disease_row: MetaDisease,
     resource_disease: ResourceMapping,
     ifsg_extracted_resource_parent: ExtractedResource,
-    extracted_primary_source: ExtractedPrimarySource,
     stable_target_id_by_bundesland_id: dict[str, MergedResourceIdentifier],
     bundesland_by_in_bundesland: dict[str, Text],
     code_by_id_type: dict[int, str],
@@ -277,7 +271,6 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         meta_disease_row: row of ifsg meta disease
         resource_disease: resource disease mapping model
         ifsg_extracted_resource_parent: ExtractedResource
-        extracted_primary_source: ExtractedPrimarySource
         stable_target_id_by_bundesland_id: stable target id to bundesland_id map
         bundesland_by_in_bundesland: in bundesland str to bundesland Text map
         code_by_id_type: id type to code map
@@ -331,7 +324,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         contact=unit_stable_target_ids_by_synonym[
             resource_disease.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
         icd10code=[i for i in icd10code if i],
@@ -363,7 +356,6 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
 def transform_ifsg_data_to_mex_variable_group(
     ifsg_variable_group: VariableGroupMapping,
     ifsg_extracted_resources_disease: list[ExtractedResource],
-    extracted_primary_source: ExtractedPrimarySource,
     meta_field: list[MetaField],
     id_types_of_diseases: list[int],
 ) -> list[ExtractedVariableGroup]:
@@ -372,7 +364,6 @@ def transform_ifsg_data_to_mex_variable_group(
     Args:
         ifsg_variable_group: ifsg variable_group mapping model
         ifsg_extracted_resources_disease: ExtractedResource disease list
-        extracted_primary_source: ExtractedPrimarySource
         meta_field: MetaField list
         id_types_of_diseases: disease related id_types
 
@@ -398,7 +389,7 @@ def transform_ifsg_data_to_mex_variable_group(
     }
     return [
         ExtractedVariableGroup(
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
             identifierInPrimarySource=identifier_in_primary_source,
             containedBy=contained_by_by_id_type[
                 identifier_in_primary_source.split("_")[0]
@@ -415,7 +406,6 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
     filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
-    extracted_primary_sources_ifsg: ExtractedPrimarySource,
     meta_catalogue2item: list[MetaCatalogue2Item],
     meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     meta_item: list[MetaItem],
@@ -428,7 +418,6 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
         filtered_variables: MetaField list to transform into variables
         ifsg_extracted_resources_disease: ExtractedResource disease list
         ifsg_extracted_variable_groups: variable group default values
-        extracted_primary_sources_ifsg: ExtractedPrimarySource
         meta_catalogue2item: MetaCatalogue2Item list
         meta_catalogue2item2schema: MetaCatalogue2Item2Schema list
         meta_item: MetaItem list
@@ -492,7 +481,7 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
                 belongsTo=belongs_to,
                 description=row.gui_tool_tip,
                 dataType=data_type_by_id[row.id_data_type],
-                hadPrimarySource=extracted_primary_sources_ifsg.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
                 identifierInPrimarySource=f"variable_{row.id_field}_{id_schema}",
                 label=f"{row.gui_text} (berechneter Wert)",
                 usedIn=used_in,

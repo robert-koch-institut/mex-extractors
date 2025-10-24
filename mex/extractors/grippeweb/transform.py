@@ -5,7 +5,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedOrganization,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -14,10 +13,12 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    Email,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
 
@@ -26,14 +27,11 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
     grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_primary_source: ExtractedPrimarySource,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
-    grippeweb_merged_contact_point_id_by_email: dict[
-        Email, MergedContactPointIdentifier
-    ],
+    grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
 ) -> tuple[ExtractedResource, ExtractedResource]:
     """Transform grippe web values to extracted resources and link them.
 
@@ -41,7 +39,6 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
         grippeweb_resource_mappings: grippeweb resource mapping models
         unit_stable_target_ids_by_synonym: merged organizational units by name
         grippeweb_extracted_access_platform: extracted grippeweb access platform
-        grippeweb_extracted_primary_source: extracted grippeweb primary source
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
             extracted grippeweb organizations dict
@@ -55,7 +52,6 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
         grippeweb_resource_mappings,
         unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
-        grippeweb_extracted_primary_source,
         grippeweb_extracted_persons,
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
@@ -68,14 +64,11 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     grippeweb_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_primary_source: ExtractedPrimarySource,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
-    grippeweb_merged_contact_point_id_by_email: dict[
-        Email, MergedContactPointIdentifier
-    ],
+    grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
 ) -> tuple[ExtractedResource, ExtractedResource]:
     """Transform grippe web values to extracted resources.
 
@@ -83,7 +76,6 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         grippeweb_resource_mappings: grippeweb resource mapping models
         unit_stable_target_ids_by_synonym: merged organizational units by name
         grippeweb_extracted_access_platform: extracted grippeweb access platform
-        grippeweb_extracted_primary_source: extracted grippeweb primary source
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
             extracted grippeweb organizations dict
@@ -124,7 +116,6 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         external_partner_identifier = get_or_create_external_partner(
             resource,
             grippeweb_merged_organization_ids_by_query_str,
-            grippeweb_extracted_primary_source,
         )
 
         has_legal_basis = resource.hasLegalBasis[0].mappingRules[0].setValues
@@ -195,7 +186,7 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
             description=description,
             documentation=documentation,
             externalPartner=external_partner_identifier,
-            hadPrimarySource=grippeweb_extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             icd10code=icd10code,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
@@ -224,7 +215,6 @@ def get_or_create_external_partner(
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
-    grippeweb_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[MergedOrganizationIdentifier] | None:
     """Get external partner from wikidata or create organization.
 
@@ -232,7 +222,6 @@ def get_or_create_external_partner(
         resource: grippeweb resource mapping model
         grippeweb_merged_organization_ids_by_query_str:
             extracted grippeweb organizations dict
-        grippeweb_extracted_primary_source: extracted grippeweb primary source
 
     Returns:
         dict extracted grippeweb resource by identifier in primary source
@@ -247,7 +236,7 @@ def get_or_create_external_partner(
             external_partner_organization = ExtractedOrganization(
                 officialName=external_partner_string,
                 identifierInPrimarySource=external_partner_string,
-                hadPrimarySource=grippeweb_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             )
             load([external_partner_organization])
             external_partner_identifier = [external_partner_organization.stableTargetId]
@@ -258,7 +247,6 @@ def get_or_create_external_partner(
 def transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
     grippeweb_extracted_persons: list[ExtractedPerson],
 ) -> ExtractedAccessPlatform:
     """Transform grippeweb access platform to ExtractedAccessPlatform.
@@ -266,7 +254,6 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     Args:
         grippeweb_access_platform: grippeweb access platform mapping model
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        extracted_primary_source: Extracted primary source
         grippeweb_extracted_persons: extracted grippeweb persons
 
     Returns:
@@ -298,7 +285,7 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
 
     return ExtractedAccessPlatform(
         contact=contact,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
         identifierInPrimarySource=identifier_in_primary_source,
         technicalAccessibility=technical_accessibility,
         title=title,
@@ -310,7 +297,6 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
     grippeweb_variable_group: VariableGroupMapping,
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-    grippeweb_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariableGroup]:
     """Transform Grippeweb variable groups to extracted variable groups.
 
@@ -318,7 +304,6 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
         grippeweb_variable_group: grippeweb variable group mapping model
         grippeweb_columns: grippeweb data by column and table
         grippeweb_extracted_parent_resource: extracted parent resource
-        grippeweb_extracted_primary_source: Extracted primary source
 
     Returns:
         list of extracted variable groups
@@ -330,7 +315,7 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
     return [
         ExtractedVariableGroup(
             containedBy=grippeweb_extracted_parent_resource.stableTargetId,
-            hadPrimarySource=grippeweb_extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             identifierInPrimarySource=table_name,
             label=label_by_table_name[table_name],
         )
@@ -343,7 +328,6 @@ def transform_grippeweb_variable_to_extracted_variables(
     grippeweb_extracted_variables_groups: list[ExtractedVariableGroup],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-    grippeweb_extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedVariable]:
     """Transform Grippeweb variables to extracted variables.
 
@@ -352,7 +336,6 @@ def transform_grippeweb_variable_to_extracted_variables(
         grippeweb_extracted_variables_groups: extracted grippeweb variable groups
         grippeweb_columns: grippeweb data by column and table
         grippeweb_extracted_parent_resource: extracted parent resource
-        grippeweb_extracted_primary_source: Extracted primary source
 
     Returns:
         list of extracted variables
@@ -401,7 +384,9 @@ def transform_grippeweb_variable_to_extracted_variables(
             extracted_variables.append(
                 ExtractedVariable(
                     belongsTo=belongs_to,
-                    hadPrimarySource=grippeweb_extracted_primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name(
+                        "grippeweb"
+                    ),
                     identifierInPrimarySource=column_name,
                     label=column_name,
                     usedIn=grippeweb_extracted_parent_resource.stableTargetId,

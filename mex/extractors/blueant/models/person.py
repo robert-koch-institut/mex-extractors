@@ -1,5 +1,4 @@
 from mex.common.models import BaseModel
-from mex.common.types import Email
 
 
 class BlueAntPerson(BaseModel):
@@ -9,7 +8,7 @@ class BlueAntPerson(BaseModel):
     personnelNumber: str
     firstname: str
     lastname: str
-    email: Email
+    email: str
 
 
 class BlueAntPersonResponse(BaseModel):

@@ -5,7 +5,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedContactPoint,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ResourceMapping,
     VariableMapping,
 )
@@ -26,8 +25,7 @@ from mex.extractors.igs.transform import (
 
 
 @pytest.mark.usefixtures("mocked_igs")
-def test_transform_igs_info_to_resources(  # noqa: PLR0913
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+def test_transform_igs_info_to_resources(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -36,7 +34,6 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
 ) -> None:
     extracted_resources = transform_igs_info_to_resources(
         IGSInfo(title="title", version="-1"),
-        extracted_primary_sources["igs"],
         igs_resource_mapping,
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
@@ -63,13 +60,11 @@ def test_transform_igs_info_to_resources(  # noqa: PLR0913
 
 
 def test_transform_igs_access_platform(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> None:
     extracted_access_platform = transform_igs_access_platform(
-        extracted_primary_sources["igs"],
         igs_access_platform_mapping,
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
@@ -98,13 +93,11 @@ def test_transform_igs_access_platform(
 
 def test_transformed_igs_schemas_to_variable_group(
     igs_schemas: dict[str, IGSSchema],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_info: IGSInfo,
 ) -> None:
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
         igs_schemas,
         {"IGS_test_title_vtest_version": MergedResourceIdentifier.generate(seed=42)},
-        extracted_primary_sources["igs"],
         igs_info,
     )
     expected = {
@@ -128,7 +121,6 @@ def test_get_enums_by_property_name(
 
 def test_transform_igs_schemas_to_variables(
     igs_schemas: dict[str, IGSSchema],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     igs_variable_mapping: VariableMapping,
     igs_variable_pathogen_mapping: VariableMapping,
     igs_info: IGSInfo,
@@ -136,7 +128,6 @@ def test_transform_igs_schemas_to_variables(
     extracted_variables = transform_igs_schemas_to_variables(
         igs_schemas,
         {"IGS_test_title_vtest_version": MergedResourceIdentifier.generate(seed=42)},
-        extracted_primary_sources["igs"],
         {"Pathogen": MergedVariableGroupIdentifier.generate(seed=43)},
         igs_variable_mapping,
         igs_variable_pathogen_mapping,
