@@ -11,21 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- streamline dagster asset names
-- publish all consenting persons in publisher
-- bump mex-common dependency to 1.16.0
-- use primary source id convenience function
-- update open data resource according to mapping changes
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- consent-mailer: fetch consent from DB in batches, to fix "URL too long" error
-
 ### Security
+
+## [1.4.0] - 2025-10-28
+
+### Changes
+
+- streamline dagster asset names
+- publish all consenting persons in publisher
+- bump mex-common dependency to 1.16.0
+- use primary source id convenience function
+- update open data resource according to mapping changes
+
+### Fixed
+
+- consent-mailer: fetch consent from DB in batches, to fix "URL too long" error
 
 ## [1.3.0] - 2025-10-14
 
