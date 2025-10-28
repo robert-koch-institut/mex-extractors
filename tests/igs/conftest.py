@@ -9,7 +9,7 @@ from mex.common.models import (
 )
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.igs.extract import extract_igs_schemas
-from mex.extractors.igs.model import IGSInfo, IGSSchema
+from mex.extractors.igs.model import IGSSchema
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -66,11 +66,6 @@ def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoin
 @pytest.fixture
 def igs_schemas() -> dict[str, IGSSchema]:
     return extract_igs_schemas()
-
-
-@pytest.fixture
-def igs_info() -> IGSInfo:
-    return IGSInfo(title="test_title", version="test_version")
 
 
 @pytest.fixture
