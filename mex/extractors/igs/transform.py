@@ -191,8 +191,7 @@ def transformed_igs_schemas_to_variable_group(
 
     Args:
         filtered_schemas: filtered IGS schemas
-        igs_extracted_resource_id:
-            dict of igs resource ids
+        igs_extracted_resource_id: stableTargetId of the igs resource
 
 
     Returns:
