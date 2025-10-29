@@ -270,8 +270,7 @@ def transform_igs_schemas_to_variables(
 
     Args:
         igs_schemas: igs schemas by schema name
-        igs_extracted_resource_id:
-            igs resources by pathogen
+        igs_extracted_resource_id: stableTargetId of the igs resource
         extracted_igs_variable_group_ids_by_igs_identifier:
             igs variable group by identifier in primary source
         variable_mapping: variable mapping default values
