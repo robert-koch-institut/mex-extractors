@@ -21,7 +21,7 @@ dependencies = [
     "numpy>=2",
     "openpyxl>=3,<4",
     "pandas>=2",
-    "pydantic==2.12.2",
+    "pydantic>=2",
     "pyodbc>=5,<6",
     "pyyaml>=6,<7",
     "requests-ntlm>=1,<2",
