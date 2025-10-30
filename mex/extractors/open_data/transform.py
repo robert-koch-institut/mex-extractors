@@ -10,7 +10,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
 )
@@ -29,21 +28,25 @@ from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
+# TODO @MX-2075: remove
+FALLBACK_UNIT = "mf4"
+
 
 def transform_open_data_person_affiliations_to_organizations(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    open_data_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search wikidata or create own organizations, load to sink and create dictionary.
 
     Args:
         open_data_creators_contributors: list of creators and contributors
-        open_data_extracted_primary_source: extracted Primary source for Open Data
 
     Returns:
         list of Extracted Organization Ids by affiliation name
@@ -61,7 +64,7 @@ def transform_open_data_person_affiliations_to_organizations(
             extracted_organization = ExtractedOrganization(
                 officialName=affiliation,
                 identifierInPrimarySource=affiliation,
-                hadPrimarySource=open_data_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
             )
             load([extracted_organization])
             affiliation_dict[affiliation] = extracted_organization.stableTargetId
@@ -70,7 +73,6 @@ def transform_open_data_person_affiliations_to_organizations(
 
 def transform_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
-    open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> ExtractedPerson:
@@ -78,7 +80,6 @@ def transform_open_data_persons_not_in_ldap(
 
     Args:
         person: list[OpenDataCreatorsOrContributors],
-        open_data_extracted_primary_source: open data primary source,
         extracted_organization_rki: ExtractedOrganization of RKI,
         open_data_organization_ids_by_str: dictionary with ID by affiliation name
 
@@ -97,7 +98,7 @@ def transform_open_data_persons_not_in_ldap(
 
     return ExtractedPerson(
         affiliation=affiliation,
-        hadPrimarySource=open_data_extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource=person.name,
         fullName=person.name,
     )
@@ -105,7 +106,6 @@ def transform_open_data_persons_not_in_ldap(
 
 def lookup_person_in_ldap_and_transform(
     person: OpenDataCreatorsOrContributors,
-    extracted_primary_source_ldap: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedPerson | None:
@@ -113,7 +113,6 @@ def lookup_person_in_ldap_and_transform(
 
     Args:
         person: Open Data person (Creator Or Contributor),
-        extracted_primary_source_ldap: primary Source for ldap
         units_by_identifier_in_primary_source: dict of primary sources by ID
         extracted_organization_rki: ExtractedOrganization of RKI,
 
@@ -125,7 +124,7 @@ def lookup_person_in_ldap_and_transform(
         ldap_person = ldap.get_person(display_name=person.name)
         return transform_ldap_person_to_extracted_person(
             ldap_person,
-            extracted_primary_source_ldap,
+            get_extracted_primary_source_id_by_name("ldap"),
             units_by_identifier_in_primary_source,
             extracted_organization_rki,
         )
@@ -133,10 +132,8 @@ def lookup_person_in_ldap_and_transform(
         return None
 
 
-def transform_open_data_persons(  # noqa: PLR0913
+def transform_open_data_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    extracted_primary_source_ldap: ExtractedPrimarySource,
-    open_data_extracted_primary_source: ExtractedPrimarySource,
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
@@ -145,8 +142,6 @@ def transform_open_data_persons(  # noqa: PLR0913
 
     Args:
         open_data_creators_contributors: list of Creators Or Contributors
-        extracted_primary_source_ldap: Extracted Primary Sources for ldap
-        open_data_extracted_primary_source: Extracted Primary Sources for open-data
         extracted_organizational_units: list of Extracted Organizational Units
         extracted_organization_rki: ExtractedOrganization of RKI,
         open_data_organization_ids_by_str: dictionary with ID by affiliation name
@@ -163,12 +158,10 @@ def transform_open_data_persons(  # noqa: PLR0913
     for person in open_data_creators_contributors:
         extracted_person = lookup_person_in_ldap_and_transform(
             person,
-            extracted_primary_source_ldap,
             units_by_identifier_in_primary_source,
             extracted_organization_rki,
         ) or transform_open_data_persons_not_in_ldap(
             person,
-            open_data_extracted_primary_source,
             extracted_organization_rki,
             open_data_organization_ids_by_str,
         )
@@ -185,14 +178,12 @@ def transform_open_data_persons(  # noqa: PLR0913
 
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
-    open_data_extracted_primary_source: ExtractedPrimarySource,
     distribution_mapping: DistributionMapping,
 ) -> list[ExtractedDistribution]:
     """Transform open data resource versions to extracted distributions.
 
     Args:
         open_data_parent_resources: list of open data parent resources
-        open_data_extracted_primary_source: Extracted platform for open data
         distribution_mapping: resource mapping model with default values
 
     Returns:
@@ -202,7 +193,6 @@ def transform_open_data_distributions(
     access_restriction = (
         distribution_mapping.accessRestriction[0].mappingRules[0].setValues
     )
-    had_primary_source = open_data_extracted_primary_source.stableTargetId
     for resource in open_data_parent_resources:
         access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
         ccby_license = (
@@ -224,7 +214,9 @@ def transform_open_data_distributions(
                     accessRestriction=access_restriction,
                     accessURL=access_url,
                     downloadURL=download_url,
-                    hadPrimarySource=had_primary_source,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name(
+                        "open-data"
+                    ),
                     identifierInPrimarySource=identifier_primary_source,
                     issued=issued,
                     license=ccby_license,
@@ -238,7 +230,6 @@ def transform_open_data_distributions(
 
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
-    open_data_extracted_primary_source: ExtractedPrimarySource,
     open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     open_data_distribution: list[ExtractedDistribution],
@@ -250,7 +241,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         open_data_parent_resource: open data parent resources
-        open_data_extracted_primary_source: Extracted platform for open data
         open_data_persons: list of ExtractedPerson
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         open_data_distribution: list of Extracted open data Distributions
@@ -282,9 +272,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         for distribution in open_data_distribution
     }
     has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
-    resource_type_general = (
-        resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
-    )
+    resource_type_general_lookup = {
+        rule.forValues[0]: rule.setValues
+        for rule in resource_mapping.resourceTypeGeneral[0].mappingRules
+        if rule.forValues
+    }
     theme = resource_mapping.theme[0].mappingRules[0].setValues
     language_by_keyword = {
         rule.forValues[0]: rule.setValues[0]
@@ -292,7 +284,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         if rule.forValues and rule.setValues
     }
     for resource in open_data_parent_resource:
-        contributing_unit = list(
+        unit_in_charge = list(
             {
                 unit_id: None
                 for person in resource.metadata.contributors
@@ -305,6 +297,8 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 for unit_id in unit_list
             }
         )
+        if not unit_in_charge:
+            unit_in_charge = [unit_stable_target_ids_by_synonym[FALLBACK_UNIT]]
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -344,12 +338,15 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             in resource_mapping.license[0].mappingRules[0].forValues
             else None
         )
-        unit_in_charge = (
+        contributing_unit = (
             unit_stable_target_ids_by_synonym.get(
-                resource_mapping.unitInCharge[0].mappingRules[0].forValues[0]
+                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
-            if resource_mapping.unitInCharge[0].mappingRules[0].forValues
+            if resource_mapping.contributingUnit[0].mappingRules[0].forValues
             else None
+        )
+        resource_type_general = resource_type_general_lookup.get(
+            resource.metadata.resource_type.type, []
         )
         extracted_resource.append(
             ExtractedResource(
@@ -364,7 +361,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 distribution=distribution,
                 documentation=documentation,
                 doi=doi,
-                hadPrimarySource=open_data_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=str(resource.conceptrecid),
                 keyword=resource.metadata.keywords,

@@ -5,10 +5,10 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:87659280de0f5adf87897f8b0110aa7cc6abaa53c647a62d13f8a67035b3c9b1"
+content_hash = "sha256:7a80eb841d997df68acb7dd4b47abfe615f995d57a0fc0e0bbf188a4c14afc39"
 
 [[metadata.targets]]
-requires_python = "==3.11.*"
+requires_python = ">=3.11,<3.12"
 
 [[package]]
 name = "alabaster"
@@ -1015,8 +1015,8 @@ files = [
 
 [[package]]
 name = "matplotlib-inline"
-version = "0.1.7"
-requires_python = ">=3.8"
+version = "0.2.1"
+requires_python = ">=3.9"
 summary = "Inline Matplotlib backend for Jupyter"
 groups = ["dev"]
 marker = "python_version >= \"3.11\""
@@ -1024,8 +1024,8 @@ dependencies = [
     "traitlets",
 ]
 files = [
-    {file = "matplotlib_inline-0.1.7-py3-none-any.whl", hash = "sha256:df192d39a4ff8f21b1895d72e6a13f5fcc5099f00fa84384e0ea28c2cc0653ca"},
-    {file = "matplotlib_inline-0.1.7.tar.gz", hash = "sha256:8423b23ec666be3d16e16b60bdd8ac4e86e840ebd1dd11a30b9f117f2fa0ab90"},
+    {file = "matplotlib_inline-0.2.1-py3-none-any.whl", hash = "sha256:d56ce5156ba6085e00a9d54fead6ed29a9c47e215cd1bba2e976ef39f5710a76"},
+    {file = "matplotlib_inline-0.2.1.tar.gz", hash = "sha256:e1ee949c340d771fc39e241ea75683deb94762c8fa5f2927ec57c83c4dffa9fe"},
 ]
 
 [[package]]
@@ -1041,25 +1041,25 @@ files = [
 
 [[package]]
 name = "mex-artificial"
-version = "1.0.0"
+version = "1.1.0"
 requires_python = "<3.12,>=3.11"
 summary = "Create artificial data for the MEx project."
 groups = ["default"]
 dependencies = [
     "annotated-types<=0.7",
     "faker<38,>=37",
-    "mex-common>=1",
-    "pydantic>=2",
-    "typer>=0.13",
+    "mex-common<2,>=1.7",
+    "pydantic",
+    "typer>=0.19",
 ]
 files = [
-    {file = "mex_artificial-1.0.0-py3-none-any.whl", hash = "sha256:c7a35a458da8de261ab11605de3bebdb6452c52858bb3ea1462f5593e25f66aa"},
-    {file = "mex_artificial-1.0.0.tar.gz", hash = "sha256:a49eb0b7dd72141b16cb97acd05bb5b69bda10e5222dec3d4117d7c68192095b"},
+    {file = "mex_artificial-1.1.0-py3-none-any.whl", hash = "sha256:98bcbc42ff39e0e95881e0068e846605d1c5fe076b2d49fe275e18daa872ed12"},
+    {file = "mex_artificial-1.1.0.tar.gz", hash = "sha256:f9f6299cb448064d80a8d8799891c26bb27136dff6ee1083153918c9014a0329"},
 ]
 
 [[package]]
 name = "mex-common"
-version = "1.6.0"
+version = "1.7.0"
 requires_python = "<3.12,>=3.11"
 summary = "Common library for MEx python projects."
 groups = ["default"]
@@ -1078,8 +1078,8 @@ dependencies = [
     "requests<3,>=2",
 ]
 files = [
-    {file = "mex_common-1.6.0-py3-none-any.whl", hash = "sha256:eb82b6eb397455a1158750e0cc3445518838e9e83a43b9e309c08e242e703f96"},
-    {file = "mex_common-1.6.0.tar.gz", hash = "sha256:1c539d5da20d6539c81d8244fab857566a7afebc31198edcdb98667a905d68ee"},
+    {file = "mex_common-1.7.0-py3-none-any.whl", hash = "sha256:e3bcf73e9739be44c7c2ae682f39167bcc1af565af53e8476cac19203358a049"},
+    {file = "mex_common-1.7.0.tar.gz", hash = "sha256:abea80452848b40f64f6f600613545f01fd650a225eff9114845ac187d07527b"},
 ]
 
 [[package]]

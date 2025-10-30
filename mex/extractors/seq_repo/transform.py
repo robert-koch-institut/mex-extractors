@@ -5,7 +5,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ResourceMapping,
 )
@@ -14,16 +13,18 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 
-def transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
+def transform_seq_repo_activities_to_extracted_activities(
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedActivity]:
     """Transform seq-repo activities to list of unique ExtractedActivity.
 
@@ -36,7 +37,6 @@ def transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
         seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
                                                         resolved project coordinators
                                                         merged ids
-        extracted_primary_source: Extracted primary source
 
     Returns:
         list of unique ExtractedActivity
@@ -59,7 +59,7 @@ def transform_seq_repo_activities_to_extracted_activities(  # noqa: PLR0913
 
         extracted_activity = ExtractedActivity(
             contact=project_coordinators_ids,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=source.project_id,
             involvedPerson=project_coordinators_ids,
             responsibleUnit=responsible_units,
@@ -82,7 +82,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedResource]:
     """Transform seq-repo resources to ExtractedResource.
 
@@ -99,7 +98,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
                                                                   coordinators merged
                                                                   ids
         extracted_organization_rki: wikidata extracted organization
-        extracted_primary_source: Extracted primary source
 
     Returns:
         list of ExtractedResource
@@ -162,7 +160,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             contributingUnit=contributing_unit or [],
             created=source.sequencing_date,
             description=description,
-            hadPrimarySource=extracted_primary_source.stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=identifier_in_primary_source,
             instrumentToolOrApparatus=source.sequencing_platform,
             keyword=keyword,
@@ -186,14 +184,12 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 def transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    extracted_primary_source: ExtractedPrimarySource,
 ) -> ExtractedAccessPlatform:
     """Transform seq-repo access platform to ExtractedAccessPlatform.
 
     Args:
         seq_repo_access_platform: Seq Repo access platform mapping model
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        extracted_primary_source: Extracted primary source
 
     Returns:
         ExtractedAccessPlatform
@@ -225,7 +221,7 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
         contact=resolved_organigram,
         description=description,
         endpointType=endpoint_type,
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
         identifierInPrimarySource=identifier_in_primary_source,
         landingPage=landing_page,
         technicalAccessibility=technical_accessibility,

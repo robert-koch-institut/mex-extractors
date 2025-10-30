@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedPrimarySource,
     ResourceMapping,
 )
 from mex.common.testing import Joker
@@ -28,22 +27,22 @@ from mex.extractors.open_data.transform import (
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_open_data_person_affiliations_to_organizations(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     results = transform_open_data_person_affiliations_to_organizations(
         [mocked_open_data_creator_with_processed_affiliation],
-        extracted_primary_sources["open-data"],
     )
     assert results == {"Universität": Joker()}
 
 
 def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     open_data_organization_ids_by_str = {
@@ -52,12 +51,11 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
 
     results = transform_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_processed_affiliation,
-        extracted_primary_sources["open-data"],
         extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
     assert results == ExtractedPerson(
-        hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource="Resolved, Roland",
         fullName="Resolved, Roland",
         affiliation=MergedOrganizationIdentifier.generate(seed=354),
@@ -67,7 +65,6 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
 
 def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     open_data_organization_ids_by_str = {
@@ -76,12 +73,11 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
     }
     results = transform_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_affiliation_to_ignore,
-        extracted_primary_sources["open-data"],
         extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
     assert results == ExtractedPerson(
-        hadPrimarySource=extracted_primary_sources["open-data"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource="Muster, Maxi",
         fullName="Muster, Maxi",
         affiliation=None,
@@ -92,7 +88,6 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_lookup_person_in_ldap_and_transform(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_units_by_identifier_in_primary_source: dict[
         str, ExtractedOrganizationalUnit
     ],
@@ -100,12 +95,11 @@ def test_lookup_person_in_ldap_and_transform(
 ) -> None:
     results = lookup_person_in_ldap_and_transform(
         mocked_open_data_creator_with_affiliation_to_ignore,
-        extracted_primary_sources["ldap"],
         mocked_units_by_identifier_in_primary_source,
         extracted_organization_rki,
     )
     assert results == ExtractedPerson(
-        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+        hadPrimarySource=get_extracted_primary_source_id_by_name("ldap"),
         identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
         affiliation=[extracted_organization_rki.stableTargetId],
         email=["test_person@email.de"],
@@ -122,7 +116,6 @@ def test_lookup_person_in_ldap_and_transform(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_transform_open_data_persons(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
@@ -131,8 +124,6 @@ def test_transform_open_data_persons(
     }
     results = transform_open_data_persons(
         [mocked_open_data_creator_with_affiliation_to_ignore],
-        extracted_primary_sources["ldap"],
-        extracted_primary_sources["open-data"],
         mocked_extracted_organizational_units,
         extracted_organization_rki,
         open_data_organization_ids_by_str,
@@ -140,7 +131,7 @@ def test_transform_open_data_persons(
 
     assert results == [
         ExtractedPerson(
-            hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("ldap"),
             identifierInPrimarySource="00000000-0000-4000-8000-000000000001",
             affiliation=[extracted_organization_rki.stableTargetId],
             email=["test_person@email.de"],
@@ -158,12 +149,10 @@ def test_transform_open_data_persons(
 @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_distributions(
     mocked_open_data_parent_resource: list[OpenDataParentResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_distribution_mapping: DistributionMapping,
 ) -> None:
     mex_distribution = transform_open_data_distributions(
         mocked_open_data_parent_resource,
-        extracted_primary_sources["open-data"],
         mocked_open_data_distribution_mapping,
     )
 
@@ -184,7 +173,6 @@ def test_transform_open_data_distributions(
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
 def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_parent_resource: list[OpenDataParentResource],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -199,7 +187,6 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mex_sources = list(
         transform_open_data_parent_resource_to_mex_resource(
             mocked_open_data_parent_resource,
-            extracted_primary_sources["open-data"],
             mocked_open_data_persons,
             unit_stable_target_ids_by_synonym,
             mocked_open_data_distribution,
@@ -211,7 +198,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
     assert len(mex_sources) == 1
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": str(extracted_primary_sources["open-data"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("open-data")),
         "identifierInPrimarySource": "Eins",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
         "created": "2021",
@@ -220,11 +207,16 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": ["bFQoRhcVH5DIax"],
+        "unitInCharge": [  # Unit of Maxi Muster = XY
+            MergedOrganizationalUnitIdentifier.generate(seed=959)
+        ],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
         "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
+        "contributingUnit": [  # default, always unit "C1"
+            MergedOrganizationalUnitIdentifier.generate(seed=999)
+        ],
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}
         ],

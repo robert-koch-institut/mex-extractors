@@ -1,4 +1,4 @@
-from mex.common.models import ActivityMapping, ExtractedPrimarySource
+from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
@@ -11,12 +11,14 @@ from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 def test_transform_blueant_sources_to_extracted_activities(
     blueant_source: BlueAntSource,
     blueant_source_without_leader: BlueAntSource,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     blueant_activity: ActivityMapping,
 ) -> None:
     stable_target_ids_by_employee_id = {
@@ -32,7 +34,6 @@ def test_transform_blueant_sources_to_extracted_activities(
     mex_sources = list(
         transform_blueant_sources_to_extracted_activities(
             [blueant_source, blueant_source_without_leader],
-            extracted_primary_sources["blueant"],
             stable_target_ids_by_employee_id,
             unit_stable_target_ids_by_synonym,
             blueant_activity,
@@ -49,7 +50,7 @@ def test_transform_blueant_sources_to_extracted_activities(
         "involvedPerson": ["bFQoRhcVH5DHV1"],
         "title": [{"value": "Prototype Space Rocket", "language": TextLanguage.EN}],
         "start": ["2019-01-07"],
-        "hadPrimarySource": str(extracted_primary_sources["blueant"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("blueant")),
         "stableTargetId": Joker(),
     }
     assert mex_sources[1].model_dump(exclude_none=True, exclude_defaults=True) == {
@@ -60,6 +61,6 @@ def test_transform_blueant_sources_to_extracted_activities(
         "identifierInPrimarySource": "00255",
         "title": [{"value": "Prototype Moon Lander", "language": TextLanguage.EN}],
         "start": ["2018-08-09"],
-        "hadPrimarySource": str(extracted_primary_sources["blueant"].stableTargetId),
+        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("blueant")),
         "stableTargetId": Joker(),
     }

@@ -1,7 +1,6 @@
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
@@ -13,16 +12,17 @@ from mex.common.types import (
 )
 from mex.extractors.odk.filter import is_invalid_odk_variable
 from mex.extractors.odk.model import ODKData
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.sinks import load
 
 
-def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
+def transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
-    extracted_primary_source_mex: ExtractedPrimarySource,
-    odk_extracted_primary_source: ExtractedPrimarySource,
 ) -> tuple[list[ExtractedResource], list[ExtractedResource]]:
     """Transform odk resources to mex resources.
 
@@ -33,8 +33,6 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
         odk_merged_organization_ids_by_str: dict of wikidata OrganizationIDs
         international_projects_extracted_activities: list of extracted international
                                                      projects activities
-        extracted_primary_source_mex: mex primary source
-        odk_extracted_primary_source: odk primary source
 
     Returns:
         tuple of list of mex child and non-child resources
@@ -86,7 +84,7 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
                 organization = ExtractedOrganization(
                     identifierInPrimarySource=partner,
                     officialName=partner,
-                    hadPrimarySource=extracted_primary_source_mex.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name("mex"),
                 )
                 load([organization])
                 external_partner.append(organization.stableTargetId)
@@ -108,7 +106,7 @@ def transform_odk_resources_to_mex_resources(  # noqa: PLR0913
                 contributingUnit=contributing_unit,
                 description=description,
                 externalPartner=external_partner,
-                hadPrimarySource=odk_extracted_primary_source.stableTargetId,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                 hasLegalBasis=has_legal_basis,
                 keyword=resource.keyword[0].mappingRules[0].setValues,
                 language=resource.language[0].mappingRules[0].setValues,
@@ -167,7 +165,6 @@ def assign_resource_relations_and_load(
 def transform_odk_data_to_extracted_variables(
     odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
-    odk_extracted_primary_source: ExtractedPrimarySource,
     variable_mapping: VariableMapping,
 ) -> list[ExtractedVariable]:
     """Transform odk variables to mex variables.
@@ -175,7 +172,6 @@ def transform_odk_data_to_extracted_variables(
     Args:
         odk_extracted_resources: extracted mex resources
         odk_raw_data: raw data extracted from Excel files
-        odk_extracted_primary_source: odk primary source
         variable_mapping: variable mapping default values
 
     Returns:
@@ -215,7 +211,7 @@ def transform_odk_data_to_extracted_variables(
             extracted_variables.append(
                 ExtractedVariable(
                     dataType=data_type,
-                    hadPrimarySource=odk_extracted_primary_source.stableTargetId,
+                    hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                     identifierInPrimarySource=identifier_in_primary_source,
                     description=description,
                     label=label,

@@ -15,4 +15,6 @@ class EndnoteSettings(BaseModel):
         ),
     )
 
-    cutoff_number_authors: int = 42
+    cutoff_number_authors: int = Field(
+        42, description="maximum number of authors to extract per publication"
+    )

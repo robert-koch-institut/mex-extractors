@@ -5,14 +5,12 @@ from dagster import asset
 from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedOrganization,
-    ExtractedPrimarySource,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
 )
-from mex.common.primary_source.transform import get_primary_sources_by_name
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.ifsg.extract import extract_sql_table
 from mex.extractors.ifsg.filter import (
@@ -42,19 +40,6 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
-
-
-@asset(group_name="ifsg", deps=["extracted_primary_source_mex"])
-def ifsg_extracted_primary_sources(
-    extracted_primary_sources: list[ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    """Load and return ifsg primary source."""
-    (ifsg_extracted_primary_sources,) = get_primary_sources_by_name(
-        extracted_primary_sources, "ifsg"
-    )
-    load([ifsg_extracted_primary_sources])
-
-    return ifsg_extracted_primary_sources
 
 
 @asset(group_name="ifsg")
@@ -165,13 +150,11 @@ def ifsg_variable_group() -> dict[str, Any]:
 @asset(group_name="ifsg")
 def ifsg_extracted_resource_parent(
     ifsg_resource_parent_dict: dict[str, Any],
-    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> ExtractedResource:
     """Extracted and loaded ifsg resource parent."""
     mex_resource_parent = transform_resource_parent_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_parent_dict),
-        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
     )
 
@@ -184,14 +167,12 @@ def ifsg_extracted_resource_parent(
 def ifsg_extracted_resources_state(
     ifsg_resource_state_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
-    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_state_dict),
         ifsg_extracted_resource_parent,
-        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
     )
     load(mex_resource_state)
@@ -207,7 +188,6 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_meta_disease: list[MetaDisease],
     ifsg_meta_type: list[MetaType],
     id_types_of_diseases: list[int],
-    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -219,7 +199,6 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
         ifsg_meta_disease,
         ifsg_meta_type,
         id_types_of_diseases,
-        ifsg_extracted_primary_sources,
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
     )
@@ -232,7 +211,6 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
 def ifsg_extracted_variable_groups(
     ifsg_variable_group: dict[str, Any],
     ifsg_extracted_resources_disease: list[ExtractedResource],
-    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     ifsg_filtered_meta_fields: list[MetaField],
     id_types_of_diseases: list[int],
 ) -> list[ExtractedVariableGroup]:
@@ -240,7 +218,6 @@ def ifsg_extracted_variable_groups(
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         VariableGroupMapping.model_validate(ifsg_variable_group),
         ifsg_extracted_resources_disease,
-        ifsg_extracted_primary_sources,
         ifsg_filtered_meta_fields,
         id_types_of_diseases,
     )
@@ -254,7 +231,6 @@ def ifsg_extracted_variables(  # noqa: PLR0913
     ifsg_filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
-    ifsg_extracted_primary_sources: ExtractedPrimarySource,
     ifsg_meta_catalogue2item: list[MetaCatalogue2Item],
     ifsg_meta_catalogue2item2schema: list[MetaCatalogue2Item2Schema],
     ifsg_meta_item: list[MetaItem],
@@ -266,7 +242,6 @@ def ifsg_extracted_variables(  # noqa: PLR0913
         ifsg_filtered_variables,
         ifsg_extracted_resources_disease,
         ifsg_extracted_variable_groups,
-        ifsg_extracted_primary_sources,
         ifsg_meta_catalogue2item,
         ifsg_meta_catalogue2item2schema,
         ifsg_meta_item,

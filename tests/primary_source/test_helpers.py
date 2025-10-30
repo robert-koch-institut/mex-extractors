@@ -1,8 +1,7 @@
 from unittest.mock import Mock
 
-from pytest import MonkeyPatch
+from pytest import MonkeyPatch, raises
 
-from mex.common.models import ExtractedPrimarySource
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.primary_source import helpers
 from mex.extractors.primary_source.helpers import (
@@ -12,7 +11,6 @@ from mex.extractors.primary_source.helpers import (
 
 
 def test_load_extracted_primary_source_by_name(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     monkeypatch: MonkeyPatch,
 ) -> None:
     """Helper finds "Wikidata" and loads, returns None for nonsense query."""
@@ -24,19 +22,26 @@ def test_load_extracted_primary_source_by_name(
 
     returned = load_extracted_primary_source_by_name(query_wiki)
     mocked_load.assert_called_once()
-
-    expected = extracted_primary_sources["wikidata"]
-
-    assert returned == expected
+    assert returned
+    assert returned.model_dump(exclude_defaults=True) == {
+        "hadPrimarySource": "00000000000000",
+        "identifierInPrimarySource": "wikidata",
+        "identifier": "gNrpqARBAlwazXAva81Tuq",
+        "stableTargetId": "djbNGb5fLgYHFyMh3fZE2g",
+    }
     assert load_extracted_primary_source_by_name(query_nonsense) is None
 
 
 def test_get_extracted_primary_source_id_by_name() -> None:
     """Helper finds "Wikidata" and returns its ID, returns None for nonsense query."""
     query_wiki = "wikidata"
-    query_nonsense = "this should give None"
+    query_nonsense = "this should raise an error"
 
     assert get_extracted_primary_source_id_by_name(
         query_wiki
     ) == MergedPrimarySourceIdentifier("djbNGb5fLgYHFyMh3fZE2g")
-    assert get_extracted_primary_source_id_by_name(query_nonsense) is None
+
+    with raises(
+        NameError, match=r"Primary source name this should raise an error not found."
+    ):
+        get_extracted_primary_source_id_by_name(query_nonsense)

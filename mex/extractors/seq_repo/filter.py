@@ -1,26 +1,26 @@
 from collections.abc import Iterable
 from datetime import datetime
 
-from mex.common.models import ExtractedPrimarySource
 from mex.extractors.filters import filter_by_global_rules
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 def filter_sources_on_latest_sequencing_date(
     seq_repo_sources: Iterable[SeqRepoSource],
-    seq_repo_extracted_primary_source: ExtractedPrimarySource,
 ) -> dict[str, SeqRepoSource]:
     """Filter sources on sequencing date, keeping only latest sequenced item.
 
     Args:
         seq_repo_sources: Seq Repo unfiltered extracted sources
-        seq_repo_extracted_primary_source: Seq Repo extracted primary source
 
     Returns:
         Filtered Seq Repo sources
     """
     filtered_sources = filter_by_global_rules(
-        seq_repo_extracted_primary_source.stableTargetId, seq_repo_sources
+        get_extracted_primary_source_id_by_name("seq-repo"), seq_repo_sources
     )
     unique_sources_with_latest_date: dict[str, SeqRepoSource] = {}
     for source in filtered_sources:

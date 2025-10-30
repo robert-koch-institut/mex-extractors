@@ -9,7 +9,6 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyMergedModel,
-    ExtractedPrimarySource,
     ItemsContainer,
     MergedConsent,
     MergedContactPoint,
@@ -22,6 +21,9 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.publisher.filter import filter_persons_with_consent
 from mex.extractors.publisher.transform import (
@@ -57,15 +59,15 @@ def publisher_items_without_actors() -> ItemsContainer[AnyMergedModel]:
 
 
 @asset(group_name="publisher")
-def publisher_merged_persons(
-    extracted_primary_source_ldap: ExtractedPrimarySource,
-) -> list[MergedPerson]:
+def publisher_merged_persons() -> list[MergedPerson]:
     """Fetch all MergedPersons with Primary source = ldap."""
     return cast(
         "list[MergedPerson]",
         get_publishable_merged_items(
             entity_type=["MergedPerson"],
-            referenced_identifier=[str(extracted_primary_source_ldap.stableTargetId)],
+            referenced_identifier=[
+                str(get_extracted_primary_source_id_by_name("ldap"))
+            ],
             reference_field="hadPrimarySource",
         ),
     )
