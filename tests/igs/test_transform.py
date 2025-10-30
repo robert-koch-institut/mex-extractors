@@ -14,38 +14,37 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
-from mex.extractors.igs.model import IGSInfo, IGSSchema
+from mex.extractors.igs.model import IGSSchema
 from mex.extractors.igs.transform import (
     get_enums_by_property_name,
     transform_igs_access_platform,
-    transform_igs_info_to_resources,
+    transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
 
 
 @pytest.mark.usefixtures("mocked_igs")
-def test_transform_igs_info_to_resources(
+def test_transform_igs_extracted_resource(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
-    extracted_resources = transform_igs_info_to_resources(
-        IGSInfo(title="title", version="-1"),
+    extracted_resource = transform_igs_extracted_resource(
         igs_resource_mapping,
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
         extracted_access_platform,
         extracted_organization_rki,
     )
-    assert extracted_resources[0].model_dump(exclude_defaults=True) == {
+    assert extracted_resource.model_dump(exclude_defaults=True) == {
         "accessPlatform": [
             "g72piPlFnLPbe8dkRoCBsx",
         ],
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "IGS_title_v-1",
+        "identifierInPrimarySource": "test_id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "publisher": [
@@ -93,12 +92,9 @@ def test_transform_igs_access_platform(
 
 def test_transformed_igs_schemas_to_variable_group(
     igs_schemas: dict[str, IGSSchema],
-    igs_info: IGSInfo,
 ) -> None:
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
-        igs_schemas,
-        {"IGS_test_title_vtest_version": MergedResourceIdentifier.generate(seed=42)},
-        igs_info,
+        igs_schemas, MergedResourceIdentifier.generate(seed=42)
     )
     expected = {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
@@ -123,15 +119,13 @@ def test_transform_igs_schemas_to_variables(
     igs_schemas: dict[str, IGSSchema],
     igs_variable_mapping: VariableMapping,
     igs_variable_pathogen_mapping: VariableMapping,
-    igs_info: IGSInfo,
 ) -> None:
     extracted_variables = transform_igs_schemas_to_variables(
         igs_schemas,
-        {"IGS_test_title_vtest_version": MergedResourceIdentifier.generate(seed=42)},
+        MergedResourceIdentifier.generate(seed=42),
         {"Pathogen": MergedVariableGroupIdentifier.generate(seed=43)},
         igs_variable_mapping,
         igs_variable_pathogen_mapping,
-        igs_info,
     )
     expected = {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
