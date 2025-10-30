@@ -20,15 +20,14 @@ from mex.common.types import (
     MergedVariableGroupIdentifier,
 )
 from mex.extractors.igs.extract import (
-    extract_igs_info,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
 )
 from mex.extractors.igs.filter import filter_creation_schemas
-from mex.extractors.igs.model import IGSInfo, IGSSchema
+from mex.extractors.igs.model import IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
-    transform_igs_info_to_resources,
+    transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
@@ -45,12 +44,6 @@ from mex.extractors.utils import load_yaml
 def igs_schemas() -> dict[str, IGSSchema]:
     """Extract from IGS schemas."""
     return extract_igs_schemas()
-
-
-@asset(group_name="igs")
-def igs_info() -> IGSInfo:
-    """Extract from IGS info."""
-    return extract_igs_info()
 
 
 @asset(group_name="igs")
@@ -88,28 +81,23 @@ def igs_extracted_contact_points_by_mail_str(
 
 
 @asset(group_name="igs")
-def igs_extracted_resource_ids_by_identifier_in_primary_source(  # noqa: PLR0913
-    igs_info: IGSInfo,
+def igs_extracted_resource_id(
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, MergedResourceIdentifier]:
+) -> MergedResourceIdentifier:
     """Transform IGS resource from IGS schemas."""
-    extracted_resources = transform_igs_info_to_resources(
-        igs_info,
+    extracted_resource = transform_igs_extracted_resource(
         ResourceMapping.model_validate(igs_resource_mapping),
         igs_extracted_contact_points_by_mail_str,
         unit_stable_target_ids_by_synonym,
         igs_extracted_access_platform,
         extracted_organization_rki,
     )
-    load(extracted_resources)
-    return {
-        resource.identifierInPrimarySource: resource.stableTargetId
-        for resource in extracted_resources
-    }
+    load([extracted_resource])
+    return extracted_resource.stableTargetId
 
 
 @asset(group_name="igs")
@@ -131,17 +119,13 @@ def igs_extracted_access_platform(
 @asset(group_name="igs")
 def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     igs_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_ids_by_identifier_in_primary_source: dict[
-        str, MergedResourceIdentifier
-    ],
-    igs_info: IGSInfo,
+    igs_extracted_resource_id: MergedResourceIdentifier,
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
     filtered_schemas = filter_creation_schemas(igs_schemas)
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
         filtered_schemas,
-        igs_extracted_resource_ids_by_identifier_in_primary_source,
-        igs_info,
+        igs_extracted_resource_id,
     )
     load(extracted_variable_groups)
     return {
@@ -153,13 +137,10 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
 @asset(group_name="igs")
 def igs_extracted_variables(
     igs_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_ids_by_identifier_in_primary_source: dict[
-        str, MergedResourceIdentifier
-    ],
+    igs_extracted_resource_id: MergedResourceIdentifier,
     igs_extracted_variable_group_ids_by_identifier_in_primary_source: dict[
         str, MergedVariableGroupIdentifier
     ],
-    igs_info: IGSInfo,
 ) -> None:
     """Transform igs schemas to extracted variables."""
     settings = Settings.get()
@@ -172,11 +153,10 @@ def igs_extracted_variables(
     load(
         transform_igs_schemas_to_variables(
             igs_schemas,
-            igs_extracted_resource_ids_by_identifier_in_primary_source,
+            igs_extracted_resource_id,
             igs_extracted_variable_group_ids_by_identifier_in_primary_source,
             variable_mapping,
             variable_pathogen_mapping,
-            igs_info,
         )
     )
 

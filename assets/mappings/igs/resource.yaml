@@ -45,7 +45,7 @@ identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - rule:
+      - setValues: "test_id"
 keyword:
   - mappingRules:
       - setValues:
