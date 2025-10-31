@@ -9,6 +9,7 @@ identifierInPrimarySource:
     mappingRules:
       - forValues:
         - Robert Koch-Institut
+        - RKI
         setValues: http://www.wikidata.org/entity/Q679041
 officialName:
   - fieldInPrimarySource:
