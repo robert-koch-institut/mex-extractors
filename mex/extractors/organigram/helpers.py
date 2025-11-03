@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from mex.common.exceptions import EmptySearchResultError
 from mex.common.organigram.extract import (
     extract_organigram_units,
@@ -13,12 +11,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.helpers import (
-    get_wikidata_organization_by_id,
-)
+from mex.extractors.wikidata.helpers import get_wikidata_organization_by_id
 
 
-@lru_cache(maxsize=1024)
 def get_unit_merged_id_by_synonym(
     synonym: str,
 ) -> MergedOrganizationalUnitIdentifier | None:

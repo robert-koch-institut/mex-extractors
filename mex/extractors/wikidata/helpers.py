@@ -33,6 +33,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     return None
 
 
+# TODO(ND): move this helper to mex-common
 @lru_cache(maxsize=1)
 def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     """Extract dict of already defined wikidata ids by labels."""
