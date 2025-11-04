@@ -1,6 +1,6 @@
 import re
-from collections.abc import Generator, Iterable
-from itertools import groupby, tee
+from collections.abc import Iterable
+from itertools import groupby
 from pathlib import PureWindowsPath
 from types import NoneType
 from typing import cast, get_args
@@ -32,6 +32,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -40,7 +41,6 @@ from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
-from mex.extractors.utils import watch_progress
 
 
 def transform_synopse_studies_into_access_platforms(
@@ -122,7 +122,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         str, ExtractedResource
     ],
     study_overviews: list[SynopseStudyOverview],
-) -> Generator[ExtractedVariable, None, None]:
+) -> list[ExtractedVariable]:
     """Transform Synopse variables to extracted variables.
 
     Args:
@@ -134,12 +134,13 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         study_overviews: list of synopse study overviews
 
     Returns:
-        Generator for ExtractedVariable
+        List of ExtractedVariable
     """
     study_by_studien_id = {study.studien_id: study for study in study_overviews}
     # groupby requires sorted iterable
     variables = sorted(variables, key=lambda x: x.synopse_id)
 
+    extracted_variables = []
     for synopse_id, levels_iter in watch_progress(
         groupby(variables, lambda x: x.synopse_id),
         "transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables",
@@ -176,21 +177,26 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         else:
             continue
 
-        yield ExtractedVariable(
-            belongsTo=belongs_to,
-            codingSystem=variable.val_instrument,
-            dataType=variable.datentyp,
-            description=(
-                Text(value=variable.originalfrage, language=TextLanguage("de"))
-                if variable.originalfrage
-                else []
-            ),
-            hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
-            identifierInPrimarySource=synopse_id,
-            label=variable.varlabel or variable.varname,
-            usedIn=used_in,
-            valueSet=sorted({level.text_dt for level in levels if level.text_dt}),
+        extracted_variables.append(
+            ExtractedVariable(
+                belongsTo=belongs_to,
+                codingSystem=variable.val_instrument,
+                dataType=variable.datentyp,
+                description=(
+                    Text(value=variable.originalfrage, language=TextLanguage("de"))
+                    if variable.originalfrage
+                    else []
+                ),
+                hadPrimarySource=get_extracted_primary_source_id_by_name(
+                    "report-server"
+                ),
+                identifierInPrimarySource=synopse_id,
+                label=variable.varlabel or variable.varname,
+                usedIn=used_in,
+                valueSet=sorted({level.text_dt for level in levels if level.text_dt}),
+            )
         )
+    return extracted_variables
 
 
 def transform_synopse_variables_to_mex_variables(
@@ -202,7 +208,7 @@ def transform_synopse_variables_to_mex_variables(
         str, ExtractedResource
     ],
     study_overviews: list[SynopseStudyOverview],
-) -> Generator[ExtractedVariable, None, None]:
+) -> list[ExtractedVariable]:
     """Transform Synopse Variable Sets to MEx datums.
 
     Args:
@@ -216,24 +222,28 @@ def transform_synopse_variables_to_mex_variables(
 
 
     Returns:
-        Generator for ExtractedVariable
+        List of ExtractedVariable
     """
     variable_group_by_thema = {
         group.identifierInPrimarySource.split("-")[0]: group
         for group in synopse_variable_groups_by_identifier_in_primary_source.values()
     }
+    all_variables = []
     for thema, variables in watch_progress(
         synopse_variables_by_thema.items(),
         "transform_synopse_variables_to_mex_variables",
     ):
         if thema not in variable_group_by_thema:
             continue
-        yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501
-            variables,
-            synopse_variable_groups_by_identifier_in_primary_source,
-            synopse_extracted_resources_by_identifier_in_primary_source,
-            study_overviews,
+        all_variables.extend(
+            transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
+                variables,
+                synopse_variable_groups_by_identifier_in_primary_source,
+                synopse_extracted_resources_by_identifier_in_primary_source,
+                study_overviews,
+            )
         )
+    return all_variables
 
 
 def transform_synopse_variables_to_mex_variable_groups(
@@ -341,7 +351,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
     )
     synopse_projects_by_study_ids = {p.studien_id: p for p in synopse_projects}
-    synopse_studies_gens = tee(synopse_studies, 2)
     description_by_study_id: dict[str, str | None] = {}
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
     title_by_study_id: dict[str, Text] = {}
@@ -350,7 +359,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         for rule in synopse_resource.rights[0].mappingRules
     }
     extracted_resources: list[ExtractedResource] = []
-    for study in synopse_studies_gens[0]:
+    for study in synopse_studies:
         if study.studien_id in synopse_projects_by_study_ids:
             project = synopse_projects_by_study_ids[study.studien_id]
         else:

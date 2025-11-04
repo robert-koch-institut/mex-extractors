@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable
 
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -144,16 +144,15 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
 
 
 def filter_out_duplicate_source_ids(
-    sources: Iterable[FFProjectsSource],
+    sources: Collection[FFProjectsSource],
 ) -> list[FFProjectsSource]:
     """Remove duplicate `lfd_nr`s from the given sources.
 
     Args:
-        sources: Iterable of FF Projects sources
+        sources: Collection of FF Projects sources
 
     Returns:
         Filtered FF Projects sources
     """
-    sources = list(sources)
     lfd_nrs = [source.lfd_nr for source in sources]
     return [source for source in sources if lfd_nrs.count(source.lfd_nr) == 1]

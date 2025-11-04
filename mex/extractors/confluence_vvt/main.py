@@ -1,4 +1,3 @@
-from itertools import tee
 from typing import Any
 
 from dagster import asset
@@ -41,11 +40,9 @@ def confluence_vvt_pages() -> list[ConfluenceVvtPage]:
     """Extract Confluence VVT sources."""
     page_ids = fetch_all_vvt_pages_ids()
     unfiltered_activities = get_page_data_by_id(page_ids)
-    return list(
-        filter_by_global_rules(
-            get_extracted_primary_source_id_by_name("confluence-vvt"),
-            unfiltered_activities,
-        )
+    return filter_by_global_rules(
+        get_extracted_primary_source_id_by_name("confluence-vvt"),
+        unfiltered_activities,
     )
 
 
@@ -78,9 +75,8 @@ def confluence_vvt_merged_person_ids_by_query_str(
     )
 
     ldap_authors = extract_confluence_vvt_authors(contacts + involved_persons)
-    ldap_author_gens = tee(ldap_authors, 2)
     mex_authors = transform_ldap_persons_with_query_to_extracted_persons(
-        ldap_author_gens[0],
+        ldap_authors,
         get_extracted_primary_source_id_by_name("ldap"),
         extracted_organizational_units,
         extracted_organization_rki,
@@ -88,7 +84,7 @@ def confluence_vvt_merged_person_ids_by_query_str(
     load(mex_authors)
 
     return get_merged_ids_by_query_string(
-        ldap_author_gens[1], get_extracted_primary_source_id_by_name("ldap")
+        ldap_authors, get_extracted_primary_source_id_by_name("ldap")
     )
 
 
@@ -102,13 +98,11 @@ def extracted_confluence_vvt_activities(
     confluence_vvt_activity_mapping: dict[str, Any],
 ) -> list[ExtractedActivity]:
     """Transform and load Confluence VVT activities."""
-    mex_activities = list(
-        transform_confluence_vvt_activities_to_extracted_activities(
-            confluence_vvt_pages,
-            ActivityMapping.model_validate(confluence_vvt_activity_mapping),
-            confluence_vvt_merged_person_ids_by_query_str,
-            unit_stable_target_ids_by_synonym,
-        )
+    mex_activities = transform_confluence_vvt_activities_to_extracted_activities(
+        confluence_vvt_pages,
+        ActivityMapping.model_validate(confluence_vvt_activity_mapping),
+        confluence_vvt_merged_person_ids_by_query_str,
+        unit_stable_target_ids_by_synonym,
     )
     load(mex_activities)
     return mex_activities

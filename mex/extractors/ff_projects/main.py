@@ -59,7 +59,7 @@ def ff_projects_person_ids_by_query_str(
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract authors for FF Projects from LDAP and group them by query."""
     ldap_primary_source_id = get_extracted_primary_source_id_by_name("ldap")
-    ff_projects_authors = list(extract_ff_project_authors(ff_projects_sources))
+    ff_projects_authors = extract_ff_project_authors(ff_projects_sources)
     extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
         ff_projects_authors,
         ldap_primary_source_id,

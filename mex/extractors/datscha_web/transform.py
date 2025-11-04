@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.models import (
     ExtractedActivity,
@@ -10,11 +10,11 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.utils import watch_progress
 
 
 def transform_datscha_web_items_to_mex_activities(
@@ -24,7 +24,7 @@ def transform_datscha_web_items_to_mex_activities(
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-) -> Generator[ExtractedActivity, None, None]:
+) -> list[ExtractedActivity]:
     """Transform datscha-web items to extracted activities.
 
     Args:
@@ -37,8 +37,9 @@ def transform_datscha_web_items_to_mex_activities(
                                                          to org stable target IDs
 
     Returns:
-        Generator for ExtractedSources
+        List of ExtractedSources
     """
+    activities = []
     for datscha_web_item in watch_progress(
         datscha_web_items, "transform_datscha_web_items_to_mex_activities"
     ):
@@ -86,15 +87,18 @@ def transform_datscha_web_items_to_mex_activities(
                         )
                     )
 
-        yield ExtractedActivity(
-            abstract=datscha_web_item.kurzbeschreibung,
-            activityType="https://mex.rki.de/item/activity-type-6",
-            contact=contact,
-            externalAssociate=external_associate,
-            hadPrimarySource=get_extracted_primary_source_id_by_name("datscha-web"),
-            identifierInPrimarySource=str(datscha_web_item.item_id),
-            involvedPerson=involved_person,
-            involvedUnit=involved_unit,
-            responsibleUnit=responsible_unit,
-            title=datscha_web_item.bezeichnung_der_verarbeitungstaetigkeit,
+        activities.append(
+            ExtractedActivity(
+                abstract=datscha_web_item.kurzbeschreibung,
+                activityType="https://mex.rki.de/item/activity-type-6",
+                contact=contact,
+                externalAssociate=external_associate,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("datscha-web"),
+                identifierInPrimarySource=str(datscha_web_item.item_id),
+                involvedPerson=involved_person,
+                involvedUnit=involved_unit,
+                responsibleUnit=responsible_unit,
+                title=datscha_web_item.bezeichnung_der_verarbeitungstaetigkeit,
+            )
         )
+    return activities

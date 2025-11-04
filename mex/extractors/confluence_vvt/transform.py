@@ -85,7 +85,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
             return None
     responsible_unit_merged_ids = list(
         {
-            unit_id
+            unit_id: None
             for oe in responsible_unit_strings
             if (unit_id := unit_merged_ids_by_synonym.get(oe))
         }

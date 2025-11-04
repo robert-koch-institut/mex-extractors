@@ -36,12 +36,10 @@ class Settings(BaseSettings):
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
-
     all_checks_path: AssetsPath = Field(
         AssetsPath("checks/__final__"),
         description="Path to the directory with checks config for each extractor.",
     )
-
     skip_extractors: list[str] = Field(
         [],
         description="Skip execution of these extractors in dagster",
@@ -56,6 +54,10 @@ class Settings(BaseSettings):
         HttpUrl("http://localhost:8081/"),
         description="MEx drop API url.",
         validation_alias="MEX_DROP_API_URL",
+    )
+    log_frequency: int = Field(
+        10000,
+        description="Frequency with which progress will be defaulted for most actions.",
     )
     schedule: str = Field(
         "0 0 * * *",

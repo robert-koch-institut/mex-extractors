@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.models import (
     ActivityMapping,
@@ -12,11 +12,11 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.blueant.models.source import BlueAntSource
+from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.utils import watch_progress
 
 
 def transform_blueant_sources_to_extracted_activities(
@@ -27,7 +27,7 @@ def transform_blueant_sources_to_extracted_activities(
     blueant_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-) -> Generator[ExtractedActivity, None, None]:
+) -> list[ExtractedActivity]:
     """Transform Blue Ant sources to ExtractedActivities.
 
     Args:
@@ -41,7 +41,7 @@ def transform_blueant_sources_to_extracted_activities(
                                                          dict
 
     Returns:
-        Generator for ExtractedActivity instances
+        List of ExtractedActivity instances
     """
     activity_type_values_by_type_id = {
         for_value: mapping_rule.setValues
@@ -49,6 +49,7 @@ def transform_blueant_sources_to_extracted_activities(
         if mapping_rule.forValues
         for for_value in mapping_rule.forValues
     }
+    activities = []
     for source in watch_progress(
         blueant_sources, "transform_blueant_sources_to_extracted_activities"
     ):
@@ -92,16 +93,19 @@ def transform_blueant_sources_to_extracted_activities(
         else:
             title = []
 
-        yield ExtractedActivity(
-            start=source.start,
-            activityType=activity_type,
-            contact=contact,
-            involvedPerson=person_stable_target_ids_by_employee_id.get(
-                source.projectLeaderEmployeeId  # type: ignore[arg-type]
-            ),
-            hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
-            responsibleUnit=department_id,
-            funderOrCommissioner=funder_or_commissioner,
-            title=title or [],
-            identifierInPrimarySource=source.number,
+        activities.append(
+            ExtractedActivity(
+                start=source.start,
+                activityType=activity_type,
+                contact=contact,
+                involvedPerson=person_stable_target_ids_by_employee_id.get(
+                    source.projectLeaderEmployeeId  # type: ignore[arg-type]
+                ),
+                hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
+                responsibleUnit=department_id,
+                funderOrCommissioner=funder_or_commissioner,
+                title=title or [],
+                identifierInPrimarySource=source.number,
+            )
         )
+    return activities

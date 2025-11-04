@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from urllib.parse import urljoin
 
 from mex.common.exceptions import MExError
@@ -10,10 +10,9 @@ from mex.common.models import ActivityMapping
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 from mex.extractors.settings import Settings
-from mex.extractors.utils import watch_progress
 
 
-def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
+def fetch_all_vvt_pages_ids() -> list[str]:
     """Fetch all the ids for data pages.
 
     Settings:
@@ -24,13 +23,14 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         MExError: When the pagination limit is exceeded
 
     Returns:
-        Generator for page IDs
+        List of page IDs
     """
     connector = ConfluenceVvtConnector.get()
     settings = Settings.get()
 
+    page_ids: list[str] = []
     limit = 100
-    for start in watch_progress(range(0, 10**6, limit), "fetch_all_vvt_pages_ids"):
+    for start in range(0, 10**6, limit):
         response = connector.session.get(
             urljoin(
                 settings.confluence_vvt.url,
@@ -42,42 +42,39 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         results = response.json()["results"]
         if not results:
             break
-        for item in results:
-            yield item["id"]
+        page_ids.extend(item["id"] for item in results)
     else:
         msg = "Pagination limit reached to fetch all data pages list"
         raise MExError(msg)
+    return page_ids
 
 
-def get_page_data_by_id(
-    page_ids: Iterable[str],
-) -> Generator[ConfluenceVvtPage, None, None]:
+def get_page_data_by_id(page_ids: Iterable[str]) -> list[ConfluenceVvtPage]:
     """Get confluence page data by its id.
 
     Args:
         page_ids: list of confluence page ids
 
     Returns:
-        Generator of ConfluenceVvtPage
+        List of ConfluenceVvtPage
     """
     connector = ConfluenceVvtConnector.get()
-    for page_id in watch_progress(page_ids, "get_page_data_by_id"):
+    pages = []
+    for page_id in page_ids:
         page_data = connector.get_page_by_id(page_id)
-        if not page_data:
-            continue
-        yield page_data
+        if page_data:
+            pages.append(page_data)
+    return pages
 
 
-def extract_confluence_vvt_authors(
-    authors: list[str],
-) -> list[LDAPPersonWithQuery]:
+def extract_confluence_vvt_authors(authors: Iterable[str]) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons with their query string for confluence-vvt authors.
 
     Args:
         authors: list of authors
 
     Returns:
-        Generator for LDAP persons with query
+        List of LDAP persons with query
     """
     ldap = LDAPConnector.get()
     seen = set()
@@ -145,7 +142,7 @@ def get_involved_persons_from_page(
 
 
 def get_all_persons_from_all_pages(
-    pages: list[ConfluenceVvtPage],
+    pages: Iterable[ConfluenceVvtPage],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> list[str]:
     """Get a list of all persons from all confluence pages.
@@ -228,7 +225,7 @@ def get_involved_units_from_page(
 
 
 def get_all_units_from_all_pages(
-    pages: list[ConfluenceVvtPage],
+    pages: Iterable[ConfluenceVvtPage],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> list[str]:
     """Get a list of all units from all confluence pages.
