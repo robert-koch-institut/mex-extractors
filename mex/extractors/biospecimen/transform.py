@@ -1,7 +1,6 @@
 from collections.abc import Generator, Iterable
 from typing import cast
 
-from mex.common.logging import watch
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -21,9 +20,9 @@ from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+from mex.extractors.utils import watch_progress
 
 
-@watch()
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -59,7 +58,9 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         for rule in resource_mapping.accessRestriction[0].mappingRules
         if rule.forValues and rule.setValues
     }
-    for resource in biospecimen_resources:
+    for resource in watch_progress(
+        biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
+    ):
         if resource.anonymisiert_pseudonymisiert:
             anonymization_pseudonymization = AnonymizationPseudonymization.find(
                 resource.anonymisiert_pseudonymisiert

@@ -4,7 +4,6 @@ from mex.common.extract import parse_csv
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.models import AccessPlatformMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.settings import Settings
@@ -12,6 +11,7 @@ from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -37,7 +37,6 @@ def extract_variables() -> list[SynopseVariable]:
     )
 
 
-@watch()
 def extract_study_data() -> Generator[SynopseStudy, None, None]:
     """Extract study data from `metadaten_zu_datensaetzen` report.
 
@@ -49,12 +48,14 @@ def extract_study_data() -> Generator[SynopseStudy, None, None]:
         Generator for Synopse Studies
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=","
+    yield from watch_progress(
+        parse_csv(
+            settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=","
+        ),
+        "extract_study_data",
     )
 
 
-@watch()
 def extract_projects() -> Generator[SynopseProject, None, None]:
     """Extract projects from `projekt_und_studienverwaltung` report.
 
@@ -66,14 +67,16 @@ def extract_projects() -> Generator[SynopseProject, None, None]:
         Generator for Synopse Projects
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.projekt_und_studienverwaltung_path,
-        SynopseProject,
-        delimiter=",",
+    yield from watch_progress(
+        parse_csv(
+            settings.synopse.projekt_und_studienverwaltung_path,
+            SynopseProject,
+            delimiter=",",
+        ),
+        "extract_projects",
     )
 
 
-@watch()
 def extract_synopse_project_contributors(
     synopse_projects: Iterable[SynopseProject],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -87,7 +90,9 @@ def extract_synopse_project_contributors(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for project in synopse_projects:
+    for project in watch_progress(
+        synopse_projects, "extract_synopse_project_contributors"
+    ):
         names = project.beitragende
         if names is None or "nicht mehr im RKI" in names or names in seen:
             continue
@@ -124,7 +129,6 @@ def extract_synopse_contact(
     ]
 
 
-@watch()
 def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
     """Extract projects from `datensatzuebersicht` report.
 
@@ -136,10 +140,13 @@ def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
         Generator for Synopse Overviews
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.datensatzuebersicht_path,
-        SynopseStudyOverview,
-        delimiter=",",
+    yield from watch_progress(
+        parse_csv(
+            settings.synopse.datensatzuebersicht_path,
+            SynopseStudyOverview,
+            delimiter=",",
+        ),
+        "extract_study_overviews",
     )
 
 

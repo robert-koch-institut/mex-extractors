@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `watch_progress` function to track progress of iterables in for loops
+
 ### Changes
+
+- replace `@watch` decorator with `watch_progress` function calls across all extractors
 
 ### Deprecated
 

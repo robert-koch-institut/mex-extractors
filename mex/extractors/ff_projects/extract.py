@@ -9,7 +9,6 @@ import pandas as pd
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TemporalEntity,
@@ -17,12 +16,12 @@ from mex.common.types import (
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
 def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
     """Extract FF Projects sources by loading data from MS-Excel file.
 
@@ -39,7 +38,9 @@ def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
         keep_default_na=False,
         parse_dates=True,
     )
-    for row in ff_projects_excel.iterrows():
+    for row in watch_progress(
+        ff_projects_excel.iterrows(), "extract_ff_projects_sources"
+    ):
         if source := extract_ff_projects_source(row[1]):
             yield source
 
@@ -151,7 +152,6 @@ def get_clean_names(name: str) -> str:
     return name.strip()
 
 
-@watch()
 def extract_ff_project_authors(
     ff_projects_sources: Iterable[FFProjectsSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -165,7 +165,7 @@ def extract_ff_project_authors(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in ff_projects_sources:
+    for source in watch_progress(ff_projects_sources, "extract_ff_project_authors"):
         names = source.projektleiter
         if not names:
             continue

@@ -8,7 +8,7 @@ import pandas as pd
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import logger, watch
+from mex.common.logging import logger
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TemporalEntity,
@@ -19,6 +19,7 @@ from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -116,7 +117,6 @@ def extract_international_projects_source(
     )
 
 
-@watch()
 def extract_international_projects_project_leaders(
     international_projects_sources: Iterable[InternationalProjectsSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -130,7 +130,9 @@ def extract_international_projects_project_leaders(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in international_projects_sources:
+    for source in watch_progress(
+        international_projects_sources, "extract_international_projects_project_leaders"
+    ):
         names = source.get_project_lead_persons()
         if not names:
             continue

@@ -1,6 +1,5 @@
 from collections.abc import Generator, Iterable
 
-from mex.common.logging import watch
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -33,6 +32,7 @@ from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+from mex.extractors.utils import watch_progress
 
 
 def get_contact_merged_ids_by_emails(
@@ -239,7 +239,6 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     )
 
 
-@watch()
 def transform_nokeda_aux_variable_to_mex_variable_group(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     mex_resource_nokeda: ExtractedResource,
@@ -255,7 +254,9 @@ def transform_nokeda_aux_variable_to_mex_variable_group(
     """
     contained_by = mex_resource_nokeda.stableTargetId
     used_identifier_in_primary_source = set()
-    for variable in extracted_cc2_aux_model:
+    for variable in watch_progress(
+        extracted_cc2_aux_model, "transform_nokeda_aux_variable_to_mex_variable_group"
+    ):
         identifier_in_primary_source = variable.domain
         if identifier_in_primary_source not in used_identifier_in_primary_source:
             used_identifier_in_primary_source.add(identifier_in_primary_source)
@@ -271,7 +272,6 @@ def transform_nokeda_aux_variable_to_mex_variable_group(
             )
 
 
-@watch()
 def transform_model_nokeda_variable_to_mex_variable_group(
     extracted_cc1_data_model_nokeda: Iterable[Cc1DataModelNoKeda],
     mex_resource_nokeda: ExtractedResource,
@@ -287,7 +287,10 @@ def transform_model_nokeda_variable_to_mex_variable_group(
     """
     contained_by = mex_resource_nokeda.stableTargetId
     used_identifier_in_primary_source = set()
-    for variable in extracted_cc1_data_model_nokeda:
+    for variable in watch_progress(
+        extracted_cc1_data_model_nokeda,
+        "transform_model_nokeda_variable_to_mex_variable_group",
+    ):
         identifier_in_primary_source = variable.domain_en
         if identifier_in_primary_source not in used_identifier_in_primary_source:
             used_identifier_in_primary_source.add(identifier_in_primary_source)
@@ -302,7 +305,6 @@ def transform_model_nokeda_variable_to_mex_variable_group(
             )
 
 
-@watch()
 def transform_feat_variable_to_mex_variable_group(
     sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     mex_resource_feat: ExtractedResource,
@@ -318,7 +320,10 @@ def transform_feat_variable_to_mex_variable_group(
     """
     contained_by = mex_resource_feat.stableTargetId
     used_identifier_in_primary_source = set()
-    for variable in sumo_extracted_cc2_feat_projection:
+    for variable in watch_progress(
+        sumo_extracted_cc2_feat_projection,
+        "transform_feat_variable_to_mex_variable_group",
+    ):
         identifier_in_primary_source = (
             f"{variable.feature_domain} {variable.feature_subdomain}"
         )
@@ -332,7 +337,6 @@ def transform_feat_variable_to_mex_variable_group(
             )
 
 
-@watch()
 def transform_nokeda_model_variable_to_mex_variable(
     extracted_cc1_data_model_nokeda: Iterable[Cc1DataModelNoKeda],
     extracted_cc1_data_valuesets: Iterable[Cc1DataValuesets],
@@ -358,7 +362,10 @@ def transform_nokeda_model_variable_to_mex_variable(
         if label.language == TextLanguage.DE
     }
     value_sets = list(extracted_cc1_data_valuesets)
-    for variable in extracted_cc1_data_model_nokeda:
+    for variable in watch_progress(
+        extracted_cc1_data_model_nokeda,
+        "transform_nokeda_model_variable_to_mex_variable",
+    ):
         value_set = [
             f"{v.category_label_de},{v.category_label_en or ''}"
             for v in value_sets
@@ -382,7 +389,6 @@ def transform_nokeda_model_variable_to_mex_variable(
         )
 
 
-@watch()
 def transform_nokeda_aux_variable_to_mex_variable(
     extracted_cc2_aux_model: Iterable[Cc2AuxModel],
     extracted_cc2_aux_mapping: Iterable[Cc2AuxMapping],
@@ -416,7 +422,9 @@ def transform_nokeda_aux_variable_to_mex_variable(
         for column in mappings
     }
 
-    for variable in extracted_cc2_aux_model:
+    for variable in watch_progress(
+        extracted_cc2_aux_model, "transform_nokeda_aux_variable_to_mex_variable"
+    ):
         value_set = dict.fromkeys(
             value_set_by_sheet_and_variable_name[
                 f"{variable.depends_on_nokeda_variable}_{variable.variable_name}"
@@ -437,7 +445,6 @@ def transform_nokeda_aux_variable_to_mex_variable(
         )
 
 
-@watch()
 def transform_feat_projection_variable_to_mex_variable(
     sumo_extracted_cc2_feat_projection: Iterable[Cc2FeatProjection],
     mex_variable_groups_feat: Iterable[ExtractedVariableGroup],
@@ -457,7 +464,10 @@ def transform_feat_projection_variable_to_mex_variable(
     stable_target_id_by_label_values = {
         m.label[0].value: m.stableTargetId for m in mex_variable_groups_feat
     }
-    for variable in sumo_extracted_cc2_feat_projection:
+    for variable in watch_progress(
+        sumo_extracted_cc2_feat_projection,
+        "transform_feat_projection_variable_to_mex_variable",
+    ):
         yield ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[
                 f"{variable.feature_domain} {variable.feature_subdomain}" or ""

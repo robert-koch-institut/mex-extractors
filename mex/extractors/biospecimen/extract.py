@@ -8,16 +8,15 @@ from pandas import DataFrame, ExcelFile, Series
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
 def extract_biospecimen_contacts_by_email(
     biospecimen_resource: Iterable[BiospecimenResource],
 ) -> Generator[LDAPPerson, None, None]:
@@ -31,7 +30,9 @@ def extract_biospecimen_contacts_by_email(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for resource in biospecimen_resource:
+    for resource in watch_progress(
+        biospecimen_resource, "extract_biospecimen_contacts_by_email"
+    ):
         for kontakt in resource.kontakt:
             if kontakt in seen:
                 continue
@@ -65,7 +66,6 @@ def extract_biospecimen_organizations(
     }
 
 
-@watch()
 def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None]:
     """Extract Biospecimen resources by loading data from MS-Excel file.
 
@@ -77,7 +77,10 @@ def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None
         Generator for Biospecimen resources
     """
     settings = Settings.get()
-    for file in Path(settings.biospecimen.raw_data_path).glob("*.xlsx"):
+    for file in watch_progress(
+        Path(settings.biospecimen.raw_data_path).glob("*.xlsx"),
+        "extract_biospecimen_resources",
+    ):
         xls = ExcelFile(file)
         sheets = xls.book.worksheets
         for sheet in sheets:

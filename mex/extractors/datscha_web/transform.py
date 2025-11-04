@@ -1,6 +1,5 @@
 from collections.abc import Generator, Iterable
 
-from mex.common.logging import watch
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -15,9 +14,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import watch_progress
 
 
-@watch()
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
@@ -40,7 +39,9 @@ def transform_datscha_web_items_to_mex_activities(
     Returns:
         Generator for ExtractedSources
     """
-    for datscha_web_item in datscha_web_items:
+    for datscha_web_item in watch_progress(
+        datscha_web_items, "transform_datscha_web_items_to_mex_activities"
+    ):
         # lookup units
         involved_unit = (
             unit_stable_target_ids_by_synonym.get(unit_name)

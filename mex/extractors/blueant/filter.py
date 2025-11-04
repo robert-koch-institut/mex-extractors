@@ -1,6 +1,5 @@
 from collections.abc import Generator, Iterable
 
-from mex.common.logging import watch
 from mex.common.utils import contains_any
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import log_filter
@@ -8,9 +7,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 
 
-@watch()
 def filter_and_log_blueant_sources(
     sources: Iterable[BlueAntSource],
 ) -> Generator[BlueAntSource, None, None]:
@@ -22,7 +21,7 @@ def filter_and_log_blueant_sources(
     Returns:
         Generator for Blue Ant sources
     """
-    for source in sources:
+    for source in watch_progress(sources, "filter_and_log_blueant_sources"):
         if filter_and_log_blueant_source(source):
             yield source
 

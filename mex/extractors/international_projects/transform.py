@@ -1,7 +1,6 @@
 from collections.abc import Generator, Iterable
 from typing import cast
 
-from mex.common.logging import watch
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
@@ -24,6 +23,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import watch_progress
 
 
 def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0913
@@ -145,7 +145,6 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     )
 
 
-@watch()
 def transform_international_projects_sources_to_extracted_activities(  # noqa: PLR0913
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
@@ -173,7 +172,10 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
     Returns:
         Generator for ExtractedActivity instances
     """
-    for source in international_projects_sources:
+    for source in watch_progress(
+        international_projects_sources,
+        "transform_international_projects_sources_to_extracted_activities",
+    ):
         if activity := transform_international_projects_source_to_extracted_activity(
             source,
             international_projects_activity,

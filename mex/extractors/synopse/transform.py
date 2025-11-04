@@ -7,7 +7,6 @@ from typing import cast, get_args
 
 from pydantic import ValidationError
 
-from mex.common.logging import watch
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -41,6 +40,7 @@ from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
 from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.utils import watch_progress
 
 
 def transform_synopse_studies_into_access_platforms(
@@ -113,7 +113,6 @@ def transform_overviews_to_resource_lookup(
     return synopse_extracted_resources_by_identifier_in_primary_source
 
 
-@watch()
 def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
     variables: Iterable[SynopseVariable],
     synopse_variable_groups_by_identifier_in_primary_source: dict[
@@ -141,7 +140,10 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     # groupby requires sorted iterable
     variables = sorted(variables, key=lambda x: x.synopse_id)
 
-    for synopse_id, levels_iter in groupby(variables, lambda x: x.synopse_id):
+    for synopse_id, levels_iter in watch_progress(
+        groupby(variables, lambda x: x.synopse_id),
+        "transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables",
+    ):
         levels = list(levels_iter)
         variable = levels[0]
         if str(variable.studie_id) in study_by_studien_id:
@@ -191,7 +193,6 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         )
 
 
-@watch()
 def transform_synopse_variables_to_mex_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     synopse_variable_groups_by_identifier_in_primary_source: dict[
@@ -221,7 +222,10 @@ def transform_synopse_variables_to_mex_variables(
         group.identifierInPrimarySource.split("-")[0]: group
         for group in synopse_variable_groups_by_identifier_in_primary_source.values()
     }
-    for thema, variables in synopse_variables_by_thema.items():
+    for thema, variables in watch_progress(
+        synopse_variables_by_thema.items(),
+        "transform_synopse_variables_to_mex_variables",
+    ):
         if thema not in variable_group_by_thema:
             continue
         yield from transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(  # noqa: E501

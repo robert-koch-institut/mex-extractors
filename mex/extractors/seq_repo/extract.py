@@ -3,9 +3,9 @@ from collections.abc import Generator
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
-from mex.common.logging import watch
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.model import SeqRepoSource
+from mex.extractors.utils import watch_progress
 
 
 def extract_sources() -> Generator[SeqRepoSource, None, None]:
@@ -24,7 +24,6 @@ def extract_sources() -> Generator[SeqRepoSource, None, None]:
         yield SeqRepoSource.model_validate(item)
 
 
-@watch()
 def extract_source_project_coordinator(
     seq_repo_sources: dict[str, SeqRepoSource],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -38,7 +37,9 @@ def extract_source_project_coordinator(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for value in seq_repo_sources.values():
+    for value in watch_progress(
+        seq_repo_sources.values(), "extract_source_project_coordinator"
+    ):
         names = value.project_coordinators
         for name in names:
             if name in seen:

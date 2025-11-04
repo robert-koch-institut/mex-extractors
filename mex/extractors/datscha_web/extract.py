@@ -3,16 +3,15 @@ from collections.abc import Generator, Iterable
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.datscha_web.connector import DatschaWebConnector
 from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
 def extract_datscha_web_items() -> Generator[DatschaWebItem, None, None]:
     """Load datscha source items by scraping datscha-web pages.
 
@@ -20,12 +19,13 @@ def extract_datscha_web_items() -> Generator[DatschaWebItem, None, None]:
         Generator for datscha web items
     """
     connector = DatschaWebConnector.get()
-    for item_url in connector.get_item_urls():
+    for item_url in watch_progress(
+        connector.get_item_urls(), "extract_datscha_web_items"
+    ):
         item = connector.get_item(item_url)
         yield item
 
 
-@watch()
 def extract_datscha_web_source_contacts(
     datscha_web_items: Iterable[DatschaWebItem],
 ) -> Generator[LDAPPersonWithQuery, None, None]:
@@ -39,7 +39,9 @@ def extract_datscha_web_source_contacts(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in datscha_web_items:
+    for source in watch_progress(
+        datscha_web_items, "extract_datscha_web_source_contacts"
+    ):
         names = source.auskunftsperson
         if not names:
             continue

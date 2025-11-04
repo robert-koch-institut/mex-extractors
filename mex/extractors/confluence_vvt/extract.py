@@ -5,14 +5,14 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import logger, watch
+from mex.common.logging import logger
 from mex.common.models import ActivityMapping
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 
 
-@watch()
 def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
     """Fetch all the ids for data pages.
 
@@ -30,7 +30,7 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
     settings = Settings.get()
 
     limit = 100
-    for start in range(0, 10**6, limit):
+    for start in watch_progress(range(0, 10**6, limit), "fetch_all_vvt_pages_ids"):
         response = connector.session.get(
             urljoin(
                 settings.confluence_vvt.url,
@@ -49,7 +49,6 @@ def fetch_all_vvt_pages_ids() -> Generator[str, None, None]:
         raise MExError(msg)
 
 
-@watch()
 def get_page_data_by_id(
     page_ids: Iterable[str],
 ) -> Generator[ConfluenceVvtPage, None, None]:
@@ -62,7 +61,7 @@ def get_page_data_by_id(
         Generator of ConfluenceVvtPage
     """
     connector = ConfluenceVvtConnector.get()
-    for page_id in page_ids:
+    for page_id in watch_progress(page_ids, "get_page_data_by_id"):
         page_data = connector.get_page_by_id(page_id)
         if not page_data:
             continue

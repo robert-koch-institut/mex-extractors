@@ -1,10 +1,14 @@
+from collections.abc import Generator, Iterable
 from os import PathLike
 from pathlib import Path
 from typing import Any, TypeVar, cast
 
 import yaml
 
+from mex.common.logging import logger
+
 T = TypeVar("T")
+_YieldT = TypeVar("_YieldT")
 
 
 # TODO(ND): move to mex.common.utils
@@ -21,3 +25,22 @@ def load_yaml(path: PathLike[str]) -> dict[str, Any]:
     """Load the contents of a YAML file from the given path and return as a dict."""
     with Path(path).open(encoding="utf-8") as fh:
         return cast("dict[str, Any]", yaml.safe_load(fh))
+
+
+def watch_progress(
+    iterable: Iterable[_YieldT],
+    name: str,
+) -> Generator[_YieldT, None, None]:
+    """Log the progress of an iterable at regular intervals.
+
+    Args:
+        iterable: The iterable to track
+        name: Descriptive name for the operation
+
+    Yields:
+        Items from the original iterable
+    """
+    for i, item in enumerate(iterable):
+        if i % 10000 == 0:
+            logger.info("%s - %s - %s", i, name, item)
+        yield item

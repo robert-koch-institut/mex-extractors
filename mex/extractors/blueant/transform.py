@@ -1,7 +1,6 @@
 import re
 from collections.abc import Generator, Iterable
 
-from mex.common.logging import watch
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
@@ -17,9 +16,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import watch_progress
 
 
-@watch()
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
@@ -50,7 +49,9 @@ def transform_blueant_sources_to_extracted_activities(
         if mapping_rule.forValues
         for for_value in mapping_rule.forValues
     }
-    for source in blueant_sources:
+    for source in watch_progress(
+        blueant_sources, "transform_blueant_sources_to_extracted_activities"
+    ):
         # find source type
         activity_type = activity_type_values_by_type_id.get(source.type_, [])
         funder_or_commissioner: list[MergedOrganizationIdentifier] = []

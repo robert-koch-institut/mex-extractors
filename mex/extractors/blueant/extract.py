@@ -3,17 +3,16 @@ from collections.abc import Generator, Iterable
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.settings import Settings
+from mex.extractors.utils import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
 def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
     """Load Blue Ant sources from Blue Ant API.
 
@@ -25,7 +24,7 @@ def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
     persons = connector.get_persons()
     blueant_id_to_employee_id_map = {p.id: p.personnelNumber for p in persons}
 
-    for source in connector.get_projects():
+    for source in watch_progress(connector.get_projects(), "extract_blueant_sources"):
         department = connector.get_department_name(source.departmentId)
         type_ = connector.get_type_description(source.typeId)
         status = connector.get_status_name(source.statusId)
@@ -49,7 +48,6 @@ def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
         )
 
 
-@watch()
 def extract_blueant_project_leaders(
     blueant_sources: Iterable[BlueAntSource],
 ) -> Generator[LDAPPerson, None, None]:
@@ -63,7 +61,7 @@ def extract_blueant_project_leaders(
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in blueant_sources:
+    for source in watch_progress(blueant_sources, "extract_blueant_project_leaders"):
         employee_id = source.projectLeaderEmployeeId
         if not employee_id:
             continue
