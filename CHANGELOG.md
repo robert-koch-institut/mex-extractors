@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
+- replace generator functions with list-returning functions for dagster compatibility
 
 ### Deprecated
 
@@ -32,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.0] - 2025-10-30
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - implement igs resource mapping update
 
 ## [1.4.0] - 2025-10-28
