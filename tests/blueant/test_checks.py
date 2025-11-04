@@ -11,8 +11,8 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
-    fail_if_item_count_is_x_items_less_than,
     check_x_items_more_passed,
+    fail_if_item_count_is_x_items_less_than,
 )
 
 
@@ -25,7 +25,7 @@ from mex.extractors.pipeline.checks.main import (
         "current_count",
         "expected_passed",
     ),
-   [
+    [
         pytest.param(
             True,
             5,
@@ -73,7 +73,6 @@ from mex.extractors.pipeline.checks.main import (
             id="yaml_not_found_should_pass",
         ),
     ],
-
 )
 def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
@@ -143,7 +142,7 @@ def test_check_x_items_more_passed_parametrized(  # noqa: PLR0913
 
 
 @pytest.mark.parametrize(
-     (
+    (
         "yaml_exists",
         "rule_threshold",
         "time_frame_str",

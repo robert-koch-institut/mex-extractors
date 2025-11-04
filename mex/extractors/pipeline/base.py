@@ -140,7 +140,9 @@ def create_asset_check_less_than(
             fail_if_item_count_is_x_items_less_than,
         )
 
-        passed = fail_if_item_count_is_x_items_less_than(context, asset_key, group_name, entity_name)
+        passed = fail_if_item_count_is_x_items_less_than(
+            context, asset_key, group_name, entity_name
+        )
         return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
 
     return check_x_items_less_than

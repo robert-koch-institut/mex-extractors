@@ -11,8 +11,8 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
-    fail_if_item_count_is_x_items_less_than,
     check_x_items_more_passed,
+    fail_if_item_count_is_x_items_less_than,
 )
 
 
