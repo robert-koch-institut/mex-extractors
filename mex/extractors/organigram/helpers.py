@@ -25,7 +25,6 @@ def get_unit_merged_id_by_synonym(
     """Search a merged organizational unit id by synonym.
 
     Args:
-        extracted_units: list of extracted units
         synonym: synonym of organizational unit
 
     Returns:
