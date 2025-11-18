@@ -35,6 +35,11 @@ test:
 	@ echo running all tests; \
 	pdm run pytest --numprocesses=auto --dist=worksteal; \
 
+requires_rki_infrastructure:
+	# run the tests marked with requires_rki_infrastructure
+	@ echo running tests marked with requires_rki_infrastructure
+	pdm run pytest -m 'requires_rki_infrastructure'
+
 wheel:
 	# build the python package
 	@ echo building wheel; \
