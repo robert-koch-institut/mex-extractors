@@ -53,7 +53,7 @@ def _get_messages() -> Any:  # noqa: ANN401
     ).json()
 
 
-@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.requires_rki_infrastructure  # disabled on gh cli due to missing mailpit, stopgap MX-1993
 def test_consent_mailer_send_emails() -> None:
     _delete_messages()
     persons = [
@@ -84,7 +84,7 @@ def test_consent_mailer_send_emails() -> None:
     )
 
 
-@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.requires_rki_infrastructure  # disabled on gh cli due to missing mailpit, stopgap MX-1993
 def test_send_consent_no_emails_for_no_rki_persons() -> None:
     _delete_messages()
 

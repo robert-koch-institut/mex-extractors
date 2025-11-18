@@ -26,6 +26,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      mailpit:
+        image: axllent/mailpit
+        ports:
+          - 1025:1025
+        env:
+          MP_SMTP_AUTH_ACCEPT_ANY: 1
+          MP_UI_AUTH: "user:password"
+          MP_MAX_AGE: "180d"
+          MP_WEBROOT: "mailpit"
+          MP_ENABLE_PROMETHEUS: "true"
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
@@ -61,4 +73,4 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make unit
+        run: make test

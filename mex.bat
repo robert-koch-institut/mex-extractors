@@ -39,7 +39,7 @@ exit /b %errorlevel%
 :unit
 @REM run the test suite with all unit tests
 echo running unit tests
-pdm run pytest -m "not integration"
+pdm run pytest -m "not integration and not requires_rki_infrastructure"
 exit /b %errorlevel%
 
 
