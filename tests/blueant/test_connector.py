@@ -60,8 +60,7 @@ def test_initialization() -> None:
 def test_get_projects() -> None:
     connector = BlueAntConnector.get()
     blueant_projects = connector.get_projects()
-    first_project = next(blueant_projects)
-    assert first_project.model_fields_set == BlueAntProject.model_fields.keys()
+    assert blueant_projects[0].model_fields_set == BlueAntProject.model_fields.keys()
 
 
 def test_get_projects_mocked(mocked_blueant: BlueAntConnector) -> None:
