@@ -1,13 +1,13 @@
 {
   "checkout": null,
-  "commit": "6009e248d0af40a236c73776716f077c9a9cc313",
+  "commit": "a67c7163c76384de4f85913f0f6045a41dcd0735",
   "context": {
     "cookiecutter": {
       "project_name": "extractors",
       "short_summary": "ETL pipelines for the RKI Metadata Exchange.",
       "long_summary": "The `mex-extractors` package implements a variety of ETL pipelines to **extract** metadata from primary data sources using a range of different technologies and protocols. Then, we **transform** the metadata into a standardized format using models provided by `mex-common`. The last step in this process is to **load** the harmonized metadata into a sink (file output, API upload, etc).",
       "_template": "https://github.com/robert-koch-institut/mex-template",
-      "_commit": "6009e248d0af40a236c73776716f077c9a9cc313"
+      "_commit": "a67c7163c76384de4f85913f0f6045a41dcd0735"
     }
   },
   "directory": null,
