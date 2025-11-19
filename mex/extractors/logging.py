@@ -1,5 +1,11 @@
+from collections.abc import Generator, Iterable, Sized
+from typing import TypeVar
+
 from mex.common.logging import logger
 from mex.common.types import MergedPrimarySourceIdentifier
+from mex.extractors.settings import Settings
+
+T = TypeVar("T")
 
 
 def log_filter(
@@ -22,3 +28,28 @@ def log_filter(
         primary_source_id,
         identifier_in_primary_source,
     )
+
+
+def watch_progress(
+    iterable: Iterable[T],
+    description: str,
+) -> Generator[T, None, None]:
+    """Log the progress of an iterable at regular intervals.
+
+    Args:
+        iterable: The iterable to track
+        description: Description for the operation
+
+    Yields:
+        Items from the original iterable
+    """
+    if isinstance(iterable, Sized):
+        total = f"/{len(iterable)}"
+    else:
+        total = ""
+    settings = Settings.get()
+    for index, item in enumerate(iterable, start=1):
+        if index % settings.log_frequency == 0:
+            logger.info("%s: %s%s", description, index, total)
+        yield item
+    logger.info("%s: done", description)

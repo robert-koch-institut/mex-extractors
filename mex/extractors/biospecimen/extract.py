@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -8,42 +8,45 @@ from pandas import DataFrame, ExcelFile, Series
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
+from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
 def extract_biospecimen_contacts_by_email(
     biospecimen_resource: Iterable[BiospecimenResource],
-) -> Generator[LDAPPerson, None, None]:
+) -> list[LDAPPerson]:
     """Extract LDAP persons for Biospecimen contacts.
 
     Args:
         biospecimen_resource: Biospecimen resources
 
     Returns:
-        Generator for LDAP persons
+        List of LDAP persons
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for resource in biospecimen_resource:
+    persons = []
+    for resource in watch_progress(
+        biospecimen_resource, "extract_biospecimen_contacts_by_email"
+    ):
         for kontakt in resource.kontakt:
             if kontakt in seen:
                 continue
             try:
-                yield ldap.get_person(mail=kontakt)
+                persons.append(ldap.get_person(mail=kontakt))
                 seen.add(kontakt)
             except MExError:
                 continue
+    return persons
 
 
 def extract_biospecimen_organizations(
-    biospecimen_resources: list[BiospecimenResource],
+    biospecimen_resources: Iterable[BiospecimenResource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
@@ -65,8 +68,7 @@ def extract_biospecimen_organizations(
     }
 
 
-@watch()
-def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None]:
+def extract_biospecimen_resources() -> list[BiospecimenResource]:
     """Extract Biospecimen resources by loading data from MS-Excel file.
 
     Settings:
@@ -74,10 +76,14 @@ def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None
                   absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Biospecimen resources
+        List of Biospecimen resources
     """
     settings = Settings.get()
-    for file in Path(settings.biospecimen.raw_data_path).glob("*.xlsx"):
+    resources = []
+    for file in watch_progress(
+        Path(settings.biospecimen.raw_data_path).glob("*.xlsx"),
+        "extract_biospecimen_resources",
+    ):
         xls = ExcelFile(file)
         sheets = xls.book.worksheets
         for sheet in sheets:
@@ -86,7 +92,8 @@ def extract_biospecimen_resources() -> Generator[BiospecimenResource, None, None
                 if resource := extract_biospecimen_resource(
                     sheet_df, str(sheet.title), file.name
                 ):
-                    yield resource
+                    resources.append(resource)
+    return resources
 
 
 def get_clean_string(series: "Series[Any]") -> str:

@@ -112,7 +112,7 @@ class ConfluenceVvtPage(BaseRawData):
 
     def get_identifier_in_primary_source(self) -> str | None:
         """Return identifier in primary source from extractor."""
-        identifier_in_primary_source = list(
+        identifier_in_primary_source = sorted(
             set(
                 self.tables[0].rows[0].cells[0].search(r"(\d{4}-\d{3})")
                 + self.tables[0].rows[1].cells[0].search(r"(\d{4}-\d{3})")

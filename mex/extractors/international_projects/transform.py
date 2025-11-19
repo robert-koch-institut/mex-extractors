@@ -1,7 +1,6 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from typing import cast
 
-from mex.common.logging import watch
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
@@ -20,6 +19,7 @@ from mex.common.types import (
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
+from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -145,7 +145,6 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     )
 
 
-@watch()
 def transform_international_projects_sources_to_extracted_activities(  # noqa: PLR0913
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
@@ -155,7 +154,7 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
     ],
-) -> Generator[ExtractedActivity, None, None]:
+) -> list[ExtractedActivity]:
     """Transform international projects sources to extracted activity.
 
     Args:
@@ -171,18 +170,25 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
                                                          their stable target ID
 
     Returns:
-        Generator for ExtractedActivity instances
+        List of ExtractedActivity instances
     """
-    for source in international_projects_sources:
-        if activity := transform_international_projects_source_to_extracted_activity(
-            source,
-            international_projects_activity,
-            person_stable_target_ids_by_query_string,
-            unit_stable_target_id_by_synonym,
-            funding_sources_stable_target_id_by_query,
-            partner_organizations_stable_target_id_by_query,
-        ):
-            yield activity
+    return [
+        activity
+        for source in watch_progress(
+            international_projects_sources,
+            "transform_international_projects_sources_to_extracted_activities",
+        )
+        if (
+            activity := transform_international_projects_source_to_extracted_activity(
+                source,
+                international_projects_activity,
+                person_stable_target_ids_by_query_string,
+                unit_stable_target_id_by_synonym,
+                funding_sources_stable_target_id_by_query,
+                partner_organizations_stable_target_id_by_query,
+            )
+        )
+    ]
 
 
 def get_theme_for_activity_or_topic(

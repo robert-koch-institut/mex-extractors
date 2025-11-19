@@ -14,8 +14,7 @@ from tests.blueant.mocked_blueant import MOCKED_API_SOURCE, MOCKED_RESOLVED_ATTR
 @pytest.mark.integration
 def test_extract_blueant_sources_from_api() -> None:
     sources = extract_blueant_sources()
-    first_source = next(sources)
-    assert first_source.model_fields_set == BlueAntSource.model_fields.keys()
+    assert sources[0].model_fields_set == BlueAntSource.model_fields.keys()
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_blueant")
