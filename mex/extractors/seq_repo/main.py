@@ -40,7 +40,7 @@ from mex.extractors.utils import load_yaml
 @asset(group_name="seq_repo")
 def seq_repo_source() -> list[SeqRepoSource]:
     """Extract sources from seq-repo."""
-    return list(extract_sources())
+    return extract_sources()
 
 
 @asset(group_name="seq_repo")
@@ -58,7 +58,7 @@ def seq_repo_ldap_persons_with_query(
     seq_repo_latest_source: dict[str, SeqRepoSource],
 ) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
-    return list(extract_source_project_coordinator(seq_repo_latest_source))
+    return extract_source_project_coordinator(seq_repo_latest_source)
 
 
 @asset(group_name="seq_repo")
@@ -68,13 +68,11 @@ def seq_repo_merged_person_ids_by_query_string(
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Get project coordinators merged ids."""
-    extracted_persons = list(
-        transform_ldap_persons_with_query_to_extracted_persons(
-            seq_repo_ldap_persons_with_query,
-            get_extracted_primary_source_id_by_name("ldap"),
-            extracted_organizational_units,
-            extracted_organization_rki,
-        )
+    extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
+        seq_repo_ldap_persons_with_query,
+        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(extracted_persons)
     return {

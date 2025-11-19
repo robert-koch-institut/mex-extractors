@@ -1,5 +1,5 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from datetime import datetime
 from functools import lru_cache
 from typing import Any
@@ -9,21 +9,20 @@ import pandas as pd
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TemporalEntity,
     TemporalEntityPrecision,
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
+from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
-def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
+def extract_ff_projects_sources() -> list[FFProjectsSource]:
     """Extract FF Projects sources by loading data from MS-Excel file.
 
     Settings:
@@ -31,7 +30,7 @@ def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
           `assets_dir`
 
     Returns:
-        Generator for FF Projects sources
+        List of FF Projects sources
     """
     settings = Settings.get()
     ff_projects_excel = pd.read_excel(
@@ -39,9 +38,13 @@ def extract_ff_projects_sources() -> Generator[FFProjectsSource, None, None]:
         keep_default_na=False,
         parse_dates=True,
     )
-    for row in ff_projects_excel.iterrows():
-        if source := extract_ff_projects_source(row[1]):
-            yield source
+    return [
+        source
+        for row in watch_progress(
+            ff_projects_excel.iterrows(), "extract_ff_projects_sources"
+        )
+        if (source := extract_ff_projects_source(row[1]))
+    ]
 
 
 def get_temporal_entity_from_cell(cell_value: Any) -> TemporalEntity | None:  # noqa: ANN401
@@ -151,21 +154,21 @@ def get_clean_names(name: str) -> str:
     return name.strip()
 
 
-@watch()
 def extract_ff_project_authors(
     ff_projects_sources: Iterable[FFProjectsSource],
-) -> Generator[LDAPPersonWithQuery, None, None]:
+) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons with their query string for FF Projects authors.
 
     Args:
         ff_projects_sources: FF Projects sources
 
     Returns:
-        Generator for LDAP persons with query
+        List of LDAP persons with query
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in ff_projects_sources:
+    ldap_persons = []
+    for source in watch_progress(ff_projects_sources, "extract_ff_project_authors"):
         names = source.projektleiter
         if not names:
             continue
@@ -178,7 +181,8 @@ def extract_ff_project_authors(
                 surname=name.surname, given_name=name.given_name, limit=2
             )
             if len(persons) == 1 and persons[0].objectGUID:
-                yield LDAPPersonWithQuery(person=persons[0], query=names)
+                ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
+    return ldap_persons
 
 
 def extract_ff_projects_organizations(

@@ -1,45 +1,50 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.datscha_web.connector import DatschaWebConnector
 from mex.extractors.datscha_web.models.item import DatschaWebItem
+from mex.extractors.logging import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
-def extract_datscha_web_items() -> Generator[DatschaWebItem, None, None]:
+def extract_datscha_web_items() -> list[DatschaWebItem]:
     """Load datscha source items by scraping datscha-web pages.
 
     Returns:
-        Generator for datscha web items
+        List of datscha web items
     """
     connector = DatschaWebConnector.get()
-    for item_url in connector.get_item_urls():
+    items = []
+    for item_url in watch_progress(
+        connector.get_item_urls(), "extract_datscha_web_items"
+    ):
         item = connector.get_item(item_url)
-        yield item
+        items.append(item)
+    return items
 
 
-@watch()
 def extract_datscha_web_source_contacts(
     datscha_web_items: Iterable[DatschaWebItem],
-) -> Generator[LDAPPersonWithQuery, None, None]:
+) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons with their query string for datscha-web source contacts.
 
     Args:
         datscha_web_items: Datscha-web items
 
     Returns:
-        Generator for LDAP persons with query
+        List of LDAP persons with query
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in datscha_web_items:
+    persons_with_query = []
+    for source in watch_progress(
+        datscha_web_items, "extract_datscha_web_source_contacts"
+    ):
         names = source.auskunftsperson
         if not names:
             continue
@@ -51,7 +56,10 @@ def extract_datscha_web_source_contacts(
                 surname=name.surname, given_name=name.given_name, limit=2
             )
             if len(persons) == 1 and persons[0].objectGUID:
-                yield LDAPPersonWithQuery(person=persons[0], query=names)
+                persons_with_query.append(
+                    LDAPPersonWithQuery(person=persons[0], query=names)
+                )
+    return persons_with_query
 
 
 def extract_datscha_web_organizations(
