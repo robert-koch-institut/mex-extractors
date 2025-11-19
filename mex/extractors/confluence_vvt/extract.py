@@ -9,6 +9,7 @@ from mex.common.logging import logger
 from mex.common.models import ActivityMapping
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
+from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 
 
@@ -30,7 +31,10 @@ def fetch_all_vvt_pages_ids() -> list[str]:
 
     page_ids: list[str] = []
     limit = 100
-    for start in range(0, 10**6, limit):
+    for start in watch_progress(
+        iter(range(0, 10**6, limit)),
+        "fetch_all_vvt_pages_ids",
+    ):
         response = connector.session.get(
             urljoin(
                 settings.confluence_vvt.url,
@@ -60,7 +64,7 @@ def get_page_data_by_id(page_ids: Iterable[str]) -> list[ConfluenceVvtPage]:
     """
     connector = ConfluenceVvtConnector.get()
     pages = []
-    for page_id in page_ids:
+    for page_id in watch_progress(page_ids, "get_page_data_by_id"):
         page_data = connector.get_page_by_id(page_id)
         if page_data:
             pages.append(page_data)
