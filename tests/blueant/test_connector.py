@@ -87,7 +87,7 @@ def test_get_projects_mocked(mocked_blueant: BlueAntConnector) -> None:
     mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
-    projects = list(connector.get_projects())
+    projects = connector.get_projects()
 
     assert len(projects) == 1
     assert projects[0] == BlueAntProject.model_validate(project_dict["projects"][0])

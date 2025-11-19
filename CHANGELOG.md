@@ -12,8 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add `watch_progress` function to track progress of iterables in for loops
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 
