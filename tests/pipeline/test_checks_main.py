@@ -214,7 +214,7 @@ def run_item_count_test(  # noqa: PLR0913
             self.timestamp = mocked_now.timestamp()
 
     class MockInstance:
-        def get_event_records(self, _filter: EventRecordsFilter) -> list["MockEvent"]:  # type: ignore[no-untyped-def]
+        def get_event_records(self, _filter: EventRecordsFilter) -> list["MockEvent"]:
             return [MockEvent(current_count)]
 
     class MockContext:
