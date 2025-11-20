@@ -1,12 +1,12 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.extract import parse_csv
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.logging import watch
 from mex.common.models import AccessPlatformMapping
 from mex.common.types import MergedOrganizationIdentifier
+from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
@@ -37,8 +37,7 @@ def extract_variables() -> list[SynopseVariable]:
     )
 
 
-@watch()
-def extract_study_data() -> Generator[SynopseStudy, None, None]:
+def extract_study_data() -> list[SynopseStudy]:
     """Extract study data from `metadaten_zu_datensaetzen` report.
 
     Settings:
@@ -46,16 +45,22 @@ def extract_study_data() -> Generator[SynopseStudy, None, None]:
           file, absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Synopse Studies
+        List of Synopse Studies
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.metadaten_zu_datensaetzen_path, SynopseStudy, delimiter=","
+    return list(
+        watch_progress(
+            parse_csv(
+                settings.synopse.metadaten_zu_datensaetzen_path,
+                SynopseStudy,
+                delimiter=",",
+            ),
+            "extract_study_data",
+        )
     )
 
 
-@watch()
-def extract_projects() -> Generator[SynopseProject, None, None]:
+def extract_projects() -> list[SynopseProject]:
     """Extract projects from `projekt_und_studienverwaltung` report.
 
     Settings:
@@ -63,31 +68,38 @@ def extract_projects() -> Generator[SynopseProject, None, None]:
           `projekt_und_studienverwaltung` file, absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Synopse Projects
+        List of Synopse Projects
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.projekt_und_studienverwaltung_path,
-        SynopseProject,
-        delimiter=",",
+    return list(
+        watch_progress(
+            parse_csv(
+                settings.synopse.projekt_und_studienverwaltung_path,
+                SynopseProject,
+                delimiter=",",
+            ),
+            "extract_projects",
+        )
     )
 
 
-@watch()
 def extract_synopse_project_contributors(
     synopse_projects: Iterable[SynopseProject],
-) -> Generator[LDAPPersonWithQuery, None, None]:
+) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons for Synopse project contributors.
 
     Args:
         synopse_projects: Synopse projects
 
     Returns:
-        Generator for LDAP persons
+        List of LDAP persons
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for project in synopse_projects:
+    ldap_persons = []
+    for project in watch_progress(
+        synopse_projects, "extract_synopse_project_contributors"
+    ):
         names = project.beitragende
         if names is None or "nicht mehr im RKI" in names or names in seen:
             continue
@@ -97,7 +109,8 @@ def extract_synopse_project_contributors(
                 surname=name.surname, given_name=name.given_name, limit=2
             )
             if len(persons) == 1 and persons[0].objectGUID:
-                yield LDAPPersonWithQuery(person=persons[0], query=names)
+                ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
+    return ldap_persons
 
 
 def extract_synopse_contact(
@@ -124,8 +137,7 @@ def extract_synopse_contact(
     ]
 
 
-@watch()
-def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
+def extract_study_overviews() -> list[SynopseStudyOverview]:
     """Extract projects from `datensatzuebersicht` report.
 
     Settings:
@@ -133,13 +145,18 @@ def extract_study_overviews() -> Generator[SynopseStudyOverview, None, None]:
                                   absolute or relative to `assets_dir`
 
     Returns:
-        Generator for Synopse Overviews
+        List of Synopse Overviews
     """
     settings = Settings.get()
-    yield from parse_csv(
-        settings.synopse.datensatzuebersicht_path,
-        SynopseStudyOverview,
-        delimiter=",",
+    return list(
+        watch_progress(
+            parse_csv(
+                settings.synopse.datensatzuebersicht_path,
+                SynopseStudyOverview,
+                delimiter=",",
+            ),
+            "extract_study_overviews",
+        )
     )
 
 

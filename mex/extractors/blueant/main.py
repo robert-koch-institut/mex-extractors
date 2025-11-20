@@ -56,7 +56,7 @@ def blueant_merged_person_id_by_employee_id(
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to mex-persons with stable target ID and group them by employee ID."""  # noqa: E501
-    ldap_project_leaders = list(extract_blueant_project_leaders(blueant_sources))
+    ldap_project_leaders = extract_blueant_project_leaders(blueant_sources)
     mex_project_leaders = transform_ldap_persons_to_extracted_persons(
         ldap_project_leaders,
         get_extracted_primary_source_id_by_name("ldap"),
@@ -125,7 +125,7 @@ def blueant_extracted_activities(
     )
 
     extracted_activities_list: list[ExtractedActivity] = list(extracted_activities)
-    num_items = len(extracted_activities_list)
+    num_items = len(extracted_activities)
     load(extracted_activities)
     return create_output(
         context=context,

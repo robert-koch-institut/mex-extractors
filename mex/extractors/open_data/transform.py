@@ -246,7 +246,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
-        open_data_extracted_contact_points: list[ExtractedContactPoint]
+        open_data_extracted_contact_points: list of ExtractedContactPoints
 
     Returns:
         list of ExtractedResource instances

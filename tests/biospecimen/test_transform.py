@@ -101,7 +101,7 @@ def test_transform_biospecimen_resource_to_mex_resource(
         resource_mapping,
         {},
     )
-    mex_source = next(mex_sources)
+    mex_source = mex_sources[0]
 
     expected = {
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",

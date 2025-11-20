@@ -148,13 +148,13 @@ def test_asset_checks_created(  # noqa: PLR0913
 
     load_calls = []
 
-    def load_asset_check_mock(group_name: str, entity_name: str) -> AssetCheck:  # noqa: ARG001
+    def load_mocked_asset_check(group_name: str, entity_name: str) -> AssetCheck:  # noqa: ARG001
         load_calls.append(entity_name)
         return AssetCheck(rules=[AssetCheckRule(**rule) for rule in rules])
 
     monkeypatch.setattr(
         "mex.extractors.pipeline.base.load_asset_check_from_settings",
-        load_asset_check_mock,
+        load_mocked_asset_check,
     )
 
     defs = load_job_definitions()

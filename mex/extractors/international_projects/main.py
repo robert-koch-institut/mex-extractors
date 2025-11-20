@@ -54,9 +54,10 @@ def international_projects_person_ids_by_query_str(
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to extracted persons and group their IDs by query."""
-    ldap_project_leaders = list(
-        extract_international_projects_project_leaders(international_projects_sources)
+    ldap_project_leaders = extract_international_projects_project_leaders(
+        international_projects_sources
     )
+
     mex_authors = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_project_leaders,
         get_extracted_primary_source_id_by_name("ldap"),
@@ -108,15 +109,13 @@ def international_projects_extracted_activities(
     activity = ActivityMapping.model_validate(
         load_yaml(settings.international_projects.mapping_path / "activity.yaml")
     )
-    mex_sources = list(
-        transform_international_projects_sources_to_extracted_activities(
-            international_projects_sources,
-            activity,
-            international_projects_person_ids_by_query_str,
-            unit_stable_target_ids_by_synonym,
-            international_projects_funding_sources_ids_by_query_string,
-            international_projects_partner_organization_ids_by_query_string,
-        )
+    mex_sources = transform_international_projects_sources_to_extracted_activities(
+        international_projects_sources,
+        activity,
+        international_projects_person_ids_by_query_str,
+        unit_stable_target_ids_by_synonym,
+        international_projects_funding_sources_ids_by_query_string,
+        international_projects_partner_organization_ids_by_query_string,
     )
     load(mex_sources)
     return mex_sources

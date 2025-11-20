@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `watch_progress` function to track progress of iterables in for loops
 - implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- replace `@watch` decorator with `watch_progress` function calls across all extractors
+- replace generator functions with list-returning functions for dagster compatibility
+
 - asset checks created during definition time in base.py
 
 ### Deprecated
@@ -23,11 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.5.1] - 2025-10-30
+
+### Changes
+
+- update lock file
+
 ## [1.5.0] - 2025-10-30
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - implement igs resource mapping update
 
 ## [1.4.0] - 2025-10-28

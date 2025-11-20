@@ -4,7 +4,7 @@ from networkx import DiGraph, NetworkXUnfeasible
 from networkx import topological_sort as network_sort
 
 from mex.common.exceptions import MExError
-from mex.extractors.utils import ensure_list
+from mex.common.utils import ensure_list
 
 ItemT = TypeVar("ItemT")
 

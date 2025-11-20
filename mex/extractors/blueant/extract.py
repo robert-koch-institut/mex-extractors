@@ -1,31 +1,31 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson
-from mex.common.logging import watch
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
+from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 
-@watch()
-def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
+def extract_blueant_sources() -> list[BlueAntSource]:
     """Load Blue Ant sources from Blue Ant API.
 
     Returns:
-        Generator for Blue Ant sources
+        List of Blue Ant sources
     """
     connector = BlueAntConnector.get()
 
     persons = connector.get_persons()
     blueant_id_to_employee_id_map = {p.id: p.personnelNumber for p in persons}
 
-    for source in connector.get_projects():
+    sources = []
+    for source in watch_progress(connector.get_projects(), "extract_blueant_sources"):
         department = connector.get_department_name(source.departmentId)
         type_ = connector.get_type_description(source.typeId)
         status = connector.get_status_name(source.statusId)
@@ -36,34 +36,37 @@ def extract_blueant_sources() -> Generator[BlueAntSource, None, None]:
             connector.get_client_name(client.clientId) for client in source.clients
         ]
         name = remove_prefixes_from_name(source.name)
-        yield BlueAntSource(
-            client_names=client_names,
-            department=department,
-            end=source.end,
-            name=name,
-            number=source.number,
-            projectLeaderEmployeeId=project_leader_employee_id,
-            start=source.start,
-            status=status,
-            type_=type_,
+        sources.append(
+            BlueAntSource(
+                client_names=client_names,
+                department=department,
+                end=source.end,
+                name=name,
+                number=source.number,
+                projectLeaderEmployeeId=project_leader_employee_id,
+                start=source.start,
+                status=status,
+                type_=type_,
+            )
         )
+    return sources
 
 
-@watch()
 def extract_blueant_project_leaders(
     blueant_sources: Iterable[BlueAntSource],
-) -> Generator[LDAPPerson, None, None]:
+) -> list[LDAPPerson]:
     """Extract LDAP persons for Blue Ant project leaders.
 
     Args:
         blueant_sources: Blue Ant sources
 
     Returns:
-        Generator for LDAP persons
+        List of LDAP persons
     """
     ldap = LDAPConnector.get()
     seen = set()
-    for source in blueant_sources:
+    persons = []
+    for source in watch_progress(blueant_sources, "extract_blueant_project_leaders"):
         employee_id = source.projectLeaderEmployeeId
         if not employee_id:
             continue
@@ -71,9 +74,10 @@ def extract_blueant_project_leaders(
             continue
         seen.add(employee_id)
         try:
-            yield ldap.get_person(employee_id=employee_id)
+            persons.append(ldap.get_person(employee_id=employee_id))
         except MExError:
             continue
+    return persons
 
 
 def remove_prefixes_from_name(name: str) -> str:
@@ -97,7 +101,7 @@ def remove_prefixes_from_name(name: str) -> str:
 
 
 def extract_blueant_organizations(
-    blueant_sources: list[BlueAntSource],
+    blueant_sources: Iterable[BlueAntSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 

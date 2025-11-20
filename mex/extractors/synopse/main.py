@@ -64,7 +64,7 @@ from mex.extractors.utils import load_yaml
 @asset(group_name="synopse")
 def synopse_projects() -> list[SynopseProject]:
     """Extract projects from Synopse."""
-    return list(extract_projects())
+    return extract_projects()
 
 
 @asset(group_name="synopse")
@@ -72,19 +72,19 @@ def synopse_ldap_persons_with_query(
     synopse_projects: list[SynopseProject],
 ) -> list[LDAPPersonWithQuery]:
     """Extract project contributors from Synopse."""
-    return list(extract_synopse_project_contributors(synopse_projects))
+    return extract_synopse_project_contributors(synopse_projects)
 
 
 @asset(group_name="synopse")
 def synopse_studies() -> list[SynopseStudy]:
     """Extract studies from Synopse."""
-    return list(extract_study_data())
+    return extract_study_data()
 
 
 @asset(group_name="synopse")
 def synopse_study_overviews() -> list[SynopseStudyOverview]:
     """Extract study overviews from Synopse."""
-    return list(extract_study_overviews())
+    return extract_study_overviews()
 
 
 @asset(group_name="synopse")
@@ -285,12 +285,10 @@ def synopse_variable_groups_by_identifier_in_primary_source(
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> dict[str, ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
-    transformed_variable_groups = list(
-        transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_by_thema,
-            synopse_extracted_resources_by_identifier_in_primary_source,
-            synopse_study_overviews,
-        )
+    transformed_variable_groups = transform_synopse_variables_to_mex_variable_groups(
+        synopse_variables_by_thema,
+        synopse_extracted_resources_by_identifier_in_primary_source,
+        synopse_study_overviews,
     )
     load(transformed_variable_groups)
     return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
@@ -308,13 +306,11 @@ def synopse_extracted_variables(
     synopse_study_overviews: list[SynopseStudyOverview],
 ) -> list[ExtractedVariable]:
     """Transforms Synopse data to extracted variables and load result."""
-    extracted_variables = list(
-        transform_synopse_variables_to_mex_variables(
-            synopse_variables_by_thema,
-            synopse_variable_groups_by_identifier_in_primary_source,
-            synopse_extracted_resources_by_identifier_in_primary_source,
-            synopse_study_overviews,
-        )
+    extracted_variables = transform_synopse_variables_to_mex_variables(
+        synopse_variables_by_thema,
+        synopse_variable_groups_by_identifier_in_primary_source,
+        synopse_extracted_resources_by_identifier_in_primary_source,
+        synopse_study_overviews,
     )
     load(extracted_variables)
     return extracted_variables

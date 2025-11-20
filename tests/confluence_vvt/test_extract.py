@@ -27,7 +27,7 @@ def test_fetch_all_vvt_pages_ids() -> None:
 def test_get_page_data_by_id() -> None:
     page_ids = set(islice(fetch_all_vvt_pages_ids(), 5))
 
-    response = list(get_page_data_by_id(page_ids))
+    response = get_page_data_by_id(page_ids)
     assert page_ids > {str(r.id) for r in response}
 
 
