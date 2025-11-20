@@ -36,12 +36,14 @@ def _req_verify() -> bool | str:
 
 def _delete_messages() -> None:
     settings = Settings.get()
-    requests.delete(
-        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
+    response = requests.delete(
+        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
     )
+
+    response.raise_for_status()
 
 
 def _get_messages() -> Any:  # noqa: ANN401
@@ -54,11 +56,7 @@ def _get_messages() -> Any:  # noqa: ANN401
         auth=_req_auth(),
     )
 
-    if response.status_code != 200:
-        print(f"DEBUG INFO: URL: {response.url}")  # noqa: T201
-        print(f"DEBUG INFO: Status: {response.status_code}")  # noqa: T201
-        print(f"DEBUG INFO: Body: {response.text}")  # noqa: T201
-
+    response.raise_for_status()
     return response.json()
 
 
