@@ -4,9 +4,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from dagster import (
-    AssetKey,
-)
+from dagster import AssetKey, EventRecordsFilter
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
@@ -216,7 +214,7 @@ def run_item_count_test(  # noqa: PLR0913
             self.timestamp = mocked_now.timestamp()
 
     class MockInstance:
-        def get_event_records(self, _filter) -> list["MockEvent"]:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list["MockEvent"]:  # type: ignore[no-untyped-def]
             return [MockEvent(current_count)]
 
     class MockContext:
@@ -232,9 +230,9 @@ def run_item_count_test(  # noqa: PLR0913
 
     if not passed:
         with pytest.raises(ValueError, match=f"failed {rule_name_for_match} check"):
-            rule_func(context, asset_key, "ext", "type")
+            rule_func(context, asset_key, "ext", "type")  # type: ignore[arg-type]
     else:
-        result = rule_func(context, asset_key, "ext", "type")
+        result = rule_func(context, asset_key, "ext", "type")  # type: ignore[arg-type]
         assert result is True
 
 

@@ -81,7 +81,7 @@ def create_output(
     context: AssetExecutionContext,
     entity_type: str,
     num_items: int,
-) -> Output:
+) -> Output[int]:
     """Creates Observation for asset key and an Output for values."""
     context.log_event(
         AssetObservation(
@@ -106,8 +106,10 @@ def blueant_extracted_activities(
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
-    blueant_merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier]
-) -> Output:
+    blueant_merged_organization_ids_by_query_str: dict[
+        str, MergedOrganizationIdentifier
+    ],
+) -> Output[int]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(

@@ -5,6 +5,7 @@ from typing import Any, cast
 from dagster import (
     AssetCheckExecutionContext,
     AssetCheckResult,
+    AssetChecksDefinition,
     AssetCheckSeverity,
     AssetKey,
     AssetsDefinition,
@@ -102,7 +103,7 @@ def monitor_jobs_sensor(
 
 def create_asset_check_more_than(
     asset_key: AssetKey, group_name: str, entity_name: str
-) -> AssetCheckResult:
+) -> AssetChecksDefinition:
     """Creating dynamically asset check for more_than rule."""
 
     @asset_check(
@@ -125,7 +126,7 @@ def create_asset_check_more_than(
 
 def create_asset_check_less_than(
     asset_key: AssetKey, group_name: str, entity_name: str
-) -> AssetCheckResult:
+) -> AssetChecksDefinition:
     """Creating dynamically asset check for less_than rule."""
 
     @asset_check(
@@ -156,8 +157,9 @@ def load_job_definitions() -> Definitions:
     module = import_module("mex.extractors")
     assets = load_assets_from_package_module(module)
 
-    checks = []
+    checks: list[AssetChecksDefinition] = []
     for asset in assets:
+        asset = cast("AssetsDefinition", asset)
         items = list(asset.group_names_by_key.items())
         if len(items) != 1:
             msg = f"asset has more than 1 group: {items}"
