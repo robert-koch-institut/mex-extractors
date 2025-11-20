@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add `watch_progress` function to track progress of iterables in for loops
+- implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
@@ -18,9 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 
+- asset checks created during definition time in base.py
+
 ### Deprecated
 
 ### Removed
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
 
 ### Fixed
 
