@@ -1,3 +1,4 @@
+import pprint
 from typing import Any
 
 import pytest
@@ -96,6 +97,9 @@ def test_consent_mailer_send_emails() -> None:
 def test_send_consent_no_emails_for_no_rki_persons() -> None:
     _delete_messages()
 
+    envelop = _get_messages()
+    assert envelop["total"] == 0, pprint.pformat(envelop)
+
     persons = [
         MergedPerson(
             identifier="efVXbcoxxMAiA5IqT1d11H",
@@ -117,4 +121,4 @@ def test_send_consent_no_emails_for_no_rki_persons() -> None:
     consent_mailer_send_emails(persons)
 
     envelop = _get_messages()
-    assert envelop["total"] == 0
+    assert envelop["total"] == 0, pprint.pformat(envelop)
