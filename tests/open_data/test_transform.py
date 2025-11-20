@@ -20,6 +20,7 @@ from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
 )
 from mex.extractors.open_data.transform import (
+    get_only_child_units,
     lookup_person_in_ldap_and_transform,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
@@ -30,6 +31,20 @@ from mex.extractors.open_data.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+
+def test_get_only_child_units(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> None:
+    no_parent_units = get_only_child_units(
+        [unit.stableTargetId for unit in mocked_extracted_organizational_units],
+        mocked_extracted_organizational_units,
+    )
+
+    assert no_parent_units == [  # Parent unit PRNT is filtered out
+        MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
+        MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),  # FG 99
+    ]
 
 
 def test_transform_open_data_person_affiliations_to_organizations(
@@ -176,12 +191,13 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_persons: list[ExtractedPerson],
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=999),
-        "XY": MergedOrganizationalUnitIdentifier.generate(seed=959),
+        unit.shortName[0].value: unit.stableTargetId
+        for unit in mocked_extracted_organizational_units
     }
 
     mex_sources = list(
@@ -189,6 +205,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             mocked_open_data_parent_resource,
             mocked_open_data_persons,
             unit_stable_target_ids_by_synonym,
+            mocked_extracted_organizational_units,
             mocked_open_data_distribution,
             mocked_open_data_parent_resource_mapping,
             extracted_organization_rki,
@@ -207,15 +224,15 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": [  # Unit of Maxi Muster = XY
-            MergedOrganizationalUnitIdentifier.generate(seed=959)
+        "unitInCharge": [  # only child unit of Maxi Muster = C1
+            MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48")
         ],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
         "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
-        "contributingUnit": [  # default, always unit "C1"
-            MergedOrganizationalUnitIdentifier.generate(seed=999)
+        "contributingUnit": [  # default, always unit "FG 99"
+            MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")
         ],
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}

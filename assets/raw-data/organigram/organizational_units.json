@@ -22,7 +22,7 @@
                 "value": "C1: Sub Unit"
             }
         ],
-        "parentDepartment": "parent-unit",
+        "parentUnit": "parent-unit",
         "shortName": [
             {
                 "language": "de",

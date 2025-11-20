@@ -22,9 +22,9 @@ def test_extracted_organizational_units(
         extracted_organizational_units(extracted_organization_rki),
     )
     assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
-        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
     ]
 
 
