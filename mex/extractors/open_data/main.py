@@ -123,6 +123,7 @@ def open_data_extracted_distributions(
 def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
@@ -138,6 +139,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
         open_data_parent_resources,
         open_data_extracted_persons,
         unit_stable_target_ids_by_synonym,
+        extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,
         extracted_organization_rki,

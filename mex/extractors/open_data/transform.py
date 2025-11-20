@@ -40,6 +40,38 @@ from mex.extractors.wikidata.helpers import (
 FALLBACK_UNIT = "mf4"
 
 
+def get_only_child_units(
+    selected_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnitIdentifier]:
+    """Return only those units which are no parents to other units within a list.
+
+    Args:
+        selected_merged_organizational_unit_ids: list of unit ids to filter
+        extracted_organizational_units: list of all units to know who's a parent
+
+    Returns:
+        list of merged unit ids who are no parents to other units of the list
+    """
+    # create a dictionary of all extracted units by id
+    extracted_units_by_id = {
+        unit.stableTargetId: unit for unit in extracted_organizational_units
+    }
+
+    # get all units which are a parent of a unit in the selected list
+    merged_parent_unit_ids = [
+        extracted_units_by_id[unit_id].parentUnit
+        for unit_id in selected_merged_organizational_unit_ids
+        if extracted_units_by_id[unit_id].parentUnit
+    ]
+
+    return [  # only return those units in the selected list, which are no parents
+        merged_unit_id
+        for merged_unit_id in selected_merged_organizational_unit_ids
+        if merged_unit_id not in merged_parent_unit_ids
+    ]
+
+
 def transform_open_data_person_affiliations_to_organizations(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
 ) -> dict[str, MergedOrganizationIdentifier]:
@@ -232,6 +264,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -243,6 +276,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         open_data_parent_resource: open data parent resources
         open_data_persons: list of ExtractedPerson
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
+        extracted_organizational_units: list of Extracted Organizational Units
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
@@ -258,7 +292,8 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         for p in open_data_persons
     }
     unit_stable_target_ids_by_person_name = {
-        p.fullName[0]: p.memberOf for p in open_data_persons
+        p.fullName[0]: get_only_child_units(p.memberOf, extracted_organizational_units)
+        for p in open_data_persons
     }
     access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
     anonymization_pseudonymization = (
@@ -295,6 +330,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
+                if unit_id != unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
             }
         )
         if not unit_in_charge:
