@@ -45,12 +45,20 @@ def _delete_messages() -> None:
 
 def _get_messages() -> Any:  # noqa: ANN401
     settings = Settings.get()
-    return requests.get(
+
+    response = requests.get(
         f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
-    ).json()
+    )
+
+    if response.status_code != 200:
+        print(f"DEBUG INFO: URL: {response.url}")  # noqa: T201
+        print(f"DEBUG INFO: Status: {response.status_code}")  # noqa: T201
+        print(f"DEBUG INFO: Body: {response.text}")  # noqa: T201
+
+    return response.json()
 
 
 @pytest.mark.requires_rki_infrastructure  # disabled on gh cli due to missing mailpit, stopgap MX-1993
