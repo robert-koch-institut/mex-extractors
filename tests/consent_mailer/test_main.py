@@ -47,7 +47,7 @@ def _get_messages() -> Any:  # noqa: ANN401
     settings = Settings.get()
 
     response = requests.get(
-        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
+        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
