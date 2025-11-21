@@ -161,7 +161,12 @@ def open_data_version_id_by_resource_id(
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_distributions: list[ExtractedDistribution],
 ) -> dict[MergedResourceIdentifier, str]:
-    """Get version id (to download tableschema zip per Resource), if zip available."""
+    """Get Zenodo version id (to download tableschema zip) per Resource stableTargetId.
+
+    Info from open data team: for some resources there are other metadata.zip files.
+    If datapackage.json exists for a resource, there also is a metadata zip and
+    it is valid for our use case.
+    """
     return {
         resource.stableTargetId: str(parent_resource.id)
         for parent_resource in open_data_parent_resources
@@ -179,7 +184,7 @@ def open_data_version_id_by_resource_id(
 def open_data_tableschemas_by_resource_id(
     open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, str],
 ) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
-    """Extract and collect metadata zip tableschemas by extracted resource id."""
+    """Extract and collect metadata zip tableschemas by resource stableTargetId."""
     return {
         resource_key: extract_tableschema(
             open_data_version_id_by_resource_id[resource_key]

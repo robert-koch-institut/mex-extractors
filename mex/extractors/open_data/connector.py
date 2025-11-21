@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from typing import Any
 
 import backoff
-from requests import HTTPError, Response
+from requests import HTTPError, RequestException, Response
 
 from mex.common.connector import HTTPConnector
 from mex.common.logging import logger
@@ -108,7 +108,10 @@ class OpenDataConnector(HTTPConnector):
         return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
 
     def get_schema_zipfile(self, version_id: str) -> Response:
-        """Get the Zip file for a certain resource version by querying the Zenodo API.
+        """Get the Zip file for a certain resource version.
+
+        The resource versions where checked to have a valid metadata zip file.
+        The zip file can be named "Metadata" or "Metadaten".
 
         Args:
             version_id: id of a resource version
@@ -116,5 +119,25 @@ class OpenDataConnector(HTTPConnector):
         Returns:
             Response of query
         """
-        zip_url = f"/api/records/{version_id}/files/Metadaten.zip/content"
-        return self.request_raw("GET", zip_url)
+        http_ok = 200
+
+        # Try downloading with first spelling version
+        try:
+            zip_url = f"/api/records/{version_id}/files/Metadaten.zip/content"
+            response = self.request_raw("GET", zip_url)
+            if response.status_code == http_ok:
+                return response
+        except RequestException:
+            pass
+
+        # Try downloading with second spelling version
+        try:
+            zip_url = f"/api/records/{version_id}/files/Metadata.zip/content"
+            response = self.request_raw("GET", zip_url)
+            if response.status_code == http_ok:
+                return response
+        except RequestException as error:
+            msg = f"No metadata zip file found for version {version_id}: {error}"
+            raise HTTPError(msg) from error
+
+        return response
