@@ -11,7 +11,7 @@ from mex.extractors.blueant.models.source import BlueAntSource
 from tests.blueant.mocked_blueant import MOCKED_API_SOURCE, MOCKED_RESOLVED_ATTRIBUTES
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_extract_blueant_sources_from_api() -> None:
     sources = extract_blueant_sources()
     first_source = next(sources)

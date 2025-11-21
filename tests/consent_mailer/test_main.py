@@ -1,4 +1,3 @@
-import pprint
 from typing import Any
 
 import pytest
@@ -60,7 +59,7 @@ def _get_messages() -> Any:  # noqa: ANN401
     return response.json()
 
 
-@pytest.mark.requires_rki_infrastructure  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.integration
 def test_consent_mailer_send_emails() -> None:
     _delete_messages()
     persons = [
@@ -91,12 +90,9 @@ def test_consent_mailer_send_emails() -> None:
     )
 
 
-@pytest.mark.requires_rki_infrastructure  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.integration
 def test_send_consent_no_emails_for_no_rki_persons() -> None:
     _delete_messages()
-
-    envelop = _get_messages()
-    assert envelop["total"] == 0, pprint.pformat(envelop)
 
     persons = [
         MergedPerson(
@@ -119,4 +115,4 @@ def test_send_consent_no_emails_for_no_rki_persons() -> None:
     consent_mailer_send_emails(persons)
 
     envelop = _get_messages()
-    assert envelop["total"] == 0, pprint.pformat(envelop)
+    assert envelop["total"] == 0

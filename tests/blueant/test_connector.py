@@ -50,13 +50,13 @@ def test_get_json_from_api_mocked_error(mocked_blueant: MagicMock) -> None:
         connector._get_json_from_api("foo")
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_initialization() -> None:
     connector = BlueAntConnector.get()
     assert str(connector.session.headers["Authorization"]).startswith("Bearer")
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_projects() -> None:
     connector = BlueAntConnector.get()
     blueant_projects = connector.get_projects()
@@ -94,7 +94,7 @@ def test_get_projects_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert projects[0] == BlueAntProject.model_validate(project_dict["projects"][0])
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_client_name() -> None:
     connector = BlueAntConnector.get()
     name = connector.get_client_name(19611103)
@@ -123,7 +123,7 @@ def test_get_client_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert name == expected_name
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_type_description() -> None:
     connector = BlueAntConnector.get()
     description = connector.get_type_description(18426)
@@ -152,7 +152,7 @@ def test_get_type_description_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert name == expected_description
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_status_name() -> None:
     connector = BlueAntConnector.get()
     description = connector.get_status_name(18438)
@@ -181,7 +181,7 @@ def test_get_status_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert name == expected_description
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_department_name() -> None:
     connector = BlueAntConnector.get()
     description = connector.get_department_name(39866)
@@ -208,7 +208,7 @@ def test_get_department_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert name == expected_name
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_persons() -> None:
     connector = BlueAntConnector.get()
     persons = connector.get_persons()

@@ -28,17 +28,12 @@ lint:
 unit:
 	# run the test suite with all unit tests
 	@ echo running unit tests; \
-	pdm run pytest -m 'not integration'; \
+	pdm run pytest -m 'not integration and not requires_rki_infrastructure'; \
 
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	pdm run pytest --numprocesses=auto --dist=worksteal; \
-
-requires_rki_infrastructure:
-	# run the tests marked with requires_rki_infrastructure
-	@ echo running tests marked with requires_rki_infrastructure
-	pdm run pytest -m 'requires_rki_infrastructure'
+	pdm run pytest --numprocesses=auto --dist=worksteal -m "not requires_rki_infrastructure"; \
 
 wheel:
 	# build the python package

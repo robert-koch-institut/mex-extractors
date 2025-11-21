@@ -17,13 +17,13 @@ from mex.extractors.confluence_vvt.extract import (
 from tests.confluence_vvt.conftest import TEST_DATA_DIR
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_fetch_all_vvt_pages_ids() -> None:
     page_ids = list(fetch_all_vvt_pages_ids())
     assert all(re.match(r"\d+", id_) for id_ in page_ids)
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_page_data_by_id() -> None:
     page_ids = set(islice(fetch_all_vvt_pages_ids(), 5))
 

@@ -27,7 +27,7 @@ def mocked_confluence_vvt_session(monkeypatch: MonkeyPatch) -> MagicMock:
     return mocked_session
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_initialization() -> None:
     connector = ConfluenceVvtConnector.get()
     try:
@@ -82,7 +82,7 @@ def test_initialization_mocked_server_error(
     assert response["statusCode"] == 500
 
 
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_page_by_id(
     monkeypatch: MonkeyPatch, detail_page_data_json: dict[str, Any]
 ) -> None:

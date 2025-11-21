@@ -8,7 +8,7 @@ from mex.extractors.drop import DropApiConnector
 
 
 @pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_list_files() -> None:
     connector = DropApiConnector.get()
     files = connector.list_files("test")
@@ -16,7 +16,7 @@ def test_list_files() -> None:
 
 
 @pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_list_files_of_non_existing_x_system() -> None:
     connector = DropApiConnector.get()
     with pytest.raises(
@@ -37,7 +37,7 @@ def test_list_files_mocked(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_file() -> None:
     connector = DropApiConnector.get()
     content = connector.get_file("test", "default")
@@ -45,7 +45,7 @@ def test_get_file() -> None:
 
 
 @pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
-@pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_file_that_does_not_exist() -> None:
     connector = DropApiConnector.get()
     with pytest.raises(
