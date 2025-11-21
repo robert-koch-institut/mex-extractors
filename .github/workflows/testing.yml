@@ -75,4 +75,4 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make requires_rki_infrastructure
+        run: make test
