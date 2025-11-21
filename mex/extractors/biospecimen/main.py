@@ -57,7 +57,9 @@ def biospecimen_extracted_persons(
 def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:

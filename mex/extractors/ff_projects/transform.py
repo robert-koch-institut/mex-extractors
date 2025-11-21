@@ -16,7 +16,7 @@ from mex.extractors.primary_source.helpers import (
 def transform_ff_projects_source_to_extracted_activity(
     ff_projects_source: FFProjectsSource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_id_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     organization_stable_target_id_by_synonyms: dict[str, MergedOrganizationIdentifier],
     ff_projects_activity: ActivityMapping,
 ) -> ExtractedActivity:
@@ -37,9 +37,10 @@ def transform_ff_projects_source_to_extracted_activity(
     """
     if rki_oe := ff_projects_source.rki_oe:
         responsible_unit = [
-            unit_stable_target_id_by_synonym[oe]
+            unit_id
             for oe in rki_oe.replace("/", ",").split(",")
             if oe in unit_stable_target_id_by_synonym
+            for unit_id in unit_stable_target_id_by_synonym[oe]
         ]
     else:
         msg = "missing unit should have been filtered out"

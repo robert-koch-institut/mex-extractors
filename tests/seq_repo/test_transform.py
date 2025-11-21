@@ -31,7 +31,9 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> None:
     expected = {
@@ -77,7 +79,9 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
@@ -157,13 +161,15 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
 ) -> None:
     expected = {
         "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifierInPrimarySource": "https://dummy.url.com/",
         "alternativeTitle": [{"language": "es", "value": "SeqRepo"}],
-        "contact": [str(unit_stable_target_ids_by_synonym["FG99"])],
+        "contact": [str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["FG99"]],
         "description": [
             {
                 "value": "This is just a sample description, don't read it.",
@@ -174,7 +180,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         "landingPage": [{"url": "https://dummy.url.com/"}],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"language": "es", "value": "Sequence Data Repository"}],
-        "unitInCharge": [str(unit_stable_target_ids_by_synonym["FG99"])],
+        "unitInCharge": [str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["FG99"]],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

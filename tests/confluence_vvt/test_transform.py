@@ -28,7 +28,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 @pytest.mark.integration
 def test_transform_confluence_vvt_page_to_extracted_activity(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     expected = {
@@ -75,7 +75,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 
 @pytest.mark.integration
 def test_transform_confluence_vvt_page_to_extracted_activities(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     all_pages = list(get_page_data_by_id(fetch_all_vvt_pages_ids()))

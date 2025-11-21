@@ -30,7 +30,9 @@ from mex.extractors.primary_source.helpers import (
 def transform_igs_extracted_resource(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
@@ -54,7 +56,11 @@ def transform_igs_extracted_resource(
         if isinstance(for_value, str)
     ]
     contributing_unit = (
-        [unit_stable_target_ids_by_synonym[for_value] for for_value in for_values]
+        [
+            unit_id
+            for for_value in for_values
+            for unit_id in unit_stable_target_ids_by_synonym[for_value]
+        ]
         if (
             for_values := igs_resource_mapping.contributingUnit[0]
             .mappingRules[0]
@@ -131,7 +137,9 @@ def transform_igs_extracted_resource(
 def transform_igs_access_platform(
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
 ) -> ExtractedAccessPlatform:
     """Transform IGS extracted access platform.
 

@@ -20,7 +20,9 @@ from mex.extractors.sinks import load
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -54,7 +56,7 @@ def transform_datscha_web_items_to_mex_activities(
             for unit_name in (
                 datscha_web_item.liegenschaften_oder_organisationseinheiten_loz
             )
-            if (unit_id := unit_stable_target_ids_by_synonym.get(unit_name))
+            for unit_id in (unit_stable_target_ids_by_synonym.get(unit_name, []))
         ]
         # lookup actors
         involved_person = person_stable_target_ids_by_query_string[

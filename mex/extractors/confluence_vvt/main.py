@@ -94,7 +94,9 @@ def extracted_confluence_vvt_activities(
     confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     confluence_vvt_activity_mapping: dict[str, Any],
 ) -> list[ExtractedActivity]:
     """Transform and load Confluence VVT activities."""

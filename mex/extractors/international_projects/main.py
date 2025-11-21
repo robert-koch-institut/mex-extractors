@@ -96,7 +96,9 @@ def international_projects_extracted_activities(
     international_projects_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     international_projects_funding_sources_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

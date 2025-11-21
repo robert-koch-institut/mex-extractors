@@ -231,7 +231,9 @@ def transform_open_data_distributions(
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -298,7 +300,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             }
         )
         if not unit_in_charge:
-            unit_in_charge = [unit_stable_target_ids_by_synonym[FALLBACK_UNIT]]
+            unit_in_charge = unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -340,10 +342,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         )
         contributing_unit = (
             unit_stable_target_ids_by_synonym.get(
-                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
+                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0], []
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
-            else None
+            else []
         )
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []

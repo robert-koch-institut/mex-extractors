@@ -30,7 +30,7 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     source: InternationalProjectsSource,
     international_projects_activity: ActivityMapping,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_id_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
@@ -69,15 +69,15 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
         if unit == "ZIG-GS":
             unit = "zig"  # noqa: PLW2901
         if found_unit := unit_stable_target_id_by_synonym.get(unit):
-            project_lead_rki_unit.append(found_unit)
+            project_lead_rki_unit.extend(found_unit)
 
     if not project_lead_rki_unit:
         return None
 
     additional_rki_units = (
-        unit_stable_target_id_by_synonym.get(source.additional_rki_units)
+        unit_stable_target_id_by_synonym.get(source.additional_rki_units, [])
         if source.additional_rki_units
-        else None
+        else []
     )
 
     all_funder_or_commissioner: list[MergedOrganizationIdentifier] = []
@@ -149,7 +149,7 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_id_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier

@@ -60,7 +60,9 @@ def endnote_extracted_consents(
 def endnote_extracted_bibliographic_resources(
     endnote_records: list[EndnoteRecord],
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
 ) -> Output[int]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()

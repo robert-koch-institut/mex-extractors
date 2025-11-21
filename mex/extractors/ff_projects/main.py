@@ -40,7 +40,9 @@ from mex.extractors.utils import load_yaml
 
 @asset(group_name="ff_projects")
 def ff_projects_sources(
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
 ) -> list[FFProjectsSource]:
     """Extract FF Projects sources and filter out invalid items."""
     ff_projects_sources = extract_ff_projects_sources()
@@ -87,7 +89,7 @@ def ff_projects_organization_ids_by_query_str(
 def ff_projects_activities(
     ff_projects_sources: list[FFProjectsSource],
     ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""

@@ -63,7 +63,9 @@ from mex.extractors.utils import load_yaml
 @asset(group_name="sumo")
 def sumo_extracted_access_platform(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
@@ -122,7 +124,9 @@ def sumo_merged_contact_ids_by_email(
 
 @asset(group_name="sumo")
 def sumo_extracted_activity(
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Extract, transform and load SUMO activity."""
@@ -175,7 +179,9 @@ def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 @asset(group_name="sumo")
 def sumo_extracted_resource_nokeda(  # noqa: PLR0913
     sumo_extracted_resources_nokeda: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     sumo_extracted_activity: ExtractedActivity,
@@ -197,7 +203,9 @@ def sumo_extracted_resource_nokeda(  # noqa: PLR0913
 @asset(group_name="sumo")
 def sumo_extracted_resource_feat(  # noqa: PLR0913
     sumo_extracted_resources_feat: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     sumo_extracted_resource_nokeda: ExtractedResource,
     sumo_extracted_activity: ExtractedActivity,

@@ -23,7 +23,9 @@ def transform_seq_repo_activities_to_extracted_activities(
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> list[ExtractedActivity]:
     """Transform seq-repo activities to list of unique ExtractedActivity.
@@ -79,7 +81,9 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     mex_access_platform: ExtractedAccessPlatform,
     seq_repo_resource: ResourceMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -148,7 +152,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             continue
 
         contributing_unit = unit_stable_target_ids_by_synonym.get(
-            source.customer_org_unit_id
+            source.customer_org_unit_id, []
         )
         keyword = [*shared_keyword, Text(value=source.species)]
         extracted_resource = ExtractedResource(
@@ -157,7 +161,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             accrualPeriodicity=accrual_periodicity,
             anonymizationPseudonymization=anonymization_pseudonymization,
             contact=project_coordinators_ids,
-            contributingUnit=contributing_unit or [],
+            contributingUnit=contributing_unit,
             created=source.sequencing_date,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
@@ -183,7 +187,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 def transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> ExtractedAccessPlatform:
     """Transform seq-repo access platform to ExtractedAccessPlatform.
 
@@ -213,7 +217,9 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     contacts = seq_repo_access_platform.contact[0].mappingRules[0].forValues or []
 
     resolved_organigram = [
-        unit_stable_target_ids_by_synonym.get(contact) for contact in contacts
+        unit_id
+        for contact in contacts
+        for unit_id in (unit_stable_target_ids_by_synonym.get(contact) or [])
     ]
 
     return ExtractedAccessPlatform(
@@ -233,7 +239,7 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
 def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> tuple[list[MergedPersonIdentifier], list[MergedOrganizationalUnitIdentifier]]:
     """Get ldap resolved ids of project coordinators and units.
@@ -264,7 +270,8 @@ def get_resolved_project_coordinators_and_units(
                 department_number := query_ldap.person.departmentNumber
             ):
                 if sam_account_name.lower() == pc.lower():
-                    unit = unit_stable_target_ids_by_synonym.get(department_number)
-                    if unit and unit not in units_in_charge:
-                        units_in_charge.append(unit)
+                    units = unit_stable_target_ids_by_synonym.get(department_number, [])
+                    for unit in units:
+                        if unit not in units_in_charge:
+                            units_in_charge.append(unit)
     return project_coordinators_ids, units_in_charge

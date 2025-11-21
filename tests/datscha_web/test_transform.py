@@ -32,12 +32,12 @@ def person_stable_target_ids_by_query_string() -> dict[
 
 @pytest.fixture
 def unit_stable_target_ids_by_synonym() -> dict[
-    str, MergedOrganizationalUnitIdentifier
-]:
+        str, list[MergedOrganizationalUnitIdentifier]
+        ]:
     return {
-        "L1": MergedOrganizationalUnitIdentifier("ID000000000033"),
-        "FG99": MergedOrganizationalUnitIdentifier("ID000000000044"),
-        "Abteilung 2": MergedOrganizationalUnitIdentifier("ID000000000055"),
+        "L1": [MergedOrganizationalUnitIdentifier("ID000000000033")],
+        "FG99": [MergedOrganizationalUnitIdentifier("ID000000000044")],
+        "Abteilung 2": [MergedOrganizationalUnitIdentifier("ID000000000055")],
     }
 
 
@@ -55,7 +55,9 @@ def organizations_stable_target_ids_by_query_string() -> dict[
 def test_transform_datscha_web_items_to_mex_activities(
     datscha_web_item: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -96,7 +98,9 @@ def test_transform_datscha_web_items_to_mex_activities(
 def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     datscha_web_item_without_contributors: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+        ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
