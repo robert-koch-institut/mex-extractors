@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add mailpit service in ci testing environment
+
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+
+- change integration marker on most tests to requires_rki_infrastructure
 
 ### Deprecated
 
