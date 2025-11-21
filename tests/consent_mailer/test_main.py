@@ -35,25 +35,31 @@ def _req_verify() -> bool | str:
 
 def _delete_messages() -> None:
     settings = Settings.get()
-    requests.delete(
-        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
+    response = requests.delete(
+        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
     )
 
+    response.raise_for_status()
+
 
 def _get_messages() -> Any:  # noqa: ANN401
     settings = Settings.get()
-    return requests.get(
-        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
+
+    response = requests.get(
+        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
-    ).json()
+    )
+
+    response.raise_for_status()
+    return response.json()
 
 
-@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.integration
 def test_consent_mailer_send_emails() -> None:
     _delete_messages()
     persons = [
@@ -84,7 +90,7 @@ def test_consent_mailer_send_emails() -> None:
     )
 
 
-@pytest.mark.integration  # disabled on gh cli due to missing mailpit, stopgap MX-1993
+@pytest.mark.integration
 def test_send_consent_no_emails_for_no_rki_persons() -> None:
     _delete_messages()
 

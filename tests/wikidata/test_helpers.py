@@ -27,6 +27,7 @@ def test_get_wikidata_extracted_organization_id_by_name(
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_get_wikidata_extracted_organization_id_by_name_for_nonsense_query() -> None:
     """Wikidata helper returns None for nonsense query."""
     query_nonsense = "this should not give a match"

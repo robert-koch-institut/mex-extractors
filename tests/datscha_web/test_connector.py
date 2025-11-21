@@ -4,6 +4,7 @@ from mex.extractors.datscha_web.connector import DatschaWebConnector
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_datscha_connector_item_urls() -> None:
     datscha = DatschaWebConnector.get()
     item_urls = datscha.get_item_urls()
@@ -12,6 +13,7 @@ def test_datscha_connector_item_urls() -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_datscha_connector_get_item() -> None:
     datscha = DatschaWebConnector.get()
     item_urls = datscha.get_item_urls()

@@ -12,7 +12,7 @@ class ConsentMailerSettings(BaseModel):
         description="The chunk size for fetching against the backend.",
     )
     mailpit_api_url: str = Field(
-        "localhost:8025",
+        "http://localhost:8025",
         description="The url to the api endpoint for mailpit. USED FOR TESTS ONLY!",
     )
     mailpit_api_user: SecretStr = Field(

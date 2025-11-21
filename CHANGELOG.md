@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add `watch_progress` function to track progress of iterables in for loops
+- add mailpit service in ci testing environment
+- add requires_rki_infrastructure marker on most integration tests
 
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
