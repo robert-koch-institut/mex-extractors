@@ -28,7 +28,7 @@ lint:
 unit:
 	# run the test suite with all unit tests
 	@ echo running unit tests; \
-	pdm run pytest -m 'not integration and not requires_rki_infrastructure'; \
+	pdm run pytest -m 'not integration'; \
 
 test:
 	# run the unit and integration test suites

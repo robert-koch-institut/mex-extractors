@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add `watch_progress` function to track progress of iterables in for loops
 - add mailpit service in ci testing environment
+- add requires_rki_infrastructure marker on most integration tests
 
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
@@ -18,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
-- change integration marker on most tests to requires_rki_infrastructure
 
 ### Deprecated
 
