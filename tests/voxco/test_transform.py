@@ -27,7 +27,9 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
         str, MergedOrganizationIdentifier
     ],
     voxco_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> None:
@@ -49,7 +51,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
         "contact": [str(voxco_extracted_persons[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
-        "unitInCharge": [str(unit_stable_target_ids_by_synonym["C1"])],
+        "unitInCharge": [str(unit) for unit in unit_stable_target_ids_by_synonym["C1"]],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],

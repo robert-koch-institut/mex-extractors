@@ -37,7 +37,7 @@ from mex.extractors.primary_source.helpers import (
 
 def test_transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
-    unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> None:
     extracted_resource = transform_resource_parent_to_mex_resource(
         resource_parent, unit_stable_target_ids
@@ -89,7 +89,7 @@ def test_transform_resource_parent_to_mex_resource(
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
-    unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
@@ -160,7 +160,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     ifsg_extracted_resources_state: list[ExtractedResource],
     meta_type: list[MetaType],
     meta_disease: list[MetaDisease],
-    unit_stable_target_ids: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     extracted_resource = [

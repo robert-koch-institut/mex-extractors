@@ -187,7 +187,9 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
 
 @asset(group_name="synopse")
 def synopse_access_platform_id(
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
     ],
@@ -214,7 +216,9 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
@@ -254,7 +258,9 @@ def synopse_activity() -> dict[str, Any]:
 def synopse_extracted_activities(
     synopse_projects: list[SynopseProject],
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

@@ -26,7 +26,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 @pytest.fixture
 def unit_merged_ids_by_synonym(
     extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
+) -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Return unit merged ids by synonym for organigram units."""
     organigram_units = extract_organigram_units()
     mex_organizational_units = transform_organigram_units_to_organizational_units(

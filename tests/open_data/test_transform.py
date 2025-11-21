@@ -180,8 +180,8 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=999),
-        "XY": MergedOrganizationalUnitIdentifier.generate(seed=959),
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=999)],
+        "XY": [MergedOrganizationalUnitIdentifier.generate(seed=959)],
     }
 
     mex_sources = list(

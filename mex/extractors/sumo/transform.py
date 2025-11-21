@@ -72,7 +72,7 @@ def get_contact_merged_ids_by_names(
 
 def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
     sumo_resource_feat: ResourceMapping,
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
     mex_resource_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
@@ -106,10 +106,8 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
                 sumo_resource_feat.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
         ],
-        contributingUnit=[
-            unit_merged_ids_by_synonym[
-                sumo_resource_feat.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+        contributingUnit=unit_merged_ids_by_synonym[
+            sumo_resource_feat.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         hasPersonalData=sumo_resource_feat.hasPersonalData[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
@@ -132,10 +130,8 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
         spatial=sumo_resource_feat.spatial[0].mappingRules[0].setValues[0],  # type: ignore[index]
         theme=sumo_resource_feat.theme[0].mappingRules[0].setValues,
         title=sumo_resource_feat.title[0].mappingRules[0].setValues[0],  # type: ignore[index]
-        unitInCharge=[
-            unit_merged_ids_by_synonym[
-                sumo_resource_feat.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+        unitInCharge=unit_merged_ids_by_synonym[
+            sumo_resource_feat.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         wasGeneratedBy=transformed_activity.stableTargetId,
     )
@@ -143,7 +139,7 @@ def transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913
 
 def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
     sumo_resource_nokeda: ResourceMapping,
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
@@ -178,10 +174,8 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
                 sumo_resource_nokeda.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
             ]
         ],
-        contributingUnit=[
-            unit_merged_ids_by_synonym[
-                sumo_resource_nokeda.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+        contributingUnit=unit_merged_ids_by_synonym[
+            sumo_resource_nokeda.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         description=[
             Text.model_validate(
@@ -230,10 +224,8 @@ def transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913
         .setValues[0],  # type: ignore[index]
         theme=sumo_resource_nokeda.theme[0].mappingRules[0].setValues,
         title=sumo_resource_nokeda.title[0].mappingRules[0].setValues[0],  # type: ignore[index]
-        unitInCharge=[
-            unit_merged_ids_by_synonym[
-                sumo_resource_nokeda.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+        unitInCharge=unit_merged_ids_by_synonym[
+            sumo_resource_nokeda.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
         wasGeneratedBy=transformed_activity.stableTargetId,
     )
@@ -510,7 +502,7 @@ def transform_feat_projection_variable_to_mex_variable(
 
 def transform_sumo_access_platform_to_mex_access_platform(
     sumo_access_platform: AccessPlatformMapping,
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     person_stable_target_ids_by_query_string: dict[str, MergedPersonIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform sumo access platform info to ExtractedAccessPlatform.
@@ -524,14 +516,11 @@ def transform_sumo_access_platform_to_mex_access_platform(
     Returns:
         ExtractedAccessPlatform
     """
-    unit_in_charge = [
-        unit_merged_ids_by_synonym[unit]
-        for unit in (
-            sumo_access_platform.unitInCharge[0].mappingRules[0].forValues or ()
-        )
-        if unit
-    ]
-    if not unit_in_charge[0]:
+    unit_in_charge = []
+    for unit in sumo_access_platform.unitInCharge[0].mappingRules[0].forValues or ():
+        if unit:
+            unit_in_charge.extend(unit_merged_ids_by_synonym[unit])
+    if not unit_in_charge:
         unit_in_charge = []
     contact = [
         person_stable_target_ids_by_query_string[contact]
@@ -554,7 +543,7 @@ def transform_sumo_access_platform_to_mex_access_platform(
 
 def transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Transform sumo activity to ExtractedActivity.
@@ -574,14 +563,12 @@ def transform_sumo_activity_to_extracted_activity(
         for contact in (sumo_activity.contact[0].mappingRules[0].forValues or ())
     ]
     documentation = sumo_activity.documentation[0].mappingRules[0].setValues
-    involved_unit = [
-        unit_merged_ids_by_synonym[unit]
-        for unit in (sumo_activity.involvedUnit[0].mappingRules[0].forValues or ())
-    ]
-    responsible_unit = [
-        unit_merged_ids_by_synonym[unit]
-        for unit in (sumo_activity.responsibleUnit[0].mappingRules[0].forValues or ())
-    ]
+    involved_unit = []
+    for unit in sumo_activity.involvedUnit[0].mappingRules[0].forValues or ():
+        involved_unit.extend(unit_merged_ids_by_synonym[unit])
+    responsible_unit = []
+    for unit in sumo_activity.responsibleUnit[0].mappingRules[0].forValues or ():
+        responsible_unit.extend(unit_merged_ids_by_synonym[unit])
     short_name = sumo_activity.shortName[0].mappingRules[0].setValues
     title = sumo_activity.title[0].mappingRules[0].setValues
     theme = sumo_activity.theme[0].mappingRules[0].setValues

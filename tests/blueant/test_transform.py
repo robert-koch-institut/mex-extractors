@@ -27,9 +27,9 @@ def test_transform_blueant_sources_to_extracted_activities(
         ],
     }
     unit_stable_target_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=555),
-        "C1 Child Department": MergedOrganizationalUnitIdentifier.generate(seed=555),
-        "XY": MergedOrganizationalUnitIdentifier.generate(seed=999),
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=555)],
+        "C1 Child Department": [MergedOrganizationalUnitIdentifier.generate(seed=555)],
+        "XY": [MergedOrganizationalUnitIdentifier.generate(seed=999)],
     }
     mex_sources = list(
         transform_blueant_sources_to_extracted_activities(

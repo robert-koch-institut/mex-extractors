@@ -40,11 +40,6 @@ def extracted_organizational_units(
 @asset(group_name="default")
 def unit_stable_target_ids_by_synonym(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
+) -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Group organizational units by their synonym."""
-    return {
-        synonym: MergedOrganizationalUnitIdentifier(merged_id)
-        for synonym, merged_id in get_unit_merged_ids_by_synonyms(
-            extracted_organizational_units
-        ).items()
-    }
+    return get_unit_merged_ids_by_synonyms(extracted_organizational_units)

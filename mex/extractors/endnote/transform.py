@@ -141,7 +141,9 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_records: list[EndnoteRecord],
     endnote_bib_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
 ) -> list[ExtractedBibliographicResource]:
     """Extract endnote bibliographic resources.
 
@@ -248,9 +250,10 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         ]
         contributing_unit = (
             [
-                unit_stable_target_ids_by_synonym[unit.strip()]
+                unit_id
                 for unit in record.custom4.split(";")
                 if unit.strip() in unit_stable_target_ids_by_synonym
+                for unit_id in unit_stable_target_ids_by_synonym[unit.strip()]
             ]
             if record.custom4
             else []

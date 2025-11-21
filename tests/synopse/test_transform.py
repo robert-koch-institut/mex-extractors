@@ -43,7 +43,7 @@ def test_transform_synopse_studies_into_access_platforms(
     synopse_access_platform: AccessPlatformMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
     }
     expected_access_platform = {
         "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
@@ -215,7 +215,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_resource: ResourceMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=234)
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
     }
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
@@ -294,7 +294,7 @@ def test_transform_synopse_projects_to_mex_activities(
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
     unit_merged_ids_by_synonym = {
-        "C1": MergedOrganizationalUnitIdentifier.generate(seed=13)
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=13)]
     }
     assert synopse_project.projektende
     assert synopse_project.projektbeginn

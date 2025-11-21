@@ -68,7 +68,7 @@ def test_get_contact_merged_ids_by_names(
 
 
 def test_transform_resource_nokeda_to_mex_resource(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_resources_nokeda: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
@@ -138,14 +138,16 @@ def test_transform_resource_nokeda_to_mex_resource(
             "https://mex.rki.de/item/theme-11",
         ],
         "title": [{"language": TextLanguage.DE, "value": "test_project"}],
-        "unitInCharge": [unit_merged_ids_by_synonym["FG99"]],
+        "unitInCharge": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG99"]
+        ],
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
 
 def test_transform_resource_feat_model_to_mex_resource(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_resources_feat: ResourceMapping,
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
@@ -199,7 +201,9 @@ def test_transform_resource_feat_model_to_mex_resource(
         ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Syndrome"}],
-        "unitInCharge": [unit_merged_ids_by_synonym["FG 99"]],
+        "unitInCharge": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG 99"]
+        ],
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
@@ -425,7 +429,7 @@ def test_transform_feat_projection_variable_to_mex_variable(
 
 
 def test_transform_sumo_access_platform_to_mex_access_platform(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_access_platform: AccessPlatformMapping,
 ) -> None:
     person_stable_target_ids_by_query_string = {
@@ -439,7 +443,7 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
         "contact": [person_stable_target_ids_by_query_string["Roland Resolved"]],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "SUMO Datenbank", "language": TextLanguage.DE}],
-        "unitInCharge": [unit_merged_ids_by_synonym["MF4"]],
+        "unitInCharge": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["MF4"]],
     }
 
     transformed_data = transform_sumo_access_platform_to_mex_access_platform(
@@ -453,7 +457,7 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
 
 def test_transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
     extracted_activity = transform_sumo_activity_to_extracted_activity(
@@ -478,8 +482,10 @@ def test_transform_sumo_activity_to_extracted_activity(
             }
         ],
         "externalAssociate": Joker(),
-        "involvedUnit": [unit_merged_ids_by_synonym["MF4"]],
-        "responsibleUnit": [unit_merged_ids_by_synonym["FG32"]],
+        "involvedUnit": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["MF4"]],
+        "responsibleUnit": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG32"]
+        ],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
         "start": [YearMonthDay("2018-07-01")],
         "theme": [

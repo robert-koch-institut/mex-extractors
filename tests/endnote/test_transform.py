@@ -85,7 +85,9 @@ def test_extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
 ) -> None:
     bibliographic_resources = extract_endnote_bibliographic_resource(
         endnote_records,

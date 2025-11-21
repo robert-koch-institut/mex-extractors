@@ -44,7 +44,7 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def transform_synopse_studies_into_access_platforms(
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
     ],
@@ -314,7 +314,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     synopse_projects: Iterable[SynopseProject],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activities: Iterable[ExtractedActivity],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
@@ -388,17 +388,18 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             and study.ds_typ_id
             == synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ):
-            contact.append(contact_point)
+            contact.extend(contact_point)
         if project.verantwortliche_oe in unit_merged_ids_by_synonym:
-            contact.append(unit_merged_ids_by_synonym[project.verantwortliche_oe])
+            contact.extend(unit_merged_ids_by_synonym[project.verantwortliche_oe])
         else:
             continue
         contributing_unit: list[MergedOrganizationalUnitIdentifier] = []
         if project.interne_partner:
             contributing_unit = [
-                unit_merged_ids_by_synonym[unit]
+                unit_id
                 for unit in project.interne_partner.split(", ")
                 if unit in unit_merged_ids_by_synonym
+                for unit_id in unit_merged_ids_by_synonym[unit]
             ]
         contributor: list[MergedPersonIdentifier] = []
         if project.beitragende in synopse_merged_person_ids_by_str:
@@ -523,7 +524,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -595,7 +596,7 @@ def transform_synopse_projects_to_mex_activities(
 def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     synopse_project: SynopseProject,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -640,12 +641,14 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         for unit in unit_merged_ids_by_synonym
     ):
         responsible_unit = [
-            unit_merged_ids_by_synonym[synonym]
+            unit_id
             for synonym in synopse_project.verantwortliche_oe.split(" ,")
             if synonym in unit_merged_ids_by_synonym
+            for unit_id in unit_merged_ids_by_synonym[synonym]
         ]
     else:
-        responsible_unit = [unit_merged_ids_by_synonym["FG21"]]
+        fg21_ids = unit_merged_ids_by_synonym["FG21"]
+        responsible_unit = fg21_ids if fg21_ids else []
     external_associate = []
     if synopse_project.externe_partner:
         for org in synopse_project.externe_partner.split(", "):
