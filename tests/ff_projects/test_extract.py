@@ -94,9 +94,8 @@ def test_get_optional_string_from_cell() -> None:
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_extract_ff_projects_organizations() -> None:
-    organizations = extract_ff_projects_organizations(
-        [next(extract_ff_projects_sources())]
-    )
+    sources = extract_ff_projects_sources()
+    organizations = extract_ff_projects_organizations([sources[0]])
     assert organizations["Robert Koch-Institut"] == MergedOrganizationIdentifier(
         "ga6xh6pgMwgq7DC7r6Wjqg"
     )

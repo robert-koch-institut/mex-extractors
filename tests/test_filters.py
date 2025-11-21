@@ -1,4 +1,6 @@
-from collections.abc import Generator, Sequence
+from collections.abc import Sequence
+
+import pytest
 
 from mex.common.types import MergedPrimarySourceIdentifier, TemporalEntity
 from mex.extractors.filters import filter_by_global_rules
@@ -36,9 +38,9 @@ class MockedBaseRawData(BaseRawData):
         return self.identifier_in_primary_source
 
 
-def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
-    """Mock a BaseRawData object."""
-    yield from [
+@pytest.fixture
+def mocked_base_raw_data_source() -> list[MockedBaseRawData]:
+    return [
         MockedBaseRawData(
             item_id="1",
             partner="permitted partner",
@@ -82,34 +84,34 @@ def mocked_base_raw_data_source() -> Generator[MockedBaseRawData, None, None]:
     ]
 
 
-def test_filters_skips_partners_mocked() -> None:
+def test_filters_skips_partners_mocked(
+    mocked_base_raw_data_source: list[MockedBaseRawData],
+) -> None:
     """Test global filter for skipping partners."""
-    source_gen = mocked_base_raw_data_source()
-    sources = list(
-        filter_by_global_rules(
-            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
-        )
+    sources = filter_by_global_rules(
+        MergedPrimarySourceIdentifier.generate(seed=42),
+        mocked_base_raw_data_source,
     )
     assert len(sources) == 3
 
 
-def test_filters_skips_units_mocked() -> None:
+def test_filters_skips_units_mocked(
+    mocked_base_raw_data_source: list[MockedBaseRawData],
+) -> None:
     """Test global filter for skipping units."""
-    source_gen = mocked_base_raw_data_source()
-    sources = list(
-        filter_by_global_rules(
-            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
-        )
+    sources = filter_by_global_rules(
+        MergedPrimarySourceIdentifier.generate(seed=42),
+        mocked_base_raw_data_source,
     )
     assert len(sources) == 3
 
 
-def test_filters_skips_years_mocked() -> None:
+def test_filters_skips_years_mocked(
+    mocked_base_raw_data_source: list[MockedBaseRawData],
+) -> None:
     """Test global filter for skipping years before."""
-    source_gen = mocked_base_raw_data_source()
-    sources = list(
-        filter_by_global_rules(
-            MergedPrimarySourceIdentifier.generate(seed=42), source_gen
-        )
+    sources = filter_by_global_rules(
+        MergedPrimarySourceIdentifier.generate(seed=42),
+        mocked_base_raw_data_source,
     )
     assert len(sources) == 3

@@ -95,9 +95,10 @@ def grippeweb_merged_contact_point_id_by_email(
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
-    mex_actors_resources = list(
+    mex_actors_resources = (
         transform_ldap_functional_accounts_to_extracted_contact_points(
-            ldap_actors, get_extracted_primary_source_id_by_name("ldap")
+            ldap_actors,
+            get_extracted_primary_source_id_by_name("ldap"),
         )
     )
     load(mex_actors_resources)
@@ -116,13 +117,11 @@ def grippeweb_extracted_persons(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
         AccessPlatformMapping.model_validate(grippeweb_access_platform),
     )
-    mex_persons = list(
-        transform_ldap_persons_to_extracted_persons(
-            ldap_persons,
-            get_extracted_primary_source_id_by_name("ldap"),
-            extracted_organizational_units,
-            extracted_organization_rki,
-        )
+    mex_persons = transform_ldap_persons_to_extracted_persons(
+        ldap_persons,
+        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_organizational_units,
+        extracted_organization_rki,
     )
     load(mex_persons)
     return mex_persons

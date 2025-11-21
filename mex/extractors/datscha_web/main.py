@@ -37,10 +37,9 @@ from mex.extractors.sinks import load
 def datscha_web_items() -> list[DatschaWebItem]:
     """Return extracted items from Datscha Web."""
     datscha_web_items = extract_datscha_web_items()
-    return list(
-        filter_by_global_rules(
-            get_extracted_primary_source_id_by_name("datscha-web"), datscha_web_items
-        )
+    return filter_by_global_rules(
+        get_extracted_primary_source_id_by_name("datscha-web"),
+        datscha_web_items,
     )
 
 
@@ -51,7 +50,7 @@ def datscha_web_person_ids_by_query_str(
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract Datscha Web contact persons from LDAP and return them by query string."""
-    ldap_source_contacts = list(extract_datscha_web_source_contacts(datscha_web_items))
+    ldap_source_contacts = extract_datscha_web_source_contacts(datscha_web_items)
     ldap_primary_source_id = get_extracted_primary_source_id_by_name("ldap")
     mex_source_contacts = transform_ldap_persons_with_query_to_extracted_persons(
         ldap_source_contacts,
@@ -80,13 +79,11 @@ def datscha_web_extracted_activities(
     datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform Datscha Web to extracted sources and load them to the sinks."""
-    mex_sources = list(
-        transform_datscha_web_items_to_mex_activities(
-            datscha_web_items,
-            datscha_web_person_ids_by_query_str,
-            unit_stable_target_ids_by_synonym,
-            datscha_web_organization_ids_by_query_str,
-        )
+    mex_sources = transform_datscha_web_items_to_mex_activities(
+        datscha_web_items,
+        datscha_web_person_ids_by_query_str,
+        unit_stable_target_ids_by_synonym,
+        datscha_web_organization_ids_by_query_str,
     )
     load(mex_sources)
     return mex_sources

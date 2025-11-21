@@ -1,7 +1,6 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from typing import cast
 
-from mex.common.logging import watch
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -18,12 +17,12 @@ from mex.common.types import (
     TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
+from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 
 
-@watch()
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
@@ -32,7 +31,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     synopse_extracted_activities: Iterable[ExtractedActivity],
     resource_mapping: ResourceMapping,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
-) -> Generator[ExtractedResource, None, None]:
+) -> list[ExtractedResource]:
     """Transform Biospecimen resources to extracted resources.
 
     Args:
@@ -45,7 +44,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         extracted_organizations: extracted organizations by label
 
     Returns:
-        Generator for ExtractedResource instances
+        List of ExtractedResource instances
     """
     person_stable_target_id_by_email = {
         str(p.email[0]): Identifier(p.stableTargetId) for p in mex_persons
@@ -59,7 +58,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         for rule in resource_mapping.accessRestriction[0].mappingRules
         if rule.forValues and rule.setValues
     }
-    for resource in biospecimen_resources:
+    resources = []
+    for resource in watch_progress(
+        biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
+    ):
         if resource.anonymisiert_pseudonymisiert:
             anonymization_pseudonymization = AnonymizationPseudonymization.find(
                 resource.anonymisiert_pseudonymisiert
@@ -138,43 +140,46 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
             theme = resource_mapping.theme[0].mappingRules[0].setValues
-        yield ExtractedResource(
-            accessRestriction=access_restriction_by_zugriffsbeschraenkung[
-                resource.zugriffsbeschraenkung
-            ],
-            alternativeTitle=resource.alternativer_titel,
-            anonymizationPseudonymization=anonymization_pseudonymization,
-            conformsTo=conforms_to,
-            contact=contact,
-            contributingUnit=contributing_unit,
-            contributor=contributor,
-            description=resource.beschreibung,
-            documentation=documentation,
-            externalPartner=external_partner,
-            hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
-            hasLegalBasis=has_legal_basis,
-            hasPersonalData=has_personal_data,
-            identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
-            instrumentToolOrApparatus=resource.tools_instrumente_oder_apparate,
-            keyword=resource.schlagworte,
-            language=language,
-            loincId=loinc_id,
-            meshId=mesh_id,
-            method=resource.methoden,
-            methodDescription=resource.methodenbeschreibung,
-            publisher=extracted_organization_rki.stableTargetId,
-            resourceCreationMethod=resource_creation_method,
-            resourceTypeGeneral=resource_type_general,
-            resourceTypeSpecific=resource.ressourcentyp_speziell,
-            rights=resource.rechte,
-            sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
-            spatial=resource.raeumlicher_bezug,
-            temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
-            theme=theme,
-            title=resource.offizieller_titel_der_probensammlung,
-            unitInCharge=unit_in_charge,
-            wasGeneratedBy=was_generated_by or None,
+        resources.append(
+            ExtractedResource(
+                accessRestriction=access_restriction_by_zugriffsbeschraenkung[
+                    resource.zugriffsbeschraenkung
+                ],
+                alternativeTitle=resource.alternativer_titel,
+                anonymizationPseudonymization=anonymization_pseudonymization,
+                conformsTo=conforms_to,
+                contact=contact,
+                contributingUnit=contributing_unit,
+                contributor=contributor,
+                description=resource.beschreibung,
+                documentation=documentation,
+                externalPartner=external_partner,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
+                hasLegalBasis=has_legal_basis,
+                hasPersonalData=has_personal_data,
+                identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
+                instrumentToolOrApparatus=resource.tools_instrumente_oder_apparate,
+                keyword=resource.schlagworte,
+                language=language,
+                loincId=loinc_id,
+                meshId=mesh_id,
+                method=resource.methoden,
+                methodDescription=resource.methodenbeschreibung,
+                publisher=extracted_organization_rki.stableTargetId,
+                resourceCreationMethod=resource_creation_method,
+                resourceTypeGeneral=resource_type_general,
+                resourceTypeSpecific=resource.ressourcentyp_speziell,
+                rights=resource.rechte,
+                sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
+                spatial=resource.raeumlicher_bezug,
+                temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
+                theme=theme,
+                title=resource.offizieller_titel_der_probensammlung,
+                unitInCharge=unit_in_charge,
+                wasGeneratedBy=was_generated_by or None,
+            )
         )
+    return resources
 
 
 def get_or_create_externe_partner(

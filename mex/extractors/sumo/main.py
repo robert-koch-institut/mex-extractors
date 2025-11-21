@@ -101,16 +101,14 @@ def sumo_merged_contact_ids_by_email(
     sumo_extracted_resources_feat: dict[str, Any],
 ) -> dict[str, MergedContactPointIdentifier]:
     """Load contacts related to resources and return them by their e-mail addresses."""
-    ldap_contact_points_resources = list(
-        extract_ldap_contact_points_by_emails(
-            [
-                ResourceMapping.model_validate(r)
-                for r in [
-                    sumo_extracted_resources_nokeda,
-                    sumo_extracted_resources_feat,
-                ]
+    ldap_contact_points_resources = extract_ldap_contact_points_by_emails(
+        [
+            ResourceMapping.model_validate(r)
+            for r in [
+                sumo_extracted_resources_nokeda,
+                sumo_extracted_resources_feat,
             ]
-        )
+        ]
     )
     mex_actors_resources = (
         transform_ldap_functional_accounts_to_extracted_contact_points(
@@ -158,20 +156,20 @@ def sumo_extracted_resources_feat() -> dict[str, Any]:
 @asset(group_name="sumo")
 def sumo_extracted_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
     """Extract Cc1 data model from SUMO."""
-    return list(extract_cc1_data_model_nokeda())
+    return extract_cc1_data_model_nokeda()
 
 
 @asset(group_name="sumo")
 def sumo_extracted_cc2_aux_model() -> list[Cc2AuxModel]:
     """Extract Cc2 auxiliary model from SUMO."""
-    sumo_cc2_aux_model = list(extract_cc2_aux_model())
-    return list(filter_and_log_cc2_aux_model(sumo_cc2_aux_model))
+    sumo_cc2_aux_model = extract_cc2_aux_model()
+    return filter_and_log_cc2_aux_model(sumo_cc2_aux_model)
 
 
 @asset(group_name="sumo")
 def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
     """Extract Cc2 features from SUMO data."""
-    return list(extract_cc2_feat_projection())
+    return extract_cc2_feat_projection()
 
 
 @asset(group_name="sumo")
@@ -223,8 +221,8 @@ def sumo_extracted_variable_groups_nokeda_aux(
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
-    """Transform Nokeda auxiliary variables to MeX variable groups and load them."""
-    mex_variable_groups_nokeda_aux = list(
+    """Transform Nokeda auxiliary variables to MEx variable groups and load them."""
+    mex_variable_groups_nokeda_aux = (
         transform_nokeda_aux_variable_to_mex_variable_group(
             sumo_extracted_cc2_aux_model,
             sumo_extracted_resource_nokeda,
@@ -239,8 +237,8 @@ def sumo_extracted_variable_groups_nokeda(
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
-    """Transform Nokeda variables to MeX variable groups and load them."""
-    mex_variable_groups_model_nokeda = list(
+    """Transform Nokeda variables to MEx variable groups and load them."""
+    mex_variable_groups_model_nokeda = (
         transform_model_nokeda_variable_to_mex_variable_group(
             sumo_extracted_cc1_data_model_nokeda,
             sumo_extracted_resource_nokeda,
@@ -256,11 +254,9 @@ def sumo_extracted_variable_group_feat(
     sumo_extracted_resource_nokeda: ExtractedResource,
 ) -> list[ExtractedVariableGroup]:
     """Transform SUMO Resource feat to MEx variable groups and load them."""
-    mex_variable_groups_feat = list(
-        transform_feat_variable_to_mex_variable_group(
-            sumo_extracted_cc2_feat_projection,
-            sumo_extracted_resource_nokeda,
-        )
+    mex_variable_groups_feat = transform_feat_variable_to_mex_variable_group(
+        sumo_extracted_cc2_feat_projection,
+        sumo_extracted_resource_nokeda,
     )
     load(mex_variable_groups_feat)
     return mex_variable_groups_feat
@@ -274,13 +270,11 @@ def sumo_extracted_variables_nokeda(
 ) -> list[ExtractedVariable]:
     """Transform Nokeda variables to extracted variables and load them."""
     sumo_cc1_data_valuesets = extract_cc1_data_valuesets()
-    transformed_nokeda_model_variable = list(
-        transform_nokeda_model_variable_to_mex_variable(
-            sumo_extracted_cc1_data_model_nokeda,
-            sumo_cc1_data_valuesets,
-            sumo_extracted_variable_groups_nokeda,
-            sumo_extracted_resource_nokeda,
-        )
+    transformed_nokeda_model_variable = transform_nokeda_model_variable_to_mex_variable(
+        sumo_extracted_cc1_data_model_nokeda,
+        sumo_cc1_data_valuesets,
+        sumo_extracted_variable_groups_nokeda,
+        sumo_extracted_resource_nokeda,
     )
     load(transformed_nokeda_model_variable)
     return transformed_nokeda_model_variable
@@ -296,14 +290,12 @@ def sumo_extracted_variables_nokeda_aux(
     sumo_cc2_aux_mapping = extract_cc2_aux_mapping(sumo_extracted_cc2_aux_model)
     sumo_cc2_aux_valuesets = extract_cc2_aux_valuesets()
 
-    sumo_extracted_variables_nokeda_aux = list(
-        transform_nokeda_aux_variable_to_mex_variable(
-            sumo_extracted_cc2_aux_model,
-            sumo_cc2_aux_mapping,
-            sumo_cc2_aux_valuesets,
-            sumo_extracted_variable_groups_nokeda_aux,
-            sumo_extracted_resource_nokeda,
-        )
+    sumo_extracted_variables_nokeda_aux = transform_nokeda_aux_variable_to_mex_variable(
+        sumo_extracted_cc2_aux_model,
+        sumo_cc2_aux_mapping,
+        sumo_cc2_aux_valuesets,
+        sumo_extracted_variable_groups_nokeda_aux,
+        sumo_extracted_resource_nokeda,
     )
     load(sumo_extracted_variables_nokeda_aux)
     return sumo_extracted_variables_nokeda_aux
@@ -316,7 +308,7 @@ def sumo_extracted_variables_feat_projection(
     sumo_extracted_resource_feat: ExtractedResource,
 ) -> list[ExtractedVariable]:
     """Transform SUMO feat projection variables to extracted variables and load them."""
-    transformed_feat_projection_variable = list(
+    transformed_feat_projection_variable = (
         transform_feat_projection_variable_to_mex_variable(
             sumo_extracted_cc2_feat_projection,
             sumo_extracted_variable_group_feat,

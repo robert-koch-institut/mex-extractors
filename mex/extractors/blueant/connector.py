@@ -1,4 +1,3 @@
-from collections.abc import Generator
 from typing import Any
 from urllib.parse import urljoin
 
@@ -45,15 +44,14 @@ class BlueAntConnector(HTTPConnector):
             raise MExError(response)
         return response
 
-    def get_projects(self) -> Generator[BlueAntProject, None, None]:
+    def get_projects(self) -> list[BlueAntProject]:
         """Load Blue Ant sources by querying the Blue Ant API projects endpoint.
 
         Returns:
-            Generator for Blue Ant projects
+            List of Blue Ant projects
         """
         dct = self._get_json_from_api("projects?includeArchived=true")
-
-        yield from BlueAntProjectResponse.model_validate(dct).projects
+        return BlueAntProjectResponse.model_validate(dct).projects
 
     def get_client_name(self, client_id: int) -> str:
         """Get client name for client id.

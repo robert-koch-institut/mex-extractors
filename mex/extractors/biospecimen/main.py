@@ -32,7 +32,7 @@ from mex.extractors.utils import load_yaml
 @asset(group_name="biospecimen")
 def biospecimen_resources() -> list[BiospecimenResource]:
     """Extract from biospecimen resources."""
-    return list(extract_biospecimen_resources())
+    return extract_biospecimen_resources()
 
 
 @asset(group_name="biospecimen")
@@ -68,16 +68,14 @@ def biospecimen_extracted_resources(
     )
     extracted_organizations = extract_biospecimen_organizations(biospecimen_resources)
 
-    mex_sources = list(
-        transform_biospecimen_resource_to_mex_resource(
-            biospecimen_resources,
-            unit_stable_target_ids_by_synonym,
-            biospecimen_extracted_persons,
-            extracted_organization_rki,
-            synopse_extracted_activities,
-            resource_mapping,
-            extracted_organizations,
-        )
+    mex_sources = transform_biospecimen_resource_to_mex_resource(
+        biospecimen_resources,
+        unit_stable_target_ids_by_synonym,
+        biospecimen_extracted_persons,
+        extracted_organization_rki,
+        synopse_extracted_activities,
+        resource_mapping,
+        extracted_organizations,
     )
     load(mex_sources)
     return mex_sources
