@@ -22,7 +22,7 @@ def transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> tuple[list[ExtractedResource], list[ExtractedResource]]:

@@ -26,9 +26,8 @@ from mex.extractors.primary_source.helpers import (
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
     unit_stable_target_ids_by_synonym: dict[
-        str,
-        list[MergedOrganizationalUnitIdentifier]
-        ],
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: Iterable[ExtractedActivity],
@@ -98,9 +97,9 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
         contact: list[Identifier] = []
         for kontakt in resource.kontakt:
-            if k := person_stable_target_id_by_email.get(kontakt):  # noqa: SIM114
+            if k := person_stable_target_id_by_email.get(kontakt):
                 contact.append(k)
-            elif k := unit_stable_target_ids_by_synonym.get(kontakt, []):
+            elif k := unit_stable_target_ids_by_synonym.get(kontakt, []):  # type: ignore[assignment]
                 contact.extend(k)
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0], None

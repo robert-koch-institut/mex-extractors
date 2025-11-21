@@ -25,7 +25,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> list[ExtractedActivity]:
     """Transform seq-repo activities to list of unique ExtractedActivity.
@@ -83,7 +83,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -187,7 +187,9 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 def transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
 ) -> ExtractedAccessPlatform:
     """Transform seq-repo access platform to ExtractedAccessPlatform.
 
@@ -239,7 +241,9 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
 def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> tuple[list[MergedPersonIdentifier], list[MergedOrganizationalUnitIdentifier]]:
     """Get ldap resolved ids of project coordinators and units.

@@ -23,7 +23,7 @@ from mex.extractors.primary_source.helpers import (
 def test_transform_international_projects_source_to_mex_source(
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)

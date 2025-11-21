@@ -152,7 +152,7 @@ def ifsg_extracted_resource_parent(
     ifsg_resource_parent_dict: dict[str, Any],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> ExtractedResource:
     """Extracted and loaded ifsg resource parent."""
     mex_resource_parent = transform_resource_parent_to_mex_resource(
@@ -171,7 +171,7 @@ def ifsg_extracted_resources_state(
     ifsg_extracted_resource_parent: ExtractedResource,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
@@ -194,7 +194,7 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     id_types_of_diseases: list[int],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""

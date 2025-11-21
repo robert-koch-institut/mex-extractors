@@ -189,7 +189,7 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
 def synopse_access_platform_id(
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
     ],
@@ -218,7 +218,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
@@ -260,7 +260,7 @@ def synopse_extracted_activities(
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

@@ -76,7 +76,7 @@ def blueant_extracted_activities(
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     blueant_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],

@@ -83,7 +83,9 @@ def test_transform_biospecimen_resource_to_mex_resource(
     resource_mapping: ResourceMapping,
 ) -> None:
     unit_stable_target_ids = MagicMock()
-    unit_stable_target_ids.get.side_effect = lambda key, default=None: [Identifier.generate(seed=42)]
+    unit_stable_target_ids.get.side_effect = lambda key, default=None: [
+        Identifier.generate(seed=42)
+    ]
 
     synopse_merged_id = next(
         filter(

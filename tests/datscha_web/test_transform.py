@@ -32,8 +32,8 @@ def person_stable_target_ids_by_query_string() -> dict[
 
 @pytest.fixture
 def unit_stable_target_ids_by_synonym() -> dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-        ]:
+    str, list[MergedOrganizationalUnitIdentifier]
+]:
     return {
         "L1": [MergedOrganizationalUnitIdentifier("ID000000000033")],
         "FG99": [MergedOrganizationalUnitIdentifier("ID000000000044")],
@@ -57,7 +57,7 @@ def test_transform_datscha_web_items_to_mex_activities(
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -100,7 +100,7 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

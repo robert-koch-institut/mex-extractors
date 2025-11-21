@@ -32,7 +32,7 @@ def transform_igs_extracted_resource(
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
@@ -139,7 +139,7 @@ def transform_igs_access_platform(
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> ExtractedAccessPlatform:
     """Transform IGS extracted access platform.
 

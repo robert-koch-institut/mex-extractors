@@ -233,7 +233,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,

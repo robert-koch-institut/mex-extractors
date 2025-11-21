@@ -138,7 +138,9 @@ def test_transform_resource_nokeda_to_mex_resource(
             "https://mex.rki.de/item/theme-11",
         ],
         "title": [{"language": TextLanguage.DE, "value": "test_project"}],
-        "unitInCharge": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG99"]],
+        "unitInCharge": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG99"]
+        ],
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
@@ -199,7 +201,9 @@ def test_transform_resource_feat_model_to_mex_resource(
         ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Syndrome"}],
-        "unitInCharge": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG 99"]],
+        "unitInCharge": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG 99"]
+        ],
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
@@ -479,7 +483,9 @@ def test_transform_sumo_activity_to_extracted_activity(
         ],
         "externalAssociate": Joker(),
         "involvedUnit": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["MF4"]],
-        "responsibleUnit": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG32"]],
+        "responsibleUnit": [
+            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG32"]
+        ],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
         "start": [YearMonthDay("2018-07-01")],
         "theme": [

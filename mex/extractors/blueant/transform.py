@@ -24,7 +24,7 @@ def transform_blueant_sources_to_extracted_activities(
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     activity: ActivityMapping,
     blueant_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier

@@ -89,9 +89,9 @@ def international_projects_extracted_activities() -> list[ExtractedActivity]:
 
 
 @pytest.fixture
-def unit_stable_target_ids_by_synonym() ->  dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-        ]:
+def unit_stable_target_ids_by_synonym() -> dict[
+    str, list[MergedOrganizationalUnitIdentifier]
+]:
     """Mock unit stable target ids."""
     return {"C1": [MergedOrganizationalUnitIdentifier.generate(seed=44)]}
 

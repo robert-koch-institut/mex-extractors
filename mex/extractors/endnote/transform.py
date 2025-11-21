@@ -143,7 +143,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> list[ExtractedBibliographicResource]:
     """Extract endnote bibliographic resources.
 

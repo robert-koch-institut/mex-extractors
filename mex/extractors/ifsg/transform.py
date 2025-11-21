@@ -30,7 +30,7 @@ def transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> ExtractedResource:
     """Transform resource parent to mex resource.
 
@@ -83,7 +83,7 @@ def transform_resource_state_to_mex_resource(
     ifsg_extracted_resource_parent: ExtractedResource,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> list[ExtractedResource]:
     """Transform resource state to mex resource.
 
@@ -217,7 +217,7 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     id_type_of_diseases: list[int],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Transform resource disease to mex resource.
@@ -270,7 +270,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
     code_by_id_type: dict[int, str],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
     """Transform resource disease row to mex resource.

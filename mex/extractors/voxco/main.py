@@ -92,7 +92,7 @@ def voxco_extracted_resources_by_str(  # noqa: PLR0913
     voxco_extracted_persons: list[ExtractedPerson],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:

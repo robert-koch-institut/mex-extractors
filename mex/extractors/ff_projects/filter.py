@@ -17,7 +17,7 @@ def filter_and_log_ff_projects_sources(
     sources: Iterable[FFProjectsSource],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> list[FFProjectsSource]:
     """Filter FF Projects sources and log filtered sources.
 
@@ -46,7 +46,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     source: FFProjectsSource,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> bool:
     """Filter a FFprojectSource according to settings and log filtering.
 

@@ -16,7 +16,9 @@ from mex.extractors.primary_source.helpers import (
 def transform_ff_projects_source_to_extracted_activity(
     ff_projects_source: FFProjectsSource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
+    unit_stable_target_id_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     organization_stable_target_id_by_synonyms: dict[str, MergedOrganizationIdentifier],
     ff_projects_activity: ActivityMapping,
 ) -> ExtractedActivity:

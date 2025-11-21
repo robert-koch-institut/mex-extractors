@@ -517,9 +517,7 @@ def transform_sumo_access_platform_to_mex_access_platform(
         ExtractedAccessPlatform
     """
     unit_in_charge = []
-    for unit in (
-        sumo_access_platform.unitInCharge[0].mappingRules[0].forValues or ()
-    ):
+    for unit in sumo_access_platform.unitInCharge[0].mappingRules[0].forValues or ():
         if unit:
             unit_in_charge.extend(unit_merged_ids_by_synonym[unit])
     if not unit_in_charge:
@@ -566,10 +564,10 @@ def transform_sumo_activity_to_extracted_activity(
     ]
     documentation = sumo_activity.documentation[0].mappingRules[0].setValues
     involved_unit = []
-    for unit in (sumo_activity.involvedUnit[0].mappingRules[0].forValues or ()):
+    for unit in sumo_activity.involvedUnit[0].mappingRules[0].forValues or ():
         involved_unit.extend(unit_merged_ids_by_synonym[unit])
     responsible_unit = []
-    for unit in (sumo_activity.responsibleUnit[0].mappingRules[0].forValues or ()):
+    for unit in sumo_activity.responsibleUnit[0].mappingRules[0].forValues or ():
         responsible_unit.extend(unit_merged_ids_by_synonym[unit])
     short_name = sumo_activity.shortName[0].mappingRules[0].setValues
     title = sumo_activity.title[0].mappingRules[0].setValues

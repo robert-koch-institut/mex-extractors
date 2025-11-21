@@ -85,7 +85,7 @@ def extracted_mex_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
         seq_repo_access_platform,
@@ -100,7 +100,7 @@ def extracted_mex_activities_dict(
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
-        ],
+    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
@@ -175,21 +175,23 @@ def unit_stable_target_ids_by_synonym() -> dict[
     """Extract the dummy units and return them grouped by synonyms."""
     return {
         "child-unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "CHLD Unterabteilung": [MergedOrganizationalUnitIdentifier(
-            "g2AinFG4E6n8H1ZMuaBW6o"
-        )],
+        "CHLD Unterabteilung": [
+            MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")
+        ],
         "C1: Sub Unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
         "C1": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
         "CHLD": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
         "C1 Sub-Unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "C1 Unterabteilung": [MergedOrganizationalUnitIdentifier(
-            "g2AinFG4E6n8H1ZMuaBW6o"
-        )],
+        "C1 Unterabteilung": [
+            MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")
+        ],
         "parent-unit": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
         "Abteilung": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
         "Department": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
         "PRNT": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "PRNT Abteilung": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
+        "PRNT Abteilung": [
+            MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")
+        ],
         "PARENT Dept.": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
         "fg99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
         "Fachgebiet 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
