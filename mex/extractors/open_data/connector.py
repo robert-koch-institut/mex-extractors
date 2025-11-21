@@ -108,5 +108,13 @@ class OpenDataConnector(HTTPConnector):
         return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
 
     def get_schema_zipfile(self, version_id: str) -> Response:
+        """Get the Zip file for a certain resource version by querying the Zenodo API.
+
+        Args:
+            version_id: id of a resource version
+
+        Returns:
+            Response of query
+        """
         zip_url = f"/api/records/{version_id}/files/Metadaten.zip/content"
         return self.request_raw("GET", zip_url)

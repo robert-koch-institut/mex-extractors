@@ -98,7 +98,7 @@ class OpenDataTableSchema(BaseModel):
     name: str
     type: str
     description: str
-    constraints: list[OpenDataTableSchemaConstraints] | None = None
+    constraints: OpenDataTableSchemaConstraints | None = None
     categories: list[OpenDataTableSchemaCategories] | None = None
 
 
@@ -106,9 +106,3 @@ class OpenDataTableSchemaJson(BaseModel):
     """Model class for Zenodo table schema jsons."""
 
     fields: list[OpenDataTableSchema]
-
-
-# class OpenDataSchemaCollection(BaseModel):
-#     """Model class for Zenodo table schemas."""
-#     version_id: str
-#     json: list[dict[str, OpenDataTableSchema]]

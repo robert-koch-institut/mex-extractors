@@ -13,6 +13,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
 )
@@ -37,6 +38,7 @@ from mex.extractors.open_data.transform import (
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
     transform_open_data_variable_groups,
+    transform_open_data_variables,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -155,17 +157,17 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
 @asset(group_name="open_data")
 def open_data_version_id_by_resource_id(
-    extracted_open_data_parent_resources: list[ExtractedResource],
+    open_data_parent_extracted_resources: list[ExtractedResource],
     open_data_parent_resources: list[OpenDataParentResource],
-    extracted_open_data_distribution: list[ExtractedDistribution],
+    open_data_extracted_distributions: list[ExtractedDistribution],
 ) -> dict[MergedResourceIdentifier, str]:
     """Get version id (to download tableschema zip per Resource), if zip available."""
     return {
         resource.stableTargetId: str(parent_resource.id)
         for parent_resource in open_data_parent_resources
-        for resource in extracted_open_data_parent_resources
+        for resource in open_data_parent_extracted_resources
         if resource.identifierInPrimarySource == parent_resource.conceptrecid
-        for distribution in extracted_open_data_distribution
+        for distribution in open_data_extracted_distributions
         if (
             distribution.stableTargetId in resource.distribution
             and distribution.title[0].value == "datapackage.json"
@@ -174,9 +176,9 @@ def open_data_version_id_by_resource_id(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_tableschema(
+def open_data_tableschemas_by_resource_id(
     open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, str],
-) -> dict[MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]]:
+) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
     """Extract and collect metadata zip tableschemas by extracted resource id."""
     return {
         resource_key: extract_tableschema(
@@ -187,18 +189,36 @@ def extracted_open_data_tableschema(
 
 
 @asset(group_name="open_data")
-def extracted_open_data_variable_group(
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_tableschema: dict[
-        MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]
+def open_data_extracted_variable_group(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
     ],
 ) -> list[ExtractedVariableGroup]:
     """Transform tableschema filenames to variable groups."""
-    breakpoint()
-    return transform_open_data_variable_groups(
-        extracted_primary_source_open_data,
-        extracted_open_data_tableschema,
+    extracted_variable_groups = transform_open_data_variable_groups(
+        open_data_tableschemas_by_resource_id,
     )
+    load(extracted_variable_groups)
+    return extracted_variable_groups
+
+
+def open_data_extracted_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    open_data_extracted_variable_group: list[ExtractedVariableGroup],
+) -> list[ExtractedVariable]:
+    """Transform tableschema file content to variables."""
+    merged_variable_group_id_by_filename = {
+        variable.identifierInPrimarySource: variable.stableTargetId
+        for variable in open_data_extracted_variable_group
+    }
+
+    extracted_variables = transform_open_data_variables(
+        open_data_tableschemas_by_resource_id, merged_variable_group_id_by_filename
+    )
+    load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)

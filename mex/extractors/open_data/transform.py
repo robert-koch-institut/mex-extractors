@@ -11,6 +11,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
 )
@@ -20,6 +21,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
@@ -382,24 +384,68 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
 
 def transform_open_data_variable_groups(
-    extracted_primary_source_open_data: ExtractedPrimarySource,
-    extracted_open_data_tableschema: dict[
-        MergedResourceIdentifier, list[dict[str, OpenDataTableSchema]]
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
     ],
 ) -> list[ExtractedVariableGroup]:
-    merged_primary_source_id_open_data = (
-        extracted_primary_source_open_data.stableTargetId
-    )
-    extracted_variable_groups: list[ExtractedVariableGroup] = []
-    breakpoint()
-    for resource_stableTargetId, schema_dict in extracted_open_data_tableschema:
+    """Transform zip table schema names to variable groups.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+
+    Returns:
+        extracted variable groups
+    """
+    return [
+        ExtractedVariableGroup(
+            hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
+            identifierInPrimarySource=filename,
+            containedBy=resource_id,
+            label=filename.removesuffix(".json"),
+        )
+        for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items()
+        for filename in schema_dict
+    ]
+
+
+def transform_open_data_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    merged_variable_group_id_by_filename: dict[str, MergedVariableGroupIdentifier],
+) -> list[ExtractedVariable]:
+    """Transform table schema content to variables.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+        merged_variable_group_id_by_filename: variable group stableTargetId by filename
+
+    Returns:
+        extracted variables
+    """
+    extracted_variables: list[ExtractedVariable] = []
+    for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items():
         for filename in schema_dict:
-            extracted_variable_groups.append(
-                ExtractedVariableGroup.model_validate(
-                    hadPrimarySource=merged_primary_source_id_open_data,
-                    identifierInPrimarySource=filename,
-                    containedBy=resource_stableTargetId,
-                    label=filename.removesuffix(".json"),
+            for schema in schema_dict[filename]:
+                value_set = (
+                    schema.constraints.enum
+                    if schema.constraints and schema.constraints.enum
+                    else [f"{item.value}, {item.label}" for item in schema.categories]
+                    if schema.categories
+                    else None
                 )
-            )
-    return extracted_variable_groups
+                extracted_variables.append(
+                    ExtractedVariable(
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "open-data"
+                        ),
+                        identifierInPrimarySource=f"{schema.name}_{resource_id}",
+                        dataType=schema.type,
+                        label=[schema.name],
+                        usedIn=[resource_id],
+                        belongsTo=[merged_variable_group_id_by_filename[filename]],
+                        description=[schema.description],
+                        valueSet=value_set,
+                    )
+                )
+    return extracted_variables
