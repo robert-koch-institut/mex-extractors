@@ -32,6 +32,8 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
     # Verify we get back a merged ID
     assert isinstance(merged_id, MergedOrganizationalUnitIdentifier)
     assert merged_id == mock_unit_id
+
+    # Set-up another Mock to test for caching and unknown synonym
     # Mock the load function
     mocked_load = Mock()
     monkeypatch.setattr(helpers, "load", mocked_load)
