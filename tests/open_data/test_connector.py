@@ -67,3 +67,9 @@ def test_get_files_for_resource_version(
     assert results == [
         OpenDataVersionFiles.model_validate(dummy_versions["entries"][0]),
     ]
+
+
+def test_get_schema_zipfile(
+    mocked_open_data_connector: OpenDataConnector,
+) -> None:
+    pass

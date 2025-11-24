@@ -120,6 +120,7 @@ class OpenDataConnector(HTTPConnector):
             Response of query
         """
         http_ok = 200
+        error_msg = f"No metadata zip file found for version {version_id}"
 
         # Try downloading with first spelling version
         try:
@@ -128,7 +129,7 @@ class OpenDataConnector(HTTPConnector):
             if response.status_code == http_ok:
                 return response
         except RequestException:
-            pass
+            pass  # Ignore and try the next option
 
         # Try downloading with second spelling version
         try:
@@ -137,7 +138,7 @@ class OpenDataConnector(HTTPConnector):
             if response.status_code == http_ok:
                 return response
         except RequestException as error:
-            msg = f"No metadata zip file found for version {version_id}: {error}"
+            msg = f"{error_msg}: {error}"
             raise HTTPError(msg) from error
 
-        return response
+        raise HTTPError(error_msg)
