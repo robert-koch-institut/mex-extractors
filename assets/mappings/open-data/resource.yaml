@@ -13,7 +13,7 @@ contact:
 contributingUnit:
   - mappingRules:
       - forValues:
-          - "C1"
+          - "FG 99"
         rule:
 hadPrimarySource:
   - mappingRules:
