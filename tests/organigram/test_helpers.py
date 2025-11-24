@@ -32,10 +32,6 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
     # Verify we get back a merged ID
     assert isinstance(merged_id, MergedOrganizationalUnitIdentifier)
     assert merged_id == mock_unit_id
-
-
-@pytest.mark.usefixtures("mocked_wikidata")
-def test_get_unit_merged_id_by_synonym_not_found(monkeypatch: MonkeyPatch) -> None:
     # Mock the load function
     mocked_load = Mock()
     monkeypatch.setattr(helpers, "load", mocked_load)
@@ -44,10 +40,10 @@ def test_get_unit_merged_id_by_synonym_not_found(monkeypatch: MonkeyPatch) -> No
     mocked_get_unit = Mock(return_value={})
     monkeypatch.setattr(helpers, "get_unit_merged_ids_by_synonyms", mocked_get_unit)
 
-    # Test lookup with unknown synonym
+    # Test second lookup with unknown synonym
     merged_id = get_unit_merged_id_by_synonym("UNKNOWN")
 
-    # Verify load was not called
+    # Verify load was not called since function is cached
     mocked_load.assert_not_called()
 
     # Verify we get None back
