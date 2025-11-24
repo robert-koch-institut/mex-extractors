@@ -94,7 +94,10 @@ def extract_tableschema(version_id: str) -> dict[str, list[OpenDataTableSchema]]
         schema_file_paths = [
             n
             for n in zf.namelist()
-            if n.lower().startswith("schemas/tableschema_")
+            if (
+                n.lower().startswith("metadaten/schemas/tableschema_")
+                or n.lower().startswith("schemas/tableschema_")
+            )
             and n.lower().endswith(".json")
         ]
         for file_path in schema_file_paths:

@@ -428,7 +428,7 @@ def transform_open_data_variables(
         for filename in schema_dict:
             for schema in schema_dict[filename]:
                 value_set = (
-                    schema.constraints.enum
+                    [str(item) for item in schema.constraints.enum]
                     if schema.constraints and schema.constraints.enum
                     else [f"{item.value}, {item.label}" for item in schema.categories]
                     if schema.categories

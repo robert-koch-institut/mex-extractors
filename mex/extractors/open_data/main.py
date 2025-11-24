@@ -207,6 +207,7 @@ def open_data_extracted_variable_group(
     return extracted_variable_groups
 
 
+@asset(group_name="open_data")
 def open_data_extracted_variables(
     open_data_tableschemas_by_resource_id: dict[
         MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
@@ -218,7 +219,6 @@ def open_data_extracted_variables(
         variable.identifierInPrimarySource: variable.stableTargetId
         for variable in open_data_extracted_variable_group
     }
-
     extracted_variables = transform_open_data_variables(
         open_data_tableschemas_by_resource_id, merged_variable_group_id_by_filename
     )
