@@ -19,12 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
+- open-data: only get FG, not department unit (or 'least' unit) for resource unitInCharge
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- organigram: fix "parentDepartment" typo in organizational_units.json
+- open-data: fix typo in asset naming
+- organigram: testing of cached helper function
 
 ### Security
 
