@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add convenience function to get units by synonym
 - add `watch_progress` function to track progress of iterables in for loops
+- ff-projects extractor creates organizations if no wikidata org is found
 
 ### Changes
 
