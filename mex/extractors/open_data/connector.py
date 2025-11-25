@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from typing import Any
 
 import backoff
-from requests import HTTPError, RequestException, Response
+from requests import HTTPError, Response
 
 from mex.common.connector import HTTPConnector
 from mex.common.logging import logger
@@ -107,7 +107,7 @@ class OpenDataConnector(HTTPConnector):
 
         return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
 
-    def get_schema_zipfile(self, version_id: str) -> Response:
+    def get_schema_zipfile(self, version_id: int) -> Response:
         """Get the Zip file for a certain resource version.
 
         The resource versions where checked to have a valid metadata zip file.
@@ -120,7 +120,7 @@ class OpenDataConnector(HTTPConnector):
             Response of query
         """
         http_ok = 200
-        error_msg = f"No metadata zip file found for version {version_id}"
+        error_msg = f"No metadata zip file found for record version {version_id}"
 
         # Try downloading with first spelling version
         try:
@@ -128,7 +128,7 @@ class OpenDataConnector(HTTPConnector):
             response = self.request_raw("GET", zip_url)
             if response.status_code == http_ok:
                 return response
-        except RequestException:
+        except HTTPError:
             pass  # Ignore and try the next option
 
         # Try downloading with second spelling version
@@ -137,7 +137,7 @@ class OpenDataConnector(HTTPConnector):
             response = self.request_raw("GET", zip_url)
             if response.status_code == http_ok:
                 return response
-        except RequestException as error:
+        except HTTPError as error:
             msg = f"{error_msg}: {error}"
             raise HTTPError(msg) from error
 

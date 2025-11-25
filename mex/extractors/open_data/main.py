@@ -162,7 +162,7 @@ def open_data_version_id_by_resource_id(
     open_data_parent_extracted_resources: list[ExtractedResource],
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_distributions: list[ExtractedDistribution],
-) -> dict[MergedResourceIdentifier, str]:
+) -> dict[MergedResourceIdentifier, int]:
     """Get Zenodo version id (to download tableschema zip) per Resource stableTargetId.
 
     Info from open data team: for some resources there are other metadata.zip files.
@@ -170,7 +170,7 @@ def open_data_version_id_by_resource_id(
     it is valid for our use case.
     """
     return {
-        resource.stableTargetId: str(parent_resource.id)
+        resource.stableTargetId: parent_resource.id
         for parent_resource in open_data_parent_resources
         for resource in open_data_parent_extracted_resources
         if resource.identifierInPrimarySource == parent_resource.conceptrecid
@@ -184,7 +184,7 @@ def open_data_version_id_by_resource_id(
 
 @asset(group_name="open_data")
 def open_data_tableschemas_by_resource_id(
-    open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, str],
+    open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, int],
 ) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
     """Extract and collect metadata zip tableschemas by resource stableTargetId."""
     return {

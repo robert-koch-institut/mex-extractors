@@ -76,11 +76,11 @@ def extract_open_data_persons_from_open_data_parent_resources(
     )
 
 
-def extract_tableschema(version_id: str) -> dict[str, list[OpenDataTableSchema]]:
+def extract_tableschema(version_id: int) -> dict[str, list[OpenDataTableSchema]]:
     """Extract the metadata zip tableschemas.
 
     Args:
-        version_id: id of record version as string
+        version_id: id of record version as integer
 
     Returns:
         name of tableschema json as string
