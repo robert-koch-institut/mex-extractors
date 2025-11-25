@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add convenience function to get units by synonym
 - add `watch_progress` function to track progress of iterables in for loops
+- implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 
@@ -20,9 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace generator functions with list-returning functions for dagster compatibility
 - open-data: only get FG, not department unit (or 'least' unit) for resource unitInCharge
 
+- asset checks created during definition time in base.py
+
 ### Deprecated
 
 ### Removed
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
 
 ### Fixed
 - organigram: fix "parentDepartment" typo in organizational_units.json
