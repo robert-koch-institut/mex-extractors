@@ -42,7 +42,7 @@ def test_get_parent_resources(mocked_open_data_connector: OpenDataConnector) -> 
 
     assert (
         mocked_open_data_connector.request.call_count == 4
-    )  # 1x connector initializing, 1x getting total, 2x for 2 pages
+    )  # 1x connector initializing, 1x getting total, 2x for 2 pages (1-25, 26-42)
     assert results == 2 * [
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][0]),
         OpenDataParentResource.model_validate(dummy_parents["hits"]["hits"][1]),
