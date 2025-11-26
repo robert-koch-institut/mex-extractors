@@ -83,7 +83,7 @@ def extract_tableschema(version_id: int) -> dict[str, list[OpenDataTableSchema]]
         version_id: id of record version as integer
 
     Returns:
-        name of tableschema json as string
+        tableschema by name of tableschema json
     """
     connector = OpenDataConnector.get()
 

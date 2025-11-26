@@ -379,7 +379,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
-            else unit_stable_target_ids_by_synonym.get(FALLBACK_UNIT)
+            else None
         )
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []
