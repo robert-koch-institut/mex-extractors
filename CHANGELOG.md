@@ -19,12 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 - open-data: only get FG, not department unit (or 'least' unit) for resource unitInCharge
+- open-data: update max number of items per page (25) in Zenodo API request
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
 - organigram: fix "parentDepartment" typo in organizational_units.json
 - open-data: fix typo in asset naming
 - organigram: testing of cached helper function
