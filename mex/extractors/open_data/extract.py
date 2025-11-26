@@ -105,6 +105,6 @@ def extract_tableschema(version_id: int) -> dict[str, list[OpenDataTableSchema]]
                 data = OpenDataTableSchemaJson.model_validate(
                     json.load(TextIOWrapper(f, encoding="utf-8"))
                 )
-            schema_collection[file_path.removeprefix("schemas/")] = data.fields
+            schema_collection[file_path.split("schemas/", 1)[1]] = data.fields
 
     return schema_collection
