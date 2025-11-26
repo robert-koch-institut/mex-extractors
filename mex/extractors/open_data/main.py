@@ -165,9 +165,9 @@ def open_data_version_id_by_resource_id(
 ) -> dict[MergedResourceIdentifier, int]:
     """Get Zenodo version id (to download tableschema zip) per Resource stableTargetId.
 
-    Info from open data team: for some resources there are other metadata.zip files.
-    If datapackage.json exists for a resource, there also is a metadata zip and
-    it is valid for our use case.
+    Info from open data team: for some resources there are no, for some there are
+    other "wrong" metadata.zip files. If datapackage.json exists for a resource,
+    there also is a metadata.zip and it is valid for our use case.
     """
     return {
         resource.stableTargetId: parent_resource.id

@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add convenience function to get units by synonym
 - add `watch_progress` function to track progress of iterables in for loops
-- opendata: extract frictionless files forgit cma variables / variable groups
+- add mailpit service in ci testing environment
+- add requires_rki_infrastructure marker on most integration tests
+- opendata: extract frictionless files for variables / variable groups
 
 ### Changes
 
