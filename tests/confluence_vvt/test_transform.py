@@ -27,6 +27,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_transform_confluence_vvt_page_to_extracted_activity(
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     confluence_vvt_activity_mapping: ActivityMapping,
@@ -74,6 +75,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 def test_transform_confluence_vvt_page_to_extracted_activities(
     unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     confluence_vvt_activity_mapping: ActivityMapping,
