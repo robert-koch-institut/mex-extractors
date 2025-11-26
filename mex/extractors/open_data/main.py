@@ -69,7 +69,7 @@ def open_data_organization_ids_by_name_str(
 
 
 @asset(group_name="open_data")
-def open_extracted_data_persons(
+def open_data_extracted_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
@@ -122,7 +122,8 @@ def open_data_extracted_distributions(
 @asset(group_name="open_data")
 def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
-    open_extracted_data_persons: list[ExtractedPerson],
+    open_data_extracted_persons: list[ExtractedPerson],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
@@ -136,8 +137,9 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
-        open_extracted_data_persons,
+        open_data_extracted_persons,
         unit_stable_target_ids_by_synonym,
+        extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,
         extracted_organization_rki,

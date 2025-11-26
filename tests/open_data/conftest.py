@@ -48,7 +48,10 @@ def mocked_open_data_persons() -> list[ExtractedPerson]:
             familyName=["Muster"],
             fullName=["Muster, Maxi"],
             givenName=["Maxi"],
-            memberOf=[MergedOrganizationalUnitIdentifier.generate(seed=959)],  # Unit XY
+            memberOf=[
+                MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"),  # PRNT
+                MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
+            ],
         )
     ]
 
