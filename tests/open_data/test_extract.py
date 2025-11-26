@@ -5,10 +5,14 @@ from mex.extractors.open_data.extract import (
     extract_oldest_record_version_creationdate,
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
+    extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
+    OpenDataTableSchemaCategories,
+    OpenDataTableSchemaConstraints,
 )
 
 
@@ -94,3 +98,41 @@ def test_extract_open_data_persons_from_open_data_parent_resources(
             orcid="1234567890",
         )
     ]
+
+
+@pytest.mark.usefixtures("mocked_open_data")
+def test_extract_tableschema() -> None:
+    schema_collections = extract_tableschema(1001)
+
+    assert schema_collections == {
+        "tableschema_foo.json": [
+            OpenDataTableSchema(
+                name="Foo1",
+                type="string",
+                description="amaze",
+                constraints=OpenDataTableSchemaConstraints(enum=["a", "b"]),
+                categories=[
+                    OpenDataTableSchemaCategories(value="a", label="the letter 'a'"),
+                    OpenDataTableSchemaCategories(value="b", label="and also 'b'"),
+                ],
+            ),
+            OpenDataTableSchema(
+                name="Foo2",
+                type="string",
+                description="wow",
+                constraints=OpenDataTableSchemaConstraints(
+                    enum=["c", "d", "e", "f", "g"]
+                ),
+                categories=None,
+            ),
+        ],
+        "tableschema_bar.json": [
+            OpenDataTableSchema(
+                name="Bar",
+                type="integer",
+                description="no constraints and no categories",
+                constraints=None,
+                categories=None,
+            )
+        ],
+    }
