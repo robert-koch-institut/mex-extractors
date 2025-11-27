@@ -221,7 +221,7 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     resolved_organigram = [
         unit_id
         for contact in contacts
-        for unit_id in (unit_stable_target_ids_by_synonym.get(contact) or [])
+        for unit_id in unit_stable_target_ids_by_synonym.get(contact, [])
     ]
 
     return ExtractedAccessPlatform(
