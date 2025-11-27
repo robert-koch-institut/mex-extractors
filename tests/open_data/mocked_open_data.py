@@ -54,7 +54,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                     "files": [],
                 },
             ],
-            "total": 200,
+            "total": 42,
         }
     }
 

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add convenience function to get units by synonym
 - add `watch_progress` function to track progress of iterables in for loops
 - ff-projects extractor creates organizations if no wikidata org is found
+- add mailpit service in ci testing environment
+- add requires_rki_infrastructure marker on most integration tests
 
 ### Changes
 
@@ -20,12 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 - open-data: only get FG, not department unit (or 'least' unit) for resource unitInCharge
+- open-data: update max number of items per page (25) in Zenodo API request
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
 - organigram: fix "parentDepartment" typo in organizational_units.json
 - open-data: fix typo in asset naming
 - organigram: testing of cached helper function
