@@ -1,13 +1,12 @@
 import re
-from collections.abc import Iterable
-from typing import Sequence
+from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
 )
-from mex.common.models.activity import AnyContactIdentifier
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -19,6 +18,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+
+if TYPE_CHECKING:
+    from mex.common.models.activity import AnyContactIdentifier
 
 
 def transform_blueant_sources_to_extracted_activities(
