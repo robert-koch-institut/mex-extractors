@@ -6,6 +6,8 @@ from mex.common.models import (
     ExtractedDistribution,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
+    ExtractedVariable,
+    ExtractedVariableGroup,
     ExtractedPerson,
     ResourceMapping,
 )
@@ -13,11 +15,12 @@ from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedResourceIdentifier,
     TextLanguage,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
-    OpenDataParentResource,
+    OpenDataParentResource, OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
     get_only_child_units,
@@ -27,6 +30,8 @@ from mex.extractors.open_data.transform import (
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
     transform_open_data_persons_not_in_ldap,
+    transform_open_data_variable_groups,
+    transform_open_data_variables,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -241,6 +246,71 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "distribution": [str(mocked_open_data_distribution[0].stableTargetId)],
         "publisher": [str(extracted_organization_rki.stableTargetId)],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+
+def test_transform_open_data_variable_groups(
+    mocked_open_data_tableschemas_by_resource_id: dict[
+        str, dict[str, list[OpenDataTableSchema]]],
+) -> None:
+
+    result = transform_open_data_variable_groups(
+        mocked_open_data_tableschemas_by_resource_id
+    )
+
+    assert result[0].model_dump(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": Joker(),
+        "identifierInPrimarySource": "tableschema_lorem.json",
+        "containedBy": ["LoremIpsumResourceId"],
+        "label": [{"value": "tableschema_foo", "language": TextLanguage.EN}],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+    assert result[1].model_dump(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": Joker(),
+        "identifierInPrimarySource": "tableschema_bar.json",
+        "containedBy": ["BarResourceIdentifier"],
+        "label": [{"value": "tableschema_bar", "language": TextLanguage.EN}],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+
+
+def test_transform_open_data_variables(
+    mocked_open_data_tableschemas_by_resource_id: dict[
+        str, dict[str, list[OpenDataTableSchema]]],
+) -> None:
+    mocked_merged_variable_group_id_by_filename ={
+        "tableschema_lorem.json": "LoremVarGroupIdentifier",
+        "tableschema_ipsum.json": "IpsumVarGroupIdentifier",
+        "tableschema_dolor.json": "DolorVarGroupIdentifier",
+    }
+
+    result = transform_open_data_variables(
+        mocked_open_data_tableschemas_by_resource_id,
+        mocked_merged_variable_group_id_by_filename,
+    )
+
+    assert result[0].model_dump(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": Joker(),
+        "identifierInPrimarySource": "Lorem1_LoremIpsumResourceId",
+        "dataType": "string",
+        "label": ["Lorem1"],
+        "usedIn": ["LoremIpsumResourceId"],
+        "belongsTo": ["LoremVarGroupIdentifier"],
+        "description": ["lorem1"],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+    assert result[1].model_dump(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": Joker(),
+        "identifierInPrimarySource": "Foo2_FooResourceIdentifier",
+        "dataType": "string",
+        "label": ["Foo2"],
+        "usedIn": ["FooResourceIdentifier"],
+        "belongsTo": ["tableschema_foo.json"],
+        "description": ["wow"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

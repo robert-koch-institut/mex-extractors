@@ -20,6 +20,9 @@ from mex.common.types import (
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
+    OpenDataTableSchemaCategories,
+    OpenDataTableSchemaConstraints,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -140,4 +143,59 @@ def mocked_units_by_identifier_in_primary_source(
     return {
         unit.identifierInPrimarySource: unit
         for unit in mocked_extracted_organizational_units
+    }
+
+
+@pytest.fixture
+def mocked_open_data_tableschemas(
+) -> list[OpenDataTableSchema]:
+    return [
+        OpenDataTableSchema(
+            name="Lorem1",
+            type="string",
+            description="lorem 1",
+            constraints=OpenDataTableSchemaConstraints(enum=["a", "b"]),
+            categories=[
+                OpenDataTableSchemaCategories(value="a", label="the letter 'a'"),
+                OpenDataTableSchemaCategories(value="b", label="and also 'b'"),
+            ],
+        ),
+        OpenDataTableSchema(
+            name="Lorem2",
+            type="string",
+            description="lorem 2",
+            constraints=OpenDataTableSchemaConstraints(
+                enum=["c", "d", "e", "f", "g"]
+            ),
+            categories=None,
+        ),
+        OpenDataTableSchema(
+            name="Ipsum",
+            type="integer",
+            description="no constraints and no categories",
+            constraints=None,
+            categories=None,
+        ),
+        OpenDataTableSchema(
+            name="Dolor",
+            type="boolean",
+            description="dolor sit amet",
+            constraints=None,
+            categories=None,
+        )
+    ]
+
+
+@pytest.fixture
+def mocked_open_data_tableschemas_by_resource_id(
+    mocked_open_data_tableschemas: list[OpenDataTableSchema],
+) -> dict[str, dict[str, list[OpenDataTableSchema]]]:
+    return {
+        "LoremIpsumResourceId": {
+            "tableschema_lorem.json": mocked_open_data_tableschemas[0:1],
+            "tableschema_ipsum.json": [mocked_open_data_tableschemas[2]],
+        },
+        "DolorResourceId": {
+            "tableschema_dolor.json": [mocked_open_data_tableschemas[3]],
+        },
     }
