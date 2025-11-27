@@ -5,6 +5,7 @@ from mex.extractors.synopse.connector import ReportServerConnector
 
 
 @pytest.mark.integration
+@pytest.mark.requires_rki_infrastructure
 @pytest.mark.skip(reason="Report server is being deprecated")
 def test_initialization() -> None:
     connector = ReportServerConnector.get()

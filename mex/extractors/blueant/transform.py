@@ -77,7 +77,7 @@ def transform_blueant_sources_to_extracted_activities(
         # find responsible unit
         department = source.department.replace("(h)", "").strip()
         if department in unit_stable_target_ids_by_synonym:
-            department_ids = unit_stable_target_ids_by_synonym.get(department, [])
+            department_ids = unit_stable_target_ids_by_synonym.get(department)
         else:
             continue
 

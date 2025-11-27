@@ -57,7 +57,7 @@ class OpenDataConnector(HTTPConnector):
             "total"
         ]
 
-        limit = 100
+        limit = 25
         amount_pages = math.ceil(total_records / limit)
 
         return [

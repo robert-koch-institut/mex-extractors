@@ -58,8 +58,8 @@ def transform_igs_extracted_resource(
     contributing_unit = (
         [
             unit_id
-            for for_value in for_values
-            for unit_id in unit_stable_target_ids_by_synonym[for_value]
+            for synonym in for_values
+            for unit_id in unit_stable_target_ids_by_synonym[synonym]
         ]
         if (
             for_values := igs_resource_mapping.contributingUnit[0]
