@@ -332,7 +332,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
-                if unit_id != unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
+                if unit_id not in unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
             }
         )
         if not unit_in_charge:
