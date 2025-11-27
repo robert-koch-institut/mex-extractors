@@ -15,7 +15,7 @@ dependencies = [
     "dagster>=1,<2",
     "defusedxml>=0.7,<1",
     "faker>=37,<38",
-    "mex-artificial>=1.1,<1.2",
+    "mex-artificial>=1.1,<2",
     "mex-common>=1.10,<1.11",
     "networkx>=3",
     "numpy>=2",
@@ -31,12 +31,12 @@ dependencies = [
 optional-dependencies.dev = [
     "ipdb>=0.13",
     "mypy>=1",
-    "pandas-stubs>=2",
+    "pandas-stubs",
     "pytest-cov>=6",
     "pytest-random-order>=1",
     "pytest-xdist>=3",
     "pytest>=8",
-    "ruff>=0.11",
+    "ruff>=0.14",
     "sphinx>=8",
     "types-beautifulsoup4",
     "types-defusedxml",
@@ -126,7 +126,10 @@ addopts = [
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]
-markers = "integration: mark a test as integration test"
+markers = [
+    "integration: mark a test as integration test",
+    "requires_rki_infrastructure: mark a test to only run in gh cli"
+]
 
 [tool.ruff]
 fix = true
