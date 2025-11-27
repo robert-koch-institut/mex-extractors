@@ -97,10 +97,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
         contact: list[Identifier] = []
         for kontakt in resource.kontakt:
-            if k := person_stable_target_id_by_email.get(kontakt):
-                contact.append(k)
-            elif k := unit_stable_target_ids_by_synonym.get(kontakt, []):  # type: ignore[assignment]
-                contact.extend(k)
+            if person := person_stable_target_id_by_email.get(kontakt):
+                contact.append(person)
+            elif unit := unit_stable_target_ids_by_synonym.get(kontakt):
+                contact.extend(unit)
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0], None
         )
