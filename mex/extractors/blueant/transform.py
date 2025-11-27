@@ -1,11 +1,13 @@
 import re
 from collections.abc import Iterable
+from typing import Sequence
 
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
 )
+from mex.common.models.activity import AnyContactIdentifier
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -82,10 +84,11 @@ def transform_blueant_sources_to_extracted_activities(
             continue
 
         # get contact employee or fallback to unit
+        contact: Sequence[AnyContactIdentifier]
         if ple_id := source.projectLeaderEmployeeId:
             contact = person_stable_target_ids_by_employee_id[ple_id]
         if not contact and department_ids:
-            contact = department_ids  # type: ignore[assignment]
+            contact = department_ids
 
         source_name = re.sub(
             r"[\d*_]+|[FG\d* ]+[- ]+", "", source.name
