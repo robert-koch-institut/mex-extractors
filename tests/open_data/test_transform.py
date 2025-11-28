@@ -73,7 +73,7 @@ def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
         hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource="Resolved, Roland",
         fullName="Resolved, Roland",
-        affiliation=MergedOrganizationIdentifier.generate(seed=354),
+        affiliation=[MergedOrganizationIdentifier.generate(seed=354)],
         orcidId=[],
     )
 
@@ -196,7 +196,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
     unit_stable_target_ids_by_synonym = {
-        unit.shortName[0].value: unit.stableTargetId
+        unit.shortName[0].value: [unit.stableTargetId]
         for unit in mocked_extracted_organizational_units
     }
 

@@ -1,5 +1,6 @@
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 
 from mex.common.models import (
     ActivityMapping,
@@ -18,11 +19,16 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.sinks import load
 
+if TYPE_CHECKING:
+    from mex.common.models.activity import AnyContactIdentifier
+
 
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     activity: ActivityMapping,
     blueant_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -75,15 +81,16 @@ def transform_blueant_sources_to_extracted_activities(
         # find responsible unit
         department = source.department.replace("(h)", "").strip()
         if department in unit_stable_target_ids_by_synonym:
-            department_id = unit_stable_target_ids_by_synonym.get(department)
+            department_ids = unit_stable_target_ids_by_synonym.get(department)
         else:
             continue
 
         # get contact employee or fallback to unit
+        contact: Sequence[AnyContactIdentifier]
         if ple_id := source.projectLeaderEmployeeId:
             contact = person_stable_target_ids_by_employee_id[ple_id]
-        if not contact and department_id:
-            contact = department_id  # type: ignore[assignment]
+        if not contact and department_ids:
+            contact = department_ids
 
         source_name = re.sub(
             r"[\d*_]+|[FG\d* ]+[- ]+", "", source.name
@@ -102,7 +109,7 @@ def transform_blueant_sources_to_extracted_activities(
                     source.projectLeaderEmployeeId  # type: ignore[arg-type]
                 ),
                 hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
-                responsibleUnit=department_id,
+                responsibleUnit=department_ids,
                 funderOrCommissioner=funder_or_commissioner,
                 title=title or [],
                 identifierInPrimarySource=source.number,

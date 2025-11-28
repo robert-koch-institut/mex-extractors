@@ -22,7 +22,9 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
         str, MergedOrganizationIdentifier
     ],
     voxco_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:

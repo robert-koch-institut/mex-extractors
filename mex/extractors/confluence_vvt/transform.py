@@ -29,7 +29,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
     page: ConfluenceVvtPage,
     confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> ExtractedActivity | None:
     """Transform Confluence-vvt page to extracted activity.
 
@@ -87,7 +87,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
         {
             unit_id: None
             for oe in responsible_unit_strings
-            if (unit_id := unit_merged_ids_by_synonym.get(oe))
+            for unit_id in unit_merged_ids_by_synonym.get(oe, [])
         }
     )
     involved_unit_merged_ids = list(
@@ -96,7 +96,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
             for oe in get_involved_units_from_page(
                 page, confluence_vvt_activity_mapping
             )
-            if (unit_id := unit_merged_ids_by_synonym.get(oe))
+            for unit_id in unit_merged_ids_by_synonym.get(oe, [])
         }
     )
 
@@ -127,7 +127,7 @@ def transform_confluence_vvt_activities_to_extracted_activities(
     pages: Iterable[ConfluenceVvtPage],
     confluence_vvt_activity_mapping: ActivityMapping,
     merged_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> list[ExtractedActivity]:
     """Transform Confluence-vvt pages to extracted activities.
 
