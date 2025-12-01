@@ -106,3 +106,40 @@ class OpenDataConnector(HTTPConnector):
         files = self.request("GET", files_base_url)
 
         return [OpenDataVersionFiles.model_validate(file) for file in files["entries"]]
+
+    def get_schema_zipfile(self, version_id: int) -> Response:
+        """Get the Zip file for a certain resource version.
+
+        The resource versions where checked to have a valid metadata zip file.
+        The zip file can be named "Metadata" or "Metadaten".
+
+        Args:
+            version_id: id of a resource version
+
+        Returns:
+            Response of query
+        """
+        http_ok = 200
+        error_msg = f"No metadata zip file found for record version {version_id}"
+        settings = Settings.get()
+
+        # Try downloading with german spelling version
+        try:
+            zip_url = f"/api/records/{version_id}{settings.open_data.zip_path_de}"
+            response = self.request_raw("GET", zip_url)
+            if response.status_code == http_ok:
+                return response
+        except HTTPError:
+            pass  # Ignore and try the next option
+
+        # Try downloading with english spelling version
+        try:
+            zip_url = f"/api/records/{version_id}{settings.open_data.zip_path_en}"
+            response = self.request_raw("GET", zip_url)
+            if response.status_code == http_ok:
+                return response
+        except HTTPError as error:
+            msg = f"{error_msg}: {error}"
+            raise HTTPError(msg) from error
+
+        raise HTTPError(error_msg)
