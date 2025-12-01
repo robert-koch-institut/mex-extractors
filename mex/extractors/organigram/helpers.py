@@ -18,7 +18,7 @@ from mex.extractors.wikidata.helpers import get_wikidata_organization_by_id
 
 @lru_cache(maxsize=1)
 def _get_cached_unit_merged_ids_by_synonyms() -> dict[
-    str, MergedOrganizationalUnitIdentifier
+    str, list[MergedOrganizationalUnitIdentifier]
 ]:
     """Extract, transform and load the organigram, then group unit IDs by synonym.
 
@@ -41,14 +41,14 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
 
 def get_unit_merged_id_by_synonym(
     synonym: str,
-) -> MergedOrganizationalUnitIdentifier | None:
+) -> list[MergedOrganizationalUnitIdentifier] | None:
     """Search a merged organizational unit id by synonym.
 
     Args:
         synonym: synonym of organizational unit
 
     Returns:
-        merged organizational unit id if found else None
+        list of merged organizational unit ids if found else None
     """
     unit_merged_ids_by_synonyms = _get_cached_unit_merged_ids_by_synonyms()
     return unit_merged_ids_by_synonyms.get(synonym, None)
