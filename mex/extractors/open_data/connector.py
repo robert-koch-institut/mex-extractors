@@ -123,7 +123,7 @@ class OpenDataConnector(HTTPConnector):
         error_msg = f"No metadata zip file found for record version {version_id}"
         settings = Settings.get()
 
-        # Try downloading with gerrman spelling version
+        # Try downloading with german spelling version
         try:
             zip_url = f"/api/records/{version_id}{settings.open_data.zip_path_de}"
             response = self.request_raw("GET", zip_url)
