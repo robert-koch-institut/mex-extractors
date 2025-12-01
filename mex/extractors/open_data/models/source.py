@@ -100,9 +100,3 @@ class OpenDataTableSchema(BaseModel):
     description: str
     constraints: OpenDataTableSchemaConstraints | None = None
     categories: list[OpenDataTableSchemaCategories] | None = None
-
-
-class OpenDataTableSchemaJson(BaseModel):
-    """Model class for Zenodo table schema jsons."""
-
-    fields: list[OpenDataTableSchema]
