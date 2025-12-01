@@ -11,8 +11,6 @@ from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataTableSchema,
-    OpenDataTableSchemaCategories,
-    OpenDataTableSchemaConstraints,
 )
 
 
@@ -101,10 +99,12 @@ def test_extract_open_data_persons_from_open_data_parent_resources(
 
 
 @pytest.mark.usefixtures("mocked_open_data")
-def test_extract_tableschema(mocked_open_data_tableschemas) -> None:
+def test_extract_tableschema(
+    mocked_open_data_tableschemas: list[OpenDataTableSchema],
+) -> None:
     schema_collections = extract_tableschema(1001)
 
     assert schema_collections == {
-        "tableschema_lorem.json": mocked_open_data_tableschemas[0:1],
-        "tableschema_ipsum.json": mocked_open_data_tableschemas[2],
+        "tableschema_lorem.json": mocked_open_data_tableschemas[0:2],
+        "tableschema_ipsum.json": [mocked_open_data_tableschemas[2]],
     }

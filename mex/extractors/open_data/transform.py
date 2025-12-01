@@ -475,7 +475,7 @@ def transform_open_data_variables(
                         hadPrimarySource=get_extracted_primary_source_id_by_name(
                             "open-data"
                         ),
-                        identifierInPrimarySource=f"{schema.name}_{resource_id}",
+                        identifierInPrimarySource=f"{schema.name}_{filename}",
                         dataType=schema.type,
                         label=[schema.name],
                         usedIn=[resource_id],

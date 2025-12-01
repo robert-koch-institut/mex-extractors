@@ -124,7 +124,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
                 {
                     "name": "Lorem1",
                     "type": "string",
-                    "description": "Lorem 1",
+                    "description": "lorem 1",
                     "constraints": {"enum": ["a", "b"]},
                     "categories": [
                         {"value": "a", "label": "the letter 'a'"},

@@ -16,6 +16,7 @@ from mex.common.organigram.transform import (
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
@@ -147,8 +148,7 @@ def mocked_units_by_identifier_in_primary_source(
 
 
 @pytest.fixture
-def mocked_open_data_tableschemas(
-) -> list[OpenDataTableSchema]:
+def mocked_open_data_tableschemas() -> list[OpenDataTableSchema]:
     return [
         OpenDataTableSchema(
             name="Lorem1",
@@ -164,9 +164,7 @@ def mocked_open_data_tableschemas(
             name="Lorem2",
             type="string",
             description="lorem 2",
-            constraints=OpenDataTableSchemaConstraints(
-                enum=["c", "d", "e", "f", "g"]
-            ),
+            constraints=OpenDataTableSchemaConstraints(enum=["c", "d", "e", "f", "g"]),
             categories=None,
         ),
         OpenDataTableSchema(
@@ -182,20 +180,20 @@ def mocked_open_data_tableschemas(
             description="dolor sit amet",
             constraints=None,
             categories=None,
-        )
+        ),
     ]
 
 
 @pytest.fixture
 def mocked_open_data_tableschemas_by_resource_id(
     mocked_open_data_tableschemas: list[OpenDataTableSchema],
-) -> dict[str, dict[str, list[OpenDataTableSchema]]]:
+) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
     return {
-        "LoremIpsumResourceId": {
-            "tableschema_lorem.json": mocked_open_data_tableschemas[0:1],
+        MergedResourceIdentifier("LoremIpsumResourceId"): {
+            "tableschema_lorem.json": mocked_open_data_tableschemas[0:2],
             "tableschema_ipsum.json": [mocked_open_data_tableschemas[2]],
         },
-        "DolorResourceId": {
+        MergedResourceIdentifier("DolorResourceId"): {
             "tableschema_dolor.json": [mocked_open_data_tableschemas[3]],
         },
     }
