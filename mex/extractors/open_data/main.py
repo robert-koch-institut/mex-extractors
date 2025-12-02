@@ -18,14 +18,17 @@ from mex.common.models import (
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedResourceIdentifier,
 )
 from mex.extractors.open_data.extract import (
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
+    extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
     transform_open_data_distributions,
@@ -150,6 +153,44 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     load(mex_sources)
     return mex_sources
+
+
+@asset(group_name="open_data")
+def open_data_version_id_by_resource_id(
+    open_data_parent_extracted_resources: list[ExtractedResource],
+    open_data_parent_resources: list[OpenDataParentResource],
+    open_data_extracted_distributions: list[ExtractedDistribution],
+) -> dict[MergedResourceIdentifier, int]:
+    """Get Zenodo version id (to download tableschema zip) per Resource stableTargetId.
+
+    Info from open data team: for some resources there are no, for some there are
+    other "wrong" metadata.zip files. If datapackage.json exists for a resource,
+    there also is a metadata.zip and it is valid for our use case.
+    """
+    return {
+        resource.stableTargetId: parent_resource.id
+        for parent_resource in open_data_parent_resources
+        for resource in open_data_parent_extracted_resources
+        if resource.identifierInPrimarySource == parent_resource.conceptrecid
+        for distribution in open_data_extracted_distributions
+        if (
+            distribution.stableTargetId in resource.distribution
+            and distribution.title[0].value == "datapackage.json"
+        )
+    }
+
+
+@asset(group_name="open_data")
+def open_data_tableschemas_by_resource_id(
+    open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, int],
+) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
+    """Extract and collect metadata zip tableschemas by resource stableTargetId."""
+    return {
+        resource_key: extract_tableschema(
+            open_data_version_id_by_resource_id[resource_key]
+        )
+        for resource_key in open_data_version_id_by_resource_id
+    }
 
 
 @entrypoint(Settings)
