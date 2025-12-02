@@ -383,7 +383,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         )
         contributing_unit = (
             unit_stable_target_ids_by_synonym.get(
-                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0], []
+                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
             else []
@@ -466,10 +466,10 @@ def transform_open_data_variables(
         for filename in schema_dict:
             for schema in schema_dict[filename]:
                 value_set = (
-                    [str(item) for item in schema.constraints.enum]
-                    if schema.constraints and schema.constraints.enum
-                    else [f"{item.value}, {item.label}" for item in schema.categories]
+                    [f"{item.value}, {item.label}" for item in schema.categories]
                     if schema.categories
+                    else [str(item) for item in schema.constraints.enum]
+                    if schema.constraints and schema.constraints.enum
                     else None
                 )
                 extracted_variables.append(

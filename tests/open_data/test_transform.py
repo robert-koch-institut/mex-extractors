@@ -229,16 +229,14 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": [  # only child unit of Maxi Muster = C1
-            MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48")
-        ],
+        "unitInCharge": [
+            "6rqNvZSApUHlz8GkkVP48"
+        ],  # only child unit of Maxi Muster = C1
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
         "contributor": [str(mocked_open_data_persons[0].stableTargetId)],
-        "contributingUnit": [  # default, always unit "FG 99"
-            MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")
-        ],
+        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],  # default, always unit "FG 99"
         "description": [
             {"language": TextLanguage.EN, "value": "Test1 <a href='test/2'>test3</a>"}
         ],
@@ -310,7 +308,7 @@ def test_transform_open_data_variables(
         "usedIn": ["LoremIpsumResourceId"],
         "belongsTo": ["LoremVarGroupId"],
         "description": [{"value": "lorem 1"}],
-        "valueSet": ["a", "b"],
+        "valueSet": ["a, the letter 'a'", "b, and also 'b'"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
