@@ -18,3 +18,11 @@ class OpenDataSettings(BaseModel):
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
+    zip_path_de: str = Field(
+        "/files/Metadaten.zip/content",
+        description="relative URL path for german spelling of the zip file name",
+    )
+    zip_path_en: str = Field(
+        "/files/Metadata.zip/content",
+        description="relative URL path for english spelling of the zip file name",
+    )

@@ -7,7 +7,6 @@ from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
     OpenDataTableSchema,
-    OpenDataTableSchemaJson,
     OpenDataVersionFiles,
 )
 
@@ -102,9 +101,9 @@ def extract_tableschema(version_id: int) -> dict[str, list[OpenDataTableSchema]]
         ]
         for file_path in schema_file_paths:
             with zf.open(file_path) as f:
-                data = OpenDataTableSchemaJson.model_validate(
-                    json.load(TextIOWrapper(f, encoding="utf-8"))
-                )
-            schema_collection[file_path.split("schemas/", 1)[1]] = data.fields
+                raw_json = json.load(TextIOWrapper(f, encoding="utf-8"))
+            schema_collection[file_path.split("schemas/", 1)[1]] = [
+                OpenDataTableSchema.model_validate(item) for item in raw_json["fields"]
+            ]
 
     return schema_collection
