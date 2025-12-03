@@ -25,7 +25,9 @@ from mex.extractors.sinks import load
 
 def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR0913
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -62,7 +64,9 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
 
 def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -246,7 +250,9 @@ def get_or_create_external_partner(
 
 def transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     grippeweb_extracted_persons: list[ExtractedPerson],
 ) -> ExtractedAccessPlatform:
     """Transform grippeweb access platform to ExtractedAccessPlatform.

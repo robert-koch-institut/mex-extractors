@@ -32,7 +32,7 @@ def test_unit_stable_target_ids_by_synonym(
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     units_by_synonym = cast(
-        "dict[str, MergedOrganizationalUnitIdentifier]",
+        "dict[str, list[MergedOrganizationalUnitIdentifier]]",
         unit_stable_target_ids_by_synonym(
             extracted_organizational_units(extracted_organization_rki)
         ),

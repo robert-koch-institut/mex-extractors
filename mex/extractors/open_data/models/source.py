@@ -77,3 +77,26 @@ class OpenDataVersionFiles(BaseModel):
     links: Links
     created: str | None = None
     updated: str | None = None
+
+
+class OpenDataTableSchemaConstraints(BaseModel):
+    """Model subclass for Zenodo table schema property 'constraints'."""
+
+    enum: list[str | int] | None = None
+
+
+class OpenDataTableSchemaCategories(BaseModel):
+    """Model subclass for Zenodo table schema property 'categories'."""
+
+    value: str
+    label: str
+
+
+class OpenDataTableSchema(BaseModel):
+    """Model subclass for single table schemas in a json."""
+
+    name: str
+    type: str
+    description: str
+    constraints: OpenDataTableSchemaConstraints | None = None
+    categories: list[OpenDataTableSchemaCategories] | None = None

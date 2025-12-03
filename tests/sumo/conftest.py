@@ -54,16 +54,16 @@ def mex_actor_access_platform() -> ExtractedPerson:
 
 
 @pytest.fixture
-def unit_merged_ids_by_synonym() -> dict[str, MergedOrganizationalUnitIdentifier]:
+def unit_merged_ids_by_synonym() -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Return dummy merged ids for units for testing."""
     return {
-        "MF4": MergedOrganizationalUnitIdentifier.generate(seed=45),
-        "mf4": MergedOrganizationalUnitIdentifier.generate(seed=45),
-        "FG32": MergedOrganizationalUnitIdentifier.generate(seed=47),
-        "fg32": MergedOrganizationalUnitIdentifier.generate(seed=47),
-        "FG99": MergedOrganizationalUnitIdentifier.generate(seed=49),
-        "fg99": MergedOrganizationalUnitIdentifier.generate(seed=49),
-        "FG 99": MergedOrganizationalUnitIdentifier.generate(seed=49),
+        "MF4": [MergedOrganizationalUnitIdentifier.generate(seed=45)],
+        "mf4": [MergedOrganizationalUnitIdentifier.generate(seed=45)],
+        "FG32": [MergedOrganizationalUnitIdentifier.generate(seed=47)],
+        "fg32": [MergedOrganizationalUnitIdentifier.generate(seed=47)],
+        "FG99": [MergedOrganizationalUnitIdentifier.generate(seed=49)],
+        "fg99": [MergedOrganizationalUnitIdentifier.generate(seed=49)],
+        "FG 99": [MergedOrganizationalUnitIdentifier.generate(seed=49)],
     }
 
 

@@ -24,10 +24,10 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 
 @pytest.fixture
 def unit_stable_target_ids_by_synonym() -> dict[
-    str, MergedOrganizationalUnitIdentifier
+    str, list[MergedOrganizationalUnitIdentifier]
 ]:
     """Mock unit stable target ids."""
-    return {"C1": MergedOrganizationalUnitIdentifier.generate(seed=44)}
+    return {"C1": [MergedOrganizationalUnitIdentifier.generate(seed=44)]}
 
 
 @pytest.fixture
@@ -122,8 +122,8 @@ def voxco_variables() -> dict[str, list[VoxcoVariable]]:
 def international_projects_extracted_activities() -> list[ExtractedActivity]:
     return [
         ExtractedActivity(
-            contact=MergedOrganizationalUnitIdentifier.generate(30),
-            responsibleUnit=MergedOrganizationalUnitIdentifier.generate(32),
+            contact=[MergedOrganizationalUnitIdentifier.generate(30)],
+            responsibleUnit=[MergedOrganizationalUnitIdentifier.generate(32)],
             title=[Text(value="title", language="de")],
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(31),
             identifierInPrimarySource="2022-006",

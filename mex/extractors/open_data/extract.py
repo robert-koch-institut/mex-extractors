@@ -1,7 +1,12 @@
+import json
+from io import BytesIO, TextIOWrapper
+from zipfile import ZipFile
+
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
     OpenDataVersionFiles,
 )
 
@@ -68,3 +73,37 @@ def extract_open_data_persons_from_open_data_parent_resources(
             for person in (resource.metadata.creators + resource.metadata.contributors)
         }
     )
+
+
+def extract_tableschema(version_id: int) -> dict[str, list[OpenDataTableSchema]]:
+    """Extract the metadata zip tableschemas.
+
+    Args:
+        version_id: id of record version as integer
+
+    Returns:
+        tableschema by name of tableschema json
+    """
+    connector = OpenDataConnector.get()
+
+    zip_file = connector.get_schema_zipfile(version_id)
+
+    schema_collection: dict[str, list[OpenDataTableSchema]] = {}
+    with ZipFile(BytesIO(zip_file.content)) as zf:
+        schema_file_paths = [
+            n
+            for n in zf.namelist()
+            if (
+                n.lower().startswith("metadaten/schemas/tableschema_")
+                or n.lower().startswith("schemas/tableschema_")
+            )
+            and n.lower().endswith(".json")
+        ]
+        for file_path in schema_file_paths:
+            with zf.open(file_path) as f:
+                raw_json = json.load(TextIOWrapper(f, encoding="utf-8"))
+            schema_collection[file_path.split("schemas/", 1)[1]] = [
+                OpenDataTableSchema.model_validate(item) for item in raw_json["fields"]
+            ]
+
+    return schema_collection
