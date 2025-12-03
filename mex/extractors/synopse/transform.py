@@ -33,6 +33,7 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.extractors.logging import watch_progress
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -44,7 +45,6 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def transform_synopse_studies_into_access_platforms(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_merged_contact_point_ids_by_query_string: dict[
         str, MergedContactPointIdentifier
     ],
@@ -53,12 +53,17 @@ def transform_synopse_studies_into_access_platforms(
     """Transform synopse studies into access platforms.
 
     Args:
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_merged_contact_point_ids_by_query_string: contact person lookup by email
         access_platform_mapping: mapping default values for access platform
     Returns:
         extracted access platform
     """
+    if (
+        unit_in_charge_synonym := access_platform_mapping.unitInCharge[0]
+        .mappingRules[0]
+        .forValues
+    ):
+        unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
     return ExtractedAccessPlatform(
         alternativeTitle=access_platform_mapping.alternativeTitle[0]
         .mappingRules[0]
@@ -76,9 +81,7 @@ def transform_synopse_studies_into_access_platforms(
         .mappingRules[0]
         .setValues,
         title=access_platform_mapping.title[0].mappingRules[0].setValues,
-        unitInCharge=unit_merged_ids_by_synonym[
-            access_platform_mapping.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ],
+        unitInCharge=unit_in_charge,
     )
 
 
@@ -314,7 +317,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     synopse_projects: Iterable[SynopseProject],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activities: Iterable[ExtractedActivity],
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
@@ -328,7 +330,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         synopse_variables_by_study_id: mapping from synopse studie id to the variables
             with this studie id
         extracted_activities: Iterable of extracted activities
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         extracted_organization: extracted organization
         synopse_resource: resource default values
         synopse_merged_contact_point_ids_by_query_string: contact person lookup by email
@@ -347,9 +348,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     extracted_activities_by_study_ids = {
         a.identifierInPrimarySource: a for a in extracted_activities
     }
-    contact_point = unit_merged_ids_by_synonym.get(
-        synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-    )
+    if contact_point_synonym := synopse_resource.contact[0].mappingRules[0].forValues:
+        contact_point = get_unit_merged_id_by_synonym(contact_point_synonym[0])
     synopse_projects_by_study_ids = {p.studien_id: p for p in synopse_projects}
     description_by_study_id: dict[str, str | None] = {}
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
@@ -389,8 +389,10 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             == synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ):
             contact.extend(contact_point)
-        if project.verantwortliche_oe in unit_merged_ids_by_synonym:
-            contact.extend(unit_merged_ids_by_synonym[project.verantwortliche_oe])
+        if project.verantwortliche_oe and (
+            unit_merged_ids := get_unit_merged_id_by_synonym(project.verantwortliche_oe)
+        ):
+            contact.extend(unit_merged_ids)
         else:
             continue
         contributing_unit: list[MergedOrganizationalUnitIdentifier] = []
@@ -398,8 +400,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             contributing_unit = [
                 unit_id
                 for unit in project.interne_partner.split(", ")
-                if unit in unit_merged_ids_by_synonym
-                for unit_id in unit_merged_ids_by_synonym[unit]
+                if (unit_merged_ids := get_unit_merged_id_by_synonym(unit))
+                for unit_id in unit_merged_ids
             ]
         contributor: list[MergedPersonIdentifier] = []
         if project.beitragende in synopse_merged_person_ids_by_str:
@@ -472,9 +474,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             in (synopse_resource.theme[0].mappingRules[0].forValues or ())
             else synopse_resource.theme[0].mappingRules[1].setValues
         )
-        if project.verantwortliche_oe in unit_merged_ids_by_synonym:
-            unit_in_charge = unit_merged_ids_by_synonym[project.verantwortliche_oe]
-        else:
+        unit_in_charge = get_unit_merged_id_by_synonym(project.verantwortliche_oe)
+        if not unit_in_charge:
             continue
         extracted_resources.append(
             ExtractedResource(
@@ -524,7 +525,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -536,7 +536,6 @@ def transform_synopse_projects_to_mex_activities(
         synopse_projects: Iterable of synopse projects
         contact_merged_ids_by_emails: Mapping from LDAP emails to contact IDs
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_merged_organization_ids_by_query_string: merged organization ids by org
                                                          name
@@ -559,7 +558,6 @@ def transform_synopse_projects_to_mex_activities(
         activity = transform_synopse_project_to_activity(
             project,
             contributor_merged_ids_by_name,
-            unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_merged_organization_ids_by_query_string,
         )
@@ -596,7 +594,6 @@ def transform_synopse_projects_to_mex_activities(
 def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     synopse_project: SynopseProject,
     contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -608,7 +605,6 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         synopse_project: a synopse project
         contact_merged_ids_by_emails: Mapping from LDAP emails to contact IDs
         contributor_merged_ids_by_name: Mapping from person names to contributor IDs
-        unit_merged_ids_by_synonym: Map from unit acronyms and labels to their merged ID
         synopse_activity: synopse activity default values
         synopse_merged_organization_ids_by_query_string: merged organization ids by org
                                                          name
@@ -616,10 +612,10 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     Returns:
         extracted activity
     """
-    if synopse_project.verantwortliche_oe in unit_merged_ids_by_synonym:
-        contact = unit_merged_ids_by_synonym.get(synopse_project.verantwortliche_oe)
+    if synopse_project.verantwortliche_oe is not None:
+        contact = get_unit_merged_id_by_synonym(synopse_project.verantwortliche_oe)
     else:
-        return None
+        pass
     documentation = None
     if projektdokumentation := synopse_project.projektdokumentation:
         try:
@@ -633,21 +629,21 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     involved_units = [
         merged_id
         for unit in (synopse_project.interne_partner or "").split(", ")
-        if (merged_id := unit_merged_ids_by_synonym.get(unit.strip()))
+        if (merged_id := get_unit_merged_id_by_synonym(unit.strip()))
     ]
 
     if synopse_project.verantwortliche_oe and any(
-        unit in synopse_project.verantwortliche_oe.split(" ,")
-        for unit in unit_merged_ids_by_synonym
+        get_unit_merged_id_by_synonym(synonym)
+        for synonym in synopse_project.verantwortliche_oe.split(" ,")
     ):
         responsible_unit = [
             unit_id
             for synonym in synopse_project.verantwortliche_oe.split(" ,")
-            if synonym in unit_merged_ids_by_synonym
-            for unit_id in unit_merged_ids_by_synonym[synonym]
+            if (unit_ids := get_unit_merged_id_by_synonym(synonym))
+            for unit_id in unit_ids
         ]
     else:
-        fg21_ids = unit_merged_ids_by_synonym["FG21"]
+        fg21_ids = get_unit_merged_id_by_synonym("FG21")
         responsible_unit = fg21_ids if fg21_ids else []
     external_associate = []
     if synopse_project.externe_partner:

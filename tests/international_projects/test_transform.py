@@ -21,9 +21,6 @@ from mex.extractors.primary_source.helpers import (
 
 
 def test_transform_international_projects_source_to_mex_source(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
@@ -32,7 +29,6 @@ def test_transform_international_projects_source_to_mex_source(
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
     unit_id = MergedOrganizationalUnitIdentifier.generate(seed=21)
-    unit_stable_target_ids_by_synonym = {"FG99": [unit_id]}
 
     international_projects_sources = list(extract_international_projects_sources())
 
@@ -41,7 +37,6 @@ def test_transform_international_projects_source_to_mex_source(
             international_projects_sources,
             international_projects_mapping_activity,
             person_stable_target_ids_by_query_string,
-            unit_stable_target_ids_by_synonym,
             funding_source_stable_target_ids_by_synonym,
             partner_organizations_stable_target_ids_by_synonym,
         )

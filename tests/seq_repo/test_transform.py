@@ -11,10 +11,10 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -31,9 +31,6 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> None:
     expected = {
@@ -44,7 +41,7 @@ def test_transform_seq_repo_activities_to_extracted_activities(
             "e0Rxxm9WvnMqPLZ44UduNx",
             "d6Lni0XPiEQM5jILEBOYxO",
         ],
-        "responsibleUnit": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "title": [{"value": "FG99-ABC-123", "language": "de"}],
         "involvedPerson": [
             "d6Lni0XPiEQM5jILEBOYxO",
@@ -63,7 +60,6 @@ def test_transform_seq_repo_activities_to_extracted_activities(
             seq_repo_latest_sources,
             seq_repo_activity,
             seq_repo_ldap_persons_with_query,
-            unit_stable_target_ids_by_synonym,
             seq_repo_merged_person_ids_by_query_string,
         )
     )
@@ -79,9 +75,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
@@ -148,7 +141,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         extracted_mex_access_platform,
         seq_repo_resource,
         seq_repo_ldap_persons_with_query,
-        unit_stable_target_ids_by_synonym,
         seq_repo_merged_person_ids_by_query_string,
         extracted_organization_rki,
     )
@@ -161,17 +153,12 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> None:
     expected = {
         "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifierInPrimarySource": "https://dummy.url.com/",
         "alternativeTitle": [{"language": "es", "value": "SeqRepo"}],
-        "contact": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["FG99"]
-        ],
+        "contact": get_unit_merged_id_by_synonym("FG99"),
         "description": [
             {
                 "value": "This is just a sample description, don't read it.",
@@ -182,9 +169,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         "landingPage": [{"url": "https://dummy.url.com/"}],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"language": "es", "value": "Sequence Data Repository"}],
-        "unitInCharge": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["FG99"]
-        ],
+        "unitInCharge": get_unit_merged_id_by_synonym("FG99"),
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -192,7 +177,6 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     extracted_mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
             seq_repo_access_platform,
-            unit_stable_target_ids_by_synonym,
         )
     )
 

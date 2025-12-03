@@ -1,12 +1,10 @@
 from collections.abc import Collection, Iterable
 
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-)
 from mex.common.utils import any_contains_any, contains_any
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.logging import log_filter
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -15,15 +13,11 @@ from mex.extractors.settings import Settings
 
 def filter_and_log_ff_projects_sources(
     sources: Iterable[FFProjectsSource],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> list[FFProjectsSource]:
     """Filter FF Projects sources and log filtered sources.
 
     Args:
         sources: Iterable of FFProjectSources
-        unit_stable_target_ids_by_synonym: Unit IDs grouped by synonyms
 
     Returns:
        List of filtered FF Projects sources
@@ -38,21 +32,17 @@ def filter_and_log_ff_projects_sources(
     return [
         source
         for source in sources_filtered_by_global_rules
-        if filter_and_log_ff_projects_source(source, unit_stable_target_ids_by_synonym)
+        if filter_and_log_ff_projects_source(source)
     ]
 
 
 def filter_and_log_ff_projects_source(  # noqa: PLR0911
     source: FFProjectsSource,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> bool:
     """Filter a FFprojectSource according to settings and log filtering.
 
     Args:
         source: FFProjectSource
-        unit_stable_target_ids_by_synonym: Unit IDs grouped by synonyms
 
     Settings:
         ff_projects.skip_funding: Skip sources with this funding
@@ -134,7 +124,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
         return False
 
     if all(
-        oe not in unit_stable_target_ids_by_synonym
+        get_unit_merged_id_by_synonym(oe)
         for oe in source.rki_oe.replace("/", ",").split(",")
     ):
         log_filter(

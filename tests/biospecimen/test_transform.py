@@ -96,7 +96,6 @@ def test_transform_biospecimen_resource_to_mex_resource(
 
     mex_sources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        unit_stable_target_ids,
         mex_persons,
         extracted_organization_rki,
         synopse_extracted_activities,
@@ -115,7 +114,7 @@ def test_transform_biospecimen_resource_to_mex_resource(
             "LOINC",
         ],
         "contact": [str(mex_persons[0].stableTargetId)],
-        "contributingUnit": [str(Identifier.generate(seed=42))],
+        "contributingUnit": ["bFQoRhcVH5DHU6"],
         "contributor": [str(Identifier.generate(seed=42))],
         "description": [{"language": TextLanguage.DE, "value": "Testbeschreibung"}],
         "documentation": [
@@ -166,7 +165,7 @@ def test_transform_biospecimen_resource_to_mex_resource(
             "https://mex.rki.de/item/theme-36",
         ],
         "title": [{"value": "test_titel"}],
-        "unitInCharge": [str(Identifier.generate(seed=42))],
+        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
         "wasGeneratedBy": str(synopse_merged_id),
         # created_in_context_of is None, therefore not displayed
     }

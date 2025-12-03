@@ -1,13 +1,13 @@
 from mex.common.exceptions import MExError
 from mex.common.models import ActivityMapping, ExtractedActivity
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TemporalEntityPrecision,
     YearMonthDay,
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -16,9 +16,6 @@ from mex.extractors.primary_source.helpers import (
 def transform_ff_projects_source_to_extracted_activity(
     ff_projects_source: FFProjectsSource,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     organization_stable_target_id_by_synonyms: dict[str, MergedOrganizationIdentifier],
     ff_projects_activity: ActivityMapping,
 ) -> ExtractedActivity:
@@ -28,8 +25,6 @@ def transform_ff_projects_source_to_extracted_activity(
         ff_projects_source: FF Projects source
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
-        unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
-                                          to unit stable target ID
         organization_stable_target_id_by_synonyms: Mapping from organization synonyms
                                                    to organization stable target ID
         ff_projects_activity: activity mapping model with default values
@@ -41,8 +36,8 @@ def transform_ff_projects_source_to_extracted_activity(
         responsible_unit = [
             unit_id
             for oe in rki_oe.replace("/", ",").split(",")
-            if oe in unit_stable_target_id_by_synonym
-            for unit_id in unit_stable_target_id_by_synonym[oe]
+            if (unit_ids := get_unit_merged_id_by_synonym(oe))
+            for unit_id in unit_ids
         ]
     else:
         msg = "missing unit should have been filtered out"

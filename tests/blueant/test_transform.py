@@ -2,7 +2,6 @@ from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
@@ -26,21 +25,15 @@ def test_transform_blueant_sources_to_extracted_activities(
             MergedPersonIdentifier.generate(seed=99),
         ],
     }
-    unit_stable_target_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=555)],
-        "C1 Child Department": [MergedOrganizationalUnitIdentifier.generate(seed=555)],
-        "XY": [MergedOrganizationalUnitIdentifier.generate(seed=999)],
-    }
     mex_sources = list(
         transform_blueant_sources_to_extracted_activities(
             [blueant_source, blueant_source_without_leader],
             stable_target_ids_by_employee_id,
-            unit_stable_target_ids_by_synonym,
             blueant_activity,
             {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
         )
     )
-    assert len(mex_sources) == 2
+    assert len(mex_sources) == 1
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [str(Identifier.generate(seed=99))],
         "responsibleUnit": [str(Identifier.generate(seed=555))],

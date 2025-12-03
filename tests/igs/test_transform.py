@@ -10,7 +10,6 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
@@ -28,16 +27,12 @@ from mex.extractors.igs.transform import (
 def test_transform_igs_extracted_resource(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     extracted_resource = transform_igs_extracted_resource(
         igs_resource_mapping,
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
         extracted_access_platform,
         extracted_organization_rki,
     )
@@ -54,7 +49,7 @@ def test_transform_igs_extracted_resource(
         ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Pathogen", "language": "de"}],
-        "unitInCharge": ["bFQoRhcVH5DHU8"],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -63,14 +58,10 @@ def test_transform_igs_extracted_resource(
 def test_transform_igs_access_platform(
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> None:
     extracted_access_platform = transform_igs_access_platform(
         igs_access_platform_mapping,
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
     )
 
     assert extracted_access_platform.model_dump(exclude_defaults=True) == {

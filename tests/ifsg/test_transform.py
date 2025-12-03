@@ -8,7 +8,6 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
-    MergedOrganizationalUnitIdentifier,
     Text,
     TextLanguage,
 )
@@ -37,11 +36,8 @@ from mex.extractors.primary_source.helpers import (
 
 def test_transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
-    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> None:
-    extracted_resource = transform_resource_parent_to_mex_resource(
-        resource_parent, unit_stable_target_ids
-    )
+    extracted_resource = transform_resource_parent_to_mex_resource(resource_parent)
     expected = {
         "identifier": Joker(),
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
@@ -89,13 +85,11 @@ def test_transform_resource_parent_to_mex_resource(
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
-    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
             resource_state,
             ifsg_extracted_resource_parent,
-            unit_stable_target_ids,
         )
         for resource_state in resource_states
     ]
@@ -109,7 +103,7 @@ def test_transform_resource_state_to_mex_resource(
         "alternativeTitle": [
             {"value": "Meldedaten Schleswig-Holstein", "language": TextLanguage.DE}
         ],
-        "contact": [str(Identifier.generate(43))],
+        "contact": ["cjna2jitPngp6yIV63cdi9"],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -135,7 +129,7 @@ def test_transform_resource_state_to_mex_resource(
         "spatial": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
-        "unitInCharge": [str(Identifier.generate(43))],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
     }
     assert extracted_resources[0][0].model_dump(exclude_defaults=True) == expected
 
@@ -160,7 +154,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     ifsg_extracted_resources_state: list[ExtractedResource],
     meta_type: list[MetaType],
     meta_disease: list[MetaDisease],
-    unit_stable_target_ids: dict[str, list[MergedOrganizationalUnitIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     extracted_resource = [
@@ -171,7 +164,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             meta_disease,
             meta_type,
             [101, 102, 103],
-            unit_stable_target_ids,
             extracted_organization_rki,
         )
         for resource_disease in resource_diseases
@@ -184,7 +176,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
-        "contact": [str(Identifier.generate(43))],
+        "contact": ["cjna2jitPngp6yIV63cdi9"],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -237,7 +229,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
                 "value": "Meldedaten nach Infektionsschutzgesetz (IfSG) zu virus (SurvNet Schema 1)",
             }
         ],
-        "unitInCharge": [str(Identifier.generate(43))],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
     }
     assert extracted_resource[0][0].model_dump(exclude_defaults=True) == expected
 
