@@ -114,8 +114,6 @@ def test_transform_biospecimen_resource_to_mex_resource(
             "LOINC",
         ],
         "contact": [str(mex_persons[0].stableTargetId)],
-        "contributingUnit": ["bFQoRhcVH5DHU6"],
-        "contributor": [str(Identifier.generate(seed=42))],
         "description": [{"language": TextLanguage.DE, "value": "Testbeschreibung"}],
         "documentation": [
             {

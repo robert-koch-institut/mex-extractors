@@ -612,10 +612,11 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     Returns:
         extracted activity
     """
+    contact = None
     if synopse_project.verantwortliche_oe is not None:
         contact = get_unit_merged_id_by_synonym(synopse_project.verantwortliche_oe)
-    else:
-        pass
+    if contact is None:
+        return None
     documentation = None
     if projektdokumentation := synopse_project.projektdokumentation:
         try:

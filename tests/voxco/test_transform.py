@@ -10,7 +10,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
 )
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -47,7 +46,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
         "contact": [str(voxco_extracted_persons[0].stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
-        "unitInCharge": get_unit_merged_id_by_synonym("C1"),
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],

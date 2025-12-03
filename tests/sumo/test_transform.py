@@ -469,8 +469,8 @@ def test_transform_sumo_activity_to_extracted_activity(
             }
         ],
         "externalAssociate": Joker(),
-        "involvedUnit": get_unit_merged_id_by_synonym("MF4"),
-        "responsibleUnit": get_unit_merged_id_by_synonym("FG3"),
+        "involvedUnit": "6rqNvZSApUHlz8GkkVP48",
+        "responsibleUnit": "6rqNvZSApUHlz8GkkVP48",
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
         "start": [YearMonthDay("2018-07-01")],
         "theme": [

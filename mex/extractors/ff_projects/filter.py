@@ -123,7 +123,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
         )
         return False
 
-    if all(
+    if not any(
         get_unit_merged_id_by_synonym(oe)
         for oe in source.rki_oe.replace("/", ",").split(",")
     ):

@@ -7,7 +7,6 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    Identifier,
     Text,
     TextLanguage,
 )
@@ -46,7 +45,7 @@ def test_transform_resource_parent_to_mex_resource(
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "alternativeTitle": [{"value": "IfSG Meldedaten", "language": TextLanguage.DE}],
-        "contact": [str(Identifier.generate(43))],
+        "contact": ["cjna2jitPngp6yIV63cdi9"],
         "description": [
             {"value": "Das Infektionsschutzgesetz", "language": TextLanguage.DE}
         ],
@@ -77,7 +76,7 @@ def test_transform_resource_parent_to_mex_resource(
                 "language": TextLanguage.DE,
             }
         ],
-        "unitInCharge": [str(Identifier.generate(43))],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
     }
     assert extracted_resource.model_dump(exclude_defaults=True) == expected
 

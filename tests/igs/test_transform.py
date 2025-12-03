@@ -79,7 +79,7 @@ def test_transform_igs_access_platform(
         "description": [{"value": "test description", "language": "en"}],
         "landingPage": [{"url": "https://rki.de:4100/docs"}],
         "title": [{"language": "en", "value": "IGS Open API"}],
-        "unitInCharge": ["bFQoRhcVH5DHU8"],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }

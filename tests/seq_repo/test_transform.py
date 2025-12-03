@@ -97,12 +97,12 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "title": [
             {"value": "FG99-ABC-123 sample test-customer-name-1", "language": "en"}
         ],
-        "unitInCharge": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
         "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
-        "contributingUnit": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
         "description": [
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},
