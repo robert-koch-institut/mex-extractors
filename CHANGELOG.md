@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - Pin Mailpit Docker image version to v1.28
+- use convenience function to obtain organizational unit merged ids
 
 ### Deprecated
 
