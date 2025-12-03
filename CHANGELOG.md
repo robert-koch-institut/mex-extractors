@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ff-projects extractor creates organizations if no wikidata org is found
+
 ### Changes
 
 - Pin Mailpit Docker image version to v1.28
