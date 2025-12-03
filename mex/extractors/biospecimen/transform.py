@@ -12,12 +12,12 @@ from mex.common.types import (
     AnonymizationPseudonymization,
     Identifier,
     Link,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.logging import watch_progress
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -25,9 +25,6 @@ from mex.extractors.primary_source.helpers import (
 
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: Iterable[ExtractedActivity],
@@ -38,7 +35,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         biospecimen_resources: Biospecimen resources
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         mex_persons: Iterable of ExtractedPersons
         synopse_extracted_activities: extracted synopse activities
         extracted_organization_rki: extracted organization
@@ -72,12 +68,12 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             anonymization_pseudonymization = None
         conforms_to = resource_mapping.conformsTo[0].mappingRules[0].setValues
         contributing_unit = (
-            unit_stable_target_ids_by_synonym.get(unit_name)
+            get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := resource.mitwirkende_fachabteilung)
             else None
         )
         contributor = (
-            unit_stable_target_ids_by_synonym.get(unit_name)
+            get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := resource.mitwirkende_personen)
             else None
         )
@@ -99,7 +95,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         for kontakt in resource.kontakt:
             if person := person_stable_target_id_by_email.get(kontakt):
                 contact.append(person)
-            elif unit := unit_stable_target_ids_by_synonym.get(kontakt):
+            elif unit := get_unit_merged_id_by_synonym(kontakt):
                 contact.extend(unit)
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0], None
@@ -132,8 +128,8 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         resource_creation_method = (
             resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
         )
-        unit_in_charge = unit_stable_target_ids_by_synonym.get(
-            resource.verantwortliche_fachabteilung, []
+        unit_in_charge = get_unit_merged_id_by_synonym(
+            resource.verantwortliche_fachabteilung
         )
         if (
             resource_mapping.theme[0].mappingRules[1].forValues

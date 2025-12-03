@@ -5,7 +5,6 @@ import pytest
 from mex.common.ldap.extract import get_merged_ids_by_query_string
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.extract import (
     extract_confluence_vvt_authors,
@@ -29,7 +28,6 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 @pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
 def test_transform_confluence_vvt_page_to_extracted_activity(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     expected = {
@@ -65,7 +63,6 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
         page_data,
         confluence_vvt_activity_mapping,
         merged_ids_by_query_string,
-        unit_merged_ids_by_synonym,
     )
     assert extracted_activity
     assert (
@@ -77,7 +74,6 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 @pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
 def test_transform_confluence_vvt_page_to_extracted_activities(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
     all_pages = list(get_page_data_by_id(fetch_all_vvt_pages_ids()))
@@ -94,7 +90,6 @@ def test_transform_confluence_vvt_page_to_extracted_activities(
         all_pages,
         confluence_vvt_activity_mapping,
         merged_ids_by_query_string,
-        unit_merged_ids_by_synonym,
     )
 
     assert len(extracted_activities) >= 50

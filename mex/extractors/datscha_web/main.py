@@ -11,7 +11,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -73,9 +72,6 @@ def datscha_web_organization_ids_by_query_str(
 
 @asset(group_name="datscha_web")
 def datscha_web_extracted_activities(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     datscha_web_items: list[DatschaWebItem],
     datscha_web_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
@@ -84,7 +80,6 @@ def datscha_web_extracted_activities(
     mex_sources = transform_datscha_web_items_to_mex_activities(
         datscha_web_items,
         datscha_web_person_ids_by_query_str,
-        unit_stable_target_ids_by_synonym,
         datscha_web_organization_ids_by_query_str,
     )
     load(mex_sources)

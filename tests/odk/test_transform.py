@@ -6,7 +6,6 @@ from mex.common.models import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TextLanguage,
 )
@@ -15,6 +14,7 @@ from mex.extractors.odk.transform import (
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -22,9 +22,6 @@ from mex.extractors.primary_source.helpers import (
 
 def test_transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> None:
@@ -36,7 +33,6 @@ def test_transform_odk_resources_to_mex_resources(
     ).stableTargetId
     resources = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
-        unit_stable_target_ids_by_synonym,
         odk_merged_organization_ids_by_str,
         international_projects_extracted_activities,
     )
@@ -56,12 +52,8 @@ def test_transform_odk_resources_to_mex_resources(
             {"value": "dolor", "language": TextLanguage.EN},
             {"value": "sit", "language": TextLanguage.DE},
         ],
-        "contact": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
-        ],
-        "contributingUnit": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
-        ],
+        "contact": get_unit_merged_id_by_synonym("C1"),
+        "contributingUnit": get_unit_merged_id_by_synonym("C1"),
         "description": [{"value": "amet", "language": TextLanguage.EN}],
         "externalPartner": [
             str(odk_merged_organization_ids_by_str["consetetur"]),
@@ -109,15 +101,12 @@ def test_transform_odk_resources_to_mex_resources(
             {"value": "aliquyam", "language": TextLanguage.EN},
             {"value": "erat", "language": TextLanguage.DE},
         ],
-        "unitInCharge": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
-        ],
+        "unitInCharge": get_unit_merged_id_by_synonym("C1"),
         "wasGeneratedBy": str(international_project_stable_target_id),
     }
     assert resources[0][0].model_dump(exclude_defaults=True) == expected
     resources_organizations_empty_or_created = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
-        unit_stable_target_ids_by_synonym,
         {},
         international_projects_extracted_activities,
     )

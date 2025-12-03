@@ -1,4 +1,3 @@
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.ff_projects.extract import extract_ff_projects_sources
 from mex.extractors.ff_projects.filter import (
     filter_and_log_ff_projects_sources,
@@ -7,17 +6,12 @@ from mex.extractors.ff_projects.filter import (
 
 
 def test_filter_and_log_ff_projects_sources() -> None:
-    unit_stable_target_ids_by_synonym = {
-        "FG33": [MergedOrganizationalUnitIdentifier.generate(33)],
-        "Department": [MergedOrganizationalUnitIdentifier.generate(99)],
-    }
     sources = list(extract_ff_projects_sources())
     assert len(sources) == 21
 
     sources = list(
         filter_and_log_ff_projects_sources(
             sources,
-            unit_stable_target_ids_by_synonym,
         )
     )
     assert len(sources) == 16

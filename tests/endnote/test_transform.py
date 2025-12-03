@@ -6,7 +6,7 @@ from mex.common.models import (
     ExtractedPerson,
 )
 from mex.common.testing import Joker
-from mex.common.types import MergedOrganizationalUnitIdentifier, TextLanguage
+from mex.common.types import TextLanguage
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
@@ -85,15 +85,11 @@ def test_extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> None:
     bibliographic_resources = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
         endnote_extracted_persons_by_person_str,
-        unit_stable_target_ids_by_synonym,
     )
 
     assert bibliographic_resources[0].model_dump(exclude_defaults=True) == {
@@ -116,7 +112,7 @@ def test_extract_endnote_bibliographic_resource(
         "bibliographicResourceType": [
             "https://mex.rki.de/item/bibliographic-resource-type-2"
         ],
-        "contributingUnit": ["bFQoRhcVH5DHU8"],
+        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "editor": ["eAoOVRo8MGXiVcaDyJwoaf"],
         "editorOfSeries": ["c4Mgoj3j2OtABRXefB9vAy"],
         "isbnIssn": ["1234-5678"],

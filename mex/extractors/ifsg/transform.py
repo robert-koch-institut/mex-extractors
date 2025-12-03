@@ -7,7 +7,6 @@ from mex.common.models import (
     VariableGroupMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     Text,
 )
@@ -21,6 +20,7 @@ from mex.extractors.ifsg.models.meta_field import MetaField
 from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_type import MetaType
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -28,16 +28,11 @@ from mex.extractors.primary_source.helpers import (
 
 def transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedResource:
     """Transform resource parent to mex resource.
 
     Args:
         resource_parent: resource parent mapping model
-        unit_stable_target_ids_by_synonym: mapping unit synonyms to
-                                           MergedOrganizationalUnitIdentifier
 
     Returns:
         resource parent transformed to ExtractedResource
@@ -50,9 +45,9 @@ def transform_resource_parent_to_mex_resource(
         .mappingRules[0]
         .setValues,
         alternativeTitle=resource_parent.alternativeTitle[0].mappingRules[0].setValues,
-        contact=unit_stable_target_ids_by_synonym[
+        contact=get_unit_merged_id_by_synonym(
             resource_parent.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ],
+        ),
         description=resource_parent.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_parent.hasLegalBasis[0].mappingRules[0].setValues,
@@ -72,26 +67,21 @@ def transform_resource_parent_to_mex_resource(
         spatial=resource_parent.spatial[0].mappingRules[0].setValues,
         theme=resource_parent.theme[0].mappingRules[0].setValues,
         title=resource_parent.title[0].mappingRules[0].setValues,
-        unitInCharge=unit_stable_target_ids_by_synonym[
+        unitInCharge=get_unit_merged_id_by_synonym(
             resource_parent.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ],
+        ),
     )
 
 
 def transform_resource_state_to_mex_resource(
     resource_state: ResourceMapping,
     ifsg_extracted_resource_parent: ExtractedResource,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> list[ExtractedResource]:
     """Transform resource state to mex resource.
 
     Args:
         resource_state: resource state mapping model
         ifsg_extracted_resource_parent: ExtractedResource
-        unit_stable_target_ids_by_synonym: mapping unit synonyms to
-                                           MergedOrganizationalUnitIdentifier
         meta_disease: list of MetaDisease table rows
 
     Returns:
@@ -101,6 +91,10 @@ def transform_resource_state_to_mex_resource(
         value.forValues[0]: value.setValues  # type: ignore[index]
         for value in resource_state.alternativeTitle[0].mappingRules
     }
+    if contact_synonym := resource_state.contact[0].mappingRules[0].forValues:
+        contact = get_unit_merged_id_by_synonym(contact_synonym[0])
+    if not contact:
+        pass
     documentation_by_bundesland_id = {
         value.forValues[0]: value.setValues  # type: ignore[index]
         for value in resource_state.documentation[0].mappingRules
@@ -118,6 +112,14 @@ def transform_resource_state_to_mex_resource(
         for value in resource_state.title[0].mappingRules
         if value.setValues
     }
+    if (
+        unit_in_charge_synonym := resource_state.unitInCharge[0]
+        .mappingRules[0]
+        .forValues
+    ):
+        unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
+    if not unit_in_charge:
+        pass
     mex_resource_state: list[ExtractedResource] = []
     for (
         id_bundesland,
@@ -136,9 +138,7 @@ def transform_resource_state_to_mex_resource(
                 .mappingRules[0]
                 .setValues,
                 alternativeTitle=bundesland_meldedaten,
-                contact=unit_stable_target_ids_by_synonym[
-                    resource_state.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-                ],
+                contact=contact,
                 documentation=documentation,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
                 hasLegalBasis=resource_state.hasLegalBasis[0].mappingRules[0].setValues,
@@ -159,9 +159,7 @@ def transform_resource_state_to_mex_resource(
                 spatial=spatial,
                 theme=resource_state.theme[0].mappingRules[0].setValues,
                 title=title_by_bundesland_id[id_bundesland],
-                unitInCharge=unit_stable_target_ids_by_synonym[
-                    resource_state.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-                ],
+                unitInCharge=unit_in_charge,
             )
         )
     return mex_resource_state
@@ -215,9 +213,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     meta_disease: list[MetaDisease],
     meta_type: list[MetaType],
     id_type_of_diseases: list[int],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Transform resource disease to mex resource.
@@ -229,8 +224,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         meta_disease: list of MetaDisease table rows
         meta_type: MetaType
         id_type_of_diseases: list of disease related id_types
-        unit_stable_target_ids_by_synonym: mapping unit synonyms to
-                                           MergedOrganizationalUnitIdentifier
         extracted_organization_rki: extracted organization for RKI
 
     Returns:
@@ -253,7 +246,6 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             stable_target_id_by_bundesland_id,
             bundesland_by_in_bundesland,
             code_by_id_type,
-            unit_stable_target_ids_by_synonym,
             extracted_organization_rki,
         )
         for meta_disease_row in meta_disease
@@ -268,9 +260,6 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
     stable_target_id_by_bundesland_id: dict[str, MergedResourceIdentifier],
     bundesland_by_in_bundesland: dict[str, Text],
     code_by_id_type: dict[int, str],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
     """Transform resource disease row to mex resource.
@@ -282,8 +271,6 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         stable_target_id_by_bundesland_id: stable target id to bundesland_id map
         bundesland_by_in_bundesland: in bundesland str to bundesland Text map
         code_by_id_type: id type to code map
-        unit_stable_target_ids_by_synonym: mapping unit synonyms to
-                                           MergedOrganizationalUnitIdentifier
         extracted_organization_rki: extracted organization for RKI
 
     Returns:
@@ -329,9 +316,9 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         .mappingRules[0]
         .setValues,
         alternativeTitle=code_by_id_type[meta_disease_row.id_type],
-        contact=unit_stable_target_ids_by_synonym[
+        contact=get_unit_merged_id_by_synonym(
             resource_disease.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ],
+        ),
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
@@ -355,9 +342,9 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         theme=resource_disease.theme[0].mappingRules[0].setValues,
         title=f"Meldedaten nach Infektionsschutzgesetz (IfSG) zu {name} "
         f"(SurvNet Schema {meta_disease_row.id_schema})",
-        unitInCharge=unit_stable_target_ids_by_synonym[
+        unitInCharge=get_unit_merged_id_by_synonym(
             resource_disease.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ],
+        ),
     )
 
 
@@ -480,7 +467,7 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
             resource_identifier_in_primary_source
             not in resource_disease_stable_target_id_by_id
         ):
-            continue
+            pass
         used_in = resource_disease_stable_target_id_by_id[
             resource_identifier_in_primary_source
         ]
