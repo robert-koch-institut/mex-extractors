@@ -52,3 +52,25 @@ def get_unit_merged_id_by_synonym(
     """
     unit_merged_ids_by_synonyms = _get_cached_unit_merged_ids_by_synonyms()
     return unit_merged_ids_by_synonyms.get(synonym, None)
+
+
+
+def match_extracted_unit_with_organigram_units(extracted_unit: str)->None:
+    rki_organization = get_wikidata_organization_by_id("RKI")
+    if not rki_organization:
+        msg = "RKI wikidata organization not found"
+        raise EmptySearchResultError(msg)
+    organigram_units = extract_organigram_units()
+    extracted_organizational_units = transform_organigram_units_to_organizational_units(
+        organigram_units,
+        get_extracted_primary_source_id_by_name("organigram"),
+        rki_organization,
+    )
+    load(extracted_organizational_units)
+    #exists = any(extracted_organizational_unit.identifier == extracted_unit for extracted_organizational_unit in extracted_organizational_units)
+    exists = any(
+    extracted_unit == id_obj.value
+    for unit in extracted_organizational_units
+    for id_obj in unit.identifier
+)
+    breakpoint()

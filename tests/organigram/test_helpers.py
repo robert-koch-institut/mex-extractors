@@ -7,7 +7,11 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.organigram import helpers
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.organigram.helpers import (
+    get_unit_merged_id_by_synonym,
+    match_extracted_unit_with_organigram_units,
+)
+from mex.extractors.wikidata import helpers
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
@@ -50,3 +54,28 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
 
     # Verify we get None back
     assert merged_id is None
+
+# @pytest.mark.usefixtures("mocked_wikidata")
+# def test_get_wikidata_extracted_organization_id_by_name(
+#     monkeypatch: MonkeyPatch,
+# ) -> None:
+#     """Wikidata helper finds "Robert Koch-Institut"."""
+#     query_rki = "Robert Koch-Institut"
+
+#     mocked_load = Mock()
+#     monkeypatch.setattr(helpers, "load", mocked_load)
+
+#     returned = get_wikidata_extracted_organization_id_by_name(query_rki)
+#     mocked_load.assert_called_once()
+
+#     assert returned == MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg")
+
+@pytest.mark.usefixtures("mocked_wikidata")
+@pytest.mark.integration
+def test_match_extracted_unit_with_organigram_units(
+    monkeypatch: MonkeyPatch,
+)-> None:
+    mocked_load = Mock()
+    monkeypatch.setattr(helpers, "load", mocked_load)
+    test_unit= "zki-ph5"
+    match_extracted_unit_with_organigram_units(extracted_unit=test_unit)
