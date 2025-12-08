@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -15,6 +17,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_blueant_sources_to_extracted_activities(
     blueant_source: BlueAntSource,
     blueant_source_without_leader: BlueAntSource,

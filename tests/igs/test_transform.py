@@ -23,7 +23,7 @@ from mex.extractors.igs.transform import (
 )
 
 
-@pytest.mark.usefixtures("mocked_igs")
+@pytest.mark.usefixtures("mocked_igs", "mocked_wikidata")
 def test_transform_igs_extracted_resource(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
