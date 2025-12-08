@@ -1,3 +1,4 @@
+import pytest
 from pytz import timezone
 
 from mex.common.models import ActivityMapping
@@ -19,6 +20,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_international_projects_source_to_mex_source(
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:

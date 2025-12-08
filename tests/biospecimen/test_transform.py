@@ -75,6 +75,7 @@ def synopse_extracted_activities() -> list[ExtractedActivity]:
     ]
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_biospecimen_resource_to_mex_resource(
     biospecimen_resources: list[BiospecimenResource],
     mex_persons: list[ExtractedPerson],

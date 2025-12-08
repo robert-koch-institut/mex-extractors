@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     ExtractedActivity,
     ExtractedResource,
@@ -20,6 +22,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],

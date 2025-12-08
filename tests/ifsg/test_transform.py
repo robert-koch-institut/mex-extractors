@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedResource,
@@ -147,6 +149,7 @@ def test_get_instrument_tool_or_apparatus(
     ]
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     resource_diseases: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,

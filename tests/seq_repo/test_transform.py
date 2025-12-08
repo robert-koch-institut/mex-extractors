@@ -69,6 +69,7 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     extracted_mex_activities_dict: dict[str, ExtractedActivity],

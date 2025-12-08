@@ -423,6 +423,7 @@ def test_transform_feat_projection_variable_to_mex_variable(
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_sumo_access_platform_to_mex_access_platform(
     sumo_access_platform: AccessPlatformMapping,
 ) -> None:

@@ -79,6 +79,7 @@ def test_transform_datscha_web_items_to_mex_activities(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     datscha_web_item_without_contributors: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
