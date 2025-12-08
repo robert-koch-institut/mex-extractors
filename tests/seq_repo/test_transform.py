@@ -26,7 +26,7 @@ from mex.extractors.seq_repo.transform import (
 )
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_transform_seq_repo_activities_to_extracted_activities(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,

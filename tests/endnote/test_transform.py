@@ -81,6 +81,7 @@ def test_get_doi(
     assert doi == expected_doi
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,

@@ -55,6 +55,7 @@ def test_transform_igs_extracted_resource(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_igs_access_platform(
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],

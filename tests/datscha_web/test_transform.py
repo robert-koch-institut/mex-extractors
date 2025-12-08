@@ -40,6 +40,7 @@ def organizations_stable_target_ids_by_query_string() -> dict[
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_datscha_web_items_to_mex_activities(
     datscha_web_item: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
