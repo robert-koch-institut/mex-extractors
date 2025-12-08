@@ -32,6 +32,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
     grippeweb_extracted_persons: list[ExtractedPerson],

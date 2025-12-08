@@ -152,6 +152,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
 ) -> None:

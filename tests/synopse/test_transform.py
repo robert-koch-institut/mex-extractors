@@ -201,6 +201,7 @@ def test_transform_synopse_variables_to_mex_variables(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],
