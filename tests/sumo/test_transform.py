@@ -69,6 +69,7 @@ def test_get_contact_merged_ids_by_names(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_nokeda_to_mex_resource(
     sumo_resources_nokeda: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
