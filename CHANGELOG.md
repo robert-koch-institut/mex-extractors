@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ff-projects extractor creates organizations if no wikidata org is found
 - opendata: transform frictionless files to variables / variable groups
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Pin Mailpit Docker image version to v1.28
 
 ### Deprecated
