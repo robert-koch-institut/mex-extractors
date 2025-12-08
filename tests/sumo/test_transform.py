@@ -449,6 +449,7 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
     assert transformed_data.model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],

@@ -1,3 +1,5 @@
+import pytest
+
 from mex.extractors.ff_projects.extract import extract_ff_projects_sources
 from mex.extractors.ff_projects.filter import (
     filter_and_log_ff_projects_sources,
@@ -5,6 +7,7 @@ from mex.extractors.ff_projects.filter import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_filter_and_log_ff_projects_sources() -> None:
     sources = list(extract_ff_projects_sources())
     assert len(sources) == 21

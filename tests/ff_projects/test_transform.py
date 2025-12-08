@@ -1,3 +1,4 @@
+import pytest
 from pytest import MonkeyPatch
 
 from mex.common.models import ActivityMapping
@@ -18,6 +19,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_ff_projects_source_to_extracted_activity(
     ff_projects_activity: ActivityMapping,
 ) -> None:
