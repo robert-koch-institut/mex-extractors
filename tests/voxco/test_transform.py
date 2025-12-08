@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -20,6 +22,7 @@ from mex.extractors.voxco.transform import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_voxco_resource_mappings_to_extracted_resources(
     voxco_resource_mappings: list[ResourceMapping],
     voxco_merged_organization_ids_by_query_string: dict[

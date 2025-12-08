@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -142,6 +144,7 @@ def test_transform_resource_nokeda_to_mex_resource(
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_feat_model_to_mex_resource(
     sumo_resources_feat: ResourceMapping,
     mex_resources_nokeda: ExtractedResource,
