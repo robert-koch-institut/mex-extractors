@@ -35,6 +35,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
 ) -> None:
@@ -83,6 +84,7 @@ def test_transform_resource_parent_to_mex_resource(
     assert extracted_resource.model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
