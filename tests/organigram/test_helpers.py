@@ -75,7 +75,12 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
 def test_match_extracted_unit_with_organigram_units(
     monkeypatch: MonkeyPatch,
 )-> None:
+    # das hier später als helper functin und dann jedes Mal vor transform to extracted_activity in invovledUnit aufrufen
     mocked_load = Mock()
     monkeypatch.setattr(helpers, "load", mocked_load)
     test_unit= "zki-ph5"
-    match_extracted_unit_with_organigram_units(extracted_unit=test_unit)
+    unit_exists = match_extracted_unit_with_organigram_units(extracted_unit=test_unit)
+
+    if not unit_exists:
+
+        breakpoint()

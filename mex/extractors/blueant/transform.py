@@ -14,6 +14,10 @@ from mex.common.types import (
 )
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
+from mex.extractors.organigram.helpers import (
+    get_ldap_units_for_employee_ids,
+    match_extracted_unit_with_organigram_units,
+)
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -49,6 +53,12 @@ def transform_blueant_sources_to_extracted_activities(
     Returns:
         List of ExtractedActivity instances
     """
+    # get employ-ids before loop for later fallback if unit not in organigramm
+    employee_ids = {
+        s.projectLeaderEmployeeId for s in blueant_sources if s.projectLeaderEmployeeId
+    }
+    ldap_unit_by_employee_id = get_ldap_units_for_employee_ids(employee_ids)
+
     activity_type_values_by_type_id = {
         for_value: mapping_rule.setValues
         for mapping_rule in activity.activityType[0].mappingRules
@@ -80,9 +90,23 @@ def transform_blueant_sources_to_extracted_activities(
 
         # find responsible unit
         department = source.department.replace("(h)", "").strip()
-        if department in unit_stable_target_ids_by_synonym:
-            department_ids = unit_stable_target_ids_by_synonym.get(department)
-        else:
+        # if department in unit_stable_target_ids_by_synonym:
+        #     department_ids = unit_stable_target_ids_by_synonym.get(department)
+        # else:
+        #     continue
+
+        department_ids = unit_stable_target_ids_by_synonym.get(department)
+
+        # Fallback only if department not in organigram
+        if (
+            not match_extracted_unit_with_organigram_units(department)
+            and source.projectLeaderEmployeeId
+        ):
+            ldap_unit = ldap_unit_by_employee_id.get(source.projectLeaderEmployeeId)
+            if ldap_unit:
+                department_ids = unit_stable_target_ids_by_synonym.get(ldap_unit)
+
+        if not department_ids:
             continue
 
         # get contact employee or fallback to unit
