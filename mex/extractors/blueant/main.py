@@ -1,6 +1,4 @@
 from dagster import (
-    AssetExecutionContext,
-    AssetObservation,
     MetadataValue,
     Output,
     asset,
@@ -77,35 +75,16 @@ def blueant_merged_organization_ids_by_query_str(
     return extract_blueant_organizations(blueant_sources)
 
 
-def create_output(
-    context: AssetExecutionContext,
-    entity_type: str,
-    num_items: int,
-) -> Output[int]:
-    """Creates Observation for asset key and an Output for values."""
-    context.log_event(
-        AssetObservation(
-            asset_key=context.asset_key,
-            metadata={"entity_type": MetadataValue.text(entity_type)},
-        )
-    )
-    return Output(
-        value=num_items,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
-
-
 @asset(
     group_name="blueant",
     metadata={"entity_type": "activity"},
 )
 def blueant_extracted_activities(
-    context: AssetExecutionContext,
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     blueant_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -124,13 +103,13 @@ def blueant_extracted_activities(
         blueant_merged_organization_ids_by_query_str,
     )
 
-    extracted_activities_list: list[ExtractedActivity] = list(extracted_activities)
     num_items = len(extracted_activities)
     load(extracted_activities)
-    return create_output(
-        context=context,
-        entity_type=extracted_activities_list[0].stemType,
-        num_items=num_items,
+    return Output(
+        value=num_items,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
     )
 
 

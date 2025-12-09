@@ -20,7 +20,7 @@ from mex.extractors.utils import load_yaml
 @pytest.fixture
 def unit_stable_target_ids_by_synonym(
     extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
+) -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Extract the dummy units and return them grouped by synonyms."""
     organigram_units = extract_organigram_units()
     mex_organizational_units = transform_organigram_units_to_organizational_units(

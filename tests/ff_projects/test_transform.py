@@ -1,3 +1,5 @@
+from pytest import MonkeyPatch
+
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -9,6 +11,7 @@ from mex.common.types import (
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.ff_projects.transform import (
+    get_or_create_organization,
     transform_ff_projects_source_to_extracted_activity,
 )
 from mex.extractors.primary_source.helpers import (
@@ -24,7 +27,7 @@ def test_transform_ff_projects_source_to_extracted_activity(
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
     unit_id = MergedOrganizationalUnitIdentifier.generate(seed=21)
-    unit_stable_target_ids_by_synonym = {"FG99": unit_id}
+    unit_stable_target_ids_by_synonym = {"FG99": [unit_id]}
     laufzeit_bis = YearMonthDay("2019-08-31")
     laufzeit_von = YearMonthDay("2017-12-31")
 
@@ -67,3 +70,22 @@ def test_transform_ff_projects_source_to_extracted_activity(
             {"language": TextLanguage.EN, "value": "This is a project with a topic."}
         ],
     }
+
+
+def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
+    org_names = ["Existing-Institute", "New-Institute", "None"]
+
+    existing_org_id = MergedOrganizationIdentifier.generate(seed=44)
+    extracted_organizations = {"Existing-Institute": existing_org_id}
+
+    created_orgs = []
+    monkeypatch.setattr(
+        "mex.extractors.ff_projects.transform.load", lambda x: created_orgs.extend(x)
+    )
+
+    result = get_or_create_organization(org_names, extracted_organizations)
+
+    assert len(result) == 2
+    assert existing_org_id in result
+    result_created_orgs = [org_id for org_id in result if org_id != existing_org_id]
+    assert result_created_orgs[0] == created_orgs[0].stableTargetId

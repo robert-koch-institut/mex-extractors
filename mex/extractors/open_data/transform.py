@@ -11,6 +11,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
+    ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -18,6 +20,8 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
@@ -27,6 +31,7 @@ from mex.extractors.open_data.extract import (
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -38,6 +43,38 @@ from mex.extractors.wikidata.helpers import (
 
 # TODO @MX-2075: remove
 FALLBACK_UNIT = "mf4"
+
+
+def get_only_child_units(
+    selected_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnitIdentifier]:
+    """Return only those units which are no parents to other units within a list.
+
+    Args:
+        selected_merged_organizational_unit_ids: list of unit ids to filter
+        extracted_organizational_units: list of all units to know who's a parent
+
+    Returns:
+        list of merged unit ids who are no parents to other units of the list
+    """
+    # create a dictionary of all extracted units by id
+    extracted_units_by_id = {
+        unit.stableTargetId: unit for unit in extracted_organizational_units
+    }
+
+    # get all units which are a parent of a unit in the selected list
+    merged_parent_unit_ids = [
+        extracted_units_by_id[unit_id].parentUnit
+        for unit_id in selected_merged_organizational_unit_ids
+        if extracted_units_by_id[unit_id].parentUnit
+    ]
+
+    return [  # only return those units in the selected list, which are no parents
+        merged_unit_id
+        for merged_unit_id in selected_merged_organizational_unit_ids
+        if merged_unit_id not in merged_parent_unit_ids
+    ]
 
 
 def transform_open_data_person_affiliations_to_organizations(
@@ -231,7 +268,10 @@ def transform_open_data_distributions(
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -243,6 +283,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         open_data_parent_resource: open data parent resources
         open_data_persons: list of ExtractedPerson
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
+        extracted_organizational_units: list of Extracted Organizational Units
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
@@ -258,7 +299,8 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         for p in open_data_persons
     }
     unit_stable_target_ids_by_person_name = {
-        p.fullName[0]: p.memberOf for p in open_data_persons
+        p.fullName[0]: get_only_child_units(p.memberOf, extracted_organizational_units)
+        for p in open_data_persons
     }
     access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
     anonymization_pseudonymization = (
@@ -295,10 +337,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
+                if unit_id not in unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
             }
         )
         if not unit_in_charge:
-            unit_in_charge = [unit_stable_target_ids_by_synonym[FALLBACK_UNIT]]
+            unit_in_charge = unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -343,7 +386,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
-            else None
+            else []
         )
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []
@@ -376,3 +419,71 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             )
         )
     return extracted_resource
+
+
+def transform_open_data_variable_groups(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    """Transform zip table schema names to variable groups.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+
+    Returns:
+        extracted variable groups
+    """
+    return [
+        ExtractedVariableGroup(
+            hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
+            identifierInPrimarySource=filename,
+            containedBy=resource_id,
+            label=filename.removesuffix(".json"),
+        )
+        for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items()
+        for filename in schema_dict
+    ]
+
+
+def transform_open_data_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    merged_variable_group_id_by_filename: dict[str, MergedVariableGroupIdentifier],
+) -> list[ExtractedVariable]:
+    """Transform table schema content to variables.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+        merged_variable_group_id_by_filename: variable group stableTargetId by filename
+
+    Returns:
+        extracted variables
+    """
+    extracted_variables: list[ExtractedVariable] = []
+    for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items():
+        for filename in schema_dict:
+            for schema in schema_dict[filename]:
+                value_set = (
+                    [f"{item.value}, {item.label}" for item in schema.categories]
+                    if schema.categories
+                    else [str(item) for item in schema.constraints.enum]
+                    if schema.constraints and schema.constraints.enum
+                    else None
+                )
+                extracted_variables.append(
+                    ExtractedVariable(
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "open-data"
+                        ),
+                        identifierInPrimarySource=f"{schema.name}_{filename}",
+                        dataType=schema.type,
+                        label=[schema.name],
+                        usedIn=[resource_id],
+                        belongsTo=[merged_variable_group_id_by_filename[filename]],
+                        description=[schema.description],
+                        valueSet=value_set,
+                    )
+                )
+    return extracted_variables

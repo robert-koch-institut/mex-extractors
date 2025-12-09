@@ -5,10 +5,12 @@ from mex.extractors.open_data.extract import (
     extract_oldest_record_version_creationdate,
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
+    extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 
 
@@ -94,3 +96,15 @@ def test_extract_open_data_persons_from_open_data_parent_resources(
             orcid="1234567890",
         )
     ]
+
+
+@pytest.mark.usefixtures("mocked_open_data")
+def test_extract_tableschema(
+    mocked_open_data_tableschemas: list[OpenDataTableSchema],
+) -> None:
+    schema_collections = extract_tableschema(1001)
+
+    assert schema_collections == {
+        "tableschema_lorem.json": mocked_open_data_tableschemas[0:2],
+        "tableschema_ipsum.json": [mocked_open_data_tableschemas[2]],
+    }

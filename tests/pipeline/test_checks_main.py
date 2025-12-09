@@ -8,8 +8,7 @@ from dagster import AssetKey, EventRecordsFilter
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
-    check_x_items_more_passed,
-    fail_if_item_count_is_x_items_less_than,
+    check_item_count_rule,
     get_historic_count,
     get_historical_events,
     get_rule,
@@ -223,16 +222,11 @@ def run_item_count_test(  # noqa: PLR0913
     context = MockContext()
     asset_key = AssetKey(["some_asset"])
 
-    if rule_name_for_match == "x_items_less_than":
-        rule_func = fail_if_item_count_is_x_items_less_than
-    else:
-        rule_func = check_x_items_more_passed
-
     if not passed:
         with pytest.raises(ValueError, match=f"failed {rule_name_for_match} check"):
-            rule_func(context, asset_key, "ext", "type")  # type: ignore[arg-type]
+            check_item_count_rule(context=context, asset_key=asset_key, extractor="ext", entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
     else:
-        result = rule_func(context, asset_key, "ext", "type")  # type: ignore[arg-type]
+        result = check_item_count_rule(context=context, asset_key=asset_key, extractor="ext",entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
         assert result is True
 
 

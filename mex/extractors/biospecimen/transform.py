@@ -25,7 +25,9 @@ from mex.extractors.primary_source.helpers import (
 
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     mex_persons: Iterable[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: Iterable[ExtractedActivity],
@@ -95,10 +97,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
         contact: list[Identifier] = []
         for kontakt in resource.kontakt:
-            if k := person_stable_target_id_by_email.get(kontakt):  # noqa: SIM114
-                contact.append(k)
-            elif k := unit_stable_target_ids_by_synonym.get(kontakt):
-                contact.append(k)
+            if person := person_stable_target_id_by_email.get(kontakt):
+                contact.append(person)
+            elif unit := unit_stable_target_ids_by_synonym.get(kontakt):
+                contact.extend(unit)
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0], None
         )
@@ -131,7 +133,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
         )
         unit_in_charge = unit_stable_target_ids_by_synonym.get(
-            resource.verantwortliche_fachabteilung
+            resource.verantwortliche_fachabteilung, []
         )
         if (
             resource_mapping.theme[0].mappingRules[1].forValues

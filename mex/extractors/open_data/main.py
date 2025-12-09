@@ -13,25 +13,32 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
+    ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
+    MergedResourceIdentifier,
 )
 from mex.extractors.open_data.extract import (
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
+    extract_tableschema,
 )
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
+    transform_open_data_variable_groups,
+    transform_open_data_variables,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -69,7 +76,7 @@ def open_data_organization_ids_by_name_str(
 
 
 @asset(group_name="open_data")
-def open_extracted_data_persons(
+def open_data_extracted_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
@@ -122,8 +129,11 @@ def open_data_extracted_distributions(
 @asset(group_name="open_data")
 def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
-    open_extracted_data_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    open_data_extracted_persons: list[ExtractedPerson],
+    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
@@ -136,8 +146,9 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
-        open_extracted_data_persons,
+        open_data_extracted_persons,
         unit_stable_target_ids_by_synonym,
+        extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,
         extracted_organization_rki,
@@ -146,6 +157,77 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     load(mex_sources)
     return mex_sources
+
+
+@asset(group_name="open_data")
+def open_data_version_id_by_resource_id(
+    open_data_parent_extracted_resources: list[ExtractedResource],
+    open_data_parent_resources: list[OpenDataParentResource],
+    open_data_extracted_distributions: list[ExtractedDistribution],
+) -> dict[MergedResourceIdentifier, int]:
+    """Get Zenodo version id (to download tableschema zip) per Resource stableTargetId.
+
+    Info from open data team: for some resources there are no, for some there are
+    other "wrong" metadata.zip files. If datapackage.json exists for a resource,
+    there also is a metadata.zip and it is valid for our use case.
+    """
+    return {
+        resource.stableTargetId: parent_resource.id
+        for parent_resource in open_data_parent_resources
+        for resource in open_data_parent_extracted_resources
+        if resource.identifierInPrimarySource == parent_resource.conceptrecid
+        for distribution in open_data_extracted_distributions
+        if (
+            distribution.stableTargetId in resource.distribution
+            and distribution.title[0].value == "datapackage.json"
+        )
+    }
+
+
+@asset(group_name="open_data")
+def open_data_tableschemas_by_resource_id(
+    open_data_version_id_by_resource_id: dict[MergedResourceIdentifier, int],
+) -> dict[MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]]:
+    """Extract and collect metadata zip tableschemas by resource stableTargetId."""
+    return {
+        resource_key: extract_tableschema(
+            open_data_version_id_by_resource_id[resource_key]
+        )
+        for resource_key in open_data_version_id_by_resource_id
+    }
+
+
+@asset(group_name="open_data")
+def open_data_extracted_variable_group(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    """Transform tableschema filenames to variable groups."""
+    extracted_variable_groups = transform_open_data_variable_groups(
+        open_data_tableschemas_by_resource_id,
+    )
+    load(extracted_variable_groups)
+    return extracted_variable_groups
+
+
+@asset(group_name="open_data")
+def open_data_extracted_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    open_data_extracted_variable_group: list[ExtractedVariableGroup],
+) -> list[ExtractedVariable]:
+    """Transform tableschema file content to variables."""
+    merged_variable_group_id_by_filename = {
+        variable.identifierInPrimarySource: variable.stableTargetId
+        for variable in open_data_extracted_variable_group
+    }
+    extracted_variables = transform_open_data_variables(
+        open_data_tableschemas_by_resource_id, merged_variable_group_id_by_filename
+    )
+    load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)

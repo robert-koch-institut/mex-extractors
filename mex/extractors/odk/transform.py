@@ -20,7 +20,9 @@ from mex.extractors.sinks import load
 
 def transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[str, MergedOrganizationalUnitIdentifier],
+    unit_stable_target_ids_by_synonym: dict[
+        str, list[MergedOrganizationalUnitIdentifier]
+    ],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> tuple[list[ExtractedResource], list[ExtractedResource]]:
@@ -49,10 +51,12 @@ def transform_odk_resources_to_mex_resources(
         contributing_unit = None
         if resource.contributingUnit:
             contributing_unit = [
-                unit_stable_target_ids_by_synonym[synonym]
+                unit_id
                 for synonym in (
                     resource.contributingUnit[0].mappingRules[0].forValues or []
                 )
+                if synonym in unit_stable_target_ids_by_synonym
+                for unit_id in unit_stable_target_ids_by_synonym[synonym]
             ]
         description = None
         if resource.description:

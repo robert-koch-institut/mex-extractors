@@ -1,7 +1,11 @@
+import json
+from io import BytesIO
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import pytest
+import requests
 from pytest import MonkeyPatch
 
 from mex.extractors.open_data import transform
@@ -54,7 +58,7 @@ def create_mocked_parent_response() -> dict[str, Any]:
                     "files": [],
                 },
             ],
-            "total": 200,
+            "total": 42,
         }
     }
 
@@ -111,4 +115,52 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
 
     # TODO @MX-2075: remove
-    monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")
+    monkeypatch.setattr(transform, "FALLBACK_UNIT", "FG 99")
+
+    # Create a mocked ZIP file with according folder structure, naming, and content."""
+    json_contents = [
+        {
+            "fields": [
+                {
+                    "name": "Lorem1",
+                    "type": "string",
+                    "description": "lorem 1",
+                    "constraints": {"enum": ["a", "b"]},
+                    "categories": [
+                        {"value": "a", "label": "the letter 'a'"},
+                        {"value": "b", "label": "and also 'b'"},
+                    ],
+                },
+                {
+                    "name": "Lorem2",
+                    "type": "string",
+                    "description": "lorem 2",
+                    "constraints": {"enum": ["c", "d", "e", "f", "g"]},
+                },
+            ],
+        },
+        {
+            "fields": [
+                {
+                    "name": "Ipsum",
+                    "type": "integer",
+                    "description": "no constraints and no categories",
+                    "something_irrelevant": True,
+                }
+            ]
+        },
+    ]
+    tableschema_names = ["tableschema_lorem.json", "tableschema_ipsum.json"]
+
+    buffer = BytesIO()
+    with ZipFile(buffer, mode="w", compression=ZIP_DEFLATED) as zf:
+        for i in range(len(tableschema_names)):
+            filename = f"Metadaten/schemas/{tableschema_names[i]}"
+            zf.writestr(filename, json.dumps(json_contents[i]))
+
+    zip_response = Mock(spec=requests.Response)
+    zip_response.status_code = 200
+    zip_response.content = buffer.getvalue()
+
+    mock_method = MagicMock(return_value=zip_response)
+    monkeypatch.setattr(OpenDataConnector, "get_schema_zipfile", mock_method)

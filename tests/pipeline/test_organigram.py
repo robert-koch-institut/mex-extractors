@@ -22,9 +22,9 @@ def test_extracted_organizational_units(
         extracted_organizational_units(extracted_organization_rki),
     )
     assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
-        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
     ]
 
 
@@ -32,7 +32,7 @@ def test_unit_stable_target_ids_by_synonym(
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     units_by_synonym = cast(
-        "dict[str, MergedOrganizationalUnitIdentifier]",
+        "dict[str, list[MergedOrganizationalUnitIdentifier]]",
         unit_stable_target_ids_by_synonym(
             extracted_organizational_units(extracted_organization_rki)
         ),
