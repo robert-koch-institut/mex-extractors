@@ -13,6 +13,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
+    ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -34,6 +36,8 @@ from mex.extractors.open_data.transform import (
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
     transform_open_data_persons,
+    transform_open_data_variable_groups,
+    transform_open_data_variables,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -186,6 +190,39 @@ def open_data_tableschemas_by_resource_id(
         )
         for resource_key in open_data_version_id_by_resource_id
     }
+
+
+@asset(group_name="open_data")
+def open_data_extracted_variable_group(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    """Transform tableschema filenames to variable groups."""
+    extracted_variable_groups = transform_open_data_variable_groups(
+        open_data_tableschemas_by_resource_id,
+    )
+    load(extracted_variable_groups)
+    return extracted_variable_groups
+
+
+@asset(group_name="open_data")
+def open_data_extracted_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    open_data_extracted_variable_group: list[ExtractedVariableGroup],
+) -> list[ExtractedVariable]:
+    """Transform tableschema file content to variables."""
+    merged_variable_group_id_by_filename = {
+        variable.identifierInPrimarySource: variable.stableTargetId
+        for variable in open_data_extracted_variable_group
+    }
+    extracted_variables = transform_open_data_variables(
+        open_data_tableschemas_by_resource_id, merged_variable_group_id_by_filename
+    )
+    load(extracted_variables)
+    return extracted_variables
 
 
 @entrypoint(Settings)

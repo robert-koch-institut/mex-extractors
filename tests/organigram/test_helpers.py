@@ -7,11 +7,17 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.organigram import helpers
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.organigram.helpers import (
+    _get_cached_unit_merged_ids_by_synonyms,
+    get_unit_merged_id_by_synonym,
+)
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
+    # clear the cache to be able to test it.
+    _get_cached_unit_merged_ids_by_synonyms.cache_clear()
+
     # Mock the load function to avoid actual sink writes
     mocked_load = Mock()
     monkeypatch.setattr(helpers, "load", mocked_load)
