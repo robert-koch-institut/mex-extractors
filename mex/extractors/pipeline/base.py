@@ -103,15 +103,14 @@ def monitor_jobs_sensor(
         run_config={},
     )
 
+
 def create_asset_check(
     asset_key: AssetKey, group_name: str, entity_name: str, rule: str
 ) -> AssetChecksDefinition:
     """Creating dynamically asset check for less_than rule."""
+    check_name = f"check_{asset_key.to_user_string()}_{rule.replace(' ', '_')}"
 
-    @asset_check(
-        asset=asset_key,
-        blocking=True,
-    )
+    @asset_check(asset=asset_key, blocking=True, name=check_name)
     def check(
         context: AssetCheckExecutionContext,
     ) -> AssetCheckResult:
