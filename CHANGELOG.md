@@ -11,15 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ff-projects extractor creates organizations if no wikidata org is found
 - opendata: transform frictionless files to variables / variable groups
+- implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Pin Mailpit Docker image version to v1.28
 
+- asset checks created during definition time in base.py
+
 ### Deprecated
 
 ### Removed
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
 
 ### Fixed
 
