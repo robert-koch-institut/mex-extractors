@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- synopse: fix extraction of involved units
 - organigram: fix "parentDepartment" typo in organizational_units.json
 - open-data: fix typo in asset naming
 - organigram: testing of cached helper function
