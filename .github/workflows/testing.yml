@@ -84,4 +84,4 @@ jobs:
       - name: Run test suite
         run: pdm run pytest tests/ldap -vvs # make test
         env:
-          MEX_LDAP_URL: ldap://slapdadmin:adminpass@slapd:636
+          MEX_LDAP_URL: ldap://admin:adminpass@localhost:636
