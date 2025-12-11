@@ -214,6 +214,10 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            "cjna2jitPngp6yIV63cdi9",  # FG 99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
+        ],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
@@ -306,7 +310,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": [str(Identifier.generate(seed=12))],
-        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
+        "involvedUnit": [
+            "cjna2jitPngp6yIV63cdi9",  # FG99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
+        ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],

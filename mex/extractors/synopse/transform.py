@@ -627,10 +627,12 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
             )
         except ValueError:
             pass  # TODO(HS): handle relative paths
+
     involved_units = [
         merged_id
         for unit in (synopse_project.interne_partner or "").split(", ")
-        if (merged_id := get_unit_merged_id_by_synonym(unit.strip()))
+        if (merged_ids := get_unit_merged_id_by_synonym(unit.strip()))
+        for merged_id in merged_ids
     ]
 
     if synopse_project.verantwortliche_oe and any(
