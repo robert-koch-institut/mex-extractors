@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common dependency to 1.11
+
 ### Deprecated
 
 ### Removed
@@ -77,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - streamline dagster asset names
 - publish all consenting persons in publisher
-- bump mex-common dependency to 1.16.0
+- bump mex-common dependency to 1.6.0
 - use primary source id convenience function
 - update open data resource according to mapping changes
 
