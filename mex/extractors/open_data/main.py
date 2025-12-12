@@ -18,7 +18,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
 )
@@ -131,9 +130,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
@@ -147,7 +143,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
         open_data_extracted_persons,
-        unit_stable_target_ids_by_synonym,
         extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,

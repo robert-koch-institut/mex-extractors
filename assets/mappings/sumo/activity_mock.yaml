@@ -32,7 +32,7 @@ identifierInPrimarySource:
 involvedUnit:
   - mappingRules:
       - forValues:
-          - mf4
+          - C1
 publication:
   - mappingRules:
       - forValues:
@@ -42,7 +42,7 @@ publication:
 responsibleUnit:
   - mappingRules:
       - forValues:
-          - fg32
+          - C1
 shortName:
   - mappingRules:
       - setValues:

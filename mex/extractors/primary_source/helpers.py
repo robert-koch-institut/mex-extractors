@@ -1,9 +1,12 @@
+from functools import lru_cache
+
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.sinks import load
 
 
+@lru_cache(maxsize=3)
 def load_extracted_primary_source_by_name(
     name: str,
 ) -> ExtractedPrimarySource | None:

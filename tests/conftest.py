@@ -4,6 +4,8 @@ import pytest
 
 from mex.common.models import ExtractedOrganization
 from mex.common.types import MergedPrimarySourceIdentifier
+from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
+from mex.extractors.primary_source.helpers import load_extracted_primary_source_by_name
 from mex.extractors.settings import Settings
 
 pytest_plugins = (
@@ -27,6 +29,13 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 def settings() -> Settings:
     """Load the settings for this pytest session."""
     return Settings.get()
+
+
+@pytest.fixture(autouse=True)
+def isolate_caches() -> None:
+    # clear the cache to be able to test it.
+    _get_cached_unit_merged_ids_by_synonyms.cache_clear()
+    load_extracted_primary_source_by_name.cache_clear()
 
 
 @pytest.fixture

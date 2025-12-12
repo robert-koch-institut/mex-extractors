@@ -7,7 +7,9 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.organigram import helpers
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.organigram.helpers import (
+    get_unit_merged_id_by_synonym,
+)
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

@@ -12,7 +12,6 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     Text,
@@ -22,6 +21,7 @@ from mex.extractors.igs.model import (
     IGSPropertiesSchema,
     IGSSchema,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -30,9 +30,6 @@ from mex.extractors.primary_source.helpers import (
 def transform_igs_extracted_resource(
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
@@ -41,7 +38,6 @@ def transform_igs_extracted_resource(
     Args:
         igs_resource_mapping: IGS resource mapping
         igs_extracted_contact_points_by_mail_str: extracted IGS contact points by mail
-        unit_stable_target_ids_by_synonym: merged organizational units by name
         igs_extracted_access_platform: extracted access platform
         extracted_organization_rki: extracted organization RKI
 
@@ -59,7 +55,8 @@ def transform_igs_extracted_resource(
         [
             unit_id
             for synonym in for_values
-            for unit_id in unit_stable_target_ids_by_synonym[synonym]
+            if (unit_ids := get_unit_merged_id_by_synonym(synonym))
+            for unit_id in unit_ids
         ]
         if (
             for_values := igs_resource_mapping.contributingUnit[0]
@@ -70,7 +67,7 @@ def transform_igs_extracted_resource(
     )
     title = igs_resource_mapping.title[0].mappingRules[0].setValues
     unit_in_charge = (
-        unit_stable_target_ids_by_synonym[for_value[0]]
+        get_unit_merged_id_by_synonym(for_value[0])
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
         else []
     )
@@ -137,16 +134,12 @@ def transform_igs_extracted_resource(
 def transform_igs_access_platform(
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedAccessPlatform:
     """Transform IGS extracted access platform.
 
     Args:
         igs_access_platform_mapping: IGS resource mapping
         igs_extracted_contact_points_by_mail_str: extracted IGS contact points by mail
-        unit_stable_target_ids_by_synonym: merged organizational units by name
 
     Returns:
         extracted IGS access platform
@@ -159,7 +152,7 @@ def transform_igs_access_platform(
         "list[str]",
         igs_access_platform_mapping.unitInCharge[0].mappingRules[0].forValues,
     )
-    unit_in_charge = unit_stable_target_ids_by_synonym[unit_string[0]]
+    unit_in_charge = get_unit_merged_id_by_synonym(unit_string[0])
     return ExtractedAccessPlatform(
         endpointDescription=igs_access_platform_mapping.endpointDescription[0]
         .mappingRules[0]

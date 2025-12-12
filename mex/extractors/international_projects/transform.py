@@ -9,7 +9,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     Link,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     Text,
@@ -20,19 +19,17 @@ from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
 from mex.extractors.logging import watch_progress
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
 
 
-def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0913
+def transform_international_projects_source_to_extracted_activity(
     source: InternationalProjectsSource,
     international_projects_activity: ActivityMapping,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
@@ -45,8 +42,6 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
         international_projects_activity: activity mapping model with default values
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
-        unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
-                                          to unit stable target ID
         funding_sources_stable_target_id_by_query: Mapping from funding sources
                                                    to organization stable target ID
         partner_organizations_stable_target_id_by_query: Mapping from partner orgs to
@@ -70,14 +65,14 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     for unit in source.get_project_lead_rki_units():
         if unit == "ZIG-GS":
             unit = "zig"  # noqa: PLW2901
-        if found_unit := unit_stable_target_id_by_synonym.get(unit):
+        if found_unit := get_unit_merged_id_by_synonym(unit):
             project_lead_rki_unit.extend(found_unit)
 
     if not project_lead_rki_unit:
         return None
 
     additional_rki_units = (
-        unit_stable_target_id_by_synonym.get(source.additional_rki_units, [])
+        get_unit_merged_id_by_synonym(source.additional_rki_units)
         if source.additional_rki_units
         else []
     )
@@ -147,13 +142,10 @@ def transform_international_projects_source_to_extracted_activity(  # noqa: PLR0
     )
 
 
-def transform_international_projects_sources_to_extracted_activities(  # noqa: PLR0913
+def transform_international_projects_sources_to_extracted_activities(
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_id_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
@@ -166,8 +158,6 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
         international_projects_activity: activity mapping model with default values
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target ID
-        unit_stable_target_id_by_synonym: Mapping from unit acronyms and labels
-                                          to unit stable target ID
         funding_sources_stable_target_id_by_query: Mapping from funding sources
                                                    to organization stable target ID
         partner_organizations_stable_target_id_by_query: Mapping from partner orgs to
@@ -187,7 +177,6 @@ def transform_international_projects_sources_to_extracted_activities(  # noqa: P
                 source,
                 international_projects_activity,
                 person_stable_target_ids_by_query_string,
-                unit_stable_target_id_by_synonym,
                 funding_sources_stable_target_id_by_query,
                 partner_organizations_stable_target_id_by_query,
             )
