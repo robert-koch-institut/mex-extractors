@@ -15,7 +15,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
@@ -84,15 +83,12 @@ def voxco_extracted_persons(
 
 
 @asset(group_name="voxco")
-def voxco_extracted_resources_by_str(  # noqa: PLR0913
+def voxco_extracted_resources_by_str(
     voxco_resource_mappings: list[dict[str, Any]],
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
     voxco_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:
@@ -101,7 +97,6 @@ def voxco_extracted_resources_by_str(  # noqa: PLR0913
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings],
         voxco_merged_organization_ids_by_query_string,
         voxco_extracted_persons,
-        unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         international_projects_extracted_activities,
     )

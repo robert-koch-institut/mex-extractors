@@ -7,11 +7,11 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.extractors.odk.filter import is_invalid_odk_variable
 from mex.extractors.odk.model import ODKData
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -20,9 +20,6 @@ from mex.extractors.sinks import load
 
 def transform_odk_resources_to_mex_resources(
     odk_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> tuple[list[ExtractedResource], list[ExtractedResource]]:
@@ -30,7 +27,6 @@ def transform_odk_resources_to_mex_resources(
 
     Args:
         odk_resource_mappings: list of resource mapping models
-        unit_stable_target_ids_by_synonym: dict of OrganizationalUnitIds
         international_projects_extracted_primary_source: primary source
         odk_merged_organization_ids_by_str: dict of wikidata OrganizationIDs
         international_projects_extracted_activities: list of extracted international
@@ -55,8 +51,8 @@ def transform_odk_resources_to_mex_resources(
                 for synonym in (
                     resource.contributingUnit[0].mappingRules[0].forValues or []
                 )
-                if synonym in unit_stable_target_ids_by_synonym
-                for unit_id in unit_stable_target_ids_by_synonym[synonym]
+                if (unit_ids := get_unit_merged_id_by_synonym(synonym))
+                for unit_id in unit_ids
             ]
         description = None
         if resource.description:
@@ -104,9 +100,9 @@ def transform_odk_resources_to_mex_resources(
                 .mappingRules[0]
                 .setValues,
                 alternativeTitle=alternative_title,
-                contact=unit_stable_target_ids_by_synonym[
+                contact=get_unit_merged_id_by_synonym(
                     resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
-                ],
+                ),
                 contributingUnit=contributing_unit,
                 description=description,
                 externalPartner=external_partner,
@@ -133,9 +129,9 @@ def transform_odk_resources_to_mex_resources(
                 temporal=resource.temporal[0].mappingRules[0].setValues,
                 theme=resource.theme[0].mappingRules[0].setValues,
                 title=resource.title[0].mappingRules[0].setValues,
-                unitInCharge=unit_stable_target_ids_by_synonym[
+                unitInCharge=get_unit_merged_id_by_synonym(
                     resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-                ],
+                ),
                 wasGeneratedBy=was_generated_by,
             )
         )

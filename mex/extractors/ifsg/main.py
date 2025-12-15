@@ -11,7 +11,6 @@ from mex.common.models import (
     ResourceMapping,
     VariableGroupMapping,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.ifsg.extract import extract_sql_table
 from mex.extractors.ifsg.filter import (
     filter_empty_statement_area_group,
@@ -150,14 +149,10 @@ def ifsg_variable_group() -> dict[str, Any]:
 @asset(group_name="ifsg")
 def ifsg_extracted_resource_parent(
     ifsg_resource_parent_dict: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedResource:
     """Extracted and loaded ifsg resource parent."""
     mex_resource_parent = transform_resource_parent_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_parent_dict),
-        unit_stable_target_ids_by_synonym,
     )
 
     load([mex_resource_parent])
@@ -169,15 +164,11 @@ def ifsg_extracted_resource_parent(
 def ifsg_extracted_resources_state(
     ifsg_resource_state_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_state_dict),
         ifsg_extracted_resource_parent,
-        unit_stable_target_ids_by_synonym,
     )
     load(mex_resource_state)
 
@@ -192,9 +183,6 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_meta_disease: list[MetaDisease],
     ifsg_meta_type: list[MetaType],
     id_types_of_diseases: list[int],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
@@ -205,7 +193,6 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
         ifsg_meta_disease,
         ifsg_meta_type,
         id_types_of_diseases,
-        unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
     )
     load(mex_resource_disease)

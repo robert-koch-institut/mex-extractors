@@ -7,24 +7,21 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.voxco.model import VoxcoVariable
 
 
-def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, PLR0913
+def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
     voxco_resource_mappings: list[ResourceMapping],
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
     voxco_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:
@@ -35,7 +32,6 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
         voxco_merged_organization_ids_by_query_string: extracted voxco organizations
                                                        dict
         voxco_extracted_persons: extracted voxco mex persons
-        unit_stable_target_ids_by_synonym: merged organizational units by name
         extracted_organization_rki: extracted rki organization
         voxco_extracted_primary_source: extracted voxco primary source
         international_projects_extracted_activities: list of international projects
@@ -104,9 +100,9 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912, 
         spatial = resource.spatial[0].mappingRules[0].setValues
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
-        unit_in_charge = unit_stable_target_ids_by_synonym[
+        unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ]
+        )
         if wgb := resource.wasGeneratedBy:
             was_generated_by = (
                 international_project_by_identifier_in_primary_source.get(
