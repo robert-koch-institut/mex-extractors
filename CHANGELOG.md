@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ff-projects extractor creates organizations if no wikidata org is found
 - opendata: transform frictionless files to variables / variable groups
+- primary source helper function: add caching
 
 ### Changes
 
