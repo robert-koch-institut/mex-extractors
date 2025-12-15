@@ -7,7 +7,7 @@ from mex.extractors.sinks import load
 
 
 @lru_cache(maxsize=3)
-def load_extracted_primary_source_by_name(
+def cached_load_extracted_primary_source_by_name(
     name: str,
 ) -> ExtractedPrimarySource | None:
     """Use helper function to look up a primary source and to load and return it.
@@ -44,7 +44,7 @@ def get_extracted_primary_source_id_by_name(
         ExtractedPrimarySource stableTargetId if one matching primary source is found.
         raise error if multiple matches / no match is found
     """
-    if extracted_primary_source := load_extracted_primary_source_by_name(name):
+    if extracted_primary_source := cached_load_extracted_primary_source_by_name(name):
         return extracted_primary_source.stableTargetId
     msg = f"Primary source name {name} not found."
     raise NameError(msg)
