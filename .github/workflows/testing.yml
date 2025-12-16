@@ -44,8 +44,8 @@ jobs:
         ports:
           - 389:389
           - 636:636
-        env:
-          LDAP_DOMAIN: "rki.local"
+        volumes:
+          - ./assets/raw-data/ldap/:/bootstrap/
 
     steps:
       - name: Checkout repo
