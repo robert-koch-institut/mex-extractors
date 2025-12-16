@@ -39,19 +39,15 @@ jobs:
           MP_MAX_AGE: "180d"
           MP_WEBROOT: "mailpit"
           MP_ENABLE_PROMETHEUS: "true"
-      slapd:
-        image: thoteam/slapd-server-mock
-        ports:
-          - 389:389
-          - 636:636
-        volumes:
-          - ./assets/raw-data/ldap/:/bootstrap/
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
+
+      - name: Start LDAP server
+        run: docker compose up -d slapd
 
       - name: Cache requirements
         uses: actions/cache@v4
@@ -84,4 +80,9 @@ jobs:
       - name: Run test suite
         run: pdm run pytest tests/ldap -vvs # make test
         env:
-          MEX_LDAP_URL: ldap://admin:adminpass@localhost:636
+          MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
+          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
+
+      - name: Cleanup LDAP container
+        if: always()
+        run: docker compose down slapd
