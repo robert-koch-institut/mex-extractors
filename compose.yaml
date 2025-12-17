@@ -24,12 +24,10 @@ services:
   slapd:
     image: thoteam/slapd-server-mock
     ports:
-      - 389:389
       - 636:636
     volumes:
       - ./assets/raw-data/ldap/:/bootstrap/
     expose:
-      - 389
       - 636
 volumes:
   work:

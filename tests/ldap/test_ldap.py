@@ -1,19 +1,8 @@
-import os
 from uuid import UUID
 
 import pytest
 
 from mex.common.ldap.connector import LDAPConnector
-
-
-@pytest.fixture(scope="module", autouse=True)
-def _set_ldap_env_vars() -> None:
-    """Set LDAP environment variables for integration tests."""
-    os.environ["MEX_LDAP_URL"] = (
-        "ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636"
-    )
-    os.environ["MEX_LDAP_SEARCH_BASE"] = "dc=ldapmock,dc=local"
-
 
 EXPECTED_PERSON = {
     "employeeID": "42",

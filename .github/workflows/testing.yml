@@ -78,7 +78,7 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make test
+        run: pdm run pytest tests/ldap -vvs
         env:
           MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
           MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
