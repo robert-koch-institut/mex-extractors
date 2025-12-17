@@ -58,14 +58,12 @@ def test_transform_seq_repo_activities_to_extracted_activities(
         "identifier": "egRPPkE5jnd2jOgr4hosz1",
         "stableTargetId": "fPqFxu76FLQjVxUDSJpb0z",
     }
-    extracted_mex_activities = list(
-        transform_seq_repo_activities_to_extracted_activities(
-            seq_repo_latest_sources,
-            seq_repo_activity,
-            seq_repo_ldap_persons_with_query,
-            unit_stable_target_ids_by_synonym,
-            seq_repo_merged_person_ids_by_query_string,
-        )
+    extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
+        seq_repo_latest_sources,
+        seq_repo_activity,
+        seq_repo_ldap_persons_with_query,
+        unit_stable_target_ids_by_synonym,
+        seq_repo_merged_person_ids_by_query_string,
     )
     assert (
         extracted_mex_activities[0].model_dump(exclude_none=True, exclude_defaults=True)

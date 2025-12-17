@@ -17,7 +17,7 @@ def blueant_source() -> BlueAntSource:
         start=TemporalEntity(2019, 1, 7),
         client_names="Robert Koch-Institut",
         department="C1",
-        projectLeaderEmployeeId="person-567",
+        projectLeaderEmployeeId="42",
         status="Projektumsetzung",
         type_="Standardprojekt",
     )

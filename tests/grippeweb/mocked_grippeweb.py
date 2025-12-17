@@ -50,9 +50,9 @@ def grippeweb_extracted_persons() -> list[ExtractedPerson]:
         ExtractedPerson(
             email=["test_person@email.de"],
             familyName="Contact",
-            givenName="Carla",
-            fullName="Contact, Carla",
-            identifierInPrimarySource="Carla",
+            givenName="Roland Resolved",
+            fullName="Roland Resolved",
+            identifierInPrimarySource="Roland Resolved",
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
         )
     ]

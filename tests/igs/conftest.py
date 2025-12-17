@@ -64,7 +64,9 @@ def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoin
 
 
 @pytest.fixture
-def igs_schemas() -> dict[str, IGSSchema]:
+def igs_schemas(
+    mocked_igs: None,  # noqa: ARG001
+) -> dict[str, IGSSchema]:
     return extract_igs_schemas()
 
 

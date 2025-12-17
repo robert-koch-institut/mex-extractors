@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import LDAPActor, LDAPPerson
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (
@@ -45,10 +45,11 @@ def test_extract_ldap_actors_for_functional_accounts(
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         grippeweb_resource_mappings
     )
-    expected = LDAPActor(
+    expected = LDAPFunctionalAccount(
         sAMAccountName="ContactC",
         objectGUID=UUID(int=4, version=4),
         mail=["email@email.de", "contactc@rki.de"],
+        ou=["Funktion"],
     )
 
     assert ldap_actors[0] == expected
@@ -69,6 +70,7 @@ def test_extract_ldap_persons(
         displayName="Resolved, Roland",
         employeeID="42",
         givenName=["Roland"],
+        sAMAccountName="ResolvedR",
         sn="Resolved",
     )
     assert ldap_persons[0] == expected

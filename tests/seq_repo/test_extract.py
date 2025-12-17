@@ -52,7 +52,7 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
         list(extract_sources())
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mock_email_domain")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
 ) -> None:
@@ -63,7 +63,7 @@ def test_extract_source_project_coordinator(
     assert project_coordinators == [
         LDAPPersonWithQuery(
             person=LDAPPerson(
-                sAMAccountName=None,
+                sAMAccountName="ResolvedR",
                 objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
                 mail=["test_person@email.de"],
                 company=None,
@@ -79,7 +79,7 @@ def test_extract_source_project_coordinator(
         ),
         LDAPPersonWithQuery(
             person=LDAPPerson(
-                sAMAccountName=None,
+                sAMAccountName="ResolvedR",
                 objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
                 mail=["test_person@email.de"],
                 company=None,

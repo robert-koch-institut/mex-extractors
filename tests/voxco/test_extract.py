@@ -51,5 +51,6 @@ def test_extract_ldap_persons_voxco(
         "displayName": "Resolved, Roland",
         "employeeID": "42",
         "givenName": ["Roland"],
+        "sAMAccountName": "ResolvedR",
         "sn": "Resolved",
     }

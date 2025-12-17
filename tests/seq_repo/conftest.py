@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
@@ -14,6 +15,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.seq_repo import extract
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -134,24 +136,9 @@ def seq_repo_ldap_persons_with_query() -> list[LDAPPersonWithQuery]:
                 ou=[],
                 sn="mustermann",
             ),
-            query="max",
-        ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="max",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-                mail=[],
-                company=None,
-                department="FG99",
-                departmentNumber="FG99",
-                displayName="mustermann, max",
-                employeeID="42",
-                givenName=["max"],
-                ou=[],
-                sn="mustermann",
-            ),
-            query="mustermann",
-        ),
+            query=query,
+        )
+        for query in ["max", "mustermann"]
     ]
 
 
@@ -199,3 +186,8 @@ def unit_stable_target_ids_by_synonym() -> dict[
         "FG 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
         "FG99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
     }
+
+
+@pytest.fixture
+def mock_email_domain(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(extract, "SEQ_REPO_EMAIL_DOMAIN", "email.de")

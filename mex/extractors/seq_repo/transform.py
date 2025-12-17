@@ -34,11 +34,10 @@ def transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources: Seq Repo extracted sources
         seq_repo_activity: Seq Repo activity mapping models with default values
         seq_repo_ldap_persons_with_query: Seq Repo sources resolved project
-                                            coordinators ldap query results
+                                          coordinators ldap query results
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
-                                                        resolved project coordinators
-                                                        merged ids
+        seq_repo_merged_person_ids_by_query_string: Seq Repo Sources resolved project
+                                                    coordinators merged ids
 
     Returns:
         list of unique ExtractedActivity
@@ -251,12 +250,10 @@ def get_resolved_project_coordinators_and_units(
     Args:
         project_coordinators: Seq Repo raw project coordinator names
         seq_repo_ldap_persons_with_query: Seq Repo sources resolved project
-                                            coordinators ldap query results
+                                          coordinators ldap query results
         unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
-        seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
-                                                                  resolved project
-                                                                  coordinators merged
-                                                                  ids
+        seq_repo_merged_person_ids_by_query_string: Seq Repo Sources resolved project
+                                                    coordinators merged ids
 
     Returns:
         Resolved ids project coordinator and units

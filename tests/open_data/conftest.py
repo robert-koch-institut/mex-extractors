@@ -1,4 +1,5 @@
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.models import (
     DistributionMapping,
@@ -18,6 +19,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
 )
+from mex.extractors.open_data import main
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -197,3 +199,8 @@ def mocked_open_data_tableschemas_by_resource_id(
             "tableschema_dolor.json": [mocked_open_data_tableschemas[3]],
         },
     }
+
+
+@pytest.fixture
+def mock_open_data_email(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(main, "OPEN_DATA_EMAIL", "test_person@email.de")

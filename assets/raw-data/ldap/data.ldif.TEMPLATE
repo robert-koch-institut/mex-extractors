@@ -15,3 +15,43 @@ sAMAccountName: ResolvedR
 department: PARENT-UNIT
 mail: test_person@email.de
 uid: ResolvedR
+
+# Juturna Felicitás
+dn: uid=FelicitasJ,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Juturna Felicitás
+sn: Felicitás
+givenName: Juturna
+displayName: Felicitás, Juturna
+employeeID: 70
+objectGUID: 00000000-0000-4000-8000-000000000002
+sAMAccountName: FelicitasJ
+department: FG99
+mail: juturna@rki.de
+mail: felicitas@rki.de
+uid: FelicitasJ
+
+# Funktion Organizational Unit
+dn: OU=Funktion,${LDAP_BASEDN}
+objectClass: top
+objectClass: organizationalUnit
+ou: Funktion
+
+# Functional Account
+dn: uid=ContactC,OU=Funktion,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+sAMAccountName: ContactC
+sn: Contact
+cn: Contact
+ou: Funktion
+objectGUID: 00000000-0000-4000-8000-000000000004
+mail: email@email.de
+mail: contactc@rki.de
