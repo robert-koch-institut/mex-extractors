@@ -1,12 +1,5 @@
-# People Organisational Unit
-dn: ou=people,${LDAP_BASEDN}
-objectClass: top
-objectClass: organizationalUnit
-description: Mock LDAP crew
-ou: people
-
-# adminuser1
-dn: uid=ResolvedR,ou=people,${LDAP_BASEDN}
+# Roland Resolved
+dn: uid=ResolvedR,${LDAP_BASEDN}
 objectClass: top
 objectClass: person
 objectClass: inetOrgPerson
