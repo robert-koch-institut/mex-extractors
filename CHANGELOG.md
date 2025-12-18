@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
+- change the docker build to multi-stage build
 
 ### Deprecated
 
