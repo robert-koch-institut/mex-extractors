@@ -1,5 +1,6 @@
 fields:
-- fieldInMEx: hadPrimarySource
+- fieldInMEx: hadPrimarySource   #ToDo: refactor
+  fieldInTarget: None
   mappingRules:
   - forValues:
     - 'Lorem Ipsum'

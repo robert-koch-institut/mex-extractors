@@ -16,7 +16,7 @@ from mex.extractors.datenkompass.models.item import (
 from mex.extractors.datenkompass.models.mapping import (
     DatenkompassMapping,
     DatenkompassMappingField,
-    MappingRule,
+    MappingOrFilterRule,
 )
 from mex.extractors.datenkompass.transform import (
     fix_quotes,
@@ -171,7 +171,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Beschreibung",
             fieldInMEx="abstract",
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues=["Es handelt. "],
                     rule=None,
@@ -186,7 +186,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Weg des Datenerhalts",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Datenerhalt",
                     rule=None,
@@ -201,7 +201,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Datenhalter/ Beauftragung durch Behörde im Geschäftsbereich",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Datenhalter",
                     rule=None,
@@ -216,7 +216,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Datennutzungszweck",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Datennutzungszweck",
                     rule=None,
@@ -231,7 +231,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Format der Daten",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Format",
                     rule=None,
@@ -246,7 +246,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Frequenz der Aktualisierung",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Frequenz",
                     rule=None,
@@ -261,7 +261,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Hauptkategorie",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Hauptkategorie",
                     rule=None,
@@ -276,7 +276,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Herausgeber",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Herausgeber",
                     rule=None,
@@ -291,7 +291,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Kommentar",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Kommentar",
                     rule=None,
@@ -306,7 +306,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Rechtsgrundlage für die Zugangseröffnung",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Rechtsgrundlage",
                     rule=None,
@@ -321,7 +321,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Status (planbare Verfügbarkeit der Daten)",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Status",
                     rule=None,
@@ -336,7 +336,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Unterkategorie",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Unterkategorie",
                     rule=None,
@@ -351,7 +351,7 @@ def test_mapping_lookup_default(mocked_activity_mapping: DatenkompassMapping) ->
             fieldInTarget="Formelle Voraussetzungen für den Datenerhalt",
             fieldInMEx=None,
             mappingRules=[
-                MappingRule(
+                MappingOrFilterRule(
                     forValues=None,
                     setValues="Voraussetzungen",
                     rule=None,

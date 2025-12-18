@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from mex.common.models.base.mapping import BaseMapping
 
 
-class MappingRule(BaseModel, extra="forbid"):
+class MappingOrFilterRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
@@ -21,10 +21,20 @@ class MappingRule(BaseModel, extra="forbid"):
 class DatenkompassMappingField(BaseMapping, extra="forbid"):
     """Model subclass for each datenkompass field mapping."""
 
-    fieldInTarget: Annotated[str | None, Field(title="fieldInTarget")] = None
+    fieldInTarget: Annotated[str, Field(min_length=1, title="fieldInTarget")]
     fieldInMEx: Annotated[str | None, Field(title="fieldInMEx")] = None
     mappingRules: Annotated[
-        list[MappingRule], Field(min_length=1, title="mappingRules")
+        list[MappingOrFilterRule], Field(min_length=1, title="mappingRules")
+    ]
+    comment: Annotated[str | None, Field(title="comment")] = None
+
+
+class DatenkompassFilterField(BaseMapping, extra="forbid"):
+    """Model subclass for datenkompass filter."""
+
+    fieldInMEx: Annotated[str, Field(min_length=1, title="fieldInMEx")]
+    filterRules: Annotated[
+        list[MappingOrFilterRule], Field(min_length=1, title="filterRules")
     ]
     comment: Annotated[str | None, Field(title="comment")] = None
 
@@ -33,3 +43,9 @@ class DatenkompassMapping(BaseMapping, extra="forbid"):
     """A mapping for the Datenkompass mapping yamls."""
 
     fields: list[DatenkompassMappingField]
+
+
+class DatenkompassFilter(BaseMapping, extra="forbid"):
+    """A mapping for the Datenkompass mapping and filter yamls."""
+
+    fields: list[DatenkompassFilterField]
