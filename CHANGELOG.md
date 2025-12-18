@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- change the docker build to multi-stage build
 
 ### Deprecated
 
@@ -30,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Pin Mailpit Docker image version to v1.28
-- change the docker build to multi-stage build
 
 ## [1.6.0] - 2025-11-28
 
