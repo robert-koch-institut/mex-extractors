@@ -1,0 +1,13 @@
+fields:
+  - fieldInMEx: responsibleUnit + hadPrimarySource
+    filterRules:
+      - rule: filter
+        forValues:
+          - "PRNT"
+        setValues:
+          - 'Lorem Ipsum'
+      - rule: filter as well
+        forValues:
+          - "FG99"
+        setValues:
+          - 'Dolor'

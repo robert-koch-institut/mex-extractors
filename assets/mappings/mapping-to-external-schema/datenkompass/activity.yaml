@@ -1,9 +1,4 @@
 fields:
-- fieldInMEx: hadPrimarySource   #ToDo: refactor
-  fieldInTarget: None
-  mappingRules:
-  - forValues:
-    - 'Lorem Ipsum'
 - fieldInTarget: Beschreibung
   fieldInMEx: abstract
   mappingRules:
