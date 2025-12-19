@@ -1,0 +1,24 @@
+# People Organisational Unit
+dn: ou=people,${LDAP_BASEDN}
+objectClass: top
+objectClass: organizationalUnit
+description: Mock LDAP crew
+ou: people
+
+# adminuser1
+dn: uid=ResolvedR,ou=people,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Roland Resolved
+sn: Resolved
+givenName: Roland
+displayName: Resolved, Roland
+employeeID: 42
+objectGUID: 00000000-0000-4000-8000-000000000001
+sAMAccountName: ResolvedR
+department: PARENT-UNIT
+mail: test_person@email.de
+uid: ResolvedR
