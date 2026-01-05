@@ -3,7 +3,7 @@
 # using bullseye because microsoft does not play nice with debian 12 signature verification yet
 # https://learn.microsoft.com/en-us/answers/questions/1328834/debian-12-public-key-is-not-available
 # debian 11 bullseye is on a LTS schedule until August 31st, 2026
-FROM python:3-11 AS builder
+FROM python:3.11 AS builder
 
 WORKDIR /build
 
@@ -35,6 +35,14 @@ ENV PYTHONOPTIMIZE=1
 ENV DAGSTER_HOME=/app
 
 WORKDIR /app
+
+COPY --from=builder /build/wheels /wheels
+
+RUN pip install --no-cache-dir \
+    --no-index \
+    --find-links=/wheels \
+    /wheels/*.whl \
+    && rm -rf /wheels
 
 RUN adduser \
     --disabled-password \
