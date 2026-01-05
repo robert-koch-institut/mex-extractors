@@ -9,16 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ff-projects extractor creates organizations if no wikidata org is found
-- opendata: transform frictionless files to variables / variable groups
-- implemented asset checks for the `x_items_less_than` rule
-
 ### Changes
-
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
-- Pin Mailpit Docker image version to v1.28
-
-- asset checks created during definition time in base.py
 
 ### Deprecated
 
@@ -28,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.7.0] - 2025-12-11
+
+### Added
+
+- ff-projects extractor creates organizations if no wikidata org is found
+- opendata: transform frictionless files to variables / variable groups
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
+- Pin Mailpit Docker image version to v1.28
 
 ## [1.6.0] - 2025-11-28
 
@@ -51,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- synopse: fix extraction of involved units
 - organigram: fix "parentDepartment" typo in organizational_units.json
 - open-data: fix typo in asset naming
 - organigram: testing of cached helper function

@@ -294,7 +294,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
     unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=13)]
+        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=13)],
+        "fg99": [
+            MergedOrganizationalUnitIdentifier.generate(seed=99),
+            MergedOrganizationalUnitIdentifier.generate(seed=999),
+        ],
     }
     assert synopse_project.projektende
     assert synopse_project.projektbeginn
@@ -317,6 +321,10 @@ def test_transform_synopse_projects_to_mex_activities(
         "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": [str(Identifier.generate(seed=12))],
         "responsibleUnit": [str(Identifier.generate(seed=13))],
+        "involvedUnit": [
+            str(MergedOrganizationalUnitIdentifier.generate(seed=99)),
+            str(MergedOrganizationalUnitIdentifier.generate(seed=999)),
+        ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],

@@ -224,9 +224,21 @@ def run_item_count_test(  # noqa: PLR0913
 
     if not passed:
         with pytest.raises(ValueError, match=f"failed {rule_name_for_match} check"):
-            check_item_count_rule(context=context, asset_key=asset_key, extractor="ext", entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="ext",
+                entity_type="type",
+                rule_name=rule_name_for_match,
+            )  # type: ignore[arg-type]
     else:
-        result = check_item_count_rule(context=context, asset_key=asset_key, extractor="ext",entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="ext",
+            entity_type="type",
+            rule_name=rule_name_for_match,
+        )  # type: ignore[arg-type]
         assert result is True
 
 
