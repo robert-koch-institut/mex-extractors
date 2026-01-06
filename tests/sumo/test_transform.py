@@ -355,7 +355,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         "description": [
             {"language": TextLanguage.EN, "value": "the lowest age in the age group"}
         ],
-        "label": [{"language": "fr", "value": "aux_age21_min"}],
+        "label": [{"value": "aux_age21_min"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
         "valueSet": Joker(),
     }
@@ -373,7 +373,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
                 "value": "Core groups as defined in the CEDIS reporting standard",
             }
         ],
-        "label": [{"language": "fr", "value": "aux_cedis_group"}],
+        "label": [{"value": "aux_cedis_group"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
         "valueSet": Joker(),
     }

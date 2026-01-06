@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- primary source helper function: add caching
+
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
+- update mex-common dependency to 1.11
 - use convenience function to obtain organizational unit merged ids
 
 ### Deprecated
@@ -27,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ff-projects extractor creates organizations if no wikidata org is found
 - opendata: transform frictionless files to variables / variable groups
-- primary source helper function: add caching
 
 ### Changes
 
@@ -83,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - streamline dagster asset names
 - publish all consenting persons in publisher
-- bump mex-common dependency to 1.16.0
+- bump mex-common dependency to 1.6.0
 - use primary source id convenience function
 - update open data resource according to mapping changes
 

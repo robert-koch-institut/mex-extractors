@@ -159,7 +159,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     expected = {
         "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifierInPrimarySource": "https://dummy.url.com/",
-        "alternativeTitle": [{"language": "es", "value": "SeqRepo"}],
+        "alternativeTitle": [{"value": "SeqRepo"}],
         "contact": get_unit_merged_id_by_synonym("FG99"),
         "description": [
             {
@@ -170,7 +170,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         "endpointType": "https://mex.rki.de/item/api-type-1",
         "landingPage": [{"url": "https://dummy.url.com/"}],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
-        "title": [{"language": "es", "value": "Sequence Data Repository"}],
+        "title": [{"value": "Sequence Data Repository"}],
         "unitInCharge": get_unit_merged_id_by_synonym("FG99"),
         "identifier": Joker(),
         "stableTargetId": Joker(),
