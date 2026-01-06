@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
+- lock file maintenance (2026-01-06)
 - use convenience function to obtain organizational unit merged ids
 
 ### Deprecated
