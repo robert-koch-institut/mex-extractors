@@ -2,7 +2,7 @@ from collections.abc import Iterable
 from functools import lru_cache
 
 from mex.common.exceptions import EmptySearchResultError, MExError
-from mex.common.ldap import LDAPConnector
+from mex.common.ldap.connector import LDAPConnector
 from mex.common.organigram.extract import (
     extract_organigram_units,
     get_unit_merged_ids_by_synonyms,

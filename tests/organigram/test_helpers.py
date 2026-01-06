@@ -79,8 +79,6 @@ def test_match_extracted_unit_with_organigram_units(
     mocked_load = Mock()
     monkeypatch.setattr(helpers, "load", mocked_load)
     test_unit= "zki-ph5"
+    breakpoint()
     unit_exists = match_extracted_unit_with_organigram_units(extracted_unit=test_unit)
-
-    if not unit_exists:
-
-        breakpoint()
+    #if not unit_exists:
