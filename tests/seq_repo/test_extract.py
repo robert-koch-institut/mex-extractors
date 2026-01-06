@@ -21,7 +21,7 @@ from mex.extractors.seq_repo.model import SeqRepoSource
 def test_extract_sources() -> None:
     sources = list(extract_sources())
     expected = {
-        "project_coordinators": ["max", "mustermann", "yee-haw"],
+        "project_coordinators": ["test_person", "test_person"],
         "customer_org_unit_id": "FG99",
         "sequencing_date": "2023-08-07",
         "lims_sample_id": "test-sample-id",
@@ -55,42 +55,50 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 @pytest.mark.usefixtures("mocked_ldap", "mock_email_domain")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
+    request: pytest.FixtureRequest,
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
     project_coordinators = list(
         extract_source_project_coordinator(seq_repo_sources_dict)
     )
-    assert project_coordinators == [
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="ResolvedR",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=["test_person@email.de"],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber=None,
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
+
+    # ldap_patched_connector returns mocked data with departmentNumber
+    if request.node.callspec.params.get("mocked_ldap") == "ldap_patched_connector":
+        assert project_coordinators == [
+            LDAPPersonWithQuery(
+                person=LDAPPerson(
+                    sAMAccountName="test_person",
+                    objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                    mail=["test_person@email.de"],
+                    company=None,
+                    department="PARENT-UNIT",
+                    departmentNumber="FG99",
+                    displayName="Resolved, Roland",
+                    employeeID="42",
+                    givenName=["Roland"],
+                    ou=[],
+                    sn="Resolved",
+                ),
+                query="test_person",
             ),
-            query="max",
-        ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="ResolvedR",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=["test_person@email.de"],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber=None,
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
+        ]
+    else:
+        # ldap_mock_server returns data from LDIF without departmentNumber
+        assert project_coordinators == [
+            LDAPPersonWithQuery(
+                person=LDAPPerson(
+                    sAMAccountName="ResolvedR",
+                    objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                    mail=["test_person@email.de"],
+                    company=None,
+                    department="PARENT-UNIT",
+                    departmentNumber=None,
+                    displayName="Resolved, Roland",
+                    employeeID="42",
+                    givenName=["Roland"],
+                    ou=[],
+                    sn="Resolved",
+                ),
+                query="test_person",
             ),
-            query="mustermann",
-        ),
-    ]
+        ]

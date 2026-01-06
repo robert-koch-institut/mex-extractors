@@ -30,7 +30,7 @@ from mex.extractors.utils import load_yaml
 def seq_repo_sources() -> list[SeqRepoSource]:
     return [
         SeqRepoSource(
-            project_coordinators=["max", "mustermann", "max"],
+            project_coordinators=["test_person", "test_person"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
@@ -41,7 +41,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_id="TEST-ID",
         ),
         SeqRepoSource(
-            project_coordinators=["jelly", "fish", "turtle"],
+            project_coordinators=["juturna", "felicitas"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
@@ -124,21 +124,20 @@ def seq_repo_ldap_persons_with_query() -> list[LDAPPersonWithQuery]:
     return [
         LDAPPersonWithQuery(
             person=LDAPPerson(
-                sAMAccountName="max",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-                mail=[],
+                sAMAccountName="test_person",
+                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                mail=["test_person@email.de"],
                 company=None,
-                department="FG99",
+                department="PARENT-UNIT",
                 departmentNumber="FG99",
-                displayName="mustermann, max",
+                displayName="Resolved, Roland",
                 employeeID="42",
-                givenName=["max"],
+                givenName=["Roland"],
                 ou=[],
-                sn="mustermann",
+                sn="Resolved",
             ),
-            query=query,
+            query="test_person",
         )
-        for query in ["max", "mustermann"]
     ]
 
 
@@ -148,10 +147,9 @@ def seq_repo_merged_person_ids_by_query_string() -> dict[
 ]:
     """Get project coordinators merged ids."""
     return {
-        "mustermann": [MergedPersonIdentifier("e0Rxxm9WvnMqPLZ44UduNx")],
-        "max": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
-        "jelly": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
-        "fish": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
+        "test_person": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
+        "juturna": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
+        "felicitas": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
     }
 
 

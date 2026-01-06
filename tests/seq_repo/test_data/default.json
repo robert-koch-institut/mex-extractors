@@ -4,6 +4,7 @@
         "customer-sample-name": "test-customer-name-1",
         "lims-sample-id": "test-sample-id",
         "project-coordinators": [
+            "test_person",
             "test_person"
         ],
         "project-id": "TEST-ID",
@@ -18,9 +19,8 @@
         "customer-sample-name": "test-customer-name-2",
         "lims-sample-id": "test-sample-id",
         "project-coordinators": [
-            "test_person",
-            "fish",
-            "turtle"
+            "juturna",
+            "felicitas"
         ],
         "project-id": "TEST-ID",
         "project-name": "FG99-ABC-321",

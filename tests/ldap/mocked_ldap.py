@@ -34,13 +34,14 @@ def mocked_ldap(request: pytest.FixtureRequest, monkeypatch: MonkeyPatch) -> Non
             "get_persons",
             lambda *_, **__: [
                 LDAPPerson(
-                    sAMAccountName="ResolvedR",
+                    sAMAccountName="test_person",
                     employeeID="42",
                     sn="Resolved",
                     givenName=["Roland"],
                     displayName="Resolved, Roland",
                     objectGUID=UUID(int=1, version=4),
                     department="PARENT-UNIT",
+                    departmentNumber="FG99",
                     mail=["test_person@email.de"],
                 )
             ],
