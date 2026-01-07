@@ -467,7 +467,7 @@ def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
             resource_identifier_in_primary_source
             not in resource_disease_stable_target_id_by_id
         ):
-            pass
+            continue
         used_in = resource_disease_stable_target_id_by_id[
             resource_identifier_in_primary_source
         ]
