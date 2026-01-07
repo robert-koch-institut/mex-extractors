@@ -92,13 +92,18 @@ def transform_resource_feat_model_to_mex_resource(
         ExtractedResource
     """
     keyword = [k.setValues[0] for k in sumo_resource_feat.keyword[0].mappingRules]  # type: ignore[index]
-    contributing_unit: list[MergedOrganizationalUnitIdentifier] | None = []
     if (
-        contributing_unit_synonym := sumo_resource_feat.unitInCharge[0]
+        contributing_unit_synonym := sumo_resource_feat.contributingUnit[0]
         .mappingRules[0]
         .forValues
     ):
         contributing_unit = get_unit_merged_id_by_synonym(contributing_unit_synonym[0])
+    if (
+        unit_in_charge_synonym := sumo_resource_feat.unitInCharge[0]
+        .mappingRules[0]
+        .forValues
+    ):
+        unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
     return ExtractedResource(
         accessPlatform=[sumo_access_platform.stableTargetId],
         accessRestriction=sumo_resource_feat.accessRestriction[0]
@@ -134,7 +139,7 @@ def transform_resource_feat_model_to_mex_resource(
         spatial=sumo_resource_feat.spatial[0].mappingRules[0].setValues[0],  # type: ignore[index]
         theme=sumo_resource_feat.theme[0].mappingRules[0].setValues,
         title=sumo_resource_feat.title[0].mappingRules[0].setValues[0],  # type: ignore[index]
-        unitInCharge=contributing_unit,
+        unitInCharge=unit_in_charge,
         wasGeneratedBy=transformed_activity.stableTargetId,
     )
 
@@ -160,9 +165,8 @@ def transform_resource_nokeda_to_mex_resource(
     Returns:
         ExtractedResource
     """
-    contributing_unit: list[MergedOrganizationalUnitIdentifier] | None = []
     if (
-        contributing_unit_synonym := sumo_resource_nokeda.unitInCharge[0]
+        contributing_unit_synonym := sumo_resource_nokeda.contributingUnit[0]
         .mappingRules[0]
         .forValues
     ):
