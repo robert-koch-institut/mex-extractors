@@ -366,7 +366,7 @@ def transform_ifsg_data_to_mex_variable_group(
         transform resource parent to ExtractedResource
     """
     identifier_in_primary_source_unique_list = {
-        f"{row.id_type}_{row.statement_area_group}"
+        f"{row.id_type}_{row.statement_area_group}": None
         for row in meta_field
         if row.id_type in id_types_of_diseases
     }
