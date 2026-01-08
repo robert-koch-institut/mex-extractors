@@ -262,7 +262,7 @@ def test_transform_open_data_variable_groups(
         "hadPrimarySource": Joker(),
         "identifierInPrimarySource": "tableschema_lorem.json",
         "containedBy": ["LoremIpsumResourceId"],
-        "label": [{"value": "tableschema_lorem", "language": Joker()}],
+        "label": [{"value": "tableschema_lorem"}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -270,7 +270,7 @@ def test_transform_open_data_variable_groups(
         "hadPrimarySource": Joker(),
         "identifierInPrimarySource": "tableschema_ipsum.json",
         "containedBy": ["LoremIpsumResourceId"],
-        "label": [{"value": "tableschema_ipsum", "language": Joker()}],
+        "label": [{"value": "tableschema_ipsum", "language": TextLanguage.EN}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -278,7 +278,7 @@ def test_transform_open_data_variable_groups(
         "hadPrimarySource": Joker(),
         "identifierInPrimarySource": "tableschema_dolor.json",
         "containedBy": ["DolorResourceId"],
-        "label": [{"value": "tableschema_dolor", "language": Joker()}],
+        "label": [{"value": "tableschema_dolor"}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
