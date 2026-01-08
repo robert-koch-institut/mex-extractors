@@ -1,8 +1,6 @@
 import pytest
 from pytest import MonkeyPatch
 
-import mex.common.wikidata.extract
-import mex.extractors.datscha_web.extract
 from mex.extractors.datscha_web.extract import (
     extract_datscha_web_items,
     extract_datscha_web_organizations,

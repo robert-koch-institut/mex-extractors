@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tailored tests for blueant and endnote; now generalized in test_checks_main.py
 
 ### Fixed
+- test for asset checks in pipeline
 
 ### Security
 
