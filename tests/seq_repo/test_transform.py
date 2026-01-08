@@ -97,7 +97,10 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [
-            {"value": "FG99-ABC-123 sample test-customer-name-1", "language": TextLanguage.EN}
+            {
+                "value": "FG99-ABC-123 sample test-customer-name-1",
+                "language": TextLanguage.EN,
+            }
         ],
         "unitInCharge": ["e4fyMCGjCeQNSvAMNHcBhK"],
         "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
