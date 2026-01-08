@@ -21,7 +21,16 @@ def get_ldap_merged_ids_by_query(
     extracted_organizational_units: Iterable[ExtractedOrganizationalUnit],
     limit: int = 10,
 ) -> list[MergedPersonIdentifier | MergedContactPointIdentifier]:
-    """Extract, transform and load ldap person or contact and return merged ID."""
+    """Extract, transform and load ldap person or contact and return merged ID.
+
+    Args:
+        query: person or functional account query
+        extracted_organizational_units: extracted organizational units
+        limit: How many items to return
+
+    Returns:
+        list of merged person or contact point ids
+    """
     connector = LDAPConnector.get()
     ldap_actors = connector.get_persons_or_functional_accounts(query=query, limit=limit)
     rki_organization = get_wikidata_organization_by_id("RKI")
