@@ -140,7 +140,7 @@ def test_transform_open_data_persons(
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     open_data_organization_ids_by_str = {
-        "Universität": MergedOrganizationIdentifier.generate(seed=354)
+        "RKI": MergedOrganizationIdentifier.generate(seed=354)
     }
     results = transform_open_data_persons(
         [mocked_open_data_creator_with_affiliation_to_ignore],

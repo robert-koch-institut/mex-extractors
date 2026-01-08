@@ -74,7 +74,7 @@ def test_extract_international_projects_sources() -> None:
 def test_extract_international_projects_project_leaders() -> None:
     expected = {
         "person": {
-            "sAMAccountName": "ResolvedR",
+            "sAMAccountName": "test_person",
             "objectGUID": uuid.UUID("00000000-0000-4000-8000-000000000001"),
             "mail": ["test_person@email.de"],
             "company": None,
@@ -86,7 +86,7 @@ def test_extract_international_projects_project_leaders() -> None:
             "ou": [],
             "sn": "Resolved",
         },
-        "query": "Dr Frieda Ficticious",
+        "query": "Roland Resolved",
     }
     international_projects_sources = extract_international_projects_sources()
     leaders = list(

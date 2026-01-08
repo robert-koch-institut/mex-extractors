@@ -121,7 +121,7 @@ def test_extract_ldap_contact_points_by_name(
 ) -> None:
     expected = {
         "person": {
-            "sAMAccountName": "ResolvedR",
+            "sAMAccountName": "test_person",
             "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
             "mail": ["test_person@email.de"],
             "company": None,

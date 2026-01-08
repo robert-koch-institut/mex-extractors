@@ -6,7 +6,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor, LDAPPerson
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
 
 
 @pytest.fixture(params=["ldap_patched_connector", "ldap_mock_server"])
@@ -22,10 +22,11 @@ def mocked_ldap(request: pytest.FixtureRequest, monkeypatch: MonkeyPatch) -> Non
             LDAPConnector,
             "get_functional_accounts",
             lambda *_, **__: [
-                LDAPActor(
+                LDAPFunctionalAccount(
                     sAMAccountName="ContactC",
                     objectGUID=UUID(int=4, version=4),
                     mail=["email@email.de", "contactc@rki.de"],
+                    ou="Funktion",
                 ),
             ],
         )
@@ -49,3 +50,9 @@ def mocked_ldap(request: pytest.FixtureRequest, monkeypatch: MonkeyPatch) -> Non
     elif request.param == "ldap_mock_server":
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")
+        else:
+            # TODO(ND): Make this configurable in mex-common
+
+            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
+
+            monkeypatch.setattr(connector_module, "AUTO_BIND_NO_TLS", "DEFAULT")

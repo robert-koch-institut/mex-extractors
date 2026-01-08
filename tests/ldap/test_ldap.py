@@ -10,7 +10,7 @@ EXPECTED_PERSON = {
     "givenName": ["Roland"],
     "displayName": "Resolved, Roland",
     "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
-    "sAMAccountName": "ResolvedR",
+    "sAMAccountName": "test_person",
     "department": "PARENT-UNIT",
     "mail": ["test_person@email.de"],
     "company": None,

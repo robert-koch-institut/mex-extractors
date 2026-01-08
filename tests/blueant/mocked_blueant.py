@@ -23,7 +23,7 @@ MOCKED_API_SOURCE = {
 MOCKED_RESOLVED_ATTRIBUTES = {
     "client_names": ["Robert Koch-Institut"],
     "department": "C1: Sub Unit",
-    "projectLeaderEmployeeId": "42",
+    "projectLeaderEmployeeId": "70",
     "status": "Projektumsetzung",
     "type_": "Standardprojekt",
 }
