@@ -11,6 +11,7 @@ from mex.common.types import (
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.logging import watch_progress
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -20,9 +21,6 @@ from mex.extractors.sinks import load
 def transform_datscha_web_items_to_mex_activities(
     datscha_web_items: Iterable[DatschaWebItem],
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -33,8 +31,6 @@ def transform_datscha_web_items_to_mex_activities(
         datscha_web_items: Datscha-web items
         person_stable_target_ids_by_query_string: Mapping from author query
                                                   to person stable target IDs
-        unit_stable_target_ids_by_synonym: Mapping from unit acronyms and labels
-                                           to unit stable target IDs
         organizations_stable_target_ids_by_query_string: Mapping from org queries
                                                          to org stable target IDs
 
@@ -47,7 +43,7 @@ def transform_datscha_web_items_to_mex_activities(
     ):
         # lookup units
         involved_unit = (
-            unit_stable_target_ids_by_synonym.get(unit_name)
+            get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := datscha_web_item.zentrale_stelle_fuer_die_verarbeitung)
             else None
         )
@@ -56,7 +52,8 @@ def transform_datscha_web_items_to_mex_activities(
             for unit_name in (
                 datscha_web_item.liegenschaften_oder_organisationseinheiten_loz
             )
-            for unit_id in (unit_stable_target_ids_by_synonym.get(unit_name, []))
+            if (merged_ids := get_unit_merged_id_by_synonym(unit_name))
+            for unit_id in merged_ids
         ]
         # lookup actors
         involved_person = person_stable_target_ids_by_query_string[

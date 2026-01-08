@@ -133,7 +133,7 @@ def mocked_extracted_organizational_units(
     return transform_organigram_units_to_organizational_units(
         extract_organigram_units(),
         get_extracted_primary_source_id_by_name("organigram"),
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 

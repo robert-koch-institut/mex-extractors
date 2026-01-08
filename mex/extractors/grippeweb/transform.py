@@ -14,20 +14,17 @@ from mex.common.models import (
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
 
 
-def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR0913
+def transform_grippeweb_resource_mappings_to_extracted_resources(
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -39,7 +36,6 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
 
     Args:
         grippeweb_resource_mappings: grippeweb resource mapping models
-        unit_stable_target_ids_by_synonym: merged organizational units by name
         grippeweb_extracted_access_platform: extracted grippeweb access platform
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
@@ -52,7 +48,6 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
     """
     parent_resource, child_resource = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
-        unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
         grippeweb_extracted_persons,
         grippeweb_merged_organization_ids_by_query_str,
@@ -62,11 +57,8 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR09
     return parent_resource, child_resource
 
 
-def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
+def transform_grippeweb_resource_mappings_to_dict(
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -78,7 +70,6 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
 
     Args:
         grippeweb_resource_mappings: grippeweb resource mapping models
-        unit_stable_target_ids_by_synonym: merged organizational units by name
         grippeweb_extracted_access_platform: extracted grippeweb access platform
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
@@ -102,9 +93,9 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         contact = grippeweb_merged_contact_point_id_by_email[
             resource.contact[0].mappingRules[0].forValues[0].lower()  # type: ignore[index]
         ]
-        contributing_unit = unit_stable_target_ids_by_synonym[
+        contributing_unit = get_unit_merged_id_by_synonym(
             resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ]
+        )
         contributor = [
             person.stableTargetId
             for name in (resource.contributor[0].mappingRules[0].forValues or [])
@@ -163,16 +154,16 @@ def transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         temporal = resource.temporal[0].mappingRules[0].setValues
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
-        unit_in_charge = unit_stable_target_ids_by_synonym[
+        unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-        ]
+        )
         # wasGeneratedField was removed for one resource mapping, but kept for the other
         # only look this field up if it exists in mapping
         was_generated_by = None
         if wgb := resource.wasGeneratedBy:
-            was_generated_by = unit_stable_target_ids_by_synonym[
+            was_generated_by = get_unit_merged_id_by_synonym(
                 wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            ]
+            )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             hasLegalBasis=has_legal_basis,
             hasPersonalData=has_personal_data,
@@ -250,16 +241,12 @@ def get_or_create_external_partner(
 
 def transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_persons: list[ExtractedPerson],
 ) -> ExtractedAccessPlatform:
     """Transform grippeweb access platform to ExtractedAccessPlatform.
 
     Args:
         grippeweb_access_platform: grippeweb access platform mapping model
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         grippeweb_extracted_persons: extracted grippeweb persons
 
     Returns:
@@ -285,9 +272,9 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     )
     title = grippeweb_access_platform.title[0].mappingRules[0].setValues
 
-    unit_in_charge = unit_stable_target_ids_by_synonym[
+    unit_in_charge = get_unit_merged_id_by_synonym(
         grippeweb_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
-    ]
+    )
 
     return ExtractedAccessPlatform(
         contact=contact,

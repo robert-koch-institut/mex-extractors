@@ -13,7 +13,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.helpers import get_wikidata_organization_by_id
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
 @lru_cache(maxsize=1)
@@ -25,15 +27,15 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
     Returns:
         Lookup of organizational unit identifiers by synonym
     """
-    rki_organization = get_wikidata_organization_by_id("RKI")
-    if not rki_organization:
+    rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
+    if not rki_organization_id:
         msg = "RKI wikidata organization not found"
         raise EmptySearchResultError(msg)
     organigram_units = extract_organigram_units()
     extracted_organizational_units = transform_organigram_units_to_organizational_units(
         organigram_units,
         get_extracted_primary_source_id_by_name("organigram"),
-        rki_organization,
+        rki_organization_id,
     )
     load(extracted_organizational_units)
     return get_unit_merged_ids_by_synonyms(extracted_organizational_units)

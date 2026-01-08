@@ -12,7 +12,6 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.extractors.odk.extract import (
@@ -60,16 +59,12 @@ def odk_merged_organization_ids_by_query_str(
 @asset(group_name="odk")
 def odk_extracted_resources(
     odk_resource_mappings: list[dict[str, Any]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     odk_merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
         [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
-        unit_stable_target_ids_by_synonym,
         odk_merged_organization_ids_by_query_str,
         international_projects_extracted_activities,
     )

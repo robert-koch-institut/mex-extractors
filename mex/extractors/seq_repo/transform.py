@@ -13,6 +13,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -23,9 +24,6 @@ def transform_seq_repo_activities_to_extracted_activities(
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> list[ExtractedActivity]:
     """Transform seq-repo activities to list of unique ExtractedActivity.
@@ -35,7 +33,6 @@ def transform_seq_repo_activities_to_extracted_activities(
         seq_repo_activity: Seq Repo activity mapping models with default values
         seq_repo_ldap_persons_with_query: Seq Repo sources resolved project
                                             coordinators ldap query results
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
                                                         resolved project coordinators
                                                         merged ids
@@ -51,7 +48,6 @@ def transform_seq_repo_activities_to_extracted_activities(
             get_resolved_project_coordinators_and_units(
                 source.project_coordinators,
                 seq_repo_ldap_persons_with_query,
-                unit_stable_target_ids_by_synonym,
                 seq_repo_merged_person_ids_by_query_string,
             )
         )
@@ -81,9 +77,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     mex_access_platform: ExtractedAccessPlatform,
     seq_repo_resource: ResourceMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -96,7 +89,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         seq_repo_resource: Seq Repo resource mapping model with default values
         seq_repo_ldap_persons_with_query: Seq Repo sources resolved project
                                                        coordinators ldap query results
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
                                                                   resolved project
                                                                   coordinators merged
@@ -143,7 +135,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             get_resolved_project_coordinators_and_units(
                 source.project_coordinators,
                 seq_repo_ldap_persons_with_query,
-                unit_stable_target_ids_by_synonym,
                 seq_repo_merged_person_ids_by_query_string,
             )
         )
@@ -151,9 +142,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         if not units_in_charge or not project_coordinators_ids:
             continue
 
-        contributing_unit = unit_stable_target_ids_by_synonym.get(
-            source.customer_org_unit_id, []
-        )
+        contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
         keyword = [*shared_keyword, Text(value=source.species)]
         extracted_resource = ExtractedResource(
             accessPlatform=mex_access_platform.stableTargetId,
@@ -187,15 +176,11 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
 
 def transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedAccessPlatform:
     """Transform seq-repo access platform to ExtractedAccessPlatform.
 
     Args:
         seq_repo_access_platform: Seq Repo access platform mapping model
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
 
     Returns:
         ExtractedAccessPlatform
@@ -221,7 +206,8 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     resolved_organigram = [
         unit_id
         for contact in contacts
-        for unit_id in unit_stable_target_ids_by_synonym.get(contact, [])
+        if (unit_ids := get_unit_merged_id_by_synonym(contact))
+        for unit_id in unit_ids
     ]
 
     return ExtractedAccessPlatform(
@@ -241,9 +227,6 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
 def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> tuple[list[MergedPersonIdentifier], list[MergedOrganizationalUnitIdentifier]]:
     """Get ldap resolved ids of project coordinators and units.
@@ -252,7 +235,6 @@ def get_resolved_project_coordinators_and_units(
         project_coordinators: Seq Repo raw project coordinator names
         seq_repo_ldap_persons_with_query: Seq Repo sources resolved project
                                             coordinators ldap query results
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
                                                                   resolved project
                                                                   coordinators merged
@@ -274,7 +256,7 @@ def get_resolved_project_coordinators_and_units(
                 department_number := query_ldap.person.departmentNumber
             ):
                 if sam_account_name.lower() == pc.lower():
-                    units = unit_stable_target_ids_by_synonym.get(department_number, [])
+                    units = get_unit_merged_id_by_synonym(department_number) or []
                     for unit in units:
                         if unit not in units_in_charge:
                             units_in_charge.append(unit)

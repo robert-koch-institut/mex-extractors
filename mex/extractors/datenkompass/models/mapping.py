@@ -2,8 +2,6 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field
 
-from mex.common.models.base.mapping import BaseMapping
-
 
 class MappingRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
@@ -18,7 +16,7 @@ class MappingRule(BaseModel, extra="forbid"):
     comment: Annotated[str | None, Field(title="comment")] = None
 
 
-class DatenkompassMappingField(BaseMapping, extra="forbid"):
+class DatenkompassMappingField(BaseModel, extra="forbid"):
     """Model subclass for each datenkompass field mapping."""
 
     fieldInTarget: Annotated[str | None, Field(title="fieldInTarget")] = None
@@ -29,7 +27,7 @@ class DatenkompassMappingField(BaseMapping, extra="forbid"):
     comment: Annotated[str | None, Field(title="comment")] = None
 
 
-class DatenkompassMapping(BaseMapping, extra="forbid"):
+class DatenkompassMapping(BaseModel, extra="forbid"):
     """A mapping for the Datenkompass mapping yamls."""
 
     fields: list[DatenkompassMappingField]

@@ -21,7 +21,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -63,9 +62,6 @@ from mex.extractors.utils import load_yaml
 @asset(group_name="sumo")
 def sumo_extracted_access_platform(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
@@ -89,7 +85,6 @@ def sumo_extracted_access_platform(
     )
     transformed_access_platform = transform_sumo_access_platform_to_mex_access_platform(
         sumo_access_platform,
-        unit_stable_target_ids_by_synonym,
         contact_merged_ids_by_name,
     )
     load([transformed_access_platform])
@@ -124,9 +119,6 @@ def sumo_merged_contact_ids_by_email(
 
 @asset(group_name="sumo")
 def sumo_extracted_activity(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Extract, transform and load SUMO activity."""
@@ -136,7 +128,6 @@ def sumo_extracted_activity(
     )
     transformed_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
-        unit_stable_target_ids_by_synonym,
         sumo_merged_contact_ids_by_email,
     )
     load([transformed_activity])
@@ -177,11 +168,8 @@ def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 
 @asset(group_name="sumo")
-def sumo_extracted_resource_nokeda(  # noqa: PLR0913
+def sumo_extracted_resource_nokeda(
     sumo_extracted_resources_nokeda: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     sumo_extracted_activity: ExtractedActivity,
@@ -190,7 +178,6 @@ def sumo_extracted_resource_nokeda(  # noqa: PLR0913
     """Transform and load extracted Nokeda Resource from SUMO."""
     mex_resource_nokeda = transform_resource_nokeda_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_nokeda),
-        unit_stable_target_ids_by_synonym,
         sumo_merged_contact_ids_by_email,
         extracted_organization_rki,
         sumo_extracted_activity,
@@ -201,11 +188,8 @@ def sumo_extracted_resource_nokeda(  # noqa: PLR0913
 
 
 @asset(group_name="sumo")
-def sumo_extracted_resource_feat(  # noqa: PLR0913
+def sumo_extracted_resource_feat(
     sumo_extracted_resources_feat: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     sumo_extracted_resource_nokeda: ExtractedResource,
     sumo_extracted_activity: ExtractedActivity,
@@ -214,7 +198,6 @@ def sumo_extracted_resource_feat(  # noqa: PLR0913
     """Transform and load extracted SUMO Resource feat."""
     mex_resource_feat = transform_resource_feat_model_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_feat),
-        unit_stable_target_ids_by_synonym,
         sumo_merged_contact_ids_by_email,
         sumo_extracted_resource_nokeda,
         sumo_extracted_activity,
