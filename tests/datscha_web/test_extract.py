@@ -1,8 +1,6 @@
 import pytest
 from pytest import MonkeyPatch
 
-import mex.common.wikidata.extract
-import mex.extractors.datscha_web.extract
 from mex.extractors.datscha_web.extract import (
     extract_datscha_web_items,
     extract_datscha_web_organizations,
@@ -28,7 +26,7 @@ def test_extract_datscha_web_organizations(
     datscha_web_item: DatschaWebItem, monkeypatch: MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        mex.extractors.datscha_web.extract,
+        "mex.extractors.datscha_web.extract",
         "get_wikidata_extracted_organization_id_by_name",
         lambda x: "test",
     )
