@@ -289,6 +289,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     Returns:
         list of ExtractedResource instances
     """
+    if not (fallback_unit_id := get_unit_merged_id_by_synonym(FALLBACK_UNIT)):
+        msg = f"No ID found for {FALLBACK_UNIT}"
+        raise MExError(msg)
+
     extracted_resource = []
 
     person_stable_target_id_by_name = {
@@ -334,10 +338,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
+                if unit_id not in fallback_unit_id
             }
         )
         if not unit_in_charge:
-            unit_in_charge = get_unit_merged_id_by_synonym(FALLBACK_UNIT)
+            unit_in_charge = fallback_unit_id
         contributor = [
             c
             for person in resource.metadata.contributors
