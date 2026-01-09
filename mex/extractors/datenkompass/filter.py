@@ -43,15 +43,15 @@ def filter_for_organization_and_unit(
         )
     ]
 
-    filtered_merged_activities_by_unit: dict[str, list[MergedActivity]]
+    filtered_merged_activities_by_unit: dict[str, list[MergedActivity]] = {}
 
-    for unit_name in datenkompass_merged_activities_by_unit:
+    for unit_name, activity_list in datenkompass_merged_activities_by_unit.items():
         filtered_merged_unit_ids = find_descendant_units(
             datenkompass_merged_organizational_units_by_id, unit_name
         )
         filtered_items = [
             item
-            for item in datenkompass_merged_activities_by_unit[unit_name]
+            for item in activity_list
             if any(
                 funder in filtered_merged_organization_ids
                 for funder in item.funderOrCommissioner

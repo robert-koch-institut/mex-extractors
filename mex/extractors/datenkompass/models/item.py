@@ -22,7 +22,7 @@ class DatenkompassActivity(BaseModel):
     titel: str = Field(..., alias="Titel")
     schlagwort: str | None = Field(None, alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
-    zeitlicheAbdeckung: str | None = Field(None, alias="Zeitliche Abdeckung")
+    zeitliche_abdeckung: str | None = Field(None, alias="Zeitliche Abdeckung")
     voraussetzungen: str = Field(
         ..., alias="Formelle Voraussetzungen für den Datenerhalt"
     )
