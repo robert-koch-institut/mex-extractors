@@ -25,7 +25,6 @@ def test_extract_blueant_sources_from_api_mocked() -> None:
         for k, v in MOCKED_API_SOURCE.items()
         if k not in ("clients", "departmentId", "projectLeaderId", "statusId", "typeId")
     } | MOCKED_RESOLVED_ATTRIBUTES
-
     sources = extract_blueant_sources()
 
     assert len(sources) == 1
