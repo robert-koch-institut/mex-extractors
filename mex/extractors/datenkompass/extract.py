@@ -37,7 +37,7 @@ def get_merged_items(
 
 
 def get_filtered_primary_source_ids(
-    filtered_primary_sources: list[str] | None,
+    filtered_primary_sources: list[str] | str | None,
 ) -> list[str]:
     """Get the IDs of the relevant primary sources.
 
@@ -50,6 +50,9 @@ def get_filtered_primary_source_ids(
     msg = "Primary sources not found."
     if not filtered_primary_sources:
         raise MExError(msg)
+
+    if isinstance(filtered_primary_sources, str):
+        filtered_primary_sources = [filtered_primary_sources]
 
     merged_primary_sources = cast(
         "list[MergedPrimarySource]",
