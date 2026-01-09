@@ -11,7 +11,7 @@ from mex.extractors.igs.connector import IGSConnector
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mocked_igs(monkeypatch: MonkeyPatch) -> None:
     """Mock the IGS connector to return dummy data."""
     monkeypatch.setattr(

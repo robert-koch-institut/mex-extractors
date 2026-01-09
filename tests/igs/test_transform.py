@@ -94,6 +94,7 @@ def test_transform_igs_access_platform(
     }
 
 
+@pytest.mark.usefixtures("mocked_igs")
 def test_transformed_igs_schemas_to_variable_group(
     igs_schemas: dict[str, IGSSchema],
 ) -> None:

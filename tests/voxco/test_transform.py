@@ -26,7 +26,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_extracted_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
     ],
@@ -36,7 +36,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
         voxco_resource_mappings,
         voxco_merged_organization_ids_by_query_string,
-        voxco_extracted_persons,
+        [roland_resolved],
         unit_stable_target_ids_by_synonym,
         extracted_organization_rki,
         international_projects_extracted_activities,
@@ -48,7 +48,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0
         "externalPartner": [
             str(voxco_merged_organization_ids_by_query_string["Robert Koch-Institut"])
         ],
-        "contact": [str(voxco_extracted_persons[0].stableTargetId)],
+        "contact": [str(roland_resolved.stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
         "unitInCharge": [str(unit) for unit in unit_stable_target_ids_by_synonym["C1"]],

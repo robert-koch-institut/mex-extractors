@@ -5,8 +5,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedContactPoint,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -29,28 +27,6 @@ from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture
-def mex_actor_resources() -> ExtractedContactPoint:
-    """Return a dummy mex actor resource."""
-    return ExtractedContactPoint(
-        email="email@email.de",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-        identifierInPrimarySource="contact point",
-    )
-
-
-@pytest.fixture
-def mex_actor_access_platform() -> ExtractedPerson:
-    """Return a dummy mex actor access platform."""
-    return ExtractedPerson(
-        familyName="Mustermann",
-        fullName="Erika Mustermann",
-        givenName="Erika",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-        identifierInPrimarySource="access platform",
-    )
 
 
 @pytest.fixture

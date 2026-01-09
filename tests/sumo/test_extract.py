@@ -105,6 +105,7 @@ def test_extract_ldap_contact_points_by_emails(
         "mail": ["email@email.de", "contactc@rki.de"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
         "sAMAccountName": "ContactC",
+        "ou": ["Funktion"],
     }
     extracted = list(
         extract_ldap_contact_points_by_emails(
@@ -120,12 +121,12 @@ def test_extract_ldap_contact_points_by_name(
 ) -> None:
     expected = {
         "person": {
-            "sAMAccountName": None,
+            "sAMAccountName": "test_person",
             "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
             "mail": ["test_person@email.de"],
             "company": None,
             "department": "PARENT-UNIT",
-            "departmentNumber": None,
+            "departmentNumber": "FG99",
             "displayName": "Resolved, Roland",
             "employeeID": "42",
             "givenName": ["Roland"],

@@ -35,19 +35,19 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     unit_stable_target_ids_by_synonym: dict[
         str, list[MergedOrganizationalUnitIdentifier]
     ],
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
 ) -> None:
     extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             grippeweb_access_platform,
             unit_stable_target_ids_by_synonym,
-            grippeweb_extracted_persons,
+            [roland_resolved],
         )
     )
     expected = {
         "hadPrimarySource": get_extracted_primary_source_id_by_name("grippeweb"),
         "identifierInPrimarySource": "primary-source",
-        "contact": [grippeweb_extracted_persons[0].stableTargetId],
+        "contact": [roland_resolved.stableTargetId],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "primary-source", "language": "en"}],
         "unitInCharge": unit_stable_target_ids_by_synonym["C1"],
@@ -66,7 +66,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         str, list[MergedOrganizationalUnitIdentifier]
     ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -76,7 +76,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         grippeweb_resource_mappings,
         unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
-        grippeweb_extracted_persons,
+        [roland_resolved],
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
     )
@@ -93,7 +93,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         "contributingUnit": [
             str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
         ],
-        "contributor": [str(grippeweb_extracted_persons[0].stableTargetId)],
+        "contributor": [str(roland_resolved.stableTargetId)],
         "created": "2011",
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "documentation": [
@@ -163,7 +163,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
         str, list[MergedOrganizationalUnitIdentifier]
     ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -174,7 +174,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
             grippeweb_resource_mappings,
             unit_stable_target_ids_by_synonym,
             grippeweb_extracted_access_platform,
-            grippeweb_extracted_persons,
+            [roland_resolved],
             grippeweb_merged_organization_ids_by_query_str,
             grippeweb_merged_contact_point_id_by_email,
         )

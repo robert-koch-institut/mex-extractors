@@ -105,6 +105,7 @@ def test_extract_synopse_contact(
         "sAMAccountName": "ContactC",
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
         "mail": ["email@email.de", "contactc@rki.de"],
+        "ou": ["Funktion"],
     }
     assert actor[0].model_dump(exclude_none=True) == expected
 

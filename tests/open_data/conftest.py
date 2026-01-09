@@ -4,17 +4,9 @@ from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.organigram.extract import extract_organigram_units
-from mex.common.organigram.transform import (
-    transform_organigram_units_to_organizational_units,
-)
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
 )
@@ -24,9 +16,6 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchema,
     OpenDataTableSchemaCategories,
     OpenDataTableSchemaConstraints,
-)
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
@@ -38,25 +27,6 @@ def mocked_open_data_parent_resource() -> list[OpenDataParentResource]:
     mocked_parent_response = create_mocked_parent_response()
     return [
         OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
-    ]
-
-
-@pytest.fixture
-def mocked_open_data_persons() -> list[ExtractedPerson]:
-    """Mock an extracted person."""
-    return [
-        ExtractedPerson(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="test_id",
-            email=["test_person@email.de"],
-            familyName=["Muster"],
-            fullName=["Muster, Maxi"],
-            givenName=["Maxi"],
-            memberOf=[
-                MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"),  # PRNT
-                MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
-            ],
-        )
     ]
 
 
@@ -124,27 +94,6 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
-
-
-@pytest.fixture
-def mocked_extracted_organizational_units(
-    extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedOrganizationalUnit]:
-    return transform_organigram_units_to_organizational_units(
-        extract_organigram_units(),
-        get_extracted_primary_source_id_by_name("organigram"),
-        extracted_organization_rki,
-    )
-
-
-@pytest.fixture
-def mocked_units_by_identifier_in_primary_source(
-    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> dict[str, ExtractedOrganizationalUnit]:
-    return {
-        unit.identifierInPrimarySource: unit
-        for unit in mocked_extracted_organizational_units
-    }
 
 
 @pytest.fixture

@@ -1,6 +1,5 @@
-from uuid import UUID
-
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
@@ -14,6 +13,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.seq_repo import extract
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -28,7 +28,7 @@ from mex.extractors.utils import load_yaml
 def seq_repo_sources() -> list[SeqRepoSource]:
     return [
         SeqRepoSource(
-            project_coordinators=["max", "mustermann", "max"],
+            project_coordinators=["test_person", "test_person"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
@@ -39,7 +39,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_id="TEST-ID",
         ),
         SeqRepoSource(
-            project_coordinators=["jelly", "fish", "turtle"],
+            project_coordinators=["juturna", "felicitas"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
@@ -117,42 +117,11 @@ def extracted_mex_activities_dict(
 
 
 @pytest.fixture
-def seq_repo_ldap_persons_with_query() -> list[LDAPPersonWithQuery]:
+def seq_repo_ldap_persons_with_query(
+    ldap_roland_resolved: LDAPPerson,
+) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
-    return [
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="max",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-                mail=[],
-                company=None,
-                department="FG99",
-                departmentNumber="FG99",
-                displayName="mustermann, max",
-                employeeID="42",
-                givenName=["max"],
-                ou=[],
-                sn="mustermann",
-            ),
-            query="max",
-        ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="max",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-                mail=[],
-                company=None,
-                department="FG99",
-                departmentNumber="FG99",
-                displayName="mustermann, max",
-                employeeID="42",
-                givenName=["max"],
-                ou=[],
-                sn="mustermann",
-            ),
-            query="mustermann",
-        ),
-    ]
+    return [LDAPPersonWithQuery(person=ldap_roland_resolved, query="resolvedr")]
 
 
 @pytest.fixture
@@ -161,10 +130,9 @@ def seq_repo_merged_person_ids_by_query_string() -> dict[
 ]:
     """Get project coordinators merged ids."""
     return {
-        "mustermann": [MergedPersonIdentifier("e0Rxxm9WvnMqPLZ44UduNx")],
-        "max": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
-        "jelly": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
-        "fish": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
+        "resolvedr": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
+        "juturna": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
+        "felicitas": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
     }
 
 
@@ -199,3 +167,8 @@ def unit_stable_target_ids_by_synonym() -> dict[
         "FG 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
         "FG99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
     }
+
+
+@pytest.fixture
+def mock_email_domain(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(extract, "SEQ_REPO_EMAIL_DOMAIN", "email.de")
