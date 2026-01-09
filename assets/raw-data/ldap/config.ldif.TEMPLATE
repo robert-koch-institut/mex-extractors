@@ -12,7 +12,7 @@ olcTLSCertificateKeyFile: /etc/ldap/ssl/ldap.key
 replace: olcTLSVerifyClient
 olcTLSVerifyClient: never
 
-# Configure logging
+# Configure loging
 dn: cn=config
 changetype: modify
 replace: olcLogLevel

@@ -1,5 +1,4 @@
 from collections.abc import Iterable
-from typing import cast
 
 from mex.common.models import (
     ExtractedActivity,
@@ -14,7 +13,6 @@ from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    TemporalEntity,
 )
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.logging import watch_progress
@@ -174,7 +172,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 rights=resource.rechte,
                 sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
                 spatial=resource.raeumlicher_bezug,
-                temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
+                temporal=resource.zeitlicher_bezug,
                 theme=theme,
                 title=resource.offizieller_titel_der_probensammlung,
                 unitInCharge=unit_in_charge,

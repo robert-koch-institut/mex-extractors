@@ -1,46 +1,37 @@
-from uuid import UUID
-
 import pytest
 
 from mex.common.ldap.connector import LDAPConnector
-
-EXPECTED_PERSON = {
-    "employeeID": "42",
-    "sn": "Resolved",
-    "givenName": ["Roland"],
-    "displayName": "Resolved, Roland",
-    "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
-    "sAMAccountName": "test_person",
-    "department": "PARENT-UNIT",
-    "mail": ["test_person@email.de"],
-    "company": None,
-    "departmentNumber": None,
-    "ou": [],
-}
+from mex.common.ldap.models import LDAPPerson
 
 
 @pytest.mark.integration
-def test_ldap_connector_get_person_by_employee_id() -> None:
+def test_ldap_connector_get_person_by_employee_id(
+    ldap_roland_resolved: LDAPPerson,
+) -> None:
     """Test fetching Roland Resolved by employee ID using LDAPConnector."""
     ldap = LDAPConnector.get()
     person = ldap.get_person(employee_id="42")
 
-    assert person.model_dump() == EXPECTED_PERSON
+    assert person == ldap_roland_resolved
 
 
 @pytest.mark.integration
-def test_ldap_connector_get_person_by_mail() -> None:
+def test_ldap_connector_get_person_by_mail(
+    ldap_roland_resolved: LDAPPerson,
+) -> None:
     """Test fetching Roland Resolved by email using LDAPConnector."""
     ldap = LDAPConnector.get()
-    person = ldap.get_person(mail="test_person@email.de")
+    person = ldap.get_person(mail="resolvedr@rki.de")
 
-    assert person.model_dump() == EXPECTED_PERSON
+    assert person == ldap_roland_resolved
 
 
 @pytest.mark.integration
-def test_ldap_connector_get_person_by_name() -> None:
+def test_ldap_connector_get_person_by_name(
+    ldap_roland_resolved: LDAPPerson,
+) -> None:
     """Test fetching Roland Resolved by name using LDAPConnector."""
     ldap = LDAPConnector.get()
     person = ldap.get_person(given_name="Roland", surname="Resolved")
 
-    assert person.model_dump() == EXPECTED_PERSON
+    assert person == ldap_roland_resolved

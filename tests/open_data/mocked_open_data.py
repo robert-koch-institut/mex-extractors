@@ -29,7 +29,10 @@ def create_mocked_parent_response() -> dict[str, Any]:
                         "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
                         "license": {"id": "cc-by-4.0"},
                         "contributors": [
-                            {"name": "Muster, Maxi", "orcid": "1234567890"}
+                            {
+                                "name": "Felicitás, Juturna",
+                                "orcid": "0000-0002-1234-5678",
+                            }
                         ],
                         "resource_type": {"name": "test1", "type": "dataset"},
                     },
@@ -42,9 +45,9 @@ def create_mocked_parent_response() -> dict[str, Any]:
                     "metadata": {
                         "creators": [
                             {
-                                "name": "Muster, Maxi",
+                                "name": "Felicitás, Juturna",
                                 "affiliation": "RKI",
-                                "orcid": "1234567890",
+                                "orcid": "0000-0002-1234-5678",
                             },
                             {
                                 "name": "Resolved, Roland",
@@ -168,4 +171,5 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
 
 @pytest.fixture
 def mock_open_data_email(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(main, "OPEN_DATA_EMAIL", "test_person@email.de")
+    # TODO(ND): move this into the mapping
+    monkeypatch.setattr(main, "OPEN_DATA_EMAIL", "ContactC@rki.de")

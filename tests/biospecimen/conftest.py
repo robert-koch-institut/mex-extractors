@@ -1,7 +1,6 @@
 import pytest
 
-from mex.common.models import ExtractedPerson, ResourceMapping
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.models import ResourceMapping
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
@@ -25,7 +24,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             externe_partner="esterner Testpartner",
             id_loinc=["12345-6"],
             id_mesh_begriff=["D123"],
-            kontakt=["test_person@email.de"],
+            kontakt=["resolvedr@rki.de"],
             methodenbeschreibung=["Testmethodenbeschreibung"],
             mitwirkende_fachabteilung="mitwirkende Testabteilung",
             mitwirkende_personen="mitwirkende Testperson",
@@ -42,21 +41,6 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             weiterfuehrende_dokumentation_titel="Testdokutitel",
             weiterfuehrende_dokumentation_url_oder_dateipfad="Testdokupfad",
             zugriffsbeschraenkung="restriktiv",
-        )
-    ]
-
-
-@pytest.fixture
-def mex_persons() -> list[ExtractedPerson]:
-    """Mock and extracted person."""
-    return [
-        ExtractedPerson(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="test_id",
-            email=["test_person@email.de"],
-            familyName=["Müller"],
-            fullName=["Müller, Marie"],
-            givenName=["Marie"],
         )
     ]
 

@@ -3,12 +3,7 @@ from typing import TypeVar
 import pytest
 from pydantic import BaseModel
 
-from mex.common.models import (
-    ExtractedActivity,
-    ExtractedPerson,
-    ExtractedResource,
-    ResourceMapping,
-)
+from mex.common.models import ExtractedActivity, ExtractedResource, ResourceMapping
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -28,21 +23,6 @@ def unit_stable_target_ids_by_synonym() -> dict[
 ]:
     """Mock unit stable target ids."""
     return {"C1": [MergedOrganizationalUnitIdentifier.generate(seed=44)]}
-
-
-@pytest.fixture
-def voxco_extracted_persons() -> list[ExtractedPerson]:
-    """Return an extracted person with static dummy values."""
-    return [
-        ExtractedPerson(
-            email=["test_person@email.de"],
-            familyName="Contact",
-            givenName="Carla",
-            fullName="Contact, Carla",
-            identifierInPrimarySource="Carla",
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
-        )
-    ]
 
 
 @pytest.fixture

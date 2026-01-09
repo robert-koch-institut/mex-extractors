@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 from pytest import MonkeyPatch
 
@@ -119,26 +117,11 @@ def extracted_mex_activities_dict(
 
 
 @pytest.fixture
-def seq_repo_ldap_persons_with_query() -> list[LDAPPersonWithQuery]:
+def seq_repo_ldap_persons_with_query(
+    ldap_roland_resolved: LDAPPerson,
+) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
-    return [
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName="test_person",
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=["test_person@email.de"],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber="FG99",
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
-            ),
-            query="test_person",
-        )
-    ]
+    return [LDAPPersonWithQuery(person=ldap_roland_resolved, query="resolvedr")]
 
 
 @pytest.fixture
@@ -147,7 +130,7 @@ def seq_repo_merged_person_ids_by_query_string() -> dict[
 ]:
     """Get project coordinators merged ids."""
     return {
-        "test_person": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
+        "resolvedr": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
         "juturna": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
         "felicitas": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
     }

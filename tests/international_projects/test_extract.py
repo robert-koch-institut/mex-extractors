@@ -1,5 +1,3 @@
-import uuid
-
 import pytest
 
 from mex.common.types import TemporalEntity
@@ -74,17 +72,7 @@ def test_extract_international_projects_sources() -> None:
 def test_extract_international_projects_project_leaders() -> None:
     expected = {
         "person": {
-            "sAMAccountName": "test_person",
-            "objectGUID": uuid.UUID("00000000-0000-4000-8000-000000000001"),
-            "mail": ["test_person@email.de"],
-            "company": None,
-            "department": "PARENT-UNIT",
-            "departmentNumber": None,
-            "displayName": "Resolved, Roland",
-            "employeeID": "42",
-            "givenName": ["Roland"],
-            "ou": [],
-            "sn": "Resolved",
+            "todo": "USE FIXTURE HERE",
         },
         "query": "Roland Resolved",
     }

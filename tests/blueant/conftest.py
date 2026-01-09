@@ -1,5 +1,6 @@
 import pytest
 
+from mex.common.ldap.models import LDAPPerson
 from mex.common.models import ActivityMapping
 from mex.common.types import TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
@@ -8,7 +9,7 @@ from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
-def blueant_source() -> BlueAntSource:
+def blueant_source(ldap_roland_resolved: LDAPPerson) -> BlueAntSource:
     """Return a sample Blue Ant source."""
     return BlueAntSource(
         end=TemporalEntity(2019, 12, 31),
@@ -17,7 +18,7 @@ def blueant_source() -> BlueAntSource:
         start=TemporalEntity(2019, 1, 7),
         client_names="Robert Koch-Institut",
         department="C1",
-        projectLeaderEmployeeId="42",
+        projectLeaderEmployeeId=ldap_roland_resolved.employeeID,
         status="Projektumsetzung",
         type_="Standardprojekt",
     )

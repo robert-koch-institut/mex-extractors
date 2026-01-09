@@ -126,7 +126,7 @@ def test_extract_ldap_contact_points_by_name(
             "mail": ["test_person@email.de"],
             "company": None,
             "department": "PARENT-UNIT",
-            "departmentNumber": None,
+            "departmentNumber": "FG99",
             "displayName": "Resolved, Roland",
             "employeeID": "42",
             "givenName": ["Roland"],

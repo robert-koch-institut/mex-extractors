@@ -45,25 +45,17 @@ from mex.extractors.sumo.transform import (
 )
 
 
-def test_get_contact_merged_ids_by_emails(
-    mex_actor_resources: ExtractedContactPoint,
-) -> None:
-    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails(
-        [mex_actor_resources]
-    )
+def test_get_contact_merged_ids_by_emails(contact_point: ExtractedContactPoint) -> None:
+    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails([contact_point])
     assert contact_merged_ids_by_emails == {
-        "email@email.de": mex_actor_resources.stableTargetId
+        contact_point.email[0]: contact_point.stableTargetId
     }
 
 
-def test_get_contact_merged_ids_by_names(
-    mex_actor_access_platform: ExtractedPerson,
-) -> None:
-    contact_merged_ids_by_names = get_contact_merged_ids_by_names(
-        [mex_actor_access_platform]
-    )
+def test_get_contact_merged_ids_by_names(juturna_felicitas: ExtractedPerson) -> None:
+    contact_merged_ids_by_names = get_contact_merged_ids_by_names([juturna_felicitas])
     assert contact_merged_ids_by_names == {
-        "Erika Mustermann": mex_actor_access_platform.stableTargetId
+        "Juturna Felicitás": juturna_felicitas.stableTargetId
     }
 
 

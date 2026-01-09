@@ -42,15 +42,17 @@ def test_extract_voxco_organizations(
 def test_extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
 ) -> None:
-    organizations = extract_ldap_persons_voxco(voxco_resource_mappings)
+    persons = extract_ldap_persons_voxco(voxco_resource_mappings)
 
-    assert organizations[0].model_dump(exclude_none=True, exclude_defaults=True) == {
+    assert len(persons) == 1
+    assert persons[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
         "mail": ["test_person@email.de"],
         "department": "PARENT-UNIT",
+        "departmentNumber": "FG99",
         "displayName": "Resolved, Roland",
         "employeeID": "42",
         "givenName": ["Roland"],
-        "sAMAccountName": "ResolvedR",
+        "sAMAccountName": "test_person",
         "sn": "Resolved",
     }

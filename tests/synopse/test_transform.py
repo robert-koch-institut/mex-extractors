@@ -211,7 +211,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_studies: list[SynopseStudy],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activity: ExtractedActivity,
-    extracted_organization: list[ExtractedOrganization],
+    extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
     unit_merged_ids_by_synonym = {
@@ -242,8 +242,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": [str(extracted_organization[0].stableTargetId)],
-        # TODO(HS): add MergedOrganizationIdentifier of Robert Koch-Institut
+        "publisher": extracted_organization_rki.stableTargetId,
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
         ],
@@ -272,7 +271,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         synopse_variables_by_study_id,
         [extracted_activity],
         unit_merged_ids_by_synonym,
-        extracted_organization[0],
+        extracted_organization_rki,
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
         {"Jane Doe": [MergedPersonIdentifier.generate(seed=237)]},

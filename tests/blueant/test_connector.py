@@ -224,10 +224,10 @@ def test_get_persons() -> None:
 def test_get_persons_mocked(mocked_blueant: BlueAntConnector) -> None:
     expected = {
         "id": 23054,
-        "personnelNumber": "12345",
-        "firstname": "Max",
-        "lastname": "Mustermann",
-        "email": "Muster@example1.com",
+        "personnelNumber": "42",
+        "firstname": "Roland",
+        "lastname": "Resolved",
+        "email": "test_person@email.de",
     }
     persons_dict = {
         "status": {"name": "OK"},

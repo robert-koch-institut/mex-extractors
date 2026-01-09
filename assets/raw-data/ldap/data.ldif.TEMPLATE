@@ -11,9 +11,10 @@ givenName: Roland
 displayName: Resolved, Roland
 employeeID: 42
 objectGUID: 00000000-0000-4000-8000-000000000001
-sAMAccountName: test_person
+sAMAccountName: ResolvedR
 department: PARENT-UNIT
-mail: test_person@email.de
+departmentNumber: FG99
+mail: resolvedr@rki.de
 uid: ResolvedR
 
 # Juturna Felicitás
@@ -31,9 +32,26 @@ employeeID: 70
 objectGUID: 00000000-0000-4000-8000-000000000002
 sAMAccountName: FelicitasJ
 department: FG99
-mail: juturna@rki.de
-mail: felicitas@rki.de
+mail: felicitasj@rki.de
 uid: FelicitasJ
+
+# Frieda Fictitious
+dn: uid=frieda,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Frieda Fictitious
+sn: Fictitious
+givenName: Frieda
+displayName: Fictitious, Frieda, Dr.
+employeeID: 71
+objectGUID: 00000000-0000-4000-8000-000000000003
+sAMAccountName: FictitiousF
+department: FG99
+mail: fictitiousf@rki.de
+uid: FictitiousF
 
 # Funktion Organizational Unit
 dn: OU=Funktion,${LDAP_BASEDN}

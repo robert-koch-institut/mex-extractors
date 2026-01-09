@@ -4,6 +4,7 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
+from mex.common.ldap.models import LDAPPerson
 from mex.common.types import TemporalEntity
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.person import BlueAntPerson
@@ -23,14 +24,14 @@ MOCKED_API_SOURCE = {
 MOCKED_RESOLVED_ATTRIBUTES = {
     "client_names": ["Robert Koch-Institut"],
     "department": "C1: Sub Unit",
-    "projectLeaderEmployeeId": "70",
+    "projectLeaderEmployeeId": "42",
     "status": "Projektumsetzung",
     "type_": "Standardprojekt",
 }
 
 
 @pytest.fixture
-def mocked_blueant(monkeypatch: MonkeyPatch) -> None:
+def mocked_blueant(monkeypatch: MonkeyPatch, ldap_roland_resolved: LDAPPerson) -> None:
     """Mock the blueant connector to return dummy data."""
     monkeypatch.setattr(
         BlueAntConnector,
@@ -43,10 +44,10 @@ def mocked_blueant(monkeypatch: MonkeyPatch) -> None:
         lambda *_, **__: [
             BlueAntPerson(
                 id=MOCKED_API_SOURCE["projectLeaderId"],
-                personnelNumber="42",
-                firstname="Max",
-                lastname="Mustermann",
-                email="max@example1.com",
+                personnelNumber=ldap_roland_resolved.employeeID,
+                firstname=ldap_roland_resolved.givenName,
+                lastname=ldap_roland_resolved.sn,
+                email=ldap_roland_resolved.mail,
             )
         ],
     )
