@@ -9,14 +9,16 @@ from mex.extractors.ldap.helpers import get_ldap_merged_id_by_query
 def test_get_ldap_merged_id_by_query(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> None:
-    merged_id = get_ldap_merged_id_by_query(
-        "Resolved, Roland", mocked_extracted_organizational_units
+    merged_person_id = get_ldap_merged_id_by_query(
+        "Resolved, Roland", mocked_extracted_organizational_units, model="person"
     )
 
-    assert merged_id == MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+    assert merged_person_id == MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
 
-    merged_id = get_ldap_merged_id_by_query(
-        "email@email.de", mocked_extracted_organizational_units
+    merged_contact_point_id = get_ldap_merged_id_by_query(
+        "email@email.de", mocked_extracted_organizational_units, model="contact_point"
     )
 
-    assert merged_id == MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K")
+    assert merged_contact_point_id == MergedContactPointIdentifier(
+        "cMkmnNOoNVAohBA1XLNr9K"
+    )

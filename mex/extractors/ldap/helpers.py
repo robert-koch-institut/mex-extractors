@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Literal, overload
 
 from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.ldap.connector import LDAPConnector
@@ -17,9 +18,31 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import get_wikidata_organization_by_id
 
 
+@overload
 def get_ldap_merged_id_by_query(
     query: str,
     extracted_organizational_units: Iterable[ExtractedOrganizationalUnit],
+    *,
+    model: Literal["person"],
+    limit: int = 10,
+) -> MergedPersonIdentifier: ...
+
+
+@overload
+def get_ldap_merged_id_by_query(
+    query: str,
+    extracted_organizational_units: Iterable[ExtractedOrganizationalUnit],
+    *,
+    model: Literal["contact_point"],
+    limit: int = 10,
+) -> MergedContactPointIdentifier: ...
+
+
+def get_ldap_merged_id_by_query(
+    query: str,
+    extracted_organizational_units: Iterable[ExtractedOrganizationalUnit],
+    *,
+    model: Literal["person", "contact_point"],  # noqa: ARG001
     limit: int = 10,
 ) -> MergedPersonIdentifier | MergedContactPointIdentifier:
     """Extract, transform and load ldap person or contact and return merged ID.
@@ -28,12 +51,13 @@ def get_ldap_merged_id_by_query(
         query: person or functional account query
         extracted_organizational_units: extracted organizational units
         limit: How many items to return
+        model: model of id to be returned to
 
     Raises:
         EmptySearchResultError if no result, FoundMoreThanOneError if multiple results
 
     Returns:
-        merged person or contact point
+        merged person or contact point id
     """
     connector = LDAPConnector.get()
     ldap_actors = connector.get_persons_or_functional_accounts(query=query, limit=limit)
