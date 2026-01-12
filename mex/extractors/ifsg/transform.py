@@ -93,8 +93,6 @@ def transform_resource_state_to_mex_resource(
     }
     if contact_synonym := resource_state.contact[0].mappingRules[0].forValues:
         contact = get_unit_merged_id_by_synonym(contact_synonym[0])
-    if not contact:
-        pass
     documentation_by_bundesland_id = {
         value.forValues[0]: value.setValues  # type: ignore[index]
         for value in resource_state.documentation[0].mappingRules
@@ -118,8 +116,6 @@ def transform_resource_state_to_mex_resource(
         .forValues
     ):
         unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
-    if not unit_in_charge:
-        pass
     mex_resource_state: list[ExtractedResource] = []
     for (
         id_bundesland,

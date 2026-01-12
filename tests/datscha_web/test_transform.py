@@ -73,6 +73,7 @@ def test_transform_datscha_web_items_to_mex_activities(
         "identifier": Joker(),
         "identifierInPrimarySource": "17",
         "involvedPerson": ["ID000000001111", "ID000000002222"],
+        "involvedUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
         "stableTargetId": Joker(),
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],

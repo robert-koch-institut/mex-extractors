@@ -327,7 +327,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         if rule.forValues and rule.setValues
     }
     for resource in open_data_parent_resource:
-        unit_in_charge: list[MergedOrganizationalUnitIdentifier] | None = list(
+        unit_in_charge = list(
             {
                 unit_id: None
                 for person in resource.metadata.contributors

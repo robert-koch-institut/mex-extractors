@@ -8,7 +8,6 @@ from mex.common.models import (
     ExtractedOrganization,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -75,7 +74,6 @@ def transform_blueant_sources_to_extracted_activities(
                 )
 
         # find responsible unit
-        department_ids: list[MergedOrganizationalUnitIdentifier] | None = None
         department = source.department.replace("(h)", "").strip()
         department_ids = get_unit_merged_id_by_synonym(department)
         if not department_ids:
