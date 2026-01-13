@@ -36,7 +36,7 @@ def test_transform_blueant_sources_to_extracted_activities(
             {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
         )
     )
-    assert len(mex_sources) == 1
+    assert len(mex_sources) == 2
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [str(Identifier.generate(seed=99))],
         "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
