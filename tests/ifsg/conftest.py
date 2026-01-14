@@ -7,7 +7,6 @@ from mex.common.models import (
     VariableGroupMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     Text,
@@ -26,12 +25,6 @@ from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture
-def unit_stable_target_ids() -> dict[str, MergedOrganizationalUnitIdentifier]:
-    """Mock unit stable target ids."""
-    return {"FG99": MergedOrganizationalUnitIdentifier.generate(seed=43)}
 
 
 @pytest.fixture

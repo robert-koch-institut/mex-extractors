@@ -15,7 +15,6 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
@@ -84,9 +83,6 @@ def igs_extracted_contact_points_by_mail_str(
 def igs_extracted_resource_id(
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> MergedResourceIdentifier:
@@ -94,7 +90,6 @@ def igs_extracted_resource_id(
     extracted_resource = transform_igs_extracted_resource(
         ResourceMapping.model_validate(igs_resource_mapping),
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
         igs_extracted_access_platform,
         extracted_organization_rki,
     )
@@ -106,15 +101,11 @@ def igs_extracted_resource_id(
 def igs_extracted_access_platform(
     igs_access_platform_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
     extracted_access_platform = transform_igs_access_platform(
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
     )
     load([extracted_access_platform])
     return extracted_access_platform

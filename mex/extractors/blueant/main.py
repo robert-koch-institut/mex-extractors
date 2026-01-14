@@ -9,7 +9,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -74,9 +73,6 @@ def blueant_merged_organization_ids_by_query_str(
 def blueant_extracted_activities(
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     blueant_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -90,7 +86,6 @@ def blueant_extracted_activities(
     extracted_activities = transform_blueant_sources_to_extracted_activities(
         blueant_sources,
         blueant_merged_person_id_by_employee_id,
-        unit_stable_target_ids_by_synonym,
         activity,
         blueant_merged_organization_ids_by_query_str,
     )
