@@ -33,6 +33,7 @@ from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataTableSchema,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -268,9 +269,6 @@ def transform_open_data_distributions(
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
@@ -282,7 +280,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     Args:
         open_data_parent_resource: open data parent resources
         open_data_persons: list of ExtractedPerson
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         extracted_organizational_units: list of Extracted Organizational Units
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
@@ -292,6 +289,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     Returns:
         list of ExtractedResource instances
     """
+    if not (fallback_unit_id := get_unit_merged_id_by_synonym(FALLBACK_UNIT)):
+        msg = f"No ID found for {FALLBACK_UNIT}"
+        raise MExError(msg)
+
     extracted_resource = []
 
     person_stable_target_id_by_name = {
@@ -337,11 +338,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
-                if unit_id not in unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
+                if unit_id not in fallback_unit_id
             }
         )
         if not unit_in_charge:
-            unit_in_charge = unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
+            unit_in_charge = fallback_unit_id
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -382,7 +383,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             else None
         )
         contributing_unit = (
-            unit_stable_target_ids_by_synonym.get(
+            get_unit_merged_id_by_synonym(
                 resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
