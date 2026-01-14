@@ -1,4 +1,7 @@
 fields:
+  - fieldInMEx: funderOrCommissioner
+    filterRules:
+      - rule: filter
   - fieldInMEx: responsibleUnit + hadPrimarySource
     filterRules:
       - rule: filter

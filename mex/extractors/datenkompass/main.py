@@ -155,7 +155,7 @@ def datenkompass_merged_activities_by_unit(
     """
     entity_type = ["MergedActivity"]
     activities_by_unit: dict[str, list[MergedActivity]] = {}
-    for rule in datenkompass_activity_filter.fields[0].filterRules:
+    for rule in datenkompass_activity_filter.fields[1].filterRules:
         parent_unit_name = rule.forValues[0] if rule.forValues else ""
         primary_source_ids = get_filtered_primary_source_ids(rule.setValues)
         activities_by_unit[parent_unit_name] = cast(
