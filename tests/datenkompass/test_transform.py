@@ -59,20 +59,20 @@ def test_get_unit_shortname(
         delim,
     )
 
-    assert result == "a.bsp. unit; e.g. unit"
+    assert result == "C1; FG 99"
 
 
 def test_get_email(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> None:
-    responsible_unit_ids = mocked_merged_activities[0].responsibleUnit
+    responsible_unit_ids = mocked_merged_activities[1].responsibleUnit
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
     result = get_email(responsible_unit_ids, merged_organizational_units_by_id)
 
-    assert result == "unit@example.org"
+    assert result == "pu@example.com"
 
 
 def test_get_resource_email(
@@ -95,7 +95,7 @@ def test_get_resource_email(
         mocked_merged_contact_point_by_id,
     )
 
-    assert result == "unit@example.org"
+    assert result == "fg@example.com"
 
 
 @pytest.mark.parametrize(
@@ -427,9 +427,9 @@ def test_transform_bibliographic_resource(
     )
 
     assert result[0].model_dump() == {
-        "kontakt": "unit@example.org",
+        "kontakt": "pu@example.com",
         "beschreibung": "Buch. Die Nutzung",
-        "organisationseinheit": "e.g. unit",
+        "organisationseinheit": "PRNT",
         "titel": (
             "title 'BibRes' no language, title en (Pattern, Peppa P. / "
             "Pattern, Peppa P. / Pattern, Peppa P. / et al.)"
@@ -483,8 +483,8 @@ def test_transform_resources(
     assert result[0].model_dump() == {
         "voraussetzungen": "OPEN",
         "frequenz": None,
-        "kontakt": "unit@example.org",
-        "organisationseinheit": "e.g. unit",
+        "kontakt": "fg@example.com",
+        "organisationseinheit": "PRNT",
         "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": "has basis; hat weitere Basis",
@@ -508,7 +508,7 @@ def test_transform_resources(
         "voraussetzungen": "RESTRICTED",
         "frequenz": None,
         "kontakt": None,
-        "organisationseinheit": "a.bsp. unit",
+        "organisationseinheit": "C1",
         "beschreibung": "n/a",
         "datenbank": None,
         "rechtsgrundlagen_benennung": None,

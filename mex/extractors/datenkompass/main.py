@@ -23,6 +23,7 @@ from mex.extractors.datenkompass.extract import (
 )
 from mex.extractors.datenkompass.filter import (
     filter_for_organization_and_unit,
+    find_descendant_units,
 )
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -58,15 +59,19 @@ def datenkompass_merged_organizational_units_by_id() -> dict[
     }
 
 
-# # TODO(JE): refactor
-# @asset(group_name="datenkompass")
-# def datenkompass_filtered_merged_organizational_units_by_id(
-#     datenkompass_merged_organizational_units_by_id: dict[
-#         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
-#     ],
-# ) -> list[str]:
-#     """Get child unit ids by filter setting for extraction filter."""
-#     return find_descendant_units(datenkompass_merged_organizational_units_by_id)
+# TODO(MX-2144): refactor and remove asset and unit setting
+@asset(group_name="datenkompass")
+def datenkompass_filtered_merged_organizational_units_by_id(
+    datenkompass_merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[str]:
+    """Get child unit ids by filter setting for extraction filter."""
+    settings = Settings.get()
+    return find_descendant_units(
+        datenkompass_merged_organizational_units_by_id,
+        settings.datenkompass.unit_filter,
+    )
 
 
 @asset(group_name="datenkompass")
@@ -150,7 +155,7 @@ def datenkompass_merged_activities_by_unit(
     """
     entity_type = ["MergedActivity"]
     activities_by_unit: dict[str, list[MergedActivity]] = {}
-    for rule in datenkompass_activity_filter.fields[1].filterRules:
+    for rule in datenkompass_activity_filter.fields[0].filterRules:
         parent_unit_name = rule.forValues[0] if rule.forValues else ""
         primary_source_ids = get_filtered_primary_source_ids(rule.setValues)
         activities_by_unit[parent_unit_name] = cast(
@@ -306,7 +311,6 @@ def datenkompass_resources(
         datenkompass_merged_contact_points_by_id,
         datenkompass_resource_mapping,
     )
-
 
 
 @asset(group_name="datenkompass")

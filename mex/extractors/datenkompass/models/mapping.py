@@ -27,7 +27,7 @@ class DatenkompassMappingField(BaseModel, extra="forbid"):
     comment: Annotated[str | None, Field(title="comment")] = None
 
 
-class DatenkompassFilterField(BaseMapping, extra="forbid"):
+class DatenkompassFilterField(BaseModel, extra="forbid"):
     """Model subclass for datenkompass filter."""
 
     fieldInMEx: Annotated[str, Field(min_length=1, title="fieldInMEx")]
@@ -43,7 +43,7 @@ class DatenkompassMapping(BaseModel, extra="forbid"):
     fields: list[DatenkompassMappingField]
 
 
-class DatenkompassFilter(BaseMapping, extra="forbid"):
+class DatenkompassFilter(BaseModel, extra="forbid"):
     """A mapping for the Datenkompass mapping and filter yamls."""
 
     fields: list[DatenkompassFilterField]

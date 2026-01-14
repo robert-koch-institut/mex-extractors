@@ -5,9 +5,9 @@ fields:
         forValues:
           - "PRNT"
         setValues:
-          - 'Lorem Ipsum'
+          - "relevant primary source"
       - rule: filter as well
         forValues:
-          - "FG99"
+          - "FG 99"
         setValues:
-          - 'Dolor'
+          - "relevant primary source"
