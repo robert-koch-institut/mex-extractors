@@ -1,10 +1,10 @@
 from datetime import UTC, datetime, timedelta, tzinfo
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 
 import pytest
-from dagster import AssetKey, EventRecordsFilter
+from dagster import AssetCheckExecutionContext, AssetKey, EventRecordsFilter
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
@@ -219,14 +219,26 @@ def run_item_count_test(  # noqa: PLR0913
     class MockContext:
         instance = MockInstance()
 
-    context = MockContext()
+    context = cast("AssetCheckExecutionContext", MockContext())
     asset_key = AssetKey(["some_asset"])
 
     if not passed:
         with pytest.raises(ValueError, match=f"failed {rule_name_for_match} check"):
-            check_item_count_rule(context=context, asset_key=asset_key, extractor="ext", entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="ext",
+                entity_type="type",
+                rule_name=rule_name_for_match,
+            )
     else:
-        result = check_item_count_rule(context=context, asset_key=asset_key, extractor="ext",entity_type="type", rule_name=rule_name_for_match)  # type: ignore[arg-type]
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="ext",
+            entity_type="type",
+            rule_name=rule_name_for_match,
+        )
         assert result is True
 
 
