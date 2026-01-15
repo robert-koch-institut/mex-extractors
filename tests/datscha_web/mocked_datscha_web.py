@@ -44,7 +44,7 @@ def datscha_web_item_raw() -> dict[str, Any]:
             "ipsam. Ea rem molestias accusamus quaerat id repudiandae. A laudantium "
             "sint doloribus eveniet sit deleniti necessitatibus."
         ),
-        "Zentrale Stelle für die Verarbeitung": "Abteilung 2",
+        "Zentrale Stelle für die Verarbeitung": "C1",
         "Zweckbestimmung der Datenverarbeitung": "wichtiges dinge",
         "Rechtsgrundlage": "Aus Gründen",
         "Herkunft der Daten": "Aus der Datenherkunft.",

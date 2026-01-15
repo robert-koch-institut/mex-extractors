@@ -12,7 +12,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -39,17 +38,12 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="ff_projects")
-def ff_projects_sources(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
-) -> list[FFProjectsSource]:
+def ff_projects_sources() -> list[FFProjectsSource]:
     """Extract FF Projects sources and filter out invalid items."""
     ff_projects_sources = extract_ff_projects_sources()
     filtered_sources = filter_out_duplicate_source_ids(ff_projects_sources)
     return filter_and_log_ff_projects_sources(
         filtered_sources,
-        unit_stable_target_ids_by_synonym,
     )
 
 
@@ -89,9 +83,6 @@ def ff_projects_organization_ids_by_query_str(
 def ff_projects_activities(
     ff_projects_sources: list[FFProjectsSource],
     ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
@@ -103,7 +94,6 @@ def ff_projects_activities(
         transform_ff_projects_source_to_extracted_activity(
             ff_projects_source,
             ff_projects_person_ids_by_query_str,
-            unit_stable_target_ids_by_synonym,
             ff_projects_organization_ids_by_query_str,
             ff_projects_activity,
         )

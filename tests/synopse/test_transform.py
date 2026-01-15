@@ -14,7 +14,6 @@ from mex.common.types import (
     Identifier,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TemporalEntity,
@@ -42,9 +41,6 @@ from mex.extractors.synopse.transform import (
 def test_transform_synopse_studies_into_access_platforms(
     synopse_access_platform: AccessPlatformMapping,
 ) -> None:
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
-    }
     expected_access_platform = {
         "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
         "identifierInPrimarySource": "t",
@@ -60,13 +56,12 @@ def test_transform_synopse_studies_into_access_platforms(
             }
         ],
         "title": [{"value": "test title", "language": "de"}],
-        "unitInCharge": ["bFQoRhcVH5DHYc"],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "identifier": "caja5lr50xZDp3vqBFy5oN",
         "stableTargetId": "hok9BZyh5ZyU9EWzXUYLqd",
     }
 
     access_platforms = transform_synopse_studies_into_access_platforms(
-        unit_merged_ids_by_synonym,
         {"email@email.de": MergedContactPointIdentifier.generate(seed=234)},
         synopse_access_platform,
     )
@@ -206,6 +201,7 @@ def test_transform_synopse_variables_to_mex_variables(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],
@@ -214,13 +210,14 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
-    }
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "contact": ["bFQoRhcVH5DHYc"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            "cjna2jitPngp6yIV63cdi9",  # FG 99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
+        ],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
@@ -262,7 +259,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "stableTargetId": Joker(),
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "wasGeneratedBy": str(extracted_activity.stableTargetId),
     }
     resources = transform_synopse_data_to_mex_resources(
@@ -270,7 +267,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         [synopse_project],
         synopse_variables_by_study_id,
         [extracted_activity],
-        unit_merged_ids_by_synonym,
         extracted_organization_rki,
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
@@ -292,19 +288,13 @@ def test_transform_synopse_projects_to_mex_activities(
     contributor_merged_ids_by_name = {
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=13)],
-        "fg99": [
-            MergedOrganizationalUnitIdentifier.generate(seed=99),
-            MergedOrganizationalUnitIdentifier.generate(seed=999),
-        ],
-    }
+
     assert synopse_project.projektende
     assert synopse_project.projektbeginn
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_der_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": ["bFQoRhcVH5DHUD"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "documentation": [
             {
                 "url": "file:///Z:/Projekte/Dokumentation",
@@ -319,10 +309,10 @@ def test_transform_synopse_projects_to_mex_activities(
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": [str(Identifier.generate(seed=12))],
-        "responsibleUnit": [str(Identifier.generate(seed=13))],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
         "involvedUnit": [
-            str(MergedOrganizationalUnitIdentifier.generate(seed=99)),
-            str(MergedOrganizationalUnitIdentifier.generate(seed=999)),
+            "cjna2jitPngp6yIV63cdi9",  # FG99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
         ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
@@ -336,7 +326,6 @@ def test_transform_synopse_projects_to_mex_activities(
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
             contributor_merged_ids_by_name,
-            unit_merged_ids_by_synonym,
             synopse_activity,
             synopse_merged_organization_ids_by_query_string,
         )

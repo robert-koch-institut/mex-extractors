@@ -1,5 +1,7 @@
 from typing import Any
 
+import pytest
+
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
@@ -14,7 +16,6 @@ from mex.common.testing import Joker
 from mex.common.types import (
     LinkLanguage,
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TextLanguage,
 )
@@ -25,22 +26,20 @@ from mex.extractors.grippeweb.transform import (
     transform_grippeweb_variable_group_to_extracted_variable_groups,
     transform_grippeweb_variable_to_extracted_variables,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     roland_resolved: ExtractedPerson,
 ) -> None:
     extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             grippeweb_access_platform,
-            unit_stable_target_ids_by_synonym,
             [roland_resolved],
         )
     )
@@ -50,7 +49,7 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
         "contact": [roland_resolved.stableTargetId],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "primary-source", "language": "en"}],
-        "unitInCharge": unit_stable_target_ids_by_synonym["C1"],
+        "unitInCharge": get_unit_merged_id_by_synonym("C1"),
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -60,11 +59,9 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     )
 
 
-def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
+@pytest.mark.usefixtures("mocked_wikidata")
+def test_transform_grippeweb_resource_mappings_to_dict(
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     roland_resolved: ExtractedPerson,
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -74,7 +71,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
 ) -> None:
     parent_resource, _ = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
-        unit_stable_target_ids_by_synonym,
         grippeweb_extracted_access_platform,
         [roland_resolved],
         grippeweb_merged_organization_ids_by_query_str,
@@ -90,9 +86,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "contact": [str(grippeweb_merged_contact_point_id_by_email["contactc@rki.de"])],
-        "contributingUnit": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
-        ],
         "contributor": [str(roland_resolved.stableTargetId)],
         "created": "2011",
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
@@ -146,9 +139,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
         "temporal": "seit 2011",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
-        "unitInCharge": [
-            str(unit_id) for unit_id in unit_stable_target_ids_by_synonym["C1"]
-        ],
+        "unitInCharge": get_unit_merged_id_by_synonym("C1"),
         "identifier": Joker(),
         "stableTargetId": Joker(),
     }
@@ -157,11 +148,8 @@ def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913
     )
 
 
-def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR0913
+def test_transform_grippeweb_resource_mappings_to_extracted_resources(
     grippeweb_resource_mappings: list[ResourceMapping],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     roland_resolved: ExtractedPerson,
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -172,7 +160,6 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: 
     parent_resource, child_resource = (
         transform_grippeweb_resource_mappings_to_extracted_resources(
             grippeweb_resource_mappings,
-            unit_stable_target_ids_by_synonym,
             grippeweb_extracted_access_platform,
             [roland_resolved],
             grippeweb_merged_organization_ids_by_query_str,

@@ -11,7 +11,9 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import MergedPrimarySourceIdentifier
+from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
 from mex.extractors.primary_source.helpers import (
+    cached_load_extracted_primary_source_by_name,
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
@@ -39,6 +41,13 @@ def settings() -> Settings:
     return Settings.get()
 
 
+@pytest.fixture(autouse=True)
+def isolate_caches() -> None:
+    # clear the cache to be able to test it.
+    _get_cached_unit_merged_ids_by_synonyms.cache_clear()
+    cached_load_extracted_primary_source_by_name.cache_clear()
+
+
 @pytest.fixture
 def extracted_organization_rki() -> ExtractedOrganization:
     return ExtractedOrganization(
@@ -55,7 +64,7 @@ def mocked_extracted_organizational_units(
     return transform_organigram_units_to_organizational_units(
         extract_organigram_units(),
         get_extracted_primary_source_id_by_name("organigram"),
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 

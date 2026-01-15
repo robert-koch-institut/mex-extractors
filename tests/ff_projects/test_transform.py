@@ -1,9 +1,9 @@
+import pytest
 from pytest import MonkeyPatch
 
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
@@ -19,6 +19,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_ff_projects_source_to_extracted_activity(
     ff_projects_activity: ActivityMapping,
 ) -> None:
@@ -26,8 +27,6 @@ def test_transform_ff_projects_source_to_extracted_activity(
     organizations_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
-    unit_id = MergedOrganizationalUnitIdentifier.generate(seed=21)
-    unit_stable_target_ids_by_synonym = {"FG99": [unit_id]}
     laufzeit_bis = YearMonthDay("2019-08-31")
     laufzeit_von = YearMonthDay("2017-12-31")
 
@@ -48,7 +47,6 @@ def test_transform_ff_projects_source_to_extracted_activity(
     extracted_activity = transform_ff_projects_source_to_extracted_activity(
         ff_projects_source,
         person_stable_target_ids_by_query_string,
-        unit_stable_target_ids_by_synonym,
         organizations_stable_target_ids_by_synonym,
         ff_projects_activity,
     )
@@ -63,7 +61,7 @@ def test_transform_ff_projects_source_to_extracted_activity(
         "identifier": Joker(),
         "identifierInPrimarySource": "19",
         "involvedPerson": [person_id],
-        "responsibleUnit": [unit_id],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "stableTargetId": Joker(),
         "start": [laufzeit_von],
         "title": [

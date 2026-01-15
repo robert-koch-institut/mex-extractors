@@ -349,7 +349,7 @@ def synopse_projects() -> list[SynopseProject]:
             studien_id="12345",
             studienart_studientyp="Monitoring-Studie",
             verantwortliche_oe="C1",
-            interne_partner="fg99",
+            interne_partner="fg99, C1",
         ),
         SynopseProject(
             akronym_des_studientitels="BBCCDD",

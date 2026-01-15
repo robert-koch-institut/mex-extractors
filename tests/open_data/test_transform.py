@@ -188,16 +188,10 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
-    unit_stable_target_ids_by_synonym = {
-        unit.shortName[0].value: [unit.stableTargetId]
-        for unit in mocked_extracted_organizational_units
-    }
-
     mex_sources = list(
         transform_open_data_parent_resource_to_mex_resource(
             mocked_open_data_parent_resource,
             [juturna_felicitas],
-            unit_stable_target_ids_by_synonym,
             mocked_extracted_organizational_units,
             mocked_open_data_distribution,
             mocked_open_data_parent_resource_mapping,

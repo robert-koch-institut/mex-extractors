@@ -75,6 +75,7 @@ def synopse_extracted_activities() -> list[ExtractedActivity]:
     ]
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
     roland_resolved: ExtractedPerson,
@@ -98,7 +99,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     resources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        unit_stable_target_ids,
         [roland_resolved, juturna_felicitas, frieda_fictitious],
         extracted_organization_rki,
         synopse_extracted_activities,
@@ -167,7 +167,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             "https://mex.rki.de/item/theme-36",
         ],
         "title": [{"value": "test_titel"}],
-        "unitInCharge": [str(Identifier.generate(seed=42))],
+        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
         "wasGeneratedBy": str(synopse_merged_id),
         # created_in_context_of is None, therefore not displayed
     }
