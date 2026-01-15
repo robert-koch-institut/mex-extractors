@@ -37,14 +37,14 @@ def test_transform_seq_repo_activities_to_extracted_activities(
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "TEST-ID",
         "contact": [
-            "d6Lni0XPiEQM5jILEBOYxO",
-            "d6Lni0XPiEQM5jILEBOYxO",
+            "c2Yd8aNoLKIf7u6ubTUuc3",
+            "eXA2Qj5pKmI7HXIgcVqCfz",
         ],
-        "responsibleUnit": ["e4fyMCGjCeQNSvAMNHcBhK"],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "title": [{"value": "FG99-ABC-123", "language": TextLanguage.DE}],
         "involvedPerson": [
-            "d6Lni0XPiEQM5jILEBOYxO",
-            "d6Lni0XPiEQM5jILEBOYxO",
+            "c2Yd8aNoLKIf7u6ubTUuc3",
+            "eXA2Qj5pKmI7HXIgcVqCfz",
         ],
         "theme": [
             "https://mex.rki.de/item/theme-11",
@@ -59,6 +59,7 @@ def test_transform_seq_repo_activities_to_extracted_activities(
         seq_repo_ldap_persons_with_query,
         seq_repo_merged_person_ids_by_query_string,
     )
+    assert extracted_mex_activities
     assert (
         extracted_mex_activities[0].model_dump(exclude_none=True, exclude_defaults=True)
         == expected
@@ -83,8 +84,8 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "created": "2023-08-07",
         "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
         "contact": [
-            "d6Lni0XPiEQM5jILEBOYxO",
-            "d6Lni0XPiEQM5jILEBOYxO",
+            "c2Yd8aNoLKIf7u6ubTUuc3",
+            "eXA2Qj5pKmI7HXIgcVqCfz",
         ],
         "theme": [
             "https://mex.rki.de/item/theme-11",

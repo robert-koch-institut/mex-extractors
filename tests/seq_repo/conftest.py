@@ -1,5 +1,4 @@
 import pytest
-from pytest import MonkeyPatch
 
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
@@ -7,10 +6,10 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
+    ExtractedPerson,
     ResourceMapping,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
-from mex.extractors.seq_repo import extract
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -110,18 +109,20 @@ def seq_repo_ldap_persons_with_query(
     ldap_roland_resolved: LDAPPerson,
 ) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
-    return [LDAPPersonWithQuery(person=ldap_roland_resolved, query="resolvedr")]
+    return [LDAPPersonWithQuery(person=ldap_roland_resolved, query="ResolvedR")]
 
 
 @pytest.fixture
-def seq_repo_merged_person_ids_by_query_string() -> dict[
-    str, list[MergedPersonIdentifier]
-]:
+def seq_repo_merged_person_ids_by_query_string(
+    roland_resolved: ExtractedPerson,
+    juturna_felicitas: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
+) -> dict[str, list[MergedPersonIdentifier]]:
     """Get project coordinators merged ids."""
     return {
-        "resolvedr": [MergedPersonIdentifier("d6Lni0XPiEQM5jILEBOYxO")],
-        "juturna": [MergedPersonIdentifier("buTvstFluFUX9TeoHlhe7c")],
-        "felicitas": [MergedPersonIdentifier("gOwHDDA0HQgT1eDYnC4Ai5")],
+        "ResolvedR": [roland_resolved.stableTargetId],
+        "FelicitasJ": [juturna_felicitas.stableTargetId],
+        "FictitiousF": [frieda_fictitious.stableTargetId],
     }
 
 
@@ -156,8 +157,3 @@ def unit_stable_target_ids_by_synonym() -> dict[
         "FG 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
         "FG99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
     }
-
-
-@pytest.fixture
-def mock_email_domain(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(extract, "SEQ_REPO_EMAIL_DOMAIN", "email.de")

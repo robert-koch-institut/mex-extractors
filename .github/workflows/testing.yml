@@ -26,27 +26,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    services:
-      mailpit:
-        image: axllent/mailpit:v1.28
-        ports:
-          - 1025:1025
-          - 8025:8025
-        env:
-          MP_SMTP_AUTH_ALLOW_INSECURE: 1
-          MP_SMTP_AUTH_ACCEPT_ANY: 1
-          MP_UI_AUTH: "user:password"
-          MP_MAX_AGE: "180d"
-          MP_ENABLE_PROMETHEUS: "true"
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
-      - name: Start LDAP server
-        run: docker compose up -d slapd
+      - name: Start containers
+        run: docker compose up -d slapd mailpit
 
       - name: Cache requirements
         uses: actions/cache@v5
@@ -82,6 +69,6 @@ jobs:
           MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
         run: make test
 
-      - name: Cleanup LDAP container
+      - name: Cleanup containers
         if: always()
-        run: docker compose down slapd
+        run: docker compose down slapd mailpit

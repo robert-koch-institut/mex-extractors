@@ -122,7 +122,7 @@ def ldap_contact_point() -> LDAPFunctionalAccount:
     return LDAPFunctionalAccount(
         sAMAccountName="ContactC",
         objectGUID=UUID(int=4, version=4),
-        mail=["email@email.de", "contactc@rki.de"],
+        mail=["fictitiousf@rki.de", "contactc@rki.de"],
         ou="Funktion",
     )
 

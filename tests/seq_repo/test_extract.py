@@ -51,10 +51,11 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
         list(extract_sources())
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mock_email_domain")
+@pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
     ldap_frieda_fictitious: LDAPPerson,
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
     project_coordinators = extract_source_project_coordinator(seq_repo_sources_dict)
@@ -62,6 +63,10 @@ def test_extract_source_project_coordinator(
     assert project_coordinators == [
         LDAPPersonWithQuery(
             person=ldap_frieda_fictitious,
-            query="test_person",
+            query="FictitiousF",
+        ),
+        LDAPPersonWithQuery(
+            person=ldap_roland_resolved,
+            query="ResolvedR",
         ),
     ]

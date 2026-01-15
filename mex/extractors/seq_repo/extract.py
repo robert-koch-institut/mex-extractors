@@ -5,8 +5,6 @@ from mex.extractors.drop import DropApiConnector
 from mex.extractors.logging import watch_progress
 from mex.extractors.seq_repo.model import SeqRepoSource
 
-SEQ_REPO_EMAIL_DOMAIN = "rki.de"
-
 
 def extract_sources() -> list[SeqRepoSource]:
     """Extract Seq Repo sources by loading data from source json file.
@@ -45,7 +43,7 @@ def extract_source_project_coordinator(
             if name in seen:
                 continue
             seen.add(name)
-            persons = ldap.get_persons(mail=f"{name}@{SEQ_REPO_EMAIL_DOMAIN}", limit=2)
+            persons = ldap.get_persons(mail=f"{name}@rki.de", limit=2)
             if len(persons) == 1 and persons[0].objectGUID:
                 persons_with_query.append(
                     LDAPPersonWithQuery(person=persons[0], query=name)

@@ -11,7 +11,7 @@ accrualPeriodicity:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - fictitiousf@rki.de
         rule:
 contributingUnit:
   - mappingRules:

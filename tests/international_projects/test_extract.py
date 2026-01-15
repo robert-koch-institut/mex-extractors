@@ -1,5 +1,6 @@
 import pytest
 
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.types import TemporalEntity
 from mex.extractors.international_projects.extract import (
     extract_international_projects_project_leaders,
@@ -69,16 +70,16 @@ def test_extract_international_projects_sources() -> None:
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_international_projects_project_leaders() -> None:
-    expected = {
-        "person": {
-            "todo": "USE FIXTURE HERE",
-        },
-        "query": "Roland Resolved",
-    }
+def test_extract_international_projects_project_leaders(
+    ldap_roland_resolved: LDAPPerson,
+) -> None:
+    expected = LDAPPersonWithQuery(
+        person=ldap_roland_resolved,
+        query="Roland Resolved",
+    )
     international_projects_sources = extract_international_projects_sources()
-    leaders = list(
-        extract_international_projects_project_leaders(international_projects_sources)
+    leaders = extract_international_projects_project_leaders(
+        international_projects_sources
     )
 
-    assert leaders[0].model_dump() == expected
+    assert leaders[0] == expected

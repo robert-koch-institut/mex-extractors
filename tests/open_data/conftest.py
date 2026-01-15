@@ -63,7 +63,7 @@ def mocked_open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
     """Mock the opendata contact point."""
     return [
         ExtractedContactPoint(
-            email="email@email.de",
+            email="fictitiousf@rki.de",
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="contact point",
         )

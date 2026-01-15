@@ -48,7 +48,7 @@ def test_extract_ldap_actors_for_functional_accounts(
     expected = LDAPFunctionalAccount(
         sAMAccountName="ContactC",
         objectGUID=UUID(int=4, version=4),
-        mail=["email@email.de", "contactc@rki.de"],
+        mail=["fictitiousf@rki.de", "contactc@rki.de"],
         ou=["Funktion"],
     )
 

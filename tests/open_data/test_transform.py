@@ -64,18 +64,24 @@ def test_transform_open_data_person_affiliations_to_organizations(
 def test_transform_open_data_persons_not_in_ldap_and_process_affiliation(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
     extracted_organization_rki: ExtractedOrganization,
-    roland_resolved: ExtractedPerson,
 ) -> None:
     open_data_organization_ids_by_str = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
     }
 
-    results = transform_open_data_persons_not_in_ldap(
+    person = transform_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_processed_affiliation,
         extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
-    assert results == roland_resolved
+    assert person.model_dump(exclude_defaults=True) == {
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
+        "identifierInPrimarySource": "Resolved, Roland",
+        "affiliation": ["bFQoRhcVH5DHZ8"],
+        "fullName": ["Resolved, Roland"],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
 
 
 def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
@@ -92,7 +98,7 @@ def test_transform_open_data_persons_not_in_ldap_and_ignore_affiliation(
         open_data_organization_ids_by_str,
     )
     assert person.model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": get_extracted_primary_source_id_by_name("ldap"),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Felicitás, Juturna",
         "fullName": ["Felicitás, Juturna"],
         "identifier": Joker(),
@@ -147,8 +153,11 @@ def test_transform_open_data_persons(
         extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
-
-    assert persons == [juturna_felicitas]
+    assert len(persons) == 1
+    assert persons[0].model_dump() == {
+        **juturna_felicitas.model_dump(),
+        "orcidId": ["https://orcid.org/0000-0002-1234-5678"],
+    }
 
 
 @pytest.mark.usefixtures("mocked_open_data")
@@ -209,7 +218,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": [
-            "6rqNvZSApUHlz8GkkVP48"
+            "cjna2jitPngp6yIV63cdi9"
         ],  # only child unit of Juturna Felicitás = C1
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
