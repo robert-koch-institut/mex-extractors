@@ -16,7 +16,7 @@ from mex.common.models import (
     ExtractedResource,
     ResourceMapping,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -88,9 +88,6 @@ def seq_repo_merged_person_ids_by_query_string(
 def seq_repo_extracted_activities_by_id_str(
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
@@ -103,7 +100,6 @@ def seq_repo_extracted_activities_by_id_str(
         seq_repo_latest_source,
         activity,
         seq_repo_ldap_persons_with_query,
-        unit_stable_target_ids_by_synonym,
         seq_repo_merged_person_ids_by_query_string,
     )
     load(mex_activities)
@@ -111,11 +107,7 @@ def seq_repo_extracted_activities_by_id_str(
 
 
 @asset(group_name="seq_repo")
-def seq_repo_extracted_access_platform(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
-) -> ExtractedAccessPlatform:
+def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Extract access platform from seq-repo."""
     settings = Settings.get()
     access_platform = AccessPlatformMapping.model_validate(
@@ -124,7 +116,6 @@ def seq_repo_extracted_access_platform(
     mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
             access_platform,
-            unit_stable_target_ids_by_synonym,
         )
     )
     load([mex_access_platform])
@@ -137,9 +128,6 @@ def seq_repo_resources(  # noqa: PLR0913
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -155,7 +143,6 @@ def seq_repo_resources(  # noqa: PLR0913
         seq_repo_extracted_access_platform,
         resource,
         seq_repo_ldap_persons_with_query,
-        unit_stable_target_ids_by_synonym,
         seq_repo_merged_person_ids_by_query_string,
         extracted_organization_rki,
     )

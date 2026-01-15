@@ -32,7 +32,7 @@ def blueant_source_without_leader() -> BlueAntSource:
         number="00255",
         start=TemporalEntity(2018, 8, 9),
         client_names="Robert Koch-Institut",
-        department="C1 Child Department",
+        department="C1 Sub-Unit",
         status="Projektumsetzung",
         type_="Sonderforschungsprojekt",
     )

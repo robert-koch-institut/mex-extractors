@@ -8,7 +8,9 @@ from mex.common.types import (
 )
 from mex.extractors.organigram import helpers
 from mex.extractors.organigram.helpers import (
+    (
     get_unit_merged_id_by_synonym,
+),
     match_extracted_unit_with_organigram_units,
 )
 from mex.extractors.wikidata import helpers

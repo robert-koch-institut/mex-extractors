@@ -8,7 +8,6 @@ from mex.common.models import (
     ExtractedOrganization,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -16,6 +15,7 @@ from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import (
     get_ldap_units_for_employee_ids,
+    get_unit_merged_id_by_synonym,
     match_extracted_unit_with_organigram_units,
 )
 from mex.extractors.primary_source.helpers import (
@@ -30,9 +30,6 @@ if TYPE_CHECKING:
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     activity: ActivityMapping,
     blueant_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -44,8 +41,6 @@ def transform_blueant_sources_to_extracted_activities(
         blueant_sources: Blue Ant sources
         person_stable_target_ids_by_employee_id: Mapping from LDAP employeeIDs
                                                  to person stable target IDs
-        unit_stable_target_ids_by_synonym: Map from unit acronyms and labels
-                                           to unit stable target IDs
         activity: activity mapping model with default values
         blueant_merged_organization_ids_by_query_string: extracted blueant organizations
                                                          dict
@@ -95,7 +90,7 @@ def transform_blueant_sources_to_extracted_activities(
         # else:
         #     continue
 
-        department_ids = unit_stable_target_ids_by_synonym.get(department)
+        # department_ids = unit_stable_target_ids_by_synonym.get(department)
 
         # Fallback only if department not in organigram
         if (
@@ -106,6 +101,7 @@ def transform_blueant_sources_to_extracted_activities(
             if ldap_unit:
                 department_ids = unit_stable_target_ids_by_synonym.get(ldap_unit)
 
+        department_ids = get_unit_merged_id_by_synonym(department)
         if not department_ids:
             continue
 

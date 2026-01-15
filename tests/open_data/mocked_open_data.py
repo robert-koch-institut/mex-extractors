@@ -122,9 +122,9 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
         {
             "fields": [
                 {
-                    "name": "Foo1",
+                    "name": "Lorem1",
                     "type": "string",
-                    "description": "amaze",
+                    "description": "lorem 1",
                     "constraints": {"enum": ["a", "b"]},
                     "categories": [
                         {"value": "a", "label": "the letter 'a'"},
@@ -132,9 +132,9 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
                     ],
                 },
                 {
-                    "name": "Foo2",
+                    "name": "Lorem2",
                     "type": "string",
-                    "description": "wow",
+                    "description": "lorem 2",
                     "constraints": {"enum": ["c", "d", "e", "f", "g"]},
                 },
             ],
@@ -142,7 +142,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
         {
             "fields": [
                 {
-                    "name": "Bar",
+                    "name": "Ipsum",
                     "type": "integer",
                     "description": "no constraints and no categories",
                     "something_irrelevant": True,
@@ -150,7 +150,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
             ]
         },
     ]
-    tableschema_names = ["tableschema_foo.json", "tableschema_bar.json"]
+    tableschema_names = ["tableschema_lorem.json", "tableschema_ipsum.json"]
 
     buffer = BytesIO()
     with ZipFile(buffer, mode="w", compression=ZIP_DEFLATED) as zf:

@@ -11,6 +11,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedVariable,
+    ExtractedVariableGroup,
     ResourceMapping,
 )
 from mex.common.types import (
@@ -18,6 +20,8 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
     MIMEType,
 )
 from mex.extractors.open_data.extract import (
@@ -27,7 +31,9 @@ from mex.extractors.open_data.extract import (
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
+    OpenDataTableSchema,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -263,9 +269,6 @@ def transform_open_data_distributions(
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
@@ -277,7 +280,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     Args:
         open_data_parent_resource: open data parent resources
         open_data_persons: list of ExtractedPerson
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
         extracted_organizational_units: list of Extracted Organizational Units
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
@@ -287,6 +289,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     Returns:
         list of ExtractedResource instances
     """
+    if not (fallback_unit_id := get_unit_merged_id_by_synonym(FALLBACK_UNIT)):
+        msg = f"No ID found for {FALLBACK_UNIT}"
+        raise MExError(msg)
+
     extracted_resource = []
 
     person_stable_target_id_by_name = {
@@ -332,11 +338,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                     )
                 )
                 for unit_id in unit_list
-                if unit_id not in unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
+                if unit_id not in fallback_unit_id
             }
         )
         if not unit_in_charge:
-            unit_in_charge = unit_stable_target_ids_by_synonym[FALLBACK_UNIT]
+            unit_in_charge = fallback_unit_id
         contributor = [
             c
             for person in resource.metadata.contributors
@@ -377,8 +383,8 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             else None
         )
         contributing_unit = (
-            unit_stable_target_ids_by_synonym.get(
-                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0], []
+            get_unit_merged_id_by_synonym(
+                resource_mapping.contributingUnit[0].mappingRules[0].forValues[0]
             )
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
             else []
@@ -414,3 +420,71 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             )
         )
     return extracted_resource
+
+
+def transform_open_data_variable_groups(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+) -> list[ExtractedVariableGroup]:
+    """Transform zip table schema names to variable groups.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+
+    Returns:
+        extracted variable groups
+    """
+    return [
+        ExtractedVariableGroup(
+            hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
+            identifierInPrimarySource=filename,
+            containedBy=resource_id,
+            label=filename.removesuffix(".json"),
+        )
+        for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items()
+        for filename in schema_dict
+    ]
+
+
+def transform_open_data_variables(
+    open_data_tableschemas_by_resource_id: dict[
+        MergedResourceIdentifier, dict[str, list[OpenDataTableSchema]]
+    ],
+    merged_variable_group_id_by_filename: dict[str, MergedVariableGroupIdentifier],
+) -> list[ExtractedVariable]:
+    """Transform table schema content to variables.
+
+    Args:
+        open_data_tableschemas_by_resource_id: list of table schemas by name by resource
+        merged_variable_group_id_by_filename: variable group stableTargetId by filename
+
+    Returns:
+        extracted variables
+    """
+    extracted_variables: list[ExtractedVariable] = []
+    for resource_id, schema_dict in open_data_tableschemas_by_resource_id.items():
+        for filename in schema_dict:
+            for schema in schema_dict[filename]:
+                value_set = (
+                    [f"{item.value}, {item.label}" for item in schema.categories]
+                    if schema.categories
+                    else [str(item) for item in schema.constraints.enum]
+                    if schema.constraints and schema.constraints.enum
+                    else None
+                )
+                extracted_variables.append(
+                    ExtractedVariable(
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "open-data"
+                        ),
+                        identifierInPrimarySource=f"{schema.name}_{filename}",
+                        dataType=schema.type,
+                        label=[schema.name],
+                        usedIn=[resource_id],
+                        belongsTo=[merged_variable_group_id_by_filename[filename]],
+                        description=[schema.description],
+                        valueSet=value_set,
+                    )
+                )
+    return extracted_variables
