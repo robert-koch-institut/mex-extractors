@@ -39,7 +39,7 @@ def mocked_blueant(monkeypatch: MonkeyPatch) -> None:
     )
     monkeypatch.setattr(
         BlueAntConnector,
-        "get_persons",
+        "get_person",
         lambda *_, **__: [
             BlueAntPerson(
                 id=MOCKED_API_SOURCE["projectLeaderId"],

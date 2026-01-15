@@ -58,20 +58,24 @@ def transform_blueant_sources_to_extracted_activities(
         activity_type = activity_type_values_by_type_id.get(source.type_, [])
         funder_or_commissioner: list[MergedOrganizationIdentifier] = []
         for name in source.client_names:
-            if name in blueant_merged_organization_ids_by_query_string:
-                funder_or_commissioner.append(
-                    blueant_merged_organization_ids_by_query_string[name]
-                )
-            elif name not in ["Robert Koch-Institut", "RKI"]:
-                extracted_organization = ExtractedOrganization(
-                    officialName=name,
-                    identifierInPrimarySource=name,
-                    hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
-                )
-                load([extracted_organization])
-                funder_or_commissioner.append(
-                    MergedOrganizationIdentifier(extracted_organization.stableTargetId)
-                )
+            if name:
+                if name in blueant_merged_organization_ids_by_query_string:
+                    funder_or_commissioner.append(
+                        blueant_merged_organization_ids_by_query_string[name]
+                    )
+                elif name not in ["Robert Koch-Institut", "RKI"]:
+                    extracted_organization = ExtractedOrganization(
+                        officialName=name,
+                        identifierInPrimarySource=name,
+                        hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
+                    )
+                    load([extracted_organization])
+                    funder_or_commissioner.append(
+                        MergedOrganizationIdentifier(extracted_organization.stableTargetId)
+                    )
+                    blueant_merged_organization_ids_by_query_string[name] = (
+                        extracted_organization.stableTargetId
+                    )
 
         # find responsible unit
         department = source.department.replace("(h)", "").strip()

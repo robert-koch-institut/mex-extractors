@@ -53,24 +53,24 @@ class BlueAntConnector(HTTPConnector):
         dct = self._get_json_from_api("projects?includeArchived=true")
         return BlueAntProjectResponse.model_validate(dct).projects
 
-    def get_client_name(self, client_id: int) -> str:
+    def get_client_name(self, client_id: int) -> str | None:
         """Get client name for client id.
 
-        Sometimes the client IDs contains department IDs. Then we have to look up the
-        department-clients with the get_department_name request.
+        Sometimes the client ID contains a department ID. In this case the API
+        request returns an error, since the ID can't be found under "customers". If
+        that happens, the extractor should return nothing
 
         Args:
             client_id: int: id of the client
 
         Returns:
-            str: name of the client
+            str name of the client or None if no client was found
         """
         try:
             dct = self._get_json_from_api(f"masterdata/customers/{client_id}")
-            name = str(dct["customer"]["text"])
+            return str(dct["customer"]["text"])
         except MExError:
-            name = self.get_department_name(client_id)
-        return name
+            return None
 
     def get_type_description(self, type_id: int) -> str:
         """Get description for type id.
