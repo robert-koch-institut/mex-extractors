@@ -56,14 +56,21 @@ class BlueAntConnector(HTTPConnector):
     def get_client_name(self, client_id: int) -> str:
         """Get client name for client id.
 
+        Sometimes the client IDs contains department IDs. Then we have to look up the
+        department-clients with the get_department_name request.
+
         Args:
             client_id: int: id of the client
 
         Returns:
             str: name of the client
         """
-        dct = self._get_json_from_api(f"masterdata/customers/{client_id}")
-        return str(dct["customer"]["text"])
+        try:
+            dct = self._get_json_from_api(f"masterdata/customers/{client_id}")
+            name = str(dct["customer"]["text"])
+        except MExError:
+            name = self.get_department_name(client_id)
+        return name
 
     def get_type_description(self, type_id: int) -> str:
         """Get description for type id.
@@ -101,7 +108,7 @@ class BlueAntConnector(HTTPConnector):
         dct = self._get_json_from_api(f"masterdata/departments/{department_id}")
         return str(dct["department"]["text"])
 
-    def get_persons(self) -> list[BlueAntPerson]:
+    def get_person(self, person_id: int) -> BlueAntPerson:
         """Get map of Blue Ant person IDs to employee IDs."""
-        dct = self._get_json_from_api("human/persons")
-        return BlueAntPersonResponse.model_validate(dct).persons
+        dct = self._get_json_from_api(f"human/persons/{person_id}")
+        return BlueAntPersonResponse.model_validate(dct).person

@@ -21,17 +21,14 @@ def extract_blueant_sources() -> list[BlueAntSource]:
     """
     connector = BlueAntConnector.get()
 
-    persons = connector.get_persons()
-    blueant_id_to_employee_id_map = {p.id: p.personnelNumber for p in persons}
-
     sources = []
     for source in watch_progress(connector.get_projects(), "extract_blueant_sources"):
         department = connector.get_department_name(source.departmentId)
         type_ = connector.get_type_description(source.typeId)
         status = connector.get_status_name(source.statusId)
-        project_leader_employee_id = blueant_id_to_employee_id_map.get(
+        project_leader_employee_id = connector.get_person(
             source.projectLeaderId
-        )
+        ).personnelNumber
         client_names = [
             connector.get_client_name(client.clientId) for client in source.clients
         ]
