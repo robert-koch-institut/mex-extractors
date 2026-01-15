@@ -10,7 +10,6 @@ from mex.common.models import (
     ExtractedResource,
     ResourceMapping,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_organizations,
@@ -57,9 +56,6 @@ def biospecimen_extracted_persons(
 def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_persons: list[ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:
@@ -72,7 +68,6 @@ def biospecimen_extracted_resources(
 
     mex_sources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        unit_stable_target_ids_by_synonym,
         biospecimen_extracted_persons,
         extracted_organization_rki,
         synopse_extracted_activities,

@@ -9,14 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ff-projects extractor creates organizations if no wikidata org is found
-- opendata: transform frictionless files to variables / variable groups
+- primary source helper function: add caching
 - implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
-- Pin Mailpit Docker image version to v1.28
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
+- update mex-common dependency to 1.11
+- lock file maintenance (2026-01-06)
+- use convenience function to obtain organizational unit merged ids
+- lock file maintenance (2026-01-12)
 
 - asset checks created during definition time in base.py
 
@@ -28,6 +31,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.7.0] - 2025-12-11
+
+### Added
+
+- ff-projects extractor creates organizations if no wikidata org is found
+- opendata: transform frictionless files to variables / variable groups
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
+- Pin Mailpit Docker image version to v1.28
+
+### Fixed
+- synopse: fix extraction of involved units
 
 ## [1.6.0] - 2025-11-28
 
@@ -74,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - streamline dagster asset names
 - publish all consenting persons in publisher
-- bump mex-common dependency to 1.16.0
+- bump mex-common dependency to 1.6.0
 - use primary source id convenience function
 - update open data resource according to mapping changes
 
