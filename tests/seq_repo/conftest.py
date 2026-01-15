@@ -25,7 +25,7 @@ from mex.extractors.utils import load_yaml
 def seq_repo_sources() -> list[SeqRepoSource]:
     return [
         SeqRepoSource(
-            project_coordinators=["test_person", "test_person"],
+            project_coordinators=["FictitiousF", "ResolvedR"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",
@@ -36,7 +36,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_id="TEST-ID",
         ),
         SeqRepoSource(
-            project_coordinators=["juturna", "felicitas"],
+            project_coordinators=["FelicitasJ", "NonExistent"],
             customer_org_unit_id="FG99",
             sequencing_date="2023-08-07",
             lims_sample_id="test-sample-id",

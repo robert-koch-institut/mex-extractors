@@ -5,6 +5,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
+    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -283,10 +284,11 @@ def test_transform_synopse_projects_to_mex_activities(
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
+    roland_resolved: ExtractedPerson,
 ) -> None:
     synopse_project = synopse_projects[0]
     contributor_merged_ids_by_name = {
-        "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
+        "Roland Resolved": [roland_resolved.stableTargetId]
     }
 
     assert synopse_project.projektende

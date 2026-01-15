@@ -3,6 +3,7 @@ from uuid import UUID
 
 import pytest
 
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
@@ -118,23 +119,9 @@ def test_extract_ldap_contact_points_by_emails(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_contact_points_by_name(
     sumo_access_platform: AccessPlatformMapping,
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    expected = {
-        "person": {
-            "sAMAccountName": "test_person",
-            "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
-            "mail": ["test_person@email.de"],
-            "company": None,
-            "department": "PARENT-UNIT",
-            "departmentNumber": "FG99",
-            "displayName": "Resolved, Roland",
-            "employeeID": "42",
-            "givenName": ["Roland"],
-            "ou": [],
-            "sn": "Resolved",
-        },
-        "query": "Roland Resolved",
-    }
-
-    extracted = list(extract_ldap_contact_points_by_name(sumo_access_platform))
-    assert extracted[0].model_dump() == expected
+    sumo_contacts = extract_ldap_contact_points_by_name(sumo_access_platform)
+    assert sumo_contacts == [
+        LDAPPersonWithQuery(person=ldap_roland_resolved, query="Roland Resolved")
+    ]

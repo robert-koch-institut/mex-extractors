@@ -54,27 +54,14 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 @pytest.mark.usefixtures("mocked_ldap", "mock_email_domain")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
-    request: pytest.FixtureRequest,
-    ldap_roland_resolved: LDAPPerson,
+    ldap_frieda_fictitious: LDAPPerson,
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
-    project_coordinators = list(
-        extract_source_project_coordinator(seq_repo_sources_dict)
-    )
+    project_coordinators = extract_source_project_coordinator(seq_repo_sources_dict)
 
-    # ldap_patched_connector returns mocked data with departmentNumber
-    if request.node.callspec.params.get("mocked_ldap") == "ldap_patched_connector":
-        assert project_coordinators == [
-            LDAPPersonWithQuery(
-                person=ldap_roland_resolved,
-                query="test_person",
-            ),
-        ]
-    else:
-        # ldap_mock_server returns data from LDIF without departmentNumber
-        assert project_coordinators == [
-            LDAPPersonWithQuery(
-                person=ldap_roland_resolved,
-                query="test_person",
-            ),
-        ]
+    assert project_coordinators == [
+        LDAPPersonWithQuery(
+            person=ldap_frieda_fictitious,
+            query="test_person",
+        ),
+    ]

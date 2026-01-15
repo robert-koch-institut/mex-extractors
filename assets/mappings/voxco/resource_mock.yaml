@@ -17,7 +17,7 @@ contact:
   - mappingRules:
       - forValues:
           - Person Test
-          - test_person@email.de
+          - resolvedr@rki.de
         rule:
 contributingUnit:
   - mappingRules:
