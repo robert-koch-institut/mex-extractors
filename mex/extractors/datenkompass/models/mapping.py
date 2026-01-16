@@ -43,7 +43,7 @@ class DatenkompassMapping(BaseModel, extra="forbid"):
     fields: list[DatenkompassMappingField]
 
 
-class DatenkompassFilter(BaseModel, extra="forbid"):
+class DatenkompassFilterMapping(BaseModel, extra="forbid"):
     """A mapping for the Datenkompass mapping and filter yamls."""
 
     fields: list[DatenkompassFilterField]
