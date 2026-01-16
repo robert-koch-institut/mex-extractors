@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Mocked-LDAP with image [slapd](https://github.com/docker-ThoTeam/slapd-server-mock)
 - primary source helper function: add caching
 
 ### Changes

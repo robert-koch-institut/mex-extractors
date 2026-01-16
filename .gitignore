@@ -129,6 +129,7 @@ dmypy.json
 .invenio.private
 .states
 .tmp_dagster_home_*
+.nux/
 .web
 *.ndjson
 assets/external/

@@ -10,7 +10,7 @@ identifierInPrimarySource:
 contact:
   - mappingRules:
       - forValues:
-          - "test_person@email.de"
+          - "resolvedr@rki.de"
         rule:
 technicalAccessibility:
   - mappingRules:

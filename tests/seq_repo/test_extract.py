@@ -1,6 +1,5 @@
 from collections.abc import Iterable
 from unittest.mock import MagicMock
-from uuid import UUID
 
 import pytest
 import requests
@@ -19,9 +18,9 @@ from mex.extractors.seq_repo.model import SeqRepoSource
 
 @pytest.mark.usefixtures("mocked_drop")
 def test_extract_sources() -> None:
-    sources = list(extract_sources())
+    sources = extract_sources()
     expected = {
-        "project_coordinators": ["max", "mustermann", "yee-haw"],
+        "project_coordinators": ["test_person", "test_person"],
         "customer_org_unit_id": "FG99",
         "sequencing_date": "2023-08-07",
         "lims_sample_id": "test-sample-id",
@@ -49,48 +48,25 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
     )
 
     with pytest.raises(MExError, match=r"Expected exactly one seq-repo file"):
-        list(extract_sources())
+        extract_sources()
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
+    ldap_frieda_fictitious: LDAPPerson,
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
-    project_coordinators = list(
-        extract_source_project_coordinator(seq_repo_sources_dict)
-    )
+    project_coordinators = extract_source_project_coordinator(seq_repo_sources_dict)
+
     assert project_coordinators == [
         LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName=None,
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=["test_person@email.de"],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber=None,
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
-            ),
-            query="max",
+            person=ldap_frieda_fictitious,
+            query="FictitiousF",
         ),
         LDAPPersonWithQuery(
-            person=LDAPPerson(
-                sAMAccountName=None,
-                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-                mail=["test_person@email.de"],
-                company=None,
-                department="PARENT-UNIT",
-                departmentNumber=None,
-                displayName="Resolved, Roland",
-                employeeID="42",
-                givenName=["Roland"],
-                ou=[],
-                sn="Resolved",
-            ),
-            query="mustermann",
+            person=ldap_roland_resolved,
+            query="ResolvedR",
         ),
     ]

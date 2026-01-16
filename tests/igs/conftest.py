@@ -50,8 +50,8 @@ def igs_variable_pathogen_mapping() -> VariableMapping:
 def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoint]:
     """Mock IGS actor."""
     return {
-        "email@email.de": ExtractedContactPoint(
-            email="email@email.de",
+        "fictitiousf@rki.de": ExtractedContactPoint(
+            email="fictitiousf@rki.de",
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
             identifierInPrimarySource="actor 1",
         ),
@@ -64,7 +64,9 @@ def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoin
 
 
 @pytest.fixture
-def igs_schemas() -> dict[str, IGSSchema]:
+def igs_schemas(
+    mocked_igs: None,  # noqa: ARG001
+) -> dict[str, IGSSchema]:
     return extract_igs_schemas()
 
 

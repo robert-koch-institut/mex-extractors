@@ -1,5 +1,4 @@
 from collections.abc import Iterable
-from uuid import UUID
 
 import pandas as pd
 import pytest
@@ -20,32 +19,18 @@ from mex.extractors.settings import Settings
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_biospecimen_contacts_by_email(
     biospecimen_resources: Iterable[BiospecimenResource],
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    ldap_persons = list(extract_biospecimen_contacts_by_email(biospecimen_resources))
-    expected = [
-        LDAPPerson(
-            sAMAccountName=None,
-            objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
-            mail=["test_person@email.de"],
-            company=None,
-            department="PARENT-UNIT",
-            displayName="Resolved, Roland",
-            employeeID="42",
-            givenName=["Roland"],
-            ou=[],
-            sn="Resolved",
-        )
-    ]
-    assert len(ldap_persons) == 1
-    assert ldap_persons == expected
+    ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
+
+    assert ldap_persons == [ldap_roland_resolved]
 
 
 def test_extract_biospecimen_resources() -> None:
-    resources = list(extract_biospecimen_resources())
+    resources = extract_biospecimen_resources()
     assert len(resources) == 2
 
-    source_dicts = [r.model_dump(exclude_none=True) for r in resources]
-    assert source_dicts[0] == {
+    assert resources[0].model_dump(exclude_none=True) == {
         "file_name": "test_bioproben.xlsx",
         "offizieller_titel_der_probensammlung": ["test_titel"],
         "beschreibung": ["Testbeschreibung"],
@@ -59,7 +44,7 @@ def test_extract_biospecimen_resources() -> None:
         "externe_partner": "esterner Testpartner",
         "id_loinc": ["12345-6"],
         "id_mesh_begriff": ["D123"],
-        "kontakt": ["test_person@email.de"],
+        "kontakt": ["resolvedr@rki.de"],
         "methodenbeschreibung": ["Testmethodenbeschreibung"],
         "mitwirkende_fachabteilung": "mitwirkende Testabteilung",
         "mitwirkende_personen": "mitwirkende Testperson",

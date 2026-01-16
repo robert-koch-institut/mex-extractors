@@ -12,7 +12,7 @@ activityType:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - contactc@rki.de
 documentation:
   - mappingRules:
       - setValues:

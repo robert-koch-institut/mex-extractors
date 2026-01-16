@@ -1,7 +1,6 @@
-from uuid import UUID
-
 import pytest
 
+from mex.common.ldap.models import LDAPPerson
 from mex.common.models import ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.voxco.extract import (
@@ -41,15 +40,8 @@ def test_extract_voxco_organizations(
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    organizations = extract_ldap_persons_voxco(voxco_resource_mappings)
+    persons = extract_ldap_persons_voxco(voxco_resource_mappings)
 
-    assert organizations[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
-        "mail": ["test_person@email.de"],
-        "department": "PARENT-UNIT",
-        "displayName": "Resolved, Roland",
-        "employeeID": "42",
-        "givenName": ["Roland"],
-        "sn": "Resolved",
-    }
+    assert persons == [ldap_roland_resolved]

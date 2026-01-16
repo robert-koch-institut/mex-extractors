@@ -20,7 +20,7 @@ from tests.confluence_vvt.conftest import TEST_DATA_DIR
 @pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
 def test_fetch_all_vvt_pages_ids() -> None:
-    page_ids = list(fetch_all_vvt_pages_ids())
+    page_ids = fetch_all_vvt_pages_ids()
     assert all(re.match(r"\d+", id_) for id_ in page_ids)
 
 
@@ -55,7 +55,7 @@ def test_fetch_all_data_page_ids_mocked(
         lambda self: setattr(self, "session", session),
     )
 
-    page_ids = list(fetch_all_vvt_pages_ids())
+    page_ids = fetch_all_vvt_pages_ids()
 
     expected = ["0101010101", "0202020202", "0303030303", "0404040404"]
 
@@ -80,7 +80,7 @@ def test_fetch_all_pages_data_mocked(
         lambda self: setattr(self, "session", session),
     )
 
-    all_pages_data = list(get_page_data_by_id(["123457"]))
+    all_pages_data = get_page_data_by_id(["123457"])
 
     assert len(all_pages_data) == 1
     all_pages_data_dict = all_pages_data[0].model_dump(exclude_none=True)

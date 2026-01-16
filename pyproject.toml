@@ -75,9 +75,6 @@ publisher = "mex.extractors.publisher.main:run"
 template = "https://github.com/robert-koch-institut/mex-template"
 skip = ["CHANGELOG.md", "mex", "tests"]
 
-[tool.dagster]
-module_name = "mex.extractors"
-
 [tool.ipdb]
 context = 5
 

@@ -2,22 +2,16 @@ import pytest
 
 from mex.common.models import (
     DistributionMapping,
-    ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
-    ExtractedPerson,
     ResourceMapping,
 )
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-    MergedPrimarySourceIdentifier,
-    MergedResourceIdentifier,
-)
+from mex.common.types import MergedPrimarySourceIdentifier, MergedResourceIdentifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -42,25 +36,6 @@ def mocked_open_data_parent_resource() -> list[OpenDataParentResource]:
 
 
 @pytest.fixture
-def mocked_open_data_persons() -> list[ExtractedPerson]:
-    """Mock an extracted person."""
-    return [
-        ExtractedPerson(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="test_id",
-            email=["test_person@email.de"],
-            familyName=["Muster"],
-            fullName=["Muster, Maxi"],
-            givenName=["Maxi"],
-            memberOf=[
-                MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"),  # PRNT
-                MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
-            ],
-        )
-    ]
-
-
-@pytest.fixture
 def mocked_open_data_creator_with_affiliation_to_ignore() -> (
     OpenDataCreatorsOrContributors
 ):
@@ -80,18 +55,6 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
     return OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
     )
-
-
-@pytest.fixture
-def mocked_open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
-    """Mock the opendata contact point."""
-    return [
-        ExtractedContactPoint(
-            email="email@email.de",
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="contact point",
-        )
-    ]
 
 
 @pytest.fixture

@@ -12,7 +12,7 @@ from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 @pytest.mark.usefixtures("mocked_datscha_web")
 def test_extract_datscha_web_items_mocked() -> None:
-    datscha_web_sources = list(extract_datscha_web_items())
+    datscha_web_sources = extract_datscha_web_items()
 
     assert len(datscha_web_sources) == 2
     assert datscha_web_sources[0].item_id == 17

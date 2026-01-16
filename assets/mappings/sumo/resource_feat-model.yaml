@@ -9,7 +9,7 @@ accrualPeriodicity:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - contactc@rki.de
 contributingUnit:
   - mappingRules:
       - forValues:

@@ -30,9 +30,9 @@ def test_transform_international_projects_source_to_mex_source(
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
 
-    international_projects_sources = list(extract_international_projects_sources())
+    international_projects_sources = extract_international_projects_sources()
 
-    extracted_activities = list(
+    extracted_activities = (
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             international_projects_mapping_activity,
@@ -51,11 +51,10 @@ def test_transform_international_projects_source_to_mex_source(
         "stableTargetId": Joker(),
         "activityType": ["https://mex.rki.de/item/activity-type-1"],
         "alternativeTitle": [{"value": "testAAbr"}],
-        "contact": ["bFQoRhcVH5DHUU", "cjna2jitPngp6yIV63cdi9"],
+        "contact": ["cjna2jitPngp6yIV63cdi9"],
         "end": [YearMonthDay(2021, 12, 31, tzinfo=timezone("UTC"))],
         "externalAssociate": [organization_id],
         "funderOrCommissioner": [organization_id],
-        "involvedPerson": [person_id],
         "involvedUnit": ["cjna2jitPngp6yIV63cdi9"],
         "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "shortName": [{"value": "testAAbr"}],

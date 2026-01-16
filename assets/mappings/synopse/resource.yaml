@@ -17,7 +17,7 @@ accessRestriction:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - contactc@rki.de
       - rule:
 contributingUnit:
   - fieldInPrimarySource:

@@ -48,12 +48,10 @@ def test_transform_datscha_web_items_to_mex_activities(
         str, MergedOrganizationIdentifier
     ],
 ) -> None:
-    mex_sources = list(
-        transform_datscha_web_items_to_mex_activities(
-            [datscha_web_item],
-            person_stable_target_ids_by_query_string,
-            organizations_stable_target_ids_by_query_string,
-        )
+    mex_sources = transform_datscha_web_items_to_mex_activities(
+        [datscha_web_item],
+        person_stable_target_ids_by_query_string,
+        organizations_stable_target_ids_by_query_string,
     )
 
     assert len(mex_sources) == 1
@@ -88,12 +86,10 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
         str, MergedOrganizationIdentifier
     ],
 ) -> None:
-    mex_sources = list(
-        transform_datscha_web_items_to_mex_activities(
-            [datscha_web_item_without_contributors],
-            person_stable_target_ids_by_query_string,
-            organizations_stable_target_ids_by_query_string,
-        )
+    mex_sources = transform_datscha_web_items_to_mex_activities(
+        [datscha_web_item_without_contributors],
+        person_stable_target_ids_by_query_string,
+        organizations_stable_target_ids_by_query_string,
     )
 
     assert len(mex_sources) == 1

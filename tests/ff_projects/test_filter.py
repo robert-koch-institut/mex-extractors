@@ -9,14 +9,10 @@ from mex.extractors.ff_projects.filter import (
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_filter_and_log_ff_projects_sources() -> None:
-    sources = list(extract_ff_projects_sources())
+    sources = extract_ff_projects_sources()
     assert len(sources) == 21
 
-    sources = list(
-        filter_and_log_ff_projects_sources(
-            sources,
-        )
-    )
+    sources = filter_and_log_ff_projects_sources(sources)
     assert len(sources) == 16
 
     project_topics = [s.thema_des_projekts for s in sources]
@@ -41,7 +37,7 @@ def test_filter_and_log_ff_projects_sources() -> None:
 
 
 def test_filter_out_duplicate_source_ids() -> None:
-    ff_proj_liste_sources = list(extract_ff_projects_sources())
+    ff_proj_liste_sources = extract_ff_projects_sources()
 
     assert len(ff_proj_liste_sources) == 21
     unfiltered_ids = [s.lfd_nr for s in ff_proj_liste_sources]

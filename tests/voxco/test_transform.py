@@ -28,14 +28,14 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_extracted_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> None:
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
         voxco_resource_mappings,
         voxco_merged_organization_ids_by_query_string,
-        voxco_extracted_persons,
+        [roland_resolved],
         extracted_organization_rki,
         international_projects_extracted_activities,
     )
@@ -46,7 +46,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
         "externalPartner": [
             str(voxco_merged_organization_ids_by_query_string["Robert Koch-Institut"])
         ],
-        "contact": [str(voxco_extracted_persons[0].stableTargetId)],
+        "contact": [str(roland_resolved.stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
         "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
