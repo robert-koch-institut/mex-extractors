@@ -60,11 +60,10 @@ def filter_activities_for_organization_and_unit(
         ]
         filtered_merged_activities_by_unit[unit_name] = filtered_items
 
-        logger.info(
-            "%s items remain after filtering for unit %s.",
-            len(filtered_items),
-            unit_name,
-        )
+    logger.info(
+        "%s items remain after filtering.",
+        sum(len(v) for v in filtered_merged_activities_by_unit.values()),
+    )
 
     return filtered_merged_activities_by_unit
 
