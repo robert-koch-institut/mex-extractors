@@ -18,6 +18,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 if TYPE_CHECKING:
     from mex.common.models.activity import AnyContactIdentifier
@@ -27,9 +30,6 @@ def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
     person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
     activity: ActivityMapping,
-    blueant_merged_organization_ids_by_query_string: dict[
-        str, MergedOrganizationIdentifier
-    ],
 ) -> list[ExtractedActivity]:
     """Transform Blue Ant sources to ExtractedActivities.
 
@@ -38,8 +38,6 @@ def transform_blueant_sources_to_extracted_activities(
         person_stable_target_ids_by_employee_id: Mapping from LDAP employeeIDs
                                                  to person stable target IDs
         activity: activity mapping model with default values
-        blueant_merged_organization_ids_by_query_string: extracted blueant organizations
-                                                         dict
 
     Returns:
         List of ExtractedActivity instances
@@ -51,6 +49,7 @@ def transform_blueant_sources_to_extracted_activities(
         for for_value in mapping_rule.forValues
     }
     activities = []
+    seen_merged_org_ids_by_query_str: dict[str, MergedOrganizationIdentifier] = {}
     for source in watch_progress(
         blueant_sources, "transform_blueant_sources_to_extracted_activities"
     ):
@@ -58,12 +57,16 @@ def transform_blueant_sources_to_extracted_activities(
         activity_type = activity_type_values_by_type_id.get(source.type_, [])
         funder_or_commissioner: list[MergedOrganizationIdentifier] = []
         for name in source.client_names:
-            if name:
-                if name in blueant_merged_organization_ids_by_query_string:
-                    funder_or_commissioner.append(
-                        blueant_merged_organization_ids_by_query_string[name]
-                    )
-                elif name not in ["Robert Koch-Institut", "RKI"]:
+            if not name or name in {"Robert Koch-Institut", "RKI"}:
+                continue
+
+            # Check if organization "name" was already used and can be reused. If not,
+            # check if that organization can be found with wikidata. If not,
+            # create and load a new ExtractedOrganization
+            if (org_id := seen_merged_org_ids_by_query_str.get(name)) is None:
+                if (
+                    org_id := get_wikidata_extracted_organization_id_by_name(name)
+                ) is None:
                     extracted_organization = ExtractedOrganization(
                         officialName=name,
                         identifierInPrimarySource=name,
@@ -72,14 +75,9 @@ def transform_blueant_sources_to_extracted_activities(
                         ),
                     )
                     load([extracted_organization])
-                    funder_or_commissioner.append(
-                        MergedOrganizationIdentifier(
-                            extracted_organization.stableTargetId
-                        )
-                    )
-                    blueant_merged_organization_ids_by_query_string[name] = (
-                        extracted_organization.stableTargetId
-                    )
+                    org_id = extracted_organization.stableTargetId
+                seen_merged_org_ids_by_query_str[name] = org_id
+            funder_or_commissioner.append(org_id)
 
         # find responsible unit
         department = source.department.replace("(h)", "").strip()

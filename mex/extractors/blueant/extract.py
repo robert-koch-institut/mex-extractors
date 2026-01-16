@@ -3,14 +3,10 @@ from collections.abc import Iterable
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
-from mex.extractors.wikidata.helpers import (
-    get_wikidata_extracted_organization_id_by_name,
-)
 
 
 def extract_blueant_sources() -> list[BlueAntSource]:
@@ -95,32 +91,3 @@ def remove_prefixes_from_name(name: str) -> str:
         name = name.removeprefix(prefix)
 
     return name
-
-
-def extract_blueant_organizations(
-    blueant_sources: Iterable[BlueAntSource],
-) -> dict[str, MergedOrganizationIdentifier]:
-    """Search and extract organization from wikidata.
-
-    Args:
-        blueant_sources: Iterable of blueant sources
-
-    Returns:
-        Dict with organization label and WikidataOrganization ID
-    """
-    merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier] = {}
-    for source in blueant_sources:
-        for name in source.client_names:
-            if (
-                not name
-                or name in ["Robert Koch-Institut", "RKI"]
-                or name in merged_organization_ids_by_query_str
-            ):
-                continue
-
-            org_id = get_wikidata_extracted_organization_id_by_name(name)
-            if not org_id:
-                continue
-            merged_organization_ids_by_query_str[name] = org_id
-
-    return merged_organization_ids_by_query_str
