@@ -36,7 +36,7 @@ def _req_verify() -> bool | str:
 def _delete_messages() -> None:
     settings = Settings.get()
     response = requests.delete(
-        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
+        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
@@ -49,7 +49,7 @@ def _get_messages() -> Any:  # noqa: ANN401
     settings = Settings.get()
 
     response = requests.get(
-        f"{settings.consent_mailer.mailpit_api_url}/mailpit/api/v1/messages",
+        f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
         verify=_req_verify(),
         auth=_req_auth(),
