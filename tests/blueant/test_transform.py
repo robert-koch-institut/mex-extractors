@@ -28,13 +28,11 @@ def test_transform_blueant_sources_to_extracted_activities(
             MergedPersonIdentifier.generate(seed=99),
         ],
     }
-    mex_sources = list(
-        transform_blueant_sources_to_extracted_activities(
-            [blueant_source, blueant_source_without_leader],
-            stable_target_ids_by_employee_id,
-            blueant_activity,
-            {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
-        )
+    mex_sources = transform_blueant_sources_to_extracted_activities(
+        [blueant_source, blueant_source_without_leader],
+        stable_target_ids_by_employee_id,
+        blueant_activity,
+        {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
     )
     assert len(mex_sources) == 2
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {

@@ -37,8 +37,8 @@ services:
     environment:
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
       - MP_SMTP_AUTH_ACCEPT_ANY=1
-      - MP_UI_AUTH="user:password"
-      - MP_MAX_AGE="180d"
-      - MP_ENABLE_PROMETHEUS="true"
+      - MP_UI_AUTH=user:password
+      - MP_MAX_AGE=180d
+      - MP_ENABLE_PROMETHEUS=true
 volumes:
   work:

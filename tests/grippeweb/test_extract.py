@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import LDAPFunctionalAccount
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (
@@ -59,25 +59,14 @@ def test_extract_ldap_actors_for_functional_accounts(
 def test_extract_ldap_persons(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_access_platform: AccessPlatformMapping,
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     ldap_persons = extract_ldap_persons(
         grippeweb_resource_mappings, grippeweb_access_platform
     )
 
     assert len(ldap_persons) == 3
-    assert ldap_persons[0].model_dump() == {
-        "objectGUID": UUID(int=1, version=4),
-        "mail": ["test_person@email.de"],
-        "department": "PARENT-UNIT",
-        "displayName": "Resolved, Roland",
-        "employeeID": "42",
-        "givenName": ["Roland"],
-        "sAMAccountName": "test_person",
-        "sn": "Resolved",
-        "ou": [],
-        "departmentNumber": "FG99",
-        "company": None,
-    }
+    assert ldap_persons[0] == ldap_roland_resolved
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_grippeweb")

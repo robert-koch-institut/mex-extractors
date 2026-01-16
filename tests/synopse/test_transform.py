@@ -95,12 +95,10 @@ def test_transform_synopse_variables_to_mex_variable_groups(
         "stableTargetId": Joker(),
     }
 
-    variable_groups = list(
-        transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_by_thema,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variable_groups = transform_synopse_variables_to_mex_variable_groups(
+        synopse_variables_by_thema,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
     sorted_variable_groups = sorted(
         variable_groups, key=lambda v: v.identifierInPrimarySource
@@ -155,7 +153,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
     }
-    variables = list(
+    variables = (
         transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
             synopse_variables,
             variable_group_by_identifier_in_primary_source,
@@ -177,13 +175,11 @@ def test_transform_synopse_variables_to_mex_variables(
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
     }
-    variables = list(
-        transform_synopse_variables_to_mex_variables(
-            synopse_variables_by_thema,
-            variable_group_by_identifier_in_primary_source,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variables = transform_synopse_variables_to_mex_variables(
+        synopse_variables_by_thema,
+        variable_group_by_identifier_in_primary_source,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
 
     sorted_variables = sorted(variables, key=lambda v: v.identifierInPrimarySource)
@@ -240,7 +236,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": extracted_organization_rki.stableTargetId,
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
         ],
@@ -310,7 +306,7 @@ def test_transform_synopse_projects_to_mex_activities(
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
-        "involvedPerson": [str(Identifier.generate(seed=12))],
+        "involvedPerson": ["eXA2Qj5pKmI7HXIgcVqCfz"],
         "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
         "involvedUnit": [
             "cjna2jitPngp6yIV63cdi9",  # FG99
@@ -324,13 +320,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
     }
 
-    activities = list(
-        transform_synopse_projects_to_mex_activities(
-            synopse_projects,
-            contributor_merged_ids_by_name,
-            synopse_activity,
-            synopse_merged_organization_ids_by_query_string,
-        )
+    activities = transform_synopse_projects_to_mex_activities(
+        synopse_projects,
+        contributor_merged_ids_by_name,
+        synopse_activity,
+        synopse_merged_organization_ids_by_query_string,
     )
 
     assert len(activities) == 2

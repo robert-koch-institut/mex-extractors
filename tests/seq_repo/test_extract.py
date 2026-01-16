@@ -18,7 +18,7 @@ from mex.extractors.seq_repo.model import SeqRepoSource
 
 @pytest.mark.usefixtures("mocked_drop")
 def test_extract_sources() -> None:
-    sources = list(extract_sources())
+    sources = extract_sources()
     expected = {
         "project_coordinators": ["test_person", "test_person"],
         "customer_org_unit_id": "FG99",
@@ -48,7 +48,7 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
     )
 
     with pytest.raises(MExError, match=r"Expected exactly one seq-repo file"):
-        list(extract_sources())
+        extract_sources()
 
 
 @pytest.mark.usefixtures("mocked_ldap")

@@ -46,8 +46,8 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 
 
 @pytest.fixture
-def resource_mapping(settings: Settings) -> ResourceMapping:
+def resource_mapping() -> ResourceMapping:
     """Mock resource mapping."""
     return ResourceMapping.model_validate(
-        load_yaml(settings.biospecimen.mapping_path / "resource_mock.yaml")
+        load_yaml(Settings.get().biospecimen.mapping_path / "resource_mock.yaml")
     )

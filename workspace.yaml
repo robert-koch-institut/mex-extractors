@@ -1,2 +1,5 @@
-locations:
-  - location_name: mex-extractors
+load_from:
+  - python_module:
+      location_name: mex-extractors
+      attribute: load_job_definitions
+      module_name: mex.extractors.pipeline

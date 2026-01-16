@@ -116,8 +116,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             "LOINC",
         ],
         "contact": [str(roland_resolved.stableTargetId)],
-        "contributingUnit": [str(Identifier.generate(seed=42))],
-        "contributor": [str(Identifier.generate(seed=42))],
         "description": [{"language": TextLanguage.DE, "value": "Testbeschreibung"}],
         "documentation": [
             {

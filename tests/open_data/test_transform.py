@@ -194,16 +194,14 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
-    mex_sources = list(
-        transform_open_data_parent_resource_to_mex_resource(
-            mocked_open_data_parent_resource,
-            [juturna_felicitas],
-            mocked_extracted_organizational_units,
-            mocked_open_data_distribution,
-            mocked_open_data_parent_resource_mapping,
-            extracted_organization_rki,
-            mocked_open_data_extracted_contact_points,
-        )
+    mex_sources = transform_open_data_parent_resource_to_mex_resource(
+        mocked_open_data_parent_resource,
+        [juturna_felicitas],
+        mocked_extracted_organizational_units,
+        mocked_open_data_distribution,
+        mocked_open_data_parent_resource_mapping,
+        extracted_organization_rki,
+        mocked_open_data_extracted_contact_points,
     )
 
     assert len(mex_sources) == 1

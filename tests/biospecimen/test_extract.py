@@ -27,7 +27,7 @@ def test_extract_biospecimen_contacts_by_email(
 
 
 def test_extract_biospecimen_resources() -> None:
-    resources = list(extract_biospecimen_resources())
+    resources = extract_biospecimen_resources()
     assert len(resources) == 2
 
     assert resources[0].model_dump(exclude_none=True) == {
