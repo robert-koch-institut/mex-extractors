@@ -1,10 +1,16 @@
 from collections.abc import Iterable
-from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
-from mex.common.models import AccessPlatformMapping, ResourceMapping
+from mex.common.ldap.models import (
+    LDAPFunctionalAccount,
+    LDAPPerson,
+    LDAPPersonWithQuery,
+)
+from mex.common.models import (
+    AccessPlatformMapping,
+    ResourceMapping,
+)
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
@@ -101,17 +107,12 @@ def test_extract_cc2_feat_projection() -> None:
 def test_extract_ldap_contact_points_by_emails(
     sumo_resources_feat: ResourceMapping,
     sumo_resources_nokeda: ResourceMapping,
+    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
-    expected = {
-        "mail": ["fictitiousf@rki.de", "contactc@rki.de"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
-        "sAMAccountName": "ContactC",
-        "ou": ["Funktion"],
-    }
-    extracted = extract_ldap_contact_points_by_emails(
+    contact_points = extract_ldap_contact_points_by_emails(
         [sumo_resources_feat, sumo_resources_nokeda]
     )
-    assert extracted[0].model_dump() == expected
+    assert contact_points == [ldap_contact_point]
 
 
 @pytest.mark.usefixtures("mocked_ldap")

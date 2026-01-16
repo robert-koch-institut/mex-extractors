@@ -9,7 +9,7 @@ accrualPeriodicity:
 contact:
   - mappingRules:
       - forValues:
-          - fictitiousf@rki.de
+          - contactc@rki.de
 contributingUnit:
   - mappingRules:
       - forValues:

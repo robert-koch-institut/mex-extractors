@@ -11,7 +11,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
     """Return a dummy biospecimen resource for testing."""
     return [
         BiospecimenResource(
-            file_name=["test_bioproben"],
+            file_name="test_bioproben",
             offizieller_titel_der_probensammlung=["test_titel"],
             beschreibung=["Testbeschreibung"],
             schlagworte=["Testschlagwort 1, Testschlagwort 2"],

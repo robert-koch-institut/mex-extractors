@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
@@ -41,18 +39,13 @@ def test_extract_columns_by_table_and_column_name() -> None:
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
 def test_extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
+    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         grippeweb_resource_mappings
     )
-    expected = LDAPFunctionalAccount(
-        sAMAccountName="ContactC",
-        objectGUID=UUID(int=4, version=4),
-        mail=["fictitiousf@rki.de", "contactc@rki.de"],
-        ou=["Funktion"],
-    )
 
-    assert ldap_actors[0] == expected
+    assert ldap_actors[0] == ldap_contact_point
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")

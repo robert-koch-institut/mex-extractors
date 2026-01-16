@@ -39,7 +39,8 @@ def test_extract_voxco_organizations(
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_persons_voxco(
-    voxco_resource_mappings: list[ResourceMapping], ldap_roland_resolved: LDAPPerson
+    voxco_resource_mappings: list[ResourceMapping],
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     persons = extract_ldap_persons_voxco(voxco_resource_mappings)
 

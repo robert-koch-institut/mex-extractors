@@ -113,28 +113,14 @@ def test_lookup_person_in_ldap_and_transform(
         str, ExtractedOrganizationalUnit
     ],
     extracted_organization_rki: ExtractedOrganization,
+    juturna_felicitas: ExtractedPerson,
 ) -> None:
     person = lookup_person_in_ldap_and_transform(
         mocked_open_data_creator_with_affiliation_to_ignore,
         mocked_units_by_identifier_in_primary_source,
         extracted_organization_rki,
     )
-    assert person
-    assert person.model_dump() == {
-        "hadPrimarySource": get_extracted_primary_source_id_by_name("ldap"),
-        "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
-        "affiliation": [extracted_organization_rki.stableTargetId],
-        "email": ["felicitasj@rki.de"],
-        "familyName": ["Felicitás"],
-        "fullName": ["Felicitás, Juturna"],
-        "givenName": ["Juturna"],
-        "memberOf": ["cjna2jitPngp6yIV63cdi9"],
-        "orcidId": [],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
-        "isniId": [],
-        "entityType": "ExtractedPerson",
-    }
+    assert person == juturna_felicitas
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -191,8 +177,8 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
+    contact_point: ExtractedContactPoint,
 ) -> None:
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         mocked_open_data_parent_resource,
@@ -201,7 +187,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         mocked_open_data_distribution,
         mocked_open_data_parent_resource_mapping,
         extracted_organization_rki,
-        mocked_open_data_extracted_contact_points,
+        [contact_point],
     )
 
     assert len(mex_sources) == 1
@@ -212,7 +198,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "created": "2021",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
-        "contact": [str(mocked_open_data_extracted_contact_points[0].stableTargetId)],
+        "contact": [contact_point.stableTargetId],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": [

@@ -13,7 +13,6 @@ from mex.extractors.pipeline import run_job_in_process
     "mocked_igs",
     "mocked_ldap",
     "mocked_open_data",
-    "mock_open_data_email",
     "mocked_wikidata",
 )
 def test_job() -> None:

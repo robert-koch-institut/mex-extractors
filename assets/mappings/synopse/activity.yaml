@@ -14,7 +14,7 @@ contact:
     locationInPrimarySource:
     mappingRules:
       - forValues:
-        - fictitiousf@rki.de
+        - contactc@rki.de
       - rule:
 documentation:
   - fieldInPrimarySource:

@@ -16,7 +16,7 @@ endpointURL:
 contact:
   - mappingRules:
       - forValues:
-          - fictitiousf@rki.de
+          - contactc@rki.de
 description:
   - mappingRules:
       - setValues:

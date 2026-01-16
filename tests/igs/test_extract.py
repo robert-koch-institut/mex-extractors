@@ -37,13 +37,7 @@ def test_extract_ldap_actors_by_mail(
         "contactc@rki.de": LDAPFunctionalAccount(
             sAMAccountName="ContactC",
             objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-            mail=["fictitiousf@rki.de", "contactc@rki.de"],
-            ou="Funktion",
-        ),
-        "fictitiousf@rki.de": LDAPFunctionalAccount(
-            sAMAccountName="ContactC",
-            objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-            mail=["fictitiousf@rki.de", "contactc@rki.de"],
+            mail=["contactc@rki.de"],
             ou="Funktion",
         ),
     }

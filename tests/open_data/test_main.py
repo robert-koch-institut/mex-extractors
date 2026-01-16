@@ -7,7 +7,6 @@ from mex.extractors.pipeline import run_job_in_process
     "mocked_open_data",
     "mocked_wikidata",
     "mocked_ldap",
-    "mock_open_data_email",
 )
 def test_job() -> None:
     assert run_job_in_process("open_data")

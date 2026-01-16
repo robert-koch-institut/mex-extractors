@@ -168,8 +168,5 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     mock_method = MagicMock(return_value=zip_response)
     monkeypatch.setattr(OpenDataConnector, "get_schema_zipfile", mock_method)
 
-
-@pytest.fixture
-def mock_open_data_email(monkeypatch: MonkeyPatch) -> None:
     # TODO(ND): move this into the mapping
     monkeypatch.setattr(main, "OPEN_DATA_EMAIL", "ContactC@rki.de")

@@ -2,7 +2,6 @@ import pytest
 
 from mex.common.models import (
     DistributionMapping,
-    ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
@@ -56,18 +55,6 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
     return OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
     )
-
-
-@pytest.fixture
-def mocked_open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
-    """Mock the opendata contact point."""
-    return [
-        ExtractedContactPoint(
-            email="fictitiousf@rki.de",
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="contact point",
-        )
-    ]
 
 
 @pytest.fixture
