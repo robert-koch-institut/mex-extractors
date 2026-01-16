@@ -79,7 +79,7 @@ def find_descendant_units(
 
     Args:
         merged_organizational_units_by_id: merged organizational units by identifier.
-        parent_unit_name: name of the apthe unit for which to find all descendants
+        parent_unit_name: name of the parent unit for which to find all descendants
 
     Returns:
         identifier of units which are descendants of the unit filter setting.
