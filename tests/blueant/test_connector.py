@@ -213,14 +213,6 @@ def test_get_department_name_mocked(mocked_blueant: BlueAntConnector) -> None:
     assert name == expected_name
 
 
-@pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
-def test_get_person() -> None:
-    connector = BlueAntConnector.get()
-    persons = connector.get_person()
-    assert len(persons)
-
-
 def test_get_person_mocked(mocked_blueant: BlueAntConnector) -> None:
     expected = {
         "id": 23054,
@@ -229,21 +221,12 @@ def test_get_person_mocked(mocked_blueant: BlueAntConnector) -> None:
         "lastname": "Mustermann",
         "email": "Muster@example1.com",
     }
-    persons_dict = {
-        "status": {"name": "OK"},
-        "persons": [
-            expected
-            | {
-                "ignore_this": "useless info",
-            }
-        ],
-    }
+    person_dict = {"status": {"name": "OK"}, "person": expected}
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
-    mocked_response.json = MagicMock(return_value=persons_dict)
+    mocked_response.json = MagicMock(return_value=person_dict)
     mocked_blueant.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     connector = BlueAntConnector.get()
-    persons = connector.get_person()
-    assert len(persons) == 1
-    assert persons[0].model_dump() == expected
+    person = connector.get_person(23054)
+    assert person.model_dump() == expected

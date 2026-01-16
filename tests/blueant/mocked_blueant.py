@@ -40,15 +40,13 @@ def mocked_blueant(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(
         BlueAntConnector,
         "get_person",
-        lambda *_, **__: [
-            BlueAntPerson(
-                id=MOCKED_API_SOURCE["projectLeaderId"],
-                personnelNumber="42",
-                firstname="Max",
-                lastname="Mustermann",
-                email="max@example1.com",
-            )
-        ],
+        lambda *_, **__: BlueAntPerson(
+            id=MOCKED_API_SOURCE["projectLeaderId"],
+            personnelNumber="42",
+            firstname="Max",
+            lastname="Mustermann",
+            email="max@example1.com",
+        ),
     )
     monkeypatch.setattr(
         BlueAntConnector,

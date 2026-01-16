@@ -45,7 +45,7 @@ def test_extract_blueant_project_leaders_not_in_ldap(
 ) -> None:
     monkeypatch.setattr(
         LDAPConnector,
-        "get_person",
+        "get_persons",
         lambda _, **__: [],
     )
     persons = list(extract_blueant_project_leaders([blueant_source]))
