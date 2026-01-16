@@ -16,7 +16,7 @@ from mex.extractors.datenkompass.extract import (
 from mex.extractors.settings import Settings
 
 
-def filter_for_organization_and_unit(
+def filter_activities_for_organization_and_unit(
     datenkompass_merged_activities_by_unit: dict[str, list[MergedActivity]],
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
