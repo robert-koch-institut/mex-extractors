@@ -22,7 +22,7 @@ from mex.extractors.datenkompass.extract import (
     get_merged_items,
 )
 from mex.extractors.datenkompass.filter import (
-    filter_for_organization_and_unit,
+    filter_activities_for_organization_and_unit,
     find_descendant_units,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -31,7 +31,7 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassResource,
 )
 from mex.extractors.datenkompass.models.mapping import (
-    DatenkompassFilter,
+    DatenkompassFilterMapping,
     DatenkompassMapping,
 )
 from mex.extractors.datenkompass.transform import (
@@ -117,10 +117,10 @@ def datenkompass_activity_mapping() -> DatenkompassMapping:
 
 
 @asset(group_name="datenkompass")
-def datenkompass_activity_filter() -> DatenkompassFilter:
+def datenkompass_activity_filter() -> DatenkompassFilterMapping:
     """Get filter for datenkompass activities."""
     settings = Settings.get()
-    return DatenkompassFilter.model_validate(
+    return DatenkompassFilterMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "activity_filter.yaml")
     )
 
@@ -145,7 +145,7 @@ def datenkompass_resource_mapping() -> DatenkompassMapping:
 
 @asset(group_name="datenkompass")
 def datenkompass_merged_activities_by_unit(
-    datenkompass_activity_filter: DatenkompassFilter,
+    datenkompass_activity_filter: DatenkompassFilterMapping,
 ) -> dict[str, list[MergedActivity]]:
     """Get merged activities filtered for allowed primary source by unit.
 
@@ -177,7 +177,7 @@ def datenkompass_filtered_merged_activities_by_unit(
     ],
 ) -> dict[str, list[MergedActivity]]:
     """Filter merged activities."""
-    return filter_for_organization_and_unit(
+    return filter_activities_for_organization_and_unit(
         datenkompass_merged_activities_by_unit,
         datenkompass_merged_organizational_units_by_id,
     )

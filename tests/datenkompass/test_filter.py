@@ -5,13 +5,13 @@ from mex.common.models import (
     MergedOrganizationalUnit,
 )
 from mex.extractors.datenkompass.filter import (
-    filter_for_organization_and_unit,
+    filter_activities_for_organization_and_unit,
     find_descendant_units,
 )
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
-def test_filter_for_organization_and_unit(
+def test_filter_activities_for_organization_and_unit(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> None:
@@ -23,7 +23,7 @@ def test_filter_for_organization_and_unit(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
 
-    result = filter_for_organization_and_unit(
+    result = filter_activities_for_organization_and_unit(
         mocked_activities_by_unit,  # 3 items, one to be filtered out because wrong organization
         mocked_units_by_ids,
     )
