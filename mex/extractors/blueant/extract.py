@@ -112,19 +112,15 @@ def extract_blueant_organizations(
     for source in blueant_sources:
         for name in source.client_names:
             if (
-                name
-                and name not in ["Robert Koch-Institut", "RKI"]
-                and name not in merged_organization_ids_by_query_str
+                not name
+                or name in ["Robert Koch-Institut", "RKI"]
+                or name in merged_organization_ids_by_query_str
             ):
-                if (org_id := get_wikidata_extracted_organization_id_by_name(name)):
-                    merged_organization_ids_by_query_str[name] = org_id
+                continue
+
+            org_id = get_wikidata_extracted_organization_id_by_name(name)
+            if not org_id:
+                continue
+            merged_organization_ids_by_query_str[name] = org_id
 
     return merged_organization_ids_by_query_str
-
-    # return {
-    #     name: org_id
-    #     for source in blueant_sources
-    #     for name in source.client_names
-    #     if name not in ["Robert Koch-Institut", "RKI"]
-    #     and (org_id := get_wikidata_extracted_organization_id_by_name(name))
-    # }

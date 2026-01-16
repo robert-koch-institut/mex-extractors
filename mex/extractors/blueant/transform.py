@@ -67,11 +67,15 @@ def transform_blueant_sources_to_extracted_activities(
                     extracted_organization = ExtractedOrganization(
                         officialName=name,
                         identifierInPrimarySource=name,
-                        hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
+                        hadPrimarySource=get_extracted_primary_source_id_by_name(
+                            "blueant"
+                        ),
                     )
                     load([extracted_organization])
                     funder_or_commissioner.append(
-                        MergedOrganizationIdentifier(extracted_organization.stableTargetId)
+                        MergedOrganizationIdentifier(
+                            extracted_organization.stableTargetId
+                        )
                     )
                     blueant_merged_organization_ids_by_query_string[name] = (
                         extracted_organization.stableTargetId

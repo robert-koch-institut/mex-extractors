@@ -66,8 +66,7 @@ def blueant_merged_organization_ids_by_query_str(
     blueant_sources: list[BlueAntSource],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for blueant from wikidata and group them by query."""
-    result = extract_blueant_organizations(blueant_sources)
-    return result
+    return extract_blueant_organizations(blueant_sources)
 
 
 @asset(group_name="blueant")
