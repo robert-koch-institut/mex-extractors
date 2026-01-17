@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - primary source helper function: add caching
+- implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 
@@ -22,9 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove mailpit path for CI testing
 - datenkompass: publish activities by unit, filter and mapping update
 
+- asset checks created during definition time in base.py
+
 ### Deprecated
 
 ### Removed
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
 
 ### Fixed
 
