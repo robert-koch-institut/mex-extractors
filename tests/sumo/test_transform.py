@@ -47,25 +47,17 @@ from mex.extractors.sumo.transform import (
 )
 
 
-def test_get_contact_merged_ids_by_emails(
-    mex_actor_resources: ExtractedContactPoint,
-) -> None:
-    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails(
-        [mex_actor_resources]
-    )
+def test_get_contact_merged_ids_by_emails(contact_point: ExtractedContactPoint) -> None:
+    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails([contact_point])
     assert contact_merged_ids_by_emails == {
-        "email@email.de": mex_actor_resources.stableTargetId
+        contact_point.email[0]: contact_point.stableTargetId,
     }
 
 
-def test_get_contact_merged_ids_by_names(
-    mex_actor_access_platform: ExtractedPerson,
-) -> None:
-    contact_merged_ids_by_names = get_contact_merged_ids_by_names(
-        [mex_actor_access_platform]
-    )
+def test_get_contact_merged_ids_by_names(juturna_felicitas: ExtractedPerson) -> None:
+    contact_merged_ids_by_names = get_contact_merged_ids_by_names([juturna_felicitas])
     assert contact_merged_ids_by_names == {
-        "Erika Mustermann": mex_actor_access_platform.stableTargetId
+        "Juturna Felicitás": juturna_felicitas.stableTargetId
     }
 
 
@@ -75,10 +67,8 @@ def test_transform_resource_nokeda_to_mex_resource(
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
-    contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
-    }
     mex_source = transform_resource_nokeda_to_mex_resource(
         sumo_resources_nokeda,
         contact_merged_ids_by_emails,
@@ -97,7 +87,7 @@ def test_transform_resource_nokeda_to_mex_resource(
         "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "contact": [MergedPersonIdentifier.generate(43)],
+        "contact": [MergedPersonIdentifier.generate(51)],
         "contributingUnit": [Joker()],
         "description": [
             {
@@ -151,10 +141,8 @@ def test_transform_resource_feat_model_to_mex_resource(
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
-    contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
-    }
     mex_source = transform_resource_feat_model_to_mex_resource(
         sumo_resources_feat,
         contact_merged_ids_by_emails,
@@ -173,7 +161,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
-        "contact": [MergedContactPointIdentifier.generate(43)],
+        "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
         "isPartOf": [mex_resources_nokeda.stableTargetId],
         "keyword": [
@@ -454,7 +442,7 @@ def test_transform_sumo_activity_to_extracted_activity(
         "stableTargetId": Joker(),
         "abstract": [{"value": "Dummy abstract", "language": TextLanguage.DE}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
-        "contact": [contact_merged_ids_by_emails["email@email.de"]],
+        "contact": [MergedContactPointIdentifier.generate(seed=51)],
         "documentation": [
             {
                 "language": LinkLanguage.DE,

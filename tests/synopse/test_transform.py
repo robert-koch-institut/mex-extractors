@@ -5,6 +5,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
+    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -62,7 +63,7 @@ def test_transform_synopse_studies_into_access_platforms(
     }
 
     access_platforms = transform_synopse_studies_into_access_platforms(
-        {"email@email.de": MergedContactPointIdentifier.generate(seed=234)},
+        {"contactc@rki.de": MergedContactPointIdentifier.generate(seed=234)},
         synopse_access_platform,
     )
     assert (
@@ -279,10 +280,11 @@ def test_transform_synopse_projects_to_mex_activities(
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
+    roland_resolved: ExtractedPerson,
 ) -> None:
     synopse_project = synopse_projects[0]
     contributor_merged_ids_by_name = {
-        "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
+        "Roland Resolved": [roland_resolved.stableTargetId]
     }
 
     assert synopse_project.projektende
@@ -304,7 +306,7 @@ def test_transform_synopse_projects_to_mex_activities(
         ),
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
-        "involvedPerson": [str(Identifier.generate(seed=12))],
+        "involvedPerson": ["eXA2Qj5pKmI7HXIgcVqCfz"],
         "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
         "involvedUnit": [
             "cjna2jitPngp6yIV63cdi9",  # FG99
