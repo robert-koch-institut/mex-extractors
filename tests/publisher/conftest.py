@@ -45,15 +45,16 @@ def merged_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonPositiveConsent",
-            fullName=["Consent, Positive"],
+            fullName=["Person, with positive Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
             identifier="PersonNegativeConsent",
+            fullName=["Person, with negative Consent"],
         ),
         MergedPerson(
-            identifier="PersonTwoConsents",
-            fullName=["Consent, More than one"],
+            identifier="PersonHasTwoConsents",
+            fullName=["Peron, with more than one Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
@@ -79,13 +80,13 @@ def merged_consent_list() -> list[MergedConsent]:
         ),
         MergedConsent(
             identifier="Consent1SamePerson",
-            hasDataSubject="PersonTwoConsents",
+            hasDataSubject="PersonHasTwoConsents",
             hasConsentStatus="https://mex.rki.de/item/consent-status-1",
             isIndicatedAtTime=YearMonthDayTime("1970-01-01T00:00:00Z"),
         ),
         MergedConsent(
             identifier="Consent2SamePerson",
-            hasDataSubject="PersonTwoConsents",
+            hasDataSubject="PersonHasTwoConsents",
             hasConsentStatus="https://mex.rki.de/item/consent-status-2",
             isIndicatedAtTime=YearMonthDayTime("2025-12-31T23:59:59Z"),
         ),
