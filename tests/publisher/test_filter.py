@@ -16,7 +16,7 @@ def test_filter_persons_with_consent(
     assert len(result) == 1
     assert result[0].model_dump(exclude_defaults=True, mode="json") == {
         "identifier": "PersonPositiveConsent",
-        "fullName": ["Consent, Positive"],
+        "fullName": ["Person, with positive Consent"],
         "memberOf": ["SomeUnitIdentifier"],
     }
 
@@ -26,7 +26,7 @@ def test_filter_persons_with_consent__more_than_one_consent(
     merged_consent_list: list[MergedConsent],
 ) -> None:
     with pytest.raises(
-        MExError, match=r"Merged Person PersonTwoConsents has more than 1 consent."
+        MExError, match=r"Merged Person PersonHasTwoConsents has more than 1 consent."
     ):
         filter_persons_with_consent(
             merged_person_list,
