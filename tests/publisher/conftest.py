@@ -52,6 +52,11 @@ def merged_person_list() -> list[MergedPerson]:
             identifier="PersonNegativeConsent",
         ),
         MergedPerson(
+            identifier="PersonTwoConsents",
+            fullName=["Consent, More than one"],
+            memberOf=["SomeUnitIdentifier"],
+        ),
+        MergedPerson(
             identifier="PersonNoConsentLink",
         ),
     ]
@@ -71,6 +76,18 @@ def merged_consent_list() -> list[MergedConsent]:
             hasDataSubject="PersonNegativeConsent",
             hasConsentStatus="https://mex.rki.de/item/consent-status-1",
             isIndicatedAtTime=YearMonthDayTime("2000-01-01T00:00:00Z"),
+        ),
+        MergedConsent(
+            identifier="Consent1SamePerson",
+            hasDataSubject="PersonTwoConsents",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-1",
+            isIndicatedAtTime=YearMonthDayTime("1970-01-01T00:00:00Z"),
+        ),
+        MergedConsent(
+            identifier="Consent2SamePerson",
+            hasDataSubject="PersonTwoConsents",
+            hasConsentStatus="https://mex.rki.de/item/consent-status-2",
+            isIndicatedAtTime=YearMonthDayTime("2025-12-31T23:59:59Z"),
         ),
     ]
 

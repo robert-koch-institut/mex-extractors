@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - primary source helper function: add caching
+- publisher: tests for and fails if a person has more than one consent
+-
 
 ### Changes
 
