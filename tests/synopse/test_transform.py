@@ -63,7 +63,7 @@ def test_transform_synopse_studies_into_access_platforms(
     }
 
     access_platforms = transform_synopse_studies_into_access_platforms(
-        {"fictitiousf@rki.de": MergedContactPointIdentifier.generate(seed=234)},
+        {"contactc@rki.de": MergedContactPointIdentifier.generate(seed=234)},
         synopse_access_platform,
     )
     assert (

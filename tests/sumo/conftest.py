@@ -46,7 +46,9 @@ def unit_merged_ids_by_synonym() -> dict[str, list[MergedOrganizationalUnitIdent
 @pytest.fixture
 def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
     """Return dummy merged ids for units for testing."""
-    return {"fictitiousf@rki.de": MergedContactPointIdentifier.generate(seed=51)}
+    return {
+        "contactc@rki.de": MergedContactPointIdentifier.generate(seed=51),
+    }
 
 
 @pytest.fixture
