@@ -8,16 +8,17 @@ from mex.common.types import Text
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_get_merged_items_mocked() -> None:
     items = extract_module.get_merged_items(entity_type=["MergedActivity"])
-    assert len(items) == 1
+    assert len(items) == 3
     assert isinstance(items[0], MergedActivity)
     assert items[0] == MergedActivity(
         contact=["LoremIpsum3456"],
-        responsibleUnit=["IdentifierOrgUnitEG"],
+        responsibleUnit=["IdentifierUnitPRNT"],
         title=[
             Text(value="titel de", language="de"),
             Text(value="title en", language="en"),
         ],
         abstract=[Text(value="Without language", language=None)],
+        end=["1970-01-01"],
         funderOrCommissioner=["Identifier1forORG"],
         shortName=["short only english"],
         theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
