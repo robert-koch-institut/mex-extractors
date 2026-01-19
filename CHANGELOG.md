@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
+- grippeweb: clean up obsolete wasGeneratedBy transformation (mapping was removed)
+
 ### Removed
 
 ### Fixed
