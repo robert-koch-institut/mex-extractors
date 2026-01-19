@@ -18,14 +18,6 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 @pytest.fixture
-def unit_stable_target_ids_by_synonym() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
-    """Mock unit stable target ids."""
-    return {"C1": [MergedOrganizationalUnitIdentifier.generate(seed=44)]}
-
-
-@pytest.fixture
 def voxco_merged_organization_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:

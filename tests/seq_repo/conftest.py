@@ -9,7 +9,7 @@ from mex.common.models import (
     ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
@@ -123,37 +123,4 @@ def seq_repo_merged_person_ids_by_query_string(
         "ResolvedR": [roland_resolved.stableTargetId],
         "FelicitasJ": [juturna_felicitas.stableTargetId],
         "FictitiousF": [frieda_fictitious.stableTargetId],
-    }
-
-
-@pytest.fixture
-def unit_stable_target_ids_by_synonym() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
-    """Extract the dummy units and return them grouped by synonyms."""
-    return {
-        "child-unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "CHLD Unterabteilung": [
-            MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")
-        ],
-        "C1: Sub Unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "C1": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "CHLD": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "C1 Sub-Unit": [MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")],
-        "C1 Unterabteilung": [
-            MergedOrganizationalUnitIdentifier("g2AinFG4E6n8H1ZMuaBW6o")
-        ],
-        "parent-unit": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "Abteilung": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "Department": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "PRNT": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "PRNT Abteilung": [
-            MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")
-        ],
-        "PARENT Dept.": [MergedOrganizationalUnitIdentifier("dLqCAZCHhjZmJcJR98ytzQ")],
-        "fg99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
-        "Fachgebiet 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
-        "Group 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
-        "FG 99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
-        "FG99": [MergedOrganizationalUnitIdentifier("e4fyMCGjCeQNSvAMNHcBhK")],
     }

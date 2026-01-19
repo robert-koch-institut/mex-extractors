@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- testing against mocked LDAP container
+- testing against a mocked ldap container
 - primary source helper function: add caching
 
 ### Changes
@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin Mailpit Docker image version to v1.28
 
 ### Fixed
+
 - synopse: fix extraction of involved units
 
 ## [1.6.0] - 2025-11-28
@@ -57,8 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 - update extractors to handle multiple organizational units per synonym mapping
@@ -81,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - implement igs resource mapping update
 
 ## [1.4.0] - 2025-10-28
