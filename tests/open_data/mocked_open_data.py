@@ -8,7 +8,7 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.extractors.open_data import transform
+from mex.extractors.open_data import main, transform
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
@@ -164,3 +164,6 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
 
     mock_method = MagicMock(return_value=zip_response)
     monkeypatch.setattr(OpenDataConnector, "get_schema_zipfile", mock_method)
+
+    # TODO(ND): move this into the mapping
+    monkeypatch.setattr(main, "OPEN_DATA_EMAIL", "ContactC@rki.de")

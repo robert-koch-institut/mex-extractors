@@ -33,7 +33,7 @@ def test_extract_cc1_data_model_nokeda() -> None:
         element_label="Name des EDIS",
         element_label_en="Name of EDIS",
     )
-    extracted = list(extract_cc1_data_model_nokeda())
+    extracted = extract_cc1_data_model_nokeda()
     assert len(extracted) == 3
     assert extracted[0] == expected
 
@@ -44,7 +44,7 @@ def test_extract_cc1_data_valuesets() -> None:
         category_label_en="Cardiac arrest (non-traumatic)",
         sheet_name="nokeda_cedis",
     )
-    extracted = list(extract_cc1_data_valuesets())
+    extracted = extract_cc1_data_valuesets()
     assert len(extracted) == 6
     assert extracted[0] == expected
 
@@ -57,7 +57,7 @@ def test_extract_cc2_aux_mapping(
         column_name="aux_age21_min",
         variable_name_column=["0", "1", "2"],
     )
-    extracted = list(extract_cc2_aux_mapping(cc2_aux_model))
+    extracted = extract_cc2_aux_mapping(cc2_aux_model)
     assert len(extracted) == 2
     assert extracted[0] == expected
 
@@ -70,14 +70,14 @@ def test_extract_cc2_aux_model() -> None:
         in_database_static=True,
         variable_name="aux_age21_min",
     )
-    extracted = list(extract_cc2_aux_model())
+    extracted = extract_cc2_aux_model()
     assert len(extracted) == 2
     assert extracted[0] == expected
 
 
 def test_extract_cc2_aux_valuesets() -> None:
     expected = Cc2AuxValuesets(label_de="Kardiovaskulär", label_en="Cardiovascular")
-    extracted = list(extract_cc2_aux_valuesets())
+    extracted = extract_cc2_aux_valuesets()
     assert len(extracted) == 3
     assert extracted[0] == expected
 
@@ -91,7 +91,7 @@ def test_extract_cc2_feat_projection() -> None:
         feature_name_de="Lorem Ipsum",
         feature_subdomain="RSV",
     )
-    extracted = list(extract_cc2_feat_projection())
+    extracted = extract_cc2_feat_projection()
     assert len(extracted) == 3
     assert extracted[0] == expected
 

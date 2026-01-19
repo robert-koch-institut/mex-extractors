@@ -7,8 +7,7 @@ from mex.common.types import Text
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_get_merged_items_mocked() -> None:
-    item_generator = extract_module.get_merged_items(entity_type=["MergedActivity"])
-    items = list(item_generator)
+    items = extract_module.get_merged_items(entity_type=["MergedActivity"])
     assert len(items) == 3  # 3 mocked MergedActivites
     assert isinstance(items[1], MergedActivity)
     assert items[1] == MergedActivity(

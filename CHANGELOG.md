@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- prepare testing against a mocked ldap container
 - primary source helper function: add caching
 
 ### Changes
