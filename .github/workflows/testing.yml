@@ -68,4 +68,4 @@ jobs:
 
       - name: Cleanup containers
         if: always()
-        run: docker compose down slapd mailpit
+        run: docker compose down mailpit
