@@ -141,6 +141,7 @@ def check_item_count_rule(  # noqa: C901
     def check_rule_violation(
         rule_name: str, historic_count: int, current_number_of_extracted_items: int
     ) -> bool:
+        """Returns True when check fails. Check is supposed to fail if [rule_name]."""
         threshold = rule["value"] or 0
         if rule_name == "x_items_more_than":
             # fail/True if current is larger than historic by threshold number of items
