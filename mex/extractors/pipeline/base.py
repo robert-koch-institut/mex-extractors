@@ -114,7 +114,7 @@ def create_asset_check(
     def check(
         context: AssetCheckExecutionContext,
     ) -> AssetCheckResult:
-        """Check that latest count is not less than threshold."""
+        """Check that latest count fulfills rule."""
         passed = check_item_count_rule(
             context=context,
             asset_key=asset_key,
