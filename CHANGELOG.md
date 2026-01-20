@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lock file maintenance (2026-01-06)
 - use convenience function to obtain organizational unit merged ids
 - lock file maintenance (2026-01-12)
-
 - asset checks created during definition time in base.py
 
 ### Deprecated
