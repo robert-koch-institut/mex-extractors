@@ -99,7 +99,7 @@ def check_item_count_rule(  # noqa: C901
     extractor: str,
     entity_type: str,
 ) -> bool:
-    """Checks current extracted items nr is complying to the given rule and it's threshold.
+    """Checks current extracted items nr is complying to given rule and it's threshold.
 
     Args:
         context: The Dagster asset execution context for this check.
@@ -172,7 +172,9 @@ def check_item_count_rule(  # noqa: C901
         msg = f"Rule not existing: {rule_name}"
         raise ValueError(msg)
 
-    if check_rule(rule_name, historic_count, current_number_of_extracted_items):
+    if check_rule_violation(
+        rule_name, historic_count, current_number_of_extracted_items
+    ):
         msg = (
             f"Asset {asset_key} failed {rule_name} check: "
             f"{current_number_of_extracted_items} not meeting threshold."
