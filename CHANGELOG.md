@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - primary source helper function: add caching
+- implemented asset checks for the `x_items_less_than` rule
 
 ### Changes
 
@@ -17,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
 - use convenience function to obtain organizational unit merged ids
+- lock file maintenance (2026-01-12)
+- asset checks created during definition time in base.py
 - lock file maintenance (2026-01-19)
 - remove mailpit path for CI testing
 - datenkompass: publish activities by unit, filter and mapping update
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
 - grippeweb: clean up obsolete wasGeneratedBy transformation (mapping was removed)
 
 ### Fixed
