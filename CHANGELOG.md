@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- prepare testing against a mocked ldap container
 - primary source helper function: add caching
 - implemented asset checks for the `x_items_less_than` rule
 - publisher: tests for and fails if a person has more than one consent
