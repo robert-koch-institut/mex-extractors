@@ -3,6 +3,11 @@ from importlib.metadata import version
 from typing import Any, cast
 
 from dagster import (
+    AssetCheckExecutionContext,
+    AssetCheckResult,
+    AssetChecksDefinition,
+    AssetCheckSeverity,
+    AssetKey,
     AssetsDefinition,
     AssetSelection,
     DagsterInstance,
@@ -17,12 +22,16 @@ from dagster import (
     ScheduleDefinition,
     SensorEvaluationContext,
     SkipReason,
+    asset_check,
     define_asset_job,
-    load_asset_checks_from_package_module,
     load_assets_from_package_module,
     sensor,
 )
 
+from mex.extractors.pipeline.checks.main import (
+    check_item_count_rule,
+    load_asset_check_from_settings,
+)
 from mex.extractors.settings import Settings
 
 
@@ -95,6 +104,29 @@ def monitor_jobs_sensor(
     )
 
 
+def create_asset_check(
+    asset_key: AssetKey, group_name: str, entity_name: str, rule: str
+) -> AssetChecksDefinition:
+    """Creating dynamical asset check for all rules."""
+    check_name = f"check_{asset_key.to_user_string()}_{rule.replace(' ', '_')}"
+
+    @asset_check(asset=asset_key, blocking=True, name=check_name)
+    def check(
+        context: AssetCheckExecutionContext,
+    ) -> AssetCheckResult:
+        """Check that latest count fulfills rule."""
+        passed = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor=group_name,
+            entity_type=entity_name,
+            rule_name=rule,
+        )
+        return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
+
+    return check
+
+
 def load_job_definitions() -> Definitions:
     """Scan the given module for assets, define jobs and io and return definitions."""
     settings = Settings.get()
@@ -102,7 +134,31 @@ def load_job_definitions() -> Definitions:
     resources = {"io_manager": FilesystemIOManager()}
     module = import_module("mex.extractors")
     assets = load_assets_from_package_module(module)
-    checks = load_asset_checks_from_package_module(module)
+
+    checks: list[AssetChecksDefinition] = []
+    for asset in assets:
+        asset = cast("AssetsDefinition", asset)
+        items = list(asset.group_names_by_key.items())
+        if len(items) != 1:
+            msg = f"asset has more than 1 group: {items}"
+            raise RuntimeError(msg)
+        asset_key, group_name = items[0]
+        asset_metadata_dict = dict(asset.metadata_by_key.items())
+        if "entity_type" in asset_metadata_dict.get(asset_key, {}):
+            entity_name = asset_metadata_dict[asset_key]["entity_type"]
+
+            try:
+                rules_for_asset = load_asset_check_from_settings(
+                    group_name, entity_name
+                )
+            except FileNotFoundError:
+                continue
+
+            for rule in rules_for_asset.rules:
+                created_check = create_asset_check(
+                    asset_key, group_name, entity_name, rule.fail_if
+                )
+                checks.append(created_check)
 
     extractor_group_names = {
         group
@@ -128,7 +184,7 @@ def load_job_definitions() -> Definitions:
         define_asset_job(
             group_name,
             AssetSelection.groups(group_name).upstream(),
-            metadata=metadata,
+            metadata={**metadata, "group_name": group_name},
             tags={"job_category": "extractor"},
         )
         for group_name in extractor_group_names

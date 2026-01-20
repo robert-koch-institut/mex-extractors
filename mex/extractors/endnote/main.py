@@ -55,7 +55,7 @@ def endnote_extracted_consents(
     return endnote_extracted_consents
 
 
-@asset(group_name="endnote")
+@asset(group_name="endnote", metadata={"entity_type": "bibliographic-resource"})
 def endnote_extracted_bibliographic_resources(
     endnote_records: list[EndnoteRecord],
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
