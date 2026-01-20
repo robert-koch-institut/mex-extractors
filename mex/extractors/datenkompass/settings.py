@@ -7,7 +7,7 @@ from mex.common.types import AssetsPath
 class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
     """Settings submodel for the datenkompass extractor."""
 
-    unit_filter: str = Field("e.g. unit", description="Filter for unit")
+    unit_filter: str = Field("PRNT", description="Filter for unit")
     organization_filter: str = Field(
         "Organization", description="Filter for organization"
     )

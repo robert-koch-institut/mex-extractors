@@ -157,13 +157,6 @@ def transform_grippeweb_resource_mappings_to_dict(
         unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
-        # wasGeneratedField was removed for one resource mapping, but kept for the other
-        # only look this field up if it exists in mapping
-        was_generated_by = None
-        if wgb := resource.wasGeneratedBy:
-            was_generated_by = get_unit_merged_id_by_synonym(
-                wgb[0].mappingRules[0].forValues[0]  # type: ignore[index]
-            )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             hasLegalBasis=has_legal_basis,
             hasPersonalData=has_personal_data,
@@ -200,7 +193,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             theme=theme,
             title=title,
             unitInCharge=unit_in_charge,
-            wasGeneratedBy=was_generated_by,
         )
     return resource_dict["grippeweb"], resource_dict["grippeweb-plus"]
 

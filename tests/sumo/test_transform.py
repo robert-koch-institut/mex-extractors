@@ -219,11 +219,9 @@ def test_transform_nokeda_aux_variable_to_mex_variable_group(
         "label": [{"language": TextLanguage.EN, "value": "age"}],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_nokeda_aux_variable_to_mex_variable_group(
-            cc2_aux_model,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_aux_variable_to_mex_variable_group(
+        cc2_aux_model,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 2
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -246,11 +244,9 @@ def test_transform_model_nokeda_variable_to_mex_variable_group(
         ],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_model_nokeda_variable_to_mex_variable_group(
-            cc1_data_model_nokeda,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_model_nokeda_variable_to_mex_variable_group(
+        cc1_data_model_nokeda,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -270,11 +266,9 @@ def test_transform_feat_variable_to_mex_variable_group(
         "label": [{"value": "feat_syndrome RSV"}],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_feat_variable_to_mex_variable_group(
-            cc2_feat_projection,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_feat_variable_to_mex_variable_group(
+        cc2_feat_projection,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -310,13 +304,11 @@ def test_transform_nokeda_model_variable_to_mex_variable(
         ],
         "usedIn": [mex_resources_nokeda.stableTargetId],
     }
-    transformed_data = list(
-        transform_nokeda_model_variable_to_mex_variable(
-            cc1_data_model_nokeda,
-            cc1_data_valuesets,
-            mex_variable_groups_model_nokeda,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_model_variable_to_mex_variable(
+        cc1_data_model_nokeda,
+        cc1_data_valuesets,
+        mex_variable_groups_model_nokeda,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -335,14 +327,12 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         for label in list(m.label)
         if label.language == TextLanguage.EN
     }
-    transformed_data = list(
-        transform_nokeda_aux_variable_to_mex_variable(
-            cc2_aux_model,
-            cc2_aux_mapping,
-            cc2_aux_valuesets,
-            mex_variable_groups_nokeda_aux,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_aux_variable_to_mex_variable(
+        cc2_aux_model,
+        cc2_aux_mapping,
+        cc2_aux_valuesets,
+        mex_variable_groups_nokeda_aux,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 2
     variable = cc2_aux_model[0]
@@ -413,12 +403,10 @@ def test_transform_feat_projection_variable_to_mex_variable(
         "usedIn": [mex_resources_feat.stableTargetId],
     }
 
-    transformed_data = list(
-        transform_feat_projection_variable_to_mex_variable(
-            cc2_feat_projection,
-            mex_variable_groups_model_feat,
-            mex_resources_feat,
-        )
+    transformed_data = transform_feat_projection_variable_to_mex_variable(
+        cc2_feat_projection,
+        mex_variable_groups_model_feat,
+        mex_resources_feat,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected

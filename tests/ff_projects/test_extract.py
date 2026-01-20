@@ -15,7 +15,7 @@ from mex.extractors.ff_projects.extract import (
 
 
 def test_extract_ff_projects_sources() -> None:
-    sources = list(extract_ff_projects_sources())
+    sources = extract_ff_projects_sources()
     source_dicts = [s.model_dump(exclude_none=True) for s in sources]
 
     expected = [
