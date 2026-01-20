@@ -8,13 +8,13 @@ from mex.common.types import LinkLanguage, TextLanguage
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_get_merged_items_mocked() -> None:
     items = extract_module.get_merged_items(entity_type=["MergedActivity"])
-    assert len(items) == 3
-    assert isinstance(items[0], MergedActivity)
+    assert len(items) == 3  # 3 mocked MergedActivites
+    assert isinstance(items[1], MergedActivity)
     assert items[0].model_dump(exclude_defaults=True) == {
-        "contact": ["LoremIpsum1234"],
-        "responsibleUnit": ["IdentifierUnitC1", "IdentifierUnitFG99"],
+        "contact": ["LoremIpsum3456"],
+        "responsibleUnit": ["IdentifierUnitPRNT"],
         "title": [
-            {"value": '"title "Act" no language"'},
+            {"value": "titel de", "language": TextLanguage.DE},
             {"value": "title en", "language": TextLanguage.EN},
         ],
         "abstract": [
