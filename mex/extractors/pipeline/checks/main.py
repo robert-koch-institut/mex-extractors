@@ -99,7 +99,7 @@ def check_item_count_rule(  # noqa: C901
     extractor: str,
     entity_type: str,
 ) -> bool:
-    """Checks latest extracted items nr is exceeding the given rule and it's threshold.
+    """Checks current extracted items nr is complying to the given rule and it's threshold.
 
     Args:
         context: The Dagster asset execution context for this check.
