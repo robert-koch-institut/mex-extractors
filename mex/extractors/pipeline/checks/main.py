@@ -9,25 +9,19 @@ from dagster import (
     EventRecordsFilter,
 )
 
+from mex.common.logging import logger
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
-
-
-def check_yaml_path(extractor: str, entity_type: str) -> bool:
-    """Checks if there are rules given the extractor and entityType.
-
-    Returns a bool.
-    """
-    settings = Settings.get()
-    path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
-    return path.exists()
 
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
     settings = Settings.get()
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
+    if not path.exists():
+        msg = "No asset check YAML found at %s"
+        raise FileNotFoundError(msg, path)
     return AssetCheck.model_validate(load_yaml(path))
 
 
@@ -98,39 +92,94 @@ def get_historic_count(
     return 0
 
 
-def check_x_items_more_passed(
+def check_item_count_rule(  # noqa: C901
     context: AssetCheckExecutionContext,
+    rule_name: str,
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
-    asset_data: int,
 ) -> bool:
-    """Checks whether latest extracted items nr is exceeding the rule threshold.
+    """Checks current extracted items nr is complying to given rule and it's threshold.
 
-    Returns bool to AssetCheck.
+    Args:
+        context: The Dagster asset execution context for this check.
+        rule_name: Either "x_items_less_than" or "x_items_more_than".
+        asset_key: Dagster AssetKey object.
+        extractor: Name of the extractor that produced the asset.
+        entity_type: Entity Type for the asset check.
+
+
+    Returns True if check passes.
     """
-    yaml_exists = check_yaml_path(extractor, entity_type)
-
-    if not yaml_exists:
+    try:
+        rule = get_rule(rule_name, extractor, entity_type)
+    except FileNotFoundError:
+        logger.error("No asset check rules found for %s", asset_key)
         return True
 
-    rule = get_rule("x_items_more_than", extractor, entity_type)
     time_delta = parse_time_frame(rule["time_frame"])
     current_time = datetime.now(UTC)
     time_frame = current_time - time_delta
 
     events = context.instance.get_event_records(
         EventRecordsFilter(
-            asset_key=asset_key, event_type=DagsterEventType.ASSET_MATERIALIZATION
+            asset_key=asset_key,
+            event_type=DagsterEventType.ASSET_MATERIALIZATION,
         )
     )
-
     if events is None:
         return True
 
-    actual_count = asset_data
+    current_number_of_extracted_items = (
+        events[0].asset_materialization.metadata["num_items"].value
+    )
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
-    return actual_count <= (historic_count if historic_count > 0 else actual_count) + (
-        rule["value"] or 0
-    )
+    if historic_count <= 0:
+        return True
+
+    def check_rule_violation(
+        rule_name: str, historic_count: int, current_number_of_extracted_items: int
+    ) -> bool:
+        """Returns True when check fails. Check is supposed to fail if [rule_name]."""
+        threshold = rule["value"] or 0
+        if rule_name == "x_items_more_than":
+            # fail/True if current is larger than historic by threshold number of items
+            return current_number_of_extracted_items > historic_count + threshold
+        if rule_name == "x_items_less_than":
+            # fail/True if current is smaller than historic by threshold number of items
+            return current_number_of_extracted_items < historic_count - threshold
+        if rule_name == "less_than_x_inbound":
+            pass
+        if rule_name == "less_than_x_outbound":
+            pass
+        if rule_name == "not_exactly_x_items":
+            pass
+        if rule_name == "x_percent_less_than":
+            pass
+        if rule_name == "x_percent_more_than":
+            pass
+        return False
+
+    if rule_name not in [
+        "x_items_less_than",
+        "x_items_more_than",
+        "less_than_x_inbound",
+        "less_than_x_outbound",
+        "not_exactly_x_items",
+        "x_percent_less_than",
+        "x_percent_more_than",
+    ]:
+        msg = f"Rule not existing: {rule_name}"
+        raise ValueError(msg)
+
+    if check_rule_violation(
+        rule_name, historic_count, current_number_of_extracted_items
+    ):
+        msg = (
+            f"Asset {asset_key} failed {rule_name} check: "
+            f"{current_number_of_extracted_items} not meeting threshold."
+        )
+        raise ValueError(msg)
+
+    return True
