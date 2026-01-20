@@ -4,14 +4,8 @@ from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedPerson,
     ResourceMapping,
-)
-from mex.common.organigram.extract import extract_organigram_units
-from mex.common.organigram.transform import (
-    transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -24,9 +18,6 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchema,
     OpenDataTableSchemaCategories,
     OpenDataTableSchemaConstraints,
-)
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
@@ -124,27 +115,6 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
-
-
-@pytest.fixture
-def mocked_extracted_organizational_units(
-    extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedOrganizationalUnit]:
-    return transform_organigram_units_to_organizational_units(
-        extract_organigram_units(),
-        get_extracted_primary_source_id_by_name("organigram"),
-        extracted_organization_rki.stableTargetId,
-    )
-
-
-@pytest.fixture
-def mocked_units_by_identifier_in_primary_source(
-    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> dict[str, ExtractedOrganizationalUnit]:
-    return {
-        unit.identifierInPrimarySource: unit
-        for unit in mocked_extracted_organizational_units
-    }
 
 
 @pytest.fixture

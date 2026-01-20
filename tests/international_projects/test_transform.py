@@ -30,9 +30,9 @@ def test_transform_international_projects_source_to_mex_source(
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
 
-    international_projects_sources = list(extract_international_projects_sources())
+    international_projects_sources = extract_international_projects_sources()
 
-    extracted_activities = list(
+    extracted_activities = (
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             international_projects_mapping_activity,
