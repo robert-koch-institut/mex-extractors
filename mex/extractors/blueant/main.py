@@ -1,4 +1,8 @@
-from dagster import MetadataValue, Output, asset
+from dagster import (
+    MetadataValue,
+    Output,
+    asset,
+)
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
@@ -59,7 +63,7 @@ def blueant_merged_person_id_by_employee_id(
     )
 
 
-@asset(group_name="blueant")
+@asset(group_name="blueant", metadata={"entity_type": "activity"})
 def blueant_extracted_activities(
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
@@ -78,7 +82,12 @@ def blueant_extracted_activities(
 
     num_items = len(extracted_activities)
     load(extracted_activities)
-    return Output(value=num_items, metadata={"num_items": MetadataValue.int(num_items)})
+    return Output(
+        value=num_items,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @entrypoint(Settings)
