@@ -3,6 +3,7 @@ from functools import lru_cache
 
 from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.ldap.connector import LDAPConnector
+from mex.common.ldap.helpers import get_ldap_units_for_employee_ids
 from mex.common.organigram.extract import (
     extract_organigram_units,
     get_unit_merged_ids_by_synonyms,
@@ -59,43 +60,28 @@ def get_unit_merged_id_by_synonym(
     return unit_merged_ids_by_synonyms.get(synonym, None)
 
 
-def get_ldap_units_for_employee_ids(employee_ids: Iterable[str]) -> dict[str, str]:
+def resolve_organizational_unit_with_fallback(
+    extracted_unit: str | None,
+    contact_employee_ids: list[str],
+    involved_employee_ids: list[str],
+) -> list[MergedOrganizationalUnitIdentifier] | None:
     """."""
-    ldap = LDAPConnector.get()
-    result = {}
+    units_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
 
-    for employee_id in watch_progress(employee_ids, "get_ldap_units_for_employee_ids"):
-        if not employee_id:
-            continue
+    if extracted_unit:
+        unit_ids = units_by_synonym.get(extracted_unit)
+        if unit_ids:
+            return unit_ids
 
-        try:
-            person = ldap.get_person(employee_id=employee_id)
-        except MExError:
-            continue
+    employee_ids = set(contact_employee_ids) | set(involved_employee_ids)
+    if not employee_ids:
+        return None
 
-        if person.organizational_unit:
-            result[employee_id] = person.organizational_unit
+    ldap_units = get_ldap_units_for_employee_ids(employee_ids)
 
-    return result
+    for ldap_unit in ldap_units:
+        unit_ids = units_by_synonym.get(ldap_unit)
+        if unit_ids:
+            return unit_ids
 
-
-def match_extracted_unit_with_organigram_units(extracted_unit: str) -> bool:
-    # rki_organization = get_wikidata_organization_by_id("RKI")
-    # if not rki_organization:
-    #     msg = "RKI wikidata organization not found"
-    #     raise EmptySearchResultError(msg)
-    organigram_units = extract_organigram_units()
-    # extracted_organizational_units = transform_organigram_units_to_organizational_units(
-    #     organigram_units,
-    #     get_extracted_primary_source_id_by_name("organigram"),
-    #     rki_organization,
-    # )
-    # load(extracted_organizational_units)
-    # exists = any(extracted_organizational_unit.identifier == extracted_unit for extracted_organizational_unit in extracted_organizational_units)
-    # extracted_organizational_units[0]= ExtractedOrganizationalUnit(hadPrimarySource=MergedPrimarySourceIdentifier("dsnYIq1AxYMLcTbSIBvDSs"), identifierInPrimarySource='praes', parentUnit=None, name=[Text(value='Institutsleitung', language=<TextLanguage.DE: 'de'>), Text(value='President', language=<TextLanguage.EN: 'en'>)], alternativeName=[Text(value='Praes', language=<TextLanguage.DE: 'de'>), Text(value='PrÃ¤s', language=<TextLanguage.DE: 'de'>)], email=[], shortName=[], unitOf=[MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg")], website=[Link(language=<LinkLanguage.DE: 'de'>, title='Institutsleitung auf rki.de', url='https://www.rki.de/DE/Institut/Organisation/Leitung/leitung-node.html')], entityType='ExtractedOrganizationalUnit', identifier=ExtractedOrganizationalUnitIdentifier("gFgzD2U7HjFF4bO8WbqkM0"), stableTargetId=MergedOrganizationalUnitIdentifier("hIbCmDVGw4ETuumjF4HBVk"))
-    # identifiers = [ u.identifier for u in  extracted_organizational_units]
-    # identifiers = [ExtractedOrganizationalUnitIdentifier("cmIwNTUG7lXnzglIePDwMU")]
-    # TODO match extracted_unit with organigram unit identifiers
-
-    organigram_units_identifiers = [unit.identifier for unit in organigram_units]
-    return extracted_unit in organigram_units_identifiers
+    return None

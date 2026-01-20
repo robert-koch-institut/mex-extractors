@@ -37,6 +37,20 @@ def blueant_source_without_leader() -> BlueAntSource:
         type_="Sonderforschungsprojekt",
     )
 
+@pytest.fixture
+def blueant_source_with_involved_employee() -> BlueAntSource:
+    """Return a sample Blue Ant source with involvedEmployeeId."""
+    return BlueAntSource(
+        end=TemporalEntity(2010, 10, 11),
+        name="4_Prototype Saturn Surfer",
+        number="00789",
+        start=TemporalEntity(2020, 8, 9),
+        client_names="Robert Koch-Institut",
+        involvedEmployeeId = "person-789",
+        department="C1 Outdated",
+        status="Projektumsetzung",
+        type_="Sonderforschungsprojekt",
+    )
 
 @pytest.fixture
 def blueant_activity(settings: Settings) -> ActivityMapping:

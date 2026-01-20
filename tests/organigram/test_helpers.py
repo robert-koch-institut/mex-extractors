@@ -8,12 +8,9 @@ from mex.common.types import (
 )
 from mex.extractors.organigram import helpers
 from mex.extractors.organigram.helpers import (
-    (
     get_unit_merged_id_by_synonym,
-),
-    match_extracted_unit_with_organigram_units,
+    resolve_organizational_unit_with_fallback,
 )
-from mex.extractors.wikidata import helpers
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
@@ -57,30 +54,53 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
     # Verify we get None back
     assert merged_id is None
 
-# @pytest.mark.usefixtures("mocked_wikidata")
-# def test_get_wikidata_extracted_organization_id_by_name(
-#     monkeypatch: MonkeyPatch,
-# ) -> None:
-#     """Wikidata helper finds "Robert Koch-Institut"."""
-#     query_rki = "Robert Koch-Institut"
 
-#     mocked_load = Mock()
-#     monkeypatch.setattr(helpers, "load", mocked_load)
-
-#     returned = get_wikidata_extracted_organization_id_by_name(query_rki)
-#     mocked_load.assert_called_once()
-
-#     assert returned == MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg")
-
-@pytest.mark.usefixtures("mocked_wikidata")
-@pytest.mark.integration
-def test_match_extracted_unit_with_organigram_units(
+@pytest.mark.parametrize(
+    ("extracted_unit", "contact_ids", "involved_ids", "expected_unit"),
+    [
+        ("DIRECT_UNIT", [], [], "DIRECT_UNIT"),
+        ("OUTDATED_UNIT", ["contact-1"], [], "LDAP_UNIT_CONTACT"),
+        ("OUTDATED_UNIT", [], ["involved-1"], "LDAP_UNIT_INVOLVED"),
+    ],
+)
+def test_resolve_organizational_unit_with_fallback_param(
     monkeypatch: MonkeyPatch,
-)-> None:
-    # das hier später als helper functin und dann jedes Mal vor transform to extracted_activity in invovledUnit aufrufen
-    mocked_load = Mock()
-    monkeypatch.setattr(helpers, "load", mocked_load)
-    test_unit= "zki-ph5"
-    breakpoint()
-    unit_exists = match_extracted_unit_with_organigram_units(extracted_unit=test_unit)
-    #if not unit_exists:
+    extracted_unit: str,
+    contact_ids: list[str],
+    involved_ids: list[str],
+    expected_unit: str,
+) -> None:
+    merged_ids = {name: [MergedOrganizationalUnitIdentifier.generate(seed=i + 1)] 
+                  for i, name in enumerate(
+                      ["DIRECT_UNIT", "LDAP_UNIT_CONTACT", "LDAP_UNIT_INVOLVED"]
+                  )}
+
+    def _mock_get_cached_unit_merged_ids_by_synonyms()-> dict[str, list[MergedOrganizationalUnitIdentifier]]:
+        return merged_ids
+
+    monkeypatch.setattr(
+        helpers,
+        "_get_cached_unit_merged_ids_by_synonyms",
+        _mock_get_cached_unit_merged_ids_by_synonyms,
+    )
+
+    def _mock_get_ldap_units_for_employee_ids(employee_ids: set[str])-> set[str]:
+        if employee_ids == {"contact-1"}:
+            return {"LDAP_UNIT_CONTACT"}
+        if employee_ids == {"involved-1"}:
+            return {"LDAP_UNIT_INVOLVED"}
+        return set()
+
+    monkeypatch.setattr(
+        helpers,
+        "get_ldap_units_for_employee_ids",
+        _mock_get_ldap_units_for_employee_ids,
+    )
+
+    result = resolve_organizational_unit_with_fallback(
+        extracted_unit=extracted_unit,
+        contact_employee_ids=contact_ids,
+        involved_employee_ids=involved_ids,
+    )
+
+    assert result == merged_ids[expected_unit]

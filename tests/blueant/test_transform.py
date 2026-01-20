@@ -1,4 +1,6 @@
+
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
@@ -49,3 +51,59 @@ def test_transform_blueant_sources_to_extracted_activities(
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("blueant")),
         "stableTargetId": Joker(),
     }
+
+
+
+
+@pytest.mark.usefixtures("mocked_wikidata")
+def test_resolve_organizational_unit_with_fallback(
+    monkeypatch:MonkeyPatch,
+    blueant_source: BlueAntSource,
+    blueant_source_without_leader: BlueAntSource,
+    blueant_source_with_involved_employee: BlueAntSource,
+    blueant_activity: ActivityMapping,
+) -> None:
+    stable_target_ids_by_employee_id = {
+        "person-567": [
+            MergedPersonIdentifier.generate(seed=99),
+        ],
+        "person-789":[
+            MergedPersonIdentifier.generate(seed=99),
+        ],
+    }
+    mocked_unit_id = MergedOrganizationIdentifier.generate(seed=42)
+    mocked_synonyms = {
+        "C1": [mocked_unit_id],
+        "C1 Sub-Unit": [mocked_unit_id],
+        "C1 Outdated": [mocked_unit_id],
+    }
+    monkeypatch.setattr(
+        "mex.extractors.organigram.helpers._get_cached_unit_merged_ids_by_synonyms",
+        lambda: mocked_synonyms,
+    )
+
+    monkeypatch.setattr(
+        "mex.extractors.organigram.helpers.get_ldap_units_for_employee_ids",
+        lambda employee_ids: {"C1 Outdated"},
+    )
+
+    mex_sources = transform_blueant_sources_to_extracted_activities(
+        [blueant_source, blueant_source_without_leader, blueant_source_with_involved_employee],
+        stable_target_ids_by_employee_id,
+        blueant_activity,
+        {"Robert Koch-Institut": mocked_unit_id},
+    )
+
+    assert len(mex_sources) == 3
+
+    # matched department with project leader
+    assert mex_sources[0].responsibleUnit == [mocked_unit_id]
+    assert mex_sources[0].contact == stable_target_ids_by_employee_id["person-567"]
+
+    # matched department without leader
+    assert mex_sources[1].responsibleUnit == [mocked_unit_id]
+    assert mex_sources[1].contact == [mocked_unit_id]
+
+    # outdated department -> fallback via involvedEmployeeID
+    assert mex_sources[2].responsibleUnit == [mocked_unit_id]
+    assert mex_sources[2].contact == stable_target_ids_by_employee_id["person-789"]
