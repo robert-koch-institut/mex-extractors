@@ -142,10 +142,12 @@ def check_item_count_rule(  # noqa: C901
         rule_name: str, historic_count: int, current_number_of_extracted_items: int
     ) -> bool:
         threshold = rule["value"] or 0
-        if rule_name == "x_items_less_than":
-            return current_number_of_extracted_items < historic_count - threshold
         if rule_name == "x_items_more_than":
+            # fail/True if current is larger than historic by threshold number of items
             return current_number_of_extracted_items > historic_count + threshold
+        if rule_name == "x_items_less_than":
+            # fail/True if current is smaller than historic by threshold number of items
+            return current_number_of_extracted_items < historic_count - threshold
         if rule_name == "less_than_x_inbound":
             pass
         if rule_name == "less_than_x_outbound":
