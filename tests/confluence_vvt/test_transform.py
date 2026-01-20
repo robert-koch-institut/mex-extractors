@@ -78,7 +78,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 def test_transform_confluence_vvt_page_to_extracted_activities(
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
-    all_pages = list(get_page_data_by_id(fetch_all_vvt_pages_ids()))
+    all_pages = get_page_data_by_id(fetch_all_vvt_pages_ids())
 
     all_persons = get_all_persons_from_all_pages(
         all_pages, confluence_vvt_activity_mapping

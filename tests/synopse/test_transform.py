@@ -94,12 +94,10 @@ def test_transform_synopse_variables_to_mex_variable_groups(
         "stableTargetId": Joker(),
     }
 
-    variable_groups = list(
-        transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_by_thema,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variable_groups = transform_synopse_variables_to_mex_variable_groups(
+        synopse_variables_by_thema,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
     sorted_variable_groups = sorted(
         variable_groups, key=lambda v: v.identifierInPrimarySource
@@ -154,7 +152,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
     }
-    variables = list(
+    variables = (
         transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
             synopse_variables,
             variable_group_by_identifier_in_primary_source,
@@ -176,13 +174,11 @@ def test_transform_synopse_variables_to_mex_variables(
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
     }
-    variables = list(
-        transform_synopse_variables_to_mex_variables(
-            synopse_variables_by_thema,
-            variable_group_by_identifier_in_primary_source,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variables = transform_synopse_variables_to_mex_variables(
+        synopse_variables_by_thema,
+        variable_group_by_identifier_in_primary_source,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
 
     sorted_variables = sorted(variables, key=lambda v: v.identifierInPrimarySource)
@@ -207,7 +203,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_studies: list[SynopseStudy],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activity: ExtractedActivity,
-    extracted_organization: list[ExtractedOrganization],
+    extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
     expected_resource = {
@@ -239,8 +235,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": [str(extracted_organization[0].stableTargetId)],
-        # TODO(HS): add MergedOrganizationIdentifier of Robert Koch-Institut
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
         ],
@@ -268,7 +263,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         [synopse_project],
         synopse_variables_by_study_id,
         [extracted_activity],
-        extracted_organization[0],
+        extracted_organization_rki,
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
         {"Jane Doe": [MergedPersonIdentifier.generate(seed=237)]},
@@ -323,13 +318,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
     }
 
-    activities = list(
-        transform_synopse_projects_to_mex_activities(
-            synopse_projects,
-            contributor_merged_ids_by_name,
-            synopse_activity,
-            synopse_merged_organization_ids_by_query_string,
-        )
+    activities = transform_synopse_projects_to_mex_activities(
+        synopse_projects,
+        contributor_merged_ids_by_name,
+        synopse_activity,
+        synopse_merged_organization_ids_by_query_string,
     )
 
     assert len(activities) == 2
