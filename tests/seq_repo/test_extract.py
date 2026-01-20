@@ -19,7 +19,7 @@ from mex.extractors.seq_repo.model import SeqRepoSource
 
 @pytest.mark.usefixtures("mocked_drop")
 def test_extract_sources() -> None:
-    sources = list(extract_sources())
+    sources = extract_sources()
     expected = {
         "project_coordinators": ["max", "mustermann", "yee-haw"],
         "customer_org_unit_id": "FG99",
@@ -49,7 +49,7 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
     )
 
     with pytest.raises(MExError, match=r"Expected exactly one seq-repo file"):
-        list(extract_sources())
+        extract_sources()
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -57,9 +57,8 @@ def test_extract_source_project_coordinator(
     seq_repo_sources: Iterable[SeqRepoSource],
 ) -> None:
     seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
-    project_coordinators = list(
-        extract_source_project_coordinator(seq_repo_sources_dict)
-    )
+    project_coordinators = extract_source_project_coordinator(seq_repo_sources_dict)
+
     assert project_coordinators == [
         LDAPPersonWithQuery(
             person=LDAPPerson(

@@ -25,16 +25,17 @@ def test_extract_blueant_sources_from_api_mocked() -> None:
         for k, v in MOCKED_API_SOURCE.items()
         if k not in ("clients", "departmentId", "projectLeaderId", "statusId", "typeId")
     } | MOCKED_RESOLVED_ATTRIBUTES
-    sources = list(extract_blueant_sources())
+    sources = extract_blueant_sources()
+
     assert len(sources) == 1
-    source = sources[0]
-    assert source.model_dump() == expected_source
+    assert sources[0].model_dump() == expected_source
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_blueant_project_leaders(blueant_source: BlueAntSource) -> None:
     blueant_sources = [blueant_source, blueant_source, blueant_source]
-    persons = list(extract_blueant_project_leaders(blueant_sources))
+    persons = extract_blueant_project_leaders(blueant_sources)
+
     assert len(persons) == 1
     assert persons[0].employeeID == "42"
 
@@ -48,7 +49,7 @@ def test_extract_blueant_project_leaders_not_in_ldap(
         "get_persons",
         lambda _, **__: [],
     )
-    persons = list(extract_blueant_project_leaders([blueant_source]))
+    persons = extract_blueant_project_leaders([blueant_source])
     assert not persons
 
 
@@ -57,7 +58,7 @@ def test_extract_blueant_project_leaders_from_source_without_leader(
     blueant_source: BlueAntSource,
 ) -> None:
     blueant_source.projectLeaderEmployeeId = None
-    persons = list(extract_blueant_project_leaders([blueant_source]))
+    persons = extract_blueant_project_leaders([blueant_source])
     assert not persons
 
 

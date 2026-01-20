@@ -2,11 +2,19 @@ from pathlib import Path
 
 import pytest
 
-from mex.common.models import ExtractedOrganization
+from mex.common.models import (
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+)
+from mex.common.organigram.extract import extract_organigram_units
+from mex.common.organigram.transform import (
+    transform_organigram_units_to_organizational_units,
+)
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
 from mex.extractors.primary_source.helpers import (
     cached_load_extracted_primary_source_by_name,
+    get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
 
@@ -47,3 +55,24 @@ def extracted_organization_rki() -> ExtractedOrganization:
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(123),
         officialName=["Robert Koch-Institut"],
     )
+
+
+@pytest.fixture
+def mocked_extracted_organizational_units(
+    extracted_organization_rki: ExtractedOrganization,
+) -> list[ExtractedOrganizationalUnit]:
+    return transform_organigram_units_to_organizational_units(
+        extract_organigram_units(),
+        get_extracted_primary_source_id_by_name("organigram"),
+        extracted_organization_rki.stableTargetId,
+    )
+
+
+@pytest.fixture
+def mocked_units_by_identifier_in_primary_source(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> dict[str, ExtractedOrganizationalUnit]:
+    return {
+        unit.identifierInPrimarySource: unit
+        for unit in mocked_extracted_organizational_units
+    }
