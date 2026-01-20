@@ -109,7 +109,7 @@ def check_item_count_rule(  # noqa: C901
         entity_type: Entity Type for the asset check.
 
 
-    Returns bool to AssetCheck.
+    Returns True if check passes.
     """
     try:
         rule = get_rule(rule_name, extractor, entity_type)
