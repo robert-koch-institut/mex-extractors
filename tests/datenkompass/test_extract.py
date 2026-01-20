@@ -11,10 +11,10 @@ def test_get_merged_items_mocked() -> None:
     assert len(items) == 3  # 3 mocked MergedActivites
     assert isinstance(items[1], MergedActivity)
     assert items[0].model_dump(exclude_defaults=True) == {
-        "contact": ["LoremIpsum3456"],
-        "responsibleUnit": ["IdentifierUnitPRNT"],
+        "contact": ["LoremIpsum1234"],
+        "responsibleUnit": ["IdentifierUnitC1", "IdentifierUnitFG99"],
         "title": [
-            {"value": "titel de", "language": TextLanguage.DE},
+            {"value": '"title "Act" no language"'},
             {"value": "title en", "language": TextLanguage.EN},
         ],
         "abstract": [
