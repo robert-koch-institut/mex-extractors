@@ -138,7 +138,7 @@ def check_item_count_rule(  # noqa: C901
     if historic_count <= 0:
         return True
 
-    def check_rule(
+    def check_rule_violation(
         rule_name: str, historic_count: int, current_number_of_extracted_items: int
     ) -> bool:
         threshold = rule["value"] or 0
