@@ -77,13 +77,12 @@ def transform_blueant_sources_to_extracted_activities(
         department = source.department.replace("(h)", "").strip()
 
         # department_ids = get_unit_merged_id_by_synonym(department)
-        # if not department_ids:
-        #     continue
         department_ids = resolve_organizational_unit_with_fallback(
             extracted_unit=department,
-            contact_employee_ids=[source.projectLeaderEmployeeId] if source.projectLeaderEmployeeId else [],
-            involved_employee_ids=[source.involvedEmployeeId] if getattr(source, "involvedEmployeeId", None) else [],
+            contact_ids=[source.projectLeaderEmployeeId] if source.projectLeaderEmployeeId else [],
         )
+        if not department_ids:
+            continue
 
 
         # get contact employee or fallback to unit

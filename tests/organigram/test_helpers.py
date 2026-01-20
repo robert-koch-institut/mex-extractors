@@ -56,18 +56,17 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.mark.parametrize(
-    ("extracted_unit", "contact_ids", "involved_ids", "expected_unit"),
+    ("extracted_unit",  "employee_ids", "expected_unit"),
     [
-        ("DIRECT_UNIT", [], [], "DIRECT_UNIT"),
-        ("OUTDATED_UNIT", ["contact-1"], [], "LDAP_UNIT_CONTACT"),
-        ("OUTDATED_UNIT", [], ["involved-1"], "LDAP_UNIT_INVOLVED"),
+        ("DIRECT_UNIT", [], "DIRECT_UNIT"),
+        ("OUTDATED_UNIT", ["contact-1"], "LDAP_UNIT_CONTACT"),
+        ("OUTDATED_UNIT", ["involved-1"], "LDAP_UNIT_INVOLVED"),
     ],
 )
 def test_resolve_organizational_unit_with_fallback_param(
     monkeypatch: MonkeyPatch,
     extracted_unit: str,
-    contact_ids: list[str],
-    involved_ids: list[str],
+    employee_ids: list[str],
     expected_unit: str,
 ) -> None:
     merged_ids = {name: [MergedOrganizationalUnitIdentifier.generate(seed=i + 1)] 
@@ -99,8 +98,7 @@ def test_resolve_organizational_unit_with_fallback_param(
 
     result = resolve_organizational_unit_with_fallback(
         extracted_unit=extracted_unit,
-        contact_employee_ids=contact_ids,
-        involved_employee_ids=involved_ids,
+        contact_ids=employee_ids,
     )
 
     assert result == merged_ids[expected_unit]

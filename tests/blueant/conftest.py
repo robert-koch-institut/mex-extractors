@@ -46,7 +46,7 @@ def blueant_source_with_involved_employee() -> BlueAntSource:
         number="00789",
         start=TemporalEntity(2020, 8, 9),
         client_names="Robert Koch-Institut",
-        involvedEmployeeId = "person-789",
+        projectLeaderEmployeeId="person-567",
         department="C1 Outdated",
         status="Projektumsetzung",
         type_="Sonderforschungsprojekt",

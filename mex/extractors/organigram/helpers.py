@@ -61,9 +61,8 @@ def get_unit_merged_id_by_synonym(
 
 
 def resolve_organizational_unit_with_fallback(
-    extracted_unit: str | None,
-    contact_employee_ids: list[str],
-    involved_employee_ids: list[str],
+    extracted_unit: str,
+    contact_ids: list[str],
 ) -> list[MergedOrganizationalUnitIdentifier] | None:
     """."""
     units_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
@@ -73,7 +72,7 @@ def resolve_organizational_unit_with_fallback(
         if unit_ids:
             return unit_ids
 
-    employee_ids = set(contact_employee_ids) | set(involved_employee_ids)
+    employee_ids = set(contact_ids)
     if not employee_ids:
         return None
 
