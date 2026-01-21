@@ -13,7 +13,7 @@ anonymizationPseudonymization:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - fictitiousf@rki.de
         rule:
 description:
   - mappingRules:

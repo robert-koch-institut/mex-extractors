@@ -1,7 +1,6 @@
-from uuid import UUID
-
 import pytest
 
+from mex.common.ldap.models import LDAPFunctionalAccount
 from mex.common.models import AccessPlatformMapping
 from mex.extractors.synopse.extract import (
     extract_projects,
@@ -97,14 +96,12 @@ def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_contact(
     synopse_access_platform: AccessPlatformMapping,
+    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     actor = extract_synopse_contact(synopse_access_platform)
-    expected = {
-        "sAMAccountName": "ContactC",
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
-        "mail": ["email@email.de", "contactc@rki.de"],
-    }
-    assert actor[0].model_dump(exclude_none=True) == expected
+
+    assert len(actor) == 1
+    assert actor[0] == ldap_contact_point
 
 
 def test_extract_study_overviews() -> None:

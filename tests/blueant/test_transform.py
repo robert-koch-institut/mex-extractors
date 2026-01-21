@@ -24,7 +24,7 @@ def test_transform_blueant_sources_to_extracted_activities(
     blueant_activity: ActivityMapping,
 ) -> None:
     stable_target_ids_by_employee_id = {
-        "person-567": [
+        "42": [
             MergedPersonIdentifier.generate(seed=99),
         ],
     }

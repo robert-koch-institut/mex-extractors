@@ -21,6 +21,14 @@ services:
       - 3000
     volumes:
       - work:/app/work:rw
+  slapd:
+    image: thoteam/slapd-server-mock
+    ports:
+      - 636:636
+    volumes:
+      - ./assets/raw-data/ldap/:/bootstrap/
+    expose:
+      - 636
   mailpit:
     image: axllent/mailpit:v1.28
     ports:

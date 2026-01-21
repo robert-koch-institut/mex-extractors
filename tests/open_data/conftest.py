@@ -2,16 +2,10 @@ import pytest
 
 from mex.common.models import (
     DistributionMapping,
-    ExtractedContactPoint,
     ExtractedDistribution,
-    ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-    MergedPrimarySourceIdentifier,
-    MergedResourceIdentifier,
-)
+from mex.common.types import MergedPrimarySourceIdentifier, MergedResourceIdentifier
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -29,25 +23,6 @@ def mocked_open_data_parent_resource() -> list[OpenDataParentResource]:
     mocked_parent_response = create_mocked_parent_response()
     return [
         OpenDataParentResource.model_validate(mocked_parent_response["hits"]["hits"][0])
-    ]
-
-
-@pytest.fixture
-def mocked_open_data_persons() -> list[ExtractedPerson]:
-    """Mock an extracted person."""
-    return [
-        ExtractedPerson(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="test_id",
-            email=["test_person@email.de"],
-            familyName=["Muster"],
-            fullName=["Muster, Maxi"],
-            givenName=["Maxi"],
-            memberOf=[
-                MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"),  # PRNT
-                MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
-            ],
-        )
     ]
 
 
@@ -71,18 +46,6 @@ def mocked_open_data_creator_with_processed_affiliation() -> (
     return OpenDataCreatorsOrContributors.model_validate(
         mocked_parent_response["hits"]["hits"][1]["metadata"]["creators"][1]
     )
-
-
-@pytest.fixture
-def mocked_open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
-    """Mock the opendata contact point."""
-    return [
-        ExtractedContactPoint(
-            email="email@email.de",
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-            identifierInPrimarySource="contact point",
-        )
-    ]
 
 
 @pytest.fixture
