@@ -25,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove mailpit path for CI testing
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
-- blueant: fix Person extraction and units written as MergedOrganization items
 
 ### Deprecated
 
@@ -35,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - grippeweb: clean up obsolete wasGeneratedBy transformation (mapping was removed)
 
 ### Fixed
+
+- blueant: fix Person extraction and units written as MergedOrganization items
 
 ### Security
 
