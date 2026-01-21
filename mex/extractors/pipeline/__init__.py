@@ -51,10 +51,10 @@ running pipelines
 
 Pipelines can be run in a couple of different ways:
 
-- run `pdm run dagster dev` and click `materialize all` on
+- run `uv run dagster dev` and click `materialize all` on
   `http://localhost:3000/locations/mex/jobs/foo_system`
-- run `pdm run foo-system` according to the entrypoint in `pyproject.toml`
-- run `pdm run dagster job execute -m mex -j foo_system` using the asset group name
+- run `uv run foo-system` according to the entrypoint in `pyproject.toml`
+- run `uv run dagster job execute -m mex -j foo_system` using the asset group name
 """
 
 from mex.extractors.pipeline.base import load_job_definitions, run_job_in_process
