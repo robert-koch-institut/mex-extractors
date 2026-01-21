@@ -13,11 +13,9 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
-    MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
 from mex.extractors.blueant.extract import (
-    extract_blueant_organizations,
     extract_blueant_project_leaders,
     extract_blueant_sources,
 )
@@ -65,24 +63,10 @@ def blueant_merged_person_id_by_employee_id(
     )
 
 
-@asset(group_name="blueant")
-def blueant_merged_organization_ids_by_query_str(
-    blueant_sources: list[BlueAntSource],
-) -> dict[str, MergedOrganizationIdentifier]:
-    """Extract organizations for blueant from wikidata and group them by query."""
-    return extract_blueant_organizations(blueant_sources)
-
-
-@asset(
-    group_name="blueant",
-    metadata={"entity_type": "activity"},
-)
+@asset(group_name="blueant", metadata={"entity_type": "activity"})
 def blueant_extracted_activities(
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-    blueant_merged_organization_ids_by_query_str: dict[
-        str, MergedOrganizationIdentifier
-    ],
 ) -> Output[int]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
@@ -94,7 +78,6 @@ def blueant_extracted_activities(
         blueant_sources,
         blueant_merged_person_id_by_employee_id,
         activity,
-        blueant_merged_organization_ids_by_query_str,
     )
 
     num_items = len(extracted_activities)

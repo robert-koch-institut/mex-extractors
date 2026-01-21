@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- blueant: fix Person extraction and units written as MergedOrganization items
+
 ### Security
 
 ## [1.7.0] - 2025-12-11

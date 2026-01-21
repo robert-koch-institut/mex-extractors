@@ -7,7 +7,7 @@ from mex.extractors.models import BaseRawData
 class BlueAntSource(BaseRawData):
     """Model class for Blue Ant sources."""
 
-    client_names: list[str]
+    client_names: list[str | None] = []
     department: str
     end: TemporalEntity
     name: str
