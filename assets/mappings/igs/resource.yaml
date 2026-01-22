@@ -66,6 +66,19 @@ method:
       - setValues:
   - mappingRules:
       - forValues:
+qualityInformation:
+  - fieldInPrimarySource: /genomes/count
+    locationInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        setValues:
+  - fieldInPrimarySource: /samples/count + component/schema/
+    locationInPrimarySource:
+    examplesInPrimarySource:
+    mappingRules:
+      - forValues:
+        setValues:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

@@ -290,7 +290,9 @@ def transform_igs_schemas_to_variables(
     used_in = igs_extracted_resource_id
     for schema_name, schema in igs_schemas.items():
         data_type: str | None = None
-        if schema_name == "Pathogen" and isinstance(schema, IGSEnumSchema):
+        if schema_name == "igsmodels__enums__Pathogen" and isinstance(
+            schema, IGSEnumSchema
+        ):
             data_type = schema.type
             for enum in schema.enum:
                 if schema_name in extracted_igs_variable_group_ids_by_igs_identifier:

@@ -15,6 +15,10 @@ class IGSConnector(HTTPConnector):
         settings = Settings.get()
         self.url = settings.igs.url
 
+    def _check_availability(self) -> None:
+        """Send a GET request to verify the API is available."""
+        self.request("GET", endpoint="openapi.json")
+
     def get_json_from_api(self) -> dict[str, Any]:
         """Get json from IGS Open Api.
 
@@ -24,7 +28,7 @@ class IGSConnector(HTTPConnector):
         Returns:
             Parsed JSON body of the response
         """
-        response = self.request("GET")
+        response = self.request("GET", endpoint="openapi.json")
 
         if (
             response.get("status", {}).get("code", requests.codes["ok"])
@@ -32,3 +36,20 @@ class IGSConnector(HTTPConnector):
         ):
             raise MExError(response)
         return response
+
+    def get_endpoint_count(
+        self, endpoint: str, params: dict[str, Any] | None = None
+    ) -> str:
+        """Get count from IGS by endpoint.
+
+        Raises:
+            MExError if IGS Open API returns an error in the response body
+
+        Returns:
+            Parsed JSON body of the response
+        """
+        if params is None:
+            params = {}
+        response = self.request_raw("GET", endpoint=endpoint, params=params)
+
+        return response.text
