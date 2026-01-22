@@ -1,8 +1,6 @@
-from collections.abc import Iterable
 from functools import lru_cache
 
-from mex.common.exceptions import EmptySearchResultError, MExError
-from mex.common.ldap.connector import LDAPConnector
+from mex.common.exceptions import EmptySearchResultError
 from mex.common.ldap.helpers import get_ldap_units_for_employee_ids
 from mex.common.organigram.extract import (
     extract_organigram_units,
@@ -12,7 +10,6 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.logging import watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -64,7 +61,17 @@ def resolve_organizational_unit_with_fallback(
     extracted_unit: str,
     contact_ids: list[str],
 ) -> list[MergedOrganizationalUnitIdentifier] | None:
-    """."""
+    """Matches unit names and its synonyms with organigramm file.
+
+    If unit is outdated , it will get unit by involved person by looking up in ldap.
+
+    Args:
+        extracted_unit: synonym of organizational unit
+        contact_ids: list of involvedPerson
+
+    Returns:
+        list of merged organizational unit ids if found else None
+    """
     units_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
 
     if extracted_unit:

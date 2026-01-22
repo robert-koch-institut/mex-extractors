@@ -56,12 +56,13 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.mark.parametrize(
-    ("extracted_unit",  "employee_ids", "expected_unit"),
+    ("extracted_unit", "employee_ids", "expected_unit"),
     [
-        ("DIRECT_UNIT", [], "DIRECT_UNIT"),
-        ("OUTDATED_UNIT", ["contact-1"], "LDAP_UNIT_CONTACT"),
-        ("OUTDATED_UNIT", ["involved-1"], "LDAP_UNIT_INVOLVED"),
+        ("Space Rocket", [], "Space Rocket"),
+        ("Starship OLD", ["contact-1"], "Starship"),
+        ("Starship OLD 2", ["involved-1"], "Starship 2"),
     ],
+    ids=["unit matches organigramm", "unit old, fallback", "unit old, fallback"],
 )
 def test_resolve_organizational_unit_with_fallback_param(
     monkeypatch: MonkeyPatch,
@@ -69,25 +70,26 @@ def test_resolve_organizational_unit_with_fallback_param(
     employee_ids: list[str],
     expected_unit: str,
 ) -> None:
-    merged_ids = {name: [MergedOrganizationalUnitIdentifier.generate(seed=i + 1)] 
-                  for i, name in enumerate(
-                      ["DIRECT_UNIT", "LDAP_UNIT_CONTACT", "LDAP_UNIT_INVOLVED"]
-                  )}
+    mocked_unit_id_rocket = MergedOrganizationalUnitIdentifier.generate(seed=42)
+    mocked_unit_id_starship = MergedOrganizationalUnitIdentifier.generate(seed=42)
 
-    def _mock_get_cached_unit_merged_ids_by_synonyms()-> dict[str, list[MergedOrganizationalUnitIdentifier]]:
-        return merged_ids
+    mocked_synonyms = {
+        "Space Rocket": [mocked_unit_id_rocket],
+        "Starship": [mocked_unit_id_starship],
+        "Starship 2": [mocked_unit_id_starship],
+    }
 
     monkeypatch.setattr(
         helpers,
         "_get_cached_unit_merged_ids_by_synonyms",
-        _mock_get_cached_unit_merged_ids_by_synonyms,
+        lambda: mocked_synonyms,
     )
 
-    def _mock_get_ldap_units_for_employee_ids(employee_ids: set[str])-> set[str]:
+    def _mock_get_ldap_units_for_employee_ids(employee_ids: set[str]) -> set[str]:
         if employee_ids == {"contact-1"}:
-            return {"LDAP_UNIT_CONTACT"}
+            return {"Starship"}
         if employee_ids == {"involved-1"}:
-            return {"LDAP_UNIT_INVOLVED"}
+            return {"Starship 2"}
         return set()
 
     monkeypatch.setattr(
@@ -101,4 +103,4 @@ def test_resolve_organizational_unit_with_fallback_param(
         contact_ids=employee_ids,
     )
 
-    assert result == merged_ids[expected_unit]
+    assert result == mocked_synonyms[expected_unit]
