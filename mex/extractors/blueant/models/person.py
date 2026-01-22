@@ -14,4 +14,4 @@ class BlueAntPerson(BaseModel):
 class BlueAntPersonResponse(BaseModel):
     """Response to GET request to Blue Ant API person endpoint."""
 
-    persons: list[BlueAntPerson]
+    person: BlueAntPerson
