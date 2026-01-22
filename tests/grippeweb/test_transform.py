@@ -149,6 +149,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
     )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_grippeweb_resource_mappings_to_extracted_resources(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,

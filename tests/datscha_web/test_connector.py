@@ -9,7 +9,7 @@ def test_datscha_connector_item_urls() -> None:
     datscha = DatschaWebConnector.get()
     item_urls = datscha.get_item_urls()
 
-    assert len(list(item_urls)) > 10
+    assert len(item_urls) > 10
 
 
 @pytest.mark.integration
