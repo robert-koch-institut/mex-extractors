@@ -33,7 +33,7 @@ def test_extract_igs_schemas() -> None:
 @pytest.mark.usefixtures("mocked_igs")
 def test_extract_endpoint_counts(
     igs_resource_mapping: ResourceMapping, igs_schemas: dict[str, IGSSchema]
-) -> dict[str, str]:
+) -> None:
     endpoint_counts = extract_endpoint_counts(igs_resource_mapping, igs_schemas)
     assert endpoint_counts == {"/genomes/count": "7", "pathogen_PATHOGEN": "4"}
 
