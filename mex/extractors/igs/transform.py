@@ -217,7 +217,7 @@ def transformed_igs_schemas_to_variable_group(
     return extracted_variable_groups
 
 
-def get_enums_by_property_name(
+def get_enums_by_property_name(  # TODO(EH): deprecated, remove in MX-2095
     igs_schemas: dict[str, IGSSchema],
 ) -> dict[str, list[str]]:
     """Return a dictionary that links enum lists to property_name.
