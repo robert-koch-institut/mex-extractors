@@ -42,14 +42,13 @@ class IGSConnector(HTTPConnector):
     ) -> str:
         """Get count from IGS by endpoint.
 
-        Raises:
-            MExError if IGS Open API returns an error in the response body
+        Args:
+            endpoint: endpoint to request
+            params: dict of request params
 
         Returns:
-            Parsed JSON body of the response
+            Parsed count str
         """
-        if params is None:
-            params = {}
         response = self.request_raw("GET", endpoint=endpoint, params=params)
 
         return response.text
