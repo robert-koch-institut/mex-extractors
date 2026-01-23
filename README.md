@@ -143,6 +143,10 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `uv run ff-projects` extracts sources from the FF Projects excel file
 
+### grippeweb extractor
+
+- `uv run grippeweb` extracts grippeweb metadata from grippeweb database
+
 ### ifsg extractor
 
 - `uv run ifsg` extracts sources from the ifsg data base
@@ -151,9 +155,9 @@ components of the MEx project are open-sourced under the same license as well.
 
 - `uv run international-projects` extracts sources from the international projects excel
 
-### grippeweb extractor
+### kvis extractor
 
-- `uv run grippeweb` extracts grippeweb metadata from grippeweb database
+- `uv run kvis` extracts KVIS metadata from KVIS database
 
 ### odk extractor
 
