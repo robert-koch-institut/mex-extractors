@@ -19,6 +19,7 @@ from mex.common.types import (
     MergedVariableGroupIdentifier,
 )
 from mex.extractors.igs.extract import (
+    extract_endpoint_counts,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
 )
@@ -50,6 +51,16 @@ def igs_resource_mapping() -> dict[str, Any]:
     """Extract IGS resource mapping."""
     settings = Settings.get()
     return load_yaml(settings.igs.mapping_path / "resource.yaml")
+
+
+@asset(group_name="igs")
+def igs_endpoint_counts(
+    igs_resource_mapping: dict[str, Any], igs_schemas: dict[str, IGSSchema]
+) -> dict[str, str]:
+    """Extract endpoint counts from IGS API."""
+    return extract_endpoint_counts(
+        ResourceMapping.model_validate(igs_resource_mapping), igs_schemas
+    )
 
 
 @asset(group_name="igs")
