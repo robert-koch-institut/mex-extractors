@@ -37,6 +37,7 @@ def blueant_source_without_leader() -> BlueAntSource:
         type_="Sonderforschungsprojekt",
     )
 
+
 @pytest.fixture
 def blueant_source_with_involved_employee() -> BlueAntSource:
     """Return a sample Blue Ant source with involvedEmployeeId."""
@@ -51,6 +52,7 @@ def blueant_source_with_involved_employee() -> BlueAntSource:
         status="Projektumsetzung",
         type_="Sonderforschungsprojekt",
     )
+
 
 @pytest.fixture
 def blueant_activity(settings: Settings) -> ActivityMapping:
