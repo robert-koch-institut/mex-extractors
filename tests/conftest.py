@@ -27,6 +27,7 @@ pytest_plugins = (
     "tests.grippeweb.mocked_grippeweb",
     "tests.ifsg.mocked_ifsg",
     "tests.igs.mocked_igs",
+    "tests.kvis.mocked_kvis",
     "tests.ldap.mocked_ldap",
     "tests.open_data.mocked_open_data",
     "tests.system.mocked_dagster_instance",
