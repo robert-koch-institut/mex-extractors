@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from mex.common.types import MergedConsentIdentifier, MergedPersonIdentifier
 
 
-def filter_persons_with_consent_or_raise_on_multiple_consents(
+def filter_persons_with_a_unique_consent(
     person_items: list[MergedPerson], consent_items: list[MergedConsent]
 ) -> list[MergedPerson]:
     """Filter for persons with positive consent. Fail if a person has > 1 consent.
