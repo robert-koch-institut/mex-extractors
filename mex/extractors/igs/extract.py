@@ -1,3 +1,5 @@
+from typing import cast
+
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount
 from mex.common.models import (
@@ -28,6 +30,33 @@ def extract_igs_schemas() -> dict[str, IGSSchema]:
         if "properties" in value:
             igs_schemas[key] = IGSPropertiesSchema(**value)
     return igs_schemas
+
+
+def extract_endpoint_counts(
+    igs_resource_mapping: ResourceMapping, igs_schemas: dict[str, IGSSchema]
+) -> dict[str, str]:
+    """Return IGS endpoint counts."""
+    count_endpoints = [
+        element.fieldInPrimarySource.split(" ")[0]
+        for element in igs_resource_mapping.qualityInformation
+        if element.fieldInPrimarySource
+    ]
+    if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
+        count_endpoints.append(
+            igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
+        )
+    connector = IGSConnector.get()
+    pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
+    endpoint_counts: dict[str, str] = {}
+    for endpoint in count_endpoints:
+        if endpoint == "/samples/count":
+            for pathogen in pathogens:
+                endpoint_counts[f"pathogen_{pathogen}"] = connector.get_endpoint_count(
+                    endpoint=endpoint, params={"pathogens": pathogen}
+                )
+        else:
+            endpoint_counts[endpoint] = connector.get_endpoint_count(endpoint=endpoint)
+    return endpoint_counts
 
 
 def extract_ldap_actors_by_mail(
