@@ -3,8 +3,8 @@ from pydantic import Field
 from mex.common.models import BaseModel
 
 
-class KVISVariablesTable(BaseModel):
-    """Model class for KVIS Variables Table."""
+class KVISVariables(BaseModel):
+    """Model class for KVIS Variables Table rows."""
 
     file_type: str = Field(..., alias="FileType")
     datatype_description: str = Field(..., alias="DatatypeDescription")
@@ -14,8 +14,8 @@ class KVISVariablesTable(BaseModel):
     fvlist_name: str | None = Field(..., alias="FVListName")
 
 
-class KVISFieldValuesTable(BaseModel):
-    """Model class for KVIS FieldValues Table."""
+class KVISFieldValues(BaseModel):
+    """Model class for KVIS FieldValues Table rows."""
 
     field_value_list_name: str = Field(..., alias="FieldValueListName")
     field_value: str = Field(..., alias="FieldValue")

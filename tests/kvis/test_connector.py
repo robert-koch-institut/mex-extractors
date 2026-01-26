@@ -1,13 +1,13 @@
 import pytest
 
 from mex.extractors.kvis.connector import KVISConnector
-from mex.extractors.kvis.models.table_models import KVISFieldValuesTable
+from mex.extractors.kvis.models.table_models import KVISFieldValues
 
 
 @pytest.mark.usefixtures("mocked_kvis")
 def test_parse_rows() -> None:
     connection = KVISConnector.get()
-    rows = connection.parse_rows(KVISFieldValuesTable)
+    rows = connection.parse_rows(KVISFieldValues)
     assert rows == [
         {
             "field_value_list_name": "field value list name",

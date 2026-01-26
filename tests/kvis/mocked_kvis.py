@@ -7,8 +7,8 @@ from pytest import MonkeyPatch
 
 from mex.extractors.kvis.connector import KVISConnector
 from mex.extractors.kvis.models.table_models import (
-    KVISFieldValuesTable,
-    KVISVariablesTable,
+    KVISFieldValues,
+    KVISVariables,
 )
 
 
@@ -37,7 +37,7 @@ def mocked_kvis(
 @pytest.fixture
 def mocked_kvis_sql_tables() -> dict[type[BaseModel], list[dict[str, Any]]]:
     return {
-        KVISFieldValuesTable: [
+        KVISFieldValues: [
             {
                 "field_value_list_name": "field value list name",
                 "field_value": "field value",
@@ -49,7 +49,7 @@ def mocked_kvis_sql_tables() -> dict[type[BaseModel], list[dict[str, Any]]]:
                 "field_value_long_text": "and now also some longer text with more words",
             },
         ],
-        KVISVariablesTable: [
+        KVISVariables: [
             {
                 "file_type": "file type",
                 "datatype_description": "datatype description",

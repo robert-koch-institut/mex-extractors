@@ -7,14 +7,14 @@ from pydantic import BaseModel
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
 from mex.extractors.kvis.models.table_models import (
-    KVISFieldValuesTable,
-    KVISVariablesTable,
+    KVISFieldValues,
+    KVISVariables,
 )
 from mex.extractors.settings import Settings
 
 QUERY_BY_MODEL = {
-    KVISVariablesTable: "SELECT * FROM KVIS.Mex.vKVISVariables",
-    KVISFieldValuesTable: "SELECT * FROM KVIS.Mex.vKVISFieldValues",
+    KVISVariables: "SELECT * FROM KVIS.Mex.vKVISVariables",
+    KVISFieldValues: "SELECT * FROM KVIS.Mex.vKVISFieldValues",
 }
 
 

@@ -8,7 +8,7 @@ ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 def extract_sql_table(model: type[ModelT]) -> list[ModelT]:
-    """Extract sql tables and parse them into pydantic models.
+    """Extract sql tables and parse each row into pydantic models.
 
     Returns:
         list of parsed pydantic ModelT
