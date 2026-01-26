@@ -5,15 +5,15 @@ import pytest
 from mex.common.exceptions import MExError
 from mex.common.models import MergedConsent, MergedPerson
 from mex.extractors.publisher.filter import (
-    filter_persons_with_consent_or_raise_on_multiple_consents,
+    filter_persons_with_unique_appoving_consent,
 )
 
 
-def test_filter_persons_with_consent_or_raise_on_multiple_consents(
+def test_filter_persons_with_unique_appoving_consent(
     merged_person_list: list[MergedPerson],
     merged_consent_list: list[MergedConsent],
 ) -> None:
-    result = filter_persons_with_consent_or_raise_on_multiple_consents(
+    result = filter_persons_with_unique_appoving_consent(
         merged_person_list,
         merged_consent_list[0:1],  # only consents referencing different persons
     )
@@ -25,7 +25,7 @@ def test_filter_persons_with_consent_or_raise_on_multiple_consents(
     }
 
 
-def test_filter_persons_with_consent_or_raise_on_multiple_consents__raise(
+def test_filter_persons_with_unique_appoving_consent__raise(
     merged_person_list: list[MergedPerson],
     merged_consent_list: list[MergedConsent],
 ) -> None:
@@ -36,7 +36,7 @@ def test_filter_persons_with_consent_or_raise_on_multiple_consents__raise(
         ' MergedConsentIdentifier("Consent2SamePerson")]}.'
     )
     with pytest.raises(MExError, match=re.escape(expected)):
-        filter_persons_with_consent_or_raise_on_multiple_consents(
+        filter_persons_with_unique_appoving_consent(
             merged_person_list,
             merged_consent_list,  # all consents incl. those referencing the same person
         )
