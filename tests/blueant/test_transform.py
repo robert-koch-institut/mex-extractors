@@ -6,7 +6,6 @@ from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     MergedOrganizationalUnitIdentifier,
-    MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
 )
@@ -98,7 +97,6 @@ def test_resolve_organizational_unit_with_fallback(
         ],
         expected_stable_target_ids_by_employee_id,
         blueant_activity,
-        {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
     )
 
     assert len(mex_sources) == 3
