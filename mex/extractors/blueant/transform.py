@@ -13,7 +13,9 @@ from mex.common.types import (
 )
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.organigram.helpers import (
+    resolve_organizational_unit_with_fallback,
+)
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -81,7 +83,13 @@ def transform_blueant_sources_to_extracted_activities(
 
         # find responsible unit
         department = source.department.replace("(h)", "").strip()
-        department_ids = get_unit_merged_id_by_synonym(department)
+
+        department_ids = resolve_organizational_unit_with_fallback(
+            extracted_unit=department,
+            contact_ids=[source.projectLeaderEmployeeId]
+            if source.projectLeaderEmployeeId
+            else [],
+        )
         if not department_ids:
             continue
 

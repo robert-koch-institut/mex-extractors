@@ -197,3 +197,6 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
+
+[tool.uv.sources]
+mex-common = { git = "https://github.com/robert-koch-institut/mex-common.git", rev = "feature/mx-1105-match-units-with-organigramm" }

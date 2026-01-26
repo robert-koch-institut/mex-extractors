@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- organigramm helper function for checking units existence
 - prepare testing against a mocked ldap container
 - primary source helper function: add caching
 - implemented asset checks for the `x_items_less_than` rule
@@ -16,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- bluant transform function checks match with organigramm file before transforming it to an activity
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
