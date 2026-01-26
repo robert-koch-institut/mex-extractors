@@ -41,6 +41,10 @@ def extract_endpoint_counts(
         for element in igs_resource_mapping.qualityInformation
         if element.fieldInPrimarySource
     ]
+    if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
+        count_endpoints.append(
+            igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
+        )
     connector = IGSConnector.get()
     pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
     endpoint_counts: dict[str, str] = {}

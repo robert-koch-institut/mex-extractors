@@ -91,6 +91,12 @@ resourceTypeSpecific:
 rights:
   - mappingRules:
       - setValues:
+sizeOfDataBasis:
+  - fieldInPrimarySource: /uploads/count
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+        setValues:
 spatial:
   - mappingRules:
       - setValues:

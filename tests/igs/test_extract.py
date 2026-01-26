@@ -35,7 +35,11 @@ def test_extract_endpoint_counts(
     igs_resource_mapping: ResourceMapping, igs_schemas: dict[str, IGSSchema]
 ) -> None:
     endpoint_counts = extract_endpoint_counts(igs_resource_mapping, igs_schemas)
-    assert endpoint_counts == {"/genomes/count": "7", "pathogen_PATHOGEN": "4"}
+    assert endpoint_counts == {
+        "/genomes/count": "7",
+        "pathogen_PATHOGEN": "4",
+        "/uploads/count": "7",
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap")
