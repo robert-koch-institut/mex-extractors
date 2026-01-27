@@ -53,17 +53,24 @@ class BlueAntConnector(HTTPConnector):
         dct = self._get_json_from_api("projects?includeArchived=true")
         return BlueAntProjectResponse.model_validate(dct).projects
 
-    def get_client_name(self, client_id: int) -> str:
+    def get_client_name(self, client_id: int) -> str | None:
         """Get client name for client id.
+
+        Sometimes the client ID contains a department ID. In this case the API
+        request returns an error, since the ID can't be found under "customers". If
+        that happens, the extractor should return nothing
 
         Args:
             client_id: int: id of the client
 
         Returns:
-            str: name of the client
+            str name of the client or None if no client was found
         """
-        dct = self._get_json_from_api(f"masterdata/customers/{client_id}")
-        return str(dct["customer"]["text"])
+        try:
+            dct = self._get_json_from_api(f"masterdata/customers/{client_id}")
+            return str(dct["customer"]["text"])
+        except MExError:
+            return None
 
     def get_type_description(self, type_id: int) -> str:
         """Get description for type id.
@@ -101,7 +108,7 @@ class BlueAntConnector(HTTPConnector):
         dct = self._get_json_from_api(f"masterdata/departments/{department_id}")
         return str(dct["department"]["text"])
 
-    def get_persons(self) -> list[BlueAntPerson]:
+    def get_person(self, person_id: int) -> BlueAntPerson:
         """Get map of Blue Ant person IDs to employee IDs."""
-        dct = self._get_json_from_api("human/persons")
-        return BlueAntPersonResponse.model_validate(dct).persons
+        dct = self._get_json_from_api(f"human/persons/{person_id}")
+        return BlueAntPersonResponse.model_validate(dct).person

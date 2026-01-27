@@ -78,7 +78,7 @@ components of the MEx project are open-sourced under the same license as well.
 - update boilerplate files with `cruft update`
 - update global requirements in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
-- update package dependencies using `pdm update-all`
+- update package dependencies using `uv sync --upgrade`
 - update github actions in `.github/workflows/*.yml` manually
 
 ### Creating release
@@ -94,91 +94,95 @@ components of the MEx project are open-sourced under the same license as well.
 
 ## Commands
 
-- run `pdm run {command} --help` to print instructions
-- run `pdm run {command} --debug` for interactive debugging
+- run `uv run {command} --help` to print instructions
+- run `uv run {command} --debug` for interactive debugging
 
 ### dagster
 
-- `pdm run dagster dev` to launch a local dagster UI
+- `uv run dagster dev` to launch a local dagster UI
 
 ### all extractors
 
-- `pdm run all-extractors` executes all extractors
+- `uv run all-extractors` executes all extractors
 - execute only in local or dev environment
 
 ### artificial extractor
 
-- `pdm run artificial` creates deterministic artificial sample data
+- `uv run artificial` creates deterministic artificial sample data
 - execute only in local or dev environment
 
 ### biospecimen extractor
 
-- `pdm run biospecimen` extracts sources from the Biospecimen excel files
+- `uv run biospecimen` extracts sources from the Biospecimen excel files
 
 ### blueant extractor
 
-- `pdm run blueant` extracts sources from the Blue Ant project management software
+- `uv run blueant` extracts sources from the Blue Ant project management software
 
 ### confluence-vvt extractor
 
-- `pdm run confluence-vvt` extracts sources from the VVT confluence page
+- `uv run confluence-vvt` extracts sources from the VVT confluence page
 
 ### consent-mailer
 
-- `pdm run consent-mailer` send emails to collect publishing consents
+- `uv run consent-mailer` send emails to collect publishing consents
 
 ### contact-point
 
-- `pdm run contact-point` extracts default contact points
+- `uv run contact-point` extracts default contact points
 
 ### datscha-web extractor
 
-- `pdm run datscha-web` extracts sources from the datscha web app
+- `uv run datscha-web` extracts sources from the datscha web app
 
 ### endnote extractor
 
-- `pdm run endnote` extracts from endnote XML files
+- `uv run endnote` extracts from endnote XML files
 
 ### ff-projects extractor
 
-- `pdm run ff-projects` extracts sources from the FF Projects excel file
-
-### ifsg extractor
-
-- `pdm run ifsg` extracts sources from the ifsg data base
-
-### international-projects extractor
-
-- `pdm run international-projects` extracts sources from the international projects excel
+- `uv run ff-projects` extracts sources from the FF Projects excel file
 
 ### grippeweb extractor
 
-- `pdm run grippeweb` extracts grippeweb metadata from grippeweb database
+- `uv run grippeweb` extracts grippeweb metadata from grippeweb database
+
+### ifsg extractor
+
+- `uv run ifsg` extracts sources from the ifsg data base
+
+### international-projects extractor
+
+- `uv run international-projects` extracts sources from the international projects excel
+
+### kvis extractor
+
+- `uv run kvis` extracts KVIS metadata from KVIS database
 
 ### odk extractor
 
-- `pdm run odk` extracts ODK survey data from excel files
+- `uv run odk` extracts ODK survey data from excel files
 
 ### open-data extractor
 
-- `pdm run open-data` extracts Open Data sources from the Zenodo API
+- `uv run open-data` extracts Open Data sources from the Zenodo API
 
 ### seq-repo extractor
 
-- `pdm run seq-repo` extracts sources from seq-repo JSON file
+- `uv run seq-repo` extracts sources from seq-repo JSON file
 
 ### sumo extractor
 
-- `pdm run sumo` extract sumo data from xlsx files
+- `uv run sumo` extract sumo data from xlsx files
 
 ### synopse extractor
 
-- `pdm run synopse` extracts synopse data from report-server exports
+- `uv run synopse` extracts synopse data from report-server exports
 
 ### voxco extractor
 
-- `pdm run voxco` extracts voxco data from voxco JSON files
+- `uv run voxco` extracts voxco data from voxco JSON files
 
 ### publisher
 
-- `pdm run publisher` gets merged items from backend and publishes them into sink
+- `uv run publisher` gets merged items from backend and publishes them into sink

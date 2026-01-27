@@ -15,11 +15,11 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
 from mex.extractors.igs.extract import (
+    extract_endpoint_counts,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
 )
@@ -54,6 +54,16 @@ def igs_resource_mapping() -> dict[str, Any]:
 
 
 @asset(group_name="igs")
+def igs_endpoint_counts(
+    igs_resource_mapping: dict[str, Any], igs_schemas: dict[str, IGSSchema]
+) -> dict[str, str]:
+    """Extract endpoint counts from IGS API."""
+    return extract_endpoint_counts(
+        ResourceMapping.model_validate(igs_resource_mapping), igs_schemas
+    )
+
+
+@asset(group_name="igs")
 def igs_access_platform_mapping() -> dict[str, Any]:
     """Extract IGS access platform mapping."""
     settings = Settings.get()
@@ -84,9 +94,6 @@ def igs_extracted_contact_points_by_mail_str(
 def igs_extracted_resource_id(
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> MergedResourceIdentifier:
@@ -94,7 +101,6 @@ def igs_extracted_resource_id(
     extracted_resource = transform_igs_extracted_resource(
         ResourceMapping.model_validate(igs_resource_mapping),
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
         igs_extracted_access_platform,
         extracted_organization_rki,
     )
@@ -106,15 +112,11 @@ def igs_extracted_resource_id(
 def igs_extracted_access_platform(
     igs_access_platform_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> ExtractedAccessPlatform:
     """Transform IGS access platform from mapping."""
     extracted_access_platform = transform_igs_access_platform(
         AccessPlatformMapping.model_validate(igs_access_platform_mapping),
         igs_extracted_contact_points_by_mail_str,
-        unit_stable_target_ids_by_synonym,
     )
     load([extracted_access_platform])
     return extracted_access_platform

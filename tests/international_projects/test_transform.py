@@ -1,9 +1,9 @@
+import pytest
 from pytz import timezone
 
 from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
@@ -20,10 +20,8 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_international_projects_source_to_mex_source(
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     international_projects_mapping_activity: ActivityMapping,
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
@@ -31,17 +29,14 @@ def test_transform_international_projects_source_to_mex_source(
     partner_organizations_stable_target_ids_by_synonym = {"WHO": organization_id}
     person_id = MergedPersonIdentifier.generate(seed=30)
     person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
-    unit_id = MergedOrganizationalUnitIdentifier.generate(seed=21)
-    unit_stable_target_ids_by_synonym = {"FG99": [unit_id]}
 
-    international_projects_sources = list(extract_international_projects_sources())
+    international_projects_sources = extract_international_projects_sources()
 
-    extracted_activities = list(
+    extracted_activities = (
         transform_international_projects_sources_to_extracted_activities(
             international_projects_sources,
             international_projects_mapping_activity,
             person_stable_target_ids_by_query_string,
-            unit_stable_target_ids_by_synonym,
             funding_source_stable_target_ids_by_synonym,
             partner_organizations_stable_target_ids_by_synonym,
         )
@@ -56,16 +51,13 @@ def test_transform_international_projects_source_to_mex_source(
         "stableTargetId": Joker(),
         "activityType": ["https://mex.rki.de/item/activity-type-1"],
         "alternativeTitle": [{"value": "testAAbr"}],
-        "contact": [
-            person_id,
-            unit_id,
-        ],
+        "contact": ["bFQoRhcVH5DHUU", "cjna2jitPngp6yIV63cdi9"],
         "end": [YearMonthDay(2021, 12, 31, tzinfo=timezone("UTC"))],
         "externalAssociate": [organization_id],
         "funderOrCommissioner": [organization_id],
         "involvedPerson": [person_id],
-        "involvedUnit": [unit_id],
-        "responsibleUnit": [unit_id],
+        "involvedUnit": ["cjna2jitPngp6yIV63cdi9"],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "shortName": [{"value": "testAAbr"}],
         "start": [YearMonthDay(2021, 7, 27, tzinfo=timezone("UTC"))],
         "theme": ["https://mex.rki.de/item/theme-37"],

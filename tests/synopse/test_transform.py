@@ -14,7 +14,6 @@ from mex.common.types import (
     Identifier,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TemporalEntity,
@@ -42,9 +41,6 @@ from mex.extractors.synopse.transform import (
 def test_transform_synopse_studies_into_access_platforms(
     synopse_access_platform: AccessPlatformMapping,
 ) -> None:
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
-    }
     expected_access_platform = {
         "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
         "identifierInPrimarySource": "t",
@@ -60,13 +56,12 @@ def test_transform_synopse_studies_into_access_platforms(
             }
         ],
         "title": [{"value": "test title", "language": "de"}],
-        "unitInCharge": ["bFQoRhcVH5DHYc"],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "identifier": "caja5lr50xZDp3vqBFy5oN",
         "stableTargetId": "hok9BZyh5ZyU9EWzXUYLqd",
     }
 
     access_platforms = transform_synopse_studies_into_access_platforms(
-        unit_merged_ids_by_synonym,
         {"email@email.de": MergedContactPointIdentifier.generate(seed=234)},
         synopse_access_platform,
     )
@@ -99,12 +94,10 @@ def test_transform_synopse_variables_to_mex_variable_groups(
         "stableTargetId": Joker(),
     }
 
-    variable_groups = list(
-        transform_synopse_variables_to_mex_variable_groups(
-            synopse_variables_by_thema,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variable_groups = transform_synopse_variables_to_mex_variable_groups(
+        synopse_variables_by_thema,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
     sorted_variable_groups = sorted(
         variable_groups, key=lambda v: v.identifierInPrimarySource
@@ -159,7 +152,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
     }
-    variables = list(
+    variables = (
         transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
             synopse_variables,
             variable_group_by_identifier_in_primary_source,
@@ -181,13 +174,11 @@ def test_transform_synopse_variables_to_mex_variables(
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
     }
-    variables = list(
-        transform_synopse_variables_to_mex_variables(
-            synopse_variables_by_thema,
-            variable_group_by_identifier_in_primary_source,
-            resources_by_synopse_id,
-            synopse_study_overviews,
-        )
+    variables = transform_synopse_variables_to_mex_variables(
+        synopse_variables_by_thema,
+        variable_group_by_identifier_in_primary_source,
+        resources_by_synopse_id,
+        synopse_study_overviews,
     )
 
     sorted_variables = sorted(variables, key=lambda v: v.identifierInPrimarySource)
@@ -206,21 +197,23 @@ def test_transform_synopse_variables_to_mex_variables(
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     synopse_project: SynopseProject,
     synopse_studies: list[SynopseStudy],
     synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
     extracted_activity: ExtractedActivity,
-    extracted_organization: list[ExtractedOrganization],
+    extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=234)]
-    }
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "contact": ["bFQoRhcVH5DHYc"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            "cjna2jitPngp6yIV63cdi9",  # FG 99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
+        ],
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
@@ -242,8 +235,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": [str(extracted_organization[0].stableTargetId)],
-        # TODO(HS): add MergedOrganizationIdentifier of Robert Koch-Institut
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
         ],
@@ -263,7 +255,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "stableTargetId": Joker(),
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
-        "unitInCharge": [str(Identifier.generate(seed=234))],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "wasGeneratedBy": str(extracted_activity.stableTargetId),
     }
     resources = transform_synopse_data_to_mex_resources(
@@ -271,8 +263,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         [synopse_project],
         synopse_variables_by_study_id,
         [extracted_activity],
-        unit_merged_ids_by_synonym,
-        extracted_organization[0],
+        extracted_organization_rki,
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
         {"Jane Doe": [MergedPersonIdentifier.generate(seed=237)]},
@@ -293,19 +284,13 @@ def test_transform_synopse_projects_to_mex_activities(
     contributor_merged_ids_by_name = {
         "Carla Contact": [MergedPersonIdentifier.generate(seed=12)]
     }
-    unit_merged_ids_by_synonym = {
-        "C1": [MergedOrganizationalUnitIdentifier.generate(seed=13)],
-        "fg99": [
-            MergedOrganizationalUnitIdentifier.generate(seed=99),
-            MergedOrganizationalUnitIdentifier.generate(seed=999),
-        ],
-    }
+
     assert synopse_project.projektende
     assert synopse_project.projektbeginn
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_der_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": ["bFQoRhcVH5DHUD"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "documentation": [
             {
                 "url": "file:///Z:/Projekte/Dokumentation",
@@ -320,10 +305,10 @@ def test_transform_synopse_projects_to_mex_activities(
         "identifier": Joker(),
         "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": [str(Identifier.generate(seed=12))],
-        "responsibleUnit": [str(Identifier.generate(seed=13))],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
         "involvedUnit": [
-            str(MergedOrganizationalUnitIdentifier.generate(seed=99)),
-            str(MergedOrganizationalUnitIdentifier.generate(seed=999)),
+            "cjna2jitPngp6yIV63cdi9",  # FG99
+            "6rqNvZSApUHlz8GkkVP48",  # C1
         ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
@@ -333,14 +318,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
     }
 
-    activities = list(
-        transform_synopse_projects_to_mex_activities(
-            synopse_projects,
-            contributor_merged_ids_by_name,
-            unit_merged_ids_by_synonym,
-            synopse_activity,
-            synopse_merged_organization_ids_by_query_string,
-        )
+    activities = transform_synopse_projects_to_mex_activities(
+        synopse_projects,
+        contributor_merged_ids_by_name,
+        synopse_activity,
+        synopse_merged_organization_ids_by_query_string,
     )
 
     assert len(activities) == 2

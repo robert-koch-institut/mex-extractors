@@ -18,7 +18,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
 )
@@ -47,6 +46,8 @@ from mex.extractors.primary_source.helpers import (
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
+
+OPEN_DATA_EMAIL = "opendata@rki.de"
 
 
 @asset(group_name="open_data")
@@ -99,7 +100,7 @@ def open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
     ldap = LDAPConnector.get()
     contact_point = [
         transform_ldap_functional_account_to_extracted_contact_point(
-            ldap.get_functional_account(mail="opendata@rki.de"),
+            ldap.get_functional_account(mail=OPEN_DATA_EMAIL),
             get_extracted_primary_source_id_by_name("ldap"),
         )
     ]
@@ -131,9 +132,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
@@ -147,7 +145,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
         open_data_extracted_persons,
-        unit_stable_target_ids_by_synonym,
         extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,

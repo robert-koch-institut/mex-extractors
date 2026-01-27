@@ -190,7 +190,7 @@ def test_transform_open_data_distributions(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mocked_open_data")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_open_data", "mocked_wikidata")
 def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_parent_resource: list[OpenDataParentResource],
     mocked_open_data_persons: list[ExtractedPerson],
@@ -200,16 +200,10 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     mocked_open_data_extracted_contact_points: list[ExtractedContactPoint],
     mocked_open_data_distribution: list[ExtractedDistribution],
 ) -> None:
-    unit_stable_target_ids_by_synonym = {
-        unit.shortName[0].value: [unit.stableTargetId]
-        for unit in mocked_extracted_organizational_units
-    }
-
     mex_sources = list(
         transform_open_data_parent_resource_to_mex_resource(
             mocked_open_data_parent_resource,
             mocked_open_data_persons,
-            unit_stable_target_ids_by_synonym,
             mocked_extracted_organizational_units,
             mocked_open_data_distribution,
             mocked_open_data_parent_resource_mapping,

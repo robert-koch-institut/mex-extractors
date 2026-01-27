@@ -16,13 +16,13 @@ from mex.common.types import (
     UTC,
     AccessRestriction,
     Language,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     TemporalEntity,
     Text,
     TextLanguage,
 )
 from mex.extractors.endnote.model import EndnoteRecord
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -141,9 +141,6 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     endnote_records: list[EndnoteRecord],
     endnote_bib_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> list[ExtractedBibliographicResource]:
     """Extract endnote bibliographic resources.
 
@@ -151,7 +148,7 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         endnote_records: list of endnote record
         endnote_bib_resource_mapping: bibliographical resource mapping
         endnote_extracted_persons_by_person_str: extracted endnote persons by name
-        unit_stable_target_ids_by_synonym: Unit stable target ids by synonym
+
 
     Return:
         list of extracted bibliographic resource
@@ -252,8 +249,8 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
             [
                 unit_id
                 for unit in record.custom4.split(";")
-                if unit.strip() in unit_stable_target_ids_by_synonym
-                for unit_id in unit_stable_target_ids_by_synonym[unit.strip()]
+                if (unit_ids := get_unit_merged_id_by_synonym(unit.strip()))
+                for unit_id in unit_ids
             ]
             if record.custom4
             else []

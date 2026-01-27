@@ -1,7 +1,7 @@
 {
     "components": {
         "schemas": {
-            "Pathogen": {
+            "igsmodels__enums__Pathogen": {
                 "enum": [
                     "PATHOGEN"
                 ],

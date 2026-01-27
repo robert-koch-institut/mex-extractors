@@ -13,7 +13,7 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier, MergedPersonIdentifier
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.confluence_vvt.extract import (
     extract_confluence_vvt_authors,
     fetch_all_vvt_pages_ids,
@@ -94,9 +94,6 @@ def extracted_confluence_vvt_activities(
     confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     confluence_vvt_activity_mapping: dict[str, Any],
 ) -> list[ExtractedActivity]:
     """Transform and load Confluence VVT activities."""
@@ -104,7 +101,6 @@ def extracted_confluence_vvt_activities(
         confluence_vvt_pages,
         ActivityMapping.model_validate(confluence_vvt_activity_mapping),
         confluence_vvt_merged_person_ids_by_query_str,
-        unit_stable_target_ids_by_synonym,
     )
     load(mex_activities)
     return mex_activities

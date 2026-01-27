@@ -11,7 +11,7 @@ from mex.extractors.igs.connector import IGSConnector
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mocked_igs(monkeypatch: MonkeyPatch) -> None:
     """Mock the IGS connector to return dummy data."""
     monkeypatch.setattr(
@@ -20,9 +20,15 @@ def mocked_igs(monkeypatch: MonkeyPatch) -> None:
         lambda self: setattr(self, "session", MagicMock(spec=requests.Session)),
     )
     with (TEST_DATA_DIR / "openapi.json").open(encoding="utf-8") as fh:
-        test_data = json.load(fh)
+        test_json = json.load(fh)
     monkeypatch.setattr(
         IGSConnector,
         "get_json_from_api",
-        lambda *_, **__: test_data,
+        lambda *_, **__: test_json,
+    )
+
+    monkeypatch.setattr(
+        IGSConnector,
+        "get_endpoint_count",
+        lambda self, endpoint, **__: "4" if endpoint == "/samples/count" else "7",
     )

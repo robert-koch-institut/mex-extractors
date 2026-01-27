@@ -1,4 +1,5 @@
-from mex.common.types import MergedOrganizationalUnitIdentifier
+import pytest
+
 from mex.extractors.ff_projects.extract import extract_ff_projects_sources
 from mex.extractors.ff_projects.filter import (
     filter_and_log_ff_projects_sources,
@@ -6,20 +7,12 @@ from mex.extractors.ff_projects.filter import (
 )
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_filter_and_log_ff_projects_sources() -> None:
-    unit_stable_target_ids_by_synonym = {
-        "FG33": [MergedOrganizationalUnitIdentifier.generate(33)],
-        "Department": [MergedOrganizationalUnitIdentifier.generate(99)],
-    }
-    sources = list(extract_ff_projects_sources())
+    sources = extract_ff_projects_sources()
     assert len(sources) == 21
 
-    sources = list(
-        filter_and_log_ff_projects_sources(
-            sources,
-            unit_stable_target_ids_by_synonym,
-        )
-    )
+    sources = filter_and_log_ff_projects_sources(sources)
     assert len(sources) == 16
 
     project_topics = [s.thema_des_projekts for s in sources]
@@ -44,7 +37,7 @@ def test_filter_and_log_ff_projects_sources() -> None:
 
 
 def test_filter_out_duplicate_source_ids() -> None:
-    ff_proj_liste_sources = list(extract_ff_projects_sources())
+    ff_proj_liste_sources = extract_ff_projects_sources()
 
     assert len(ff_proj_liste_sources) == 21
     unfiltered_ids = [s.lfd_nr for s in ff_proj_liste_sources]

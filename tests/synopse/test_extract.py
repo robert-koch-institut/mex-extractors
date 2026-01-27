@@ -69,7 +69,7 @@ def test_extract_study_data() -> None:
         "version": "V26",
         "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
-    study_data = list(extract_study_data())
+    study_data = extract_study_data()
     assert len(study_data) == 2
     assert study_data[0].model_dump(exclude_defaults=True) == expected_study_data
 
@@ -82,16 +82,14 @@ def test_extract_projects() -> None:
         "studien_id": "1122999",
         "studienart_studientyp": "Monitoring-Studie",
     }
-    projects = list(extract_projects())
+    projects = extract_projects()
     assert len(projects) == 4
     assert projects[0].model_dump(exclude_none=True) == expected_project
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -> None:
-    persons = list(
-        extract_synopse_project_contributors([synopse_project, synopse_project])
-    )
+    persons = extract_synopse_project_contributors([synopse_project, synopse_project])
     assert len(persons) == 1
     assert persons[0].person.displayName == "Resolved, Roland"
 
@@ -117,6 +115,6 @@ def test_extract_study_overviews() -> None:
         "synopse_id": "405",
         "titel_datenset": "BBCCDD",
     }
-    overviews = list(extract_study_overviews())
+    overviews = extract_study_overviews()
     assert len(overviews) == 9
     assert overviews[0].model_dump() == expected_overview

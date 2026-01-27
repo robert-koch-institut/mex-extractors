@@ -4,7 +4,6 @@ import pytest
 
 from mex.common.testing import Joker
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -31,17 +30,6 @@ def person_stable_target_ids_by_query_string() -> dict[
 
 
 @pytest.fixture
-def unit_stable_target_ids_by_synonym() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
-    return {
-        "L1": [MergedOrganizationalUnitIdentifier("ID000000000033")],
-        "FG99": [MergedOrganizationalUnitIdentifier("ID000000000044")],
-        "Abteilung 2": [MergedOrganizationalUnitIdentifier("ID000000000055")],
-    }
-
-
-@pytest.fixture
 def organizations_stable_target_ids_by_query_string() -> dict[
     str, MergedOrganizationIdentifier
 ]:
@@ -52,23 +40,18 @@ def organizations_stable_target_ids_by_query_string() -> dict[
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_datscha_web_items_to_mex_activities(
     datscha_web_item: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
 ) -> None:
-    mex_sources = list(
-        transform_datscha_web_items_to_mex_activities(
-            [datscha_web_item],
-            person_stable_target_ids_by_query_string,
-            unit_stable_target_ids_by_synonym,
-            organizations_stable_target_ids_by_query_string,
-        )
+    mex_sources = transform_datscha_web_items_to_mex_activities(
+        [datscha_web_item],
+        person_stable_target_ids_by_query_string,
+        organizations_stable_target_ids_by_query_string,
     )
 
     assert len(mex_sources) == 1
@@ -88,30 +71,25 @@ def test_transform_datscha_web_items_to_mex_activities(
         "identifier": Joker(),
         "identifierInPrimarySource": "17",
         "involvedPerson": ["ID000000001111", "ID000000002222"],
-        "involvedUnit": ["ID000000000055"],
-        "responsibleUnit": ["ID000000000033", "ID000000000044"],
+        "involvedUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
         "stableTargetId": Joker(),
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     datscha_web_item_without_contributors: DatschaWebItem,
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
 ) -> None:
-    mex_sources = list(
-        transform_datscha_web_items_to_mex_activities(
-            [datscha_web_item_without_contributors],
-            person_stable_target_ids_by_query_string,
-            unit_stable_target_ids_by_synonym,
-            organizations_stable_target_ids_by_query_string,
-        )
+    mex_sources = transform_datscha_web_items_to_mex_activities(
+        [datscha_web_item_without_contributors],
+        person_stable_target_ids_by_query_string,
+        organizations_stable_target_ids_by_query_string,
     )
 
     assert len(mex_sources) == 1
@@ -125,12 +103,12 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
             }
         ],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": ["ID000000000033", "ID000000000044"],
+        "contact": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
         "externalAssociate": ["ID000000000077"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("datscha-web")),
         "identifier": Joker(),
         "identifierInPrimarySource": "92",
-        "responsibleUnit": ["ID000000000033", "ID000000000044"],
+        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
         "stableTargetId": Joker(),
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }

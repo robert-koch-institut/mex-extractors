@@ -9,8 +9,6 @@ __pycache__/
 # Distribution / packaging
 .eggs/
 .installed.cfg
-.pdm-build
-.pdm-python
 .Python
 .python-version
 .web/
@@ -129,6 +127,7 @@ dmypy.json
 .invenio.private
 .states
 .tmp_dagster_home_*
+.nux/
 .web
 *.ndjson
 assets/external/
