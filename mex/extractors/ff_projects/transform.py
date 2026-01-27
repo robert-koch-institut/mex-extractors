@@ -121,17 +121,25 @@ def get_or_create_organization(
     """
     final_organizations: list[MergedOrganizationIdentifier] = []
     for org in orgs:
-        if wpo := extracted_organizations.get(org):
+        extracted_organizations = {
+            key.strip().lower(): value for key, value in extracted_organizations.items()
+        }
+        if org in ("None", "Not applicable"):
+            continue
+        normalized_org = org.strip().lower()
+        if wpo := extracted_organizations.get(normalized_org):
             final_organizations.append(wpo)
-        elif org not in ("None", "Not applicable"):
-            new_extracted_organization = ExtractedOrganization(
-                officialName=[Text(value=org)],
-                identifierInPrimarySource=org,
-                hadPrimarySource=get_extracted_primary_source_id_by_name("ff-projects"),
-            )
-            load([new_extracted_organization])
-            final_organizations.append(
-                MergedOrganizationIdentifier(new_extracted_organization.stableTargetId)
-            )
+            continue
+        new_extracted_organization = ExtractedOrganization(
+            officialName=[Text(value=org)],
+            identifierInPrimarySource=org,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("ff-projects"),
+        )
+        load([new_extracted_organization])
+        merged_id = MergedOrganizationIdentifier(
+            new_extracted_organization.stableTargetId
+        )
+        extracted_organizations[normalized_org] = merged_id
+        final_organizations.append(merged_id)
 
     return final_organizations
