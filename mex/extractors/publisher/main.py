@@ -25,7 +25,9 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.publisher.extract import get_publishable_merged_items
-from mex.extractors.publisher.filter import filter_persons_with_consent
+from mex.extractors.publisher.filter import (
+    filter_persons_with_appoving_unique_consent,
+)
 from mex.extractors.publisher.transform import (
     get_unit_id_per_person,
     update_actor_references_where_needed,
@@ -84,7 +86,9 @@ def publisher_persons() -> ItemsContainer[AnyMergedModel]:
         "list[MergedConsent]",
         get_publishable_merged_items(entity_type=["MergedConsent"]),
     )
-    filtered_persons = filter_persons_with_consent(merged_persons, merged_consent)
+    filtered_persons = filter_persons_with_appoving_unique_consent(
+        merged_persons, merged_consent
+    )
     return ItemsContainer[AnyMergedModel](items=filtered_persons)
 
 
