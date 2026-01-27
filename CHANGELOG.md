@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - blueant: fix Person extraction and units written as MergedOrganization items
+- seq-repo: fixed by updating model and skipping resources without date
 
 ### Security
 

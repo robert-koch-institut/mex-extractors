@@ -10,7 +10,7 @@ class SeqRepoSource(BaseRawData):
     """Model class for Seq Repo Source."""
 
     project_coordinators: list[str] = Field(alias="project-coordinators")
-    customer_org_unit_id: str = Field(alias="customer-org-unit-id")
+    customer_org_unit_id: str | None = Field(None, alias="customer-org-unit-id")
     sequencing_date: str = Field(alias="sequencing-date")
     lims_sample_id: str = Field(alias="lims-sample-id")
     sequencing_platform: str = Field(alias="sequencing-platform")

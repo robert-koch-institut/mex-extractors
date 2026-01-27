@@ -142,7 +142,10 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         if not units_in_charge or not project_coordinators_ids:
             continue
 
-        contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
+        if source.customer_org_unit_id is not None:
+            contributing_unit = get_unit_merged_id_by_synonym(
+                source.customer_org_unit_id
+            )
         keyword = [*shared_keyword, Text(value=source.species)]
         extracted_resource = ExtractedResource(
             accessPlatform=mex_access_platform.stableTargetId,
