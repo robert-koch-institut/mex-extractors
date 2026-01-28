@@ -30,10 +30,10 @@ def log_filter(
     )
 
 
-def watch_progress(
+def watch_progress[T](
     iterable: Iterable[T],
     description: str,
-) -> Generator[T, None, None]:
+) -> Generator[T]:
     """Log the progress of an iterable at regular intervals.
 
     Args:

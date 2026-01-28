@@ -9,7 +9,7 @@ from mex.common.utils import ensure_list
 ItemT = TypeVar("ItemT")
 
 
-def topological_sort(
+def topological_sort[ItemT](
     items: list[ItemT],
     primary_key: str,
     *,
