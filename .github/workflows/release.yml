@@ -108,7 +108,7 @@ jobs:
 
       - name: Generate locked requirements.txt
         run: |
-          uv export --no-dev --output locked-requirements.txt --no-hashes
+          uv export --no-dev --output-file locked-requirements.txt --no-hashes
 
       - name: Login to container registry
         uses: docker/login-action@v3
