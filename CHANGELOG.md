@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.8.0] - 2026-01-28
+
+### Added
+
 - extraction of kvis sql tables
 - prepare testing against a mocked ldap container
 - primary source helper function: add caching
@@ -33,8 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
 
-### Deprecated
-
 ### Removed
 
 - tailored tests for blueant and endnote; now generalized in test_checks_main.py
@@ -43,8 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - blueant: fix Person extraction and units written as MergedOrganization items
-
-### Security
 
 ## [1.7.0] - 2025-12-11
 
