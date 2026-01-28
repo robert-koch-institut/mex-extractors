@@ -1,7 +1,7 @@
 from dagster import asset
 
+from mex.artificial.constants import DEFAULT_LOCALE
 from mex.artificial.helpers import generate_artificial_extracted_items
-from mex.artificial.main import DEFAULT_LOCALE
 from mex.common.cli import entrypoint
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
@@ -19,7 +19,6 @@ def artificial_data() -> ItemsContainer[AnyExtractedModel]:
     artificial_data = generate_artificial_extracted_items(
         locale=DEFAULT_LOCALE,
         seed=42,
-        count=len(EXTRACTED_MODEL_CLASSES_BY_NAME) * 25,
         chattiness=16,
         stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )
