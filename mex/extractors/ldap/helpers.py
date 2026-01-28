@@ -29,7 +29,7 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     sam_account_name: str = "*",
     surname: str = "*",
 ) -> MergedPersonIdentifier:
-    """Extract, transform and load ldap person or contact and return merged ID.
+    """Extract, transform and load ldap person and return merged ID.
 
     Args:
         person_unit_ids: merged unit ids
@@ -45,7 +45,7 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
         EmptySearchResultError if no result, FoundMoreThanOneError if multiple results
 
     Returns:
-        merged person or contact point id
+        merged person id
     """
     connector = LDAPConnector.get()
     ldap_person = connector.get_person(
@@ -76,17 +76,17 @@ def get_ldap_merged_contact_id_by_mail(
     mail: str = "*",
     limit: int = 10,
 ) -> MergedContactPointIdentifier:
-    """Extract, transform and load ldap person or contact and return merged ID.
+    """Extract, transform and load ldap contact point and return merged ID.
 
     Args:
-        mail: person or functional account mail
+        mail: functional account mail
         limit: How many items to return
 
     Raises:
         EmptySearchResultError if no result, FoundMoreThanOneError if multiple results
 
     Returns:
-        merged person or contact point id
+        merged contact point id
     """
     connector = LDAPConnector.get()
     functional_account = connector.get_functional_accounts(mail=mail, limit=limit)
