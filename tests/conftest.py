@@ -10,7 +10,10 @@ from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
 from mex.extractors.primary_source.helpers import (
     cached_load_extracted_primary_source_by_name,
@@ -67,6 +70,13 @@ def mocked_extracted_organizational_units(
         get_extracted_primary_source_id_by_name("organigram"),
         extracted_organization_rki.stableTargetId,
     )
+
+
+@pytest.fixture
+def mocked_merged_organizational_unit_ids(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnitIdentifier]:
+    return [ou.stableTargetId for ou in mocked_extracted_organizational_units]
 
 
 @pytest.fixture

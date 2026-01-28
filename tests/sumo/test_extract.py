@@ -102,9 +102,10 @@ def test_extract_ldap_contact_points_by_emails(
     sumo_resources_nokeda: ResourceMapping,
 ) -> None:
     expected = {
-        "mail": ["email@email.de", "contactc@rki.de"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
         "sAMAccountName": "ContactC",
+        "mail": ["email@email.de", "contactc@rki.de"],
+        "ou": ["Funktion"],
     }
     extracted = list(
         extract_ldap_contact_points_by_emails(
