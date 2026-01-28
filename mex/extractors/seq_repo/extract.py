@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
@@ -17,8 +19,12 @@ def extract_sources() -> list[SeqRepoSource]:
     if len(files) != 1:
         msg = f"Expected exactly one seq-repo file, got {len(files)}"
         raise MExError(msg)
-    data = connector.get_file("seq-repo", files[0])
-    return [SeqRepoSource.model_validate(item) for item in data]
+    data = cast("list[dict[str, Any]]", connector.get_file("seq-repo", files[0]))
+    return [
+        SeqRepoSource.model_validate(item)
+        for item in data
+        if item.get("sequencing-date") is not None
+    ]
 
 
 def extract_source_project_coordinator(
