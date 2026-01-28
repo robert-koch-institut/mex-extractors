@@ -12,7 +12,7 @@ from mex.extractors.utils import load_yaml
 RawDataT = TypeVar("RawDataT", bound=BaseRawData)
 
 
-def filter_by_global_rules(
+def filter_by_global_rules[RawDataT: BaseRawData](
     primary_source_id: MergedPrimarySourceIdentifier,
     items: Iterable[RawDataT],
 ) -> list[RawDataT,]:

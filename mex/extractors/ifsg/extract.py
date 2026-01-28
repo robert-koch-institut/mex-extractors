@@ -7,7 +7,7 @@ from mex.extractors.ifsg.connector import IFSGConnector
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
-def extract_sql_table(model: type[ModelT]) -> list[ModelT]:
+def extract_sql_table[ModelT: BaseModel](model: type[ModelT]) -> list[ModelT]:
     """Extract sql tables and parse them into pydantic models.
 
     Returns:
