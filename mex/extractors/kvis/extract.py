@@ -7,7 +7,7 @@ from mex.extractors.kvis.connector import KVISConnector
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
-def extract_sql_table(model: type[ModelT]) -> list[ModelT]:
+def extract_sql_table[ModelT: BaseModel](model: type[ModelT]) -> list[ModelT]:
     """Extract sql tables and parse each row into pydantic models.
 
     Returns:

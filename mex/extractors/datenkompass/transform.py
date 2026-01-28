@@ -34,8 +34,8 @@ from mex.extractors.datenkompass.models.mapping import (
 )
 from mex.extractors.settings import Settings
 
-_VocabularyT = TypeVar(
-    "_VocabularyT",
+VocabularyT = TypeVar(
+    "VocabularyT",
     Theme,
     BibliographicResourceType,
     Frequency,
@@ -189,8 +189,10 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
-def get_german_vocabulary(
-    entries: list[_VocabularyT] | None,
+def get_german_vocabulary[
+    VocabularyT: (Theme, BibliographicResourceType, Frequency, License)
+](
+    entries: list[VocabularyT] | None,
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
