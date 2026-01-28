@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--update dependencies mex-artifical >= 1.3, Faker >= 40
+- update dependencies mex-artificial >= 1.3, Faker >= 40
 
 ### Deprecated
 
