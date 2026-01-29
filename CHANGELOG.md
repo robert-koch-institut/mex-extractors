@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove mailpit path for CI testing
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
+- igs mapping update resource
 
 ### Deprecated
 
