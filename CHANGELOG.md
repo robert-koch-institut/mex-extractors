@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.8.0] - 2026-01-28
+
+### Added
+
 - extraction of kvis sql tables
 - prepare testing against a mocked ldap container
 - primary source helper function: add caching
@@ -17,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - publisher: tests for and fails if a person has more than one consent
 
 ### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
@@ -29,8 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
 
-### Deprecated
-
 ### Removed
 
 - tailored tests for blueant and endnote; now generalized in test_checks_main.py
@@ -40,8 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - blueant: fix Person extraction and units written as MergedOrganization items
 - seq-repo: fixed by updating model and skipping resources without date
-
-### Security
 
 ## [1.7.0] - 2025-12-11
 

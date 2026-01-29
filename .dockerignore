@@ -151,10 +151,11 @@ work/
 .mypy.ini
 .pre-commit-config.yaml
 .pydocstyle
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+docs/
 Makefile
 mex.bat
-*.lock
 Pipfile
 poetry.toml
 pytest.ini
-requirements.txt
