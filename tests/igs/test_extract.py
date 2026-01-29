@@ -52,16 +52,10 @@ def test_extract_ldap_actors_by_mail(
     )
     expected = {
         "contactc@rki.de": LDAPFunctionalAccount(
-            objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
             sAMAccountName="ContactC",
-            mail=["email@email.de", "contactc@rki.de"],
-            ou=["Funktion"],
-        ),
-        "email@email.de": LDAPFunctionalAccount(
             objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-            sAMAccountName="ContactC",
-            mail=["email@email.de", "contactc@rki.de"],
-            ou=["Funktion"],
+            mail=["contactc@rki.de"],
+            ou="Funktion",
         ),
     }
     assert ldap_actors == expected

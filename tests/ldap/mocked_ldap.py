@@ -1,4 +1,7 @@
-from typing import cast
+import json
+import os
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -6,46 +9,185 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import AnyLDAPActor, LDAPFunctionalAccount, LDAPPerson
+from mex.common.ldap.models import LDAPActor, LDAPFunctionalAccount, LDAPPerson
+from mex.common.ldap.transform import (
+    transform_ldap_functional_account_to_extracted_contact_point,
+    transform_ldap_person_to_extracted_person,
+)
+from mex.common.models import (
+    ExtractedContactPoint,
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+    ExtractedPerson,
+)
+from mex.common.transform import MExEncoder, normalize
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 
 @pytest.fixture
-def mocked_ldap(monkeypatch: MonkeyPatch) -> None:
-    """Mock the LDAP connector to return resolved persons and units."""
-    actor = LDAPFunctionalAccount(
-        sAMAccountName="ContactC",
-        objectGUID=UUID(int=4, version=4),
-        mail=["email@email.de", "contactc@rki.de"],
-        ou="Funktion",
-    )
-    person = LDAPPerson(
+def ldap_roland_resolved() -> LDAPPerson:
+    return LDAPPerson(
+        sAMAccountName="ResolvedR",
         employeeID="42",
         sn="Resolved",
         givenName=["Roland"],
         displayName="Resolved, Roland",
         objectGUID=UUID(int=1, version=4),
         department="PARENT-UNIT",
-        mail=["test_person@email.de"],
+        departmentNumber="FG99",
+        mail=["resolvedr@rki.de"],
     )
-    monkeypatch.setattr(
-        LDAPConnector,
-        "__init__",
-        lambda self: setattr(self, "_connection", MagicMock()),
+
+
+@pytest.fixture
+def roland_resolved(
+    ldap_roland_resolved: LDAPPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    extracted_organization_rki: ExtractedOrganization,
+) -> ExtractedPerson:
+    return transform_ldap_person_to_extracted_person(
+        ldap_roland_resolved,
+        get_extracted_primary_source_id_by_name("ldap"),
+        mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
     )
-    monkeypatch.setattr(
-        LDAPConnector,
-        "get_functional_accounts",
-        lambda *_, **__: [actor],
+
+
+@pytest.fixture
+def ldap_juturna_felicitas() -> LDAPPerson:
+    return LDAPPerson(
+        sAMAccountName="FelicitasJ",
+        employeeID="70",
+        sn="Felicitás",
+        givenName=["Juturna"],
+        displayName="Felicitás, Juturna",
+        objectGUID=UUID(int=2, version=4),
+        department="FG99",
+        mail=["felicitasj@rki.de"],
     )
-    monkeypatch.setattr(
-        LDAPConnector,
-        "get_persons",
-        lambda *_, **__: [person],
+
+
+@pytest.fixture
+def juturna_felicitas(
+    ldap_juturna_felicitas: LDAPPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    extracted_organization_rki: ExtractedOrganization,
+) -> ExtractedPerson:
+    return transform_ldap_person_to_extracted_person(
+        ldap_juturna_felicitas,
+        get_extracted_primary_source_id_by_name("ldap"),
+        mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
     )
-    monkeypatch.setattr(
-        LDAPConnector,
-        "get_persons_or_functional_accounts",
-        lambda self, query, *_, **__: [cast("AnyLDAPActor", person)]
-        if query == "Resolved, Roland"
-        else [cast("AnyLDAPActor", actor)],
+
+
+@pytest.fixture
+def ldap_frieda_fictitious() -> LDAPPerson:
+    return LDAPPerson(
+        sAMAccountName="FictitiousF",
+        employeeID="71",
+        sn="Fictitious",
+        givenName=["Frieda"],
+        displayName="Fictitious, Frieda, Dr.",
+        objectGUID=UUID(int=3, version=4),
+        department="FG99",
+        mail=["fictitiousf@rki.de"],
     )
+
+
+@pytest.fixture
+def frieda_fictitious(
+    ldap_frieda_fictitious: LDAPPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    extracted_organization_rki: ExtractedOrganization,
+) -> ExtractedPerson:
+    return transform_ldap_person_to_extracted_person(
+        ldap_frieda_fictitious,
+        get_extracted_primary_source_id_by_name("ldap"),
+        mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
+    )
+
+
+@pytest.fixture
+def ldap_contact_point() -> LDAPFunctionalAccount:
+    return LDAPFunctionalAccount(
+        sAMAccountName="ContactC",
+        objectGUID=UUID(int=4, version=4),
+        mail=["contactc@rki.de"],
+        ou="Funktion",
+    )
+
+
+@pytest.fixture
+def contact_point(ldap_contact_point: LDAPFunctionalAccount) -> ExtractedContactPoint:
+    return transform_ldap_functional_account_to_extracted_contact_point(
+        ldap_contact_point,
+        get_extracted_primary_source_id_by_name("ldap"),
+    )
+
+
+def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
+    """Create a mocked search that picks the best match by simple token matching."""
+
+    def tokenize(obj: object) -> set[str]:
+        serialized = json.dumps(obj, cls=MExEncoder, ensure_ascii=False)
+        return set(normalize(serialized.lower()).split())
+
+    def mock_search(_self: LDAPConnector, **kwargs: dict[str, Any]) -> list[LDAPActor]:
+        tokenized_query = tokenize(kwargs)
+        actors_by_score = [
+            (len(tokenized_query & tokenize(actor)), actor) for actor in actors
+        ]
+        return [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
+
+    return mock_search
+
+
+@pytest.fixture(params=["ldap_patched_connector", "ldap_mock_server"])
+def mocked_ldap(  # noqa: PLR0913
+    request: pytest.FixtureRequest,
+    monkeypatch: MonkeyPatch,
+    ldap_contact_point: LDAPFunctionalAccount,
+    ldap_roland_resolved: LDAPPerson,
+    ldap_juturna_felicitas: LDAPPerson,
+    ldap_frieda_fictitious: LDAPPerson,
+) -> None:
+    """Run each test with patched connector and/or against a mock server."""
+    if request.param == "ldap_patched_connector":
+        monkeypatch.setattr(
+            LDAPConnector,
+            "__init__",
+            lambda self: setattr(self, "_connection", MagicMock()),
+        )
+        monkeypatch.setattr(
+            LDAPConnector,
+            "get_functional_accounts",
+            ldap_mock_searcher(
+                [ldap_contact_point],
+            ),
+        )
+        monkeypatch.setattr(
+            LDAPConnector,
+            "get_persons",
+            ldap_mock_searcher(
+                [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
+            ),
+        )
+    elif request.param == "ldap_mock_server":
+        if "MEX_LDAP_SEARCH_BASE" not in os.environ:
+            pytest.skip("Ldap mock server not configured")
+        else:
+            # TODO(ND): Make this configurable in mex-common
+
+            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
+
+            monkeypatch.setattr(connector_module, "AUTO_BIND_NO_TLS", "DEFAULT")

@@ -1,9 +1,16 @@
 from collections.abc import Iterable
-from uuid import UUID
 
 import pytest
 
-from mex.common.models import AccessPlatformMapping, ResourceMapping
+from mex.common.ldap.models import (
+    LDAPFunctionalAccount,
+    LDAPPerson,
+    LDAPPersonWithQuery,
+)
+from mex.common.models import (
+    AccessPlatformMapping,
+    ResourceMapping,
+)
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
@@ -100,41 +107,20 @@ def test_extract_cc2_feat_projection() -> None:
 def test_extract_ldap_contact_points_by_emails(
     sumo_resources_feat: ResourceMapping,
     sumo_resources_nokeda: ResourceMapping,
+    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
-    expected = {
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
-        "sAMAccountName": "ContactC",
-        "mail": ["email@email.de", "contactc@rki.de"],
-        "ou": ["Funktion"],
-    }
-    extracted = list(
-        extract_ldap_contact_points_by_emails(
-            [sumo_resources_feat, sumo_resources_nokeda]
-        )
+    contact_points = extract_ldap_contact_points_by_emails(
+        [sumo_resources_feat, sumo_resources_nokeda]
     )
-    assert extracted[0].model_dump() == expected
+    assert contact_points == [ldap_contact_point]
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_contact_points_by_name(
     sumo_access_platform: AccessPlatformMapping,
+    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    expected = {
-        "person": {
-            "sAMAccountName": None,
-            "objectGUID": UUID("00000000-0000-4000-8000-000000000001"),
-            "mail": ["test_person@email.de"],
-            "company": None,
-            "department": "PARENT-UNIT",
-            "departmentNumber": None,
-            "displayName": "Resolved, Roland",
-            "employeeID": "42",
-            "givenName": ["Roland"],
-            "ou": [],
-            "sn": "Resolved",
-        },
-        "query": "Roland Resolved",
-    }
-
-    extracted = list(extract_ldap_contact_points_by_name(sumo_access_platform))
-    assert extracted[0].model_dump() == expected
+    sumo_contacts = extract_ldap_contact_points_by_name(sumo_access_platform)
+    assert sumo_contacts == [
+        LDAPPersonWithQuery(person=ldap_roland_resolved, query="Roland Resolved")
+    ]
