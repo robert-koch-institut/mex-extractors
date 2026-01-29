@@ -52,7 +52,7 @@ RUN adduser \
     --uid "10001" \
     mex
 
-COPY --chown=mex --exclude=*.lock --exclude=requirements.txt . .
+COPY --chown=mex assets assets
 
 USER mex
 
