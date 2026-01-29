@@ -1,4 +1,4 @@
-.PHONY: all test setup hooks install lint unit test wheel image run start docs
+.PHONY: all setup hooks install lint unit test wheel image run start docs
 all: install lint test
 
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
@@ -18,7 +18,7 @@ hooks:
 install: setup hooks
 	# install packages from lock file in local virtual environment
 	@ echo installing package; \
-	pdm install-all; \
+	uv sync; \
 
 lint:
 	# run the linter hooks from pre-commit on all files
@@ -28,17 +28,17 @@ lint:
 unit:
 	# run the test suite with all unit tests
 	@ echo running unit tests; \
-	pdm run pytest -m 'not integration'; \
+	uv run pytest -m 'not integration'; \
 
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	pdm run pytest --numprocesses=auto --dist=worksteal -m "not requires_rki_infrastructure"; \
+	uv run pytest --numprocesses=auto --dist=worksteal -m "not requires_rki_infrastructure"; \
 
 wheel:
 	# build the python package
 	@ echo building wheel; \
-	pdm build --no-sdist; \
+	uv build --wheel; \
 
 image:
 	# build the docker image
@@ -67,4 +67,5 @@ start: image
 docs:
 	# use sphinx to auto-generate html docs from code
 	@ echo generating docs; \
-	pdm doc; \
+	uv run sphinx-apidoc -f -o docs/source mex; \
+	uv run sphinx-build -aE -b dirhtml docs docs/dist; \

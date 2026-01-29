@@ -55,7 +55,7 @@ def mocked_consent_backend_api_connector(
             entity_type: list[str] | None = None,
             referenced_identifier: list[str] | None = None,
             reference_field: str | None = None,
-        ) -> Generator[AnyMergedModel, None, None]:
+        ) -> Generator[AnyMergedModel]:
             call_counter["count"] += 1
             if (
                 entity_type

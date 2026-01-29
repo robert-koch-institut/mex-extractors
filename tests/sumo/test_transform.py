@@ -1,3 +1,5 @@
+import pytest
+
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -14,12 +16,12 @@ from mex.common.testing import Joker
 from mex.common.types import (
     LinkLanguage,
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     TextLanguage,
     YearMonthDay,
 )
+from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -45,41 +47,30 @@ from mex.extractors.sumo.transform import (
 )
 
 
-def test_get_contact_merged_ids_by_emails(
-    mex_actor_resources: ExtractedContactPoint,
-) -> None:
-    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails(
-        [mex_actor_resources]
-    )
+def test_get_contact_merged_ids_by_emails(contact_point: ExtractedContactPoint) -> None:
+    contact_merged_ids_by_emails = get_contact_merged_ids_by_emails([contact_point])
     assert contact_merged_ids_by_emails == {
-        "email@email.de": mex_actor_resources.stableTargetId
+        contact_point.email[0]: contact_point.stableTargetId,
     }
 
 
-def test_get_contact_merged_ids_by_names(
-    mex_actor_access_platform: ExtractedPerson,
-) -> None:
-    contact_merged_ids_by_names = get_contact_merged_ids_by_names(
-        [mex_actor_access_platform]
-    )
+def test_get_contact_merged_ids_by_names(juturna_felicitas: ExtractedPerson) -> None:
+    contact_merged_ids_by_names = get_contact_merged_ids_by_names([juturna_felicitas])
     assert contact_merged_ids_by_names == {
-        "Erika Mustermann": mex_actor_access_platform.stableTargetId
+        "Juturna Felicitás": juturna_felicitas.stableTargetId
     }
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_nokeda_to_mex_resource(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_resources_nokeda: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
-    contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
-    }
     mex_source = transform_resource_nokeda_to_mex_resource(
         sumo_resources_nokeda,
-        unit_merged_ids_by_synonym,
         contact_merged_ids_by_emails,
         extracted_organization_rki,
         transformed_activity,
@@ -96,7 +87,7 @@ def test_transform_resource_nokeda_to_mex_resource(
         "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "contact": [MergedPersonIdentifier.generate(43)],
+        "contact": [MergedPersonIdentifier.generate(51)],
         "contributingUnit": [Joker()],
         "description": [
             {
@@ -138,27 +129,22 @@ def test_transform_resource_nokeda_to_mex_resource(
             "https://mex.rki.de/item/theme-11",
         ],
         "title": [{"language": TextLanguage.DE, "value": "test_project"}],
-        "unitInCharge": [
-            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG99"]
-        ],
+        "unitInCharge": get_unit_merged_id_by_synonym("FG99"),
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_feat_model_to_mex_resource(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_resources_feat: ResourceMapping,
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
+    contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
-    contact_merged_ids_by_emails = {
-        "email@email.de": MergedContactPointIdentifier.generate(43)
-    }
     mex_source = transform_resource_feat_model_to_mex_resource(
         sumo_resources_feat,
-        unit_merged_ids_by_synonym,
         contact_merged_ids_by_emails,
         mex_resources_nokeda,
         transformed_activity,
@@ -175,7 +161,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         "stableTargetId": Joker(),
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
-        "contact": [MergedContactPointIdentifier.generate(43)],
+        "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
         "isPartOf": [mex_resources_nokeda.stableTargetId],
         "keyword": [
@@ -201,9 +187,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Syndrome"}],
-        "unitInCharge": [
-            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG 99"]
-        ],
+        "unitInCharge": get_unit_merged_id_by_synonym("FG 99"),
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
@@ -223,11 +207,9 @@ def test_transform_nokeda_aux_variable_to_mex_variable_group(
         "label": [{"language": TextLanguage.EN, "value": "age"}],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_nokeda_aux_variable_to_mex_variable_group(
-            cc2_aux_model,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_aux_variable_to_mex_variable_group(
+        cc2_aux_model,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 2
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -250,11 +232,9 @@ def test_transform_model_nokeda_variable_to_mex_variable_group(
         ],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_model_nokeda_variable_to_mex_variable_group(
-            cc1_data_model_nokeda,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_model_nokeda_variable_to_mex_variable_group(
+        cc1_data_model_nokeda,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -274,11 +254,9 @@ def test_transform_feat_variable_to_mex_variable_group(
         "label": [{"value": "feat_syndrome RSV"}],
         "stableTargetId": Joker(),
     }
-    transformed_data = list(
-        transform_feat_variable_to_mex_variable_group(
-            cc2_feat_projection,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_feat_variable_to_mex_variable_group(
+        cc2_feat_projection,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -314,13 +292,11 @@ def test_transform_nokeda_model_variable_to_mex_variable(
         ],
         "usedIn": [mex_resources_nokeda.stableTargetId],
     }
-    transformed_data = list(
-        transform_nokeda_model_variable_to_mex_variable(
-            cc1_data_model_nokeda,
-            cc1_data_valuesets,
-            mex_variable_groups_model_nokeda,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_model_variable_to_mex_variable(
+        cc1_data_model_nokeda,
+        cc1_data_valuesets,
+        mex_variable_groups_model_nokeda,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
@@ -339,14 +315,12 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         for label in list(m.label)
         if label.language == TextLanguage.EN
     }
-    transformed_data = list(
-        transform_nokeda_aux_variable_to_mex_variable(
-            cc2_aux_model,
-            cc2_aux_mapping,
-            cc2_aux_valuesets,
-            mex_variable_groups_nokeda_aux,
-            mex_resources_nokeda,
-        )
+    transformed_data = transform_nokeda_aux_variable_to_mex_variable(
+        cc2_aux_model,
+        cc2_aux_mapping,
+        cc2_aux_valuesets,
+        mex_variable_groups_nokeda_aux,
+        mex_resources_nokeda,
     )
     assert len(transformed_data) == 2
     variable = cc2_aux_model[0]
@@ -417,19 +391,17 @@ def test_transform_feat_projection_variable_to_mex_variable(
         "usedIn": [mex_resources_feat.stableTargetId],
     }
 
-    transformed_data = list(
-        transform_feat_projection_variable_to_mex_variable(
-            cc2_feat_projection,
-            mex_variable_groups_model_feat,
-            mex_resources_feat,
-        )
+    transformed_data = transform_feat_projection_variable_to_mex_variable(
+        cc2_feat_projection,
+        mex_variable_groups_model_feat,
+        mex_resources_feat,
     )
     assert len(transformed_data) == 1
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_sumo_access_platform_to_mex_access_platform(
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     sumo_access_platform: AccessPlatformMapping,
 ) -> None:
     person_stable_target_ids_by_query_string = {
@@ -443,26 +415,23 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
         "contact": [person_stable_target_ids_by_query_string["Roland Resolved"]],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "SUMO Datenbank", "language": TextLanguage.DE}],
-        "unitInCharge": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["MF4"]],
     }
 
     transformed_data = transform_sumo_access_platform_to_mex_access_platform(
         sumo_access_platform,
-        unit_merged_ids_by_synonym,
         person_stable_target_ids_by_query_string,
     )
 
     assert transformed_data.model_dump(exclude_defaults=True) == expected
 
 
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
-    unit_merged_ids_by_synonym: dict[str, list[MergedOrganizationalUnitIdentifier]],
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
 ) -> None:
     extracted_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
-        unit_merged_ids_by_synonym,
         contact_merged_ids_by_emails,
     )
 
@@ -473,7 +442,7 @@ def test_transform_sumo_activity_to_extracted_activity(
         "stableTargetId": Joker(),
         "abstract": [{"value": "Dummy abstract", "language": TextLanguage.DE}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
-        "contact": [contact_merged_ids_by_emails["email@email.de"]],
+        "contact": [MergedContactPointIdentifier.generate(seed=51)],
         "documentation": [
             {
                 "language": LinkLanguage.DE,
@@ -482,10 +451,8 @@ def test_transform_sumo_activity_to_extracted_activity(
             }
         ],
         "externalAssociate": Joker(),
-        "involvedUnit": [str(unit_id) for unit_id in unit_merged_ids_by_synonym["MF4"]],
-        "responsibleUnit": [
-            str(unit_id) for unit_id in unit_merged_ids_by_synonym["FG32"]
-        ],
+        "involvedUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
         "start": [YearMonthDay("2018-07-01")],
         "theme": [

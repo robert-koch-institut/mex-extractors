@@ -23,7 +23,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
 )
 from mex.extractors.grippeweb.extract import (
@@ -140,16 +139,12 @@ def grippeweb_merged_organization_ids_by_query_str(
 @asset(group_name="grippeweb")
 def grippeweb_extracted_access_platform(
     grippeweb_access_platform: dict[str, Any],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_persons: list[ExtractedPerson],
 ) -> ExtractedAccessPlatform:
     """Transform Grippeweb mappings to extracted access platform and load to sinks."""
     grippeweb_extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             AccessPlatformMapping.model_validate(grippeweb_access_platform),
-            unit_stable_target_ids_by_synonym,
             grippeweb_extracted_persons,
         )
     )
@@ -158,11 +153,8 @@ def grippeweb_extracted_access_platform(
 
 
 @asset(group_name="grippeweb")
-def grippeweb_extracted_parent_resource(  # noqa: PLR0913
+def grippeweb_extracted_parent_resource(
     grippeweb_resource_mappings: list[dict[str, Any]],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -174,7 +166,6 @@ def grippeweb_extracted_parent_resource(  # noqa: PLR0913
     parent_resource, child_resource = (
         transform_grippeweb_resource_mappings_to_extracted_resources(
             [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
-            unit_stable_target_ids_by_synonym,
             grippeweb_extracted_access_platform,
             grippeweb_extracted_persons,
             grippeweb_merged_organization_ids_by_query_str,

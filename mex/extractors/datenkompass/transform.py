@@ -34,8 +34,8 @@ from mex.extractors.datenkompass.models.mapping import (
 )
 from mex.extractors.settings import Settings
 
-_VocabularyT = TypeVar(
-    "_VocabularyT",
+VocabularyT = TypeVar(
+    "VocabularyT",
     Theme,
     BibliographicResourceType,
     Frequency,
@@ -189,8 +189,10 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
-def get_german_vocabulary(
-    entries: list[_VocabularyT] | None,
+def get_german_vocabulary[
+    VocabularyT: (Theme, BibliographicResourceType, Frequency, License)
+](
+    entries: list[VocabularyT] | None,
 ) -> list[str | None]:
     """Get german prefLabel for Vocabularies.
 
@@ -346,6 +348,9 @@ def transform_activities(
         datenhalter = handle_setval(
             default_by_fieldname["datenhalter"].mappingRules[0].setValues
         )
+        start = str(item.start[0]) if item.start else None
+        end = str(item.end[0]) if item.end else None
+        zeitliche_abdeckung = f"{start} - {end}" if start and end else start or end
         voraussetzungen = handle_setval(
             default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
         )
@@ -386,6 +391,7 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
+                zeitliche_abdeckung=zeitliche_abdeckung,
                 voraussetzungen=voraussetzungen,
                 frequenz=frequenz,
                 hauptkategorie=hauptkategorie,

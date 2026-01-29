@@ -12,10 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - change the docker build to multi-stage build
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
-
-- update mex-common dependency to 1.11
-
 ### Deprecated
 
 ### Removed
@@ -23,6 +19,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.1] - 2026-01-29
+
+### Added
+
+- enable testing against a mocked ldap container
+
+### Changes
+
+- update dependencies mex-artificial >= 1.3, Faker >= 40
+
+## [1.8.0] - 2026-01-28
+
+### Added
+
+- extraction of kvis sql tables
+- prepare testing against a mocked ldap container
+- primary source helper function: add caching
+- implemented asset checks for the `x_items_less_than` rule
+- extract counts from IGS API
+- publisher: tests for and fails if a person has more than one consent
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
+- update mex-common dependency to 1.11
+- use convenience function to obtain organizational unit merged ids
+- lock file maintenance (2026-01-12)
+- asset checks created during definition time in base.py
+- lock file maintenance (2026-01-19)
+- remove mailpit path for CI testing
+- datenkompass: publish activities by unit, filter and mapping update
+- switch package manager from pdm to uv
+
+### Removed
+
+- tailored tests for blueant and endnote; now generalized in test_checks_main.py
+- grippeweb: clean up obsolete wasGeneratedBy transformation (mapping was removed)
+
+### Fixed
+
+- blueant: fix Person extraction and units written as MergedOrganization items
 
 ## [1.7.0] - 2025-12-11
 
@@ -35,6 +76,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Pin Mailpit Docker image version to v1.28
+
+### Fixed
+
+- synopse: fix extraction of involved units
 
 ## [1.6.0] - 2025-11-28
 
@@ -58,7 +103,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- synopse: fix extraction of involved units
 - organigram: fix "parentDepartment" typo in organizational_units.json
 - open-data: fix typo in asset naming
 - organigram: testing of cached helper function

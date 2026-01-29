@@ -75,9 +75,12 @@ def synopse_extracted_activities() -> list[ExtractedActivity]:
     ]
 
 
-def test_transform_biospecimen_resource_to_mex_resource(
+@pytest.mark.usefixtures("mocked_wikidata")
+def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: list[BiospecimenResource],
-    mex_persons: list[ExtractedPerson],
+    roland_resolved: ExtractedPerson,
+    juturna_felicitas: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
     resource_mapping: ResourceMapping,
@@ -94,16 +97,14 @@ def test_transform_biospecimen_resource_to_mex_resource(
         )
     ).stableTargetId
 
-    mex_sources = transform_biospecimen_resource_to_mex_resource(
+    resources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        unit_stable_target_ids,
-        mex_persons,
+        [roland_resolved, juturna_felicitas, frieda_fictitious],
         extracted_organization_rki,
         synopse_extracted_activities,
         resource_mapping,
         {},
     )
-    mex_source = mex_sources[0]
 
     expected = {
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -114,9 +115,7 @@ def test_transform_biospecimen_resource_to_mex_resource(
         "conformsTo": [
             "LOINC",
         ],
-        "contact": [str(mex_persons[0].stableTargetId)],
-        "contributingUnit": [str(Identifier.generate(seed=42))],
-        "contributor": [str(Identifier.generate(seed=42))],
+        "contact": [str(roland_resolved.stableTargetId)],
         "description": [{"language": TextLanguage.DE, "value": "Testbeschreibung"}],
         "documentation": [
             {
@@ -166,8 +165,8 @@ def test_transform_biospecimen_resource_to_mex_resource(
             "https://mex.rki.de/item/theme-36",
         ],
         "title": [{"value": "test_titel"}],
-        "unitInCharge": [str(Identifier.generate(seed=42))],
+        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
         "wasGeneratedBy": str(synopse_merged_id),
         # created_in_context_of is None, therefore not displayed
     }
-    assert mex_source.model_dump(exclude_none=True, exclude_defaults=True) == expected
+    assert resources[0].model_dump(exclude_none=True, exclude_defaults=True) == expected

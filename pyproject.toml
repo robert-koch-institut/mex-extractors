@@ -1,12 +1,12 @@
 [project]
 name = "mex-extractors"
-version = "1.7.0"
+version = "1.8.1"
 description = "ETL pipelines for the RKI Metadata Exchange."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-extractors" }
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "beautifulsoup4>=4,<5",
     "boto3>=1,<2",
@@ -14,9 +14,9 @@ dependencies = [
     "dagster-webserver>=1,<2",
     "dagster>=1,<2",
     "defusedxml>=0.7,<1",
-    "faker>=37,<38",
-    "mex-artificial>=1.1,<2",
-    "mex-common>=1.11,<1.12",
+    "faker>=40",
+    "mex-artificial>=1.3,<2",
+    "mex-common>=1.13,<1.14",
     "networkx>=3",
     "numpy>=2",
     "openpyxl>=3,<4",
@@ -28,7 +28,9 @@ dependencies = [
     "requests>=2",
     "xlrd>=2,<3",
 ]
-optional-dependencies.dev = [
+
+[dependency-groups]
+dev = [
     "ipdb>=0.13",
     "mypy>=1",
     "pandas-stubs",
@@ -61,6 +63,7 @@ grippeweb = "mex.extractors.grippeweb.main:run"
 ifsg = "mex.extractors.ifsg.main:run"
 igs = "mex.extractors.igs.main:run"
 international-projects = "mex.extractors.international_projects.main:run"
+kvis = "mex.extractors.kvis.main:run"
 odk = "mex.extractors.odk.main:run"
 open-data = "mex.extractors.open_data.main:run"
 seq-repo = "mex.extractors.seq_repo.main:run"
@@ -75,14 +78,10 @@ publisher = "mex.extractors.publisher.main:run"
 template = "https://github.com/robert-koch-institut/mex-template"
 skip = ["CHANGELOG.md", "mex", "tests"]
 
-[tool.dagster]
-module_name = "mex.extractors"
-
 [tool.ipdb]
 context = 5
 
 [tool.mypy]
-python_version = "3.11"
 show_error_codes = true
 strict = true
 plugins = ["pydantic.mypy"]
@@ -98,19 +97,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "botocore.*"
 ignore_missing_imports = true
-
-[tool.pdm]
-distribution = true
-
-[tool.pdm.scripts]
-update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
-lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
-install-all = { cmd = "pdm install --group :all --frozen-lockfile" }
-apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
-sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
-doc = { composite = ["apidoc", "sphinx"] }
-lint = { cmd = "pre-commit run --all-files" }
-test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true

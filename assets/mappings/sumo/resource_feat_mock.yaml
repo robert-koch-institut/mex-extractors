@@ -11,12 +11,12 @@ accrualPeriodicity:
 contact:
   - mappingRules:
       - forValues:
-          - email@email.de
+          - contactc@rki.de
         rule:
 contributingUnit:
   - mappingRules:
       - forValues:
-          - MF4
+          - C1
         rule:
 hadPrimarySource:
   - mappingRules:

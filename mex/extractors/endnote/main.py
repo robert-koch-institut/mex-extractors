@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedConsent,
     ExtractedPerson,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.endnote.extract import extract_endnote_records
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
@@ -56,13 +55,10 @@ def endnote_extracted_consents(
     return endnote_extracted_consents
 
 
-@asset(group_name="endnote")
+@asset(group_name="endnote", metadata={"entity_type": "bibliographic-resource"})
 def endnote_extracted_bibliographic_resources(
     endnote_records: list[EndnoteRecord],
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
 ) -> Output[int]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
@@ -75,7 +71,6 @@ def endnote_extracted_bibliographic_resources(
         endnote_records,
         endnote_bibliographic_resource_mapping,
         endnote_extracted_persons_by_name_str,
-        unit_stable_target_ids_by_synonym,
     )
     num_items = len(extracted_bibliographic_resource)
     load(extracted_bibliographic_resource)

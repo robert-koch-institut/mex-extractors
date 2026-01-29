@@ -12,7 +12,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
@@ -96,9 +95,6 @@ def international_projects_extracted_activities(
     international_projects_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
-    unit_stable_target_ids_by_synonym: dict[
-        str, list[MergedOrganizationalUnitIdentifier]
-    ],
     international_projects_funding_sources_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -115,7 +111,6 @@ def international_projects_extracted_activities(
         international_projects_sources,
         activity,
         international_projects_person_ids_by_query_str,
-        unit_stable_target_ids_by_synonym,
         international_projects_funding_sources_ids_by_query_string,
         international_projects_partner_organization_ids_by_query_string,
     )

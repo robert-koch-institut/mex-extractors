@@ -26,28 +26,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    services:
-      mailpit:
-        image: axllent/mailpit:v1.28
-        ports:
-          - 1025:1025
-          - 8025:8025
-        env:
-          MP_SMTP_AUTH_ALLOW_INSECURE: 1
-          MP_SMTP_AUTH_ACCEPT_ANY: 1
-          MP_UI_AUTH: "user:password"
-          MP_MAX_AGE: "180d"
-          MP_WEBROOT: "mailpit"
-          MP_ENABLE_PROMETHEUS: "true"
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
+      - name: Start containers
+        run: docker compose up -d slapd mailpit
+
       - name: Cache requirements
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-requirements
         with:
@@ -57,7 +46,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-environment
         with:
@@ -69,10 +58,19 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
-        run: make install
+        run: |
+          echo ${{ matrix.python-version }} > .python-version
+          make install
 
       - name: Run test suite
+        env:
+          MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
+          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
         run: make test
+
+      - name: Cleanup containers
+        if: always()
+        run: docker compose down slapd mailpit

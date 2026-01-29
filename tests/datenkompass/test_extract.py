@@ -2,29 +2,43 @@ import pytest
 
 import mex.extractors.datenkompass.extract as extract_module
 from mex.common.models import MergedActivity
-from mex.common.types import Text
+from mex.common.types import LinkLanguage, TextLanguage
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
 def test_get_merged_items_mocked() -> None:
-    item_generator = extract_module.get_merged_items(entity_type=["MergedActivity"])
-    items = list(item_generator)
-    assert len(items) == 1
-    assert isinstance(items[0], MergedActivity)
-    assert items[0] == MergedActivity(
-        contact=["LoremIpsum3456"],
-        responsibleUnit=["IdentifierOrgUnitEG"],
-        title=[
-            Text(value="titel de", language="de"),
-            Text(value="title en", language="en"),
+    items = extract_module.get_merged_items(entity_type=["MergedActivity"])
+    assert len(items) == 3  # 3 mocked MergedActivites
+    assert isinstance(items[1], MergedActivity)
+    assert items[0].model_dump(exclude_defaults=True) == {
+        "contact": ["LoremIpsum1234"],
+        "responsibleUnit": ["IdentifierUnitC1", "IdentifierUnitFG99"],
+        "title": [
+            {"value": '"title "Act" no language"'},
+            {"value": "title en", "language": TextLanguage.EN},
         ],
-        abstract=[Text(value="Without language", language=None)],
-        funderOrCommissioner=["Identifier1forORG"],
-        shortName=["short only english"],
-        theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
-        entityType="MergedActivity",
-        identifier="MergedActivityWithORG1",
-    )
+        "abstract": [
+            {"value": "Die Nutzung", "language": TextLanguage.DE},
+            {"value": "The usage", "language": TextLanguage.EN},
+        ],
+        "end": ["2025-02-25"],
+        "funderOrCommissioner": ["Identifier2forORG", "NoORGIdentifier"],
+        "shortName": [
+            {"value": "short en", "language": TextLanguage.EN},
+            {"value": "short de", "language": TextLanguage.DE},
+        ],
+        "start": ["2021-02-21"],
+        "theme": ["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
+        "website": [
+            {"url": "https://www.dont-transform.de"},
+            {
+                "language": LinkLanguage.DE,
+                "title": "Ja",
+                "url": "https://www.do-transform.org",
+            },
+        ],
+        "identifier": "MergedActivityWithORG2",
+    }
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")

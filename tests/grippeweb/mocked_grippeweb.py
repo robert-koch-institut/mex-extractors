@@ -6,7 +6,6 @@ from pytest import MonkeyPatch
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -17,7 +16,6 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPrimarySourceIdentifier,
     Text,
 )
 from mex.extractors.grippeweb.connector import GrippewebConnector
@@ -33,29 +31,6 @@ def grippeweb_merged_contact_point_id_by_email() -> dict[
     str, MergedContactPointIdentifier
 ]:
     return {"contactc@rki.de": MergedContactPointIdentifier.generate(42)}
-
-
-@pytest.fixture
-def unit_stable_target_ids_by_synonym() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
-    """Mock unit stable target ids."""
-    return {"C1": [MergedOrganizationalUnitIdentifier.generate(seed=44)]}
-
-
-@pytest.fixture
-def grippeweb_extracted_persons() -> list[ExtractedPerson]:
-    """Return an extracted person with static dummy values."""
-    return [
-        ExtractedPerson(
-            email=["test_person@email.de"],
-            familyName="Contact",
-            givenName="Carla",
-            fullName="Contact, Carla",
-            identifierInPrimarySource="Carla",
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=40),
-        )
-    ]
 
 
 @pytest.fixture

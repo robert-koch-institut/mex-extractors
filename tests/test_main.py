@@ -11,6 +11,7 @@ from mex.extractors.pipeline import run_job_in_process
     "mocked_grippeweb",
     "mocked_ifsg",
     "mocked_igs",
+    "mocked_kvis",
     "mocked_ldap",
     "mocked_open_data",
     "mocked_wikidata",

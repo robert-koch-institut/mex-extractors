@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   dagster-daemon:
     build:
@@ -22,5 +21,22 @@ services:
       - 3000
     volumes:
       - work:/app/work:rw
+  slapd:
+    image: thoteam/slapd-server-mock
+    ports:
+      - 636:636
+    volumes:
+      - ./assets/raw-data/ldap/:/bootstrap/
+    expose:
+      - 636
+  mailpit:
+    image: axllent/mailpit:v1.28
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_UI_AUTH=user:password
 volumes:
   work:

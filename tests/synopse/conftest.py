@@ -6,8 +6,6 @@ from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
     ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -33,33 +31,6 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
 )
 from mex.extractors.utils import load_yaml
-
-
-@pytest.fixture
-def extracted_person() -> ExtractedPerson:
-    """Return an extracted person with static dummy values."""
-    return ExtractedPerson(
-        affiliation=Identifier.generate(23),
-        email=["fictitiousf@rki.de", "info@rki.de"],
-        familyName="Fictitious",
-        fullName="Fictitious, Frieda, Dr.",
-        givenName="Frieda",
-        memberOf=Identifier.generate(256),
-        hadPrimarySource=Identifier.generate(40),
-        identifierInPrimarySource="frieda",
-    )
-
-
-@pytest.fixture
-def extracted_organization() -> list[ExtractedOrganization]:
-    """Return an extracted person with static dummy values."""
-    return [
-        ExtractedOrganization(
-            hadPrimarySource=Identifier.generate(40),
-            identifierInPrimarySource="org",
-            officialName="org name",
-        )
-    ]
 
 
 @pytest.fixture
@@ -364,7 +335,7 @@ def synopse_projects() -> list[SynopseProject]:
         SynopseProject(
             akronym_des_studientitels="BBCCDD_00",
             anschlussprojekt="BBCCDD",
-            beitragende="Carla Contact",
+            beitragende="Roland Resolved",
             beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
             externe_partner="Testpartner",
             project_studientitel="Studie zu Lorem und Ipsum",
@@ -378,11 +349,11 @@ def synopse_projects() -> list[SynopseProject]:
             studien_id="12345",
             studienart_studientyp="Monitoring-Studie",
             verantwortliche_oe="C1",
-            interne_partner="fg99",
+            interne_partner="fg99, C1",
         ),
         SynopseProject(
             akronym_des_studientitels="BBCCDD",
-            beitragende="Carla Contact",
+            beitragende="Roland Resolved",
             beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
             project_studientitel="Studie zu Lorem und Ipsum",
             kontakt=["info@rki.de"],
