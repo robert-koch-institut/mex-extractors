@@ -28,7 +28,9 @@ def test_extract_parent_resources_mocked() -> None:
         "metadata": {
             "description": "<p>Test1</p> <br>\n<a href='test/2'>test3</a>",
             "license": {"id": "cc-by-4.0"},
-            "contributors": [{"name": "Muster, Maxi", "orcid": "1234567890"}],
+            "contributors": [
+                {"name": "Felicitás, Juturna", "orcid": "0000-0002-1234-5678"}
+            ],
             "resource_type": {"type": "dataset"},
         },
         "files": [{"id": "file_test_id"}],
@@ -40,9 +42,9 @@ def test_extract_parent_resources_mocked() -> None:
         "metadata": {
             "creators": [
                 {
-                    "name": "Muster, Maxi",
+                    "name": "Felicitás, Juturna",
                     "affiliation": "RKI",
-                    "orcid": "1234567890",
+                    "orcid": "0000-0002-1234-5678",
                 },
                 {
                     "name": "Resolved, Roland",
@@ -92,8 +94,8 @@ def test_extract_open_data_persons_from_open_data_parent_resources(
     )
     assert results == [
         OpenDataCreatorsOrContributors(
-            name="Muster, Maxi",
-            orcid="1234567890",
+            name="Felicitás, Juturna",
+            orcid="0000-0002-1234-5678",
         )
     ]
 
