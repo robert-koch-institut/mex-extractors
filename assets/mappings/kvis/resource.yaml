@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../../__schema__/ResourceMapping.json
+
+accessRestriction:
+- mappingRules:
+  - setValues: https://mex.rki.de/item/access-restriction-2 
+accrualPeriodicity:
+- mappingRules:
+  - setValues: https://mex.rki.de/item/frequency-1
+alternativeTitle:
+- mappingRules:
+  - setValues:
+    - value: KVIS
+      language: de
+contact:
+- mappingRules:
+  - forValues:
+    - contactc@rki.de
+    rule: Use value to match with ldap connector.
+contributingUnit:
+- mappingRules:
+  - forValues:
+    - C1
+    rule: Use value to match with identifier in organigram connector.
+contributor:
+- mappingRules:
+  - forValues:
+    - ResolvedR@rki.de
+    - FictitiousF@rki.de
+    rule: Match value with ldap connector.
+created:
+- mappingRules:
+  - setValues: "1999"
+description:
+- mappingRules:
+  - setValues:
+    - value: "Beschreibung 1"
+      language: de
+    - value: "Beschreibung 2."
+      language: de
+documentation:
+- mappingRules:
+  - setValues:
+    - language: de
+      title: Doku 1
+      url: https://www.doku1.example
+    - language: de
+      title: Doku 2
+      url: https://www.other_doku2.example
+externalPartner:
+- mappingRules:
+  - forValues:
+    - RKI
+    rule: Use value to match with wikidata connector.
+hadPrimarySource:
+- mappingRules:
+  - rule: 'kvis'
+hasLegalBasis:
+- mappingRules:
+  - setValues:
+    - value: Ja
+      language: de
+hasPurpose:
+- mappingRules:
+  - setValues:
+    - value: Erkennen
+      language: de
+    - value: Information
+      language: de
+identifierInPrimarySource:
+- mappingRules:
+  - setValues: kvis_resource
+keyword:
+- mappingRules:
+  - setValues:
+    - value: key
+      language: de
+    - value: word
+      language: de
+language:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/language-1
+method:
+- mappingRules:
+  - setValues:
+    - value: methode 1
+      language: de
+    - value: Methode 2
+      language: de
+populationCoverage:
+- mappingRules:
+  - setValues:
+    - value: alle
+      language: de
+    - value: jeder
+      language: de
+provenance:
+- mappingRules:
+  - setValues:
+    - value: Mein Katze regeln.
+      language: de
+publisher:
+- mappingRules:
+  - forValues:
+    - Robert Koch-Institut
+    rule: Match value with wikidata connector.
+resourceCreationMethod:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/resource-type-general-13
+resourceTypeSpecific:
+- mappingRules:
+  - setValues:
+    - value: Type
+      language: de
+spatial:
+- mappingRules:
+  - setValues:
+    - value: spatial
+      language: de
+theme:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/theme-11
+title:
+- mappingRules:
+  - setValues:
+    - value: Titel
+      language: de
+unitInCharge:
+- mappingRules:
+  - forValues:
+    - fg99
+    rule: Use value to match with organigramm connector.
