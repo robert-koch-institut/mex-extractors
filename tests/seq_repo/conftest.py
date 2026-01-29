@@ -46,7 +46,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_id="TEST-ID",
         ),
         SeqRepoSource(
-            project_coordinators=["max"],
+            project_coordinators=["ResolvedR"],
             customer_org_unit_id=None,
             sequencing_date="1970-01-01",
             lims_sample_id="another-test-sample-id",
@@ -60,7 +60,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             customer_org_unit_id="FG99",
             customer_sample_name="test-customer-name-2",
             lims_sample_id="test-sample-id",
-            project_coordinators=["someone"],
+            project_coordinators=["ResolvedR"],
             project_id="TEST-ID",
             project_name="SKIPPED BECAUSE MISSING DATE",
             sequenced_sample_id="SEQ-321",
