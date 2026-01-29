@@ -95,7 +95,10 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [
-            {"value": "FG99-ABC-123 sample test-customer-name-1", "language": "en"}
+            {
+                "value": "FG99-ABC-123 sample test-customer-name-1",
+                "language": TextLanguage.EN,
+            }
         ],
         "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
         "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
@@ -104,21 +107,18 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         ],
         "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
         "description": [
-            {"value": "Testbeschreibung", "language": "de"},
-            {"value": "test description", "language": "en"},
+            {"value": "Testbeschreibung", "language": TextLanguage.DE},
+            {"value": "test description", "language": TextLanguage.EN},
         ],
         "instrumentToolOrApparatus": [{"value": "TEST"}],
         "keyword": [
-            {"value": "fastc", "language": "de"},
-            {"value": "fastd", "language": "de"},
-            {
-                "value": "Severe acute respiratory syndrome coronavirus 2",
-                "language": "en",
-            },
+            {"value": "fastc", "language": TextLanguage.DE},
+            {"value": "fastd", "language": TextLanguage.DE},
+            {"value": "virus XYZ"},
         ],
         "method": [
-            {"value": "Next-Generation Sequencing", "language": "de"},
-            {"value": "NGS", "language": "de"},
+            {"value": "Next-Generation Sequencing", "language": TextLanguage.DE},
+            {"value": "NGS", "language": TextLanguage.DE},
         ],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceCreationMethod": [
@@ -126,10 +126,10 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "resourceTypeSpecific": [
-            {"value": "Sequencing Data", "language": "de"},
-            {"value": "Sequenzdaten", "language": "de"},
+            {"value": "Sequencing Data", "language": TextLanguage.DE},
+            {"value": "Sequenzdaten", "language": TextLanguage.DE},
         ],
-        "rights": [{"value": "Example content", "language": "de"}],
+        "rights": [{"value": "Example content", "language": TextLanguage.DE}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "identifier": "cYmhNKAP5uCRwuspCYccyc",
         "stableTargetId": "cca31cXT1dWCdf3hUeO1PR",
@@ -149,6 +149,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         mex_resources[0].model_dump(exclude_none=True, exclude_defaults=True)
         == expected_resource
     )
+    assert mex_resources[1].contributingUnit == []
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

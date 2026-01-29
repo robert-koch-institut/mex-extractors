@@ -32,6 +32,17 @@
         "species": "Lab rat"
     },
     {
+        "customer-sample-name": "test-customer-name-3",
+        "lims-sample-id": "another-test-sample-id",
+        "project-coordinators": [
+            "max"
+        ],
+        "project-id": "TEST-ID-2",
+        "project-name": "NO UNIT TO FILL IN",
+        "sequenced-sample-id": "SEQ-789",
+        "sequencing-date": "1970-01-01"
+    },
+    {
         "customer-org-unit-id": "FG99",
         "customer-sample-name": "test-customer-name-2",
         "lims-sample-id": "test-sample-id",

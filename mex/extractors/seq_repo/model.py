@@ -11,10 +11,10 @@ class SeqRepoSource(BaseRawData):
 
     project_coordinators: list[str] = Field(alias="project-coordinators")
     customer_org_unit_id: str | None = Field(None, alias="customer-org-unit-id")
-    sequencing_date: str = Field(alias="sequencing-date")
+    sequencing_date: str | None = Field(None, alias="sequencing-date")
     lims_sample_id: str = Field(alias="lims-sample-id")
-    sequencing_platform: str = Field(alias="sequencing-platform")
-    species: str
+    sequencing_platform: str | None = Field(None, alias="sequencing-platform")
+    species: str | None = Field(None, alias="species")
     project_name: str = Field(alias="project-name")
     customer_sample_name: str = Field(alias="customer-sample-name")
     project_id: str = Field(alias="project-id")

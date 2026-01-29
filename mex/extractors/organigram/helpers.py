@@ -42,7 +42,7 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
 
 
 def get_unit_merged_id_by_synonym(
-    synonym: str,
+    synonym: str | None,
 ) -> list[MergedOrganizationalUnitIdentifier] | None:
     """Search a merged organizational unit id by synonym.
 
@@ -52,5 +52,8 @@ def get_unit_merged_id_by_synonym(
     Returns:
         list of merged organizational unit ids if found else None
     """
+    if synonym is None:
+        return None
+
     unit_merged_ids_by_synonyms = _get_cached_unit_merged_ids_by_synonyms()
     return unit_merged_ids_by_synonyms.get(synonym, None)

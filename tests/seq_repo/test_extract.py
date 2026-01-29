@@ -31,7 +31,7 @@ def test_extract_sources() -> None:
         "customer_sample_name": "test-customer-name-1",
         "project_id": "TEST-ID",
     }
-    assert len(sources) == 2
+    assert len(sources) == 4
     assert sources[0].model_dump() == expected
 
 
