@@ -18,6 +18,7 @@ from mex.common.types import (
 )
 from mex.extractors.igs.model import (
     IGSEnumSchema,
+    IGSInfo,
     IGSPropertiesSchema,
     IGSSchema,
 )
@@ -27,12 +28,15 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
-def transform_igs_extracted_resource(
+def transform_igs_extracted_resource(  # noqa: PLR0913
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
-) -> ExtractedResource:
+    igs_schemas: dict[str, IGSSchema],
+    igs_info: IGSInfo,
+    igs_endpoint_counts: dict[str, str],
+) -> dict[str, ExtractedResource]:
     """Transform IGS schemas to extracted resources.
 
     Args:
@@ -40,10 +44,14 @@ def transform_igs_extracted_resource(
         igs_extracted_contact_points_by_mail_str: extracted IGS contact points by mail
         igs_extracted_access_platform: extracted access platform
         extracted_organization_rki: extracted organization RKI
+        igs_schemas: igs schema dictionary
+        igs_info: IGS info
+        igs_endpoint_counts: IGS endpoint count dictionary
 
     Returns:
-        igs extracted resource
+        igs extracted resource by pathogen
     """
+    pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
     contact = [
         igs_extracted_contact_points_by_mail_str[for_value].stableTargetId
         for rule in igs_resource_mapping.contact[0].mappingRules
@@ -51,84 +59,120 @@ def transform_igs_extracted_resource(
         for for_value in rule.forValues
         if isinstance(for_value, str)
     ]
-    contributing_unit = (
-        [
-            unit_id
-            for synonym in for_values
-            if (unit_ids := get_unit_merged_id_by_synonym(synonym))
-            for unit_id in unit_ids
-        ]
-        if (
-            for_values := igs_resource_mapping.contributingUnit[0]
-            .mappingRules[0]
-            .forValues
-        )
-        else []
-    )
-    title = igs_resource_mapping.title[0].mappingRules[0].setValues
+    contributing_units_by_pathogen = {
+        for_value: rule.rule
+        for rule in igs_resource_mapping.contributingUnit[0].mappingRules[1:]
+        if rule.forValues and rule.rule
+        for for_value in rule.forValues
+    }
+    created = igs_resource_mapping.created[0].mappingRules[0].setValues
     unit_in_charge = (
         get_unit_merged_id_by_synonym(for_value[0])
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
         else []
     )
-    keyword = [
-        set_value
-        for rule in igs_resource_mapping.keyword[1].mappingRules[1:]
-        if rule.setValues
-        for set_value in rule.setValues
-    ]
-    if igs_resource_mapping.keyword[0].mappingRules[0].setValues:
-        keyword.extend(igs_resource_mapping.keyword[0].mappingRules[0].setValues)
-
-    return ExtractedResource(
-        accessPlatform=igs_extracted_access_platform.stableTargetId,
-        accessRestriction=igs_resource_mapping.accessRestriction[0]
-        .mappingRules[0]
-        .setValues,
-        accrualPeriodicity=igs_resource_mapping.accrualPeriodicity[0]
-        .mappingRules[0]
-        .setValues,
-        alternativeTitle=igs_resource_mapping.alternativeTitle[0]
-        .mappingRules[0]
-        .setValues,
-        anonymizationPseudonymization=igs_resource_mapping.anonymizationPseudonymization[
-            0
+    keywords_by_pathogen = {
+        rule.forValues[0]: rule.setValues
+        for rule in igs_resource_mapping.keyword[1].mappingRules
+        if rule.forValues and rule.setValues
+    }
+    quality_information_values_by_field_in_primary_source = {
+        field.fieldInPrimarySource: field.mappingRules[0]
+        .setValues[0]
+        .value.split("[")[0]
+        for field in igs_resource_mapping.qualityInformation
+        if field.mappingRules[0].setValues
+    }
+    title_by_pathogen = {
+        rule.forValues[0]: rule.setValues
+        for rule in igs_resource_mapping.title[0].mappingRules
+        if rule.forValues and rule.setValues
+    }
+    extracted_resources_by_pathogen: dict[str, ExtractedResource] = {}
+    for pathogen in pathogens:
+        contributing_units = [
+            unit
+            for synonym in contributing_units_by_pathogen[pathogen].split(",")
+            if (units := get_unit_merged_id_by_synonym(synonym))
+            for unit in units
         ]
-        .mappingRules[0]
-        .setValues,
-        contact=contact,
-        contributingUnit=contributing_unit,
-        description=igs_resource_mapping.description[0].mappingRules[0].setValues,
-        documentation=igs_resource_mapping.documentation[0].mappingRules[0].setValues,
-        hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
-        hasLegalBasis=igs_resource_mapping.hasLegalBasis[0].mappingRules[0].setValues,
-        hasPersonalData=igs_resource_mapping.hasPersonalData[0]
-        .mappingRules[0]
-        .setValues,
-        identifierInPrimarySource=igs_resource_mapping.identifierInPrimarySource[0]
-        .mappingRules[0]
-        .setValues,
-        keyword=keyword,
-        language=igs_resource_mapping.language[0].mappingRules[0].setValues,
-        meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
-        method=igs_resource_mapping.method[0].mappingRules[0].setValues,
-        publisher=extracted_organization_rki.stableTargetId,
-        resourceCreationMethod=igs_resource_mapping.resourceCreationMethod[0]
-        .mappingRules[0]
-        .setValues,
-        resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral[0]
-        .mappingRules[0]
-        .setValues,
-        resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific[0]
-        .mappingRules[0]
-        .setValues,
-        rights=igs_resource_mapping.rights[0].mappingRules[0].setValues,
-        spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
-        temporal=igs_resource_mapping.temporal[0].mappingRules[0].setValues,
-        theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
-        title=title,
-        unitInCharge=unit_in_charge,
-    )
+        identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
+        keyword = cast(
+            "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
+        )
+        keyword.append(Text(value=pathogen.removesuffix("P")))
+        keyword.extend(keywords_by_pathogen[pathogen])
+        quality_information = [
+            Text(
+                value=f"{quality_information_values_by_field_in_primary_source[key]}{value}",
+                language="de",
+            )
+            for key, value in igs_endpoint_counts.items()
+            if "pathogen" not in key and "upload" not in key
+        ]
+        quality_information.append(
+            Text(value=igs_endpoint_counts[f"pathogen_{pathogen}"])
+        )
+        if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
+            size_of_databasis = igs_endpoint_counts[
+                igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
+            ]
+        extracted_resources_by_pathogen[pathogen] = ExtractedResource(
+            accessPlatform=igs_extracted_access_platform.stableTargetId,
+            accessRestriction=igs_resource_mapping.accessRestriction[0]
+            .mappingRules[0]
+            .setValues,
+            accrualPeriodicity=igs_resource_mapping.accrualPeriodicity[0]
+            .mappingRules[0]
+            .setValues,
+            alternativeTitle=igs_resource_mapping.alternativeTitle[0]
+            .mappingRules[0]
+            .setValues,
+            anonymizationPseudonymization=igs_resource_mapping.anonymizationPseudonymization[
+                0
+            ]
+            .mappingRules[0]
+            .setValues,
+            contact=contact,
+            contributingUnit=contributing_units,
+            created=created,
+            description=igs_resource_mapping.description[0].mappingRules[0].setValues,
+            documentation=igs_resource_mapping.documentation[0]
+            .mappingRules[0]
+            .setValues,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
+            hasLegalBasis=igs_resource_mapping.hasLegalBasis[0]
+            .mappingRules[0]
+            .setValues,
+            hasPurpose=igs_resource_mapping.hasPurpose[0].mappingRules[0].setValues,
+            identifierInPrimarySource=identifier_in_primary_source,
+            keyword=keyword,
+            language=igs_resource_mapping.language[0].mappingRules[0].setValues,
+            meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
+            method=igs_resource_mapping.method[0].mappingRules[0].setValues,
+            populationCoverage=igs_resource_mapping.populationCoverage[0]
+            .mappingRules[0]
+            .setValues,
+            provenance=igs_resource_mapping.provenance[0].mappingRules[0].setValues,
+            publisher=extracted_organization_rki.stableTargetId,
+            qualityInformation=quality_information,
+            resourceCreationMethod=igs_resource_mapping.resourceCreationMethod[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific[0]
+            .mappingRules[0]
+            .setValues,
+            rights=igs_resource_mapping.rights[0].mappingRules[0].setValues,
+            spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
+            sizeOfDataBasis=size_of_databasis,
+            theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
+            title=title_by_pathogen[pathogen],
+            unitInCharge=unit_in_charge,
+        )
+    return extracted_resources_by_pathogen
 
 
 def transform_igs_access_platform(

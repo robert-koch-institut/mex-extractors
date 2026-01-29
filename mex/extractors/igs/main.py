@@ -12,24 +12,20 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedOrganization,
     ResourceMapping,
-    VariableMapping,
 )
 from mex.common.types import (
     MergedResourceIdentifier,
-    MergedVariableGroupIdentifier,
 )
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
+    extract_igs_info,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
 )
-from mex.extractors.igs.filter import filter_creation_schemas
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_extracted_resource,
-    transform_igs_schemas_to_variables,
-    transformed_igs_schemas_to_variable_group,
 )
 from mex.extractors.pipeline.base import run_job_in_process
 from mex.extractors.primary_source.helpers import (
@@ -38,6 +34,12 @@ from mex.extractors.primary_source.helpers import (
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
+
+
+@asset(group_name="igs")
+def igs_info() -> IGSInfo:
+    """Extract from IGS info."""
+    return extract_igs_info()
 
 
 @asset(group_name="igs")
@@ -91,21 +93,30 @@ def igs_extracted_contact_points_by_mail_str(
 
 
 @asset(group_name="igs")
-def igs_extracted_resource_id(
+def igs_extracted_resource_id_by_pathogen(  # noqa: PLR0913
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     igs_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
-) -> MergedResourceIdentifier:
+    igs_schemas: dict[str, IGSSchema],
+    igs_info: IGSInfo,
+    igs_endpoint_counts: dict[str, str],
+) -> dict[str, MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
-    extracted_resource = transform_igs_extracted_resource(
+    extracted_resources = transform_igs_extracted_resource(
         ResourceMapping.model_validate(igs_resource_mapping),
         igs_extracted_contact_points_by_mail_str,
         igs_extracted_access_platform,
         extracted_organization_rki,
+        igs_schemas,
+        igs_info,
+        igs_endpoint_counts,
     )
-    load([extracted_resource])
-    return extracted_resource.stableTargetId
+    load(extracted_resources.values())
+    return {
+        pathogen: resource.stableTargetId
+        for pathogen, resource in extracted_resources.items()
+    }
 
 
 @asset(group_name="igs")
@@ -122,16 +133,17 @@ def igs_extracted_access_platform(
     return extracted_access_platform
 
 
-@asset(group_name="igs")
+# TODO(EH): update in MX-2162
+'''@asset(group_name="igs")
 def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     igs_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_id: MergedResourceIdentifier,
+    igs_extracted_resource_id_by_pathogen: MergedResourceIdentifier,
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
     filtered_schemas = filter_creation_schemas(igs_schemas)
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
         filtered_schemas,
-        igs_extracted_resource_id,
+        igs_extracted_resource_id_by_pathogen,
     )
     load(extracted_variable_groups)
     return {
@@ -143,7 +155,7 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
 @asset(group_name="igs")
 def igs_extracted_variables(
     igs_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_id: MergedResourceIdentifier,
+    igs_extracted_resource_id_by_pathogen: MergedResourceIdentifier,
     igs_extracted_variable_group_ids_by_identifier_in_primary_source: dict[
         str, MergedVariableGroupIdentifier
     ],
@@ -159,12 +171,12 @@ def igs_extracted_variables(
     load(
         transform_igs_schemas_to_variables(
             igs_schemas,
-            igs_extracted_resource_id,
+            igs_extracted_resource_id_by_pathogen,
             igs_extracted_variable_group_ids_by_identifier_in_primary_source,
             variable_mapping,
             variable_pathogen_mapping,
         )
-    )
+    )'''
 
 
 @entrypoint(Settings)

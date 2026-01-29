@@ -13,7 +13,7 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_extracted_resource,
@@ -23,34 +23,48 @@ from mex.extractors.igs.transform import (
 
 
 @pytest.mark.usefixtures("mocked_igs", "mocked_wikidata")
-def test_transform_igs_extracted_resource(
+def test_transform_igs_extracted_resource(  # noqa: PLR0913
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
+    igs_schemas: dict[str, IGSSchema],
+    igs_info: IGSInfo,
+    igs_endpoint_counts: dict[str, str],
 ) -> None:
     extracted_resource = transform_igs_extracted_resource(
         igs_resource_mapping,
         igs_extracted_contact_points_by_mail_str,
         extracted_access_platform,
         extracted_organization_rki,
+        igs_schemas,
+        igs_info,
+        igs_endpoint_counts,
     )
-    assert extracted_resource.model_dump(exclude_defaults=True) == {
-        "accessPlatform": [
-            "g72piPlFnLPbe8dkRoCBsx",
-        ],
+    assert extracted_resource["PATHOGEN"].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "test_id",
+        "identifierInPrimarySource": "test_title_PATHOGEN",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
+        "created": "1970",
+        "sizeOfDataBasis": "5",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
-        "publisher": [
-            "fxIeF3TWocUZoMGmBftJ6x",
-        ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Pathogen", "language": "de"}],
         "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "accessPlatform": ["g72piPlFnLPbe8dkRoCBsx"],
+        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "keyword": [
+            {"value": "test keyword", "language": "de"},
+            {"value": "PATHOGEN"},
+            {"value": "Pathogen", "language": "de"},
+        ],
+        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "qualityInformation": [
+            {"value": "Anzahl tests: 42", "language": "de"},
+            {"value": "7"},
+        ],
+        "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
+        "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",
     }
 
 
