@@ -24,7 +24,9 @@ def test_get_ldap_merged_person_id_by_query(
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_get_ldap_merged_contact_id_by_mail() -> None:
-    merged_contact_point_id = get_ldap_merged_contact_id_by_mail(mail="email@email.de")
+    merged_contact_point_id = get_ldap_merged_contact_id_by_mail(
+        mail="resolvedr@rki.de"
+    )
 
     assert merged_contact_point_id == MergedContactPointIdentifier(
         "cMkmnNOoNVAohBA1XLNr9K"
