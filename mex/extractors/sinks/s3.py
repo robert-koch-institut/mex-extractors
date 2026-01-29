@@ -34,7 +34,7 @@ class S3BaseSink(BaseSink):
         """Close the underlying boto client."""
         self.client.close()
 
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
         """Force subclass to implement Load method."""
         raise NotImplementedError  # force subclass to implement
 
@@ -42,7 +42,7 @@ class S3BaseSink(BaseSink):
 class S3Sink(S3BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
         """Write the incoming items as an NDJSON directly to S3.
 
         Args:
@@ -73,7 +73,7 @@ class S3XlsxSink(S3BaseSink):
 
     def load(
         self, items: Iterable[_LoadItemT], *, unit_name: str | None = None
-    ) -> (Generator)[_LoadItemT, None, None]:
+    ) -> Generator[_LoadItemT]:
         """Write the incoming items as an XLSX directly to S3.
 
         Args:

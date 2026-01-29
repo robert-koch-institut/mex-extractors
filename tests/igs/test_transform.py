@@ -15,7 +15,6 @@ from mex.common.types import (
 )
 from mex.extractors.igs.model import IGSSchema
 from mex.extractors.igs.transform import (
-    get_enums_by_property_name,
     transform_igs_access_platform,
     transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
@@ -95,21 +94,14 @@ def test_transformed_igs_schemas_to_variable_group(
     )
     expected = {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "Pathogen",
+        "identifierInPrimarySource": "igsmodels__enums__Pathogen",
         "containedBy": ["bFQoRhcVH5DHU6"],
-        "label": [{"value": "Pathogen", "language": "en"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "label": [{"value": "igsmodels__enums__Pathogen", "language": "en"}],
+        "identifier": "bmzsPxrn1mqZm8GCmKaJ5I",
+        "stableTargetId": "qGSnMxJYiNTJeUntnV3Vy",
     }
 
     assert extracted_variable_groups[0].model_dump(exclude_defaults=True) == expected
-
-
-def test_get_enums_by_property_name(
-    igs_schemas: dict[str, IGSSchema],
-) -> None:
-    enums_by_property_name = get_enums_by_property_name(igs_schemas)
-    assert enums_by_property_name == {"schemas": ["PATHOGEN"]}
 
 
 def test_transform_igs_schemas_to_variables(
@@ -120,7 +112,7 @@ def test_transform_igs_schemas_to_variables(
     extracted_variables = transform_igs_schemas_to_variables(
         igs_schemas,
         MergedResourceIdentifier.generate(seed=42),
-        {"Pathogen": MergedVariableGroupIdentifier.generate(seed=43)},
+        {"igsmodels__enums__Pathogen": MergedVariableGroupIdentifier.generate(seed=43)},
         igs_variable_mapping,
         igs_variable_pathogen_mapping,
     )

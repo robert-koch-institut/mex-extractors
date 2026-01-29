@@ -2,16 +2,16 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from mex.extractors.ifsg.connector import IFSGConnector
+from mex.extractors.kvis.connector import KVISConnector
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 def extract_sql_table[ModelT: BaseModel](model: type[ModelT]) -> list[ModelT]:
-    """Extract sql tables and parse them into pydantic models.
+    """Extract sql tables and parse each row into pydantic models.
 
     Returns:
         list of parsed pydantic ModelT
     """
-    connection = IFSGConnector.get()
+    connection = KVISConnector.get()
     return [model.model_validate(row) for row in connection.parse_rows(model)]

@@ -55,7 +55,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
         run: make setup
@@ -101,14 +101,14 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
         run: make setup
 
       - name: Generate locked requirements.txt
         run: |
-          uv export --no-dev --output locked-requirements.txt --no-hashes
+          uv export --no-dev --output-file locked-requirements.txt --no-hashes
 
       - name: Login to container registry
         uses: docker/login-action@v3
@@ -150,7 +150,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
         run: make setup

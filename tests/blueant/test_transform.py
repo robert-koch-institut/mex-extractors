@@ -4,7 +4,6 @@ from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
-    MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     TextLanguage,
 )
@@ -32,13 +31,11 @@ def test_transform_blueant_sources_to_extracted_activities(
         [blueant_source, blueant_source_without_leader],
         stable_target_ids_by_employee_id,
         blueant_activity,
-        {"Robert Koch-Institut": MergedOrganizationIdentifier.generate(seed=42)},
     )
     assert len(mex_sources) == 2
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [str(Identifier.generate(seed=99))],
         "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "funderOrCommissioner": [str(Identifier.generate(seed=42))],
         "identifier": Joker(),
         "identifierInPrimarySource": "00123",
         "involvedPerson": ["bFQoRhcVH5DHV1"],

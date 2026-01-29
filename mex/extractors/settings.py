@@ -15,6 +15,7 @@ from mex.extractors.grippeweb.settings import GrippewebSettings
 from mex.extractors.ifsg.settings import IFSGSettings
 from mex.extractors.igs.settings import IGSSettings
 from mex.extractors.international_projects.settings import InternationalProjectsSettings
+from mex.extractors.kvis.settings import KVISSettings
 from mex.extractors.odk.settings import ODKSettings
 from mex.extractors.open_data.settings import OpenDataSettings
 from mex.extractors.publisher.settings import PublisherSettings
@@ -103,6 +104,7 @@ class Settings(BaseSettings):
     international_projects: InternationalProjectsSettings = (
         InternationalProjectsSettings()
     )
+    kvis: KVISSettings = KVISSettings()
     odk: ODKSettings = ODKSettings()
     open_data: OpenDataSettings = OpenDataSettings()
     publisher: PublisherSettings = PublisherSettings()

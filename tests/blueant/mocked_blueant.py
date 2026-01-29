@@ -40,16 +40,14 @@ def mocked_blueant(monkeypatch: MonkeyPatch, ldap_roland_resolved: LDAPPerson) -
     )
     monkeypatch.setattr(
         BlueAntConnector,
-        "get_persons",
-        lambda *_, **__: [
-            BlueAntPerson(
-                id=MOCKED_API_SOURCE["projectLeaderId"],
-                personnelNumber=ldap_roland_resolved.employeeID,
-                firstname=ldap_roland_resolved.givenName,
-                lastname=ldap_roland_resolved.sn,
-                email=ldap_roland_resolved.mail,
-            )
-        ],
+        "get_person",
+        lambda *_, **__: BlueAntPerson(
+            id=MOCKED_API_SOURCE["projectLeaderId"],
+            personnelNumber=ldap_roland_resolved.employeeID,
+            firstname=ldap_roland_resolved.givenName,
+            lastname=ldap_roland_resolved.sn,
+            email=ldap_roland_resolved.mail,
+        ),
     )
     monkeypatch.setattr(
         BlueAntConnector,

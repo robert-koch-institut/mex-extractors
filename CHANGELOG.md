@@ -9,12 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- testing against a mocked ldap container
-- primary source helper function: add caching
-- implemented asset checks for the `x_items_less_than` rule
+- enable testing against a mocked ldap container
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.8.0] - 2026-01-28
+
+### Added
+
+- extraction of kvis sql tables
+- prepare testing against a mocked ldap container
+- primary source helper function: add caching
+- implemented asset checks for the `x_items_less_than` rule
+- extract counts from IGS API
+- publisher: tests for and fails if a person has more than one consent
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
@@ -26,8 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
 
-### Deprecated
-
 ### Removed
 
 - tailored tests for blueant and endnote; now generalized in test_checks_main.py
@@ -35,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-### Security
+- blueant: fix Person extraction and units written as MergedOrganization items
 
 ## [1.7.0] - 2025-12-11
 
@@ -65,8 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 - update extractors to handle multiple organizational units per synonym mapping
@@ -89,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - implement igs resource mapping update
 
 ## [1.4.0] - 2025-10-28
