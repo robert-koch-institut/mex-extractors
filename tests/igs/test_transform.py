@@ -89,7 +89,7 @@ def test_transform_igs_access_platform(
         },
         "endpointType": "https://mex.rki.de/item/api-type-1",
         "endpointURL": {"url": "https://rki.de:4100"},
-        "contact": ["cGyT8sVLtQTF7vK24LoOk6"],
+        "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "description": [{"value": "test description", "language": "en"}],
         "landingPage": [{"url": "https://rki.de:4100/docs"}],
         "title": [{"language": "en", "value": "IGS Open API"}],

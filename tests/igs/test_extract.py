@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import LDAPActor
+from mex.common.ldap.models import LDAPFunctionalAccount
 from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
@@ -51,15 +51,11 @@ def test_extract_ldap_actors_by_mail(
         igs_resource_mapping, igs_access_platform_mapping
     )
     expected = {
-        "contactc@rki.de": LDAPActor(
+        "contactc@rki.de": LDAPFunctionalAccount(
             sAMAccountName="ContactC",
             objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-            mail=["email@email.de", "contactc@rki.de"],
-        ),
-        "email@email.de": LDAPActor(
-            sAMAccountName="ContactC",
-            objectGUID=UUID("00000000-0000-4000-8000-000000000004"),
-            mail=["email@email.de", "contactc@rki.de"],
+            mail=["contactc@rki.de"],
+            ou="Funktion",
         ),
     }
     assert ldap_actors == expected
