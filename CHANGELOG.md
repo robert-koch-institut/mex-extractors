@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- enable testing against a mocked ldap container
+
 ### Changes
 
 - update dependencies mex-artificial >= 1.3, Faker >= 40
@@ -35,9 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
-
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
-
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin Mailpit Docker image version to v1.28
 
 ### Fixed
+
 - synopse: fix extraction of involved units
 
 ## [1.6.0] - 2025-11-28

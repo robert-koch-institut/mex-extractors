@@ -5,8 +5,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedContactPoint,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariableGroup,
     ResourceMapping,
@@ -32,31 +30,9 @@ from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
-def mex_actor_resources() -> ExtractedContactPoint:
-    """Return a dummy mex actor resource."""
-    return ExtractedContactPoint(
-        email="email@email.de",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-        identifierInPrimarySource="contact point",
-    )
-
-
-@pytest.fixture
-def mex_actor_access_platform() -> ExtractedPerson:
-    """Return a dummy mex actor access platform."""
-    return ExtractedPerson(
-        familyName="Mustermann",
-        fullName="Erika Mustermann",
-        givenName="Erika",
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=42),
-        identifierInPrimarySource="access platform",
-    )
-
-
-@pytest.fixture
 def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
     """Return dummy merged ids for units for testing."""
-    return {"email@email.de": MergedContactPointIdentifier.generate(seed=51)}
+    return {"contactc@rki.de": MergedContactPointIdentifier.generate(seed=51)}
 
 
 @pytest.fixture
