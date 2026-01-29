@@ -10,7 +10,7 @@ def test_filter_sources_on_latest_sequencing_date(
     )
 
     expected = SeqRepoSource(
-        project_coordinators=["max", "mustermann", "max"],
+        project_coordinators=["FictitiousF", "ResolvedR"],
         customer_org_unit_id="FG99",
         sequencing_date="2023-08-07",
         lims_sample_id="test-sample-id",

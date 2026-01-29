@@ -13,16 +13,16 @@ wheels = [
 
 [[package]]
 name = "alembic"
-version = "1.18.1"
+version = "1.18.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mako" },
     { name = "sqlalchemy" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/49/cc/aca263693b2ece99fa99a09b6d092acb89973eb2bb575faef1777e04f8b4/alembic-1.18.1.tar.gz", hash = "sha256:83ac6b81359596816fb3b893099841a0862f2117b2963258e965d70dc62fb866", size = 2044319, upload-time = "2026-01-14T18:53:14.907Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/93/07f5ba5d8e4f4049e864faa9d822bbbbfb6f3223a4ffb1376768ab9ee4b8/alembic-1.18.2.tar.gz", hash = "sha256:1c3ddb635f26efbc80b1b90c5652548202022d4e760f6a78d6d85959280e3684", size = 2048272, upload-time = "2026-01-28T21:23:30.914Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/83/36/cd9cb6101e81e39076b2fbe303bfa3c85ca34e55142b0324fcbf22c5c6e2/alembic-1.18.1-py3-none-any.whl", hash = "sha256:f1c3b0920b87134e851c25f1f7f236d8a332c34b75416802d06971df5d1b7810", size = 260973, upload-time = "2026-01-14T18:53:17.533Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/60/ced4277ccf61f91eb03c4ac9f63b9567eb814f9ab1cd7835f00fbd5d0c14/alembic-1.18.2-py3-none-any.whl", hash = "sha256:18a5f6448af4864cc308aadf33eb37c0116da9a60fd9bb3f31ccb1b522b4a9b9", size = 261953, upload-time = "2026-01-28T21:23:32.508Z" },
 ]
 
 [[package]]
@@ -97,30 +97,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.42.36"
+version = "1.42.37"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/54/06/50ff808cf4f40efada8edc20f9d563ab287864423c874dfb94f755a60c52/boto3-1.42.36.tar.gz", hash = "sha256:a4eb51105c8c5d7b2bc2a9e2316e69baf69a55611275b9f189c0cf59f1aae171", size = 112839, upload-time = "2026-01-27T20:38:26.992Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a9/ef/0d6ceb88ae2b3638b956190a431e4a8a3697d5769d4bbbede8efcccacaea/boto3-1.42.37.tar.gz", hash = "sha256:d8b6c52c86f3bf04f71a5a53e7fb4d1527592afebffa5170cf3ef7d70966e610", size = 112830, upload-time = "2026-01-28T20:38:43.339Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/d1/35d12f04a7792e2f5e9ddff3c7b60493a32027761380dee7f24ee8ae80cc/boto3-1.42.36-py3-none-any.whl", hash = "sha256:e0ff6f2747bfdec63405b35ea185a7aea35239c3f4fe99e4d29368a6de9c4a84", size = 140604, upload-time = "2026-01-27T20:38:25.349Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/a4/cd334f74498acc6ad42a69c48e8c495f6f721d8abe13f8ef0d4b862fb1c0/boto3-1.42.37-py3-none-any.whl", hash = "sha256:e1e38fd178ffc66cfbe9cb6838b8c460000c3eb741e5f40f57eb730780ef0ed4", size = 140604, upload-time = "2026-01-28T20:38:42.135Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.42.36"
+version = "1.42.37"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/66/4e/b24089cf7a77d38886ac4fbae300a3c4c6d68c1b9ccb66af03cb07b6c35c/botocore-1.42.36.tar.gz", hash = "sha256:2ebd89cc75927944e2cee51b7adce749f38e0cb269a758a6464a27f8bcca65fb", size = 14909073, upload-time = "2026-01-27T20:38:16.621Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/4d/94292e7686e64d2ede8dae7102bbb11a1474e407c830de4192f2518e6cff/botocore-1.42.37.tar.gz", hash = "sha256:3ec58eb98b0857f67a2ae6aa3ded51597e7335f7640be654e0e86da4f173b5b2", size = 14914621, upload-time = "2026-01-28T20:38:34.586Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/e8/f14d25bd768187424b385bc6a44e2ed5e96964e461ba019add03e48713c7/botocore-1.42.36-py3-none-any.whl", hash = "sha256:2cfae4c482e5e87bd835ab4289b711490c161ba57e852c06b65a03e7c25e08eb", size = 14583066, upload-time = "2026-01-27T20:38:14.02Z" },
+    { url = "https://files.pythonhosted.org/packages/72/30/54042dd3ad8161964f8f47aa418785079bd8d2f17053c40d65bafb9f6eed/botocore-1.42.37-py3-none-any.whl", hash = "sha256:f13bb8b560a10714d96fb7b0c7f17828dfa6e6606a1ead8c01c6ebb8765acbd8", size = 14589390, upload-time = "2026-01-28T20:38:31.306Z" },
 ]
 
 [[package]]
@@ -1290,14 +1290,14 @@ wheels = [
 
 [[package]]
 name = "psutil"
-version = "7.2.1"
+version = "7.2.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/73/cb/09e5184fb5fc0358d110fc3ca7f6b1d033800734d34cac10f4136cfac10e/psutil-7.2.1.tar.gz", hash = "sha256:f7583aec590485b43ca601dd9cea0dcd65bd7bb21d30ef4ddbf4ea6b5ed1bdd3", size = 490253, upload-time = "2025-12-29T08:26:00.169Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/aa/c6/d1ddf4abb55e93cebc4f2ed8b5d6dbad109ecb8d63748dd2b20ab5e57ebe/psutil-7.2.2.tar.gz", hash = "sha256:0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372", size = 493740, upload-time = "2026-01-28T18:14:54.428Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fb/23/851cadc9764edcc18f0effe7d0bf69f727d4cf2442deb4a9f78d4e4f30f2/psutil-7.2.1-cp313-cp313t-win_amd64.whl", hash = "sha256:923f8653416604e356073e6e0bccbe7c09990acef442def2f5640dd0faa9689f", size = 139081, upload-time = "2025-12-29T08:26:12.483Z" },
-    { url = "https://files.pythonhosted.org/packages/59/82/d63e8494ec5758029f31c6cb06d7d161175d8281e91d011a4a441c8a43b5/psutil-7.2.1-cp313-cp313t-win_arm64.whl", hash = "sha256:cfbe6b40ca48019a51827f20d830887b3107a74a79b01ceb8cc8de4ccb17b672", size = 134767, upload-time = "2025-12-29T08:26:14.528Z" },
-    { url = "https://files.pythonhosted.org/packages/34/68/d9317542e3f2b180c4306e3f45d3c922d7e86d8ce39f941bb9e2e9d8599e/psutil-7.2.1-cp37-abi3-win_amd64.whl", hash = "sha256:b1b0671619343aa71c20ff9767eced0483e4fc9e1f489d50923738caf6a03c17", size = 136938, upload-time = "2025-12-29T08:26:41.036Z" },
-    { url = "https://files.pythonhosted.org/packages/3e/73/2ce007f4198c80fcf2cb24c169884f833fe93fbc03d55d302627b094ee91/psutil-7.2.1-cp37-abi3-win_arm64.whl", hash = "sha256:0d67c1822c355aa6f7314d92018fb4268a76668a536f133599b91edd48759442", size = 133836, upload-time = "2025-12-29T08:26:43.086Z" },
+    { url = "https://files.pythonhosted.org/packages/16/ba/0756dca669f5a9300d0cbcbfae9a4c30e446dfc7440ffe43ded5724bfd93/psutil-7.2.2-cp313-cp313t-win_amd64.whl", hash = "sha256:ab486563df44c17f5173621c7b198955bd6b613fb87c71c161f827d3fb149a9b", size = 139893, upload-time = "2026-01-28T18:15:06.378Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/61/8fa0e26f33623b49949346de05ec1ddaad02ed8ba64af45f40a147dbfa97/psutil-7.2.2-cp313-cp313t-win_arm64.whl", hash = "sha256:ae0aefdd8796a7737eccea863f80f81e468a1e4cf14d926bd9b6f5f2d5f90ca9", size = 135589, upload-time = "2026-01-28T18:15:08.03Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/90/e2159492b5426be0c1fef7acba807a03511f97c5f86b3caeda6ad92351a7/psutil-7.2.2-cp37-abi3-win_amd64.whl", hash = "sha256:eb7e81434c8d223ec4a219b5fc1c47d0417b12be7ea866e24fb5ad6e84b3d988", size = 137737, upload-time = "2026-01-28T18:15:33.849Z" },
+    { url = "https://files.pythonhosted.org/packages/8c/c7/7bb2e321574b10df20cbde462a94e2b71d05f9bbda251ef27d104668306a/psutil-7.2.2-cp37-abi3-win_arm64.whl", hash = "sha256:8c233660f575a5a89e6d4cb65d9f938126312bca76d8fe087b947b3a1aaac9ee", size = 134617, upload-time = "2026-01-28T18:15:36.514Z" },
 ]
 
 [[package]]

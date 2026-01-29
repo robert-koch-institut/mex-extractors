@@ -216,10 +216,10 @@ def test_get_department_name_mocked(mocked_blueant: BlueAntConnector) -> None:
 def test_get_person_mocked(mocked_blueant: BlueAntConnector) -> None:
     expected = {
         "id": 23054,
-        "personnelNumber": "12345",
-        "firstname": "Max",
-        "lastname": "Mustermann",
-        "email": "Muster@example1.com",
+        "personnelNumber": "42",
+        "firstname": "Roland",
+        "lastname": "Resolved",
+        "email": "test_person@email.de",
     }
     person_dict = {"status": {"name": "OK"}, "person": expected}
     mocked_response = Mock(spec=requests.Response)
