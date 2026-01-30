@@ -2,7 +2,7 @@
 
 accessRestriction:
 - mappingRules:
-  - setValues: https://mex.rki.de/item/access-restriction-2 
+  - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
 - mappingRules:
   - setValues: https://mex.rki.de/item/frequency-1
