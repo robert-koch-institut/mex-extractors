@@ -1,26 +1,36 @@
 services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: dagster
+      POSTGRES_PASSWORD: dagster
+      POSTGRES_DB: dagster
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   dagster-daemon:
     build:
       context: .
     environment:
-      - DAGSTER_HOME=/app/work
-      - MEX_WORK_DIR=/app/work
-    entrypoint: ["dagster-daemon", "run", "--module-name", "mex.extractors"]
+      - MEX_WORK_DIR=/work
+    entrypoint: ["dagster-daemon", "run", "-w", "workspace.yaml"]
+    depends_on:
+      - postgres
     volumes:
-      - work:/app/work:rw
+      - work:/work:rw
   dagster-webserver:
     build:
       context: .
     ports:
       - 3000:3000
     environment:
-      - DAGSTER_HOME=/app/work
-      - MEX_WORK_DIR=/app/work
-    entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "--module-name", "mex.extractors"]
+      - MEX_WORK_DIR=/work
+    entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml"]
+    depends_on:
+      - postgres
     expose:
       - 3000
     volumes:
-      - work:/app/work:rw
+      - work:/work:rw
   slapd:
     image: thoteam/slapd-server-mock
     ports:
@@ -38,5 +48,13 @@ services:
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
+    expose:
+      - 8025
 volumes:
+  pgdata:
   work:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: mode=1777

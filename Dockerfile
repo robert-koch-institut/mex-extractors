@@ -29,7 +29,7 @@ LABEL org.opencontainers.image.vendor="robert-koch-institut"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONOPTIMIZE=1
 
-ENV DAGSTER_HOME=/app
+ENV DAGSTER_HOME=/dagster
 
 WORKDIR /app
 
@@ -47,9 +47,13 @@ RUN adduser \
     --shell "/sbin/nologin" \
     --no-create-home \
     --uid "10001" \
-    mex
+    mex \
+    && chown mex:mex /app \
+    && mkdir -p /dagster && chown mex:mex /dagster
 
 COPY --chown=mex assets assets
+COPY --chown=mex workspace.yaml workspace.yaml
+COPY --chown=mex dagster.yaml /dagster/dagster.yaml
 
 USER mex
 
