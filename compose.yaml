@@ -10,29 +10,25 @@ services:
   dagster-daemon:
     build:
       context: .
-    environment:
-      - MEX_WORK_DIR=/work
     entrypoint: ["dagster-daemon", "run", "-w", "workspace.yaml"]
     depends_on:
       - postgres
     volumes:
-      - ./dagster-compose.yaml:/dagster/dagster.yaml:ro
-      - work:/work:rw
+      - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
+      - work:/app/work:rw
   dagster-webserver:
     build:
       context: .
     ports:
       - 3000:3000
-    environment:
-      - MEX_WORK_DIR=/work
     entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml"]
     depends_on:
       - postgres
     expose:
       - 3000
     volumes:
-      - ./dagster-compose.yaml:/dagster/dagster.yaml:ro
-      - work:/work:rw
+      - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
+      - work:/app/work:rw
   slapd:
     image: thoteam/slapd-server-mock
     ports:
