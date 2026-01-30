@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from datetime import datetime
 
+from mex.common.exceptions import MExError
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -33,10 +34,15 @@ def filter_sources_on_latest_sequencing_date(
             unique_sources_with_latest_date[identifier_in_primary_source] = source
         else:
             item_in_dict = unique_sources_with_latest_date[identifier_in_primary_source]
-            if item_in_dict.sequencing_date is not None:  # otherwise mypy complains
-                item_in_dict_date = datetime.strptime(  # noqa: DTZ007
-                    item_in_dict.sequencing_date, "%Y-%M-%d"
+            if not item_in_dict.sequencing_date:  # otherwise mypy complains
+                msg = (
+                    f"{identifier_in_primary_source} has no sequencing date."
+                    f"This should've been filtered out before and not happen here."
                 )
+                raise MExError(msg)
+            item_in_dict_date = datetime.strptime(  # noqa: DTZ007
+                item_in_dict.sequencing_date, "%Y-%M-%d"
+            )
             source_date = datetime.strptime(source.sequencing_date, "%Y-%M-%d")  # noqa: DTZ007
             if source_date > item_in_dict_date:
                 unique_sources_with_latest_date[identifier_in_primary_source] = source
