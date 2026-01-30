@@ -52,7 +52,7 @@ def get_unit_merged_id_by_synonym(
     Returns:
         list of merged organizational unit ids if found else None
     """
-    if synonym is None:
+    if not synonym:
         return None
 
     unit_merged_ids_by_synonyms = _get_cached_unit_merged_ids_by_synonyms()

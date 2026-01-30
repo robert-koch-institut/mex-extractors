@@ -24,7 +24,7 @@ def filter_sources_on_latest_sequencing_date(
     )
     unique_sources_with_latest_date: dict[str, SeqRepoSource] = {}
     for source in filtered_sources:
-        if source.sequencing_date is None:
+        if not source.sequencing_date:
             continue
         identifier_in_primary_source = (
             f"{source.lims_sample_id}.{source.sequencing_platform}"
