@@ -36,7 +36,7 @@ def filter_sources_on_latest_sequencing_date(
             item_in_dict = unique_sources_with_latest_date[identifier_in_primary_source]
             if not item_in_dict.sequencing_date:  # otherwise mypy complains
                 msg = (
-                    f"{identifier_in_primary_source} has no sequencing date."
+                    f"{identifier_in_primary_source} has no sequencing date. "
                     f"This should've been filtered out before and not happen here."
                 )
                 raise MExError(msg)
