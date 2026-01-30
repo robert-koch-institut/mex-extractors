@@ -16,6 +16,7 @@ services:
     depends_on:
       - postgres
     volumes:
+      - ./dagster-compose.yaml:/dagster/dagster.yaml:ro
       - work:/work:rw
   dagster-webserver:
     build:
@@ -30,6 +31,7 @@ services:
     expose:
       - 3000
     volumes:
+      - ./dagster-compose.yaml:/dagster/dagster.yaml:ro
       - work:/work:rw
   slapd:
     image: thoteam/slapd-server-mock
