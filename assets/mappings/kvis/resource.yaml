@@ -5,7 +5,7 @@ accessRestriction:
   - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
 - mappingRules:
-  - setValues: https://mex.rki.de/item/frequency-1
+  - setValues:
 alternativeTitle:
 - mappingRules:
   - setValues:
@@ -33,19 +33,17 @@ created:
 description:
 - mappingRules:
   - setValues:
-    - value: "Beschreibung 1"
-      language: de
-    - value: "Beschreibung 2."
+    - value: "Wörter"
       language: de
 documentation:
 - mappingRules:
   - setValues:
     - language: de
-      title: Doku 1
-      url: https://www.doku1.example
+      title: a
+      url: http://www.a.b
     - language: de
-      title: Doku 2
-      url: https://www.other_doku2.example
+      title: c
+      url: http://www.c.d
 externalPartner:
 - mappingRules:
   - forValues:
@@ -57,24 +55,16 @@ hadPrimarySource:
 hasLegalBasis:
 - mappingRules:
   - setValues:
-    - value: Ja
-      language: de
 hasPurpose:
 - mappingRules:
   - setValues:
-    - value: Erkennen
-      language: de
-    - value: Information
-      language: de
 identifierInPrimarySource:
 - mappingRules:
   - setValues: kvis_resource
 keyword:
 - mappingRules:
   - setValues:
-    - value: key
-      language: de
-    - value: word
+    - value: Schlüsselwort
       language: de
 language:
 - mappingRules:
@@ -83,22 +73,12 @@ language:
 method:
 - mappingRules:
   - setValues:
-    - value: methode 1
-      language: de
-    - value: Methode 2
-      language: de
 populationCoverage:
 - mappingRules:
   - setValues:
-    - value: alle
-      language: de
-    - value: jeder
-      language: de
 provenance:
 - mappingRules:
   - setValues:
-    - value: Mein Katze regeln.
-      language: de
 publisher:
 - mappingRules:
   - forValues:
@@ -107,21 +87,15 @@ publisher:
 resourceCreationMethod:
 - mappingRules:
   - setValues:
-    - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
 - mappingRules:
   - setValues:
-    - https://mex.rki.de/item/resource-type-general-13
 resourceTypeSpecific:
 - mappingRules:
   - setValues:
-    - value: Type
-      language: de
 spatial:
 - mappingRules:
   - setValues:
-    - value: spatial
-      language: de
 theme:
 - mappingRules:
   - setValues:

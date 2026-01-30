@@ -1,27 +1,36 @@
 from mex.common.models import ExtractedResource, ResourceMapping
-
+from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
-from mex.extractors.primary_source.helpers import \
-    get_extracted_primary_source_id_by_name
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
+from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.wikidata.helpers import \
-    get_wikidata_extracted_organization_id_by_name
+from mex.extractors.utils import load_yaml
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+)
 
 
-def transform_kvis_resource_to_extracted_resource(
-    mapping: ResourceMapping
-) -> ExtractedResource:
-    breakpoint()
+def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
+    settings = Settings.get()
+    mapping = ResourceMapping.model_validate(
+        load_yaml(settings.kvis.mapping_path / "resource.yaml")
+    )
+
     extracted_resource = ExtractedResource(
         accessRestriction=mapping.accessRestriction[0].mappingRules[0].setValues,
         accrualPeriodicity=mapping.accrualPeriodicity[0].mappingRules[0].setValues,
         alternativeTitle=mapping.alternativeTitle[0].mappingRules[0].setValues,
-        contact=mapping.contact[0].mappingRules[0].forValues, # TODO: ldap-helper
+        contact=[
+            MergedContactPointIdentifier.generate(seed=1234)
+            for c in mapping.contact[0].mappingRules[0].forValues
+        ],  # TODO: ldap-helper
         contributingUnit=get_unit_merged_id_by_synonym(
             mapping.contributingUnit[0].mappingRules[0].forValues[0]
         ),
         contributor=[
-            c # TODO: ldap-helper
+            MergedPersonIdentifier.generate(seed=1234)  # TODO: ldap-helper
             for c in mapping.contributor[0].mappingRules[0].forValues
         ],
         created=mapping.created[0].mappingRules[0].setValues,
@@ -33,7 +42,9 @@ def transform_kvis_resource_to_extracted_resource(
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
         hasPurpose=mapping.hasPurpose[0].mappingRules[0].setValues,
-        identifierInPrimarySource=mapping.identifierInPrimarySource[0].mappingRules[0].setValues,
+        identifierInPrimarySource=mapping.identifierInPrimarySource[0]
+        .mappingRules[0]
+        .setValues,
         keyword=mapping.keyword[0].mappingRules[0].setValues,
         language=mapping.language[0].mappingRules[0].setValues,
         method=mapping.method[0].mappingRules[0].setValues,
@@ -42,7 +53,9 @@ def transform_kvis_resource_to_extracted_resource(
         publisher=get_wikidata_extracted_organization_id_by_name(
             mapping.publisher[0].mappingRules[0].forValues[0]
         ),
-        resourceCreationMethod=mapping.resourceCreationMethod[0].mappingRules[0].setValues,
+        resourceCreationMethod=mapping.resourceCreationMethod[0]
+        .mappingRules[0]
+        .setValues,
         resourceTypeGeneral=mapping.resourceTypeGeneral[0].mappingRules[0].setValues,
         resourceTypeSpecific=mapping.resourceTypeSpecific[0].mappingRules[0].setValues,
         spatial=mapping.spatial[0].mappingRules[0].setValues,
