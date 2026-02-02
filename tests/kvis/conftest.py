@@ -4,7 +4,7 @@ from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariabl
 
 
 @pytest.fixture
-def mocked_KVISFieldValues() -> list[KVISFieldValues]:
+def mocked_kvisfieldvalues() -> list[KVISFieldValues]:
     return [
         KVISFieldValues(
             field_value_list_name="field value list name",
@@ -20,7 +20,7 @@ def mocked_KVISFieldValues() -> list[KVISFieldValues]:
 
 
 @pytest.fixture
-def mocked_KVISVariables() -> list[KVISVariables]:
+def mocked_kvisvariables() -> list[KVISVariables]:
     return [
         KVISVariables(
             file_type="file type",
