@@ -1,7 +1,11 @@
 import pytest
 
-from mex.common.types import LinkLanguage, TextLanguage
-from mex.extractors.kvis.transform import transform_kvis_resource_to_extracted_resource
+from mex.common.types import LinkLanguage, MergedResourceIdentifier, TextLanguage
+from mex.extractors.kvis.models.table_models import KVISVariables
+from mex.extractors.kvis.transform import (
+    transform_kvis_resource_to_extracted_resource,
+    transform_kvis_variables_to_extracted_variable_groups,
+)
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
@@ -30,4 +34,22 @@ def test_transform_kvis_resource_to_extracted_resource() -> None:
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
         "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+    }
+
+
+def test_transform_kvis_variables_to_extracted_variable_groups(
+    mocked_kvisvariables: list[KVISVariables],
+) -> None:
+    resource_stabletargetid = MergedResourceIdentifier.generate(seed=12345)
+    extracted_variable_group = transform_kvis_variables_to_extracted_variable_groups(
+        resource_stabletargetid, mocked_kvisvariables
+    )
+    assert len(extracted_variable_group) == 2
+    assert extracted_variable_group[1].model_dump(
+        exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
+    ) == {
+        "containedBy": [str(resource_stabletargetid)],
+        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "identifierInPrimarySource": "kvis_some more file types",
+        "label": [{"language": TextLanguage.DE, "value": "some more file types"}],
     }

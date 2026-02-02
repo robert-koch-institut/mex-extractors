@@ -1,13 +1,17 @@
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.models import ExtractedResource
+from mex.common.models import ExtractedVariableGroup
+from mex.common.types import MergedResourceIdentifier
 from mex.extractors.kvis.extract import extract_sql_table
 from mex.extractors.kvis.models.table_models import (
     KVISFieldValues,
     KVISVariables,
 )
-from mex.extractors.kvis.transform import transform_kvis_resource_to_extracted_resource
+from mex.extractors.kvis.transform import (
+    transform_kvis_resource_to_extracted_resource,
+    transform_kvis_variables_to_extracted_variable_groups,
+)
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 
@@ -25,9 +29,20 @@ def kvis_fieldvalues_table_entries() -> list[KVISFieldValues]:
 
 
 @asset(group_name="kvis")
-def kvis_extracted_resource() -> ExtractedResource:
-    """Create and return an extracted resource."""
-    return transform_kvis_resource_to_extracted_resource()
+def kvis_extracted_resource_id() -> MergedResourceIdentifier:
+    """Create extracted resource and return its stableTargetID."""
+    return transform_kvis_resource_to_extracted_resource().stableTargetId
+
+
+@asset(group_name="kvis")
+def kvis_extracted_variable_groups(
+    kvis_extracted_resource_id: MergedResourceIdentifier,
+    kvis_variables_table_entries: list[KVISVariables],
+) -> list[ExtractedVariableGroup]:
+    """Transform and load extracted variable groups."""
+    return transform_kvis_variables_to_extracted_variable_groups(
+        kvis_extracted_resource_id, kvis_variables_table_entries
+    )
 
 
 @entrypoint(Settings)

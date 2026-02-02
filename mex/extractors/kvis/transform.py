@@ -1,5 +1,11 @@
-from mex.common.models import ExtractedResource, ResourceMapping
-from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
+from mex.common.models import ExtractedResource, ExtractedVariableGroup, ResourceMapping
+from mex.common.types import (
+    MergedContactPointIdentifier,
+    MergedPersonIdentifier,
+    MergedResourceIdentifier,
+    Text,
+)
+from mex.extractors.kvis.models.table_models import KVISVariables
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -99,3 +105,26 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
     )
     load([extracted_resource])
     return extracted_resource
+
+
+def transform_kvis_variables_to_extracted_variable_groups(
+    kvis_extracted_resource_id: MergedResourceIdentifier,
+    kvis_variables_table_entries: list[KVISVariables],
+) -> list[ExtractedVariableGroup]:
+    """Transform entries of the kvis variables table to extracted variable groups."""
+    extracted_variable_groups: list[ExtractedVariableGroup] = []
+    seen: set[str] = set()
+    for item in kvis_variables_table_entries:
+        if item.file_type in seen:
+            continue
+        seen.add(item.file_type)
+        extracted_variable_groups.append(
+            ExtractedVariableGroup(
+                containedBy=kvis_extracted_resource_id,
+                hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
+                identifierInPrimarySource=f"kvis_{item.file_type}",
+                label=Text(value=item.file_type, language="de"),
+            )
+        )
+    load(extracted_variable_groups)
+    return extracted_variable_groups
