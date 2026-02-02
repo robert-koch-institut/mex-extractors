@@ -111,10 +111,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "keyword": [
             {"value": "fastc", "language": TextLanguage.DE},
             {"value": "fastd", "language": TextLanguage.DE},
-            {
-                "value": "Severe acute respiratory syndrome coronavirus 2",
-                "language": TextLanguage.EN,
-            },
+            {"value": "virus XYZ"},
         ],
         "method": [
             {"value": "Next-Generation Sequencing", "language": TextLanguage.DE},
@@ -149,6 +146,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         mex_resources[0].model_dump(exclude_none=True, exclude_defaults=True)
         == expected_resource
     )
+    assert mex_resources[1].contributingUnit == []
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
