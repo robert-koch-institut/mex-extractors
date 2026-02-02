@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
@@ -66,6 +68,7 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     return extracted_person.stableTargetId
 
 
+@lru_cache(maxsize=1024)
 def get_ldap_merged_contact_id_by_mail(
     *,
     mail: str = "*",
