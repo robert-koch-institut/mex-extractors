@@ -11,6 +11,7 @@ from mex.extractors.ldap.helpers import (
 )
 
 
+@pytest.mark.integration
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_get_ldap_merged_person_id_by_query(
     mocked_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
@@ -22,6 +23,7 @@ def test_get_ldap_merged_person_id_by_query(
     assert merged_person_id == MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
 
 
+@pytest.mark.integration
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_get_ldap_merged_contact_id_by_mail() -> None:
     merged_contact_point_id = get_ldap_merged_contact_id_by_mail(
