@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - convenience function for LDAP lookup
 
 ### Changes
+- change the docker build to multi-stage build
 
 ### Deprecated
 
@@ -65,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - blueant: fix Person extraction and units written as MergedOrganization items
+- seq-repo: fixed by updating model and skipping resources without date
 
 ## [1.7.0] - 2025-12-11
 
