@@ -1,10 +1,12 @@
 import pytest
+from mex.common.models import ExtractedVariableGroup
 
 from mex.common.types import LinkLanguage, MergedResourceIdentifier, TextLanguage
-from mex.extractors.kvis.models.table_models import KVISVariables
+from mex.extractors.kvis.models.table_models import KVISVariables, KVISFieldValues
 from mex.extractors.kvis.transform import (
     transform_kvis_resource_to_extracted_resource,
     transform_kvis_variables_to_extracted_variable_groups,
+    transform_kvis_table_entries_to_extracted_variables,
 )
 
 
@@ -39,17 +41,58 @@ def test_transform_kvis_resource_to_extracted_resource() -> None:
 
 def test_transform_kvis_variables_to_extracted_variable_groups(
     mocked_kvisvariables: list[KVISVariables],
+    mocked_extracted_resource_id: MergedResourceIdentifier,
 ) -> None:
-    resource_stabletargetid = MergedResourceIdentifier.generate(seed=12345)
     extracted_variable_group = transform_kvis_variables_to_extracted_variable_groups(
-        resource_stabletargetid, mocked_kvisvariables
+        mocked_extracted_resource_id, mocked_kvisvariables
     )
     assert len(extracted_variable_group) == 2
     assert extracted_variable_group[1].model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "containedBy": [str(resource_stabletargetid)],
+        "containedBy": [str(mocked_extracted_resource_id)],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
-        "identifierInPrimarySource": "kvis_some more file types",
-        "label": [{"language": TextLanguage.DE, "value": "some more file types"}],
+        "identifierInPrimarySource": "kvis_another file type",
+        "label": [{"language": TextLanguage.DE, "value": "another file type"}],
+    }
+
+
+def test_transform_kvis_table_entries_to_extracted_variables(
+    mocked_extracted_resource_id: MergedResourceIdentifier,
+    mocked_extracted_variable_groups: list[ExtractedVariableGroup],
+    mocked_kvisvariables: list[KVISVariables],
+    mocked_kvisfieldvalues: list[KVISFieldValues],
+) -> None:
+    extracted_variables = transform_kvis_table_entries_to_extracted_variables(
+        mocked_extracted_resource_id,
+        mocked_extracted_variable_groups,
+        mocked_kvisvariables,
+        mocked_kvisfieldvalues,
+    )
+    assert len(extracted_variables) == 3
+    assert extracted_variables[0].model_dump(
+        exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
+    ) == {
+        "belongsTo": ["hxWBV2djsXmw3fNmkrh8S2"],
+        "dataType": "integer",
+        "description": [{"value": "field description"}],
+        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "identifierInPrimarySource": "kvis_field name short",
+        "label": [{"language": TextLanguage.EN, "value": "field name long"}],
+        "usedIn": ["bFQoRhcVH5DK7x"]
+    }
+
+    assert extracted_variables[2].model_dump(
+        exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
+    ) == {
+        "belongsTo": ["hNI0nop3NLG8VWawi91Rti"],
+        "dataType": "bool",
+        "description": [
+            {"language": TextLanguage.EN,"value": "a boolean field for flagging"}
+        ],
+        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "identifierInPrimarySource": "kvis_bit",
+        "label": [{"value": "bool"}],
+        "usedIn": ["bFQoRhcVH5DK7x"],
+        "valueSet": ["it is true", "it is false"]
     }

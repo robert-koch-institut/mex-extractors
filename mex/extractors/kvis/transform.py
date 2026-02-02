@@ -1,11 +1,17 @@
-from mex.common.models import ExtractedResource, ExtractedVariableGroup, ResourceMapping
+from collections import defaultdict
+from pathlib import Path
+
+from mex.common.exceptions import MExError
+from mex.common.models import ExtractedResource, ExtractedVariableGroup, \
+    ResourceMapping, ExtractedVariable, VariableMapping
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedPersonIdentifier,
     MergedResourceIdentifier,
     Text,
+    TextLanguage,
 )
-from mex.extractors.kvis.models.table_models import KVISVariables
+from mex.extractors.kvis.models.table_models import KVISVariables, KVISFieldValues
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -49,11 +55,13 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         else []
     )
     external_partner = (
-        get_wikidata_extracted_organization_id_by_name(
-            mapping.externalPartner[0].mappingRules[0].forValues[0]
+        [partner_id]
+        if mapping.externalPartner[0].mappingRules[0].forValues and
+        (partner_id := get_wikidata_extracted_organization_id_by_name(
+                mapping.externalPartner[0].mappingRules[0].forValues[0]
+            )
         )
-        if mapping.externalPartner[0].mappingRules[0].forValues
-        else None
+        else []
     )
     publisher = (
         get_wikidata_extracted_organization_id_by_name(
@@ -92,7 +100,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         method=mapping.method[0].mappingRules[0].setValues,
         populationCoverage=mapping.populationCoverage[0].mappingRules[0].setValues,
         provenance=mapping.provenance[0].mappingRules[0].setValues,
-        publisher=publisher,
+        publisher=[publisher],
         resourceCreationMethod=mapping.resourceCreationMethod[0]
         .mappingRules[0]
         .setValues,
@@ -120,11 +128,67 @@ def transform_kvis_variables_to_extracted_variable_groups(
         seen.add(item.file_type)
         extracted_variable_groups.append(
             ExtractedVariableGroup(
-                containedBy=kvis_extracted_resource_id,
+                containedBy=[kvis_extracted_resource_id],
                 hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
                 identifierInPrimarySource=f"kvis_{item.file_type}",
-                label=Text(value=item.file_type, language="de"),
+                label=[Text(value=item.file_type, language=TextLanguage.DE)],
             )
         )
     load(extracted_variable_groups)
     return extracted_variable_groups
+
+
+def transform_kvis_table_entries_to_extracted_variables(
+    kvis_extracted_resource_id: MergedResourceIdentifier,
+    kvis_extracted_variable_groups: list[ExtractedVariableGroup],
+    kvis_variables_table_entries: list[KVISVariables],
+    kvis_fieldvalues_table_entries: list[KVISFieldValues],
+) -> list[ExtractedVariable]:
+    """Transform entries of the kvis tables to extracted variables."""
+    settings = Settings.get()
+    variable_mapping = VariableMapping.model_validate(
+        load_yaml(settings.kvis.mapping_path / "variable.yaml")
+    )
+
+    # create valueSet lookup logic
+    # mapping: model_alias -> field_name, e.g. "FieldValue": "field_value"
+    alias_to_field = {f.alias: name for name, f in KVISFieldValues.model_fields.items()}
+    # Mapping: In which field in the KVIS table should the valueSets be looked up
+    valueset_fields_by_forvalues: dict[str, list[str]] = {}
+    for rule in variable_mapping.valueSet:
+        # translate aliases in "use" to real field names
+        use_field = alias_to_field[rule.fieldInPrimarySource]
+        for for_value in rule.mappingRules[0].forValues:
+            valueset_fields_by_forvalues[
+                for_value
+            ] = use_field
+    # Collect valueSets from table according to mapping rules
+    valuesets_by_variable: dict[str, list[str]] = defaultdict(list)
+    for item in kvis_fieldvalues_table_entries:
+        field = valueset_fields_by_forvalues.get(item.field_value_list_name, None)
+        if not field:
+            msg = (
+                f"no lookup-field rule defined in variables.yaml valueSet ",
+                f"for field '{item.field_value_list_name}'.")
+            raise MExError(msg)
+        valuesets_by_variable[item.field_value_list_name].append(getattr(item, field))
+
+    extracted_variables: list[ExtractedVariable] = []
+    extracted_variable_group_id_by_label= {
+        item.label[0].value: item.stableTargetId for item in kvis_extracted_variable_groups
+    }
+    for item in kvis_variables_table_entries:
+        extracted_variables.append(
+            ExtractedVariable(
+                belongsTo=[extracted_variable_group_id_by_label[item.file_type]],
+                dataType=item.datatype_description,
+                description=[Text(value=item.field_description)],
+                hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
+                identifierInPrimarySource=f"kvis_{item.field_name_short}",
+                label=[Text(value=item.field_name_long)],
+                usedIn=[kvis_extracted_resource_id],
+                valueSet=valuesets_by_variable.get(item.fvlist_name, []),
+            )
+        )
+    load(extracted_variables)
+    return extracted_variables
