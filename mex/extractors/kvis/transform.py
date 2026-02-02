@@ -13,32 +13,68 @@ from mex.extractors.wikidata.helpers import (
 
 
 def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
+    """Transform the Resource mapping to an extracted resource. No reading from KVIS."""
     settings = Settings.get()
     mapping = ResourceMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "resource.yaml")
+    )
+
+    contact = (
+        [  # TODO(mx-1662): ldap-helper
+            MergedContactPointIdentifier.generate(seed=1234)
+            for c in mapping.contact[0].mappingRules[0].forValues
+        ]
+        if mapping.contact[0].mappingRules[0].forValues
+        else []
+    )
+    contributing_unit = (
+        get_unit_merged_id_by_synonym(
+            mapping.contributingUnit[0].mappingRules[0].forValues[0]
+        )
+        if mapping.contributingUnit[0].mappingRules[0].forValues
+        else None
+    )
+    contributor = (
+        [
+            MergedPersonIdentifier.generate(seed=1234)  # TODO(mx-1662): ldap-helper
+            for c in mapping.contributor[0].mappingRules[0].forValues
+        ]
+        if mapping.contributor[0].mappingRules[0].forValues
+        else []
+    )
+    external_partner = (
+        get_wikidata_extracted_organization_id_by_name(
+            mapping.externalPartner[0].mappingRules[0].forValues[0]
+        )
+        if mapping.externalPartner[0].mappingRules[0].forValues
+        else None
+    )
+    publisher = (
+        get_wikidata_extracted_organization_id_by_name(
+            mapping.publisher[0].mappingRules[0].forValues[0]
+        )
+        if mapping.publisher[0].mappingRules[0].forValues
+        else None
+    )
+    unit_in_charge = (
+        get_unit_merged_id_by_synonym(
+            mapping.unitInCharge[0].mappingRules[0].forValues[0]
+        )
+        if mapping.unitInCharge[0].mappingRules[0].forValues
+        else None
     )
 
     extracted_resource = ExtractedResource(
         accessRestriction=mapping.accessRestriction[0].mappingRules[0].setValues,
         accrualPeriodicity=mapping.accrualPeriodicity[0].mappingRules[0].setValues,
         alternativeTitle=mapping.alternativeTitle[0].mappingRules[0].setValues,
-        contact=[
-            MergedContactPointIdentifier.generate(seed=1234)
-            for c in mapping.contact[0].mappingRules[0].forValues
-        ],  # TODO: ldap-helper
-        contributingUnit=get_unit_merged_id_by_synonym(
-            mapping.contributingUnit[0].mappingRules[0].forValues[0]
-        ),
-        contributor=[
-            MergedPersonIdentifier.generate(seed=1234)  # TODO: ldap-helper
-            for c in mapping.contributor[0].mappingRules[0].forValues
-        ],
+        contact=contact,
+        contributingUnit=contributing_unit,
+        contributor=contributor,
         created=mapping.created[0].mappingRules[0].setValues,
         description=mapping.description[0].mappingRules[0].setValues,
         documentation=mapping.documentation[0].mappingRules[0].setValues,
-        externalPartner=get_wikidata_extracted_organization_id_by_name(
-            mapping.externalPartner[0].mappingRules[0].forValues[0]
-        ),
+        externalPartner=external_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
         hasPurpose=mapping.hasPurpose[0].mappingRules[0].setValues,
@@ -50,9 +86,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         method=mapping.method[0].mappingRules[0].setValues,
         populationCoverage=mapping.populationCoverage[0].mappingRules[0].setValues,
         provenance=mapping.provenance[0].mappingRules[0].setValues,
-        publisher=get_wikidata_extracted_organization_id_by_name(
-            mapping.publisher[0].mappingRules[0].forValues[0]
-        ),
+        publisher=publisher,
         resourceCreationMethod=mapping.resourceCreationMethod[0]
         .mappingRules[0]
         .setValues,
@@ -61,9 +95,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         spatial=mapping.spatial[0].mappingRules[0].setValues,
         theme=mapping.theme[0].mappingRules[0].setValues,
         title=mapping.title[0].mappingRules[0].setValues,
-        unitInCharge=get_unit_merged_id_by_synonym(
-            mapping.unitInCharge[0].mappingRules[0].forValues[0]
-        ),
+        unitInCharge=unit_in_charge,
     )
     load([extracted_resource])
     return extracted_resource
