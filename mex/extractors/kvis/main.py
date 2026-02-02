@@ -26,6 +26,7 @@ def kvis_fieldvalues_table_entries() -> list[KVISFieldValues]:
 
 @asset(group_name="kvis")
 def kvis_extracted_resource() -> ExtractedResource:
+    """Create and return an extracted resource."""
     return transform_kvis_resource_to_extracted_resource()
 
 
