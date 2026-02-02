@@ -1,4 +1,3 @@
-from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
@@ -28,7 +27,7 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     object_guid: str = "*",
     sam_account_name: str = "*",
     surname: str = "*",
-) -> MergedPersonIdentifier:
+) -> MergedPersonIdentifier | None:
     """Extract, transform and load ldap person and return merged ID.
 
     Args:
@@ -41,11 +40,8 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
         sam_account_name: Account name
         surname: Surname of a person, defaults to non-null
 
-    Raises:
-        EmptySearchResultError if no result, FoundMoreThanOneError if multiple results
-
     Returns:
-        merged person id
+        merged person id or None, if not exactly one result
     """
     connector = LDAPConnector.get()
     ldap_person = connector.get_person(
@@ -59,8 +55,7 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     )
     rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
     if not rki_organization_id:
-        msg = "Wikidata organization RKI not found."
-        raise EmptySearchResultError(msg)
+        return None
     extracted_person = transform_ldap_person_and_unit_ids_to_extracted_person(
         ldap_person,
         get_extracted_primary_source_id_by_name("ldap"),
@@ -75,27 +70,20 @@ def get_ldap_merged_contact_id_by_mail(
     *,
     mail: str = "*",
     limit: int = 10,
-) -> MergedContactPointIdentifier:
+) -> MergedContactPointIdentifier | None:
     """Extract, transform and load ldap contact point and return merged ID.
 
     Args:
         mail: functional account mail
-        limit: How many items to return
-
-    Raises:
-        EmptySearchResultError if no result, FoundMoreThanOneError if multiple results
+        limit: How many items to returnd
 
     Returns:
-        merged contact point id
+        merged contact point id or None, if not exactly one result
     """
     connector = LDAPConnector.get()
     functional_account = connector.get_functional_accounts(mail=mail, limit=limit)
-    if len(functional_account) == 0:
-        msg = f"No result for mail: {mail}"
-        raise EmptySearchResultError(msg)
-    if len(functional_account) > 1:
-        msg = f"More than one result for mail: {mail}"
-        raise FoundMoreThanOneError(msg)
+    if len(functional_account) != 1:
+        return None
     extracted_contact_point = (
         transform_ldap_functional_account_to_extracted_contact_point(
             functional_account[0],
