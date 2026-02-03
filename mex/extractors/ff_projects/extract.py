@@ -197,16 +197,12 @@ def extract_ff_projects_organizations(
         Dict with organization label and WikidataOrganization ID
     """
     return {
-        zuwendungs_oder_auftraggeber: org_id
+        org_name: org_id
         for source in ff_projects_sources
         if source.zuwendungs_oder_auftraggeber
         and source.zuwendungs_oder_auftraggeber != "Sonderforschung"
-        for zuwendungs_oder_auftraggeber in source.zuwendungs_oder_auftraggeber.split(
-            "/"
+        for org_name in (
+            part.strip() for part in source.zuwendungs_oder_auftraggeber.split("/")
         )
-        if (
-            org_id := get_wikidata_extracted_organization_id_by_name(
-                zuwendungs_oder_auftraggeber
-            )
-        )
+        if (org_id := get_wikidata_extracted_organization_id_by_name(org_name))
     }
