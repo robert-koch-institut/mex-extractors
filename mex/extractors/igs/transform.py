@@ -96,7 +96,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
         contributing_units = [
             unit
             for synonym in contributing_units_by_pathogen[pathogen].split(",")
-            if (units := get_unit_merged_id_by_synonym(synonym))
+            if (units := get_unit_merged_id_by_synonym(synonym.strip()))
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
