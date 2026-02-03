@@ -9,20 +9,22 @@ def test_filter_sources_on_latest_sequencing_date(
         seq_repo_sources
     )
 
-    expected = {
-        "test-sample-id.TEST": SeqRepoSource(
-            project_coordinators=["max", "mustermann", "max"],
-            customer_org_unit_id="FG99",
-            sequencing_date="2023-08-07",
-            lims_sample_id="test-sample-id",
-            sequencing_platform="TEST",
-            species="Severe acute respiratory syndrome coronavirus 2",
-            project_name="FG99-ABC-123",
-            customer_sample_name="test-customer-name-1",
-            project_id="TEST-ID",
-        )
-    }
+    expected = SeqRepoSource(
+        project_coordinators=["FictitiousF", "ResolvedR"],
+        customer_org_unit_id="FG99",
+        sequencing_date="2023-08-07",
+        lims_sample_id="test-sample-id",
+        sequencing_platform="TEST",
+        species="virus XYZ",
+        project_name="FG99-ABC-123",
+        customer_sample_name="test-customer-name-1",
+        project_id="TEST-ID",
+    )
 
-    assert len(seq_repo_sources) == 2
-    assert len(seq_repo_sources_filtered) == 1
-    assert seq_repo_sources_filtered == expected
+    assert len(seq_repo_sources) == 4
+    assert len(seq_repo_sources_filtered) == 2
+    assert seq_repo_sources_filtered.keys() == {
+        "test-sample-id.TEST",
+        "another-test-sample-id.TEST-2",
+    }
+    assert seq_repo_sources_filtered["test-sample-id.TEST"] == expected

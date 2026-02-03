@@ -9,6 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.8.2] - 2026-02-02
+
+### Changes
+- change the docker build to multi-stage build
+
+## [1.8.1] - 2026-01-29
+
+### Added
+
+- enable testing against a mocked ldap container
+
+### Changes
+
+- update dependencies mex-artificial >= 1.3, Faker >= 40
+
+## [1.8.0] - 2026-01-28
+
+### Added
+
 - extraction of kvis sql tables
 - prepare testing against a mocked ldap container
 - primary source helper function: add caching
@@ -18,6 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/203934
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - update mex-common dependency to 1.11
@@ -29,8 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
 
-### Deprecated
-
 ### Removed
 
 - tailored tests for blueant and endnote; now generalized in test_checks_main.py
@@ -40,8 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - blueant: fix Person extraction and units written as MergedOrganization items
 - ff-projects: fixed extract_ff_projects_organizations() to match organizations with wikidata
-
-### Security
+- seq-repo: fixed by updating model and skipping resources without date
 
 ## [1.7.0] - 2025-12-11
 
@@ -56,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin Mailpit Docker image version to v1.28
 
 ### Fixed
+
 - synopse: fix extraction of involved units
 
 ## [1.6.0] - 2025-11-28
