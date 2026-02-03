@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
+
 ### Security
 
 ## [1.8.2] - 2026-02-02
@@ -68,7 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - blueant: fix Person extraction and units written as MergedOrganization items
-- ff-projects: fixed extract_ff_projects_organizations() to match organizations with wikidata
 - seq-repo: fixed by updating model and skipping resources without date
 
 ## [1.7.0] - 2025-12-11
