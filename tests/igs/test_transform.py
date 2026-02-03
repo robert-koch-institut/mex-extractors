@@ -55,8 +55,8 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "keyword": [
             {"value": "test keyword", "language": "de"},
-            {"value": "PATHOGEN"},
             {"value": "Pathogen", "language": "de"},
+            {"value": "PATHOGEN"},
         ],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
