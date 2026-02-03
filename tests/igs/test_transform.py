@@ -61,7 +61,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
             {"value": "Anzahl tests: 42", "language": "de"},
-            {"value": "7"},
+            {"value": "Anzahl Genomsequenzen: 7", "language": "de"},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",

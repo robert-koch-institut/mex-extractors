@@ -111,7 +111,9 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             if "pathogen" not in key and "upload" not in key
         ]
         quality_information.append(
-            Text(value=igs_endpoint_counts[f"pathogen_{pathogen}"])
+            Text(
+                value=f"Anzahl Genomsequenzen: {igs_endpoint_counts[f'pathogen_{pathogen}']}"  # noqa: E501
+            )
         )
         if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
             size_of_databasis = igs_endpoint_counts[
