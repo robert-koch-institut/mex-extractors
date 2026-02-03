@@ -97,11 +97,10 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
-        keyword = cast(
-            "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
-        )
-        keyword.append(Text(value=pathogen.removesuffix("P")))
-        keyword.extend(keywords_by_pathogen[pathogen])
+        keyword = igs_resource_mapping.keyword[0].mappingRules[0].setValues
+        if keyword:
+            keyword.append(Text(value=pathogen.removesuffix("P")))
+            keyword.extend(keywords_by_pathogen[pathogen])
         quality_information = [
             Text(
                 value=f"{quality_information_values_by_field_in_primary_source[key]}{value}",
