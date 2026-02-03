@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix debian to bullseye for docker
-
 ### Security
+
+## [1.8.3] - 2026-02-03
+
+### Fixed
+
+- fix debian to bullseye for docker
 
 ## [1.8.2] - 2026-02-02
 
