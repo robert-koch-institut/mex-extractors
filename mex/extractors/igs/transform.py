@@ -128,11 +128,6 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             alternativeTitle=igs_resource_mapping.alternativeTitle[0]
             .mappingRules[0]
             .setValues,
-            anonymizationPseudonymization=igs_resource_mapping.anonymizationPseudonymization[
-                0
-            ]
-            .mappingRules[0]
-            .setValues,
             contact=contact,
             contributingUnit=contributing_units,
             created=created,
