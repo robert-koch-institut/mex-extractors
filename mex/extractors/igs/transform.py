@@ -122,6 +122,8 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             size_of_databasis = igs_endpoint_counts[
                 igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
             ]
+        if pathogen not in title_by_pathogen:  # TODO(EH): fix in MX-2189
+            continue
         extracted_resources_by_pathogen[pathogen] = ExtractedResource(
             accessPlatform=igs_extracted_access_platform.stableTargetId,
             accessRestriction=igs_resource_mapping.accessRestriction[0]
