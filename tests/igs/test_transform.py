@@ -46,7 +46,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         "identifierInPrimarySource": "test_title_PATHOGEN",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "created": "1970",
-        "sizeOfDataBasis": "5",
+        "sizeOfDataBasis": "Anzahl Uploads: 5",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Pathogen", "language": "de"}],

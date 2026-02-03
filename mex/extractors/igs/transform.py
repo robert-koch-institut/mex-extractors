@@ -119,9 +119,11 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             )
         )
         if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
-            size_of_databasis = igs_endpoint_counts[
-                igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
-            ]
+            size_of_databasis = f"Anzahl Uploads: {
+                igs_endpoint_counts[
+                    igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
+                ]
+            }"
         if pathogen not in title_by_pathogen:  # TODO(EH): fix in MX-2189
             continue
         extracted_resources_by_pathogen[pathogen] = ExtractedResource(
