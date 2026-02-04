@@ -1,9 +1,6 @@
 # syntax=docker/dockerfile:1
 
-# using bullseye because microsoft does not play nice with debian 12 signature verification yet
-# https://learn.microsoft.com/en-us/answers/questions/1328834/debian-12-public-key-is-not-available
-# debian 11 bullseye is on a LTS schedule until August 31st, 2026
-FROM python:3.13-bullseye AS builder
+FROM python:3.13-trixie AS builder
 
 WORKDIR /build
 
@@ -15,13 +12,19 @@ ENV PIP_PROGRESS_BAR=off
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN uv export --no-dev --no-hashes --output-file requirements.lock
+RUN uv export --frozen --no-hashes --no-dev --output-file requirements.lock
 
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.lock
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels --no-deps .
 
+RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEE4D7792F748182B" \
+        | gpg --dearmor -o /build/microsoft-prod.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] \
+        https://packages.microsoft.com/debian/13/prod trixie main" \
+        > /build/mssql-release.list
 
-FROM python:3.13-slim-bullseye
+
+FROM python:3.13-slim-trixie
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="ETL pipelines for the RKI Metadata Exchange."
@@ -44,6 +47,13 @@ RUN pip install --no-cache-dir \
     /wheels/*.whl \
     && rm -rf /wheels
 
+COPY --from=builder /build/microsoft-prod.gpg /usr/share/keyrings/microsoft-prod.gpg
+COPY --from=builder /build/mssql-release.list /etc/apt/sources.list.d/mssql-release.list
+
+RUN apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y krb5-user msodbcsql18 unixodbc \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN adduser \
     --disabled-password \
     --gecos "" \
@@ -56,4 +66,4 @@ COPY --chown=mex assets assets
 
 USER mex
 
-ENTRYPOINT [ "all-extractors" ]
+ENTRYPOINT [ "dagster", "dev", "--host", "0.0.0.0", "--module-name", "mex.extractors" ]
