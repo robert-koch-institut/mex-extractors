@@ -24,7 +24,7 @@ contributingUnit:
 contributor:
 - mappingRules:
   - forValues:
-    - ResolvedR@rki.de
+    - FelicitasJ@rki.de
     - FictitiousF@rki.de
     rule: Match value with ldap connector.
 created:

@@ -1,26 +1,73 @@
 import pytest
-from mex.common.models import ExtractedVariableGroup
 
+from mex.common.models import (
+    ExtractedContactPoint,
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+    ExtractedPerson,
+    ExtractedVariableGroup,
+)
 from mex.common.types import LinkLanguage, MergedResourceIdentifier, TextLanguage
-from mex.extractors.kvis.models.table_models import KVISVariables, KVISFieldValues
+from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 from mex.extractors.kvis.transform import (
+    lookup_kvis_functional_account_in_ldap_and_transform,
+    lookup_kvis_person_in_ldap_and_transform,
+    transform_kvis_fieldvalues_table_entries_to_setvalues,
     transform_kvis_resource_to_extracted_resource,
-    transform_kvis_variables_to_extracted_variable_groups,
     transform_kvis_table_entries_to_extracted_variables,
+    transform_kvis_variables_to_extracted_variable_groups,
 )
 
 
-@pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_kvis_resource_to_extracted_resource() -> None:
-    extracted_resource = transform_kvis_resource_to_extracted_resource()
+@pytest.mark.usefixtures("mocked_ldap")
+def test_lookup_kvis_person_in_ldap_and_transform(
+    juturna_felicitas: ExtractedPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    extracted_organization_rki: ExtractedOrganization,
+) -> None:
+    person_id = lookup_kvis_person_in_ldap_and_transform(
+        juturna_felicitas.email[0],
+        mocked_units_by_identifier_in_primary_source,
+        extracted_organization_rki,
+    )
+    assert person_id == juturna_felicitas.stableTargetId
+
+
+@pytest.mark.usefixtures("mocked_ldap")
+def test_lookup_kvis_functional_account_in_ldap_and_transform(
+    contact_point: ExtractedContactPoint,
+) -> None:
+    contact_id = lookup_kvis_functional_account_in_ldap_and_transform(
+        contact_point.email[0],
+    )
+    assert contact_id == contact_point.stableTargetId
+
+
+@pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
+def test_transform_kvis_resource_to_extracted_resource(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    extracted_organization_rki: ExtractedOrganization,
+    contact_point: ExtractedContactPoint,
+    juturna_felicitas: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
+) -> None:
+    extracted_resource = transform_kvis_resource_to_extracted_resource(
+        mocked_extracted_organizational_units,
+        extracted_organization_rki,
+    )
     assert extracted_resource.model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "alternativeTitle": [{"language": TextLanguage.DE, "value": "KVIS"}],
-        "contact": ["bFQoRhcVH5DIek"],
+        "contact": [contact_point.stableTargetId],
         "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "contributor": ["bFQoRhcVH5DIek", "bFQoRhcVH5DIek"],
+        "contributor": [
+            juturna_felicitas.stableTargetId,
+            frieda_fictitious.stableTargetId,
+        ],
         "created": "1999",
         "description": [{"language": TextLanguage.DE, "value": "Wörter"}],
         "documentation": [
@@ -52,8 +99,22 @@ def test_transform_kvis_variables_to_extracted_variable_groups(
     ) == {
         "containedBy": [str(mocked_extracted_resource_id)],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
-        "identifierInPrimarySource": "kvis_another file type",
-        "label": [{"language": TextLanguage.DE, "value": "another file type"}],
+        "identifierInPrimarySource": "kvis_file with strings and bools",
+        "label": [
+            {"language": TextLanguage.DE, "value": "file with strings and bools"}
+        ],
+    }
+
+
+def test_transform_kvis_fieldvalues_table_entries_to_setvalues(
+    mocked_kvisfieldvalues: list[KVISFieldValues],
+) -> None:
+    valueset_dict = transform_kvis_fieldvalues_table_entries_to_setvalues(
+        mocked_kvisfieldvalues
+    )
+    assert valueset_dict == {
+        "STRING": ["one", "two", "three"],
+        "BOOL": ["it is false", "it is true"],
     }
 
 
@@ -73,26 +134,26 @@ def test_transform_kvis_table_entries_to_extracted_variables(
     assert extracted_variables[0].model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "belongsTo": ["hxWBV2djsXmw3fNmkrh8S2"],
-        "dataType": "integer",
-        "description": [{"value": "field description"}],
+        "belongsTo": ["CooqBBvfd2q077RJ1qc1S"],
+        "dataType": "integer field",
+        "description": [{"value": "some integer field"}],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
-        "identifierInPrimarySource": "kvis_field name short",
-        "label": [{"language": TextLanguage.EN, "value": "field name long"}],
-        "usedIn": ["bFQoRhcVH5DK7x"]
+        "identifierInPrimarySource": "kvis_int",
+        "label": [{"value": "Integer", "language": TextLanguage.DE}],
+        "usedIn": ["bFQoRhcVH5DK7x"],
     }
 
     assert extracted_variables[2].model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "belongsTo": ["hNI0nop3NLG8VWawi91Rti"],
-        "dataType": "bool",
+        "belongsTo": ["gSCYeMkhBrsWdo8Xoei8bk"],
+        "dataType": "bool field",
         "description": [
-            {"language": TextLanguage.EN,"value": "a boolean field for flagging"}
+            {"language": TextLanguage.EN, "value": "a boolean field for flagging"}
         ],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
-        "identifierInPrimarySource": "kvis_bit",
-        "label": [{"value": "bool"}],
+        "identifierInPrimarySource": "kvis_bool",
+        "label": [{"value": "boolean", "language": TextLanguage.EN}],
         "usedIn": ["bFQoRhcVH5DK7x"],
-        "valueSet": ["it is true", "it is false"]
+        "valueSet": ["it is false", "it is true"],
     }

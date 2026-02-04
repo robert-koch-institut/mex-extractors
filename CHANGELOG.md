@@ -13,8 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- change the docker build to multi-stage build
-
 ### Deprecated
 
 ### Removed
@@ -22,6 +20,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.3] - 2026-02-03
+
+### Fixed
+
+- fix debian to bullseye for docker
+
+## [1.8.2] - 2026-02-02
+
+### Changes
+
+- change the docker build to multi-stage build
 
 ## [1.8.1] - 2026-01-29
 

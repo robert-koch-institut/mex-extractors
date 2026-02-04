@@ -1,4 +1,5 @@
 import pytest
+
 from mex.common.models import ExtractedVariableGroup
 from mex.common.types import MergedResourceIdentifier, TextLanguage
 
@@ -14,16 +15,17 @@ def mocked_extracted_variable_groups(
 ) -> list[ExtractedVariableGroup]:
     return [
         ExtractedVariableGroup(
-            containedBy= [mocked_extracted_resource_id],
-            hadPrimarySource= "eKx0G7GVS8o9v537kCUM3i",
-            identifierInPrimarySource= "kvis_file type 1",
-            label= [{"language": TextLanguage.DE, "value": "file type 1"}],
+            containedBy=[mocked_extracted_resource_id],
+            hadPrimarySource="eKx0G7GVS8o9v537kCUM3i",
+            identifierInPrimarySource="kvis_file with integers",
+            label=[{"language": TextLanguage.DE, "value": "file with integers"}],
         ),
         ExtractedVariableGroup(
             containedBy=[mocked_extracted_resource_id],
             hadPrimarySource="eKx0G7GVS8o9v537kCUM3i",
-            identifierInPrimarySource="kvis_another file type",
-            label=[{"language": TextLanguage.DE, "value": "another file type"}],
-        )
+            identifierInPrimarySource="kvis_file with strings and bools",
+            label=[
+                {"language": TextLanguage.DE, "value": "file with strings and bools"}
+            ],
+        ),
     ]
-

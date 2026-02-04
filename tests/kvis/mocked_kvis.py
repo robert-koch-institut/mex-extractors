@@ -47,28 +47,28 @@ def mocked_kvisfieldvalues() -> list[KVISFieldValues]:
     return [
         KVISFieldValues(
             field_value_list_name="STRING",
-            field_value="1",
-            field_value_long_text="one",
-        ),
-        KVISFieldValues(
-            field_value_list_name="BOOL",
-            field_value="1",
-            field_value_long_text="it is true",
+            field_value="one",
+            field_value_long_text="the number one",
         ),
         KVISFieldValues(
             field_value_list_name="STRING",
-            field_value="2",
-            field_value_long_text="two",
+            field_value="two",
+            field_value_long_text="the number two",
         ),
         KVISFieldValues(
             field_value_list_name="STRING",
-            field_value="3",
-            field_value_long_text="three",
+            field_value="three",
+            field_value_long_text="the number three",
         ),
         KVISFieldValues(
             field_value_list_name="BOOL",
             field_value="0",
             field_value_long_text="it is false",
+        ),
+        KVISFieldValues(
+            field_value_list_name="BOOL",
+            field_value="1",
+            field_value_long_text="it is true",
         ),
     ]
 
@@ -77,15 +77,15 @@ def mocked_kvisfieldvalues() -> list[KVISFieldValues]:
 def mocked_kvisvariables() -> list[KVISVariables]:
     return [
         KVISVariables(
-            file_type="file type 1",
-            datatype_description="integer",
-            field_description="field description",
-            field_name_short="field name short",
-            field_name_long="field name long",
+            file_type="file with integers",
+            datatype_description="integer field",
+            field_description="some integer field",
+            field_name_short="int",
+            field_name_long="Integer",
             fvlist_name=None,
         ),
         KVISVariables(
-            file_type="another file type",
+            file_type="file with strings and bools",
             datatype_description="string field",
             field_description="some text field",
             field_name_short="str",
@@ -93,11 +93,11 @@ def mocked_kvisvariables() -> list[KVISVariables]:
             fvlist_name="STRING",
         ),
         KVISVariables(
-            file_type="another file type",
-            datatype_description="bool",
+            file_type="file with strings and bools",
+            datatype_description="bool field",
             field_description="a boolean field for flagging",
-            field_name_short="bit",
-            field_name_long="bool",
+            field_name_short="bool",
+            field_name_long="boolean",
             fvlist_name="BOOL",
         ),
     ]
