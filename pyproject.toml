@@ -114,7 +114,7 @@ addopts = [
 ]
 markers = [
     "integration: mark a test as integration test",
-    "requires_rki_infrastructure: mark a test to not run in external ci"
+    "requires_rki_infrastructure: mark a test to only run in gh cli"
 ]
 
 [tool.ruff]
