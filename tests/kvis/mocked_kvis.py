@@ -12,7 +12,6 @@ from mex.extractors.kvis.models.table_models import (
 
 @pytest.fixture
 def mocked_kvis(
-    # mocked_kvis_sql_tables: dict[type[BaseModel], list[dict[str, Any]]],
     mocked_kvisfieldvalues: list[KVISFieldValues],
     mocked_kvisvariables: list[KVISVariables],
     monkeypatch: MonkeyPatch,

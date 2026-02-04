@@ -15,18 +15,15 @@ contact:
 - mappingRules:
   - forValues:
     - contactc@rki.de
-    rule: Use value to match with ldap connector.
 contributingUnit:
 - mappingRules:
   - forValues:
     - C1
-    rule: Use value to match with identifier in organigram connector.
 contributor:
 - mappingRules:
   - forValues:
     - FelicitasJ@rki.de
     - FictitiousF@rki.de
-    rule: Match value with ldap connector.
 created:
 - mappingRules:
   - setValues: "1999"
@@ -48,7 +45,6 @@ externalPartner:
 - mappingRules:
   - forValues:
     - RKI
-    rule: Use value to match with wikidata connector.
 hadPrimarySource:
 - mappingRules:
   - rule: 'kvis'
@@ -109,4 +105,3 @@ unitInCharge:
 - mappingRules:
   - forValues:
     - fg99
-    rule: Use value to match with organigramm connector.
