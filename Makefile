@@ -52,11 +52,12 @@ run: image
 	@ echo running docker container mex-extractors:${LATEST}; \
 	mkdir --parents --mode 777 $(PWD)/work; \
 	docker run \
+		--publish 3000:3000 \
 		--env MEX_WORK_DIR=/work \
 		--volume ${PWD}/work:/work \
 		rki/mex-extractors:${LATEST}; \
 
-start: image
+start:
 	# start the service using docker compose
 	@ echo start mex-extractors:${LATEST} with compose; \
 	docker compose up --remove-orphans; \

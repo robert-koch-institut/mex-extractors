@@ -15,7 +15,7 @@ services:
       - postgres
     volumes:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
-      - work:/app/work:rw
+      - dagster:/app/work:rw
   dagster-webserver:
     build:
       context: .
@@ -24,11 +24,15 @@ services:
     entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml"]
     depends_on:
       - postgres
-    expose:
-      - 3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/dagit_info"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
     volumes:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
-      - work:/app/work:rw
+      - dagster:/app/work:rw
   slapd:
     image: thoteam/slapd-server-mock
     ports:
@@ -50,7 +54,7 @@ services:
       - 8025
 volumes:
   pgdata:
-  work:
+  dagster:
     driver: local
     driver_opts:
       type: tmpfs

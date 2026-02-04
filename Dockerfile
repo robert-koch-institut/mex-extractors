@@ -73,4 +73,6 @@ COPY --chown=mex dagster.yaml /app/dagster/dagster.yaml
 
 USER mex
 
-ENTRYPOINT [ "dagster", "dev", "--host", "0.0.0.0", "--module-name", "mex.extractors" ]
+EXPOSE 3000
+
+ENTRYPOINT [ "dagster", "dev", "--host", "0.0.0.0", "-w", "workspace.yaml" ]
