@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.13 AS builder
+FROM python:3.13-trixie AS builder
 
 WORKDIR /build
 
@@ -12,13 +12,19 @@ ENV PIP_PROGRESS_BAR=off
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN uv export --no-dev --no-hashes --output-file requirements.lock
+RUN uv export --frozen --no-hashes --no-dev --output-file requirements.lock
 
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.lock
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels --no-deps .
 
+RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEE4D7792F748182B" \
+        | gpg --dearmor -o /build/microsoft-prod.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] \
+        https://packages.microsoft.com/debian/13/prod trixie main" \
+        > /build/mssql-release.list
 
-FROM python:3.13-slim
+
+FROM python:3.13-slim-trixie
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="ETL pipelines for the RKI Metadata Exchange."
@@ -29,7 +35,8 @@ LABEL org.opencontainers.image.vendor="robert-koch-institut"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONOPTIMIZE=1
 
-ENV DAGSTER_HOME=/app
+ENV DAGSTER_HOME=/app/dagster
+ENV MEX_WORK_DIR=/app/work
 
 WORKDIR /app
 
@@ -41,6 +48,13 @@ RUN pip install --no-cache-dir \
     /wheels/*.whl \
     && rm -rf /wheels
 
+COPY --from=builder /build/microsoft-prod.gpg /usr/share/keyrings/microsoft-prod.gpg
+COPY --from=builder /build/mssql-release.list /etc/apt/sources.list.d/mssql-release.list
+
+RUN apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y krb5-user msodbcsql18 unixodbc \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN adduser \
     --disabled-password \
     --gecos "" \
@@ -49,8 +63,16 @@ RUN adduser \
     --uid "10001" \
     mex
 
-COPY --chown=mex assets assets
+RUN chown mex:mex /app
+RUN mkdir /app/dagster && chown mex:mex /app/dagster
+RUN mkdir /app/work && chown mex:mex /app/work
+
+COPY --chown=mex assets /app/assets
+COPY --chown=mex workspace.yaml /app/workspace.yaml
+COPY --chown=mex dagster.yaml /app/dagster/dagster.yaml
 
 USER mex
 
-ENTRYPOINT [ "all-extractors" ]
+EXPOSE 3000
+
+ENTRYPOINT [ "dagster", "dev", "--host", "0.0.0.0", "-w", "workspace.yaml" ]

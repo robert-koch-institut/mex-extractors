@@ -1,0 +1,12 @@
+python_logs:
+  managed_python_loggers:
+    - mex
+telemetry:
+  enabled: false
+storage:
+  postgres:
+    postgres_db:
+      hostname: postgres
+      username: dagster
+      password: dagster
+      db_name: dagster
