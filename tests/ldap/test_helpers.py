@@ -2,7 +2,6 @@ import pytest
 
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
 from mex.extractors.ldap.helpers import (
@@ -14,11 +13,8 @@ from mex.extractors.ldap.helpers import (
 @pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
 @pytest.mark.usefixtures("mocked_ldap")
-def test_get_ldap_merged_person_id_by_query(
-    mocked_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
-) -> None:
+def test_get_ldap_merged_person_id_by_query() -> None:
     merged_person_id = get_ldap_merged_person_id_by_query(
-        mocked_merged_organizational_unit_ids,
         display_name="Resolved, Roland",
     )
     assert merged_person_id == MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")

@@ -7,9 +7,9 @@ from mex.common.ldap.transform import (
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -19,9 +19,8 @@ from mex.extractors.wikidata.helpers import (
 )
 
 
+@lru_cache(maxsize=1024)
 def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
-    person_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    *,
     display_name: str = "*",
     employee_id: str = "*",
     given_name: str = "*",
@@ -33,7 +32,6 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     """Extract, transform and load ldap person and return merged ID.
 
     Args:
-        person_unit_ids: merged unit ids
         display_name: Display name of the person
         employee_id: Employee identifier
         given_name: Given name of a person, defaults to non-null
@@ -58,6 +56,13 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
     if not rki_organization_id:
         return None
+    unit_merged_ids_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
+    person_unit_ids = [
+        merged_id
+        for unit in [ldap_person.department, ldap_person.departmentNumber]
+        if unit and unit in unit_merged_ids_by_synonym
+        for merged_id in unit_merged_ids_by_synonym[unit]
+    ]
     extracted_person = transform_ldap_person_and_unit_ids_to_extracted_person(
         ldap_person,
         get_extracted_primary_source_id_by_name("ldap"),
