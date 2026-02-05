@@ -43,7 +43,6 @@ wheel:
 image:
 	# build the docker image
 	@ echo building docker image mex-extractors:${LATEST}; \
-	export DOCKER_BUILDKIT=1; \
 	docker build \
 		--tag rki/mex-extractors:${LATEST} \
 		--tag rki/mex-extractors:latest .; \
@@ -51,17 +50,16 @@ image:
 run: image
 	# run the extractors using docker
 	@ echo running docker container mex-extractors:${LATEST}; \
-	mkdir --parents --mode 777 work; \
+	mkdir --parents --mode 777 $(PWD)/work; \
 	docker run \
+		--publish 3000:3000 \
 		--env MEX_WORK_DIR=/work \
 		--volume ${PWD}/work:/work \
 		rki/mex-extractors:${LATEST}; \
 
-start: image
+start:
 	# start the service using docker compose
 	@ echo start mex-extractors:${LATEST} with compose; \
-	export DOCKER_BUILDKIT=1; \
-	export COMPOSE_DOCKER_CLI_BUILD=1; \
 	docker compose up --remove-orphans; \
 
 docs:
