@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add odbc and krb driver installation to dockerfile
-- add postgres to docker compose configuration
-
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
@@ -24,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.4] - 2026-02-05
+
+### Added
+
+- add odbc and krb driver installation to dockerfile
+- add postgres to docker compose configuration
+
+### Changes
+
+- upgrade debian docker base to trixie again
 
 ## [1.8.3] - 2026-02-03
 
