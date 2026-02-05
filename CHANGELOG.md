@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add odbc and krb driver installation to dockerfile
+- add postgres to docker compose configuration
+
 ### Changes
+
+- upgrade debian docker base to trixie again
 
 ### Deprecated
 
@@ -28,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.8.2] - 2026-02-02
 
 ### Changes
+
 - change the docker build to multi-stage build
 
 ## [1.8.1] - 2026-01-29
