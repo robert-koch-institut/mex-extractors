@@ -213,21 +213,16 @@ def transform_kvis_variables_to_extracted_variable_groups(
     Returns:
         list of extracted variable group entries.
     """
-    extracted_variable_groups: list[ExtractedVariableGroup] = []
-    seen: set[str] = set()
-    for item in kvis_variables_table_entries:
-        if item.file_type in seen:
-            continue
-        seen.add(item.file_type)
-        extracted_variable_groups.append(
-            ExtractedVariableGroup(
-                containedBy=[kvis_extracted_resource_id],
-                hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
-                identifierInPrimarySource=f"kvis_{item.file_type}",
-                label=[Text(value=item.file_type, language=TextLanguage.DE)],
-            )
+    unique_file_types = {item.file_type for item in kvis_variables_table_entries}
+    return [
+        ExtractedVariableGroup(
+            containedBy=[kvis_extracted_resource_id],
+            hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
+            identifierInPrimarySource=f"kvis_{file_type}",
+            label=[Text(value=file_type, language=TextLanguage.DE)],
         )
-    return extracted_variable_groups
+        for file_type in unique_file_types
+    ]
 
 
 def transform_kvis_fieldvalues_table_entries_to_setvalues(
