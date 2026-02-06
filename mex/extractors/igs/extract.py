@@ -1,5 +1,4 @@
-from functools import lru_cache
-from typing import Any, cast
+from typing import cast
 
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount
@@ -16,24 +15,14 @@ from mex.extractors.igs.model import (
 )
 
 
-@lru_cache(maxsize=1)
-def get_raw_json_from_api() -> dict[str, Any]:
-    """Extract raw IGS json.
-
-    Returns:
-        raw igs json dict
-    """
-    connector = IGSConnector.get()
-    return connector.get_json_from_api()
-
-
 def extract_igs_info() -> IGSInfo:
     """Extract IGS info.
 
     Returns:
         IGS info
     """
-    raw_json = get_raw_json_from_api()
+    connector = IGSConnector.get()
+    raw_json = connector.get_json_from_api()
     return IGSInfo(**raw_json.get("info", {}))
 
 
@@ -43,7 +32,8 @@ def extract_igs_schemas() -> dict[str, IGSSchema]:
     Returns:
         IGS schemas by name
     """
-    raw_json = get_raw_json_from_api()
+    connector = IGSConnector.get()
+    raw_json = connector.get_json_from_api()
     schemas = raw_json.get("components", {}).get("schemas", {})
     igs_schemas: dict[str, IGSSchema] = {}
     for key, value in schemas.items():
