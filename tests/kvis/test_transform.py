@@ -136,7 +136,7 @@ def test_transform_kvis_table_entries_to_extracted_variables(
     ) == {
         "belongsTo": ["CooqBBvfd2q077RJ1qc1S"],
         "dataType": "integer field",
-        "description": [{"value": "some integer field"}],
+        "description": [{"value": "some integer field", "language": TextLanguage.DE}],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
         "identifierInPrimarySource": "kvis_int",
         "label": [{"value": "Integer", "language": TextLanguage.DE}],
@@ -149,11 +149,11 @@ def test_transform_kvis_table_entries_to_extracted_variables(
         "belongsTo": ["gSCYeMkhBrsWdo8Xoei8bk"],
         "dataType": "bool field",
         "description": [
-            {"language": TextLanguage.EN, "value": "a boolean field for flagging"}
+            {"language": TextLanguage.DE, "value": "a boolean field for flagging"}
         ],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
         "identifierInPrimarySource": "kvis_bool",
-        "label": [{"value": "boolean", "language": TextLanguage.EN}],
+        "label": [{"value": "boolean", "language": TextLanguage.DE}],
         "usedIn": ["bFQoRhcVH5DK7x"],
         "valueSet": ["it is false", "it is true"],
     }

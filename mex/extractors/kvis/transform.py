@@ -213,7 +213,9 @@ def transform_kvis_variables_to_extracted_variable_groups(
     Returns:
         list of extracted variable group entries.
     """
-    unique_file_types = {item.file_type for item in kvis_variables_table_entries}
+    unique_file_types = sorted(
+        {item.file_type for item in kvis_variables_table_entries}
+    )
     return [
         ExtractedVariableGroup(
             containedBy=[kvis_extracted_resource_id],
