@@ -1,0 +1,39 @@
+import pytest
+
+from mex.common.models import ExtractedVariableGroup
+from mex.common.types import MergedResourceIdentifier, TextLanguage
+
+
+@pytest.fixture
+def mocked_extracted_resource_id() -> MergedResourceIdentifier:
+    return MergedResourceIdentifier.generate(seed=12345)
+
+
+@pytest.fixture
+def mocked_extracted_variable_groups(
+    mocked_extracted_resource_id: MergedResourceIdentifier,
+) -> list[ExtractedVariableGroup]:
+    return [
+        ExtractedVariableGroup(
+            containedBy=[mocked_extracted_resource_id],
+            hadPrimarySource="eKx0G7GVS8o9v537kCUM3i",
+            identifierInPrimarySource="kvis_file with integers",
+            label=[{"language": TextLanguage.DE, "value": "file with integers"}],
+        ),
+        ExtractedVariableGroup(
+            containedBy=[mocked_extracted_resource_id],
+            hadPrimarySource="eKx0G7GVS8o9v537kCUM3i",
+            identifierInPrimarySource="kvis_file with strings and bools",
+            label=[
+                {"language": TextLanguage.DE, "value": "file with strings and bools"}
+            ],
+        ),
+    ]
+
+
+@pytest.fixture
+def mocked_valuesets_by_variable_name() -> dict[str, list[str]]:
+    return {
+        "STRING": ["one", "two", "three"],
+        "BOOL": ["it is false", "it is true"],
+    }

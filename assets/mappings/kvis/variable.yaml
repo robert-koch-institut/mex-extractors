@@ -1,0 +1,21 @@
+hadPrimarySource:
+  - mappingRules:
+    - forValues:
+identifierInPrimarySource:
+  - mappingRules:
+    - forValues:
+label:
+  - mappingRules:
+    - forValues:
+usedIn:
+  - mappingRules:
+    - forValues:
+valueSet:
+  - fieldInPrimarySource: FieldValue
+    mappingRules:
+    - forValues:
+      - STRING
+  - fieldInPrimarySource: FieldValueLongText
+    mappingRules:
+    - forValues:
+      - BOOL

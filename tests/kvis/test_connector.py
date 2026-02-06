@@ -10,13 +10,28 @@ def test_parse_rows() -> None:
     rows = connection.parse_rows(KVISFieldValues)
     assert rows == [
         {
-            "field_value_list_name": "field value list name",
-            "field_value": "field value",
-            "field_value_long_text": "field value long text",
+            "field_value_list_name": "STRING",
+            "field_value": "one",
+            "field_value_long_text": "the number one",
         },
         {
-            "field_value_list_name": "another list name",
-            "field_value": "more values",
-            "field_value_long_text": "and now also some longer text with more words",
+            "field_value_list_name": "STRING",
+            "field_value": "two",
+            "field_value_long_text": "the number two",
+        },
+        {
+            "field_value_list_name": "STRING",
+            "field_value": "three",
+            "field_value_long_text": "the number three",
+        },
+        {
+            "field_value_list_name": "BOOL",
+            "field_value": "0",
+            "field_value_long_text": "it is false",
+        },
+        {
+            "field_value_list_name": "BOOL",
+            "field_value": "1",
+            "field_value_long_text": "it is true",
         },
     ]
