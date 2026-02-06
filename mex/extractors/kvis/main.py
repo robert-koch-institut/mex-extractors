@@ -4,7 +4,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
-    ExtractedVariable,
     ExtractedVariableGroup,
 )
 from mex.common.types import MergedResourceIdentifier
@@ -76,7 +75,6 @@ def kvis_extracted_variables(
         kvis_fieldvalues_table_entries,
     )
     load(extracted_variables)
-    return extracted_variables
 
 
 @entrypoint(Settings)
