@@ -243,7 +243,9 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
 
     # collect valueSet entries in a dictionary by variable name:
     # field name mapping: model_alias -> field_name, e.g. "FieldValue": "field_value"
-    alias_to_field = {f.alias: name for name, f in KVISFieldValues.model_fields.items()}
+    field_name_by_alias = {
+        f.alias: name for name, f in KVISFieldValues.model_fields.items()
+    }
     # Mapping: In which field in the KVIS table should the valueSets be looked up
     valueset_fields_by_forvalues: dict[str, str] = {}
     for rule in variable_mapping.valueSet:
@@ -251,7 +253,7 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
             msg = "no forValues defined in variables.yaml for 'valueSet'"
             raise MExError(msg)
         # translate aliases in mapping to field names in model
-        use_field = alias_to_field[rule.fieldInPrimarySource]
+        use_field = field_name_by_alias[rule.fieldInPrimarySource]
         for for_value in rule.mappingRules[0].forValues:
             valueset_fields_by_forvalues[for_value] = use_field
     # Collect valueSets from table according to mapping rules
