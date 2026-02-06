@@ -122,13 +122,13 @@ def test_transform_kvis_table_entries_to_extracted_variables(
     mocked_extracted_resource_id: MergedResourceIdentifier,
     mocked_extracted_variable_groups: list[ExtractedVariableGroup],
     mocked_kvisvariables: list[KVISVariables],
-    mocked_kvisfieldvalues: list[KVISFieldValues],
+    mocked_valuesets_by_variable_name: dict[str, list[str]],
 ) -> None:
     extracted_variables = transform_kvis_table_entries_to_extracted_variables(
         mocked_extracted_resource_id,
         mocked_extracted_variable_groups,
         mocked_kvisvariables,
-        mocked_kvisfieldvalues,
+        mocked_valuesets_by_variable_name,
     )
     assert len(extracted_variables) == 3
     assert extracted_variables[0].model_dump(

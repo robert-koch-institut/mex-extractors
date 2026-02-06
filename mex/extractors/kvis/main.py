@@ -13,6 +13,7 @@ from mex.extractors.kvis.models.table_models import (
     KVISVariables,
 )
 from mex.extractors.kvis.transform import (
+    transform_kvis_fieldvalues_table_entries_to_setvalues,
     transform_kvis_resource_to_extracted_resource,
     transform_kvis_table_entries_to_extracted_variables,
     transform_kvis_variables_to_extracted_variable_groups,
@@ -61,18 +62,28 @@ def kvis_extracted_variable_groups(
 
 
 @asset(group_name="kvis")
+def kvis_valuesets_by_variable_name(
+    kvis_fieldvalues_table_entries: list[KVISFieldValues],
+) -> dict[str, list[str]]:
+    """Transform table entries to value sets for variables by variable name."""
+    return transform_kvis_fieldvalues_table_entries_to_setvalues(
+        kvis_fieldvalues_table_entries
+    )
+
+
+@asset(group_name="kvis")
 def kvis_extracted_variables(
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_extracted_variable_groups: list[ExtractedVariableGroup],
     kvis_variables_table_entries: list[KVISVariables],
-    kvis_fieldvalues_table_entries: list[KVISFieldValues],
+    kvis_valuesets_by_variable_name: dict[str, list[str]],
 ) -> None:
     """Transform and load extracted variables."""
     extracted_variables = transform_kvis_table_entries_to_extracted_variables(
         kvis_extracted_resource_id,
         kvis_extracted_variable_groups,
         kvis_variables_table_entries,
-        kvis_fieldvalues_table_entries,
+        kvis_valuesets_by_variable_name,
     )
     load(extracted_variables)
 

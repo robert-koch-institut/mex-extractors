@@ -278,7 +278,7 @@ def transform_kvis_table_entries_to_extracted_variables(
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_extracted_variable_groups: list[ExtractedVariableGroup],
     kvis_variables_table_entries: list[KVISVariables],
-    kvis_fieldvalues_table_entries: list[KVISFieldValues],
+    kvis_valuesets_by_variable_name: dict[str, list[str]],
 ) -> list[ExtractedVariable]:
     """Transform entries of the kvis tables to extracted variables.
 
@@ -286,15 +286,11 @@ def transform_kvis_table_entries_to_extracted_variables(
         kvis_extracted_resource_id: MergedResourceIdentifier of kvis resource
         kvis_extracted_variable_groups: list of ExtractedVariableGroups
         kvis_variables_table_entries: list of KVISVariables table entries
-        kvis_fieldvalues_table_entries: list of KVISFieldValues table entries
+        kvis_valuesets_by_variable_name: value sets for variables by variable name.
 
     Returns:
         list of ExtractedVariables
     """
-    valuesets_by_variable_name = transform_kvis_fieldvalues_table_entries_to_setvalues(
-        kvis_fieldvalues_table_entries
-    )
-
     extracted_variable_group_id_by_label = {
         item.label[0].value: item.stableTargetId
         for item in kvis_extracted_variable_groups
@@ -309,7 +305,7 @@ def transform_kvis_table_entries_to_extracted_variables(
             identifierInPrimarySource=f"kvis_{item.field_name_short}",
             label=[Text(value=item.field_name_long, language=TextLanguage.DE)],
             usedIn=[kvis_extracted_resource_id],
-            valueSet=valuesets_by_variable_name.get(item.fvlist_name, None)
+            valueSet=kvis_valuesets_by_variable_name.get(item.fvlist_name, None)
             if item.fvlist_name
             else None,
         )

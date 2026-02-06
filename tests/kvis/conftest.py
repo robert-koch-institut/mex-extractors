@@ -29,3 +29,11 @@ def mocked_extracted_variable_groups(
             ],
         ),
     ]
+
+
+@pytest.fixture
+def mocked_valuesets_by_variable_name() -> dict[str, list[str]]:
+    return {
+        "STRING": ["one", "two", "three"],
+        "BOOL": ["it is false", "it is true"],
+    }
