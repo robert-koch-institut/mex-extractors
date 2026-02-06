@@ -67,7 +67,7 @@ def kvis_extracted_variables(
     kvis_extracted_variable_groups: list[ExtractedVariableGroup],
     kvis_variables_table_entries: list[KVISVariables],
     kvis_fieldvalues_table_entries: list[KVISFieldValues],
-) -> list[ExtractedVariable]:
+) -> None:
     """Transform and load extracted variables."""
     extracted_variables = transform_kvis_table_entries_to_extracted_variables(
         kvis_extracted_resource_id,
