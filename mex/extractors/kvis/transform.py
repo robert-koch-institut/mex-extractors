@@ -300,10 +300,10 @@ def transform_kvis_table_entries_to_extracted_variables(
         ExtractedVariable(
             belongsTo=[extracted_variable_group_id_by_label[item.file_type]],
             dataType=item.datatype_description,
-            description=[Text(value=item.field_description)],
+            description=[Text(value=item.field_description, language=TextLanguage.DE)],
             hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
             identifierInPrimarySource=f"kvis_{item.field_name_short}",
-            label=[Text(value=item.field_name_long)],
+            label=[Text(value=item.field_name_long, language=TextLanguage.DE)],
             usedIn=[kvis_extracted_resource_id],
             valueSet=valuesets_by_variable_name.get(item.fvlist_name, None)
             if item.fvlist_name
