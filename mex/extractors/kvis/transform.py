@@ -97,7 +97,15 @@ def transform_kvis_resource_to_extracted_resource(
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedResource:
-    """Transform the Resource mapping to an extracted resource. No reading from KVIS."""
+    """Transform the Resource mapping to an extracted resource. No reading from KVIS.
+
+    Args:
+        extracted_organizational_units: list of extracted organizational units,
+        extracted_organization_rki: RKI extracted organizational unit
+
+    Returns:
+        ExtractedResource
+    """
     settings = Settings.get()
     mapping = ResourceMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "resource.yaml")
@@ -196,7 +204,15 @@ def transform_kvis_variables_to_extracted_variable_groups(
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_variables_table_entries: list[KVISVariables],
 ) -> list[ExtractedVariableGroup]:
-    """Transform entries of the kvis variables table to extracted variable groups."""
+    """Transform entries of the kvis variables table to extracted variable groups.
+
+    Args:
+        kvis_extracted_resource_id: MergedResourceIdentifier of kvis resource
+        kvis_variables_table_entries: The kvis variables table entries.
+
+    Returns:
+        list of extracted variable group entries.
+    """
     extracted_variable_groups: list[ExtractedVariableGroup] = []
     seen: set[str] = set()
     for item in kvis_variables_table_entries:
@@ -217,7 +233,14 @@ def transform_kvis_variables_to_extracted_variable_groups(
 def transform_kvis_fieldvalues_table_entries_to_setvalues(
     kvis_fieldvalues_table_entries: list[KVISFieldValues],
 ) -> dict[str, list[str]]:
-    """Collect valueSets from fieldvalues table according to mapping rules."""
+    """Collect valueSets from fieldvalues table according to mapping rules.
+
+    Args:
+        kvis_fieldvalues_table_entries: list of KVISFieldValue table entries
+
+    Returns:
+        dictionary of setValues by variable
+    """
     settings = Settings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "variable.yaml")
@@ -258,7 +281,17 @@ def transform_kvis_table_entries_to_extracted_variables(
     kvis_variables_table_entries: list[KVISVariables],
     kvis_fieldvalues_table_entries: list[KVISFieldValues],
 ) -> list[ExtractedVariable]:
-    """Transform entries of the kvis tables to extracted variables."""
+    """Transform entries of the kvis tables to extracted variables.
+
+    Args:
+        kvis_extracted_resource_id: MergedResourceIdentifier of kvis resource
+        kvis_extracted_variable_groups: list of ExtractedVariableGroups
+        kvis_variables_table_entries: list of KVISVariables table entries
+        kvis_fieldvalues_table_entries: list of KVISFieldValues table entries
+
+    Returns:
+        list of ExtractedVariables
+    """
     valuesets_by_variable_name = transform_kvis_fieldvalues_table_entries_to_setvalues(
         kvis_fieldvalues_table_entries
     )
