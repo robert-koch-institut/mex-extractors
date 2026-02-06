@@ -27,7 +27,7 @@ repos:
     hooks:
       - id: uv-lock
         name: uv
-        args: ["--check"]
+        args: [--check]
   - repo: local
     hooks:
     - id: mypy

@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+- upgrade debian docker base to trixie again
+
 ### Deprecated
 
 ### Removed
@@ -20,6 +23,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.5] - 2026-02-05
+
+### Fixed
+
+- fix dagster code location name
+
+## [1.8.4] - 2026-02-05
+
+### Added
+
+- add odbc and krb driver installation to dockerfile
+- add postgres to docker compose configuration
+
+### Changes
+
+- upgrade debian docker base to trixie again
 
 ## [1.8.3] - 2026-02-03
 
@@ -68,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove mailpit path for CI testing
 - datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
+- igs mapping update resource
 
 ### Removed
 

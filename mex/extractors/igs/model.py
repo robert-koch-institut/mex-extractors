@@ -3,6 +3,12 @@ from typing import Any
 from mex.common.models import BaseModel
 
 
+class IGSInfo(BaseModel):
+    """Model class for IGS Info."""
+
+    title: str
+
+
 class IGSSchema(BaseModel):
     """Model class for IGS Schemas."""
 
