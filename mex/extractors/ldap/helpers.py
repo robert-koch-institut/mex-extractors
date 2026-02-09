@@ -83,7 +83,7 @@ def get_ldap_merged_contact_id_by_mail(
 
     Args:
         mail: functional account mail
-        limit: How many items to returnd
+        limit: How many items to return
 
     Returns:
         merged contact point id or None, if not exactly one result
