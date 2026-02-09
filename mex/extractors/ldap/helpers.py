@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from mex.common.exceptions import EmptySearchResultError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
@@ -55,7 +56,8 @@ def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     )
     rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
     if not rki_organization_id:
-        return None
+        msg = "RKI wikidata organization not found"
+        raise EmptySearchResultError(msg)
     unit_merged_ids_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
     person_unit_ids = [
         merged_id
