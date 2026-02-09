@@ -243,34 +243,37 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
         load_yaml(settings.kvis.mapping_path / "variable.yaml")
     )
 
-    # collect valueSet entries in a dictionary by variable name:
-    # field name mapping: model_alias -> field_name, e.g. "FieldValue": "field_value"
-    field_name_by_alias = {
-        f.alias: name for name, f in KVISFieldValues.model_fields.items()
+    # get variable names by lookup field for valueset collection:
+    valueset_variables_by_lookupfield = {
+        rule.fieldInPrimarySource: rule.mappingRules[0].forValues
+        for rule in variable_mapping.valueSet
     }
-    # Mapping: In which field in the KVIS table should the valueSets be looked up
-    valueset_fields_by_forvalues: dict[str, str] = {}
-    for rule in variable_mapping.valueSet:
-        if not rule.mappingRules[0].forValues:
-            msg = "no forValues defined in variables.yaml for 'valueSet'"
-            raise MExError(msg)
-        # translate aliases in mapping to field names in model
-        use_field = field_name_by_alias[rule.fieldInPrimarySource]
-        for for_value in rule.mappingRules[0].forValues:
-            valueset_fields_by_forvalues[for_value] = use_field
-    # Collect valueSets from table according to mapping rules
+
+    # Collect valueSets from table per variable according to lookup field
     valuesets_by_variable_name: dict[str, list[str]] = defaultdict(list)
     for item in kvis_fieldvalues_table_entries:
-        field = valueset_fields_by_forvalues.get(item.field_value_list_name, None)
-        if not field:
+        if (
+            valueset_variables_by_lookupfield["FieldValue"]
+            and item.field_value_list_name
+            in valueset_variables_by_lookupfield["FieldValue"]
+        ):
+            valuesets_by_variable_name[item.field_value_list_name].append(
+                item.field_value
+            )
+        elif (
+            valueset_variables_by_lookupfield["FieldValueLongText"]
+            and item.field_value_list_name
+            in valueset_variables_by_lookupfield["FieldValueLongText"]
+        ):
+            valuesets_by_variable_name[item.field_value_list_name].append(
+                item.field_value_long_text
+            )
+        else:
             msg = (
                 f"no lookup-field (fieldInPrimarySource) defined in variables.yaml "
                 f"for 'valueSet' for KVIS field '{item.field_value_list_name}'."
             )
             raise MExError(msg)
-        valuesets_by_variable_name[item.field_value_list_name].append(
-            getattr(item, field)
-        )
     return valuesets_by_variable_name
 
 
