@@ -9,9 +9,21 @@ from mex.common.models import (
 from mex.extractors.igs.connector import IGSConnector
 from mex.extractors.igs.model import (
     IGSEnumSchema,
+    IGSInfo,
     IGSPropertiesSchema,
     IGSSchema,
 )
+
+
+def extract_igs_info() -> IGSInfo:
+    """Extract IGS info.
+
+    Returns:
+        IGS info
+    """
+    connector = IGSConnector.get()
+    raw_json = connector.get_json_from_api()
+    return IGSInfo(**raw_json.get("info", {}))
 
 
 def extract_igs_schemas() -> dict[str, IGSSchema]:

@@ -9,9 +9,19 @@ from mex.common.models import (
 )
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.igs.extract import extract_igs_schemas
-from mex.extractors.igs.model import IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+
+@pytest.fixture
+def igs_info() -> IGSInfo:
+    return IGSInfo(title="test_title", version="test_version")
+
+
+@pytest.fixture
+def igs_endpoint_counts() -> dict[str, str]:
+    return {"/test/count": "42", "pathogen_PATHOGEN": "7", "/uploads/count": "5"}
 
 
 @pytest.fixture
