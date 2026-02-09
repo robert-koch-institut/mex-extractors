@@ -30,5 +30,11 @@ def mocked_igs(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(
         IGSConnector,
         "get_endpoint_count",
-        lambda self, endpoint, **__: "4" if endpoint == "/samples/count" else "7",
+        lambda self, endpoint, **__: (
+            "4"
+            if endpoint == "/samples/count"
+            else "5"
+            if endpoint == "/uploads/count"
+            else "7"
+        ),
     )
