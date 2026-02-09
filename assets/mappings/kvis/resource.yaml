@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=../../__schema__/ResourceMapping.json
+
+accessRestriction:
+- mappingRules:
+  - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+- mappingRules:
+  - setValues:
+alternativeTitle:
+- mappingRules:
+  - setValues:
+    - value: KVIS
+      language: de
+contact:
+- mappingRules:
+  - forValues:
+    - contactc@rki.de
+contributingUnit:
+- mappingRules:
+  - forValues:
+    - C1
+contributor:
+- mappingRules:
+  - forValues:
+    - FelicitasJ@rki.de
+    - FictitiousF@rki.de
+created:
+- mappingRules:
+  - setValues: "1999"
+description:
+- mappingRules:
+  - setValues:
+    - value: "Wörter"
+      language: de
+documentation:
+- mappingRules:
+  - setValues:
+    - language: de
+      title: a
+      url: http://www.a.b
+    - language: de
+      title: c
+      url: http://www.c.d
+externalPartner:
+- mappingRules:
+  - forValues:
+    - RKI
+hadPrimarySource:
+- mappingRules:
+  - rule: 'kvis'
+hasLegalBasis:
+- mappingRules:
+  - setValues:
+hasPurpose:
+- mappingRules:
+  - setValues:
+identifierInPrimarySource:
+- mappingRules:
+  - setValues: kvis_resource
+keyword:
+- mappingRules:
+  - setValues:
+    - value: Schlüsselwort
+      language: de
+language:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/language-1
+method:
+- mappingRules:
+  - setValues:
+populationCoverage:
+- mappingRules:
+  - setValues:
+provenance:
+- mappingRules:
+  - setValues:
+publisher:
+- mappingRules:
+  - forValues:
+    - Robert Koch-Institut
+    rule: Match value with wikidata connector.
+resourceCreationMethod:
+- mappingRules:
+  - setValues:
+resourceTypeGeneral:
+- mappingRules:
+  - setValues:
+resourceTypeSpecific:
+- mappingRules:
+  - setValues:
+spatial:
+- mappingRules:
+  - setValues:
+theme:
+- mappingRules:
+  - setValues:
+    - https://mex.rki.de/item/theme-11
+title:
+- mappingRules:
+  - setValues:
+    - value: Titel
+      language: de
+unitInCharge:
+- mappingRules:
+  - forValues:
+    - fg99
