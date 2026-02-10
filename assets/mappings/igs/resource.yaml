@@ -24,8 +24,16 @@ contact:
           - contactc@rki.de
         rule:
 contributingUnit:
-  - mappingRules:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
       - forValues:
+          - PATHOGEN
+        rule: C1
+created:
+  - mappingRules:
+      - setValues: "1970"
 description:
   - mappingRules:
       - setValues:
@@ -38,23 +46,28 @@ hadPrimarySource:
 hasLegalBasis:
   - mappingRules:
       - setValues:
-hasPersonalData:
+hasPurpose:
   - mappingRules:
       - setValues:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
-      - setValues: "test_id"
+      - setValues:
 keyword:
   - mappingRules:
       - setValues:
+          - value: "test keyword"
+            language: de
   - fieldInPrimarySource:
     locationInPrimarySource:
-    examplesInPrimarySource:
     mappingRules:
+      - rule:
       - forValues:
+          - PATHOGEN
         setValues:
+          - language: de
+            value: Pathogen
 language:
   - mappingRules:
       - setValues:
@@ -66,14 +79,26 @@ method:
       - setValues:
   - mappingRules:
       - forValues:
+populationCoverage:
+  - mappingRules:
+      - setValues:
+  - mappingRules:
+      - forValues:
+provenance:
+  - mappingRules:
+      - setValues:
+  - mappingRules:
+      - forValues:
 qualityInformation:
-  - fieldInPrimarySource: /genomes/count
+  - fieldInPrimarySource: /test/count
     locationInPrimarySource:
     examplesInPrimarySource:
     mappingRules:
-      - forValues:
+      - rule:
         setValues:
-  - fieldInPrimarySource: /samples/count + component/schema/
+        - value: "Anzahl tests: [/test/count]"
+          language: de
+  - fieldInPrimarySource: /samples/count + test/schema/
     locationInPrimarySource:
     examplesInPrimarySource:
     mappingRules:
