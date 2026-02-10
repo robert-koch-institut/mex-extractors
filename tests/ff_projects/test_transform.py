@@ -80,10 +80,23 @@ def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(
         "mex.extractors.ff_projects.transform.load", lambda x: created_orgs.extend(x)
     )
-
+    org_names = [
+        "Existing-Institute",  # match existing
+        "G-BA",  # new
+        "G-BA ",  # duplicate
+        "g-ba",  # duplicate
+        "None",  # ignored
+    ]
     result = get_or_create_organization(org_names, extracted_organizations)
 
-    assert len(result) == 2
+    assert len(created_orgs) == 1
+    assert len(result) == 4
     assert existing_org_id in result
     result_created_orgs = [org_id for org_id in result if org_id != existing_org_id]
     assert result_created_orgs[0] == created_orgs[0].stableTargetId
+    g_ba_ids = [org_id for org_id in result if org_id != existing_org_id]
+    assert len(set(g_ba_ids)) == 1
+
+    # oiriginal name of extracted organization used in creating new ExtractedOrganization
+    assert created_orgs[0].officialName[0].value == "G-BA"
+    assert created_orgs[0].identifierInPrimarySource.strip() == "G-BA"

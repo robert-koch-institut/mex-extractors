@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- test split by / for ff-projects extract organization
 -kvis: transformation and loading of resource, variables and variable-groups
 
 ### Changes
@@ -21,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
 
 ### Security
 
