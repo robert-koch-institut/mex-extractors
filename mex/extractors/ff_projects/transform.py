@@ -51,17 +51,21 @@ def transform_ff_projects_source_to_extracted_activity(
         if person in person_stable_target_ids_by_query_string
         for sti in person_stable_target_ids_by_query_string[person]
     ]
-    orgs = ff_projects_source.zuwendungs_oder_auftraggeber.replace("/", ",").split(",")
-    funder_or_commissioner: list[MergedOrganizationIdentifier] = []
-    for org in orgs:
-        if org in (
-            ff_projects_activity.funderOrCommissioner[0].mappingRules[1].forValues or ()
-        ):
-            continue
-        funder_or_commissioner = get_or_create_organization(
-            orgs,
-            organization_stable_target_id_by_synonyms,
-        )
+
+    orgs = [
+        org.strip()
+        for org in ff_projects_source.zuwendungs_oder_auftraggeber.replace(
+            "/", ","
+        ).split(",")
+    ]
+    skipped_orgs = set(
+        ff_projects_activity.funderOrCommissioner[0].mappingRules[1].forValues or ()
+    )
+    to_create_orgs = [org for org in orgs if org not in skipped_orgs]
+    funder_or_commissioner = get_or_create_organization(
+        to_create_orgs,
+        organization_stable_target_id_by_synonyms,
+    )
 
     if ff_projects_source.rki_az in (
         ff_projects_activity.activityType[0].mappingRules[0].forValues or ()
@@ -120,16 +124,23 @@ def get_or_create_organization(
         list of matched or created organization identifier
     """
     final_organizations: list[MergedOrganizationIdentifier] = []
+
+    # for easier lookp up by stripping and lowercasing name variations
+    cleaned_extracted_organizations = {
+        key.strip().lower(): value for key, value in extracted_organizations.items()
+    }
     for org in orgs:
-        extracted_organizations = {
-            key.strip().lower(): value for key, value in extracted_organizations.items()
-        }
-        if org in ("None", "Not applicable"):
+        # not org covers None or empty strings
+        if not org or org in ("None", "Not applicable"):
             continue
-        normalized_org = org.strip().lower()
-        if wpo := extracted_organizations.get(normalized_org):
+
+        # stripped and lowercased org name variations for matching in look up
+        cleaned_org = org.strip().lower()
+
+        if wpo := cleaned_extracted_organizations.get(cleaned_org):
             final_organizations.append(wpo)
             continue
+
         new_extracted_organization = ExtractedOrganization(
             officialName=[Text(value=org)],
             identifierInPrimarySource=org,
@@ -139,7 +150,9 @@ def get_or_create_organization(
         merged_id = MergedOrganizationIdentifier(
             new_extracted_organization.stableTargetId
         )
-        extracted_organizations[normalized_org] = merged_id
+
+        # cache newly created orgs to prevent duplicates because of name variations
+        cleaned_extracted_organizations[cleaned_org] = merged_id
         final_organizations.append(merged_id)
 
     return final_organizations
