@@ -71,14 +71,11 @@ class S3Sink(S3BaseSink):
 class S3XlsxSink(S3BaseSink):
     """Special sink to load models as XLSX file into S3 bucket."""
 
-    def load(
-        self, items: Iterable[_LoadItemT], *, unit_name: str | None = None
-    ) -> Generator[_LoadItemT]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
         """Write the incoming items as an XLSX directly to S3.
 
         Args:
             items: Iterable of any kind of items
-            unit_name: [optional] unit name for excel naming
 
         Returns:
             Generator for the loaded items
@@ -86,8 +83,7 @@ class S3XlsxSink(S3BaseSink):
         settings = Settings.get()
         items_list = list(items)
 
-        optional_name_extension = f"_{unit_name.replace(' ', '')}" if unit_name else ""
-        file_name = f"{items_list[0].__class__.__name__}{optional_name_extension}.xlsx"
+        file_name = f"{items_list[0].__class__.__name__}.xlsx"
 
         dicts = [
             item.model_dump(by_alias=True, exclude_none=False) for item in items_list

@@ -92,7 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - asset checks created during definition time in base.py
 - lock file maintenance (2026-01-19)
 - remove mailpit path for CI testing
-- datenkompass: publish activities by unit, filter and mapping update
 - switch package manager from pdm to uv
 - igs mapping update resource
 

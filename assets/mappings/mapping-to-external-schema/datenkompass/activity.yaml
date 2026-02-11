@@ -1,4 +1,8 @@
 fields:
+- fieldInMEx: hadPrimarySource
+  mappingRules:
+  - forValues:
+    - 'Lorem Ipsum'
 - fieldInTarget: Beschreibung
   fieldInMEx: abstract
   mappingRules:

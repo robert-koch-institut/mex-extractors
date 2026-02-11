@@ -348,9 +348,6 @@ def transform_activities(
         datenhalter = handle_setval(
             default_by_fieldname["datenhalter"].mappingRules[0].setValues
         )
-        start = str(item.start[0]) if item.start else None
-        end = str(item.end[0]) if item.end else None
-        zeitliche_abdeckung = f"{start} - {end}" if start and end else start or end
         voraussetzungen = handle_setval(
             default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
         )
@@ -391,7 +388,6 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
-                zeitliche_abdeckung=zeitliche_abdeckung,
                 voraussetzungen=voraussetzungen,
                 frequenz=frequenz,
                 hauptkategorie=hauptkategorie,

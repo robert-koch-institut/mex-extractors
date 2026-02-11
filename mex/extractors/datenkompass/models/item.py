@@ -22,7 +22,6 @@ class DatenkompassActivity(BaseModel):
     titel: str = Field(..., alias="Titel")
     schlagwort: str | None = Field(None, alias="Schlagwort")
     datenbank: str | None = Field(None, alias="Link oder Datenbank")
-    zeitliche_abdeckung: str | None = Field(None, alias="Zeitliche Abdeckung")
     voraussetzungen: str = Field(
         ..., alias="Formelle Voraussetzungen für den Datenerhalt"
     )
@@ -37,6 +36,7 @@ class DatenkompassActivity(BaseModel):
     kommentar: str = Field(..., alias="Kommentar")
     dk_format: str = Field(..., alias="Format der Daten")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassBibliographicResource(BaseModel):
@@ -73,6 +73,7 @@ class DatenkompassBibliographicResource(BaseModel):
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 class DatenkompassResource(BaseModel):
@@ -109,6 +110,7 @@ class DatenkompassResource(BaseModel):
     herausgeber: str = Field(..., alias="Herausgeber")
     kommentar: str = Field(..., alias="Kommentar")
     identifier: MergedIdentifier = Field(..., alias="MEx-Identifier")
+    entityType: str = Field(exclude=True)  # ignore when writing to json
 
 
 AnyDatenkompassModel = (

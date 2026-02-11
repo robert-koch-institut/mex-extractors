@@ -1,6 +1,5 @@
 fields:
-- fieldInMEx: hadPrimarySource   #ToDo: refactor
-  fieldInTarget: None
+- fieldInMEx: hadPrimarySource
   mappingRules:
   - forValues:
     - 'Source-1'

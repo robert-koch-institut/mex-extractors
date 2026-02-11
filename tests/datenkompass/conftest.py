@@ -28,7 +28,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     Text,
-    TextLanguage,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
@@ -66,7 +65,10 @@ def mocked_merged_activities() -> list[MergedActivity]:
     return [
         MergedActivity(
             contact=["LoremIpsum1234"],
-            responsibleUnit=["IdentifierUnitC1", "IdentifierUnitFG99"],
+            responsibleUnit=[
+                MergedOrganizationalUnitIdentifier("IdentifierOrgUnitZB"),
+                MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
+            ],
             title=[
                 Text(value='"title "Act" no language"', language=None),
                 Text(value="title en", language="en"),
@@ -75,7 +77,6 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 Text(value="Die Nutzung", language="de"),
                 Text(value="The usage", language="en"),
             ],
-            end=["2025-02-25"],
             funderOrCommissioner=[
                 MergedOrganizationIdentifier("Identifier2forORG"),
                 MergedOrganizationIdentifier("NoORGIdentifier"),
@@ -84,7 +85,6 @@ def mocked_merged_activities() -> list[MergedActivity]:
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
             ],
-            start=["2021-02-21"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             website=[
                 Link(language=None, url="https://www.dont-transform.de"),
@@ -95,13 +95,12 @@ def mocked_merged_activities() -> list[MergedActivity]:
         ),
         MergedActivity(
             contact=["LoremIpsum3456"],
-            responsibleUnit=["IdentifierUnitPRNT"],
+            responsibleUnit=[MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG")],
             title=[
                 Text(value="titel de", language="de"),
                 Text(value="title en", language="en"),
             ],
             abstract=[Text(value="Without language", language=None)],
-            end=["1970-01-01"],
             funderOrCommissioner=[MergedOrganizationIdentifier("Identifier1forORG")],
             shortName=[Text(value="short only english", language="en")],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ...
@@ -110,7 +109,7 @@ def mocked_merged_activities() -> list[MergedActivity]:
         ),
         MergedActivity(
             contact=["LoremIpsum5678"],
-            responsibleUnit=["IdentifierUnitFG99"],
+            responsibleUnit=["DolorSitAmetConsec"],
             title=[Text(value="should get filtered out", language="en")],
             funderOrCommissioner=[MergedOrganizationIdentifier("NoORGIdentifier")],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_ ..
@@ -134,7 +133,9 @@ def mocked_merged_bibliographic_resource() -> list[MergedBibliographicResource]:
                 Text(value="Die Nutzung", language="de"),
                 Text(value="The usage", language="en"),
             ],
-            contributingUnit=[MergedOrganizationalUnitIdentifier("IdentifierUnitPRNT")],
+            contributingUnit=[
+                MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG")
+            ],
             keyword=[
                 Text(value="short en", language="en"),
                 Text(value="short de", language="de"),
@@ -167,8 +168,8 @@ def mocked_merged_resource() -> list[MergedResource]:
             ],
             contact=[
                 "PersonIdentifier4Peppa",
-                "IdentifierUnitC1",
-                "IdentifierUnitFG99",
+                "IdentifierOrgUnitEG",
+                "IdentifierOrgUnitZB",
                 "identifier4contactPt",
             ],
             doi="https://doi.org/10.1234_example",
@@ -184,7 +185,7 @@ def mocked_merged_resource() -> list[MergedResource]:
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["some Source-2 resource title"],
             wasGeneratedBy=["MergedActivityWithORG2"],
-            unitInCharge=["IdentifierUnitPRNT"],
+            unitInCharge=["IdentifierOrgUnitEG"],
             identifier=["Source2Resource"],
         ),
         MergedResource(
@@ -193,7 +194,7 @@ def mocked_merged_resource() -> list[MergedResource]:
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["some Source-1 resource title"],
             wasGeneratedBy=["MergedActivityNoORG"],
-            unitInCharge=["IdentifierUnitC1"],
+            unitInCharge=["IdentifierOrgUnitZB"],
             identifier=["Source1Resource"],
         ),
     ]
@@ -204,47 +205,28 @@ def mocked_merged_organizational_units() -> list[MergedOrganizationalUnit]:
     """Mock a list of Merged Organizational Unit items."""
     return [
         MergedOrganizationalUnit(
-            parentUnit="IdentifierUnitPRNT",
-            name=[
-                Text(value="CHLD Unterabteilung", language=TextLanguage.DE),
-                Text(value="C1: Sub Unit", language=TextLanguage.EN),
-            ],
-            alternativeName=[
-                Text(value="CHLD", language=TextLanguage.EN),
-                Text(value="C1 Sub-Unit", language=TextLanguage.EN),
-                Text(value="C1 Unterabteilung", language=TextLanguage.DE),
-            ],
+            name=[Text(value="example unit", language="en")],
+            parentUnit=MergedOrganizationalUnitIdentifier("identifierParentUnit"),
+            email=["unit@example.org"],
+            shortName=[Text(value="e.g. unit", language="en")],
+            entityType="MergedOrganizationalUnit",
+            identifier=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
+        ),
+        MergedOrganizationalUnit(
+            name=[Text(value="andere Beispiel unit", language="de")],
+            parentUnit=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitEG"),
             email=[],
-            shortName=[Text(value="C1", language=TextLanguage.DE)],
+            shortName=[Text(value="a.bsp. unit", language="en")],
             entityType="MergedOrganizationalUnit",
-            identifier="IdentifierUnitC1",
+            identifier=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitZB"),
         ),
         MergedOrganizationalUnit(
-            parentUnit=None,
-            name=[
-                Text(value="Abteilung", language=TextLanguage.DE),
-                Text(value="Department", language=TextLanguage.EN),
-            ],
-            alternativeName=[
-                Text(value="PRNT Abteilung", language=TextLanguage.DE),
-                Text(value="PARENT Dept.", language=None),
-            ],
-            email=["pu@example.com", "PARENT@example.com"],
-            shortName=[Text(value="PRNT", language=TextLanguage.DE)],
+            name=[Text(value="non-extractable unit", language="en")],
+            parentUnit=MergedOrganizationalUnitIdentifier("identifierParentUnit"),
+            email=["dont_extract@example.org"],
+            shortName=[Text(value="nope", language="en")],
             entityType="MergedOrganizationalUnit",
-            identifier="IdentifierUnitPRNT",
-        ),
-        MergedOrganizationalUnit(
-            parentUnit=None,
-            name=[
-                Text(value="Fachgebiet 99", language=TextLanguage.DE),
-                Text(value="Group 99", language=TextLanguage.EN),
-            ],
-            alternativeName=[Text(value="FG99", language=TextLanguage.DE)],
-            email=["fg@example.com"],
-            shortName=[Text(value="FG 99", language=TextLanguage.DE)],
-            entityType="MergedOrganizationalUnit",
-            identifier="IdentifierUnitFG99",
+            identifier=MergedOrganizationalUnitIdentifier("IdentifierOrgUnitNo"),
         ),
     ]
 
@@ -254,14 +236,14 @@ def mocked_merged_organization() -> list[MergedOrganization]:
     """Mock a list of organizations as Merged Organization items."""
     return [
         MergedOrganization(
-            officialName=[Text(value="Organization 1", language="de")],
-            entityType="MergedOrganization",
-            identifier=MergedOrganizationIdentifier("Identifier1forORG"),
-        ),
-        MergedOrganization(
-            officialName=[Text(value="Organization 2", language=None)],
+            officialName=[Text(value="Organization 2", language="de")],
             entityType="MergedOrganization",
             identifier=MergedOrganizationIdentifier("Identifier2forORG"),
+        ),
+        MergedOrganization(
+            officialName=[Text(value="Organization 1", language=None)],
+            entityType="MergedOrganization",
+            identifier=MergedOrganizationIdentifier("Identifier1forORG"),
         ),
     ]
 
@@ -313,12 +295,11 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt. Die Nutzung",
             datenhalter="Datenhalter",
-            kontakt="fg@example.com",
-            organisationseinheit="C1; FG 99",
+            kontakt="unit@example.org",
+            organisationseinheit="a.bsp. unit; e.g. unit",
             titel="short de; title 'Act' no language; title en",
             schlagwort="Infektionskrankheiten und -epidemiologie",
             datenbank="https://www.do-transform.org",
-            zeitliche_abdeckung="2021-02-21 - 2025-02-25",
             voraussetzungen="Voraussetzungen",
             frequenz="Frequenz",
             hauptkategorie="Hauptkategorie",
@@ -336,12 +317,11 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
         DatenkompassActivity(
             beschreibung="Es handelt. Without language",
             datenhalter="Datenhalter",
-            kontakt="pu@example.com",
-            organisationseinheit="PRNT",
+            kontakt="unit@example.org",
+            organisationseinheit="e.g. unit",
             titel="short only english; titel de",
             schlagwort="Infektionskrankheiten und -epidemiologie",
             datenbank=None,
-            zeitliche_abdeckung="1970-01-01",
             voraussetzungen="Voraussetzungen",
             frequenz="Frequenz",
             hauptkategorie="Hauptkategorie",
@@ -373,12 +353,12 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 ) -> MagicMock:
     """Mock the backendAPIConnector functions to return dummy variables."""
     mock_dispatch = {
-        "MergedActivity": mocked_merged_activities,
+        "MergedActivity": [mocked_merged_activities[1]],
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
         "MergedPrimarySource": mocked_merged_primary_sources,
         "MergedOrganizationalUnit": mocked_merged_organizational_units,
-        "MergedOrganization": mocked_merged_organization,
+        "MergedOrganization": [mocked_merged_organization[1]],
         "MergedPerson": mocked_merged_person,
         "MergedContactPoint": mocked_merged_contact_point,
     }
