@@ -10,9 +10,8 @@ from mex.extractors.ldap.helpers import (
 )
 
 
-@pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_get_ldap_merged_person_id_by_query() -> None:
     merged_person_id = get_ldap_merged_person_id_by_query(
         display_name="Resolved, Roland",
@@ -20,7 +19,6 @@ def test_get_ldap_merged_person_id_by_query() -> None:
     assert merged_person_id == MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
 
 
-@pytest.mark.integration
 @pytest.mark.requires_rki_infrastructure
 @pytest.mark.usefixtures("mocked_ldap")
 def test_get_ldap_merged_contact_id_by_mail() -> None:
