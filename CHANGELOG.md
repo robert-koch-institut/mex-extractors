@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--kvis: transformation and loading of resource, variables and variable-groups
+- kvis: transformation and loading of resource, variables and variable-groups
 
 ### Changes
 
