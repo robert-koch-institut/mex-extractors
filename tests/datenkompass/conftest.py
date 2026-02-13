@@ -53,14 +53,6 @@ def mocked_bibliographic_resource_mapping() -> DatenkompassMapping:
 
 
 @pytest.fixture
-def mocked_resource_mapping() -> DatenkompassMapping:
-    settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
-    )
-
-
-@pytest.fixture
 def mocked_merged_activities() -> list[MergedActivity]:
     """Mock a list of Merged Activity items."""
     return [
@@ -171,6 +163,7 @@ def mocked_merged_resource() -> list[MergedResource]:
                 "IdentifierUnitFG99",
                 "identifier4contactPt",
             ],
+            created="1970-01-01",
             doi="https://doi.org/10.1234_example",
             hasLegalBasis=[
                 Text(value="has basis", language="en"),
@@ -182,19 +175,28 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="Wort 2", language="de"),
             ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some Source-2 resource title"],
+            title=["Resource with unit C1"],
             wasGeneratedBy=["MergedActivityWithORG2"],
-            unitInCharge=["IdentifierUnitPRNT"],
-            identifier=["Source2Resource"],
+            unitInCharge=["IdentifierUnitC1"],
+            identifier=["IdentifierC1Resource"],
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
             contact=["PersonIdentifier4Peppa"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
-            title=["some Source-1 resource title"],
+            title=["Resource with unit FG 99"],
             wasGeneratedBy=["MergedActivityNoORG"],
-            unitInCharge=["IdentifierUnitC1"],
-            identifier=["Source1Resource"],
+            unitInCharge=["IdentifierUnitFG99"],
+            identifier=["IdentifierFG99Resource"],
+        ),
+        MergedResource(
+            accessRestriction=AccessRestriction["RESTRICTED"],
+            contact=["PersonIdentifier4Peppa"],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["Resource with no relevant unit"],
+            wasGeneratedBy=["MergedActivityNoORG"],
+            unitInCharge=["someIrrelevantUnit"],
+            identifier=["FilteredOutResource"],
         ),
     ]
 

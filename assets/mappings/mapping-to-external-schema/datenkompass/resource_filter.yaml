@@ -1,0 +1,10 @@
+fields:
+  - fieldInMEx: hadPrimarySource
+    filterRules:
+      - forValues:
+          - "relevant primary source"
+  - fieldInMEx: unitInCharge
+    filterRules:
+      - forValues:
+          - "PRNT"
+          - "FG 99"
