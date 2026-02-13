@@ -5,6 +5,7 @@ from mex.common.models import (
     MergedActivity,
     MergedOrganization,
     MergedOrganizationalUnit,
+    MergedResource,
 )
 from mex.common.organigram.helpers import find_descendants
 from mex.common.types import (
@@ -13,6 +14,7 @@ from mex.common.types import (
 from mex.extractors.datenkompass.extract import (
     get_merged_items,
 )
+from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 from mex.extractors.settings import Settings
 
 
@@ -66,6 +68,57 @@ def filter_activities_for_organization_and_unit(
     )
 
     return filtered_merged_activities_by_unit
+
+
+def filter_merged_resources_by_unit(
+    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    resource_filter_mapping: DatenkompassFilterMapping,
+    merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> dict[str, dict[str, list[MergedResource]]]:
+    """Filter the merged resources by unit in unitInCharge.
+
+    Args:
+        merged_resources_by_primary_source: merged resources by primary source.
+        resource_filter_mapping: Datenkompass resource filter mapping
+        merged_organizational_units_by_id: all merged units by their id
+
+    Returns:
+        filtered list of merged resources by primary source by unit.
+    """
+    allowedunits_by_filterunits = {
+        filter_unit: set(
+            find_descendant_units(merged_organizational_units_by_id, filter_unit)
+        )
+        for filter_unit in (
+            resource_filter_mapping.fields[1].filterRules[0].forValues or []
+        )
+    }
+    result_resources_by_primary_source_by_unit: dict[
+        str, dict[str, list[MergedResource]]
+    ] = {}
+
+    for filter_unit, allowed_units in allowedunits_by_filterunits.items():
+        result_resources_by_primary_source: dict[str, list[MergedResource]] = {}
+        for (
+            primary_source,
+            merged_resources,
+        ) in merged_resources_by_primary_source.items():
+            allowed_merged_resources = [
+                item
+                for item in merged_resources
+                if allowed_units.intersection(item.unitInCharge)
+            ]
+            if allowed_merged_resources:
+                result_resources_by_primary_source[primary_source] = (
+                    allowed_merged_resources
+                )
+        result_resources_by_primary_source_by_unit[filter_unit] = (
+            result_resources_by_primary_source
+        )
+
+    return result_resources_by_primary_source_by_unit
 
 
 def find_descendant_units(

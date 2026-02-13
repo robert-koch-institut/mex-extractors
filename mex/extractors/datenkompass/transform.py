@@ -33,6 +33,7 @@ from mex.extractors.datenkompass.models.mapping import (
     DatenkompassMappingField,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.utils import load_yaml
 
 VocabularyT = TypeVar(
     "VocabularyT",
@@ -297,6 +298,46 @@ def handle_setval(set_value: list[str] | str | None) -> str:
     raise ValueError(msg)
 
 
+def built_string_shorter_than_limit(
+    words: list[str | None],
+    delim: str,
+    min_word_length: int,
+    max_string_length: int,
+) -> str | None:
+    """Filter out certain words and limit final string to maximum length.
+
+    Args:
+        words: list of entries.
+        delim: list delimiter for joining the strings in list
+        min_word_length: minimal length of each word.
+        max_string_length: maximal length of final string of joined words.
+
+    Returns:
+        combined string.
+    """
+    parts = []
+    total_length = 0
+
+    for word in words:
+        if not word or any(
+            url_pattern in word for url_pattern in ["www.", "http:", "https:"]
+        ):
+            continue
+
+        word_len = len(word)
+
+        if word_len < min_word_length:
+            continue
+
+        if total_length + word_len > max_string_length:
+            break
+
+        parts.append(word)
+        total_length += word_len + len(delim)
+
+    return delim.join(parts)
+
+
 def transform_activities(
     filtered_merged_activities: list[MergedActivity],
     merged_organizational_units_by_id: dict[
@@ -535,149 +576,163 @@ def transform_bibliographic_resources(
 
 
 def transform_resources(
-    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    merged_resources_by_primary_source_by_unit: dict[
+        str, dict[str, list[MergedResource]]
+    ],
     merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier,
         MergedOrganizationalUnit,
     ],
     merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
-    resource_mapping: DatenkompassMapping,
-) -> list[DatenkompassResource]:
+) -> dict[str, dict[str, list[DatenkompassResource]]]:
     """Transform merged to datenkompass resources.
 
     Args:
-        merged_resources_by_primary_source: dictionary of merged resources
+        merged_resources_by_primary_source_by_unit: dictionary of merged resources
         merged_organizational_units_by_id: dict of merged organizational units by id
         merged_contact_points_by_id: dict of merged contact points
-        resource_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassResource instances.
     """
     settings = Settings.get()
+    resource_mapping = DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
+    )
     delim = settings.datenkompass.list_delimiter
-    datenkompass_resources = []
+    min_keyword_length = settings.datenkompass.min_keyword_item_length
+    max_keyword_string_length = settings.datenkompass.max_keyword_str_length
+
     default_by_fieldname = mapping_lookup_default(
         DatenkompassResource,
         resource_mapping,
     )
-    for (
-        primary_source,
-        merged_resources_list,
-    ) in merged_resources_by_primary_source.items():
-        datennutzungszweck = next(
-            handle_setval(rule.setValues)
-            for rule in default_by_fieldname["datennutzungszweck"].mappingRules
-            if rule.forPrimarySource and rule.forPrimarySource == primary_source
+
+    datennutzungszweck = handle_setval(
+        default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+    )
+    dk_format = handle_setval(
+        default_by_fieldname["dk_format"].mappingRules[0].setValues
+    )
+    datenhalter = handle_setval(
+        default_by_fieldname["datenhalter"].mappingRules[0].setValues
+    )
+    hauptkategorie = handle_setval(
+        default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+    )
+    unterkategorie = handle_setval(
+        default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+    )
+    rechtsgrundlage = handle_setval(
+        default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+    )
+    datenerhalt = handle_setval(
+        default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+    )
+    status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+    herausgeber = handle_setval(
+        default_by_fieldname["herausgeber"].mappingRules[0].setValues
+    )
+    kommentar = handle_setval(
+        default_by_fieldname["kommentar"].mappingRules[0].setValues
+    )
+
+    result_resoures_by_primary_source_by_unit: dict[
+        str, dict[str, list[DatenkompassResource]]
+    ] = {}
+    for unit, inner_dict in merged_resources_by_primary_source_by_unit.items():
+        result_resoures_by_primary_source: dict[str, list[DatenkompassResource]] = {}
+        for primary_source, merged_resources_list in inner_dict.items():
+            datenkompass_resources = []
+            for item in merged_resources_list:
+                voraussetzungen = next(
+                    handle_setval(rule.setValues)
+                    for rule in default_by_fieldname["voraussetzungen"].mappingRules
+                    if rule.forValues
+                    and rule.forValues[0] == item.accessRestriction.name
+                )
+                frequenz_vocabulary = (
+                    get_german_vocabulary([item.accrualPeriodicity])
+                    if item.accrualPeriodicity
+                    else []
+                )
+                frequenz = (
+                    delim.join(f for f in frequenz_vocabulary if f is not None) or None
+                )
+                kontakt = get_resource_email(
+                    item.contact,
+                    merged_organizational_units_by_id,
+                    merged_contact_points_by_id,
+                )
+                organisationseinheit = get_unit_shortname(
+                    item.unitInCharge,
+                    merged_organizational_units_by_id,
+                    delim,
+                )
+                beschreibung = (
+                    get_abstract_or_description(item.description, delim)
+                    if item.description
+                    else handle_setval(
+                        default_by_fieldname["beschreibung"].mappingRules[0].setValues
+                    )
+                )
+                rechtsgrundlagen_benennung_collection = [
+                    entry.value for entry in item.hasLegalBasis
+                ] + get_german_vocabulary(
+                    [item.license] if item.license else [],
+                )
+                rechtsgrundlagen_benennung = (
+                    delim.join(
+                        entry
+                        for entry in rechtsgrundlagen_benennung_collection
+                        if entry is not None
+                    )
+                    or None
+                )
+                schlagwort_collection = get_german_vocabulary(item.theme) + [
+                    entry.value for entry in item.keyword
+                ]
+                schlagwort = built_string_shorter_than_limit(
+                    schlagwort_collection,
+                    delim,
+                    min_keyword_length,
+                    max_keyword_string_length,
+                )
+                datennutzungszweck_erweitert = (
+                    delim.join(
+                        [hp.value for hp in item.hasPurpose if hp.value is not None]
+                    )
+                    or None
+                )
+                datenkompass_resources.append(
+                    DatenkompassResource(
+                        voraussetzungen=voraussetzungen,
+                        frequenz=frequenz,
+                        kontakt=kontakt,
+                        organisationseinheit=organisationseinheit,
+                        startdatum=str(item.created) if item.created else None,
+                        beschreibung=beschreibung,
+                        datenbank=item.doi,
+                        rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
+                        datennutzungszweck_erweitert=datennutzungszweck_erweitert,
+                        schlagwort=schlagwort,
+                        dk_format=dk_format,
+                        titel=delim.join([fix_quotes(t.value) for t in item.title]),
+                        datenhalter=datenhalter,
+                        hauptkategorie=hauptkategorie,
+                        unterkategorie=unterkategorie,
+                        rechtsgrundlage=rechtsgrundlage,
+                        datenerhalt=datenerhalt,
+                        status=status,
+                        datennutzungszweck=datennutzungszweck,
+                        herausgeber=herausgeber,
+                        kommentar=kommentar,
+                        identifier=item.identifier,
+                        entityType=item.entityType,
+                    ),
+                )
+            result_resoures_by_primary_source[primary_source] = datenkompass_resources
+        result_resoures_by_primary_source_by_unit[unit] = (
+            result_resoures_by_primary_source
         )
-        for item in merged_resources_list:
-            voraussetzungen = next(
-                handle_setval(rule.setValues)
-                for rule in default_by_fieldname["voraussetzungen"].mappingRules
-                if rule.forValues and rule.forValues[0] == item.accessRestriction.name
-            )
-            frequenz_vocabulary = (
-                get_german_vocabulary([item.accrualPeriodicity])
-                if item.accrualPeriodicity
-                else []
-            )
-            frequenz = (
-                delim.join(f for f in frequenz_vocabulary if f is not None) or None
-            )
-            kontakt = get_resource_email(
-                item.contact,
-                merged_organizational_units_by_id,
-                merged_contact_points_by_id,
-            )
-            organisationseinheit = get_unit_shortname(
-                item.unitInCharge,
-                merged_organizational_units_by_id,
-                delim,
-            )
-            beschreibung = (
-                get_abstract_or_description(item.description, delim)
-                if item.description
-                else handle_setval(
-                    default_by_fieldname["beschreibung"].mappingRules[0].setValues
-                )
-            )
-            rechtsgrundlagen_benennung_collection = [
-                entry.value for entry in item.hasLegalBasis
-            ] + get_german_vocabulary(
-                [item.license] if item.license else [],
-            )
-            rechtsgrundlagen_benennung = (
-                delim.join(
-                    entry
-                    for entry in rechtsgrundlagen_benennung_collection
-                    if entry is not None
-                )
-                or None
-            )
-            schlagwort_collection = get_german_vocabulary(item.theme) + [
-                entry.value for entry in item.keyword
-            ]
-            schlagwort = (
-                delim.join(
-                    [entry for entry in schlagwort_collection if entry is not None]
-                )
-                or None
-            )
-            datennutzungszweck_erweitert = (
-                delim.join([hp.value for hp in item.hasPurpose if hp.value is not None])
-                or None
-            )
-            dk_format = handle_setval(
-                default_by_fieldname["dk_format"].mappingRules[0].setValues
-            )
-            datenhalter = handle_setval(
-                default_by_fieldname["datenhalter"].mappingRules[0].setValues
-            )
-            hauptkategorie = handle_setval(
-                default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
-            )
-            unterkategorie = handle_setval(
-                default_by_fieldname["unterkategorie"].mappingRules[0].setValues
-            )
-            rechtsgrundlage = handle_setval(
-                default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
-            )
-            datenerhalt = handle_setval(
-                default_by_fieldname["datenerhalt"].mappingRules[0].setValues
-            )
-            status = handle_setval(
-                default_by_fieldname["status"].mappingRules[0].setValues
-            )
-            herausgeber = handle_setval(
-                default_by_fieldname["herausgeber"].mappingRules[0].setValues
-            )
-            kommentar = handle_setval(
-                default_by_fieldname["kommentar"].mappingRules[0].setValues
-            )
-            datenkompass_resources.append(
-                DatenkompassResource(
-                    voraussetzungen=voraussetzungen,
-                    frequenz=frequenz,
-                    kontakt=kontakt,
-                    organisationseinheit=organisationseinheit,
-                    beschreibung=beschreibung,
-                    datenbank=item.doi,
-                    rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
-                    datennutzungszweck_erweitert=datennutzungszweck_erweitert,
-                    schlagwort=schlagwort,
-                    dk_format=dk_format,
-                    titel=delim.join([fix_quotes(t.value) for t in item.title]),
-                    datenhalter=datenhalter,
-                    hauptkategorie=hauptkategorie,
-                    unterkategorie=unterkategorie,
-                    rechtsgrundlage=rechtsgrundlage,
-                    datenerhalt=datenerhalt,
-                    status=status,
-                    datennutzungszweck=datennutzungszweck,
-                    herausgeber=herausgeber,
-                    kommentar=kommentar,
-                    identifier=item.identifier,
-                    entityType=item.entityType,
-                ),
-            )
-    return datenkompass_resources
+    return result_resoures_by_primary_source_by_unit
