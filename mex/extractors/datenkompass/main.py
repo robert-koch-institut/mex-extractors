@@ -326,8 +326,8 @@ def datenkompass_s3_xlsx_publication(
             deque(
                 s3xlsx.load(
                     datenkompass_resources,
-                    unit_name=unit,
                     primary_source_name=primary_source,
+                    unit_name=unit,
                 ),
                 maxlen=0,
             )

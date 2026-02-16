@@ -77,7 +77,7 @@ def filter_merged_resources_by_unit(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> dict[str, dict[str, list[MergedResource]]]:
-    """Filter the merged resources by unit in unitInCharge.
+    """Filter the merged resources by (unit and its childunits) in field unitInCharge.
 
     Args:
         merged_resources_by_primary_source: merged resources by primary source.

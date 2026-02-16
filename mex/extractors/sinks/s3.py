@@ -75,15 +75,15 @@ class S3XlsxSink(S3BaseSink):
         self,
         items: Iterable[_LoadItemT],
         *,
-        unit_name: str | None = None,
         primary_source_name: str | None = None,
+        unit_name: str | None = None,
     ) -> Generator[_LoadItemT]:
         """Write the incoming items as an XLSX directly to S3.
 
         Args:
             items: Iterable of any kind of items
-            unit_name: [optional] unit name for excel naming
             primary_source_name: [optional] primary source name for excel naming
+            unit_name: [optional] unit name for excel naming
 
         Returns:
             Generator for the loaded items
