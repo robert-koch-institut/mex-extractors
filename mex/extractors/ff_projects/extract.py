@@ -93,7 +93,7 @@ def get_optional_string_from_cell(cell_value: Any) -> str | None:  # noqa: ANN40
     return str(cell_value) if cell_value else None
 
 
-def extract_ff_projects_source(row: "pd.Series[Any]") -> FFProjectsSource | None:
+def extract_ff_projects_source(row: pd.Series[Any]) -> FFProjectsSource | None:
     """Extract one FF Projects source from a single pandas series row.
 
     Args:

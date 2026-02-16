@@ -96,7 +96,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
     return resources
 
 
-def get_clean_string(series: "Series[Any]") -> str:
+def get_clean_string(series: Series[Any]) -> str:
     """Clean string DataFrame and concatenate to one string.
 
     Args:

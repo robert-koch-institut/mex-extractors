@@ -56,7 +56,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
 
 
 def extract_international_projects_source(
-    row: "pd.Series[Any]",
+    row: pd.Series[Any],
 ) -> InternationalProjectsSource | None:
     """Extract one international projects source from an xlrd row.
 
