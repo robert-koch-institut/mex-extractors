@@ -296,14 +296,26 @@ def test_handle_setval_none_raises_error() -> None:
         handle_setval(None)
 
 
-def test_built_string_shorter_than_limit() -> None:
+@pytest.mark.parametrize(
+    ("input_value", "expected_output"),
+    [
+        (["aaa", "b", "c", "dd", "ee"], "aaa||dd"),
+        (["aa", "dd", "ee"], "aa||dd||ee"),
+        (["abcabcalsdhldgh", "y", "http://", "https://", "www.b"], ""),
+        ([], ""),
+    ],
+    ids=["filter for length", "last word just fits", "all filtered out", "empty input"],
+)
+def test_built_string_shorter_than_limit(
+    input_value: list[str | None], expected_output: str
+) -> None:
     result = built_string_shorter_than_limit(
-        ["aaa", "www.b", "c", "dd", "ee"],
+        input_value,
         "||",
         2,
         10,
     )
-    assert result == "aaa||dd"
+    assert result == expected_output
 
 
 def test_transform_activities(

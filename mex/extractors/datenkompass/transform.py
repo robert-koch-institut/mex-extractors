@@ -303,7 +303,7 @@ def built_string_shorter_than_limit(
     delim: str,
     min_word_length: int,
     max_string_length: int,
-) -> str | None:
+) -> str:
     """Filter out certain words and limit final string to maximum length.
 
     Args:
