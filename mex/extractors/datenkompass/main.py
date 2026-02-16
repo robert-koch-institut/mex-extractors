@@ -7,13 +7,11 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedContactPoint,
     MergedOrganizationalUnit,
-    MergedPerson,
     MergedResource,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
-    MergedPersonIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
     get_filtered_primary_source_ids,
@@ -81,7 +79,7 @@ def datenkompass_merged_contact_points_by_id() -> dict[
     }
 
 
-@asset(group_name="datenkompass")
+'''@asset(group_name="datenkompass")
 def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get person name as dictionary by id."""
     return {
@@ -100,7 +98,7 @@ def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
     }
 
 
-'''@asset(group_name="datenkompass")
+@asset(group_name="datenkompass")
 def datenkompass_activity_mapping() -> DatenkompassMapping:
     """Load the Datenkompass activity mapping."""
     settings = Settings.get()
