@@ -35,7 +35,7 @@ def ldap_roland_resolved() -> LDAPPerson:
         givenName=["Roland"],
         displayName="Resolved, Roland",
         objectGUID=UUID(int=1, version=4),
-        department="PARENT-UNIT",
+        department="parent-unit",
         departmentNumber="FG99",
         mail=["resolvedr@rki.de"],
     )
