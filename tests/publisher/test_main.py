@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -17,10 +17,8 @@ from mex.extractors.publisher.main import (
     publisher_items_without_actors,
     publisher_persons,
 )
+from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.sinks.s3 import S3Sink
-
-if TYPE_CHECKING:
-    from mex.common.models import AnyMergedModel, ItemsContainer
 
 
 @pytest.fixture  # needed for hardcoded upload to S3. Remove with MX-1808
@@ -39,7 +37,7 @@ def test_run() -> None:
 
 @pytest.mark.usefixtures("mocked_backend")
 def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
-    container = cast("ItemsContainer[AnyMergedModel]", publisher_items_without_actors())
+    container = cast("PublisherItemsLike", publisher_items_without_actors())
     assert len(container.items) == 1
     assert isinstance(container.items[0], MergedBibliographicResource)
     mocked_backend.fetch_extracted_items.assert_not_called()
@@ -63,7 +61,7 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
 
 @pytest.mark.usefixtures("mocked_backend")
 def test_publisher_persons(mocked_backend: MagicMock) -> None:
-    container = cast("ItemsContainer[AnyMergedModel]", publisher_persons())
+    container = cast("PublisherItemsLike", publisher_persons())
     assert len(container.items) == 1
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
@@ -80,9 +78,7 @@ def test_publisher_persons(mocked_backend: MagicMock) -> None:
 
 
 def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
-    container = cast(
-        "ItemsContainer[AnyMergedModel]", publisher_contact_points_and_units()
-    )
+    container = cast("PublisherItemsLike", publisher_contact_points_and_units())
     assert len(container.items) == 2
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
@@ -96,10 +92,7 @@ def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
 
 @pytest.mark.usefixtures("mocked_backend")
 def test_publisher_fallback_contact_identifiers() -> None:
-    identifiers = cast(
-        "list[MergedContactPointIdentifier]",
-        publisher_fallback_contact_identifiers(),
-    )
+    identifiers = publisher_fallback_contact_identifiers()
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
 
@@ -110,7 +103,7 @@ def test_publisher_items(
     ],
 ) -> None:
     container = cast(
-        "ItemsContainer[AnyMergedModel]",
+        "PublisherItemsLike",
         publisher_items(
             publisher_items_without_actors(),
             publisher_persons(),

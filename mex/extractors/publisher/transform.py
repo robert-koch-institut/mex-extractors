@@ -3,7 +3,6 @@ from collections.abc import Collection
 from mex.common.logging import logger
 from mex.common.models import (
     AnyMergedModel,
-    ItemsContainer,
     MergedPerson,
 )
 from mex.common.types import (
@@ -15,11 +14,12 @@ from mex.common.types import (
 from mex.extractors.publisher.fields import (
     REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
 )
+from mex.extractors.publisher.types import PublisherItemsLike
 
 
 def get_unit_id_per_person(
     publisher_merged_persons: list[MergedPerson],
-    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_contact_points_and_units: PublisherItemsLike,
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address.
 
