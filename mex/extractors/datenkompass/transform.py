@@ -15,6 +15,8 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    TemporalEntity,
+    TemporalEntityPrecision,
     Text,
 )
 from mex.common.types.vocabulary import (
@@ -336,6 +338,18 @@ def built_string_shorter_than_limit(
         total_length += word_len + len(delim)
 
     return delim.join(parts)
+
+
+def format_temporal_entity(entity: TemporalEntity | None) -> str | None:
+    """Format dates to DD.MM.YYYY format."""
+    if not entity:
+        return None
+
+    if entity.precision == TemporalEntityPrecision.YEAR:
+        return entity.date_time.strftime("%Y")
+    if entity.precision == TemporalEntityPrecision.MONTH:
+        return entity.date_time.strftime("%m.%Y")
+    return entity.date_time.strftime("%d.%m.%Y")
 
 
 def transform_activities(
@@ -704,13 +718,14 @@ def transform_resources(
                     )
                     or None
                 )
+                startdatum = format_temporal_entity(item.created)
                 datenkompass_resources.append(
                     DatenkompassResource(
                         voraussetzungen=voraussetzungen,
                         frequenz=frequenz,
                         kontakt=kontakt,
                         organisationseinheit=organisationseinheit,
-                        startdatum=str(item.created) if item.created else None,
+                        startdatum=startdatum,
                         beschreibung=beschreibung,
                         datenbank=item.doi,
                         rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,
