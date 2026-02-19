@@ -1,5 +1,5 @@
 from collections import deque
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from dagster import asset
 
@@ -8,7 +8,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-    AnyMergedModel,
     ItemsContainer,
     MergedConsent,
     MergedContactPoint,
@@ -35,11 +34,6 @@ from mex.extractors.publisher.transform import (
 from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
-
-if TYPE_CHECKING:
-    type PublisherItems = ItemsContainer[AnyMergedModel]
-else:
-    PublisherItems = ItemsContainer  # type: ignore[arg-type]
 
 
 @asset(group_name="publisher")
@@ -80,7 +74,7 @@ def publisher_merged_persons() -> list[MergedPerson]:
 
 
 @asset(group_name="publisher")
-def publisher_persons() -> PublisherItems:
+def publisher_persons() -> PublisherItemsLike:
     """Get publishable persons with positive consent."""
     merged_persons = cast(
         "list[MergedPerson]",
@@ -97,7 +91,7 @@ def publisher_persons() -> PublisherItems:
 
 
 @asset(group_name="publisher")
-def publisher_contact_points_and_units() -> PublisherItems:
+def publisher_contact_points_and_units() -> PublisherItemsLike:
     """Get publishable contact points and organizational units."""
     settings = Settings.get()
     allowed_entity_types = [
@@ -151,7 +145,7 @@ def publisher_items(
     publisher_fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
-) -> PublisherItems:
+) -> PublisherItemsLike:
     """All publishable items with updated contact references, where needed."""
     allowed_actors = {
         person.identifier
@@ -172,7 +166,7 @@ def publisher_items(
 
 
 @asset(group_name="publisher")
-def publisher_s3_load(publisher_items: PublisherItems) -> None:
+def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
     """Write received merged items to s3 sink."""
     s3 = S3Sink.get()
     deque(s3.load(publisher_items.items), maxlen=0)

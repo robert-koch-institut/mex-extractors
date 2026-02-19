@@ -1,11 +1,15 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.ldap.models import LDAPPerson
 from mex.common.models import ActivityMapping
 from mex.common.types import TemporalEntity
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPerson
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

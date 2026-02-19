@@ -1,27 +1,12 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    ExtractedOrganization,
-    ExtractedResource,
-    ExtractedVariableGroup,
-    ResourceMapping,
-    VariableGroupMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
-from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
-    MetaCatalogue2Item2Schema,
-)
-from mex.extractors.ifsg.models.meta_datatype import MetaDataType
-from mex.extractors.ifsg.models.meta_disease import MetaDisease
-from mex.extractors.ifsg.models.meta_field import MetaField
-from mex.extractors.ifsg.models.meta_item import MetaItem
-from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
-from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.ifsg.transform import (
     get_instrument_tool_or_apparatus,
     transform_ifsg_data_to_mex_variable_group,
@@ -33,6 +18,25 @@ from mex.extractors.ifsg.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        ExtractedOrganization,
+        ExtractedResource,
+        ExtractedVariableGroup,
+        ResourceMapping,
+        VariableGroupMapping,
+    )
+    from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
+    from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
+        MetaCatalogue2Item2Schema,
+    )
+    from mex.extractors.ifsg.models.meta_datatype import MetaDataType
+    from mex.extractors.ifsg.models.meta_disease import MetaDisease
+    from mex.extractors.ifsg.models.meta_field import MetaField
+    from mex.extractors.ifsg.models.meta_item import MetaItem
+    from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
+    from mex.extractors.ifsg.models.meta_type import MetaType
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

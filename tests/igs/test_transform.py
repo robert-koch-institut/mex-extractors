@@ -1,25 +1,29 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    AccessPlatformMapping,
-    ExtractedAccessPlatform,
-    ExtractedContactPoint,
-    ExtractedOrganization,
-    ResourceMapping,
-    VariableMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
-from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedAccessPlatform,
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ResourceMapping,
+        VariableMapping,
+    )
+    from mex.extractors.igs.model import IGSInfo, IGSSchema
 
 
 @pytest.mark.usefixtures("mocked_igs", "mocked_wikidata")

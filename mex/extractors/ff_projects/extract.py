@@ -1,8 +1,7 @@
 import re
-from collections.abc import Iterable
 from datetime import datetime
 from functools import lru_cache
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
@@ -20,6 +19,9 @@ from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def extract_ff_projects_sources() -> list[FFProjectsSource]:

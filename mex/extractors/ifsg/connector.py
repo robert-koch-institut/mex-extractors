@@ -1,8 +1,6 @@
 import platform
 from subprocess import PIPE, STDOUT, Popen
-from typing import Any
-
-from pydantic import BaseModel
+from typing import TYPE_CHECKING, Any
 
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
@@ -18,6 +16,9 @@ from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
 
 
 class NoOpPyodbc:

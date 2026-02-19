@@ -1,11 +1,13 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import MergedConsent, MergedPerson
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from mex.common.models import MergedConsent, MergedPerson
 
 
 def extract_ldap_persons() -> list[MergedPerson]:

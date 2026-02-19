@@ -1,10 +1,11 @@
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urljoin
-
-from requests import Response
 
 from mex.common.connector import HTTPConnector
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from requests import Response
 
 
 class DropApiConnector(HTTPConnector):

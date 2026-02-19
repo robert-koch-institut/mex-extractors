@@ -1,7 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.ldap.models import LDAPFunctionalAccount
-from mex.common.models import AccessPlatformMapping
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
@@ -10,7 +10,11 @@ from mex.extractors.synopse.extract import (
     extract_synopse_project_contributors,
     extract_variables,
 )
-from mex.extractors.synopse.models.project import SynopseProject
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPFunctionalAccount
+    from mex.common.models import AccessPlatformMapping
+    from mex.extractors.synopse.models.project import SynopseProject
 
 
 def test_extract_variables() -> None:

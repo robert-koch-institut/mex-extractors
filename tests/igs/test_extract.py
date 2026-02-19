@@ -1,15 +1,18 @@
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pytest
 
 from mex.common.ldap.models import LDAPFunctionalAccount
-from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
 )
-from mex.extractors.igs.model import IGSSchema
+
+if TYPE_CHECKING:
+    from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.extractors.igs.model import IGSSchema
 
 
 @pytest.mark.usefixtures("mocked_igs")

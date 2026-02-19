@@ -1,15 +1,11 @@
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_and_unit_ids_to_extracted_person,
-)
-from mex.common.types import (
-    MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
-    MergedPersonIdentifier,
 )
 from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
 from mex.extractors.primary_source.helpers import (
@@ -19,6 +15,13 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.types import (
+        MergedContactPointIdentifier,
+        MergedOrganizationalUnitIdentifier,
+        MergedPersonIdentifier,
+    )
 
 
 @lru_cache(maxsize=1024)

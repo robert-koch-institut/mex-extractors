@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from mex.common.logging import logger
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.synopse.models.variable import SynopseVariable
+
+if TYPE_CHECKING:
+    from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def filter_and_log_synopse_variables(

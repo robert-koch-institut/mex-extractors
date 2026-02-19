@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter, ValidationError
 
@@ -21,7 +22,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -30,6 +30,9 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.extractors.endnote.model import EndnoteRecord
 
 
 def extract_endnote_persons_by_person_string(

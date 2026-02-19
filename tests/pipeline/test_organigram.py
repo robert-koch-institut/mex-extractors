@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
+from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.models.organization import ExtractedOrganization
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -7,9 +8,6 @@ from mex.common.types import (
 from mex.extractors.pipeline.organigram import (
     extracted_organizational_units,
 )
-
-if TYPE_CHECKING:
-    from mex.common.models import ExtractedOrganizationalUnit
 
 
 def test_extracted_organizational_units(
