@@ -144,9 +144,6 @@ ignore = [
     "SIM108",  # Allow explicit if-else instead of ternary (easier to read)
     "TD003",   # Allow TODOs without ticket link (don't punish TODO writers)
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
-    "TC001",   # Allow typing imports are cheap (Pydantic inspection at runtime)
-    "TC002",   # Allow third-party imports (Pydantic inspection at runtime)
-    "TC003",   # Allow stdlib types import (Pydantic inspection at runtime)
 ]
 select = ["ALL"]
 
@@ -184,6 +181,9 @@ select = ["ALL"]
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
 "reflex" = "rx"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "mex.common.models"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]
