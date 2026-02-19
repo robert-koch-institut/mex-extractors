@@ -281,9 +281,9 @@ def transform_igs_schemas_to_variables(
     extracted_variables: list[ExtractedVariable] = []
     used_in = igs_extracted_resources
     properties_by_schema_name = {
-        f"variable-group-{schema_name}": schema.properties
+        key: schema.properties
         for schema_name, schema in igs_schemas.items()
-        if f"variable-group-{schema_name}"
+        if (key := f"variable-group-{schema_name}")
         in extracted_igs_variable_group_ids_by_igs_identifier
         and isinstance(schema, IGSPropertiesSchema)
     }
