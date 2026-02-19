@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update IGS extractor according to mapping changes
 - lock file maintenance (2026-02-12)
 - datenkompass: update resource handling for wave 2
 

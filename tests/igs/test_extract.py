@@ -19,7 +19,7 @@ def test_extract_igs_schemas() -> None:
         "enum": ["PATHOGEN"],
         "type": "string",
     }
-    assert schemas["schemaCreation"].model_dump() == {
+    assert schemas["SchemaCreation"].model_dump() == {
         "properties": {
             "schemas": {
                 "type": "date",
