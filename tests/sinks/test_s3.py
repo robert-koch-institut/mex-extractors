@@ -1,12 +1,15 @@
 from collections import deque
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.models import ExtractedOrganization
 from mex.common.testing import Joker
 from mex.extractors.sinks.s3 import S3BaseSink, S3Sink, S3XlsxSink
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedOrganization
 
 
 @pytest.fixture

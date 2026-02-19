@@ -56,7 +56,7 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
         all_checks_path = yaml_path
 
         @classmethod
-        def get(cls) -> "MockSettings":
+        def get(cls) -> MockSettings:
             return cls()
 
     monkeypatch.setattr("mex.extractors.pipeline.checks.main.Settings", MockSettings)
@@ -181,7 +181,7 @@ def run_item_count_test(  # noqa: PLR0913
 
     class FixedDatetime(datetime):
         @classmethod
-        def now(cls, tz: tzinfo | None = None) -> "FixedDatetime":
+        def now(cls, tz: tzinfo | None = None) -> FixedDatetime:
             dt = mocked_now.astimezone(tz) if tz else mocked_now.replace(tzinfo=None)
             return cls(
                 dt.year,
@@ -213,7 +213,7 @@ def run_item_count_test(  # noqa: PLR0913
             self.timestamp = mocked_now.timestamp()
 
     class MockInstance:
-        def get_event_records(self, _filter: EventRecordsFilter) -> list["MockEvent"]:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
             return [MockEvent(current_count)]
 
     class MockContext:

@@ -1,5 +1,4 @@
-from collections.abc import Generator
-from typing import cast
+from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -34,6 +33,9 @@ from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @pytest.fixture

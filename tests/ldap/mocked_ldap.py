@@ -1,7 +1,6 @@
 import json
 import os
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -14,16 +13,20 @@ from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_to_extracted_person,
 )
-from mex.common.models import (
-    ExtractedContactPoint,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
-)
 from mex.common.transform import MExEncoder, normalize
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from mex.common.models import (
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
+        ExtractedPerson,
+    )
 
 
 @pytest.fixture

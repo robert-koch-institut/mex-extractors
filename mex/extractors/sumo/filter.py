@@ -1,10 +1,14 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from mex.extractors.logging import log_filter
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 
 
 def filter_and_log_cc2_aux_model(

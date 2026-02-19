@@ -1,11 +1,9 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from mex.common.extract import parse_csv
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.models import AccessPlatformMapping
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
@@ -15,6 +13,12 @@ from mex.extractors.synopse.models.variable import SynopseVariable
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.models import AccessPlatformMapping
+    from mex.common.types import MergedOrganizationIdentifier
 
 
 def extract_variables() -> list[SynopseVariable]:

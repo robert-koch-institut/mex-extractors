@@ -1,9 +1,8 @@
 import re
-from collections.abc import Iterable
 from itertools import groupby
 from pathlib import PureWindowsPath
 from types import NoneType
-from typing import cast, get_args
+from typing import TYPE_CHECKING, cast, get_args
 
 from pydantic import ValidationError
 
@@ -38,10 +37,14 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.synopse.models.project import SynopseProject
-from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.synopse.models.project import SynopseProject
+    from mex.extractors.synopse.models.study import SynopseStudy
+    from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
+    from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def transform_synopse_studies_into_access_platforms(
@@ -647,7 +650,7 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         ]
     else:
         fg21_ids = get_unit_merged_id_by_synonym("FG21")
-        responsible_unit = fg21_ids if fg21_ids else []
+        responsible_unit = fg21_ids or []
     external_associate = []
     if synopse_project.externe_partner:
         for org in synopse_project.externe_partner.split(", "):

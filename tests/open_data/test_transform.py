@@ -1,14 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    DistributionMapping,
-    ExtractedContactPoint,
-    ExtractedDistribution,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
-    ResourceMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
@@ -16,11 +9,6 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     TextLanguage,
-)
-from mex.extractors.open_data.models.source import (
-    OpenDataCreatorsOrContributors,
-    OpenDataParentResource,
-    OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
     get_only_child_units,
@@ -36,6 +24,22 @@ from mex.extractors.open_data.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        DistributionMapping,
+        ExtractedContactPoint,
+        ExtractedDistribution,
+        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
+        ExtractedPerson,
+        ResourceMapping,
+    )
+    from mex.extractors.open_data.models.source import (
+        OpenDataCreatorsOrContributors,
+        OpenDataParentResource,
+        OpenDataTableSchema,
+    )
 
 
 def test_get_only_child_units(

@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -6,10 +6,6 @@ from mex.common.ldap.models import (
     LDAPFunctionalAccount,
     LDAPPerson,
     LDAPPersonWithQuery,
-)
-from mex.common.models import (
-    AccessPlatformMapping,
-    ResourceMapping,
 )
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
@@ -27,6 +23,14 @@ from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ResourceMapping,
+    )
 
 
 def test_extract_cc1_data_model_nokeda() -> None:

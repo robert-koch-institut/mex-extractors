@@ -1,9 +1,11 @@
 from collections.abc import Generator, Iterable, Sized
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from mex.common.logging import logger
-from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from mex.common.types import MergedPrimarySourceIdentifier
 
 T = TypeVar("T")
 

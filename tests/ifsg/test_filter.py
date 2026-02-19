@@ -1,10 +1,14 @@
+from typing import TYPE_CHECKING
+
 from mex.extractors.ifsg.filter import (
     filter_id_type_of_diseases,
     filter_variables,
 )
-from mex.extractors.ifsg.models.meta_field import MetaField
-from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
-from mex.extractors.ifsg.models.meta_type import MetaType
+
+if TYPE_CHECKING:
+    from mex.extractors.ifsg.models.meta_field import MetaField
+    from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
+    from mex.extractors.ifsg.models.meta_type import MetaType
 
 
 def test_filter_id_type_of_diseases(

@@ -1,14 +1,8 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    ExtractedContactPoint,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
-    ExtractedVariableGroup,
-)
 from mex.common.types import LinkLanguage, MergedResourceIdentifier, TextLanguage
-from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 from mex.extractors.kvis.transform import (
     lookup_kvis_functional_account_in_ldap_and_transform,
     lookup_kvis_person_in_ldap_and_transform,
@@ -17,6 +11,16 @@ from mex.extractors.kvis.transform import (
     transform_kvis_table_entries_to_extracted_variables,
     transform_kvis_variables_to_extracted_variable_groups,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
+        ExtractedPerson,
+        ExtractedVariableGroup,
+    )
+    from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 
 
 @pytest.mark.usefixtures("mocked_ldap")

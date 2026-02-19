@@ -1,8 +1,12 @@
 from abc import abstractmethod
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from mex.common.models import BaseModel
-from mex.common.types import TemporalEntity
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from mex.common.types import TemporalEntity
 
 
 class BaseRawData(BaseModel):

@@ -1,12 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedPerson,
-    ExtractedResource,
-    ResourceMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -15,11 +10,20 @@ from mex.common.types import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.voxco.transform import (
     transform_voxco_resource_mappings_to_extracted_resources,
     transform_voxco_variable_mappings_to_extracted_variables,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        ExtractedActivity,
+        ExtractedOrganization,
+        ExtractedPerson,
+        ExtractedResource,
+        ResourceMapping,
+    )
+    from mex.extractors.voxco.model import VoxcoVariable
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

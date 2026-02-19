@@ -1,14 +1,17 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pandas import DataFrame, ExcelFile
 
-from mex.common.models import ResourceMapping
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.odk.model import ODKData
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ResourceMapping
+    from mex.common.types import MergedOrganizationIdentifier
 
 
 def extract_odk_raw_data() -> list[ODKData]:

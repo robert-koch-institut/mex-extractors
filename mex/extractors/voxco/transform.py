@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
@@ -6,14 +8,16 @@ from mex.common.models import (
     ExtractedVariable,
     ResourceMapping,
 )
-from mex.common.types import (
-    MergedOrganizationIdentifier,
-)
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.voxco.model import VoxcoVariable
+
+if TYPE_CHECKING:
+    from mex.common.types import (
+        MergedOrganizationIdentifier,
+    )
+    from mex.extractors.voxco.model import VoxcoVariable
 
 
 def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
@@ -158,7 +162,7 @@ def transform_voxco_variable_mappings_to_extracted_variables(
             identifierInPrimarySource=str(variable.Id),
             dataType=variable.DataType,
             description=variable.Type,
-            label=variable.QuestionText if variable.QuestionText else variable.Text,
+            label=variable.QuestionText or variable.Text,
             usedIn=resource.stableTargetId,
             valueSet=[
                 choice.split("Text=")[1].split(";")[0] for choice in variable.Choices

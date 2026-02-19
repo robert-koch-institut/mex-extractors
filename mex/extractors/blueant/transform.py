@@ -1,5 +1,4 @@
 import re
-from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
 from mex.common.models import (
@@ -7,11 +6,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
 )
-from mex.common.types import (
-    MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
-)
-from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
@@ -23,7 +17,14 @@ from mex.extractors.wikidata.helpers import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     from mex.common.models.activity import AnyContactIdentifier
+    from mex.common.types import (
+        MergedOrganizationIdentifier,
+        MergedPersonIdentifier,
+    )
+    from mex.extractors.blueant.models.source import BlueAntSource
 
 
 def transform_blueant_sources_to_extracted_activities(

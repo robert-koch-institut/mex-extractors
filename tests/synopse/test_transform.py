@@ -1,15 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    AccessPlatformMapping,
-    ActivityMapping,
-    ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedPerson,
-    ExtractedResource,
-    ExtractedVariableGroup,
-    ResourceMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
@@ -23,10 +15,6 @@ from mex.common.types import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.synopse.models.project import SynopseProject
-from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
 from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_data_to_mex_resources,
@@ -36,6 +24,22 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ActivityMapping,
+        ExtractedActivity,
+        ExtractedOrganization,
+        ExtractedPerson,
+        ExtractedResource,
+        ExtractedVariableGroup,
+        ResourceMapping,
+    )
+    from mex.extractors.synopse.models.project import SynopseProject
+    from mex.extractors.synopse.models.study import SynopseStudy
+    from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
+    from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

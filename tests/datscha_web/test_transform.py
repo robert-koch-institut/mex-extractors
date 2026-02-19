@@ -1,4 +1,4 @@
-from collections.abc import Hashable
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -7,13 +7,17 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
-from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.datscha_web.transform import (
     transform_datscha_web_items_to_mex_activities,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Hashable
+
+    from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
 @pytest.fixture

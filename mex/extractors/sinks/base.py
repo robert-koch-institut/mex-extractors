@@ -1,9 +1,13 @@
 from collections import deque
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
-from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.sinks.registry import get_sink
 from mex.extractors.logging import watch_progress
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 
 
 def load(

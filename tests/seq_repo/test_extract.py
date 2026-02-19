@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,7 +13,11 @@ from mex.extractors.seq_repo.extract import (
     extract_sources,
 )
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
-from mex.extractors.seq_repo.model import SeqRepoSource
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 @pytest.mark.usefixtures("mocked_drop")

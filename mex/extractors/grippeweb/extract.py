@@ -1,13 +1,15 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
-from mex.common.models import AccessPlatformMapping, ResourceMapping
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
+    from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.types import MergedOrganizationIdentifier
 
 
 def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]]:

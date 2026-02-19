@@ -1,13 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    MergedActivity,
-    MergedBibliographicResource,
-    MergedContactPoint,
-    MergedOrganizationalUnit,
-    MergedPerson,
-    MergedResource,
-)
 from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
@@ -34,6 +28,16 @@ from mex.extractors.datenkompass.transform import (
     transform_bibliographic_resources,
     transform_resources,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedBibliographicResource,
+        MergedContactPoint,
+        MergedOrganizationalUnit,
+        MergedPerson,
+        MergedResource,
+    )
 
 
 def test_fix_quotes() -> None:

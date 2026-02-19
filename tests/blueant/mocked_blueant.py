@@ -1,14 +1,17 @@
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.common.ldap.models import LDAPPerson
 from mex.common.types import TemporalEntity
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.person import BlueAntPerson
 from mex.extractors.blueant.models.project import BlueAntProject
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPerson
 
 MOCKED_API_SOURCE = {
     "clients": [{"clientId": 1}],

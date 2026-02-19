@@ -1,11 +1,6 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount
-from mex.common.models import (
-    AccessPlatformMapping,
-    ResourceMapping,
-)
 from mex.extractors.igs.connector import IGSConnector
 from mex.extractors.igs.model import (
     IGSEnumSchema,
@@ -13,6 +8,13 @@ from mex.extractors.igs.model import (
     IGSPropertiesSchema,
     IGSSchema,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPFunctionalAccount
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ResourceMapping,
+    )
 
 
 def extract_igs_info() -> IGSInfo:

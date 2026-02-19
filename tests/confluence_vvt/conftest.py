@@ -1,12 +1,14 @@
 import json
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 
 from mex.common.models import ActivityMapping
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 

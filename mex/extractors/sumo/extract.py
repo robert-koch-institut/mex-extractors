@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 import numpy as np
 from pandas import ExcelFile
@@ -6,7 +6,6 @@ from pandas import ExcelFile
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.extractors.settings import Settings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
@@ -14,6 +13,11 @@ from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.models import AccessPlatformMapping, ResourceMapping
 
 
 def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:

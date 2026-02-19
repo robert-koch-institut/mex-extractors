@@ -1,8 +1,7 @@
 import re
-from collections.abc import Iterable
 from datetime import datetime
 from functools import lru_cache
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
@@ -20,6 +19,9 @@ from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def extract_ff_projects_sources() -> list[FFProjectsSource]:
@@ -93,7 +95,7 @@ def get_optional_string_from_cell(cell_value: Any) -> str | None:  # noqa: ANN40
     return str(cell_value) if cell_value else None
 
 
-def extract_ff_projects_source(row: "pd.Series[Any]") -> FFProjectsSource | None:
+def extract_ff_projects_source(row: pd.Series[Any]) -> FFProjectsSource | None:
     """Extract one FF Projects source from a single pandas series row.
 
     Args:

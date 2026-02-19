@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 from mex.extractors.synopse.filter import (
     filter_and_log_synopse_variables,
 )
-from mex.extractors.synopse.models.variable import SynopseVariable
+
+if TYPE_CHECKING:
+    from mex.extractors.synopse.models.variable import SynopseVariable
 
 
 def test_filter_and_log_synopse_variables(

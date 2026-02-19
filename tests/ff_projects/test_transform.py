@@ -1,7 +1,8 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -17,6 +18,9 @@ from mex.extractors.ff_projects.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ActivityMapping, ExtractedOrganization
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
@@ -76,9 +80,9 @@ def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
     existing_org_id = MergedOrganizationIdentifier.generate(seed=44)
     extracted_organizations = {"Existing-Institute": existing_org_id}
 
-    created_orgs = []
+    created_orgs: list[ExtractedOrganization] = []
     monkeypatch.setattr(
-        "mex.extractors.ff_projects.transform.load", lambda x: created_orgs.extend(x)
+        "mex.extractors.ff_projects.transform.load", created_orgs.extend
     )
 
     result = get_or_create_organization(org_names, extracted_organizations)

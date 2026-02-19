@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 from mex.common.exceptions import EmptySearchResultError
 from mex.common.organigram.extract import (
@@ -8,7 +9,6 @@ from mex.common.organigram.extract import (
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -16,6 +16,9 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
 @lru_cache(maxsize=1)

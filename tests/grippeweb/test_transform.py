@@ -1,17 +1,7 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from mex.common.models import (
-    AccessPlatformMapping,
-    ExtractedAccessPlatform,
-    ExtractedPerson,
-    ExtractedResource,
-    ExtractedVariableGroup,
-    ResourceMapping,
-    VariableGroupMapping,
-    VariableMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     LinkLanguage,
@@ -30,6 +20,18 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedAccessPlatform,
+        ExtractedPerson,
+        ExtractedResource,
+        ExtractedVariableGroup,
+        ResourceMapping,
+        VariableGroupMapping,
+        VariableMapping,
+    )
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

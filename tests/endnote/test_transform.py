@@ -1,13 +1,9 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    BibliographicResourceMapping,
-    ConsentMapping,
-    ExtractedPerson,
-)
 from mex.common.testing import Joker
 from mex.common.types import TextLanguage
-from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
     extract_endnote_consents,
@@ -17,6 +13,14 @@ from mex.extractors.endnote.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        BibliographicResourceMapping,
+        ConsentMapping,
+        ExtractedPerson,
+    )
+    from mex.extractors.endnote.model import EndnoteRecord
 
 
 def test_extract_endnote_persons_by_person_string(
