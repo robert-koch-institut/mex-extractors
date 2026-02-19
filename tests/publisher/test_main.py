@@ -1,4 +1,4 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -17,8 +17,10 @@ from mex.extractors.publisher.main import (
     publisher_items_without_actors,
     publisher_persons,
 )
-from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.sinks.s3 import S3Sink
+
+if TYPE_CHECKING:
+    from mex.extractors.publisher.types import PublisherItemsLike
 
 
 @pytest.fixture  # needed for hardcoded upload to S3. Remove with MX-1808

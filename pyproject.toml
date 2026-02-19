@@ -157,6 +157,8 @@ select = ["ALL"]
 "mex/extractors/mapping/types.py" = [
     "A005",     # Allow custom mapping types module to shadow standard-library
 ]
+"mex/**/models/**/*.py" = ["TC001","TC002","TC003"]
+"mex/tests/**/*.py" = ["TC001","TC002","TC003"]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
 ]
@@ -183,7 +185,10 @@ select = ["ALL"]
 "reflex" = "rx"
 
 [tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "mex.common.models"]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "typing.Protocol"]
+runtime-evaluated-decorators = [
+    "dagster.asset",
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]

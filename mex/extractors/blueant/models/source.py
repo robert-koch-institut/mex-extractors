@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
-
-from mex.extractors.models import BaseRawData
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
+from collections.abc import Sequence
 
 from mex.common.types import TemporalEntity
+from mex.extractors.models import BaseRawData
 
 
 class BlueAntSource(BaseRawData):
