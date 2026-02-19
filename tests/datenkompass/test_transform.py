@@ -8,14 +8,7 @@ from mex.common.models import (
     MergedPerson,
     MergedResource,
 )
-from mex.common.types import (
-    TemporalEntity,
-    Text,
-    Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
-)
+from mex.common.types import Text
 from mex.common.types.vocabulary import Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -28,7 +21,6 @@ from mex.extractors.datenkompass.models.mapping import (
 from mex.extractors.datenkompass.transform import (
     built_string_shorter_than_limit,
     fix_quotes,
-    format_temporal_entity,
     get_abstract_or_description,
     get_datenbank,
     get_email,
@@ -326,23 +318,6 @@ def test_built_string_shorter_than_limit(
     assert result == expected_output
 
 
-@pytest.mark.parametrize(
-    ("input_value", "expected_output"),
-    [
-        (YearMonthDayTime("1970-02-15T16:20:30"), "15.02.1970"),
-        (YearMonthDay("1971-03-16"), "16.03.1971"),
-        (YearMonth("1972-04"), "04.1972"),
-        (Year("1975"), "1975"),
-        (None, None),
-    ],
-    ids=["YearMonthDayTime", "YearMonthDay", "YearMonth", "Year", "None"],
-)
-def test_format_temporal_entity(
-    input_value: TemporalEntity, expected_output: str
-) -> None:
-    assert format_temporal_entity(input_value) == expected_output
-
-
 def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
@@ -441,7 +416,7 @@ def test_transform_resources(
         "frequenz": None,
         "kontakt": "fg@example.com",
         "organisationseinheit": "C1",
-        "startdatum": "01.01.1970",
+        "startdatum": "1970-01-01",
         "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": "has basis; hat weitere Basis",
