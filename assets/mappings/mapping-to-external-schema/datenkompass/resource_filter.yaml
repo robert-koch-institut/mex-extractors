@@ -1,0 +1,11 @@
+fields:
+  - fieldInMEx: hadPrimarySource
+    filterRules:
+      - forValues:
+          - "relevant primary source"
+          - "mex-editor"
+  - fieldInMEx: unitInCharge
+    filterRules:
+      - forValues:
+          - "PRNT"
+          - "FG 99"
