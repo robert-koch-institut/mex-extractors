@@ -8,19 +8,22 @@ from pytest import MonkeyPatch
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity, get_provider
 from mex.common.models import (
+    AnyExtractedModel,
     AnyMergedModel,
+    ExtractedResource,
     MergedActivity,
     MergedBibliographicResource,
     MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
-    MergedPrimarySource,
     MergedResource,
-    ExtractedResource, PaginatedItemsContainer, AnyExtractedModel,
+    PaginatedItemsContainer,
 )
 from mex.common.types import (
     AccessRestriction,
+    ExtractedResourceIdentifier,
+    Identifier,
     Link,
     MergedActivityIdentifier,
     MergedBibliographicResourceIdentifier,
@@ -28,8 +31,11 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
     Text,
-    TextLanguage, MergedPrimarySourceIdentifier,
+    TextLanguage,
+    Theme,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
@@ -206,14 +212,14 @@ def mocked_merged_resource() -> list[MergedResource]:
             title=["Merged Resource with Extracted Resource to be filtered out"],
             wasGeneratedBy=["MergedActivityWithORG2"],
             unitInCharge=["IdentifierUnitFG99"],
-            identifier=["hV7vNy69kWLxo85d9mwYwQ"],
+            identifier=["IdMergedWithExtracted"],
         ),
     ]
+
 
 @pytest.fixture
 def mocked_extracted_resource() -> list[ExtractedResource]:
     """Mock a list of Extracted Resource items."""
-    breakpoint()
     return [
         ExtractedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
@@ -224,7 +230,6 @@ def mocked_extracted_resource() -> list[ExtractedResource]:
             title=["Extracted Resource for Merged Resource to be filtered out"],
             wasGeneratedBy=["MergedActivityWithORG2"],
             unitInCharge=["IdentifierUnitFG99"],
-            #stableTargetId=["ResourceWithExtracted"],
         ),
     ]
 
@@ -416,12 +421,12 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         skip: int,  # noqa: ARG001
         limit: int,  # noqa: ARG001
     ) -> PaginatedItemsContainer[AnyExtractedModel]:
-        if not entity_type and len(entity_type) <= 0:
+        if not entity_type:
             pytest.fail("No entity_type given in query to Backend.")
-        breakpoint()
-        return PaginatedItemsContainer[
-            AnyExtractedModel
-        ](items=mocked_extracted_resource, total=len(mocked_extracted_resource))
+
+        return PaginatedItemsContainer[AnyExtractedModel](
+            items=mocked_extracted_resource, total=len(mocked_extracted_resource)
+        )
 
     backend = MagicMock(
         fetch_all_merged_items=MagicMock(
@@ -448,12 +453,11 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 @pytest.fixture
 def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the IdentityProvider functions to return dummy variables."""
-    breakpoint()
+
     def fetch(
         identifier_in_primary_source: str,
-        had_primary_source: MergedPrimarySourceIdentifier,
+        had_primary_source: MergedPrimarySourceIdentifier,  # noqa: ARG001
     ) -> list[Identity]:
-        breakpoint()
         if identifier_in_primary_source == "completely irrelevant":
             return [
                 Identity(
@@ -481,7 +485,32 @@ def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
                     stableTargetId="identifierMexEditorPS",
                 )
             ]
-        breakpoint()
+        if identifier_in_primary_source == "Extracted Resource for Merged Resource":
+            return [
+                Identity(
+                    hadPrimarySource=MergedPrimarySourceIdentifier(
+                        "identifierRelevantPS"
+                    ),
+                    identifierInPrimarySource="Extracted Resource for Merged Resource",
+                    accessRestriction=AccessRestriction["RESTRICTED"],
+                    wasGeneratedBy=MergedActivityIdentifier("MergedActivityWithORG2"),
+                    contact=[Identifier("PersonIdentifier4Peppa")],
+                    theme=[Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]],
+                    title=[
+                        Text(
+                            value="Extracted Resource for Merged Resource to be filtered out",
+                            language=TextLanguage.EN,
+                        )
+                    ],
+                    unitInCharge=[
+                        MergedOrganizationalUnitIdentifier("IdentifierUnitFG99")
+                    ],
+                    entityType="ExtractedResource",
+                    identifier=ExtractedResourceIdentifier("IdExtractedResource"),
+                    stableTargetId=MergedResourceIdentifier("IdMergedWithExtracted"),
+                )
+            ]
+
         pytest.fail("wrong mocking of identity provider")
 
     provider = get_provider()

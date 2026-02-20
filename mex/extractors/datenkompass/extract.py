@@ -1,11 +1,8 @@
-from typing import cast
-
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.identity import get_provider
-from mex.common.models import AnyMergedModel, MergedPrimarySource, AnyExtractedModel
+from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, AnyMergedModel
 from mex.common.types import MergedIdentifier
-from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 
 
 def get_merged_items(
@@ -36,6 +33,7 @@ def get_merged_items(
     )
 
     return list(response)
+
 
 def get_extracted_item_stable_target_ids(
     entity_type: list[str] | None = None,
@@ -96,5 +94,6 @@ def get_filtered_primary_source_ids(
         for fps in filtered_primary_sources
         for mps in provider.fetch(
             identifier_in_primary_source=fps,
-            had_primary_source=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID)[:1]
+            had_primary_source=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        )[:1]
     ]

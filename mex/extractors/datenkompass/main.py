@@ -14,8 +14,9 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
+    get_extracted_item_stable_target_ids,
     get_filtered_primary_source_ids,
-    get_merged_items, get_extracted_item_stable_target_ids,
+    get_merged_items,
 )
 from mex.extractors.datenkompass.filter import (
     filter_merged_resources_by_unit,
@@ -228,7 +229,8 @@ def datenkompass_merged_resources_by_primary_source(
             ["ExtractedResource"]
         )
         merged_resources_by_primary_source[fps] = [
-            item for item in all_mex_editor_resources
+            item
+            for item in all_mex_editor_resources
             if item.identifier not in extracted_resource_stid
         ]
 
