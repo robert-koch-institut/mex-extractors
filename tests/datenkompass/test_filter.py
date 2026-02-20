@@ -62,12 +62,12 @@ def test_filter_merged_resources_by_unit(
         mocked_units_by_ids,
     )
 
-    # 3 items before filtering. One to be filtered out because wrong unit
-    assert len(mocked_resources_by_primary_source["relevant primary source"]) == 3
+    # 4 items before filtering. One to be filtered out because wrong unit
+    assert len(mocked_resources_by_primary_source["relevant primary source"]) == 4
     assert len(result["PRNT"]) == 1
     assert len(result["FG 99"]) == 1
     assert len(result["PRNT"]["relevant primary source"]) == 1
-    assert len(result["FG 99"]["relevant primary source"]) == 1
+    assert len(result["FG 99"]["relevant primary source"]) == 2
     assert (
         result["PRNT"]["relevant primary source"][0].identifier
         == "IdentifierC1Resource"
