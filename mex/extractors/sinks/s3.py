@@ -1,11 +1,15 @@
 import json
+import re
 from collections.abc import Generator, Iterable
+from importlib import metadata
 from io import BytesIO
+from pathlib import Path
 from typing import TypeVar
 
 import boto3
 import pandas as pd
 
+from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
@@ -43,7 +47,13 @@ class S3Sink(S3BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
-        """Write the incoming items as an NDJSON directly to S3.
+        """Write items as an NDJSON to S3.
+
+        Writes items to
+        `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`.
+
+        Settings:
+            s3_bucket_key: The S3 Bucket key for writing to
 
         Args:
             items: Iterable of any kind of items
@@ -52,6 +62,8 @@ class S3Sink(S3BaseSink):
             Generator for the loaded items
         """
         settings = Settings.get()
+        directory_path = self._build_directory_path()
+        items_path = (directory_path / "items.ndjson").as_posix()
         total_count = 0
         with BytesIO() as buffer:
             for item in items:
@@ -62,10 +74,25 @@ class S3Sink(S3BaseSink):
             self.client.put_object(
                 Body=buffer,
                 Bucket=settings.s3_bucket_key,
-                Key="publisher.ndjson",
+                Key=items_path,
             )
         logger.info("%s - written %s items", type(self).__name__, total_count)
         yield from items
+
+    @staticmethod
+    def _build_directory_path() -> Path:
+        """Build directory path that includes the mex-model major and minor version."""
+        mex_model_version = metadata.version("mex-model")
+        regex_pattern = r"(\d+\.\d+)\..+"
+        re_groups = re.match(regex_pattern, mex_model_version)
+        if not re_groups:
+            msg = (
+                f"Cannot parse mex-model version '{mex_model_version}'"
+                f" with regex '{regex_pattern}'"
+            )
+            raise MExError(msg)
+        mex_model_major_minor_version = re_groups[1]
+        return Path(f"publisher-{mex_model_major_minor_version}")
 
 
 class S3XlsxSink(S3BaseSink):
