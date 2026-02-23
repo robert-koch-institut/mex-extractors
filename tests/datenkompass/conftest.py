@@ -476,12 +476,12 @@ def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
                     stableTargetId="identifierRelevantPS",
                 )
             ]
-        if identifier_in_primary_source == "mex-editor":
+        if identifier_in_primary_source == "filter primary source":
             return [
                 Identity(
                     identifier="00000000000002",
                     hadPrimarySource="00000000000000",
-                    identifierInPrimarySource="mex-editor",
+                    identifierInPrimarySource="filter primary source",
                     stableTargetId="identifierMexEditorPS",
                 )
             ]

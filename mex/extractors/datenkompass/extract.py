@@ -36,7 +36,7 @@ def get_merged_items(
 
 
 def get_extracted_item_stable_target_ids(
-    entity_type: list[str] | None = None,
+    entity_type: list[str],
 ) -> list[MergedIdentifier]:
     """Fetch extracted items from backend and return their stableTargetId.
 

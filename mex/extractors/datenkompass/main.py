@@ -14,11 +14,11 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
-    get_extracted_item_stable_target_ids,
     get_filtered_primary_source_ids,
     get_merged_items,
 )
 from mex.extractors.datenkompass.filter import (
+    filter_merged_items_for_primary_source,
     filter_merged_resources_by_unit,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -219,22 +219,17 @@ def datenkompass_merged_resources_by_primary_source(
                     reference_field="hadPrimarySource",
                 ),
             )
-
-        # special treatment for mex-editor resources: filter those merged resources out,
-        # which are referenced via stableTargetID by an extracted resource,
-        # to keep only those merged resources which consist only of rules
-        fps = "mex-editor"
-        all_mex_editor_resources = merged_resources_by_primary_source[fps]
-        extracted_resource_stid = get_extracted_item_stable_target_ids(
-            ["ExtractedResource"]
-        )
-        merged_resources_by_primary_source[fps] = [
-            item
-            for item in all_mex_editor_resources
-            if item.identifier not in extracted_resource_stid
-        ]
-
     return merged_resources_by_primary_source
+
+
+def filtered_datenkompass_merged_resources_by_primary_source(
+    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+) -> dict[str, list[MergedResource]]:
+    """Filter the merged items for primary source as defined in settings."""
+    return filter_merged_items_for_primary_source(
+        merged_resources_by_primary_source,
+        "ExtractedResource",
+    )
 
 
 @asset(group_name="datenkompass")

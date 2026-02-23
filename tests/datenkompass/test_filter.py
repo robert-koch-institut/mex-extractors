@@ -7,6 +7,7 @@ from mex.common.models import (
 )
 from mex.extractors.datenkompass.filter import (
     filter_activities_for_organization_and_unit,
+    filter_merged_items_for_primary_source,
     filter_merged_resources_by_unit,
     find_descendant_units,
 )
@@ -88,3 +89,27 @@ def test_find_descendant_units(
     result = find_descendant_units(mocked_units_by_ids, "PRNT")
 
     assert result == ["IdentifierUnitC1", "IdentifierUnitPRNT"]
+
+
+@pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
+def test_filter_filter_merged_items_for_primary_source(
+    mocked_merged_resource: list[MergedResource],
+) -> None:
+    mocked_resources_by_primary_source = {
+        "relevant primary source": mocked_merged_resource,
+        "filter primary source": mocked_merged_resource,
+    }
+
+    result = filter_merged_items_for_primary_source(
+        mocked_resources_by_primary_source,
+        "ExtractedResource",
+    )
+
+    assert len(result["relevant primary source"]) == 4
+    assert len(result["filter primary source"]) == 3
+    assert "IdMergedWithExtracted" in [
+        item.identifier for item in result["relevant primary source"]
+    ]
+    assert "IdMergedWithExtracted" not in [
+        item.identifier for item in result["filter primary source"]
+    ]

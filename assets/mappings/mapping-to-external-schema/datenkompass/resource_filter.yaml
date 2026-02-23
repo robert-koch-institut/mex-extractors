@@ -3,7 +3,7 @@ fields:
     filterRules:
       - forValues:
           - "relevant primary source"
-          - "mex-editor"
+          - "filter primary source"
   - fieldInMEx: unitInCharge
     filterRules:
       - forValues:
