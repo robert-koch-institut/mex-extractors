@@ -1,3 +1,5 @@
+import datetime
+import hashlib
 import json
 import re
 from collections.abc import Generator, Iterable
@@ -9,11 +11,13 @@ from typing import TypeVar
 import boto3
 import pandas as pd
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
+from mex.common.types import UTC
 from mex.extractors.settings import Settings
 
 _LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
@@ -47,10 +51,12 @@ class S3Sink(S3BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
-        """Write items as an NDJSON to S3.
+        """Write items.ndjson and metadata.json to S3.
 
-        Writes items to
-        `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`.
+        Write to directory
+        `publisher-{mex-model major version}.{mex-model minor version}`
+        - items to `items.ndjson`
+        - metadata to `metadata.json`
 
         Settings:
             s3_bucket_key: The S3 Bucket key for writing to
@@ -76,8 +82,11 @@ class S3Sink(S3BaseSink):
                 Bucket=settings.s3_bucket_key,
                 Key=items_path,
             )
+            checksum = self._calculate_checksum(buffer)
         logger.info("%s - written %s items", type(self).__name__, total_count)
         yield from items
+        metadata_path = (directory_path / "metadata.json").as_posix()
+        self._load_metadata(metadata_path, checksum)
 
     @staticmethod
     def _build_directory_path() -> Path:
@@ -93,6 +102,37 @@ class S3Sink(S3BaseSink):
             raise MExError(msg)
         mex_model_major_minor_version = re_groups[1]
         return Path(f"publisher-{mex_model_major_minor_version}")
+
+    @staticmethod
+    def _calculate_checksum(buffer: BytesIO) -> str:
+        """Calculate sha256 checksum of the buffer."""
+        buffer.seek(0)
+        return hashlib.sha256(buffer.read()).hexdigest()
+
+    def _load_metadata(self, metadata_path: str, checksum: str) -> None:
+        """Write metadata file."""
+        settings = Settings.get()
+        backend_connector = BackendApiConnector.get()
+        response = backend_connector.request("GET", "_system/check")
+        backend_version = response["version"]
+        versions = {
+            "mex-backend": backend_version,
+            "mex-common": metadata.version("mex-common"),
+            "mex-extractors": metadata.version("mex-extractors"),
+            "mex-model": metadata.version("mex-model"),
+        }
+        payload = {
+            "versions": versions,
+            "sha256_checksum": checksum,
+            "write_completed_at": datetime.datetime.now(tz=UTC).isoformat(),
+        }
+        payload_json = json.dumps(payload, sort_keys=True, cls=MExEncoder)
+        payload_bytes = payload_json.encode(encoding="utf-8")
+        self.client.put_object(
+            Body=payload_bytes,
+            Bucket=settings.s3_bucket_key,
+            Key=metadata_path,
+        )
 
 
 class S3XlsxSink(S3BaseSink):
