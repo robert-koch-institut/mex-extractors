@@ -46,7 +46,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         "identifierInPrimarySource": "test_title_PATHOGEN",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "created": "1970",
-        "sizeOfDataBasis": "Anzahl Uploads: 5",
+        "sizeOfDataBasis": "Anzahl Uploads: 7",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Pathogen", "language": "de"}],
@@ -60,7 +60,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         ],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
-            {"value": "Anzahl tests: 42", "language": "de"},
+            {"value": "Test Präfix Anzahl tests: 42", "language": "de"},
             {"value": "Anzahl Genomsequenzen: 7", "language": "de"},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",

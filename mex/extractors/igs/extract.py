@@ -64,7 +64,8 @@ def extract_endpoint_counts(
         if endpoint == "/samples/count":
             for pathogen in pathogens:
                 endpoint_counts[f"pathogen_{pathogen}"] = connector.get_endpoint_count(
-                    endpoint=endpoint, params={"pathogens": pathogen}
+                    endpoint=endpoint,
+                    params={"pathogens": pathogen, "include_deleted": "false"},
                 )
         else:
             endpoint_counts[endpoint] = connector.get_endpoint_count(endpoint=endpoint)
