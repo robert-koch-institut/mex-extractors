@@ -117,41 +117,54 @@ def datenkompass_resource_filter_mapping() -> DatenkompassFilterMapping:
 
 
 @asset(group_name="datenkompass")
-def datenkompass_merged_activities(
+def datenkompass_merged_activities_by_primary_source(
     datenkompass_activity_filter_mapping: DatenkompassFilterMapping,
-) -> list[MergedActivity]:
-    """Get merged activities filtered for allowed primary source by unit.
+) -> dict[str, list[MergedActivity]]:
+    """Get merged activities filtered for allowed primary source.
 
     We can only filter for one reference field here (will change in MX-2136).
     Therefore, we filter for the allowed primary sources per unit, since
     we can't filter for hadPrimarySources in already fetched merged activities.
     """
     filtered_primary_sources = (
-        datenkompass_activity_filter_mapping.fields[0].filterRules[0].forValues
+        datenkompass_activity_filter_mapping.fields[1].filterRules[0].forValues
     )
     entity_type = ["MergedActivity"]
+    merged_activities_by_primary_source: dict[str, list[MergedActivity]] = {}
     if filtered_primary_sources:
-        primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
+        for fps in filtered_primary_sources:
+            primary_source_ids = get_filtered_primary_source_ids([fps])
 
-        merged_activities = cast(
-            "list[MergedActivity]",
-            get_merged_items(
-                entity_type=entity_type,
-                referenced_identifier=primary_source_ids,
-                reference_field="hadPrimarySource",
-            ),
-        )
-    return merged_activities
+            merged_activities_by_primary_source[fps] = cast(
+                "list[MergedActivity]",
+                get_merged_items(
+                    entity_type=entity_type,
+                    referenced_identifier=primary_source_ids,
+                    reference_field="hadPrimarySource",
+                ),
+            )
+    return merged_activities_by_primary_source
 
 
 @asset(group_name="datenkompass")
 def datenkompass_filtered_merged_activities(
-    datenkompass_merged_activities: list[MergedActivity],
-    datenkompass_activity_filter_mapping: DatenkompassFilterMapping,
+    datenkompass_merged_activities_by_primary_source: dict[str, list[MergedActivity]],
 ) -> list[MergedActivity]:
-    """Filter merged activities."""
+    """Filter items for primary source, turn into a list, filter for organization."""
+    filtered_merged_activities_by_primary_source = (
+        filter_merged_items_for_primary_source(
+            datenkompass_merged_activities_by_primary_source,
+            "ExtractedActivity",
+        )
+    )
+    merged_activities_filtered_for_primary_source = [
+        item
+        for sublist in filtered_merged_activities_by_primary_source.values()
+        for item in sublist
+    ]
+
     return filter_activities_by_organization(
-        datenkompass_merged_activities, datenkompass_activity_filter_mapping
+        merged_activities_filtered_for_primary_source,
     )
 
 

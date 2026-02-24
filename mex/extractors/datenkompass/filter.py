@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast, overload
 
 from mex.common.organigram.helpers import find_descendants
 from mex.extractors.datenkompass.extract import (
@@ -21,29 +21,23 @@ if TYPE_CHECKING:
 
 
 def filter_activities_by_organization(
-    datenkompass_merged_activities: list[MergedActivity],
-    datenkompass_activity_filter_mapping: DatenkompassFilterMapping,
+    datenkompass_merged_activities_by_primary_source: list[MergedActivity],
 ) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        datenkompass_merged_activities: merged activities by unit.
-        datenkompass_activity_filter_mapping: filter rules
+        datenkompass_merged_activities_by_primary_source: merged activities by unit.
 
     Returns:
         filtered list of merged activities by unit.
     """
-    filter_org = (
-        datenkompass_activity_filter_mapping.fields[0].filterRules[0].forValues[0]
-        if datenkompass_activity_filter_mapping.fields[0].filterRules[0].forValues
-        else None
-    )
+    settings = Settings.get()
     filtered_merged_organization_ids = [
         organization.identifier
         for organization in cast(
             "list[MergedOrganization]",
             get_merged_items(
-                query_string=filter_org,
+                query_string=settings.datenkompass.organization_filter,
                 entity_type=["MergedOrganization"],
             ),
         )
@@ -51,7 +45,7 @@ def filter_activities_by_organization(
 
     return [
         item
-        for item in datenkompass_merged_activities
+        for item in datenkompass_merged_activities_by_primary_source
         if any(
             funder in filtered_merged_organization_ids
             for funder in item.funderOrCommissioner
@@ -144,10 +138,22 @@ def find_descendant_units(
     return descendants
 
 
+@overload
 def filter_merged_items_for_primary_source(
-    merged_items_by_primary_source: dict[str, list[MergedResource]],
+    merged_items_by_primary_source: dict[str, list[MergedResource]], entity_type: str
+) -> dict[str, list[MergedResource]]: ...
+
+
+@overload
+def filter_merged_items_for_primary_source(
+    merged_items_by_primary_source: dict[str, list[MergedActivity]], entity_type: str
+) -> dict[str, list[MergedActivity]]: ...
+
+
+def filter_merged_items_for_primary_source(
+    merged_items_by_primary_source: dict[str, list[Any]],
     entity_type: str,
-) -> dict[str, list[MergedResource]]:
+) -> dict[str, list[Any]]:
     """Filter the merged items for primary source as defined in settings.
 
      Special treatment for items which were created/edited in editor: filter those
@@ -167,12 +173,16 @@ def filter_merged_items_for_primary_source(
 
     primary_source_filter = settings.datenkompass.primary_source_filter
 
-    concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
-    extracted_item_stid = set(get_extracted_item_stable_target_ids([entity_type]))
-    merged_items_by_primary_source[primary_source_filter] = [
-        item
-        for item in concerned_merged_items
-        if item.identifier not in extracted_item_stid
-    ]
+    if primary_source_filter in merged_items_by_primary_source:
+        concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
+        extracted_item_stid = set(get_extracted_item_stable_target_ids([entity_type]))
+        new_merged_items_by_primary_source = dict(merged_items_by_primary_source)
+        new_merged_items_by_primary_source[primary_source_filter] = [
+            item
+            for item in concerned_merged_items
+            if item.identifier not in extracted_item_stid
+        ]
+
+        return new_merged_items_by_primary_source
 
     return merged_items_by_primary_source

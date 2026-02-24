@@ -184,10 +184,10 @@ def get_title(item: MergedActivity) -> list[str]:
         List of short name and title of units as strings.
     """
     collected_titles = []
-    if item.shortName:
-        collected_titles.extend(get_german_text(item.shortName))
     if item.title:
         collected_titles.extend(get_german_text(item.title))
+    if item.shortName:
+        collected_titles.extend(get_german_text(item.shortName))
     return collected_titles
 
 
@@ -436,8 +436,8 @@ def transform_activities(
                 titel=titel,
                 schlagwort=schlagwort,
                 datenbank=datenbank,
-                startdatum=item.start[0].date_time.strftime("%d.%m.%Y"),
-                enddatum=item.end[0].date_time.strftime("%d.%m.%Y"),
+                startdatum=str(item.start[0]) if item.start else None,
+                enddatum=str(item.end[0]) if item.end else None,
                 voraussetzungen=voraussetzungen,
                 frequenz=frequenz,
                 hauptkategorie=hauptkategorie,
