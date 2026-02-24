@@ -201,19 +201,22 @@ def datenkompass_merged_resources_by_primary_source(
     return merged_resources_by_primary_source
 
 
-def filtered_datenkompass_merged_resources_by_primary_source(
-    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+@asset(group_name="datenkompass")
+def datenkompass_filtered_merged_resources_by_primary_source(
+    datenkompass_merged_resources_by_primary_source: dict[str, list[MergedResource]],
 ) -> dict[str, list[MergedResource]]:
     """Filter the merged items for primary source as defined in settings."""
     return filter_merged_items_for_primary_source(
-        merged_resources_by_primary_source,
+        datenkompass_merged_resources_by_primary_source,
         "ExtractedResource",
     )
 
 
 @asset(group_name="datenkompass")
-def datenkompass_merged_resources_by_primary_source_by_unit(
-    datenkompass_merged_resources_by_primary_source: dict[str, list[MergedResource]],
+def datenkompass_filtered_merged_resources_by_primary_source_by_unit(
+    datenkompass_filtered_merged_resources_by_primary_source: dict[
+        str, list[MergedResource]
+    ],
     datenkompass_resource_filter_mapping: DatenkompassFilterMapping,
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
@@ -221,7 +224,7 @@ def datenkompass_merged_resources_by_primary_source_by_unit(
 ) -> dict[str, dict[str, list[MergedResource]]]:
     """Filter the merged resources by units."""
     return filter_merged_resources_by_unit(
-        datenkompass_merged_resources_by_primary_source,
+        datenkompass_filtered_merged_resources_by_primary_source,
         datenkompass_resource_filter_mapping,
         datenkompass_merged_organizational_units_by_id,
     )
@@ -262,7 +265,7 @@ def datenkompass_bibliographic_resources(
 
 @asset(group_name="datenkompass")
 def datenkompass_resources_by_primary_source_by_unit(
-    datenkompass_merged_resources_by_primary_source_by_unit: dict[
+    datenkompass_filtered_merged_resources_by_primary_source_by_unit: dict[
         str, dict[str, list[MergedResource]]
     ],
     datenkompass_merged_organizational_units_by_id: dict[
@@ -274,7 +277,7 @@ def datenkompass_resources_by_primary_source_by_unit(
 ) -> dict[str, dict[str, list[DatenkompassResource]]]:
     """Transform resources to datenkompass items."""
     return transform_resources(
-        datenkompass_merged_resources_by_primary_source_by_unit,
+        datenkompass_filtered_merged_resources_by_primary_source_by_unit,
         datenkompass_merged_organizational_units_by_id,
         datenkompass_merged_contact_points_by_id,
     )
