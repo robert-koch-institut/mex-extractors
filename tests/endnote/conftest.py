@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.models import (
@@ -9,8 +11,10 @@ from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

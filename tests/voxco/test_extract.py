@@ -1,13 +1,17 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.ldap.models import LDAPPerson
-from mex.common.models import ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
     extract_voxco_variables,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPerson
+    from mex.common.models import ResourceMapping
 
 
 @pytest.mark.usefixtures("mocked_drop")

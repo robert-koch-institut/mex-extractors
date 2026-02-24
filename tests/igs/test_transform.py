@@ -1,25 +1,29 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    AccessPlatformMapping,
-    ExtractedAccessPlatform,
-    ExtractedContactPoint,
-    ExtractedOrganization,
-    ResourceMapping,
-    VariableMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
 )
-from mex.extractors.igs.model import IGSInfo, IGSSchema
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedAccessPlatform,
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ResourceMapping,
+        VariableMapping,
+    )
+    from mex.extractors.igs.model import IGSInfo, IGSSchema
 
 
 @pytest.mark.usefixtures("mocked_igs", "mocked_wikidata")
@@ -101,44 +105,46 @@ def test_transform_igs_access_platform(
 
 @pytest.mark.usefixtures("mocked_igs")
 def test_transformed_igs_schemas_to_variable_group(
-    igs_schemas: dict[str, IGSSchema],
+    filtered_igs_schemas: dict[str, IGSSchema],
 ) -> None:
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
-        igs_schemas, MergedResourceIdentifier.generate(seed=42)
+        filtered_igs_schemas, [MergedResourceIdentifier.generate(seed=42)]
     )
     expected = {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "igsmodels__enums__Pathogen",
+        "identifierInPrimarySource": "variable-group-SchemaCreation",
         "containedBy": ["bFQoRhcVH5DHU6"],
-        "label": [{"value": "igsmodels__enums__Pathogen", "language": "en"}],
-        "identifier": "bmzsPxrn1mqZm8GCmKaJ5I",
-        "stableTargetId": "qGSnMxJYiNTJeUntnV3Vy",
+        "label": [{"value": "SchemaCreation", "language": "en"}],
+        "identifier": "uVz9KCEmkU9Nj3IM5Rphv",
+        "stableTargetId": "cpwz2hs0xnNLRJYlngToaG",
     }
 
     assert extracted_variable_groups[0].model_dump(exclude_defaults=True) == expected
 
 
 def test_transform_igs_schemas_to_variables(
-    igs_schemas: dict[str, IGSSchema],
+    filtered_igs_schemas: dict[str, IGSSchema],
     igs_variable_mapping: VariableMapping,
-    igs_variable_pathogen_mapping: VariableMapping,
 ) -> None:
     extracted_variables = transform_igs_schemas_to_variables(
-        igs_schemas,
-        MergedResourceIdentifier.generate(seed=42),
-        {"igsmodels__enums__Pathogen": MergedVariableGroupIdentifier.generate(seed=43)},
+        filtered_igs_schemas,
+        [MergedResourceIdentifier.generate(seed=42)],
+        {
+            "variable-group-SchemaCreation": MergedVariableGroupIdentifier.generate(
+                seed=43
+            )
+        },
         igs_variable_mapping,
-        igs_variable_pathogen_mapping,
     )
     expected = {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
-        "identifierInPrimarySource": "pathogen_PATHOGEN",
-        "dataType": "string",
-        "label": [{"value": "PATHOGEN"}],
+        "identifierInPrimarySource": "variable-group-SchemaCreation_schemas",
+        "dataType": "date",
+        "description": [{"value": "test_description"}],
+        "label": [{"value": "schemas", "language": "de"}],
         "usedIn": ["bFQoRhcVH5DHU6"],
         "belongsTo": ["bFQoRhcVH5DHU7"],
-        "description": [{"value": "Pathogen", "language": "de"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "cnZF2Q4cKgTkXrItCRthOY",
+        "stableTargetId": "bxrMKpfWgjAvJ5a0B2WacI",
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected

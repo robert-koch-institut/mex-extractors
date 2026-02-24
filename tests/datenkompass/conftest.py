@@ -1,5 +1,4 @@
-from collections.abc import Generator
-from typing import cast
+from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -8,18 +7,22 @@ from pytest import MonkeyPatch
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity, get_provider
 from mex.common.models import (
+    AnyExtractedModel,
     AnyMergedModel,
+    ExtractedResource,
     MergedActivity,
     MergedBibliographicResource,
     MergedContactPoint,
     MergedOrganization,
     MergedOrganizationalUnit,
     MergedPerson,
-    MergedPrimarySource,
     MergedResource,
+    PaginatedItemsContainer,
 )
 from mex.common.types import (
     AccessRestriction,
+    ExtractedResourceIdentifier,
+    Identifier,
     Link,
     MergedActivityIdentifier,
     MergedBibliographicResourceIdentifier,
@@ -27,13 +30,19 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
     Text,
     TextLanguage,
+    Theme,
 )
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @pytest.fixture
@@ -198,6 +207,32 @@ def mocked_merged_resource() -> list[MergedResource]:
             unitInCharge=["someIrrelevantUnit"],
             identifier=["FilteredOutResource"],
         ),
+        MergedResource(
+            accessRestriction=AccessRestriction["RESTRICTED"],
+            contact=["PersonIdentifier4Peppa"],
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["Merged Resource with Extracted Resource to be filtered out"],
+            wasGeneratedBy=["MergedActivityWithORG2"],
+            unitInCharge=["IdentifierUnitFG99"],
+            identifier=["IdMergedWithExtracted"],
+        ),
+    ]
+
+
+@pytest.fixture
+def mocked_extracted_resource() -> list[ExtractedResource]:
+    """Mock a list of Extracted Resource items."""
+    return [
+        ExtractedResource(
+            accessRestriction=AccessRestriction["RESTRICTED"],
+            contact=["PersonIdentifier4Peppa"],
+            hadPrimarySource="identifierRelevantPS",
+            identifierInPrimarySource="Extracted Resource for Merged Resource",
+            theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
+            title=["Extracted Resource for Merged Resource to be filtered out"],
+            wasGeneratedBy=["MergedActivityWithORG2"],
+            unitInCharge=["IdentifierUnitFG99"],
+        ),
     ]
 
 
@@ -293,22 +328,6 @@ def mocked_merged_contact_point() -> list[MergedContactPoint]:
 
 
 @pytest.fixture
-def mocked_merged_primary_sources() -> list[MergedPrimarySource]:
-    """Mock a list of merged Primary Source items."""
-    return [
-        MergedPrimarySource(
-            entityType="MergedPrimarySource",
-            identifier="SomeIrrelevantPS",
-        ),
-        MergedPrimarySource(
-            title=[Text(value="this is a Relevant Primary Source", language="en")],
-            entityType="MergedPrimarySource",
-            identifier="identifierRelevantPS",
-        ),
-    ]
-
-
-@pytest.fixture
 def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
     """Mock a list of Datenkompass Activity items."""
     return [
@@ -371,14 +390,13 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     mocked_merged_organization: list[MergedOrganization],
     mocked_merged_person: list[MergedPerson],
     mocked_merged_contact_point: list[MergedContactPoint],
-    mocked_merged_primary_sources: list[MergedPrimarySource],
+    mocked_extracted_resource: list[ExtractedResource],
 ) -> MagicMock:
     """Mock the backendAPIConnector functions to return dummy variables."""
     mock_dispatch = {
         "MergedActivity": mocked_merged_activities,
         "MergedBibliographicResource": mocked_merged_bibliographic_resource,
         "MergedResource": mocked_merged_resource,
-        "MergedPrimarySource": mocked_merged_primary_sources,
         "MergedOrganizationalUnit": mocked_merged_organizational_units,
         "MergedOrganization": mocked_merged_organization,
         "MergedPerson": mocked_merged_person,
@@ -399,10 +417,27 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 
         return cast("list[AnyMergedModel]", mock_dispatch.get(key))
 
+    def fetch_extracted_items(
+        *,
+        entity_type: list[str] | None = None,
+        skip: int,  # noqa: ARG001
+        limit: int,  # noqa: ARG001
+    ) -> PaginatedItemsContainer[AnyExtractedModel]:
+        if not entity_type:
+            pytest.fail("No entity_type given in query to Backend.")
+
+        return PaginatedItemsContainer[AnyExtractedModel](
+            items=mocked_extracted_resource, total=len(mocked_extracted_resource)
+        )
+
     backend = MagicMock(
         fetch_all_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_all_merged_items,
             side_effect=fetch_all_merged_items,
+        ),
+        fetch_extracted_items=MagicMock(
+            spec=BackendApiConnector.fetch_extracted_items,
+            side_effect=fetch_extracted_items,
         ),
     )
     monkeypatch.setattr(
@@ -411,6 +446,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     monkeypatch.setattr(
         BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
     )
+    monkeypatch.setattr(
+        BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items
+    )
     return backend
 
 
@@ -418,8 +456,11 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
 def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the IdentityProvider functions to return dummy variables."""
 
-    def fetch(stable_target_id: str) -> list[Identity]:
-        if stable_target_id == "SomeIrrelevantPS":
+    def fetch(
+        identifier_in_primary_source: str,
+        had_primary_source: MergedPrimarySourceIdentifier,  # noqa: ARG001
+    ) -> list[Identity]:
+        if identifier_in_primary_source == "completely irrelevant":
             return [
                 Identity(
                     identifier="12345678901234",
@@ -428,7 +469,7 @@ def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
                     stableTargetId="SomeIrrelevantPS",
                 )
             ]
-        if stable_target_id == "identifierRelevantPS":
+        if identifier_in_primary_source == "relevant primary source":
             return [
                 Identity(
                     identifier="98765432109876",
@@ -437,6 +478,41 @@ def mocked_provider(monkeypatch: MonkeyPatch) -> MagicMock:
                     stableTargetId="identifierRelevantPS",
                 )
             ]
+        if identifier_in_primary_source == "filter primary source":
+            return [
+                Identity(
+                    identifier="00000000000002",
+                    hadPrimarySource="00000000000000",
+                    identifierInPrimarySource="filter primary source",
+                    stableTargetId="identifierMexEditorPS",
+                )
+            ]
+        if identifier_in_primary_source == "Extracted Resource for Merged Resource":
+            return [
+                Identity(
+                    hadPrimarySource=MergedPrimarySourceIdentifier(
+                        "identifierRelevantPS"
+                    ),
+                    identifierInPrimarySource="Extracted Resource for Merged Resource",
+                    accessRestriction=AccessRestriction["RESTRICTED"],
+                    wasGeneratedBy=MergedActivityIdentifier("MergedActivityWithORG2"),
+                    contact=[Identifier("PersonIdentifier4Peppa")],
+                    theme=[Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]],
+                    title=[
+                        Text(
+                            value="Extracted Resource for Merged Resource to be filtered out",
+                            language=TextLanguage.EN,
+                        )
+                    ],
+                    unitInCharge=[
+                        MergedOrganizationalUnitIdentifier("IdentifierUnitFG99")
+                    ],
+                    entityType="ExtractedResource",
+                    identifier=ExtractedResourceIdentifier("IdExtractedResource"),
+                    stableTargetId=MergedResourceIdentifier("IdMergedWithExtracted"),
+                )
+            ]
+
         pytest.fail("wrong mocking of identity provider")
 
     provider = get_provider()

@@ -1,8 +1,10 @@
-from os import PathLike
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import yaml
+
+if TYPE_CHECKING:
+    from os import PathLike
 
 
 def load_yaml(path: PathLike[str]) -> dict[str, Any]:

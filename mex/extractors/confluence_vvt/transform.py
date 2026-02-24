@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
@@ -17,12 +17,16 @@ from mex.extractors.confluence_vvt.extract import (
     get_involved_units_from_page,
     get_responsible_unit_from_page,
 )
-from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 
 
 def transform_confluence_vvt_page_to_extracted_activity(

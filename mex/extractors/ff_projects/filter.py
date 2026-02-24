@@ -1,7 +1,6 @@
-from collections.abc import Collection, Iterable
+from typing import TYPE_CHECKING
 
 from mex.common.utils import any_contains_any, contains_any
-from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.logging import log_filter
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
@@ -9,6 +8,11 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Collection, Iterable
+
+    from mex.extractors.ff_projects.models.source import FFProjectsSource
 
 
 def filter_and_log_ff_projects_sources(

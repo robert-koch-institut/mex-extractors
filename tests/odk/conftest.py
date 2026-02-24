@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.models import (
@@ -13,8 +15,10 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.odk.model import ODKData
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

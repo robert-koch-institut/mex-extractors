@@ -1,4 +1,4 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from mex.common.models import (
     AccessPlatformMapping,
@@ -12,15 +12,17 @@ from mex.common.models import (
     VariableGroupMapping,
     VariableMapping,
 )
-from mex.common.types import (
-    MergedContactPointIdentifier,
-    MergedOrganizationIdentifier,
-)
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+
+if TYPE_CHECKING:
+    from mex.common.types import (
+        MergedContactPointIdentifier,
+        MergedOrganizationIdentifier,
+    )
 
 
 def transform_grippeweb_resource_mappings_to_extracted_resources(

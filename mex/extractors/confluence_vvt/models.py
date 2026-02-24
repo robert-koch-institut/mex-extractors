@@ -1,10 +1,14 @@
 import re
 from abc import abstractmethod
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from mex.common.models import BaseModel
-from mex.common.types import TemporalEntity
 from mex.extractors.models import BaseRawData
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from mex.common.types import TemporalEntity
 
 
 class ConfluenceVvtCell(BaseModel):
@@ -37,7 +41,7 @@ class ConfluenceVvtValue(ConfluenceVvtCell):
 
     def get_texts(self) -> list[str]:
         """Returns all text in this value cell."""
-        return self.texts if self.texts else []
+        return self.texts or []
 
 
 class ConfluenceVvtRow(BaseModel):

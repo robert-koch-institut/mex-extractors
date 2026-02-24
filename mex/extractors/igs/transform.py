@@ -15,6 +15,7 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     Text,
+    TextLanguage,
 )
 from mex.extractors.igs.model import (
     IGSEnumSchema,
@@ -234,145 +235,67 @@ def transform_igs_access_platform(
 
 def transformed_igs_schemas_to_variable_group(
     filtered_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_id: MergedResourceIdentifier,
+    igs_extracted_resources: list[MergedResourceIdentifier],
 ) -> list[ExtractedVariableGroup]:
     """Transform IGS schema to extracted variable group.
 
     Args:
         filtered_schemas: filtered IGS schemas
-        igs_extracted_resource_id: stableTargetId of the igs resource
+        igs_extracted_resources: stableTargetIds of the igs resource
 
 
     Returns:
         list of extracted variable groups
     """
-    extracted_variable_groups: list[ExtractedVariableGroup] = []
-    for schema_name in filtered_schemas:
-        contained_by = igs_extracted_resource_id
-        label = (
-            [Text(value="Health Agency", language="en")]
-            if "HaCreation" in schema_name
-            else [Text(value=schema_name.removesuffix("Creation"), language="en")]
+    return [
+        ExtractedVariableGroup(
+            containedBy=igs_extracted_resources,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
+            identifierInPrimarySource=f"variable-group-{schema_name}",
+            label=Text(value=schema_name, language=TextLanguage.EN),
         )
-        extracted_variable_groups.append(
-            ExtractedVariableGroup(
-                containedBy=contained_by,
-                hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
-                identifierInPrimarySource=schema_name,
-                label=label,
-            )
-        )
-    return extracted_variable_groups
-
-
-def get_enums_by_property_name(  # TODO(EH): deprecated, remove in MX-2095
-    igs_schemas: dict[str, IGSSchema],
-) -> dict[str, list[str]]:
-    """Return a dictionary that links enum lists to property_name.
-
-    Args:
-        igs_schemas: dictionary of igs schemas by schema name
-
-    Returns:
-        enum list by property name
-    """
-    enum_by_schema_name = {
-        schema_name: schema.enum
-        for schema_name, schema in igs_schemas.items()
-        if isinstance(schema, IGSEnumSchema)
-    }
-    return {
-        property_name: enum_by_schema_name[schema_name]
-        for schema in igs_schemas.values()
-        if isinstance(schema, IGSPropertiesSchema)
-        for property_name, properties in schema.properties.items()
-        if (
-            "$ref" in properties
-            and (schema_name := properties["$ref"].split("/")[-1])
-            in enum_by_schema_name
-        )
-        or (
-            "items" in properties
-            and "$ref" in properties["items"]
-            and (schema_name := properties["items"]["$ref"].split("/")[-1])
-            in enum_by_schema_name
-        )
-        or (
-            "anyOf" in properties
-            and "$ref" in properties["anyOf"][0]
-            and (schema_name := properties["anyOf"][0]["$ref"].split("/")[-1])
-            in enum_by_schema_name
-        )
-    }
+        for schema_name in filtered_schemas
+    ]
 
 
 def transform_igs_schemas_to_variables(
     igs_schemas: dict[str, IGSSchema],
-    igs_extracted_resource_id: MergedResourceIdentifier,
+    igs_extracted_resources: list[MergedResourceIdentifier],
     extracted_igs_variable_group_ids_by_igs_identifier: dict[
         str, MergedVariableGroupIdentifier
     ],
     variable_mapping: VariableMapping,
-    variable_pathogen_mapping: VariableMapping,
 ) -> list[ExtractedVariable]:
     """Transform igs schemas to variables.
 
     Args:
         igs_schemas: igs schemas by schema name
-        igs_extracted_resource_id: stableTargetId of the igs resource
+        igs_extracted_resources: stableTargetIds of the igs resource
         extracted_igs_variable_group_ids_by_igs_identifier:
             igs variable group by identifier in primary source
         variable_mapping: variable mapping default values
-        variable_pathogen_mapping: variable_pathogen mapping default values
 
     Returns:
         list of ExtractedVariable
     """
-    description_by_enum = {
-        rule.forValues[0]: rule.setValues
-        for rule in variable_pathogen_mapping.description[0].mappingRules
-        if rule.forValues
-    }
-    enums_by_property_name = get_enums_by_property_name(igs_schemas)
     extracted_variables: list[ExtractedVariable] = []
-    used_in = igs_extracted_resource_id
-    for schema_name, schema in igs_schemas.items():
-        data_type: str | None = None
-        if schema_name == "igsmodels__enums__Pathogen" and isinstance(
-            schema, IGSEnumSchema
-        ):
-            data_type = schema.type
-            for enum in schema.enum:
-                if schema_name in extracted_igs_variable_group_ids_by_igs_identifier:
-                    belongs_to = [
-                        extracted_igs_variable_group_ids_by_igs_identifier[schema_name]
-                    ]
-                else:
-                    continue
-                description = description_by_enum.get(enum)
-                identifier_in_primary_source = f"pathogen_{enum}"
-                label = enum
-                extracted_variables.append(
-                    ExtractedVariable(
-                        belongsTo=belongs_to,
-                        dataType=data_type,
-                        description=description,
-                        hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
-                        identifierInPrimarySource=identifier_in_primary_source,
-                        label=label,
-                        usedIn=used_in,
-                    )
-                )
-
-        if not isinstance(schema, IGSPropertiesSchema):
-            continue
-        for property_name, schema_property in schema.properties.items():
-            if schema_name in extracted_igs_variable_group_ids_by_igs_identifier:
-                belongs_to = [
-                    extracted_igs_variable_group_ids_by_igs_identifier[schema_name]
-                ]
-            else:
-                continue
+    used_in = igs_extracted_resources
+    properties_by_schema_name = {
+        key: schema.properties
+        for schema_name, schema in igs_schemas.items()
+        if (key := f"variable-group-{schema_name}")
+        in extracted_igs_variable_group_ids_by_igs_identifier
+        and isinstance(schema, IGSPropertiesSchema)
+    }
+    for (
+        schema_name,
+        variable_group_id,
+    ) in extracted_igs_variable_group_ids_by_igs_identifier.items():
+        for property_name, schema_property in properties_by_schema_name[
+            schema_name
+        ].items():
+            belongs_to = variable_group_id
+            data_type = None
             if (
                 schema_property
                 and variable_mapping.dataType[1].mappingRules[0].forValues
@@ -383,16 +306,21 @@ def transform_igs_schemas_to_variables(
                 data_type = schema_property["format"]
             elif "type" in schema_property:
                 data_type = schema_property["type"]
-            value_set = enums_by_property_name.get(property_name, [])
+            description = None
+            if "description" in schema_property:
+                description = schema_property["description"]
+                if description == "":
+                    continue
+            else:
+                continue
             extracted_variables.append(
                 ExtractedVariable(
                     belongsTo=belongs_to,
                     dataType=data_type,
-                    description=schema_property.get("title"),
+                    description=description,
                     hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
                     identifierInPrimarySource=f"{schema_name}_{property_name}",
                     label=property_name,
-                    valueSet=value_set,
                     usedIn=used_in,
                 )
             )

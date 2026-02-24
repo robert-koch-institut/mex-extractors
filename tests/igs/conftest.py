@@ -9,7 +9,7 @@ from mex.common.models import (
 )
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.igs.extract import extract_igs_schemas
-from mex.extractors.igs.model import IGSInfo, IGSSchema
+from mex.extractors.igs.model import IGSInfo, IGSPropertiesSchema, IGSSchema
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
@@ -49,14 +49,6 @@ def igs_variable_mapping() -> VariableMapping:
 
 
 @pytest.fixture
-def igs_variable_pathogen_mapping() -> VariableMapping:
-    settings = Settings.get()
-    return VariableMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "variable_pathogen.yaml")
-    )
-
-
-@pytest.fixture
 def igs_extracted_contact_points_by_mail_str() -> dict[str, ExtractedContactPoint]:
     """Mock IGS actor."""
     return {
@@ -78,6 +70,24 @@ def igs_schemas(
     mocked_igs: None,  # noqa: ARG001
 ) -> dict[str, IGSSchema]:
     return extract_igs_schemas()
+
+
+@pytest.fixture
+def filtered_igs_schemas(
+    mocked_igs: None,  # noqa: ARG001
+) -> dict[str, IGSSchema]:
+    return {
+        "SchemaCreation": IGSPropertiesSchema(
+            properties={
+                "schemas": {
+                    "items": {"$ref": "#/components/schemas/Pathogen"},
+                    "title": "test_title",
+                    "type": "date",
+                    "description": "test_description",
+                }
+            }
+        )
+    }
 
 
 @pytest.fixture

@@ -1,9 +1,12 @@
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
-from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
-from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.sinks import load
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedPrimarySource
+    from mex.common.types import MergedPrimarySourceIdentifier
 
 
 @lru_cache(maxsize=3)

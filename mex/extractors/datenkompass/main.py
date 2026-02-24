@@ -20,6 +20,7 @@ from mex.extractors.datenkompass.extract import (
 )
 from mex.extractors.datenkompass.filter import (
     filter_activities_by_organization,
+    filter_merged_items_for_primary_source,
     filter_merged_resources_by_unit,
 )
 from mex.extractors.datenkompass.models.item import (
@@ -198,6 +199,16 @@ def datenkompass_merged_resources_by_primary_source(
                 ),
             )
     return merged_resources_by_primary_source
+
+
+def filtered_datenkompass_merged_resources_by_primary_source(
+    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+) -> dict[str, list[MergedResource]]:
+    """Filter the merged items for primary source as defined in settings."""
+    return filter_merged_items_for_primary_source(
+        merged_resources_by_primary_source,
+        "ExtractedResource",
+    )
 
 
 @asset(group_name="datenkompass")

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
@@ -22,7 +23,6 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -33,6 +33,9 @@ from mex.extractors.utils import load_yaml
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 
 
 def lookup_kvis_person_in_ldap_and_transform(
@@ -308,7 +311,7 @@ def transform_kvis_table_entries_to_extracted_variables(
             identifierInPrimarySource=f"kvis_{item.field_name_short}",
             label=[Text(value=item.field_name_long, language=TextLanguage.DE)],
             usedIn=[kvis_extracted_resource_id],
-            valueSet=kvis_valuesets_by_variable_name.get(item.fvlist_name, None)
+            valueSet=kvis_valuesets_by_variable_name.get(item.fvlist_name)
             if item.fvlist_name
             else None,
         )

@@ -1,4 +1,5 @@
-from mex.common.ldap.models import LDAPPersonWithQuery
+from typing import TYPE_CHECKING
+
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -17,7 +18,10 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.seq_repo.model import SeqRepoSource
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPersonWithQuery
+    from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 def transform_seq_repo_activities_to_extracted_activities(

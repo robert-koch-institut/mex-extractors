@@ -1,19 +1,23 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-from mex.common.models import (
-    MergedActivity,
-    MergedOrganization,
-    MergedOrganizationalUnit,
-    MergedResource,
-)
 from mex.common.organigram.helpers import find_descendants
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-)
 from mex.extractors.datenkompass.extract import (
+    get_extracted_item_stable_target_ids,
     get_merged_items,
 )
-from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
+from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedOrganization,
+        MergedOrganizationalUnit,
+        MergedResource,
+    )
+    from mex.common.types import (
+        MergedOrganizationalUnitIdentifier,
+    )
+    from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 
 
 def filter_activities_by_organization(
@@ -138,3 +142,37 @@ def find_descendant_units(
     descendants.append(parent_id)
 
     return descendants
+
+
+def filter_merged_items_for_primary_source(
+    merged_items_by_primary_source: dict[str, list[MergedResource]],
+    entity_type: str,
+) -> dict[str, list[MergedResource]]:
+    """Filter the merged items for primary source as defined in settings.
+
+     Special treatment for items which were created/edited in editor: filter those
+     merged items out, which are referenced via stableTargetID by an extracted item,
+     to keep only those merged items which consist only of rules
+
+    Args:
+        merged_items_by_primary_source: merged items dictionary by primary source.
+        entity_type: entity type to of merged items
+
+    Settings: primary source which needs to be filtered
+
+    Returns:
+        dictionary with list of filtered merged items
+    """
+    settings = Settings.get()
+
+    primary_source_filter = settings.datenkompass.primary_source_filter
+
+    concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
+    extracted_item_stid = set(get_extracted_item_stable_target_ids([entity_type]))
+    merged_items_by_primary_source[primary_source_filter] = [
+        item
+        for item in concerned_merged_items
+        if item.identifier not in extracted_item_stid
+    ]
+
+    return merged_items_by_primary_source
