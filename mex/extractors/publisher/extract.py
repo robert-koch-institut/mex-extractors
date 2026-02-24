@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import AnyMergedModel
+
+if TYPE_CHECKING:
+    from mex.common.models import AnyMergedModel
 
 
 def get_publishable_merged_items(

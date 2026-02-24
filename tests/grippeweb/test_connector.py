@@ -1,8 +1,10 @@
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
-from pytest import MonkeyPatch
-
 from mex.extractors.grippeweb.connector import GrippewebConnector
+
+if TYPE_CHECKING:
+    from pytest import MonkeyPatch
 
 
 def test_parse_rows(monkeypatch: MonkeyPatch) -> None:

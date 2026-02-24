@@ -1,12 +1,16 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPerson
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.ldap.models import LDAPPerson
 
 
 def extract_blueant_sources() -> list[BlueAntSource]:

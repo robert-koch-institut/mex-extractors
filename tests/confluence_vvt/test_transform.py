@@ -1,9 +1,9 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.confluence_vvt.extract import (
@@ -21,6 +21,9 @@ from mex.extractors.confluence_vvt.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ActivityMapping
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 

@@ -1,4 +1,7 @@
-from mex.common.models import MergedConsent, MergedPerson
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from mex.common.models import MergedConsent, MergedPerson
 
 
 def filter_persons_without_consent(

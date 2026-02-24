@@ -8,7 +8,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-    AnyMergedModel,
     ItemsContainer,
     MergedConsent,
     MergedContactPoint,
@@ -32,12 +31,13 @@ from mex.extractors.publisher.transform import (
     get_unit_id_per_person,
     update_actor_references_where_needed,
 )
+from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
 
 
 @asset(group_name="publisher")
-def publisher_items_without_actors() -> ItemsContainer[AnyMergedModel]:
+def publisher_items_without_actors() -> PublisherItemsLike:
     """All items with entity types that are neither an actor nor skipped.
 
     Actor types are: Person, ContactPoint and OrganizationalUnit.
@@ -54,10 +54,8 @@ def publisher_items_without_actors() -> ItemsContainer[AnyMergedModel]:
             "MergedOrganizationalUnit",
         ]
     ]
-    merged_items = get_publishable_merged_items(
-        entity_type=allowed_entity_types,
-    )
-    return ItemsContainer[AnyMergedModel](items=merged_items)
+    merged_items = get_publishable_merged_items(entity_type=allowed_entity_types)
+    return ItemsContainer(items=merged_items)
 
 
 @asset(group_name="publisher")
@@ -76,7 +74,7 @@ def publisher_merged_persons() -> list[MergedPerson]:
 
 
 @asset(group_name="publisher")
-def publisher_persons() -> ItemsContainer[AnyMergedModel]:
+def publisher_persons() -> PublisherItemsLike:
     """Get publishable persons with positive consent."""
     merged_persons = cast(
         "list[MergedPerson]",
@@ -89,11 +87,11 @@ def publisher_persons() -> ItemsContainer[AnyMergedModel]:
     filtered_persons = filter_persons_with_appoving_unique_consent(
         merged_persons, merged_consent
     )
-    return ItemsContainer[AnyMergedModel](items=filtered_persons)
+    return ItemsContainer(items=filtered_persons)
 
 
 @asset(group_name="publisher")
-def publisher_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
+def publisher_contact_points_and_units() -> PublisherItemsLike:
     """Get publishable contact points and organizational units."""
     settings = Settings.get()
     allowed_entity_types = [
@@ -105,7 +103,7 @@ def publisher_contact_points_and_units() -> ItemsContainer[AnyMergedModel]:
     merged_items = get_publishable_merged_items(
         entity_type=allowed_entity_types,
     )
-    return ItemsContainer[AnyMergedModel](items=merged_items)
+    return ItemsContainer(items=merged_items)
 
 
 @asset(group_name="publisher")
@@ -129,7 +127,7 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
 @asset(group_name="publisher")
 def publisher_fallback_unit_identifiers_by_person(
     publisher_merged_persons: list[MergedPerson],
-    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_contact_points_and_units: PublisherItemsLike,
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address."""
     return get_unit_id_per_person(
@@ -140,14 +138,14 @@ def publisher_fallback_unit_identifiers_by_person(
 
 @asset(group_name="publisher")
 def publisher_items(
-    publisher_items_without_actors: ItemsContainer[AnyMergedModel],
-    publisher_persons: ItemsContainer[AnyMergedModel],
-    publisher_contact_points_and_units: ItemsContainer[AnyMergedModel],
+    publisher_items_without_actors: PublisherItemsLike,
+    publisher_persons: PublisherItemsLike,
+    publisher_contact_points_and_units: PublisherItemsLike,
     publisher_fallback_contact_identifiers: list[MergedContactPointIdentifier],
     publisher_fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
-) -> ItemsContainer[AnyMergedModel]:
+) -> PublisherItemsLike:
     """All publishable items with updated contact references, where needed."""
     allowed_actors = {
         person.identifier
@@ -160,7 +158,7 @@ def publisher_items(
             publisher_fallback_contact_identifiers,
             publisher_fallback_unit_identifiers_by_person,
         )
-    return ItemsContainer[AnyMergedModel](
+    return ItemsContainer(
         items=publisher_items_without_actors.items
         + publisher_persons.items
         + publisher_contact_points_and_units.items
@@ -168,7 +166,7 @@ def publisher_items(
 
 
 @asset(group_name="publisher")
-def publisher_s3_load(publisher_items: ItemsContainer[AnyMergedModel]) -> None:
+def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
     """Write received merged items to s3 sink."""
     s3 = S3Sink.get()
     deque(s3.load(publisher_items.items), maxlen=0)

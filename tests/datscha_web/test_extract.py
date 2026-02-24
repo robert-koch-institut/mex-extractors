@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from pytest import MonkeyPatch
 
@@ -7,7 +9,9 @@ from mex.extractors.datscha_web.extract import (
     extract_datscha_web_items,
     extract_datscha_web_organizations,
 )
-from mex.extractors.datscha_web.models.item import DatschaWebItem
+
+if TYPE_CHECKING:
+    from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
 @pytest.mark.usefixtures("mocked_datscha_web")

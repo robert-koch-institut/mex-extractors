@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPerson
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPerson
 
 
 @pytest.mark.integration

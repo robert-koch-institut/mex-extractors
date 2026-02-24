@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - convenience function for LDAP lookup
+- update dependencies
 
 ### Changes
 
 - update IGS extractor according to mapping changes and wrap up
-- lock file maintenance (2026-02-12)
+- lock file maintenance (2026-02-16)
 
 ### Deprecated
 

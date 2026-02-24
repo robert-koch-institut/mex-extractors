@@ -1,12 +1,16 @@
-from collections.abc import Iterable
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.seq_repo.model import SeqRepoSource
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 def filter_sources_on_latest_sequencing_date(
