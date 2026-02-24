@@ -1,19 +1,21 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.logging import logger
-from mex.common.models import (
-    MergedActivity,
-    MergedOrganization,
-    MergedOrganizationalUnit,
-)
 from mex.common.organigram.helpers import find_descendants
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-)
 from mex.extractors.datenkompass.extract import (
     get_merged_items,
 )
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedOrganization,
+        MergedOrganizationalUnit,
+    )
+    from mex.common.types import (
+        MergedOrganizationalUnitIdentifier,
+    )
 
 
 def filter_activities_for_organization_and_unit(

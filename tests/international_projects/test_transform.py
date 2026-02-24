@@ -1,7 +1,8 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from pytz import timezone
 
-from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -18,6 +19,9 @@ from mex.extractors.international_projects.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ActivityMapping
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

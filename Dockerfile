@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.13-trixie AS builder
+FROM python:3.14-trixie AS builder
 
 WORKDIR /build
 
@@ -24,7 +24,7 @@ RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEE4D7792
         > /build/mssql-release.list
 
 
-FROM python:3.13-slim-trixie
+FROM python:3.14-slim-trixie
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="ETL pipelines for the RKI Metadata Exchange."

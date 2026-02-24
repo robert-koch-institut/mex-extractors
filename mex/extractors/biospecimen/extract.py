@@ -1,20 +1,23 @@
 import re
-from collections.abc import Iterable
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pandas import DataFrame, ExcelFile, Series
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPerson
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.ldap.models import LDAPPerson
+    from mex.common.types import MergedOrganizationIdentifier
 
 
 def extract_biospecimen_contacts_by_email(
@@ -96,7 +99,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
     return resources
 
 
-def get_clean_string(series: "Series[Any]") -> str:
+def get_clean_string(series: Series[Any]) -> str:
     """Clean string DataFrame and concatenate to one string.
 
     Args:

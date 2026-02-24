@@ -1,7 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
-from mex.common.models import AccessPlatformMapping, ResourceMapping
 from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
@@ -9,6 +9,10 @@ from mex.extractors.grippeweb.extract import (
     extract_ldap_actors_for_functional_accounts,
     extract_ldap_persons,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
+    from mex.common.models import AccessPlatformMapping, ResourceMapping
 
 
 @pytest.mark.usefixtures("mocked_grippeweb")

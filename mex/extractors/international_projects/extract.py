@@ -1,7 +1,6 @@
 import re
 import warnings
-from collections.abc import Iterable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
@@ -23,6 +22,9 @@ from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def extract_international_projects_sources() -> list[InternationalProjectsSource]:
@@ -56,7 +58,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
 
 
 def extract_international_projects_source(
-    row: "pd.Series[Any]",
+    row: pd.Series[Any],
 ) -> InternationalProjectsSource | None:
     """Extract one international projects source from an xlrd row.
 

@@ -1,19 +1,23 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import ActivityMapping
 from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     MergedPersonIdentifier,
     TextLanguage,
 )
-from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ActivityMapping
+    from mex.extractors.blueant.models.source import BlueAntSource
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
