@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import json
 import re
 from collections import deque
@@ -64,10 +65,10 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
 @pytest.mark.usefixtures("mocked_s3_client", "mocked_backend")
 def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     items = [extracted_organization_rki]
-    expected_content = ""
+    expected_str = ""
     for item in items:
-        expected_content += json.dumps(item, sort_keys=True, cls=MExEncoder)
-        expected_content += "\n"
+        expected_str += json.dumps(item, sort_keys=True, cls=MExEncoder)
+        expected_str += "\n"
 
     sink = S3Sink.get()
     deque(sink.load(items), maxlen=0)
@@ -82,21 +83,26 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
         Bucket="s3_bucket",
         Key=Joker(),
     )
-    body = load_items_client_call.kwargs["Body"]
-    assert isinstance(body, BytesIO)
-    returned_content = sink.client.bodies[0].decode("utf-8")
-    assert returned_content == expected_content
+    item_buffer = load_items_client_call.kwargs["Body"]
+    assert isinstance(item_buffer, BytesIO)
+    item_bytes = sink.client.bodies[0]
+    item_str = item_bytes.decode("utf-8")
+    assert item_str == expected_str
     assert re.match(
         r"publisher-\d+\.\d+/items.ndjson", load_items_client_call.kwargs["Key"]
     )
+
+    expected_checksum = hashlib.sha256(item_bytes).hexdigest()
 
     assert load_items_client_call == call(
         Body=Joker(),
         Bucket="s3_bucket",
         Key=Joker(),
     )
-    body = load_metadata_client_call.kwargs["Body"]
-    assert isinstance(body, bytes)
+    metadata_bytes = load_metadata_client_call.kwargs["Body"]
+    assert isinstance(metadata_bytes, bytes)
+    metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
+    assert metadata_dct["sha256_checksum"] == expected_checksum
     assert re.match(
         r"publisher-\d+\.\d+/metadata.json", load_metadata_client_call.kwargs["Key"]
     )
