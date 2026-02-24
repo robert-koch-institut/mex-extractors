@@ -1,13 +1,16 @@
-from collections.abc import Iterable
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from mex.common.models import ActivityFilter
-from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.utils import any_contains_any
 from mex.extractors.logging import log_filter
 from mex.extractors.models import BaseRawData
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.types import MergedPrimarySourceIdentifier
 
 RawDataT = TypeVar("RawDataT", bound=BaseRawData)
 

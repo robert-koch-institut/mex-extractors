@@ -1,24 +1,24 @@
-from typing import TypeVar, cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.logging import logger
-from mex.common.models import (
-    MergedActivity,
-    MergedOrganization,
-    MergedOrganizationalUnit,
-    MergedResource,
-)
 from mex.common.organigram.helpers import find_descendants
-from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
-)
 from mex.extractors.datenkompass.extract import (
     get_extracted_item_stable_target_ids,
     get_merged_items,
 )
-from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 from mex.extractors.settings import Settings
 
-MergedT = TypeVar("MergedT", MergedResource, MergedActivity)
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedOrganization,
+        MergedOrganizationalUnit,
+        MergedResource,
+    )
+    from mex.common.types import (
+        MergedOrganizationalUnitIdentifier,
+    )
+    from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 
 
 def filter_activities_for_organization_and_unit(

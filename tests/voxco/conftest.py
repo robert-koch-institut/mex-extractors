@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import pytest
 from pydantic import BaseModel
@@ -10,9 +10,11 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.model import VoxcoVariable
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 

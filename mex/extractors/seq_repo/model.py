@@ -1,9 +1,13 @@
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from pydantic import Field
 
-from mex.common.types import TemporalEntity
 from mex.extractors.models import BaseRawData
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from mex.common.types import TemporalEntity
 
 
 class SeqRepoSource(BaseRawData):

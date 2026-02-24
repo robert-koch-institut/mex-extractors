@@ -1,22 +1,7 @@
-from typing import TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel
 
-from mex.common.models import (
-    MergedActivity,
-    MergedBibliographicResource,
-    MergedContactPoint,
-    MergedOrganizationalUnit,
-    MergedResource,
-)
-from mex.common.types import (
-    Identifier,
-    MergedContactPointIdentifier,
-    MergedOrganizationalUnitIdentifier,
-    MergedPersonIdentifier,
-    Text,
-)
 from mex.common.types.vocabulary import (
     BibliographicResourceType,
     Frequency,
@@ -28,12 +13,28 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
-from mex.extractors.datenkompass.models.mapping import (
-    DatenkompassMapping,
-    DatenkompassMappingField,
-)
+from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
+
+    from mex.common.models import (
+        MergedActivity,
+        MergedBibliographicResource,
+        MergedContactPoint,
+        MergedOrganizationalUnit,
+        MergedResource,
+    )
+    from mex.common.types import (
+        Identifier,
+        MergedContactPointIdentifier,
+        MergedOrganizationalUnitIdentifier,
+        MergedPersonIdentifier,
+        Text,
+    )
+    from mex.extractors.datenkompass.models.mapping import DatenkompassMappingField
 
 VocabularyT = TypeVar(
     "VocabularyT",
@@ -385,7 +386,7 @@ def transform_activities(
         datenbank = None
         if item.website:
             url_de = delim.join([w.url for w in item.website if w.language == "de"])
-            datenbank = url_de if url_de else item.website[0].url
+            datenbank = url_de or item.website[0].url
         datenhalter = handle_setval(
             default_by_fieldname["datenhalter"].mappingRules[0].setValues
         )

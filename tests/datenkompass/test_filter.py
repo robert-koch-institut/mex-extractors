@@ -1,10 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    MergedActivity,
-    MergedOrganizationalUnit,
-    MergedResource,
-)
 from mex.extractors.datenkompass.filter import (
     filter_activities_for_organization_and_unit,
     filter_merged_items_for_primary_source,
@@ -14,6 +11,13 @@ from mex.extractors.datenkompass.filter import (
 from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedOrganizationalUnit,
+        MergedResource,
+    )
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")

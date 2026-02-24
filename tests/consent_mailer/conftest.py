@@ -1,4 +1,4 @@
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -11,6 +11,9 @@ from mex.common.models import (
 from mex.common.types import (
     TemporalEntity,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @pytest.fixture
@@ -81,5 +84,5 @@ def mocked_consent_backend_api_connector(
             empty: list[AnyMergedModel] = []
             return (x for x in empty)
 
-    monkeypatch.setattr(connector.BackendApiConnector, "get", lambda: FakeConnector())
+    monkeypatch.setattr(connector.BackendApiConnector, "get", FakeConnector)
     return call_counter

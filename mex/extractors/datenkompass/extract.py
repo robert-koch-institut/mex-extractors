@@ -1,8 +1,13 @@
+from typing import TYPE_CHECKING
+
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.identity import get_provider
-from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, AnyMergedModel
-from mex.common.types import MergedIdentifier
+from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+
+if TYPE_CHECKING:
+    from mex.common.models import AnyMergedModel
+    from mex.common.types import MergedIdentifier
 
 
 def get_merged_items(

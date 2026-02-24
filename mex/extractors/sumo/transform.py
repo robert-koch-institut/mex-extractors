@@ -1,4 +1,4 @@
-from collections.abc import Collection, Iterable
+from typing import TYPE_CHECKING
 
 from mex.common.models import (
     AccessPlatformMapping,
@@ -28,12 +28,16 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
-from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
-from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
-from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
-from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
-from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
-from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
+
+if TYPE_CHECKING:
+    from collections.abc import Collection, Iterable
+
+    from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
+    from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
+    from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
+    from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+    from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
+    from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 
 def get_contact_merged_ids_by_emails(

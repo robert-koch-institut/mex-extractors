@@ -1,10 +1,9 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 import pandas as pd
 import pytest
 from pandas import Series
 
-from mex.common.ldap.models import LDAPPerson
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_resources,
@@ -12,8 +11,13 @@ from mex.extractors.biospecimen.extract import (
     get_clean_string,
     get_year_from_zeitlicher_bezug,
 )
-from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.ldap.models import LDAPPerson
+    from mex.extractors.biospecimen.models.source import BiospecimenResource
+    from mex.extractors.settings import Settings
 
 
 @pytest.mark.usefixtures("mocked_ldap")

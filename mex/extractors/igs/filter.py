@@ -1,5 +1,8 @@
-from mex.common.models import VariableGroupFilter
-from mex.extractors.igs.model import IGSSchema
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from mex.common.models import VariableGroupFilter
+    from mex.extractors.igs.model import IGSSchema
 
 
 def filter_igs_schemas(

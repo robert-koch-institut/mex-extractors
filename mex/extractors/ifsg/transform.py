@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedResource,
@@ -6,24 +8,26 @@ from mex.common.models import (
     ResourceMapping,
     VariableGroupMapping,
 )
-from mex.common.types import (
-    MergedResourceIdentifier,
-    Text,
-)
-from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
-from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
-    MetaCatalogue2Item2Schema,
-)
-from mex.extractors.ifsg.models.meta_datatype import MetaDataType
-from mex.extractors.ifsg.models.meta_disease import MetaDisease
-from mex.extractors.ifsg.models.meta_field import MetaField
-from mex.extractors.ifsg.models.meta_item import MetaItem
-from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
-from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.types import (
+        MergedResourceIdentifier,
+        Text,
+    )
+    from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
+    from mex.extractors.ifsg.models.meta_catalogue2item2schema import (
+        MetaCatalogue2Item2Schema,
+    )
+    from mex.extractors.ifsg.models.meta_datatype import MetaDataType
+    from mex.extractors.ifsg.models.meta_disease import MetaDisease
+    from mex.extractors.ifsg.models.meta_field import MetaField
+    from mex.extractors.ifsg.models.meta_item import MetaItem
+    from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
+    from mex.extractors.ifsg.models.meta_type import MetaType
 
 
 def transform_resource_parent_to_mex_resource(
