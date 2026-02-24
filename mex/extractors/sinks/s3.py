@@ -73,20 +73,27 @@ class S3Sink(S3BaseSink):
         total_count = 0
         with BytesIO() as buffer:
             for item in items:
-                dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
-                buffer.write(f"{dumped_json}\n".encode())
+                item_str = self._convert_item_to_ndjson(item)
+                buffer.write(item_str.encode("utf-8"))
                 total_count += 1
-            buffer.seek(0)  # Reset buffer pointer before uploading
+                yield item
+            checksum = self._calculate_checksum(buffer)
+            # Reset buffer pointer before uploading
+            buffer.seek(0)
             self.client.put_object(
                 Body=buffer,
                 Bucket=settings.s3_bucket_key,
                 Key=items_path,
             )
-            checksum = self._calculate_checksum(buffer)
         logger.info("%s - written %s items", type(self).__name__, total_count)
-        yield from items
         metadata_path = (directory_path / "metadata.json").as_posix()
         self._load_metadata(metadata_path, checksum)
+
+    @staticmethod
+    def _convert_item_to_ndjson(item: _LoadItemT) -> str:
+        """Convert an item to an ndjson string."""
+        dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
+        return f"{dumped_json}\n"
 
     @staticmethod
     def _build_directory_path() -> Path:

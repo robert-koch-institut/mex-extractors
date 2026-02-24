@@ -64,14 +64,17 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
 
 @pytest.mark.usefixtures("mocked_s3_client", "mocked_backend")
 def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
-    items = [extracted_organization_rki]
+    items_generator = (item for item in [extracted_organization_rki])
+    expected_items = [extracted_organization_rki]
     expected_str = ""
-    for item in items:
+    for item in expected_items:
         expected_str += json.dumps(item, sort_keys=True, cls=MExEncoder)
         expected_str += "\n"
 
     sink = S3Sink.get()
-    deque(sink.load(items), maxlen=0)
+    returned_items = list(sink.load(items_generator))
+
+    assert returned_items == expected_items
 
     assert sink.client.put_object.call_count == 2
     load_items_client_call, load_metadata_client_call = (
