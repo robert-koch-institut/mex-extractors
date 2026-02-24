@@ -223,11 +223,11 @@ def datenkompass_merged_resources_by_primary_source(
 
 
 def filtered_datenkompass_merged_resources_by_primary_source(
-    merged_resources_by_primary_source: dict[str, list[MergedResource]],
+    datenkompass_merged_resources_by_primary_source: dict[str, list[MergedResource]],
 ) -> dict[str, list[MergedResource]]:
     """Filter the merged items for primary source as defined in settings."""
     return filter_merged_items_for_primary_source(
-        merged_resources_by_primary_source,
+        datenkompass_merged_resources_by_primary_source,
         "ExtractedResource",
     )
 
