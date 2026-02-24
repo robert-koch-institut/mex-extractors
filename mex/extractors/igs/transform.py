@@ -80,11 +80,14 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
     default_keywords = cast(
         "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
     )
+    quality_information_prefix = (
+        igs_resource_mapping.qualityInformation[0].mappingRules[0].setValues[0].value  # type: ignore[index]
+    )
     quality_information_values_by_field_in_primary_source = {
-        field.fieldInPrimarySource: field.mappingRules[0]
-        .setValues[0]
-        .value.split("[")[0]
-        for field in igs_resource_mapping.qualityInformation
+        field.fieldInPrimarySource: f"{quality_information_prefix} {
+            field.mappingRules[0].setValues[0].value.split('[')[0]
+        }"
+        for field in igs_resource_mapping.qualityInformation[1:]
         if field.mappingRules[0].setValues
     }
     title_by_pathogen = {
@@ -114,19 +117,15 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             for key, value in igs_endpoint_counts.items()
             if "pathogen" not in key and "upload" not in key
         ]
-        quality_information.append(
-            Text(
-                value=f"Anzahl Genomsequenzen: {igs_endpoint_counts[f'pathogen_{pathogen}']}"  # noqa: E501
-            )
-        )
+        if (
+            count := igs_endpoint_counts[f"pathogen_{pathogen}"]
+        ) != "0" and count != "None":
+            quality_information.append(Text(value=f"Anzahl Genomsequenzen: {count}"))
         if igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource:
-            size_of_databasis = f"Anzahl Uploads: {
-                igs_endpoint_counts[
-                    igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
-                ]
-            }"
-        if pathogen not in title_by_pathogen:  # TODO(EH): fix in MX-2189
-            continue
+            size_of_databasis = (
+                f"Anzahl Uploads: {igs_endpoint_counts[f'pathogen_{pathogen}']}"
+            )
+        title = title_by_pathogen.get(pathogen, title_by_pathogen["[*]"])
         extracted_resources_by_pathogen[pathogen] = ExtractedResource(
             accessPlatform=igs_extracted_access_platform.stableTargetId,
             accessRestriction=igs_resource_mapping.accessRestriction[0]
@@ -174,7 +173,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
             sizeOfDataBasis=size_of_databasis,
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
-            title=title_by_pathogen[pathogen],
+            title=title,
             unitInCharge=unit_in_charge,
         )
     return extracted_resources_by_pathogen
@@ -306,13 +305,19 @@ def transform_igs_schemas_to_variables(
                 data_type = schema_property["format"]
             elif "type" in schema_property:
                 data_type = schema_property["type"]
-            description = None
+            elif "anyOf" in schema_property and "type" in schema_property["anyOf"]:
+                data_type = (
+                    schema_property["anyOf"][0]["type"]
+                    if schema_property["anyOf"][0]["type"] != "null"
+                    else schema_property["anyOf"][1]["type"]
+                )
+
+            description: list[str] = []
             if "description" in schema_property:
-                description = schema_property["description"]
-                if description == "":
-                    continue
-            else:
-                continue
+                description = [schema_property["description"]]
+                if description[0] == "":
+                    description = []
+
             extracted_variables.append(
                 ExtractedVariable(
                     belongsTo=belongs_to,
