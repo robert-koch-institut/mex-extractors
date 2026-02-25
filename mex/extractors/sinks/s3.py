@@ -2,11 +2,10 @@ import datetime
 import hashlib
 import json
 import re
-from collections.abc import Generator, Iterable
 from importlib import metadata
 from io import BytesIO
 from pathlib import Path
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import boto3
 import pandas as pd
@@ -19,6 +18,9 @@ from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.types import UTC
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, Iterable
 
 _LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 

@@ -4,7 +4,7 @@ import json
 import re
 from collections import deque
 from io import BytesIO
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -12,10 +12,12 @@ from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
-from mex.common.models import ExtractedOrganization
 from mex.common.testing import Joker
 from mex.common.transform import MExEncoder
 from mex.extractors.sinks.s3 import S3BaseSink, S3Sink, S3XlsxSink
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedOrganization
 
 
 class MockedBoto:
