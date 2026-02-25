@@ -434,7 +434,7 @@ def transform_activities(
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 titel=titel,
-                schlagwort=schlagwort,
+                schlagwort=schlagwort if schlagwort else None,
                 datenbank=datenbank,
                 startdatum=str(item.start[0]) if item.start else None,
                 enddatum=str(item.end[0]) if item.end else None,
