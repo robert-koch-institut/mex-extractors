@@ -54,14 +54,6 @@ def mocked_activity_mapping() -> DatenkompassMapping:
 
 
 @pytest.fixture
-def mocked_bibliographic_resource_mapping() -> DatenkompassMapping:
-    settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
-    )
-
-
-@pytest.fixture
 def mocked_merged_activities() -> list[MergedActivity]:
     """Mock a list of Merged Activity items."""
     return [
