@@ -175,7 +175,13 @@ def filter_merged_items_for_primary_source(
 
     if primary_source_filter in merged_items_by_primary_source:
         concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
-        extracted_item_stid = set(get_extracted_item_stable_target_ids([entity_type]))
+        concerned_merged_item_ids = [item.identifier for item in concerned_merged_items]
+        extracted_item_stid = set(
+            get_extracted_item_stable_target_ids(
+                [entity_type],
+                concerned_merged_item_ids,
+            )
+        )
         new_merged_items_by_primary_source = dict(merged_items_by_primary_source)
         new_merged_items_by_primary_source[primary_source_filter] = [
             item
