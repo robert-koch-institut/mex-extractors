@@ -84,7 +84,7 @@ def get_extracted_item_stable_target_ids(
 def get_filtered_primary_source_ids(
     filtered_primary_sources: list[str] | str | None,
 ) -> list[str]:
-    """Get the MergedIdentifier of the relevant primary sources.
+    """Get a list of MergedIdentifier of filtered primary sources.
 
     Args:
         filtered_primary_sources: List of primary sources.
@@ -102,10 +102,9 @@ def get_filtered_primary_source_ids(
     provider = get_provider()
 
     return [
-        mps.stableTargetId
-        for fps in filtered_primary_sources
-        for mps in provider.fetch(
+        provider.fetch(
             identifier_in_primary_source=fps,
             had_primary_source=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-        )[:1]
+        )[0].stableTargetId
+        for fps in filtered_primary_sources
     ]

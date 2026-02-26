@@ -11,9 +11,6 @@ class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
     organization_filter: str = Field(
         "Organization", description="Filter for organization"
     )
-    primary_source_filter: str = Field(
-        "filter primary source", description="Primary source which needs to be filtered"
-    )
     cutoff_number_authors: int = Field(
         3,
         description="Maximum number of extracted authors for Bibliographic resources",

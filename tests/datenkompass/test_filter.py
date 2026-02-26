@@ -89,7 +89,7 @@ def test_filter_filter_merged_items_for_primary_source(
 ) -> None:
     mocked_resources_by_primary_source = {
         "relevant primary source": mocked_merged_resource,
-        "filter primary source": mocked_merged_resource,
+        "mex-editor": mocked_merged_resource,
     }
 
     result = filter_merged_items_for_primary_source(
@@ -98,10 +98,10 @@ def test_filter_filter_merged_items_for_primary_source(
     )
 
     assert len(result["relevant primary source"]) == 4
-    assert len(result["filter primary source"]) == 3
+    assert len(result["mex-editor"]) == 3
     assert "IdMergedWithExtracted" in [
         item.identifier for item in result["relevant primary source"]
     ]
     assert "IdMergedWithExtracted" not in [
-        item.identifier for item in result["filter primary source"]
+        item.identifier for item in result["mex-editor"]
     ]
