@@ -77,7 +77,7 @@ def get_extracted_item_stable_target_ids(
 def get_filtered_primary_source_ids(
     filtered_primary_sources: list[str] | str | None,
 ) -> list[str]:
-    """Get the MergedIdentifier of the relevant primary sources.
+    """Get a list of MergedIdentifier of filtered primary sources.
 
     Args:
         filtered_primary_sources: List of primary sources.
