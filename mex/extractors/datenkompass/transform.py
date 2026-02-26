@@ -299,7 +299,7 @@ def handle_setval(set_value: list[str] | str | None) -> str:
     raise ValueError(msg)
 
 
-def built_string_shorter_than_limit(
+def filter_schlagworte(
     words: list[str | None],
     delim: str,
     min_word_length: int,
@@ -693,7 +693,7 @@ def transform_resources(
                 schlagwort_collection = get_german_vocabulary(item.theme) + [
                     entry.value for entry in item.keyword
                 ]
-                schlagwort = built_string_shorter_than_limit(
+                schlagwort = filter_schlagworte(
                     schlagwort_collection,
                     delim,
                     min_keyword_length,

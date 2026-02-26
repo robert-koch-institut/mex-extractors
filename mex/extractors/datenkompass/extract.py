@@ -95,10 +95,9 @@ def get_filtered_primary_source_ids(
     provider = get_provider()
 
     return [
-        mps.stableTargetId
-        for fps in filtered_primary_sources
-        for mps in provider.fetch(
+        provider.fetch(
             identifier_in_primary_source=fps,
             had_primary_source=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-        )[:1]
+        )[0].stableTargetId
+        for fps in filtered_primary_sources
     ]
