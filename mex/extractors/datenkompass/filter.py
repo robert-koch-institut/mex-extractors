@@ -169,9 +169,7 @@ def filter_merged_items_for_primary_source(
     Returns:
         dictionary with list of filtered merged items
     """
-    settings = Settings.get()
-
-    primary_source_filter = settings.datenkompass.primary_source_filter
+    primary_source_filter = "mex-editor"
     extracted_item_stid: set[Any] = set()
     stepwidth = 100
 

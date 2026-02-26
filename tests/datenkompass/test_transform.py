@@ -13,7 +13,7 @@ from mex.extractors.datenkompass.models.mapping import (
     MappingOrFilterRule,
 )
 from mex.extractors.datenkompass.transform import (
-    built_string_shorter_than_limit,
+    filter_schlagworte,
     fix_quotes,
     get_abstract_or_description,
     get_datenbank,
@@ -310,10 +310,10 @@ def test_handle_setval_none_raises_error() -> None:
     ],
     ids=["filter for length", "last word just fits", "all filtered out", "empty input"],
 )
-def test_built_string_shorter_than_limit(
+def test_filter_schlagworte(
     input_value: list[str | None], expected_output: str
 ) -> None:
-    result = built_string_shorter_than_limit(
+    result = filter_schlagworte(
         input_value,
         "||",
         2,
