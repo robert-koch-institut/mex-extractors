@@ -568,7 +568,7 @@ def transform_bibliographic_resources(
                 dk_format=dk_format,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
-                schlagwort=schlagwort,
+                schlagwort=schlagwort if schlagwort else None,
                 titel=titel,
                 datenhalter=datenhalter,
                 frequenz=frequenz,
