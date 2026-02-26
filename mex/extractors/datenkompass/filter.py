@@ -172,23 +172,28 @@ def filter_merged_items_for_primary_source(
     settings = Settings.get()
 
     primary_source_filter = settings.datenkompass.primary_source_filter
+    extracted_item_stid: set[Any] = set()
+    stepwidth = 100
 
-    if primary_source_filter in merged_items_by_primary_source:
-        concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
-        concerned_merged_item_ids = [item.identifier for item in concerned_merged_items]
-        extracted_item_stid = set(
-            get_extracted_item_stable_target_ids(
-                [entity_type],
-                concerned_merged_item_ids,
+    if primary_source_filter not in merged_items_by_primary_source:
+        return merged_items_by_primary_source
+
+    concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
+    concerned_merged_item_ids = [item.identifier for item in concerned_merged_items]
+    for counter in range(0, len(concerned_merged_item_ids), stepwidth):
+        extracted_item_stid.update(
+            set(
+                get_extracted_item_stable_target_ids(
+                    [entity_type],
+                    concerned_merged_item_ids[counter : counter + stepwidth],
+                )
             )
         )
-        new_merged_items_by_primary_source = dict(merged_items_by_primary_source)
-        new_merged_items_by_primary_source[primary_source_filter] = [
-            item
-            for item in concerned_merged_items
-            if item.identifier not in extracted_item_stid
-        ]
+    new_merged_items_by_primary_source = dict(merged_items_by_primary_source)
+    new_merged_items_by_primary_source[primary_source_filter] = [
+        item
+        for item in concerned_merged_items
+        if item.identifier not in extracted_item_stid
+    ]
 
-        return new_merged_items_by_primary_source
-
-    return merged_items_by_primary_source
+    return new_merged_items_by_primary_source
