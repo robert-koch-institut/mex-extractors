@@ -4,7 +4,7 @@ import json
 import re
 from collections import deque
 from io import BytesIO
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -14,41 +14,10 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.testing import Joker
 from mex.common.transform import MExEncoder
-from mex.extractors.sinks.s3 import S3BaseSink, S3Sink, S3XlsxSink
+from mex.extractors.sinks.s3 import S3Sink, S3XlsxSink
 
 if TYPE_CHECKING:
     from mex.common.models import ExtractedOrganization
-
-
-class MockedBoto:
-    def __init__(self) -> None:
-        self.put_object: MagicMock = MagicMock(side_effect=self._put_object)
-        self.bodies: list[bytes] = []
-
-    def _put_object(self, *_: Any, **kwargs: Any) -> None:  # noqa: ANN401
-        body: Any = kwargs.get("Body")
-
-        if isinstance(body, BytesIO):
-            self.bodies.append(body.read())
-        elif isinstance(body, bytes):
-            self.bodies.append(body)
-        else:
-            msg = f"Unexpected Body type: {type(body)}"
-            raise TypeError(msg)
-
-    def close(self) -> None:
-        pass
-
-
-@pytest.fixture
-def mocked_s3_client(monkeypatch: MonkeyPatch) -> MockedBoto:
-    mocked_client = MockedBoto()
-
-    def mocked_init(self: S3BaseSink) -> None:
-        self.client = mocked_client
-
-    monkeypatch.setattr(S3BaseSink, "__init__", mocked_init)
-    return mocked_client
 
 
 @pytest.fixture
@@ -64,7 +33,7 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
     return BackendApiConnector.get()
 
 
-@pytest.mark.usefixtures("mocked_s3_client", "mocked_backend")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
 def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     items_generator = (item for item in [extracted_organization_rki])
     expected_items = [extracted_organization_rki]
@@ -159,7 +128,7 @@ def test__calculate_checksum() -> None:
     assert returned == expected
 
 
-@pytest.mark.usefixtures("mocked_s3_client", "mocked_backend")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
 def test__load_metadata(monkeypatch: MonkeyPatch) -> None:
     locally_available_version = {
         "mex-common": "mex-common-version",
@@ -204,7 +173,7 @@ def test__load_metadata(monkeypatch: MonkeyPatch) -> None:
     assert json.loads(returned_content) == expected_content
 
 
-@pytest.mark.usefixtures("mocked_s3_client")
+@pytest.mark.usefixtures("mocked_s3sink_client")
 def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
     sink = S3XlsxSink()
     deque(sink.load([extracted_organization_rki]), maxlen=0)
