@@ -11,11 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - convenience function for LDAP lookup
 - update dependencies
+- s3sink writes dedicated metadata file that includes mex-package versions, checksum of the written items file, and timestamp of write completion
 
 ### Changes
 
 - lock file maintenance (2026-02-16)
 - update IGS extractor according to mapping changes
+- lock file maintenance (2026-02-12)
+- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
 
 ### Deprecated
 

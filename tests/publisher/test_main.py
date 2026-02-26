@@ -17,22 +17,15 @@ from mex.extractors.publisher.main import (
     publisher_items_without_actors,
     publisher_persons,
 )
-from mex.extractors.sinks.s3 import S3Sink
 
 if TYPE_CHECKING:
     from mex.extractors.publisher.types import PublisherItemsLike
 
 
-@pytest.fixture  # needed for hardcoded upload to S3. Remove with MX-1808
-def mocked_boto(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
-    mocked_client = MagicMock()
-    monkeypatch.setattr(
-        S3Sink, "__init__", lambda self: setattr(self, "client", mocked_client)
-    )
-    return mocked_client
-
-
-@pytest.mark.usefixtures("mocked_backend", "mocked_boto")
+@pytest.mark.usefixtures(
+    "mocked_backend",
+    "mocked_s3sink_client",  # needed for hardcoded upload to S3. Remove with MX-1808
+)
 def test_run() -> None:
     assert run_job_in_process("publisher")
 

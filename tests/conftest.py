@@ -1,4 +1,7 @@
+from io import BytesIO
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -19,6 +22,11 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
+from mex.extractors.sinks.s3 import S3BaseSink
+
+if TYPE_CHECKING:
+    from pytest import MonkeyPatch
+
 
 pytest_plugins = (
     "mex.common.testing.plugin",
@@ -79,3 +87,32 @@ def mocked_units_by_identifier_in_primary_source(
         unit.identifierInPrimarySource: unit
         for unit in mocked_extracted_organizational_units
     }
+
+
+@pytest.fixture
+def mocked_s3sink_client(monkeypatch: MonkeyPatch) -> None:
+    class MockedBoto:
+        def __init__(self) -> None:
+            self.put_object: MagicMock = MagicMock(side_effect=self._put_object)
+            self.bodies: list[bytes] = []
+
+        def _put_object(self, *_: Any, **kwargs: Any) -> None:  # noqa: ANN401
+            body: Any = kwargs.get("Body")
+
+            if isinstance(body, BytesIO):
+                self.bodies.append(body.read())
+            elif isinstance(body, bytes):
+                self.bodies.append(body)
+            else:
+                msg = f"Unexpected Body type: {type(body)}"
+                raise TypeError(msg)
+
+        def close(self) -> None:
+            pass
+
+    mocked_client = MockedBoto()
+
+    def mocked_init(self: S3BaseSink) -> None:
+        self.client = mocked_client
+
+    monkeypatch.setattr(S3BaseSink, "__init__", mocked_init)
