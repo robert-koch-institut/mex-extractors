@@ -552,7 +552,7 @@ def transform_bibliographic_resources(
             for rule in default_by_fieldname["voraussetzungen"].mappingRules
             if rule.forValues and rule.forValues[0] == item.accessRestriction.name
         )
-        schlagwort = built_string_shorter_than_limit(
+        schlagwort = filter_schlagworte(
             [word.value for word in item.keyword] if item.keyword else [],
             delim,
             min_word_length,
