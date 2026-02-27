@@ -42,19 +42,24 @@ def get_merged_items(
 
 def get_extracted_item_stable_target_ids(
     entity_type: list[str],
+    referenced_identifier: list[str] | None,
 ) -> list[MergedIdentifier]:
     """Fetch extracted items from backend and return their stableTargetId.
 
     Args:
         entity_type: List of entity types.
+        referenced_identifier: list of MergedIdentifiers to filter for
 
     Returns:
         List of stableTargetIds of extracted items of the given entity type(s).
     """
+    reference_field = "stableTargetId"
     connector = BackendApiConnector.get()
 
     response = connector.fetch_extracted_items(
         entity_type=entity_type,
+        referenced_identifier=referenced_identifier,
+        reference_field=reference_field,
         skip=0,
         limit=1,
     )
@@ -66,6 +71,8 @@ def get_extracted_item_stable_target_ids(
         extracted_items.extend(
             connector.fetch_extracted_items(
                 entity_type=entity_type,
+                referenced_identifier=referenced_identifier,
+                reference_field=reference_field,
                 skip=item_counter,
                 limit=item_number_limit,
             ).items

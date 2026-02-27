@@ -47,7 +47,9 @@ def test_get_merged_items_mocked() -> None:
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
 def test_get_extracted_item_stable_target_ids() -> None:
-    result = get_extracted_item_stable_target_ids(["ExtractedResource"])
+    result = get_extracted_item_stable_target_ids(
+        ["ExtractedResource"], ["thisdoesnotmatter"]
+    )
     assert result == ["IdMergedWithExtracted"]
 
 

@@ -420,6 +420,8 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
     def fetch_extracted_items(
         *,
         entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,  # noqa: ARG001
+        reference_field: str | None = None,  # noqa: ARG001
         skip: int,  # noqa: ARG001
         limit: int,  # noqa: ARG001
     ) -> PaginatedItemsContainer[AnyExtractedModel]:
