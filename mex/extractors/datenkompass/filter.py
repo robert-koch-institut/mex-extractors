@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any, cast, overload
 
+from mex.common.exceptions import MExError
 from mex.common.organigram.helpers import find_descendants
 from mex.extractors.datenkompass.extract import (
     get_extracted_item_stable_target_ids,
@@ -174,23 +175,26 @@ def filter_merged_items_for_primary_source(
     stepwidth = 100
 
     if primary_source_filter not in merged_items_by_primary_source:
-        return merged_items_by_primary_source
+        msg = "No mex-editor items in dictionary"
+        raise MExError(msg)
 
-    concerned_merged_items = merged_items_by_primary_source[primary_source_filter]
-    concerned_merged_item_ids = [item.identifier for item in concerned_merged_items]
-    for counter in range(0, len(concerned_merged_item_ids), stepwidth):
+    mex_editor_merged_items = merged_items_by_primary_source[primary_source_filter]
+    mex_editor_merged_item_ids = [
+        str(item.identifier) for item in mex_editor_merged_items
+    ]
+    for counter in range(0, len(mex_editor_merged_item_ids), stepwidth):
         extracted_item_stid.update(
             set(
                 get_extracted_item_stable_target_ids(
                     [entity_type],
-                    concerned_merged_item_ids[counter : counter + stepwidth],
+                    mex_editor_merged_item_ids[counter : counter + stepwidth],
                 )
             )
         )
     new_merged_items_by_primary_source = dict(merged_items_by_primary_source)
     new_merged_items_by_primary_source[primary_source_filter] = [
         item
-        for item in concerned_merged_items
+        for item in mex_editor_merged_items
         if item.identifier not in extracted_item_stid
     ]
 
