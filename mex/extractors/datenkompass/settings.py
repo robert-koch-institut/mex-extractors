@@ -19,6 +19,10 @@ class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
         "; ",
         description="Seperator for different entries in a datenkompass model field.",
     )
+    min_keyword_item_length: int = Field(2, description="Minimum length per keyword")
+    max_keyword_str_length: int = Field(
+        50, description="Maximum length for complete collected keywords string"
+    )
     mapping_path: AssetsPath = Field(
         AssetsPath("mappings/mapping-to-external-schema/datenkompass"),
         description=(
