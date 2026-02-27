@@ -462,7 +462,6 @@ def transform_bibliographic_resources(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     datenkompass_person_str_by_id: dict[MergedPersonIdentifier, str],
-    bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform merged to datenkompass bibliographic resources.
 
@@ -476,12 +475,57 @@ def transform_bibliographic_resources(
         list of DatenkompassBibliographicResource instances.
     """
     settings = Settings.get()
+
+    bibliographic_resource_mapping = DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+    )
     delim = settings.datenkompass.list_delimiter
+    min_word_length = settings.datenkompass.min_keyword_item_length
+    max_string_length = settings.datenkompass.max_keyword_str_length
+    max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
+
     datenkompass_bibliographic_recources = []
     default_by_fieldname = mapping_lookup_default(
         DatenkompassBibliographicResource,
         bibliographic_resource_mapping,
     )
+
+    rechtsgrundlagen_benennung = handle_setval(
+        default_by_fieldname["rechtsgrundlagen_benennung"].mappingRules[0].setValues
+    )
+    datennutzungszweck_erweitert = handle_setval(
+        default_by_fieldname["datennutzungszweck_erweitert"].mappingRules[0].setValues
+    )
+    dk_format = handle_setval(
+        default_by_fieldname["dk_format"].mappingRules[0].setValues
+    )
+    datenhalter = handle_setval(
+        default_by_fieldname["datenhalter"].mappingRules[0].setValues
+    )
+    frequenz = handle_setval(default_by_fieldname["frequenz"].mappingRules[0].setValues)
+    hauptkategorie = handle_setval(
+        default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+    )
+    unterkategorie = handle_setval(
+        default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+    )
+    herausgeber = handle_setval(
+        default_by_fieldname["herausgeber"].mappingRules[0].setValues
+    )
+    datenerhalt = handle_setval(
+        default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+    )
+    status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+    datennutzungszweck = handle_setval(
+        default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+    )
+    rechtsgrundlage = handle_setval(
+        default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+    )
+    kommentar = handle_setval(
+        default_by_fieldname["kommentar"].mappingRules[0].setValues
+    )
+
     for item in merged_bibliographic_resources:
         datenbank = get_datenbank(item)
         kontakt = get_email(item.contributingUnit, merged_organizational_units_by_id)
@@ -490,7 +534,6 @@ def transform_bibliographic_resources(
             merged_organizational_units_by_id,
             delim,
         )
-        max_number_authors_cutoff = settings.datenkompass.cutoff_number_authors
         title_collection = ", ".join(fix_quotes(entry.value) for entry in item.title)
         creator_collection = " / ".join(
             [
@@ -509,47 +552,11 @@ def transform_bibliographic_resources(
             for rule in default_by_fieldname["voraussetzungen"].mappingRules
             if rule.forValues and rule.forValues[0] == item.accessRestriction.name
         )
-        rechtsgrundlagen_benennung = handle_setval(
-            default_by_fieldname["rechtsgrundlagen_benennung"].mappingRules[0].setValues
-        )
-        datennutzungszweck_erweitert = handle_setval(
-            default_by_fieldname["datennutzungszweck_erweitert"]
-            .mappingRules[0]
-            .setValues
-        )
-        dk_format = handle_setval(
-            default_by_fieldname["dk_format"].mappingRules[0].setValues
-        )
-        datenhalter = handle_setval(
-            default_by_fieldname["datenhalter"].mappingRules[0].setValues
-        )
-        frequenz = handle_setval(
-            default_by_fieldname["frequenz"].mappingRules[0].setValues
-        )
-        hauptkategorie = handle_setval(
-            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
-        )
-        unterkategorie = handle_setval(
-            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
-        )
-        herausgeber = handle_setval(
-            default_by_fieldname["herausgeber"].mappingRules[0].setValues
-        )
-        datenerhalt = handle_setval(
-            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
-        )
-        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
-        datennutzungszweck = handle_setval(
-            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
-        )
-        rechtsgrundlage = handle_setval(
-            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
-        )
-        kommentar = handle_setval(
-            default_by_fieldname["kommentar"].mappingRules[0].setValues
-        )
-        schlagwort = (
-            delim.join([word.value for word in item.keyword]) if item.keyword else None
+        schlagwort = filter_schlagworte(
+            [word.value for word in item.keyword] if item.keyword else [],
+            delim,
+            min_word_length,
+            max_string_length,
         )
         datenkompass_bibliographic_recources.append(
             DatenkompassBibliographicResource(
@@ -561,7 +568,7 @@ def transform_bibliographic_resources(
                 dk_format=dk_format,
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
-                schlagwort=schlagwort,
+                schlagwort=schlagwort if schlagwort else None,
                 titel=titel,
                 datenhalter=datenhalter,
                 frequenz=frequenz,

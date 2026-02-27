@@ -6,13 +6,16 @@ from dagster import asset
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
+    MergedBibliographicResource,
     MergedContactPoint,
     MergedOrganizationalUnit,
+    MergedPerson,
     MergedResource,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.datenkompass.extract import (
     get_filtered_primary_source_ids,
@@ -25,6 +28,7 @@ from mex.extractors.datenkompass.filter import (
 )
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
+    DatenkompassBibliographicResource,
     DatenkompassResource,
 )
 from mex.extractors.datenkompass.models.mapping import (
@@ -32,6 +36,7 @@ from mex.extractors.datenkompass.models.mapping import (
 )
 from mex.extractors.datenkompass.transform import (
     transform_activities,
+    transform_bibliographic_resources,
     transform_resources,
 )
 from mex.extractors.pipeline import run_job_in_process
@@ -68,7 +73,7 @@ def datenkompass_merged_contact_points_by_id() -> dict[
     }
 
 
-'''@asset(group_name="datenkompass")
+@asset(group_name="datenkompass")
 def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
     """Get person name as dictionary by id."""
     return {
@@ -85,7 +90,6 @@ def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
         )
         if person.fullName or person.familyName
     }
-'''
 
 
 @asset(group_name="datenkompass")
@@ -95,16 +99,6 @@ def datenkompass_activity_filter_mapping() -> DatenkompassFilterMapping:
     return DatenkompassFilterMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "activity_filter.yaml")
     )
-
-
-'''@asset(group_name="datenkompass")
-def datenkompass_bibliographic_resource_mapping() -> DatenkompassMapping:
-    """Load the Datenkompass activity mapping."""
-    settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
-    )
-'''
 
 
 @asset(group_name="datenkompass")
@@ -168,13 +162,17 @@ def datenkompass_filtered_merged_activities(
     )
 
 
-'''@asset(group_name="datenkompass")
-def datenkompass_merged_bibliographic_resources(
-    datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
-) -> list[MergedBibliographicResource]:
+@asset(group_name="datenkompass")
+def datenkompass_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
+    settings = Settings.get()
+    bibliographic_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
+        load_yaml(
+            settings.datenkompass.mapping_path / "bibliographic-resource_filter.yaml"
+        )
+    )
     filtered_primary_sources = (
-        datenkompass_bibliographic_resource_mapping.fields[0].mappingRules[0].forValues
+        bibliographic_resource_filter_mapping.fields[0].filterRules[0].forValues
     )
     entity_type = ["MergedBibliographicResource"]
     primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
@@ -186,7 +184,6 @@ def datenkompass_merged_bibliographic_resources(
             reference_field="hadPrimarySource",
         ),
     )
-'''
 
 
 @asset(group_name="datenkompass")
@@ -257,23 +254,20 @@ def datenkompass_activities(
     )
 
 
-'''@asset(group_name="datenkompass")
+@asset(group_name="datenkompass")
 def datenkompass_bibliographic_resources(
     datenkompass_merged_bibliographic_resources: list[MergedBibliographicResource],
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     datenkompass_person_name_str_by_id: dict[MergedPersonIdentifier, str],
-    datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         datenkompass_merged_bibliographic_resources,
         datenkompass_merged_organizational_units_by_id,
         datenkompass_person_name_str_by_id,
-        datenkompass_bibliographic_resource_mapping,
     )
-'''
 
 
 @asset(group_name="datenkompass")
@@ -299,7 +293,7 @@ def datenkompass_resources_by_primary_source_by_unit(
 @asset(group_name="datenkompass")
 def datenkompass_s3_xlsx_publication(
     datenkompass_activities: list[DatenkompassActivity],
-    # datenkompass_bibliographic_resources: list[DatenkompassBibliographicResource],
+    datenkompass_bibliographic_resources: list[DatenkompassBibliographicResource],
     datenkompass_resources_by_primary_source_by_unit: dict[
         str, dict[str, list[DatenkompassResource]]
     ],
@@ -307,12 +301,12 @@ def datenkompass_s3_xlsx_publication(
     """Write items to S3 xlsx."""
     s3xlsx = S3XlsxSink()
     deque(s3xlsx.load(datenkompass_activities), maxlen=0)
-    """deque(
+    deque(
         s3xlsx.load(
             datenkompass_bibliographic_resources,
         ),
         maxlen=0,
-    )"""
+    )
     for unit, inner_dict in datenkompass_resources_by_primary_source_by_unit.items():
         for primary_source, datenkompass_resources in inner_dict.items():
             deque(
