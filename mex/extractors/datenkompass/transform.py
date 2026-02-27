@@ -184,10 +184,10 @@ def get_title(item: MergedActivity) -> list[str]:
         List of short name and title of units as strings.
     """
     collected_titles = []
-    if item.shortName:
-        collected_titles.extend(get_german_text(item.shortName))
     if item.title:
         collected_titles.extend(get_german_text(item.title))
+    if item.shortName:
+        collected_titles.extend(get_german_text(item.shortName))
     return collected_titles
 
 
@@ -345,24 +345,59 @@ def transform_activities(
         MergedOrganizationalUnitIdentifier,
         MergedOrganizationalUnit,
     ],
-    activity_mapping: DatenkompassMapping,
 ) -> list[DatenkompassActivity]:
     """Transform merged to datenkompass activities.
 
     Args:
         filtered_merged_activities: List of merged activities
         merged_organizational_units_by_id: dict of merged organizational units by id
-        activity_mapping: Datenkompass mapping.
 
     Returns:
         list of DatenkompassActivity instances.
     """
     settings = Settings.get()
+
+    activity_mapping = DatenkompassMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+    )
     delim = settings.datenkompass.list_delimiter
+    min_keyword_length = settings.datenkompass.min_keyword_item_length
+    max_keyword_string_length = settings.datenkompass.max_keyword_str_length
+
     datenkompass_activities = []
     default_by_fieldname = mapping_lookup_default(
         DatenkompassActivity,
         activity_mapping,
+    )
+
+    voraussetzungen = handle_setval(
+        default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
+    )
+    frequenz = handle_setval(default_by_fieldname["frequenz"].mappingRules[0].setValues)
+    hauptkategorie = handle_setval(
+        default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
+    )
+    unterkategorie = handle_setval(
+        default_by_fieldname["unterkategorie"].mappingRules[0].setValues
+    )
+    rechtsgrundlage = handle_setval(
+        default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
+    )
+    datenerhalt = handle_setval(
+        default_by_fieldname["datenerhalt"].mappingRules[0].setValues
+    )
+    status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
+    datennutzungszweck = handle_setval(
+        default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
+    )
+    herausgeber = handle_setval(
+        default_by_fieldname["herausgeber"].mappingRules[0].setValues
+    )
+    kommentar = handle_setval(
+        default_by_fieldname["kommentar"].mappingRules[0].setValues
+    )
+    dk_format = handle_setval(
+        default_by_fieldname["dk_format"].mappingRules[0].setValues
     )
     for item in filtered_merged_activities:
         beschreibung = handle_setval(
@@ -379,9 +414,11 @@ def transform_activities(
             delim,
         )
         titel = delim.join(get_title(item))
-        schlagwort = (
-            delim.join(t for t in get_german_vocabulary(item.theme) if t is not None)
-            or None
+        schlagwort = filter_schlagworte(
+            get_german_vocabulary(item.theme),
+            delim,
+            min_keyword_length,
+            max_keyword_string_length,
         )
         datenbank = None
         if item.website:
@@ -390,40 +427,6 @@ def transform_activities(
         datenhalter = handle_setval(
             default_by_fieldname["datenhalter"].mappingRules[0].setValues
         )
-        start = str(item.start[0]) if item.start else None
-        end = str(item.end[0]) if item.end else None
-        zeitliche_abdeckung = f"{start} - {end}" if start and end else start or end
-        voraussetzungen = handle_setval(
-            default_by_fieldname["voraussetzungen"].mappingRules[0].setValues
-        )
-        frequenz = handle_setval(
-            default_by_fieldname["frequenz"].mappingRules[0].setValues
-        )
-        hauptkategorie = handle_setval(
-            default_by_fieldname["hauptkategorie"].mappingRules[0].setValues
-        )
-        unterkategorie = handle_setval(
-            default_by_fieldname["unterkategorie"].mappingRules[0].setValues
-        )
-        rechtsgrundlage = handle_setval(
-            default_by_fieldname["rechtsgrundlage"].mappingRules[0].setValues
-        )
-        datenerhalt = handle_setval(
-            default_by_fieldname["datenerhalt"].mappingRules[0].setValues
-        )
-        status = handle_setval(default_by_fieldname["status"].mappingRules[0].setValues)
-        datennutzungszweck = handle_setval(
-            default_by_fieldname["datennutzungszweck"].mappingRules[0].setValues
-        )
-        herausgeber = handle_setval(
-            default_by_fieldname["herausgeber"].mappingRules[0].setValues
-        )
-        kommentar = handle_setval(
-            default_by_fieldname["kommentar"].mappingRules[0].setValues
-        )
-        dk_format = handle_setval(
-            default_by_fieldname["dk_format"].mappingRules[0].setValues
-        )
         datenkompass_activities.append(
             DatenkompassActivity(
                 datenhalter=datenhalter,
@@ -431,9 +434,10 @@ def transform_activities(
                 kontakt=kontakt,
                 organisationseinheit=organisationseinheit,
                 titel=titel,
-                schlagwort=schlagwort,
+                schlagwort=schlagwort if schlagwort else None,
                 datenbank=datenbank,
-                zeitliche_abdeckung=zeitliche_abdeckung,
+                startdatum=str(item.start[0]) if item.start else None,
+                enddatum=str(item.end[0]) if item.end else None,
                 voraussetzungen=voraussetzungen,
                 frequenz=frequenz,
                 hauptkategorie=hauptkategorie,

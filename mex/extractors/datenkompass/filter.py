@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, overload
 
 from mex.common.exceptions import MExError
-from mex.common.logging import logger
 from mex.common.organigram.helpers import find_descendants
 from mex.extractors.datenkompass.extract import (
     get_extracted_item_stable_target_ids,
@@ -22,17 +21,13 @@ if TYPE_CHECKING:
     from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 
 
-def filter_activities_for_organization_and_unit(
-    datenkompass_merged_activities_by_unit: dict[str, list[MergedActivity]],
-    datenkompass_merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
-    ],
-) -> dict[str, list[MergedActivity]]:
+def filter_activities_by_organization(
+    datenkompass_merged_activities_by_primary_source: list[MergedActivity],
+) -> list[MergedActivity]:
     """Filter the merged activities based on the mapping specifications.
 
     Args:
-        datenkompass_merged_activities_by_unit: merged activities by unit.
-        datenkompass_merged_organizational_units_by_id: units by id
+        datenkompass_merged_activities_by_primary_source: merged activities by unit.
 
     Returns:
         filtered list of merged activities by unit.
@@ -49,29 +44,14 @@ def filter_activities_for_organization_and_unit(
         )
     ]
 
-    filtered_merged_activities_by_unit: dict[str, list[MergedActivity]] = {}
-
-    for unit_name, activity_list in datenkompass_merged_activities_by_unit.items():
-        filtered_merged_unit_ids = find_descendant_units(
-            datenkompass_merged_organizational_units_by_id, unit_name
+    return [
+        item
+        for item in datenkompass_merged_activities_by_primary_source
+        if any(
+            funder in filtered_merged_organization_ids
+            for funder in item.funderOrCommissioner
         )
-        filtered_items = [
-            item
-            for item in activity_list
-            if any(
-                funder in filtered_merged_organization_ids
-                for funder in item.funderOrCommissioner
-            )
-            and any(unit in filtered_merged_unit_ids for unit in item.responsibleUnit)
-        ]
-        filtered_merged_activities_by_unit[unit_name] = filtered_items
-
-    logger.info(
-        "%s items remain after filtering.",
-        sum(len(v) for v in filtered_merged_activities_by_unit.values()),
-    )
-
-    return filtered_merged_activities_by_unit
+    ]
 
 
 def filter_merged_resources_by_unit(
@@ -159,10 +139,22 @@ def find_descendant_units(
     return descendants
 
 
+@overload
 def filter_merged_items_for_primary_source(
-    merged_items_by_primary_source: dict[str, list[MergedResource]],
+    merged_items_by_primary_source: dict[str, list[MergedResource]], entity_type: str
+) -> dict[str, list[MergedResource]]: ...
+
+
+@overload
+def filter_merged_items_for_primary_source(
+    merged_items_by_primary_source: dict[str, list[MergedActivity]], entity_type: str
+) -> dict[str, list[MergedActivity]]: ...
+
+
+def filter_merged_items_for_primary_source(
+    merged_items_by_primary_source: dict[str, list[Any]],
     entity_type: str,
-) -> dict[str, list[MergedResource]]:
+) -> dict[str, list[Any]]:
     """Filter the merged items for primary source as defined in settings.
 
      Special treatment for items which were created/edited in editor: filter those

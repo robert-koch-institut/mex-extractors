@@ -1,16 +1,10 @@
 fields:
   - fieldInMEx: funderOrCommissioner
     filterRules:
-      - rule: filter
-  - fieldInMEx: responsibleUnit + hadPrimarySource
+      - forValues:
+          - "Organization"
+  - fieldInMEx: hadPrimarySource
     filterRules:
-      - rule: filter
-        forValues:
-          - "PRNT"
-        setValues:
+      - forValues:
           - "relevant primary source"
-      - rule: filter as well
-        forValues:
-          - "FG 99"
-        setValues:
-          - "relevant primary source"
+          - "mex-editor"
