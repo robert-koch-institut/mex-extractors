@@ -1,6 +1,5 @@
 import math
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import backoff
 from requests import HTTPError, Response
@@ -13,6 +12,9 @@ from mex.extractors.open_data.models.source import (
     OpenDataVersionFiles,
 )
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class OpenDataConnector(HTTPConnector):

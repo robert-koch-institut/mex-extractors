@@ -12,7 +12,7 @@ displayName: Resolved, Roland
 employeeID: 42
 objectGUID: 00000000-0000-4000-8000-000000000001
 sAMAccountName: ResolvedR
-department: PARENT-UNIT
+department: parent-unit
 departmentNumber: FG99
 mail: resolvedr@rki.de
 uid: ResolvedR

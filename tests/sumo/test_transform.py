@@ -1,17 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    AccessPlatformMapping,
-    ActivityMapping,
-    ExtractedAccessPlatform,
-    ExtractedActivity,
-    ExtractedContactPoint,
-    ExtractedOrganization,
-    ExtractedPerson,
-    ExtractedResource,
-    ExtractedVariableGroup,
-    ResourceMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     LinkLanguage,
@@ -25,12 +15,6 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
-from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
-from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
-from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
-from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
-from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.sumo.transform import (
     get_contact_merged_ids_by_emails,
     get_contact_merged_ids_by_names,
@@ -45,6 +29,26 @@ from mex.extractors.sumo.transform import (
     transform_sumo_access_platform_to_mex_access_platform,
     transform_sumo_activity_to_extracted_activity,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ActivityMapping,
+        ExtractedAccessPlatform,
+        ExtractedActivity,
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ExtractedPerson,
+        ExtractedResource,
+        ExtractedVariableGroup,
+        ResourceMapping,
+    )
+    from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
+    from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
+    from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
+    from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
+    from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
+    from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 
 
 def test_get_contact_merged_ids_by_emails(contact_point: ExtractedContactPoint) -> None:

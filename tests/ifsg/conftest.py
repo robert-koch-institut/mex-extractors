@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.models import (
@@ -23,8 +25,10 @@ from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

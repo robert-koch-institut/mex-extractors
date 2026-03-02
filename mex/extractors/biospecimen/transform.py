@@ -1,5 +1,4 @@
-from collections.abc import Iterable
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.models import (
     ExtractedActivity,
@@ -15,12 +14,16 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     TemporalEntity,
 )
-from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
@@ -98,7 +101,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             elif unit := get_unit_merged_id_by_synonym(kontakt):
                 contact.extend(unit)
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
-            resource.studienbezug[0], None
+            resource.studienbezug[0]
         )
         if resource.weiterfuehrende_dokumentation_url_oder_dateipfad:
             documentation = Link(

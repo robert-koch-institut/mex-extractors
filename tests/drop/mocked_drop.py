@@ -57,7 +57,7 @@ def mocked_drop(monkeypatch: MonkeyPatch) -> None:
 
     def get_raw_file_mocked(
         _self: DropApiConnector, x_system: str, file_id: str
-    ) -> "MockedResponse":
+    ) -> MockedResponse:
         with (
             (
                 Path(__file__).parents[2]

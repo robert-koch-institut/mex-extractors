@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPerson
-from mex.common.models import ResourceMapping
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPerson
+    from mex.common.models import ResourceMapping
+    from mex.common.types import MergedOrganizationIdentifier
 
 
 def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:

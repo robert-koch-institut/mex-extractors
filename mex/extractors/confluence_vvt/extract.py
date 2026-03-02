@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
 from mex.common.exceptions import MExError
@@ -6,11 +6,15 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import logger
-from mex.common.models import ActivityMapping
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
-from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.models import ActivityMapping
+    from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
 
 
 def fetch_all_vvt_pages_ids() -> list[str]:

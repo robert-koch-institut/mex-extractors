@@ -1,7 +1,10 @@
-from pytest import MonkeyPatch
+from typing import TYPE_CHECKING
 
 from mex.common.settings import SETTINGS_STORE
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from pytest import MonkeyPatch
 
 
 def test_settings(monkeypatch: MonkeyPatch) -> None:

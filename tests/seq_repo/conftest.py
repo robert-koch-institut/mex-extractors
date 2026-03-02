@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
@@ -9,15 +11,17 @@ from mex.common.models import (
     ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.types import MergedPersonIdentifier
 from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_activities_to_extracted_activities,
 )
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.common.types import MergedPersonIdentifier
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

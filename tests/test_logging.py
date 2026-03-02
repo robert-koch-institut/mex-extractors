@@ -1,9 +1,11 @@
 import logging
-
-from pytest import LogCaptureFixture
+from typing import TYPE_CHECKING
 
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.logging import log_filter, watch_progress
+
+if TYPE_CHECKING:
+    from pytest import LogCaptureFixture
 
 
 def test_log_filter(caplog: LogCaptureFixture) -> None:

@@ -1,17 +1,12 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    ExtractedActivity,
-    ExtractedResource,
-    ResourceMapping,
-    VariableMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
 )
-from mex.extractors.odk.model import ODKData
 from mex.extractors.odk.transform import (
     transform_odk_data_to_extracted_variables,
     transform_odk_resources_to_mex_resources,
@@ -20,6 +15,15 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        ExtractedActivity,
+        ExtractedResource,
+        ResourceMapping,
+        VariableMapping,
+    )
+    from mex.extractors.odk.model import ODKData
 
 
 @pytest.mark.usefixtures("mocked_wikidata")

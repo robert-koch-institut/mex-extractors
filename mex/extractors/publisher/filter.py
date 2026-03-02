@@ -2,9 +2,9 @@ from collections import defaultdict
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
-from mex.common.models import MergedConsent, MergedPerson
 
 if TYPE_CHECKING:
+    from mex.common.models import MergedConsent, MergedPerson
     from mex.common.types import MergedConsentIdentifier, MergedPersonIdentifier
 
 

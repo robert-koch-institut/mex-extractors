@@ -1,15 +1,19 @@
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.datscha_web.connector import DatschaWebConnector
-from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.logging import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.common.types import MergedOrganizationIdentifier
+    from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
 def extract_datscha_web_items() -> list[DatschaWebItem]:

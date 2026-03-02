@@ -2,12 +2,14 @@ import json
 from email.headerregistry import Address
 from email.message import EmailMessage
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
 
-from mex.common.models import MergedPerson
 from mex.extractors.settings import Settings
+
+if TYPE_CHECKING:
+    from mex.common.models import MergedPerson
 
 
 def transform_person_to_sendable_email(person: MergedPerson) -> EmailMessage | None:

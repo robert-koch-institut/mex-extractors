@@ -10,12 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - test split by / for ff-projects extract organization
--kvis: transformation and loading of resource, variables and variable-groups
+- convenience function for LDAP lookup
+- update dependencies
 
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
-- upgrade debian docker base to trixie again
+- lock file maintenance (2026-02-16)
+- update IGS extractor according to mapping changes
 
 ### Deprecated
 
@@ -26,6 +27,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
 
 ### Security
+
+## [1.9.0] - 2026-02-10
+
+### Added
+
+- kvis: transformation and loading of resource, variables and variable-groups
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+- upgrade debian docker base to trixie again
 
 ## [1.8.5] - 2026-02-05
 

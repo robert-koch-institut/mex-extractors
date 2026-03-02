@@ -1,10 +1,13 @@
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 import pytest
 
 from mex.common.types import MergedPrimarySourceIdentifier, TemporalEntity
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.models import BaseRawData
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class MockedBaseRawData(BaseRawData):

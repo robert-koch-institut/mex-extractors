@@ -1,7 +1,7 @@
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 from mex.common.models import ExtractedOrganization, OrganizationMapping
-from mex.common.types import MergedOrganizationIdentifier
 from mex.common.wikidata.extract import get_wikidata_organization
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
@@ -13,6 +13,9 @@ from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
+if TYPE_CHECKING:
+    from mex.common.types import MergedOrganizationIdentifier
+
 
 def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization | None:
     """Get and load a wikidata item details by its ID.
@@ -23,7 +26,9 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     Returns:
         extracted organization if found in wikidata
     """
-    wikidata_organization = get_wikidata_organization(wikidata_id.split("/")[-1])
+    wikidata_organization = get_wikidata_organization(
+        wikidata_id.rsplit("/", maxsplit=1)[-1]
+    )
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
         wikidata_organization, get_extracted_primary_source_id_by_name("wikidata")
     )

@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
@@ -16,13 +17,15 @@ from mex.common.types import (
     TextLanguage,
     Theme,
 )
-from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+
+if TYPE_CHECKING:
+    from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
 @pytest.fixture

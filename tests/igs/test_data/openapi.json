@@ -1,14 +1,7 @@
 {
     "components": {
         "schemas": {
-            "igsmodels__enums__Pathogen": {
-                "enum": [
-                    "PATHOGEN"
-                ],
-                "title": "enum",
-                "type": "string"
-            },
-            "schemaCreation": {
+            "SchemaCreation": {
                 "description": "properties",
                 "properties": {
                     "schemas": {
@@ -19,6 +12,13 @@
                         "type": "date"
                     }
                 }
+            },
+            "igsmodels__enums__Pathogen": {
+                "enum": [
+                    "PATHOGEN"
+                ],
+                "title": "enum",
+                "type": "string"
             }
         }
     },

@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.models import ActivityMapping
-from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import Settings
 
 
 @pytest.fixture

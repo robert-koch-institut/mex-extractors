@@ -1,14 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.ldap.models import LDAPPersonWithQuery
-from mex.common.models import (
-    AccessPlatformMapping,
-    ActivityMapping,
-    ExtractedAccessPlatform,
-    ExtractedActivity,
-    ExtractedOrganization,
-    ResourceMapping,
-)
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedPersonIdentifier,
@@ -18,12 +11,23 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_activities_to_extracted_activities,
     transform_seq_repo_resource_to_extracted_resource,
 )
+
+if TYPE_CHECKING:
+    from mex.common.ldap.models import LDAPPersonWithQuery
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ActivityMapping,
+        ExtractedAccessPlatform,
+        ExtractedActivity,
+        ExtractedOrganization,
+        ResourceMapping,
+    )
+    from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")

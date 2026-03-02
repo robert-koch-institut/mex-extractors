@@ -1,12 +1,15 @@
 import re
+from typing import TYPE_CHECKING
 
 import pytest
 
 from mex.common.exceptions import MExError
-from mex.common.models import MergedConsent, MergedPerson
 from mex.extractors.publisher.filter import (
     filter_persons_with_appoving_unique_consent,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import MergedConsent, MergedPerson
 
 
 def test_filter_persons_with_appoving_unique_consent(

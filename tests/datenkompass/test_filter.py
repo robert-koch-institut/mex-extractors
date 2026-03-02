@@ -1,13 +1,17 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.models import (
-    MergedActivity,
-    MergedOrganizationalUnit,
-)
 from mex.extractors.datenkompass.filter import (
     filter_activities_for_organization_and_unit,
     find_descendant_units,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import (
+        MergedActivity,
+        MergedOrganizationalUnit,
+    )
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")

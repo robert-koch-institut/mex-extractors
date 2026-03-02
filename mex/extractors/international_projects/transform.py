@@ -1,5 +1,4 @@
-from collections.abc import Iterable
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from mex.common.models import (
     ActivityMapping,
@@ -15,15 +14,19 @@ from mex.common.types import (
     TextLanguage,
     Theme,
 )
-from mex.extractors.international_projects.models.source import (
-    InternationalProjectsSource,
-)
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from mex.extractors.international_projects.models.source import (
+        InternationalProjectsSource,
+    )
 
 
 def transform_international_projects_source_to_extracted_activity(
@@ -121,7 +124,7 @@ def transform_international_projects_source_to_extracted_activity(
         hadPrimarySource=get_extracted_primary_source_id_by_name(
             "international-projects"
         ),
-        fundingProgram=source.funding_program if source.funding_program else [],
+        fundingProgram=source.funding_program or [],
         shortName=source.project_abbreviation,
         theme=get_theme_for_activity_or_topic(
             theme, source.activity1, source.activity2, source.topic1, source.topic2
