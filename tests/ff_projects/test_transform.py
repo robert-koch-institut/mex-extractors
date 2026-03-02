@@ -86,9 +86,9 @@ def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
     )
     org_names = [
         "Existing-Institute",  # match existing
-        "G-BA",  # new
-        "G-BA ",  # duplicate
-        "g-ba",  # duplicate
+        "New-Existing-Institute",  # new
+        "New-Existing-Institute ",  # trailing space
+        "new-existing-institute",  # duplicate
         "None",  # ignored
     ]
     result = get_or_create_organization(org_names, extracted_organizations)
@@ -102,5 +102,5 @@ def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
     assert len(set(g_ba_ids)) == 1
 
     # oiriginal name of extracted organization used in creating new ExtractedOrganization
-    assert created_orgs[0].officialName[0].value == "G-BA"
-    assert created_orgs[0].identifierInPrimarySource.strip() == "G-BA"
+    assert created_orgs[0].officialName[0].value == "New-Existing-Institute"
+    assert created_orgs[0].identifierInPrimarySource.strip() == "New-Existing-Institute"
