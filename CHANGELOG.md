@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
-
+- set postgres in compose yaml to 16.13
 - lock file maintenance (2026-02-16)
 - update IGS extractor according to mapping changes
 
