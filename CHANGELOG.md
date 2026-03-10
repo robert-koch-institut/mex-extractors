@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- test split by / for ff-projects extract organization
 - convenience function for LDAP lookup
 - update dependencies
 
@@ -25,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
 
 ### Security
 
