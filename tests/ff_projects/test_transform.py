@@ -98,8 +98,8 @@ def test_get_or_create_organization(monkeypatch: MonkeyPatch) -> None:
     assert existing_org_id in result
     result_created_orgs = [org_id for org_id in result if org_id != existing_org_id]
     assert result_created_orgs[0] == created_orgs[0].stableTargetId
-    g_ba_ids = [org_id for org_id in result if org_id != existing_org_id]
-    assert len(set(g_ba_ids)) == 1
+    new_org_ids = [org_id for org_id in result if org_id != existing_org_id]
+    assert len(set(new_org_ids)) == 1
 
     # oiriginal name of extracted organization used in creating new ExtractedOrganization
     assert created_orgs[0].officialName[0].value == "New-Existing-Institute"
