@@ -450,7 +450,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 try:
                     modified = typ(study.datum_der_letzten_aenderung)
                     break
-                except (ValidationError, ValueError):
+                except ValidationError, ValueError:
                     continue
         population_coverage = (
             [Text(value=study.bevoelkerungsabdeckung, language=TextLanguage.DE)]
