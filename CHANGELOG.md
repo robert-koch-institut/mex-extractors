@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix settings to support secrets in nested sources
-
 ### Security
+
+## [1.10.1] - 2026-03-11
+
+### Fixed
+
+- fix settings to support secrets in nested sources
 
 ## [1.10.0] - 2026-03-11
 
