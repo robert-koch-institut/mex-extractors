@@ -10,6 +10,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add dagster job schedule for datenkompass
+
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.10.1] - 2026-03-11
+
+### Fixed
+
+- fix settings to support secrets in nested sources
+
+## [1.10.0] - 2026-03-11
+
+### Added
+
 - test split by / for ff-projects extract organization
 - convenience function for LDAP lookup
 - update dependencies
@@ -21,15 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lock file maintenance (2026-02-16)
 - update IGS extractor according to mapping changes
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
-
-### Security
 
 ## [1.9.0] - 2026-02-10
 
