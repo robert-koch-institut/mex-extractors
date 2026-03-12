@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- datenkompass: update resource handling for wave 2
+
 ### Changes
 
 ### Deprecated
