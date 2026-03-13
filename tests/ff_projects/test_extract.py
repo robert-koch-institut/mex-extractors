@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
+from pytest import MonkeyPatch
 
 from mex.common.types import MergedOrganizationIdentifier, TemporalEntity
 from mex.extractors.ff_projects.extract import (
@@ -12,6 +13,7 @@ from mex.extractors.ff_projects.extract import (
     get_string_from_cell,
     get_temporal_entity_from_cell,
 )
+from mex.extractors.ff_projects.models.source import FFProjectsSource
 
 
 def test_extract_ff_projects_sources() -> None:
@@ -99,3 +101,40 @@ def test_extract_ff_projects_organizations() -> None:
     assert organizations["Robert Koch-Institut"] == MergedOrganizationIdentifier(
         "ga6xh6pgMwgq7DC7r6Wjqg"
     )
+
+
+def test_extract_ff_projects_organizations_split(monkeypatch: MonkeyPatch) -> None:
+    test_source = FFProjectsSource(
+        kategorie="Sonstige",
+        foerderprogr=None,
+        thema_des_projekts="Test Project",
+        rki_az="1234",
+        laufzeit_cells=(None, None),
+        laufzeit_bis=None,
+        laufzeit_von=None,
+        projektleiter="Dr Ficticious",
+        rki_oe="C1",
+        zuwendungs_oder_auftraggeber="Blueberry / Banana",
+        lfd_nr="1",
+    )
+
+    def mock_get_wikidata_extracted_organization_id_by_name(
+        name: str,
+    ) -> MergedOrganizationIdentifier:
+        mapping = {
+            "Blueberry": "dndYcmAjSS3oSktVgN0wDp",
+            "Banana": "ga6xh6pgMwgq7DC7r6Wjqg",
+        }
+        return MergedOrganizationIdentifier(mapping.get(name))
+
+    monkeypatch.setattr(
+        "mex.extractors.ff_projects.extract.get_wikidata_extracted_organization_id_by_name",
+        mock_get_wikidata_extracted_organization_id_by_name,
+    )
+
+    organizations = extract_ff_projects_organizations([test_source])
+
+    assert organizations == {
+        "Blueberry": MergedOrganizationIdentifier("dndYcmAjSS3oSktVgN0wDp"),
+        "Banana": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
+    }

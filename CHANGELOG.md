@@ -9,13 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- convenience function for LDAP lookup
-- update dependencies
-
 ### Changes
-
-- update IGS extractor according to mapping changes and wrap up
-- lock file maintenance (2026-02-16)
 
 ### Deprecated
 
@@ -24,6 +18,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.10.1] - 2026-03-11
+
+### Fixed
+
+- fix settings to support secrets in nested sources
+
+## [1.10.0] - 2026-03-11
+
+### Added
+
+- test split by / for ff-projects extract organization
+- convenience function for LDAP lookup
+- update dependencies
+
+### Changes
+
+- update IGS extractor according to mapping changes and wrap up
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
+- set postgres in compose yaml to 16.13
+- lock file maintenance (2026-02-16)
+
+### Fixed
+
+- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
 
 ## [1.9.0] - 2026-02-10
 

@@ -1,4 +1,6 @@
 from pydantic import Field, HttpUrl, SecretStr
+from pydantic_settings import BaseSettings as PydanticBaseSettings
+from pydantic_settings import NestedSecretsSettingsSource, PydanticBaseSettingsSource
 
 from mex.common.settings import BaseSettings
 from mex.common.types import AssetsPath
@@ -29,6 +31,23 @@ from mex.extractors.wikidata.settings import WikidataSettings
 
 class Settings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[PydanticBaseSettings],  # noqa: ARG003
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """Define the sources and their order for loading the settings values."""
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            NestedSecretsSettingsSource(file_secret_settings),
+        )
 
     all_filter_mapping_path: AssetsPath = Field(
         AssetsPath("mappings/__all__"),
