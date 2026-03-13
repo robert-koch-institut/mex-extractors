@@ -243,6 +243,13 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
         BackendApiConnector, "_check_availability", MagicMock(return_value=True)
     )
     monkeypatch.setattr(
+        BackendApiConnector,
+        "request",
+        MagicMock(
+            return_value={"status": "Fabulous", "version": "mex-backend-version"}
+        ),
+    )
+    monkeypatch.setattr(
         BackendApiConnector, "fetch_merged_items", backend.fetch_merged_items
     )
     monkeypatch.setattr(
