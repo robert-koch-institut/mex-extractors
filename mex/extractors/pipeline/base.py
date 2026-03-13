@@ -227,7 +227,7 @@ def load_job_definitions() -> Definitions:
             )
         )
 
-    # Define the extra datenkompass job running once a week
+    # Define the extra datenkompass job based on schedule setting
     datenkompass_job = define_asset_job(
         "datenkompass",
         AssetSelection.groups("datenkompass").upstream(),
