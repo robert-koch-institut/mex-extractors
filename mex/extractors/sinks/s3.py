@@ -111,8 +111,7 @@ class S3Sink(S3BaseSink):
         """Write metadata file."""
         settings = Settings.get()
         backend_connector = BackendApiConnector.get()
-        response = backend_connector.request("GET", "_system/check")
-        backend_version = response["version"]
+        backend_version = backend_connector.system_status().version
         versions = {
             "mex-backend": backend_version,
             "mex-common": metadata.version("mex-common"),
