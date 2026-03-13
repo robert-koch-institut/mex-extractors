@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add dagster job schedule for datenkompass
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.11.0] - 2026-03-13
+
+### Added
+
+- add dagster job schedule for datenkompass
 
 ## [1.10.1] - 2026-03-11
 
