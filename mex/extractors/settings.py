@@ -108,6 +108,9 @@ class Settings(BaseSettings):
         "s3_bucket",
         description="The S3 bucket where to store objects.",
     )
+    s3_verify_ssl_certificate: bool = Field(
+        default=True, description="Whether to verify the certificate of the S3 server."
+    )
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
     confluence_vvt: ConfluenceVvtSettings = ConfluenceVvtSettings()
