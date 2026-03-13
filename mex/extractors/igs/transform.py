@@ -312,7 +312,7 @@ def transform_igs_schemas_to_variables(
                 ):
                     data_type = schema_property["anyOf"][0]["type"]
                 if (
-                    "type" in schema_property["anyOf"][0]
+                    "type" in schema_property["anyOf"][1]
                     and schema_property["anyOf"][1]["type"] != "null"
                 ):
                     data_type = schema_property["anyOf"][1]["type"]
