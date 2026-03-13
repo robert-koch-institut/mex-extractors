@@ -121,10 +121,6 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             ]
         )
         if (
-            count := igs_endpoint_counts[f"pathogen_{pathogen}"]
-        ) != "0" and count != "None":
-            quality_information.append(Text(value=f"Anzahl Genomsequenzen: {count}"))
-        if (
             igs_resource_mapping.sizeOfDataBasis[0].fieldInPrimarySource
             and (count := igs_endpoint_counts[f"pathogen_{pathogen}"]) != "0"
         ):
@@ -319,7 +315,7 @@ def transform_igs_schemas_to_variables(
                     "type" in schema_property["anyOf"][0]
                     and schema_property["anyOf"][1]["type"] != "null"
                 ):
-                    data_type = schema_property["anyOf"][0]["type"]
+                    data_type = schema_property["anyOf"][1]["type"]
 
             description: list[str] = []
             if "description" in schema_property:
