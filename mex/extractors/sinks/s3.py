@@ -105,8 +105,7 @@ class S3Sink(S3BaseSink):
     @staticmethod
     def _calculate_checksum(buffer: BytesIO) -> str:
         """Calculate sha256 checksum of the buffer."""
-        buffer.seek(0)
-        return hashlib.sha256(buffer.read()).hexdigest()
+        return hashlib.sha256(buffer.getbuffer()).hexdigest()
 
     def _load_metadata(self, metadata_path: str, checksum: str) -> None:
         """Write metadata file."""
