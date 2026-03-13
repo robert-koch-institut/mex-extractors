@@ -1,7 +1,6 @@
 import datetime
 import hashlib
 import json
-import re
 from importlib import metadata
 from io import BytesIO
 from pathlib import Path
@@ -9,9 +8,9 @@ from typing import TYPE_CHECKING, TypeVar
 
 import boto3
 import pandas as pd
+from packaging.version import Version
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
@@ -100,17 +99,8 @@ class S3Sink(S3BaseSink):
     @staticmethod
     def _build_directory_path() -> Path:
         """Build directory path that includes the mex-model major and minor version."""
-        mex_model_version = metadata.version("mex-model")
-        regex_pattern = r"(\d+\.\d+)\..+"
-        re_groups = re.match(regex_pattern, mex_model_version)
-        if not re_groups:
-            msg = (
-                f"Cannot parse mex-model version '{mex_model_version}'"
-                f" with regex '{regex_pattern}'"
-            )
-            raise MExError(msg)
-        mex_model_major_minor_version = re_groups[1]
-        return Path(f"publisher-{mex_model_major_minor_version}")
+        mex_model_version = Version(metadata.version("mex-model"))
+        return Path(f"publisher-{mex_model_version.major}.{mex_model_version.minor}")
 
     @staticmethod
     def _calculate_checksum(buffer: BytesIO) -> str:
@@ -135,7 +125,7 @@ class S3Sink(S3BaseSink):
             "sha256_checksum": checksum,
             "write_completed_at": datetime.datetime.now(tz=UTC).isoformat(),
         }
-        payload_json = json.dumps(payload, sort_keys=True, cls=MExEncoder)
+        payload_json = json.dumps(payload, sort_keys=True, cls=MExEncoder, indent=4)
         payload_bytes = payload_json.encode(encoding="utf-8")
         self.client.put_object(
             Body=payload_bytes,

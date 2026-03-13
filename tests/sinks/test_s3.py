@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, call
 
 import pytest
+from packaging.version import InvalidVersion
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.exceptions import MExError
 from mex.common.testing import Joker
 from mex.common.transform import MExEncoder
 from mex.extractors.sinks.s3 import S3Sink, S3XlsxSink
@@ -114,9 +114,7 @@ def test__build_directory_path_exception(monkeypatch: MonkeyPatch) -> None:
         return version
 
     monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", fake_version)
-    with pytest.raises(
-        MExError, match=r".*Cannot parse mex-model version 'bogus.version' with regex.*"
-    ):
+    with pytest.raises(InvalidVersion, match=r"Invalid version: 'bogus.version'"):
         S3Sink._build_directory_path()
 
 
