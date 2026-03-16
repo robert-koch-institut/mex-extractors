@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- s3sink writes dedicated metadata file that includes mex-package versions, checksum of
+  the written items file, and timestamp of write completion
+
 ### Changes
+
+- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
+- update mex-common to 1.16.1
 
 ### Deprecated
 
