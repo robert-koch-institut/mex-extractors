@@ -90,6 +90,10 @@ provenance:
   - mappingRules:
       - forValues:
 qualityInformation:
+  - mappingRules:
+      - setValues:
+        - value: Test Präfix
+          language: de
   - fieldInPrimarySource: /test/count
     locationInPrimarySource:
     examplesInPrimarySource:
@@ -141,6 +145,11 @@ title:
         setValues:
           - language: de
             value: Pathogen
+      - forValues:
+        - "[*]"
+        setValues:
+          - language: de
+            value: pathogen nicht gefunden
 unitInCharge:
   - mappingRules:
       - forValues:
