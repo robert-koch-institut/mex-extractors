@@ -227,7 +227,7 @@ def load_job_definitions() -> Definitions:
             )
         )
 
-    # Define the extra datenkompass job but without schedule or trigger
+    # Define the extra datenkompass job based on schedule setting
     datenkompass_job = define_asset_job(
         "datenkompass",
         AssetSelection.groups("datenkompass").upstream(),
@@ -235,6 +235,14 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "publisher"},
     )
     jobs.append(datenkompass_job)
+    if settings.datenkompass.schedule:
+        schedules.append(
+            ScheduleDefinition(
+                job=datenkompass_job,
+                cron_schedule=settings.datenkompass.schedule,
+                default_status=DefaultScheduleStatus.RUNNING,
+            )
+        )
 
     # Define the extra publisher job
     publisher_job = define_asset_job(
