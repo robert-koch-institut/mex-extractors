@@ -124,19 +124,18 @@ def datenkompass_merged_activities_by_primary_source(
         datenkompass_activity_filter_mapping.fields[1].filterRules[0].forValues
     )
     entity_type = ["MergedActivity"]
-    merged_activities_by_primary_source: dict[str, list[MergedActivity]] = {}
     if filtered_primary_sources:
-        for fps in filtered_primary_sources:
-            primary_source_ids = get_filtered_primary_source_ids([fps])
-
-            merged_activities_by_primary_source[fps] = cast(
+        merged_activities_by_primary_source = {
+            fps: cast(
                 "list[MergedActivity]",
                 get_merged_items(
                     entity_type=entity_type,
-                    referenced_identifier=primary_source_ids,
+                    referenced_identifier=get_filtered_primary_source_ids(fps),
                     reference_field="hadPrimarySource",
                 ),
             )
+            for fps in filtered_primary_sources
+        }
     return merged_activities_by_primary_source
 
 
@@ -195,19 +194,18 @@ def datenkompass_merged_resources_by_primary_source(
         datenkompass_resource_filter_mapping.fields[0].filterRules[0].forValues
     )
     entity_type = ["MergedResource"]
-    merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
     if filtered_primary_sources:
-        for fps in filtered_primary_sources:
-            primary_source_ids = get_filtered_primary_source_ids([fps])
-
-            merged_resources_by_primary_source[fps] = cast(
+        merged_resources_by_primary_source = {
+            fps: cast(
                 "list[MergedResource]",
                 get_merged_items(
                     entity_type=entity_type,
-                    referenced_identifier=primary_source_ids,
+                    referenced_identifier=get_filtered_primary_source_ids(fps),
                     reference_field="hadPrimarySource",
                 ),
             )
+            for fps in filtered_primary_sources
+        }
     return merged_resources_by_primary_source
 
 

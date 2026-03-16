@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.11.0] - 2026-03-13
+
+### Added
+
+- add dagster job schedule for datenkompass
+
 ## [1.10.1] - 2026-03-11
 
 ### Fixed
@@ -37,10 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update IGS extractor according to mapping changes and wrap up
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
 - set postgres in compose yaml to 16.13
 - lock file maintenance (2026-02-16)
-- update IGS extractor according to mapping changes
 
 ### Fixed
 
