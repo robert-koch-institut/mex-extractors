@@ -139,7 +139,7 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
     item = mocked_merged_activities[0]
     result = get_title(item)
 
-    assert result == ["short de", "title 'Act' no language", "title en"]
+    assert result == ["title 'Act' no language", "title en", "short de"]
 
 
 def test_get_german_vocabulary() -> None:
@@ -326,7 +326,6 @@ def test_transform_activities(
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_datenkompass_activity: list[DatenkompassActivity],
-    mocked_activity_mapping: DatenkompassMapping,
 ) -> None:
     datenkompass_filtered_merged_activities = mocked_merged_activities[
         :2
@@ -337,7 +336,6 @@ def test_transform_activities(
     result = transform_activities(
         datenkompass_filtered_merged_activities,
         merged_organizational_units_by_id,
-        mocked_activity_mapping,
     )
     assert result == mocked_datenkompass_activity
 
