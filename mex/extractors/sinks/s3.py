@@ -30,7 +30,7 @@ class S3BaseSink(BaseSink):
             endpoint_url=str(settings.s3_endpoint_url),
             aws_access_key_id=settings.s3_access_key_id.get_secret_value(),
             aws_secret_access_key=settings.s3_secret_access_key.get_secret_value(),
-            verify=settings.s3_verify_ssl_certificate,
+            verify=settings.s3_ssl_verify,
         )
 
     def close(self) -> None:

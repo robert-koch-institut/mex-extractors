@@ -108,8 +108,13 @@ class Settings(BaseSettings):
         "s3_bucket",
         description="The S3 bucket where to store objects.",
     )
-    s3_verify_ssl_certificate: bool = Field(
-        default=True, description="Whether to verify the certificate of the S3 server."
+    s3_ssl_verify: bool | AssetsPath = Field(
+        default=True,
+        description=(
+            "Either a boolean that controls whether we verify the server's TLS "
+            "certificate, or a path to a CA bundle to use. If a path is given, it can "
+            "be either absolute or relative to the `assets_dir`. Defaults to True."
+        ),
     )
     biospecimen: BiospecimenSettings = BiospecimenSettings()
     blueant: BlueAntSettings = BlueAntSettings()
