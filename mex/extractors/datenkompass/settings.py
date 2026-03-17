@@ -7,6 +7,10 @@ from mex.common.types import AssetsPath
 class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
     """Settings submodel for the datenkompass extractor."""
 
+    schedule: str | None = Field(
+        None,
+        description="A valid cron string defining when to run the datenkompass",
+    )
     unit_filter: str = Field("PRNT", description="Filter for unit")
     organization_filter: str = Field(
         "Organization", description="Filter for organization"

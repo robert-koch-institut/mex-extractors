@@ -21,6 +21,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.12.0] - 2026-03-17
+
+### Added
+
+- s3sink writes dedicated metadata file that includes mex-package versions, checksum of
+  the written items file, and timestamp of write completion
+
+### Changes
+
+- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
+- update mex-common to 1.16.1
+
+## [1.11.0] - 2026-03-13
+
+### Added
+
+- add dagster job schedule for datenkompass
+
 ## [1.10.1] - 2026-03-11
 
 ### Fixed
@@ -37,10 +55,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update IGS extractor according to mapping changes and wrap up
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
 - set postgres in compose yaml to 16.13
 - lock file maintenance (2026-02-16)
-- update IGS extractor according to mapping changes
 
 ### Fixed
 
