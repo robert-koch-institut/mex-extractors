@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add setting for controlling s3 ssl certificate verification
+
 ### Changes
 
 ### Deprecated
