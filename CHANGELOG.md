@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - datenkompass: update resource, activity and bibliographic-resource handling for wave 2
+- add setting for controlling s3 ssl certificate verification
 
 ### Changes
 
