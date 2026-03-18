@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - datenkompass: update resource and activity handling for wave 2
+- add setting for controlling s3 ssl certificate verification
 
 ### Changes
 
@@ -20,6 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.12.0] - 2026-03-17
+
+### Added
+
+- s3sink writes dedicated metadata file that includes mex-package versions, checksum of
+  the written items file, and timestamp of write completion
+
+### Changes
+
+- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
+- update mex-common to 1.16.1
 
 ## [1.11.0] - 2026-03-13
 
