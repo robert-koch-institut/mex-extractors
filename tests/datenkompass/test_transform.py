@@ -345,7 +345,6 @@ def test_transform_bibliographic_resource(
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
     mocked_merged_person: list[MergedPerson],
-    mocked_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> None:
     merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
@@ -358,7 +357,6 @@ def test_transform_bibliographic_resource(
         mocked_merged_bibliographic_resource,
         merged_organizational_units_by_id,
         datenkompass_person_str_by_id,
-        mocked_bibliographic_resource_mapping,
     )
 
     assert result[0].model_dump() == {

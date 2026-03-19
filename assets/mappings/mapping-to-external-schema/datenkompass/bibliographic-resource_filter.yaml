@@ -1,0 +1,5 @@
+fields:
+  - fieldInMEx: hadPrimarySource
+    filterRules:
+      - forValues:
+          - 'relevant primary source'
