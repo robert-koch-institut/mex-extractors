@@ -1,10 +1,4 @@
 fields:
-- fieldInMEx: hadPrimarySource   #ToDo: refactor
-  fieldInTarget: None
-  mappingRules:
-  - forValues:
-    - 'Lorem'
-    - 'Ipsum'
 - fieldInTarget: Formelle Voraussetzungen für den Datenerhalt
   fieldInMEx: accessRestriction
   mappingRules:

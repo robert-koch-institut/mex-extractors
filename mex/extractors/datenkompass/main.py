@@ -22,8 +22,9 @@ from mex.extractors.datenkompass.extract import (
     get_merged_items,
 )
 from mex.extractors.datenkompass.filter import (
-    filter_activities_for_organization_and_unit,
-    find_descendant_units,
+    filter_activities_by_organization,
+    filter_merged_items_for_primary_source,
+    filter_merged_resources_by_unit,
 )
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -32,7 +33,6 @@ from mex.extractors.datenkompass.models.item import (
 )
 from mex.extractors.datenkompass.models.mapping import (
     DatenkompassFilterMapping,
-    DatenkompassMapping,
 )
 from mex.extractors.datenkompass.transform import (
     transform_activities,
@@ -57,21 +57,6 @@ def datenkompass_merged_organizational_units_by_id() -> dict[
             get_merged_items(entity_type=["MergedOrganizationalUnit"]),
         )
     }
-
-
-# TODO(MX-2144): refactor and remove asset and unit setting
-@asset(group_name="datenkompass")
-def datenkompass_filtered_merged_organizational_units_by_id(
-    datenkompass_merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
-    ],
-) -> list[str]:
-    """Get child unit ids by filter setting for extraction filter."""
-    settings = Settings.get()
-    return find_descendant_units(
-        datenkompass_merged_organizational_units_by_id,
-        settings.datenkompass.unit_filter,
-    )
 
 
 @asset(group_name="datenkompass")
@@ -108,16 +93,7 @@ def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
 
 
 @asset(group_name="datenkompass")
-def datenkompass_activity_mapping() -> DatenkompassMapping:
-    """Load the Datenkompass activity mapping."""
-    settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
-    )
-
-
-@asset(group_name="datenkompass")
-def datenkompass_activity_filter() -> DatenkompassFilterMapping:
+def datenkompass_activity_filter_mapping() -> DatenkompassFilterMapping:
     """Get filter for datenkompass activities."""
     settings = Settings.get()
     return DatenkompassFilterMapping.model_validate(
@@ -126,70 +102,76 @@ def datenkompass_activity_filter() -> DatenkompassFilterMapping:
 
 
 @asset(group_name="datenkompass")
-def datenkompass_bibliographic_resource_mapping() -> DatenkompassMapping:
-    """Load the Datenkompass activity mapping."""
+def datenkompass_resource_filter_mapping() -> DatenkompassFilterMapping:
+    """Load the Datenkompass resource filter mapping."""
     settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+    return DatenkompassFilterMapping.model_validate(
+        load_yaml(settings.datenkompass.mapping_path / "resource_filter.yaml")
     )
 
 
 @asset(group_name="datenkompass")
-def datenkompass_resource_mapping() -> DatenkompassMapping:
-    """Load the Datenkompass activity mapping."""
-    settings = Settings.get()
-    return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
-    )
-
-
-@asset(group_name="datenkompass")
-def datenkompass_merged_activities_by_unit(
-    datenkompass_activity_filter: DatenkompassFilterMapping,
+def datenkompass_merged_activities_by_primary_source(
+    datenkompass_activity_filter_mapping: DatenkompassFilterMapping,
 ) -> dict[str, list[MergedActivity]]:
-    """Get merged activities filtered for allowed primary source by unit.
+    """Get merged activities filtered for allowed primary source.
 
     We can only filter for one reference field here (will change in MX-2136).
     Therefore, we filter for the allowed primary sources per unit, since
     we can't filter for hadPrimarySources in already fetched merged activities.
     """
+    filtered_primary_sources = (
+        datenkompass_activity_filter_mapping.fields[1].filterRules[0].forValues
+    )
     entity_type = ["MergedActivity"]
-    activities_by_unit: dict[str, list[MergedActivity]] = {}
-    for rule in datenkompass_activity_filter.fields[1].filterRules:
-        parent_unit_name = rule.forValues[0] if rule.forValues else ""
-        primary_source_ids = get_filtered_primary_source_ids(rule.setValues)
-        activities_by_unit[parent_unit_name] = cast(
-            "list[MergedActivity]",
-            get_merged_items(
-                entity_type=entity_type,
-                referenced_identifier=primary_source_ids,
-                reference_field="hadPrimarySource",
-            ),
-        )
-    return activities_by_unit
+    if filtered_primary_sources:
+        merged_activities_by_primary_source = {
+            fps: cast(
+                "list[MergedActivity]",
+                get_merged_items(
+                    entity_type=entity_type,
+                    referenced_identifier=get_filtered_primary_source_ids(fps),
+                    reference_field="hadPrimarySource",
+                ),
+            )
+            for fps in filtered_primary_sources
+        }
+    return merged_activities_by_primary_source
 
 
 @asset(group_name="datenkompass")
-def datenkompass_filtered_merged_activities_by_unit(
-    datenkompass_merged_activities_by_unit: dict[str, list[MergedActivity]],
-    datenkompass_merged_organizational_units_by_id: dict[
-        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
-    ],
-) -> dict[str, list[MergedActivity]]:
-    """Filter merged activities."""
-    return filter_activities_for_organization_and_unit(
-        datenkompass_merged_activities_by_unit,
-        datenkompass_merged_organizational_units_by_id,
+def datenkompass_filtered_merged_activities(
+    datenkompass_merged_activities_by_primary_source: dict[str, list[MergedActivity]],
+) -> list[MergedActivity]:
+    """Filter items for primary source, turn into a list, filter for organization."""
+    filtered_merged_activities_by_primary_source = (
+        filter_merged_items_for_primary_source(
+            datenkompass_merged_activities_by_primary_source,
+            "ExtractedActivity",
+        )
+    )
+    merged_activities_filtered_for_primary_source = [
+        item
+        for sublist in filtered_merged_activities_by_primary_source.values()
+        for item in sublist
+    ]
+
+    return filter_activities_by_organization(
+        merged_activities_filtered_for_primary_source,
     )
 
 
 @asset(group_name="datenkompass")
-def datenkompass_merged_bibliographic_resources(
-    datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
-) -> list[MergedBibliographicResource]:
+def datenkompass_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
+    settings = Settings.get()
+    bibliographic_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
+        load_yaml(
+            settings.datenkompass.mapping_path / "bibliographic-resource_filter.yaml"
+        )
+    )
     filtered_primary_sources = (
-        datenkompass_bibliographic_resource_mapping.fields[0].mappingRules[0].forValues
+        bibliographic_resource_filter_mapping.fields[0].filterRules[0].forValues
     )
     entity_type = ["MergedBibliographicResource"]
     primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
@@ -204,73 +186,70 @@ def datenkompass_merged_bibliographic_resources(
 
 
 @asset(group_name="datenkompass")
-def datenkompass_merged_resources_by_primary_source_str(
-    datenkompass_filtered_merged_organizational_units_by_id: list[str],
-    datenkompass_resource_mapping: DatenkompassMapping,
+def datenkompass_merged_resources_by_primary_source(
+    datenkompass_resource_filter_mapping: DatenkompassFilterMapping,
 ) -> dict[str, list[MergedResource]]:
-    """Get merged resources as dictionary."""
+    """Get merged resources as dictionary by primary source."""
     filtered_primary_sources = (
-        datenkompass_resource_mapping.fields[0].mappingRules[0].forValues
+        datenkompass_resource_filter_mapping.fields[0].filterRules[0].forValues
     )
     entity_type = ["MergedResource"]
-    merged_resources_by_primary_source: dict[str, list[MergedResource]] = {}
     if filtered_primary_sources:
-        for fps in filtered_primary_sources:
-            primary_source_ids = get_filtered_primary_source_ids([fps])
-
-            merged_resources_by_primary_source[fps] = cast(
+        merged_resources_by_primary_source = {
+            fps: cast(
                 "list[MergedResource]",
                 get_merged_items(
                     entity_type=entity_type,
-                    referenced_identifier=primary_source_ids,
+                    referenced_identifier=get_filtered_primary_source_ids(fps),
                     reference_field="hadPrimarySource",
                 ),
             )
-
-    first_fetched_merged_resources_ids = {
-        mr.identifier
-        for merged_resources in merged_resources_by_primary_source.values()
-        for mr in merged_resources
-    }
-
-    merged_resources_of_units = cast(
-        "list[MergedResource]",
-        get_merged_items(
-            entity_type=entity_type,
-            referenced_identifier=datenkompass_filtered_merged_organizational_units_by_id,
-            reference_field="unitInCharge",
-        ),
-    )
-
-    merged_resources_by_primary_source["MergedResource items of unit filter"] = [
-        mr
-        for mr in merged_resources_of_units
-        if mr.identifier not in first_fetched_merged_resources_ids
-    ]
-
+            for fps in filtered_primary_sources
+        }
     return merged_resources_by_primary_source
 
 
 @asset(group_name="datenkompass")
-def datenkompass_activities_by_unit(
-    datenkompass_filtered_merged_activities_by_unit: dict[str, list[MergedActivity]],
+def datenkompass_filtered_merged_resources_by_primary_source(
+    datenkompass_merged_resources_by_primary_source: dict[str, list[MergedResource]],
+) -> dict[str, list[MergedResource]]:
+    """Filter the merged items for primary source "mex-editor"."""
+    return filter_merged_items_for_primary_source(
+        datenkompass_merged_resources_by_primary_source,
+        "ExtractedResource",
+    )
+
+
+@asset(group_name="datenkompass")
+def datenkompass_filtered_merged_resources_by_primary_source_by_unit(
+    datenkompass_filtered_merged_resources_by_primary_source: dict[
+        str, list[MergedResource]
+    ],
+    datenkompass_resource_filter_mapping: DatenkompassFilterMapping,
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    datenkompass_activity_mapping: DatenkompassMapping,
-) -> dict[str, list[DatenkompassActivity]]:
+) -> dict[str, dict[str, list[MergedResource]]]:
+    """Filter the merged resources by units."""
+    return filter_merged_resources_by_unit(
+        datenkompass_filtered_merged_resources_by_primary_source,
+        datenkompass_resource_filter_mapping,
+        datenkompass_merged_organizational_units_by_id,
+    )
+
+
+@asset(group_name="datenkompass")
+def datenkompass_activities(
+    datenkompass_filtered_merged_activities: list[MergedActivity],
+    datenkompass_merged_organizational_units_by_id: dict[
+        MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
+    ],
+) -> list[DatenkompassActivity]:
     """Transform activities to datenkompass items."""
-    datenkompass_activities_by_unit: dict[str, list[DatenkompassActivity]] = {}
-    for (
-        unit_name,
-        activity_list,
-    ) in datenkompass_filtered_merged_activities_by_unit.items():
-        datenkompass_activities_by_unit[unit_name] = transform_activities(
-            activity_list,
-            datenkompass_merged_organizational_units_by_id,
-            datenkompass_activity_mapping,
-        )
-    return datenkompass_activities_by_unit
+    return transform_activities(
+        datenkompass_filtered_merged_activities,
+        datenkompass_merged_organizational_units_by_id,
+    )
 
 
 @asset(group_name="datenkompass")
@@ -280,21 +259,19 @@ def datenkompass_bibliographic_resources(
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     datenkompass_person_name_str_by_id: dict[MergedPersonIdentifier, str],
-    datenkompass_bibliographic_resource_mapping: DatenkompassMapping,
 ) -> list[DatenkompassBibliographicResource]:
     """Transform bibliographic resources to datenkompass items."""
     return transform_bibliographic_resources(
         datenkompass_merged_bibliographic_resources,
         datenkompass_merged_organizational_units_by_id,
         datenkompass_person_name_str_by_id,
-        datenkompass_bibliographic_resource_mapping,
     )
 
 
 @asset(group_name="datenkompass")
-def datenkompass_resources(
-    datenkompass_merged_resources_by_primary_source_str: dict[
-        str, list[MergedResource]
+def datenkompass_resources_by_primary_source_by_unit(
+    datenkompass_filtered_merged_resources_by_primary_source_by_unit: dict[
+        str, dict[str, list[MergedResource]]
     ],
     datenkompass_merged_organizational_units_by_id: dict[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
@@ -302,37 +279,42 @@ def datenkompass_resources(
     datenkompass_merged_contact_points_by_id: dict[
         MergedContactPointIdentifier, MergedContactPoint
     ],
-    datenkompass_resource_mapping: DatenkompassMapping,
-) -> list[DatenkompassResource]:
+) -> dict[str, dict[str, list[DatenkompassResource]]]:
     """Transform resources to datenkompass items."""
     return transform_resources(
-        datenkompass_merged_resources_by_primary_source_str,
+        datenkompass_filtered_merged_resources_by_primary_source_by_unit,
         datenkompass_merged_organizational_units_by_id,
         datenkompass_merged_contact_points_by_id,
-        datenkompass_resource_mapping,
     )
 
 
 @asset(group_name="datenkompass")
 def datenkompass_s3_xlsx_publication(
-    datenkompass_activities_by_unit: dict[str, list[DatenkompassActivity]],
+    datenkompass_activities: list[DatenkompassActivity],
     datenkompass_bibliographic_resources: list[DatenkompassBibliographicResource],
-    datenkompass_resources: list[DatenkompassResource],
+    datenkompass_resources_by_primary_source_by_unit: dict[
+        str, dict[str, list[DatenkompassResource]]
+    ],
 ) -> None:
     """Write items to S3 xlsx."""
     s3xlsx = S3XlsxSink()
-    for unit_name, activity_list in datenkompass_activities_by_unit.items():
-        deque(
-            s3xlsx.load(activity_list, unit_name=unit_name),
-            maxlen=0,
-        )
+    deque(s3xlsx.load(datenkompass_activities), maxlen=0)
     deque(
         s3xlsx.load(
             datenkompass_bibliographic_resources,
         ),
         maxlen=0,
     )
-    deque(s3xlsx.load(datenkompass_resources), maxlen=0)
+    for unit, inner_dict in datenkompass_resources_by_primary_source_by_unit.items():
+        for primary_source, datenkompass_resources in inner_dict.items():
+            deque(
+                s3xlsx.load(
+                    datenkompass_resources,
+                    primary_source_name=primary_source,
+                    unit_name=unit,
+                ),
+                maxlen=0,
+            )
 
 
 @entrypoint(Settings)
