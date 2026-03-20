@@ -59,11 +59,7 @@ def get_temporal_entity_from_cell(cell_value: Any) -> TemporalEntity | None:  # 
         TemporalEntity or None
     """
     if isinstance(cell_value, datetime):
-        temporal_entity = TemporalEntity(cell_value)
-        temporal_entity.precision = (
-            TemporalEntityPrecision.SECOND
-        )  # keeps TemporalEntity precision in Seconds as standard.
-        return temporal_entity
+        return TemporalEntity(cell_value, precision=TemporalEntityPrecision.DAY)
     return None
 
 
