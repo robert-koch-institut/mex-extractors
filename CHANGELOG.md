@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ff-projects: start and end dates are not shifted by a day anymore
+
 ### Security
 
 ## [1.12.0] - 2026-03-17
