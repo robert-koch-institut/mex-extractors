@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- biospecimen: add missing loading of created ExtractedOrganization
 - ff-projects: start and end dates are not shifted by a day anymore
 
 ### Security

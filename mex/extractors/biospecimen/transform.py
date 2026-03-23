@@ -19,6 +19,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+from mex.extractors.sinks import load
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -197,8 +198,10 @@ def get_or_create_externe_partner(
     """
     if externe_partner in extracted_organizations:
         return extracted_organizations[externe_partner]
-    return ExtractedOrganization(
+    extracted_organization = ExtractedOrganization(
         officialName=externe_partner,
         identifierInPrimarySource=externe_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
-    ).stableTargetId
+    )
+    load([extracted_organization])
+    return extracted_organization.stableTargetId
