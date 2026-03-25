@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- datenkompass: update resource, activity and bibliographic-resource handling for wave 2
-- add setting for controlling s3 ssl certificate verification
-
 ### Changes
 
 ### Deprecated
@@ -20,10 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.13.0] - 2026-03-25
+
+### Added
+
+- datenkompass: update resource, activity and bibliographic-resource handling for wave 2
+- add setting for controlling s3 ssl certificate verification
+
+### Fixed
+
 - biospecimen: add missing loading of created ExtractedOrganization
 - ff-projects: start and end dates are not shifted by a day anymore
-
-### Security
 
 ## [1.12.0] - 2026-03-17
 
