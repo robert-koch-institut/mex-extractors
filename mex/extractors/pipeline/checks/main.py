@@ -117,10 +117,6 @@ def check_item_count_rule(  # noqa: C901
         logger.error("No asset check rules found for %s", asset_key)
         return True
 
-    time_delta = parse_time_frame(rule["time_frame"])
-    current_time = datetime.now(UTC)
-    time_frame = current_time - time_delta
-
     events = context.instance.get_event_records(
         EventRecordsFilter(
             asset_key=asset_key,
@@ -133,10 +129,19 @@ def check_item_count_rule(  # noqa: C901
     current_number_of_extracted_items = (
         events[0].asset_materialization.metadata["num_items"].value
     )
-    historical_events = get_historical_events(events)
-    historic_count = get_historic_count(historical_events, time_frame)
-    if historic_count <= 0:
-        return True
+
+    if rule_name in ["less_than_x_inbound", "less_than_x_outbound"]:
+        historic_count = 0
+
+    else:
+        time_delta = parse_time_frame(rule["time_frame"])
+        current_time = datetime.now(UTC)
+        time_frame = current_time - time_delta
+
+        historical_events = get_historical_events(events)
+        historic_count = get_historic_count(historical_events, time_frame)
+        if historic_count <= 0:
+            return True
 
     def check_rule_violation(
         rule_name: str, historic_count: int, current_number_of_extracted_items: int
