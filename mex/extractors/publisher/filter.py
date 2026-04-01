@@ -27,7 +27,7 @@ def filter_persons_with_approving_unique_consent(
     seen_person_ids_with_consent_ids: dict[
         MergedPersonIdentifier, list[MergedConsentIdentifier]
     ] = defaultdict(list)
-    collected_person_items_with_positive_consent: list[MergedPerson] = []
+    collected_persons_with_positive_consent: list[MergedPerson] = []
 
     for consent in consent_items:
         person_id = consent.hasDataSubject
@@ -37,7 +37,7 @@ def filter_persons_with_approving_unique_consent(
             consent.hasConsentStatus.name == "VALID_FOR_PROCESSING"
             and (person := person_items_by_id.get(person_id)) is not None
         ):
-            collected_person_items_with_positive_consent.append(person)
+            collected_persons_with_positive_consent.append(person)
 
     persons_with_serveral_consents = {
         p: c for p, c in seen_person_ids_with_consent_ids.items() if len(c) > 1
@@ -49,4 +49,4 @@ def filter_persons_with_approving_unique_consent(
         )
         raise MExError(msg)
 
-    return collected_person_items_with_positive_consent
+    return collected_persons_with_positive_consent
