@@ -3,7 +3,6 @@ from typing import cast
 
 from dagster import asset
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
@@ -12,7 +11,6 @@ from mex.common.models import (
     MergedConsent,
     MergedContactPoint,
     MergedPerson,
-    PaginatedItemsContainer,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -109,18 +107,16 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
 def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
-    connector = BackendApiConnector.get()
-    response = cast(
-        "PaginatedItemsContainer[MergedContactPoint]",
-        connector.fetch_merged_items(
+    merged_contact_point = cast(
+        "list[MergedContactPoint]",
+        get_publishable_merged_items(
             query_string=str(settings.contact_point.mex_email),
             entity_type=["MergedContactPoint"],
             referenced_identifier=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
             reference_field="hadPrimarySource",
-            limit=1,
         ),
     )
-    return [item.identifier for item in response.items]
+    return [merged_contact_point[0].identifier]
 
 
 @asset(group_name="publisher")
