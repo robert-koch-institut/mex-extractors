@@ -147,8 +147,8 @@ def publisher_items(
 ) -> PublisherItemsLike:
     """All publishable items with updated contact references, where needed."""
     allowed_actors = {
-        person.identifier
-        for person in publisher_persons.items + publisher_contact_points_and_units.items
+        actor.identifier
+        for actor in publisher_persons.items + publisher_contact_points_and_units.items
     }
     for item in publisher_items_without_actors.items:
         update_actor_references_where_needed(
