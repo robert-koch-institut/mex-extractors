@@ -93,4 +93,10 @@ def blueant_extracted_activities(
 @entrypoint(Settings)
 def run() -> None:  # pragma: no cover
     """Run the blueant extractor job in-process."""
+    # activate_http_logging()
+
+    # import logging
+    # logging.basicConfig(level=logging.INFO)
+    # activate_http_summary_logging()
     run_job_in_process("blueant")
+    # dump_http_summary()
