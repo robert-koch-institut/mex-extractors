@@ -77,14 +77,14 @@ def update_actor_references_where_needed(
         if "MergedPerson" not in ref_types:
             continue
 
-            # keep allowed actors (contact points and units)
+        # keep allowed actors (contact points and units)
         allowed_field_identifiers = [
             identifier
             for identifier in getattr(item, field)
             if identifier in allowed_actors
         ]
 
-        # replace un-allowed persons with their unit id if unit has email
+        # replace unpublishable persons with their unit id if unit has email
         replacement_field_identifiers: set[MergedOrganizationalUnitIdentifier] = set()
         if "MergedOrganizationalUnit" in ref_types:
             replacement_field_identifiers = {
