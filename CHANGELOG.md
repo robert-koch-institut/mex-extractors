@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- publisher: code maintenance (typos, naming, unified db fetching)
 - datenkompass: updated mapping path in settings
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/172aac
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/491e2d
