@@ -96,9 +96,8 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
-        for entity_type in MERGED_MODEL_CLASSES_BY_NAME
-        if entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
-        and entity_type not in settings.publisher.skip_entity_types
+        for entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
+        if entity_type not in settings.publisher.skip_entity_types
     ]
     merged_items = get_publishable_merged_items(
         entity_type=allowed_entity_types,
