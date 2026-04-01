@@ -59,7 +59,7 @@ def publisher_items_without_actors() -> PublisherItemsLike:
 
 
 @asset(group_name="publisher")
-def publisher_merged_persons() -> list[MergedPerson]:
+def publisher_merged_ldap_persons() -> list[MergedPerson]:
     """Fetch all MergedPersons with Primary source = ldap."""
     return cast(
         "list[MergedPerson]",
@@ -126,12 +126,12 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
 
 @asset(group_name="publisher")
 def publisher_fallback_unit_identifiers_by_person(
-    publisher_merged_persons: list[MergedPerson],
+    publisher_merged_ldap_persons: list[MergedPerson],
     publisher_contact_points_and_units: PublisherItemsLike,
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address."""
     return get_unit_id_per_person(
-        publisher_merged_persons,
+        publisher_merged_ldap_persons,
         publisher_contact_points_and_units,
     )
 
