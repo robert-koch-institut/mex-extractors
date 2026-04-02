@@ -48,7 +48,7 @@ def kvis_extracted_resource_id(
     return extracted_resource.stableTargetId
 
 
-@asset(group_name="kvis", metadata={"entity_type": "variable_group"})
+@asset(group_name="kvis", metadata={"entity_type": "variable-group"})
 def kvis_extracted_variable_groups(
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_variables_table_entries: list[KVISVariables],

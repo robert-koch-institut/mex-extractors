@@ -9,7 +9,6 @@ from mex.common.ldap.transform import (
 )
 from mex.common.models import (
     ActivityMapping,
-    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )

@@ -183,7 +183,7 @@ def grippeweb_extracted_parent_resource(
     )
 
 
-@asset(group_name="grippeweb", metadata={"entity_type": "variable_group"})
+@asset(group_name="grippeweb", metadata={"entity_type": "variable-group"})
 def grippeweb_extracted_variable_groups(
     grippeweb_variable_group: dict[str, Any],
     grippeweb_columns: dict[str, dict[str, list[Any]]],

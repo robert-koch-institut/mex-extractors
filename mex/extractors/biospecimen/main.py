@@ -51,7 +51,7 @@ def biospecimen_extracted_persons(
     return mex_persons
 
 
-@asset(group_name="biospecimen",  metadata={"entity_type": "resource"})
+@asset(group_name="biospecimen", metadata={"entity_type": "resource"})
 def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_persons: list[ExtractedPerson],

@@ -14,6 +14,20 @@ from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
+# Rule type classifications
+STATIC_RULES = {
+    "less_than_x_inbound",
+    "less_than_x_outbound",
+    "not_exactly_x_items",
+}
+HISTORICAL_RULES = {
+    "x_items_less_than",
+    "x_items_more_than",
+    "x_percent_less_than",
+    "x_percent_more_than",
+}
+ALL_RULES = STATIC_RULES | HISTORICAL_RULES
+
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
@@ -92,34 +106,91 @@ def get_historic_count(
     return 0
 
 
-def check_item_count_rule(  # noqa: C901
+def check_static_rule(
+    rule_name: str,
+    current_number_of_extracted_items: int,
+    rule: dict[str, Any],
+) -> bool:
+    """Check rules that validate current state (no historical data needed).
+
+    Args:
+        rule_name: Name of the static rule.
+        current_number_of_extracted_items: Current count of extracted items.
+        rule: Rule configuration from YAML.
+
+    Returns False if check fails, True if check passes.
+    """
+    threshold = rule["value"] or 0
+
+    if rule_name == "not_exactly_x_items":
+        return current_number_of_extracted_items == threshold
+    if rule_name == "less_than_x_inbound":
+        pass
+    if rule_name == "less_than_x_outbound":
+        pass
+
+    return True
+
+
+def check_historical_rule(
+    rule_name: str,
+    current_number_of_extracted_items: int,
+    historic_count: int,
+    rule: dict[str, Any],
+) -> bool:
+    """Check rules that compare current state with historical data.
+
+    Args:
+        rule_name: Name of the historical rule.
+        current_number_of_extracted_items: Current count of extracted items.
+        historic_count: Historical count for comparison.
+        rule: Rule configuration from YAML.
+
+    Returns True if check passes, False if check fails.
+    """
+    threshold = rule["value"] or 0
+
+    if rule_name == "x_items_more_than":
+        # fail if current is larger than historic by threshold number of items
+        return current_number_of_extracted_items <= historic_count + threshold
+    if rule_name == "x_items_less_than":
+        # fail if current is smaller than historic by threshold number of items
+        return current_number_of_extracted_items >= historic_count - threshold
+    if rule_name == "x_percent_less_than":
+        pass
+    if rule_name == "x_percent_more_than":
+        pass
+
+    return True
+
+
+def check_item_count_rule(
     context: AssetCheckExecutionContext,
     rule_name: str,
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
 ) -> bool:
-    """Checks current extracted items nr is complying to given rule and it's threshold.
+    """Checks extracted items are complying to given rule and threshold.
 
     Args:
         context: The Dagster asset execution context for this check.
-        rule_name: Either "x_items_less_than" or "x_items_more_than".
+        rule_name: Name of the rule to check.
         asset_key: Dagster AssetKey object.
         extractor: Name of the extractor that produced the asset.
         entity_type: Entity Type for the asset check.
 
-
-    Returns True if check passes.
+    Returns True if check passes, raises ValueError if check fails.
     """
+    if rule_name not in ALL_RULES:
+        msg = f"Rule not existing: {rule_name}"
+        raise ValueError(msg)
+
     try:
         rule = get_rule(rule_name, extractor, entity_type)
     except FileNotFoundError:
         logger.error("No asset check rules found for %s", asset_key)
         return True
-
-    time_delta = parse_time_frame(rule["time_frame"])
-    current_time = datetime.now(UTC)
-    time_frame = current_time - time_delta
 
     events = context.instance.get_event_records(
         EventRecordsFilter(
@@ -133,49 +204,32 @@ def check_item_count_rule(  # noqa: C901
     current_number_of_extracted_items = (
         events[0].asset_materialization.metadata["num_items"].value
     )
+
+    # Handle static rules
+    if rule_name in STATIC_RULES:
+        if not check_static_rule(rule_name, current_number_of_extracted_items, rule):
+            msg = (
+                f"Asset {asset_key} failed {rule_name} check: "
+                f"{current_number_of_extracted_items} not meeting threshold."
+            )
+            raise ValueError(msg)
+        return True
+
+    # Handle historical rules
+    time_delta = parse_time_frame(rule["time_frame"])
+    current_time = datetime.now(UTC)
+    time_frame = current_time - time_delta
+
     historical_events = get_historical_events(events)
     historic_count = get_historic_count(historical_events, time_frame)
     if historic_count <= 0:
         return True
 
-    def check_rule_violation(
-        rule_name: str, historic_count: int, current_number_of_extracted_items: int
-    ) -> bool:
-        """Returns True when check fails. Check is supposed to fail if [rule_name]."""
-        threshold = rule["value"] or 0
-        if rule_name == "x_items_more_than":
-            # fail/True if current is larger than historic by threshold number of items
-            return current_number_of_extracted_items > historic_count + threshold
-        if rule_name == "x_items_less_than":
-            # fail/True if current is smaller than historic by threshold number of items
-            return current_number_of_extracted_items < historic_count - threshold
-        if rule_name == "less_than_x_inbound":
-            pass
-        if rule_name == "less_than_x_outbound":
-            pass
-        if rule_name == "not_exactly_x_items":
-            # fail/True if current is exactly threshold number of items
-            return current_number_of_extracted_items == threshold
-        if rule_name == "x_percent_less_than":
-            pass
-        if rule_name == "x_percent_more_than":
-            pass
-        return False
-
-    if rule_name not in [
-        "x_items_less_than",
-        "x_items_more_than",
-        "less_than_x_inbound",
-        "less_than_x_outbound",
-        "not_exactly_x_items",
-        "x_percent_less_than",
-        "x_percent_more_than",
-    ]:
-        msg = f"Rule not existing: {rule_name}"
-        raise ValueError(msg)
-
-    if check_rule_violation(
-        rule_name, historic_count, current_number_of_extracted_items
+    if not check_historical_rule(
+        rule_name,
+        current_number_of_extracted_items,
+        historic_count,
+        rule,
     ):
         msg = (
             f"Asset {asset_key} failed {rule_name} check: "

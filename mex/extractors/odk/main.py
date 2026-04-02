@@ -7,7 +7,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedActivity,
     ExtractedResource,
-    ExtractedVariable,
     ResourceMapping,
     VariableMapping,
 )
