@@ -15,7 +15,7 @@ from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
 
 # Rule type classifications
-CONNECTION_RULES = {
+STATIC_RULES = {
     "less_than_x_inbound",
     "less_than_x_outbound",
     "not_exactly_x_items",
@@ -26,7 +26,7 @@ HISTORICAL_RULES = {
     "x_percent_less_than",
     "x_percent_more_than",
 }
-ALL_RULES = CONNECTION_RULES | HISTORICAL_RULES
+ALL_RULES = STATIC_RULES | HISTORICAL_RULES
 
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
@@ -106,7 +106,7 @@ def get_historic_count(
     return 0
 
 
-def check_connection_rule(
+def check_static_rule(
     rule_name: str,
     current_number_of_extracted_items: int,  # noqa: ARG001
     rule: dict[str, Any],
@@ -114,7 +114,7 @@ def check_connection_rule(
     """Check rules that validate current state (no historical data needed).
 
     Args:
-        rule_name: Name of the connection rule.
+        rule_name: Name of the static rule.
         current_number_of_extracted_items: Current count of extracted items.
         rule: Rule configuration from YAML.
 
@@ -205,9 +205,9 @@ def check_item_count_rule(
         events[0].asset_materialization.metadata["num_items"].value
     )
 
-    # Handle connection rules
-    if rule_name in CONNECTION_RULES:
-        if not check_connection_rule(
+    # Handle static rules
+    if rule_name in STATIC_RULES:
+        if not check_static_rule(
             rule_name, current_number_of_extracted_items, rule
         ):
             msg = (
