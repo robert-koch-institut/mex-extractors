@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -207,11 +207,11 @@ def sumo_extracted_resource_feat(
     return mex_resource_feat
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
 def sumo_extracted_variable_groups_nokeda_aux(
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> list[ExtractedVariableGroup]:
+) -> Output[list[ExtractedVariableGroup]]:
     """Transform Nokeda auxiliary variables to MEx variable groups and load them."""
     mex_variable_groups_nokeda_aux = (
         transform_nokeda_aux_variable_to_mex_variable_group(
@@ -219,15 +219,21 @@ def sumo_extracted_variable_groups_nokeda_aux(
             sumo_extracted_resource_nokeda,
         )
     )
+    num_items = len(mex_variable_groups_nokeda_aux)
     load(mex_variable_groups_nokeda_aux)
-    return mex_variable_groups_nokeda_aux
+    return Output(
+        value=mex_variable_groups_nokeda_aux,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
 def sumo_extracted_variable_groups_nokeda(
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> list[ExtractedVariableGroup]:
+) -> Output[list[ExtractedVariableGroup]]:
     """Transform Nokeda variables to MEx variable groups and load them."""
     mex_variable_groups_model_nokeda = (
         transform_model_nokeda_variable_to_mex_variable_group(
@@ -235,30 +241,42 @@ def sumo_extracted_variable_groups_nokeda(
             sumo_extracted_resource_nokeda,
         )
     )
+    num_items = len(mex_variable_groups_model_nokeda)
     load(mex_variable_groups_model_nokeda)
-    return mex_variable_groups_model_nokeda
+    return Output(
+        value=mex_variable_groups_model_nokeda,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
 def sumo_extracted_variable_group_feat(
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> list[ExtractedVariableGroup]:
+) -> Output[list[ExtractedVariableGroup]]:
     """Transform SUMO Resource feat to MEx variable groups and load them."""
     mex_variable_groups_feat = transform_feat_variable_to_mex_variable_group(
         sumo_extracted_cc2_feat_projection,
         sumo_extracted_resource_nokeda,
     )
+    num_items = len(mex_variable_groups_feat)
     load(mex_variable_groups_feat)
-    return mex_variable_groups_feat
+    return Output(
+        value=mex_variable_groups_feat,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable"})
 def sumo_extracted_variables_nokeda(
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_variable_groups_nokeda: list[ExtractedVariableGroup],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> list[ExtractedVariable]:
+) -> Output[list[ExtractedVariable]]:
     """Transform Nokeda variables to extracted variables and load them."""
     sumo_cc1_data_valuesets = extract_cc1_data_valuesets()
     transformed_nokeda_model_variable = transform_nokeda_model_variable_to_mex_variable(
@@ -267,16 +285,22 @@ def sumo_extracted_variables_nokeda(
         sumo_extracted_variable_groups_nokeda,
         sumo_extracted_resource_nokeda,
     )
+    num_items = len(transformed_nokeda_model_variable)
     load(transformed_nokeda_model_variable)
-    return transformed_nokeda_model_variable
+    return Output(
+        value=transformed_nokeda_model_variable,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable"})
 def sumo_extracted_variables_nokeda_aux(
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_variable_groups_nokeda_aux: list[ExtractedVariableGroup],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> list[ExtractedVariable]:
+) -> Output[list[ExtractedVariable]]:
     """Transform Nokeda aux variables to extracted variables and load them."""
     sumo_cc2_aux_mapping = extract_cc2_aux_mapping(sumo_extracted_cc2_aux_model)
     sumo_cc2_aux_valuesets = extract_cc2_aux_valuesets()
@@ -288,16 +312,22 @@ def sumo_extracted_variables_nokeda_aux(
         sumo_extracted_variable_groups_nokeda_aux,
         sumo_extracted_resource_nokeda,
     )
+    num_items = len(sumo_extracted_variables_nokeda_aux)
     load(sumo_extracted_variables_nokeda_aux)
-    return sumo_extracted_variables_nokeda_aux
+    return Output(
+        value=sumo_extracted_variables_nokeda_aux,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "variable"})
 def sumo_extracted_variables_feat_projection(
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_variable_group_feat: list[ExtractedVariableGroup],
     sumo_extracted_resource_feat: ExtractedResource,
-) -> list[ExtractedVariable]:
+) -> Output[list[ExtractedVariable]]:
     """Transform SUMO feat projection variables to extracted variables and load them."""
     transformed_feat_projection_variable = (
         transform_feat_projection_variable_to_mex_variable(
@@ -306,8 +336,14 @@ def sumo_extracted_variables_feat_projection(
             sumo_extracted_resource_feat,
         )
     )
+    num_items = len(transformed_feat_projection_variable)
     load(transformed_feat_projection_variable)
-    return transformed_feat_projection_variable
+    return Output(
+        value=transformed_feat_projection_variable,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @entrypoint(Settings)
