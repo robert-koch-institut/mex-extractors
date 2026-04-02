@@ -167,14 +167,14 @@ def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
     return extract_cc2_feat_projection()
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "resource-nokeda"})
 def sumo_extracted_resource_nokeda(
     sumo_extracted_resources_nokeda: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     sumo_extracted_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
-) -> ExtractedResource:
+) -> Output[ExtractedResource]:
     """Transform and load extracted Nokeda Resource from SUMO."""
     mex_resource_nokeda = transform_resource_nokeda_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_nokeda),
@@ -183,18 +183,24 @@ def sumo_extracted_resource_nokeda(
         sumo_extracted_activity,
         sumo_extracted_access_platform,
     )
+    num_items = len([mex_resource_nokeda])
     load([mex_resource_nokeda])
-    return mex_resource_nokeda
+    return Output(
+        value=mex_resource_nokeda,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo")
+@asset(group_name="sumo", metadata={"entity_type": "resource-feat"})
 def sumo_extracted_resource_feat(
     sumo_extracted_resources_feat: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     sumo_extracted_resource_nokeda: ExtractedResource,
     sumo_extracted_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
-) -> ExtractedResource:
+) -> Output[ExtractedResource]:
     """Transform and load extracted SUMO Resource feat."""
     mex_resource_feat = transform_resource_feat_model_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_feat),
@@ -203,11 +209,17 @@ def sumo_extracted_resource_feat(
         sumo_extracted_activity,
         sumo_extracted_access_platform,
     )
+    num_items = len([mex_resource_feat])    
     load([mex_resource_feat])
-    return mex_resource_feat
+    return Output(
+        value=mex_resource_feat,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-group-nokeda-aux"})
 def sumo_extracted_variable_groups_nokeda_aux(
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_resource_nokeda: ExtractedResource,
@@ -229,7 +241,7 @@ def sumo_extracted_variable_groups_nokeda_aux(
     )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-group-nokeda"})
 def sumo_extracted_variable_groups_nokeda(
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_resource_nokeda: ExtractedResource,
@@ -251,7 +263,7 @@ def sumo_extracted_variable_groups_nokeda(
     )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable-group"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-group-feat"})
 def sumo_extracted_variable_group_feat(
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_resource_nokeda: ExtractedResource,
@@ -271,7 +283,7 @@ def sumo_extracted_variable_group_feat(
     )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-nokeda"})
 def sumo_extracted_variables_nokeda(
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_variable_groups_nokeda: list[ExtractedVariableGroup],
@@ -295,7 +307,7 @@ def sumo_extracted_variables_nokeda(
     )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-nokeda-aux"})
 def sumo_extracted_variables_nokeda_aux(
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_variable_groups_nokeda_aux: list[ExtractedVariableGroup],
@@ -322,7 +334,7 @@ def sumo_extracted_variables_nokeda_aux(
     )
 
 
-@asset(group_name="sumo", metadata={"entity_type": "variable"})
+@asset(group_name="sumo", metadata={"entity_type": "variable-feat-projection"})
 def sumo_extracted_variables_feat_projection(
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_variable_group_feat: list[ExtractedVariableGroup],
