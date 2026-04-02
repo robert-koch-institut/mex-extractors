@@ -48,7 +48,7 @@ image:
 		--tag rki/mex-extractors:latest .; \
 
 run: image
-	# run the extractors using docker
+	# run the service as a docker container
 	@ echo running docker container mex-extractors:${LATEST}; \
 	mkdir --parents --mode 777 $(PWD)/work; \
 	docker run \
