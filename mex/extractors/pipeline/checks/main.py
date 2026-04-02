@@ -207,9 +207,7 @@ def check_item_count_rule(
 
     # Handle static rules
     if rule_name in STATIC_RULES:
-        if not check_static_rule(
-            rule_name, current_number_of_extracted_items, rule
-        ):
+        if not check_static_rule(rule_name, current_number_of_extracted_items, rule):
             msg = (
                 f"Asset {asset_key} failed {rule_name} check: "
                 f"{current_number_of_extracted_items} not meeting threshold."
