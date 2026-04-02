@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+<<<<<<< feature/mx-1968-assetcheck-inbound
+- implement "not_exactly_x_items" check
+=======
 - AssetCheck `x_items_less_than` for open-data
+>>>>>>> main
 
 ### Changes
 
