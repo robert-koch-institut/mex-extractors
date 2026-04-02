@@ -131,7 +131,7 @@ def check_item_count_rule(  # noqa: C901
     )
 
     if rule_name in ["less_than_x_inbound", "less_than_x_outbound"]:
-        historic_count = 0
+        return True
 
     else:
         time_delta = parse_time_frame(rule["time_frame"])
