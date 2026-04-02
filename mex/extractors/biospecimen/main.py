@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedResource,
     ResourceMapping,
 )
 from mex.extractors.biospecimen.extract import (
@@ -52,13 +51,13 @@ def biospecimen_extracted_persons(
     return mex_persons
 
 
-@asset(group_name="biospecimen")
+@asset(group_name="biospecimen",  metadata={"entity_type": "resource"})
 def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_persons: list[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
-) -> list[ExtractedResource]:
+) -> Output[int]:
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
@@ -74,8 +73,14 @@ def biospecimen_extracted_resources(
         resource_mapping,
         extracted_organizations,
     )
+    num_items = len(mex_sources)
     load(mex_sources)
-    return mex_sources
+    return Output(
+        value=num_items,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @entrypoint(Settings)

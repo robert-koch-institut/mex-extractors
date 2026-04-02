@@ -154,7 +154,8 @@ def check_item_count_rule(  # noqa: C901
         if rule_name == "less_than_x_outbound":
             pass
         if rule_name == "not_exactly_x_items":
-            pass
+            # fail/True if current is exactly threshold number of items
+            return current_number_of_extracted_items == threshold
         if rule_name == "x_percent_less_than":
             pass
         if rule_name == "x_percent_more_than":

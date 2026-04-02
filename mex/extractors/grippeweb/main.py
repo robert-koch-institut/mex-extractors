@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -152,7 +152,7 @@ def grippeweb_extracted_access_platform(
     return grippeweb_extracted_access_platform
 
 
-@asset(group_name="grippeweb")
+@asset(group_name="grippeweb", metadata={"entity_type": "resource"})
 def grippeweb_extracted_parent_resource(
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
@@ -161,7 +161,7 @@ def grippeweb_extracted_parent_resource(
         str, MergedOrganizationIdentifier
     ],
     grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
-) -> ExtractedResource:
+) -> Output[ExtractedResource]:
     """Transform Grippeweb default values to extracted resources and load to sinks."""
     parent_resource, child_resource = (
         transform_grippeweb_resource_mappings_to_extracted_resources(
@@ -172,17 +172,23 @@ def grippeweb_extracted_parent_resource(
             grippeweb_merged_contact_point_id_by_email,
         )
     )
+    num_items = len([parent_resource, child_resource])
     load([parent_resource])
     load([child_resource])
-    return parent_resource
+    return Output(
+        value=parent_resource,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="grippeweb")
+@asset(group_name="grippeweb", metadata={"entity_type": "variable_group"})
 def grippeweb_extracted_variable_groups(
     grippeweb_variable_group: dict[str, Any],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-) -> list[ExtractedVariableGroup]:
+) -> Output[list[ExtractedVariableGroup]]:
     """Transform Grippeweb values to extracted variable groups and load to sinks."""
     extracted_variable_groups = (
         transform_grippeweb_variable_group_to_extracted_variable_groups(
@@ -191,8 +197,14 @@ def grippeweb_extracted_variable_groups(
             grippeweb_extracted_parent_resource,
         )
     )
+    num_items = len(extracted_variable_groups)
     load(extracted_variable_groups)
-    return extracted_variable_groups
+    return Output(
+        value=extracted_variable_groups,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @asset(group_name="grippeweb")

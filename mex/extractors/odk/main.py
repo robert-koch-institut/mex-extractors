@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -56,26 +56,33 @@ def odk_merged_organization_ids_by_query_str(
     )
 
 
-@asset(group_name="odk")
+@asset(group_name="odk", metadata={"entity_type": "resource"})
 def odk_extracted_resources(
     odk_resource_mappings: list[dict[str, Any]],
     odk_merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
-) -> list[ExtractedResource]:
+) -> Output[list[ExtractedResource]]:
     """Transform odk resources to mex resource, load to sinks and return."""
     extracted_resources_tuple = transform_odk_resources_to_mex_resources(
         [ResourceMapping.model_validate(r) for r in odk_resource_mappings],
         odk_merged_organization_ids_by_query_str,
         international_projects_extracted_activities,
     )
-    return assign_resource_relations_and_load(extracted_resources_tuple)
+    extracted_resources = assign_resource_relations_and_load(extracted_resources_tuple)
+    num_items = len(extracted_resources)
+    return Output(
+        value=extracted_resources,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="odk")
+@asset(group_name="odk", metadata={"entity_type": "variable"})
 def odk_extracted_variables(
     odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
-) -> list[ExtractedVariable]:
+) -> Output[int]:
     """Transform odk data to mex variables and load to sinks."""
     settings = Settings.get()
     variable_mapping = VariableMapping.model_validate(
@@ -87,9 +94,14 @@ def odk_extracted_variables(
         odk_raw_data,
         variable_mapping,
     )
-
+    num_items = len(extracted_variables)
     load(extracted_variables)
-    return extracted_variables
+    return Output(
+        value=num_items,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @entrypoint(Settings)

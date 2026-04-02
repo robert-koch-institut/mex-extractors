@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -6,7 +6,6 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import (
-    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
@@ -70,20 +69,26 @@ def datscha_web_organization_ids_by_query_str(
     return extract_datscha_web_organizations(datscha_web_items)
 
 
-@asset(group_name="datscha_web")
+@asset(group_name="datscha_web", metadata={"entity_type": "activity"})
 def datscha_web_extracted_activities(
     datscha_web_items: list[DatschaWebItem],
     datscha_web_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
-) -> list[ExtractedActivity]:
+) -> Output[int]:
     """Transform Datscha Web to extracted sources and load them to the sinks."""
     mex_sources = transform_datscha_web_items_to_mex_activities(
         datscha_web_items,
         datscha_web_person_ids_by_query_str,
         datscha_web_organization_ids_by_query_str,
     )
+    num_items = len(mex_sources)
     load(mex_sources)
-    return mex_sources
+    return Output(
+        value=num_items,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @entrypoint(Settings)
