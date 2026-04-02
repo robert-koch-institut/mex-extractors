@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- AssetCheck `x_items_less_than` for open-data
+
 ### Changes
+
+- AssetCheck rule type classifications
 
 ### Deprecated
 
