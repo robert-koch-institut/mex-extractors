@@ -29,7 +29,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -69,7 +69,7 @@ def blueant_extracted_activities(
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
 ) -> Output[int]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.blueant.mapping_path / "activity.yaml")
     )
@@ -90,7 +90,7 @@ def blueant_extracted_activities(
     )
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the blueant extractor job in-process."""
     run_job_in_process("blueant")

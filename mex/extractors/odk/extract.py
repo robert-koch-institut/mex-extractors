@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from pandas import DataFrame, ExcelFile
 
 from mex.extractors.odk.model import ODKData
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -24,7 +24,7 @@ def extract_odk_raw_data() -> list[ODKData]:
     Returns:
         list of ODK data.
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     raw_data = []
     for file in Path(settings.odk.raw_data_path).glob("*.xlsx"):
         xls = ExcelFile(file)

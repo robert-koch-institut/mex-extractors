@@ -5,7 +5,7 @@ from requests_ntlm import HttpNtlmAuth
 
 from mex.common.connector import HTTPConnector
 from mex.common.exceptions import MExError
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 class ReportServerConnector(HTTPConnector):
@@ -16,12 +16,12 @@ class ReportServerConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.url = settings.synopse.report_server_url
 
     def _set_authentication(self) -> None:
         """Authenticate to the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.session.auth = HttpNtlmAuth(
             settings.synopse.report_server_username.get_secret_value(),
             settings.synopse.report_server_password.get_secret_value(),

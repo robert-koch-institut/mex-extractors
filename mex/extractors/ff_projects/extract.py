@@ -15,7 +15,7 @@ from mex.common.types import (
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -34,7 +34,7 @@ def extract_ff_projects_sources() -> list[FFProjectsSource]:
     Returns:
         List of FF Projects sources
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     ff_projects_excel = pd.read_excel(
         settings.ff_projects.file_path,
         keep_default_na=False,

@@ -18,7 +18,7 @@ from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -33,7 +33,7 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
     Returns:
         list for international projects sources
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     # silence openpyxl warning:
     # `UserWarning: Data Validation extension is not supported and will be removed`
     # we do not use excels data validation functionality

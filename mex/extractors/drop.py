@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urljoin
 
 from mex.common.connector import HTTPConnector
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from requests import Response
@@ -19,12 +19,12 @@ class DropApiConnector(HTTPConnector):
 
     def _set_authentication(self) -> None:
         """Set the drop API key to all session headers."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.session.headers["X-API-Key"] = settings.drop_api_key.get_secret_value()
 
     def _set_url(self) -> None:
         """Set the drop api url with the version path."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.url = urljoin(str(settings.drop_api_url), self.API_VERSION)
 
     def list_files(self, x_system: str) -> list[str]:

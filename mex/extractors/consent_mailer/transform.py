@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
 
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from mex.common.models import MergedPerson
@@ -30,7 +30,7 @@ def transform_person_to_sendable_email(person: MergedPerson) -> EmailMessage | N
         EmailMessage | None: The email message for the defined person or None if the
         person doesn't have a @rki.de email address.
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
 
     rki_emails = filter(lambda mail: mail.endswith("@rki.de"), person.email)
     to_field = "; ".join(rki_emails)

@@ -19,7 +19,7 @@ from mex.extractors.kvis.transform import (
     transform_kvis_variables_to_extracted_variable_groups,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 
 
@@ -88,7 +88,7 @@ def kvis_extracted_variables(
     load(extracted_variables)
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the KVIS extractor job in-process."""
     run_job_in_process("kvis")

@@ -8,7 +8,7 @@ from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import logger
 from mex.extractors.confluence_vvt.connector import ConfluenceVvtConnector
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -31,7 +31,7 @@ def fetch_all_vvt_pages_ids() -> list[str]:
         List of page IDs
     """
     connector = ConfluenceVvtConnector.get()
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
 
     page_ids: list[str] = []
     limit = 100

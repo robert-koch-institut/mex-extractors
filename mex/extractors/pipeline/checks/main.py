@@ -11,7 +11,7 @@ from dagster import (
 
 from mex.common.logging import logger
 from mex.extractors.pipeline.checks.models.check import AssetCheck
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.utils import load_yaml
 
 # Rule type classifications
@@ -31,7 +31,7 @@ ALL_RULES = STATIC_RULES | HISTORICAL_RULES
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
     if not path.exists():
         msg = "No asset check YAML found at %s"

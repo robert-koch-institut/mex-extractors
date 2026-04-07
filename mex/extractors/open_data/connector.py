@@ -11,7 +11,7 @@ from mex.extractors.open_data.models.source import (
     OpenDataResourceVersion,
     OpenDataVersionFiles,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -22,7 +22,7 @@ class OpenDataConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.url = settings.open_data.url
         self.community_rki = settings.open_data.community_rki
 
@@ -123,7 +123,7 @@ class OpenDataConnector(HTTPConnector):
         """
         http_ok = 200
         error_msg = f"No metadata zip file found for record version {version_id}"
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
 
         # Try downloading with german spelling version
         try:

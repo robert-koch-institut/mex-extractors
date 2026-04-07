@@ -9,7 +9,7 @@ from mex.common.wikidata.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -42,7 +42,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
 @lru_cache(maxsize=1)
 def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     """Extract dict of already defined wikidata ids by labels."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     organization_mapping = OrganizationMapping.model_validate(
         load_yaml(settings.wikidata.mapping_path / "organization.yaml")
     )

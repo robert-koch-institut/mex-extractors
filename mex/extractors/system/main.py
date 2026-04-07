@@ -6,14 +6,14 @@ from dagster import AssetKey, DagsterInstance, RunsFilter, asset
 from pytz import UTC
 
 from mex.common.logging import logger
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 @asset(group_name="system_clean_up")
 def system_fetch_old_dagster_run_ids() -> list[str]:
     """Fetch ids of Dagster runs, which are old enough to be deleted."""
     instance = DagsterInstance.get()
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     # Define the time threshold
     cutoff_date = datetime.datetime.now(tz=UTC) - datetime.timedelta(
         days=settings.system.max_run_age_in_days

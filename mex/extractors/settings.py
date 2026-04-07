@@ -29,7 +29,7 @@ from mex.extractors.voxco.settings import VoxcoSettings
 from mex.extractors.wikidata.settings import WikidataSettings
 
 
-class Settings(BaseSettings):
+class ExtractorSettings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
 
     @classmethod

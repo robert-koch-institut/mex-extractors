@@ -6,7 +6,7 @@ from mex.extractors.datenkompass.extract import (
     get_extracted_item_stable_target_ids,
     get_merged_items,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from mex.common.models import (
@@ -32,7 +32,7 @@ def filter_activities_by_organization(
     Returns:
         filtered list of merged activities by unit.
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     filtered_merged_organization_ids = [
         organization.identifier
         for organization in cast(
