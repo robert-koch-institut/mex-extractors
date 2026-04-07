@@ -6,7 +6,7 @@ ETL pipelines for the RKI Metadata Exchange.
 [![cve-scan](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/cve-scan.yml)
 [![documentation](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/documentation.yml/badge.svg)](https://robert-koch-institut.github.io/mex-extractors)
 [![linting](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/linting.yml)
-[![open-code](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/open-code.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-extractors)
+[![opencode](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/opencode.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-extractors)
 [![testing](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/testing.yml/badge.svg)](https://github.com/robert-koch-institut/mex-extractors/actions/workflows/testing.yml)
 
 ## Project
