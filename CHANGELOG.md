@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- AssetCheck `x_items_less_than` for open-data
+
 ### Changes
 
 - publisher: code maintenance (typos, naming, unified db fetching)
 - datenkompass: updated mapping path in settings
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/172aac
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/491e2d
+- AssetCheck rule type classifications
 
 ### Deprecated
 
@@ -23,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.13.1] - 2026-04-02
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/43f715
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/172aac
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/491e2d
 
 ## [1.13.0] - 2026-03-25
 

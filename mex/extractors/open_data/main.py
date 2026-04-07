@@ -1,4 +1,8 @@
-from dagster import asset
+from dagster import (
+    MetadataValue,
+    Output,
+    asset,
+)
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
@@ -109,10 +113,10 @@ def open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
     return contact_point
 
 
-@asset(group_name="open_data")
+@asset(group_name="open_data", metadata={"entity_type": "distribution"})
 def open_data_extracted_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
-) -> list[ExtractedDistribution]:
+) -> Output[list[ExtractedDistribution]]:
     """Extract distributions for open data & transform and load them to sinks."""
     settings = Settings.get()
     distribution_mapping = DistributionMapping.model_validate(
@@ -123,11 +127,17 @@ def open_data_extracted_distributions(
         distribution_mapping,
     )
 
+    num_items = len(mex_distributions)
     load(mex_distributions)
-    return mex_distributions
+    return Output(
+        value=mex_distributions,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
-@asset(group_name="open_data")
+@asset(group_name="open_data", metadata={"entity_type": "resource"})
 def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
@@ -135,7 +145,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
-) -> list[ExtractedResource]:
+) -> Output[list[ExtractedResource]]:
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
@@ -152,8 +162,14 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
         open_data_extracted_contact_points,
     )
 
+    num_items = len(mex_sources)
     load(mex_sources)
-    return mex_sources
+    return Output(
+        value=mex_sources,
+        metadata={
+            "num_items": MetadataValue.int(num_items),
+        },
+    )
 
 
 @asset(group_name="open_data")
