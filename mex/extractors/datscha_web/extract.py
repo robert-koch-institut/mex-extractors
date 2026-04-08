@@ -58,7 +58,7 @@ def extract_datscha_web_source_contacts(
         for name in analyse_person_string(names):
             persons = ldap.get_persons(
                 surname=name.surname, given_name=name.given_name, limit=2
-            )
+            ).items
             if len(persons) == 1 and persons[0].objectGUID:
                 persons_with_query.append(
                     LDAPPersonWithQuery(person=persons[0], query=names)
