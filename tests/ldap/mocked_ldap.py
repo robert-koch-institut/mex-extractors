@@ -192,9 +192,3 @@ def mocked_ldap(  # noqa: PLR0913
     elif request.param == "ldap_mock_server":
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")
-        else:
-            # TODO(ND): Make this configurable in mex-common
-
-            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
-
-            monkeypatch.setattr(connector_module, "AUTO_BIND_NO_TLS", "DEFAULT")
