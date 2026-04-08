@@ -194,6 +194,7 @@ def mocked_ldap(  # noqa: PLR0913
             pytest.skip("Ldap mock server not configured")
         else:
             # TODO(ND): Make this configurable in mex-common
+            # HS: turn off tls certificate validation because our mock ldap server uses a self-signed certificate
 
             from mex.common.ldap import connector as connector_module  # noqa: PLC0415
 
