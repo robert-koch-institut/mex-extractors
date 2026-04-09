@@ -209,7 +209,7 @@ def sumo_extracted_resource_feat(
         sumo_extracted_activity,
         sumo_extracted_access_platform,
     )
-    num_items = len([mex_resource_feat])    
+    num_items = len([mex_resource_feat])
     load([mex_resource_feat])
     return Output(
         value=mex_resource_feat,

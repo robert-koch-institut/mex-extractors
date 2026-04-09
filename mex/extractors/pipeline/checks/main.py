@@ -108,11 +108,7 @@ def get_historic_count(
 
 def check_static_rule(
     rule_name: str,
-<<<<<<< feature/mx-1968-assetcheck-inbound
     current_number_of_extracted_items: int,
-=======
-    current_number_of_extracted_items: int,  # noqa: ARG001
->>>>>>> main
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
@@ -124,17 +120,10 @@ def check_static_rule(
 
     Returns False if check fails, True if check passes.
     """
-<<<<<<< feature/mx-1968-assetcheck-inbound
     threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
         return current_number_of_extracted_items == threshold
-=======
-    threshold = rule["value"] or 0  # noqa: F841
-
-    if rule_name == "not_exactly_x_items":
-        pass
->>>>>>> main
     if rule_name == "less_than_x_inbound":
         pass
     if rule_name == "less_than_x_outbound":
