@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import asset
+from dagster import Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -160,11 +160,11 @@ def ifsg_extracted_resource_parent(
     return mex_resource_parent
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "resource"})
 def ifsg_extracted_resources_state(
     ifsg_resource_state_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
-) -> list[ExtractedResource]:
+) -> Output[list[ExtractedResource]]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_state = transform_resource_state_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_state_dict),
@@ -172,10 +172,15 @@ def ifsg_extracted_resources_state(
     )
     load(mex_resource_state)
 
-    return mex_resource_state
+    return Output(
+        value=mex_resource_state,
+        metadata={
+            "num_items": len(mex_resource_state),
+        },
+    )
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "resource"})
 def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_resource_disease_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
@@ -184,7 +189,7 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_meta_type: list[MetaType],
     id_types_of_diseases: list[int],
     extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedResource]:
+) -> Output[list[ExtractedResource]]:
     """Extracted and loaded ifsg resource disease."""
     mex_resource_disease = transform_resource_disease_to_mex_resource(
         ResourceMapping.model_validate(ifsg_resource_disease_dict),
@@ -197,16 +202,21 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     )
     load(mex_resource_disease)
 
-    return mex_resource_disease
+    return Output(
+        value=mex_resource_disease,
+        metadata={
+            "num_items": len(mex_resource_disease),
+        },
+    )
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "variable_group"})
 def ifsg_extracted_variable_groups(
     ifsg_variable_group: dict[str, Any],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_filtered_meta_fields: list[MetaField],
     id_types_of_diseases: list[int],
-) -> list[ExtractedVariableGroup]:
+) -> Output[list[ExtractedVariableGroup]]:
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         VariableGroupMapping.model_validate(ifsg_variable_group),
@@ -216,10 +226,15 @@ def ifsg_extracted_variable_groups(
     )
     load(extracted_variable_group)
 
-    return extracted_variable_group
+    return Output(
+        value=extracted_variable_group,
+        metadata={
+            "num_items": len(extracted_variable_group),
+        },
+    )
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "variable"})
 def ifsg_extracted_variables(  # noqa: PLR0913
     ifsg_filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
@@ -229,7 +244,7 @@ def ifsg_extracted_variables(  # noqa: PLR0913
     ifsg_meta_item: list[MetaItem],
     ifsg_meta_datatype: list[MetaDataType],
     ifsg_meta_schema2field: list[MetaSchema2Field],
-) -> list[ExtractedVariable]:
+) -> Output[list[ExtractedVariable]]:
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
         ifsg_filtered_variables,
@@ -242,7 +257,12 @@ def ifsg_extracted_variables(  # noqa: PLR0913
         ifsg_meta_schema2field,
     )
     load(extracted_variables)
-    return extracted_variables
+    return Output(
+        value=extracted_variables,
+        metadata={
+            "num_items": len(extracted_variables),
+        },
+    )
 
 
 @entrypoint(Settings)

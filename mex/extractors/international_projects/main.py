@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -89,7 +89,7 @@ def international_projects_partner_organization_ids_by_query_string(
     )
 
 
-@asset(group_name="international_projects")
+@asset(group_name="international_projects", metadata={"entity_type": "activity"})
 def international_projects_extracted_activities(
     international_projects_sources: list[InternationalProjectsSource],
     international_projects_person_ids_by_query_str: dict[
@@ -101,7 +101,7 @@ def international_projects_extracted_activities(
     international_projects_partner_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-) -> list[ExtractedActivity]:
+) -> Output[list[ExtractedActivity]]:
     """Transform projects to extracted activities, load and return them."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
@@ -115,7 +115,12 @@ def international_projects_extracted_activities(
         international_projects_partner_organization_ids_by_query_string,
     )
     load(mex_sources)
-    return mex_sources
+    return Output(
+        value=mex_sources,
+        metadata={
+            "num_items": len(mex_sources),
+        },
+    )
 
 
 @entrypoint(Settings)

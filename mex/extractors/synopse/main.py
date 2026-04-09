@@ -1,7 +1,7 @@
 from itertools import groupby
 from typing import Any
 
-from dagster import asset
+from dagster import Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -205,7 +205,7 @@ def synopse_access_platform_id(
     return transformed_access_platforms.stableTargetId
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "resource"})
 def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
@@ -216,7 +216,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
-) -> dict[str, ExtractedResource]:
+) -> Output[dict[str, ExtractedResource]]:
     """Get lookup from synopse_id to extracted resource identifier in primary source.
 
     Also transforms Synopse data to extracted resources
@@ -232,9 +232,15 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_merged_person_ids_by_name_str,
     )
     load(transformed_study_data_resources)
-    return transform_overviews_to_resource_lookup(
+    resources_by_id =  transform_overviews_to_resource_lookup(
         synopse_study_overviews,
         transformed_study_data_resources,
+    )
+    return Output(
+        value=resources_by_id,
+        metadata={
+            "num_items": len(resources_by_id),
+        },
     )
 
 
@@ -245,7 +251,7 @@ def synopse_activity() -> dict[str, Any]:
     return load_yaml(settings.synopse.mapping_path / "activity.yaml")
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "activity"})
 def synopse_extracted_activities(
     synopse_projects: list[SynopseProject],
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
@@ -253,7 +259,7 @@ def synopse_extracted_activities(
         str, MergedOrganizationIdentifier
     ],
     synopse_activity: dict[str, Any],
-) -> list[ExtractedActivity]:
+) -> Output[list[ExtractedActivity]]:
     """Transforms Synopse data to extracted activities and load result."""
     non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
@@ -266,17 +272,22 @@ def synopse_extracted_activities(
 
     load(non_child_activities)
     load(child_activities)
-    return [*non_child_activities, *child_activities]
+    return Output(
+        value=[*non_child_activities, *child_activities],
+        metadata={
+            "num_items": len([*non_child_activities, *child_activities]),
+        },
+    )
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "variable_group"})
 def synopse_variable_groups_by_identifier_in_primary_source(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
     synopse_study_overviews: list[SynopseStudyOverview],
-) -> dict[str, ExtractedVariableGroup]:
+) -> Output[dict[str, ExtractedVariableGroup]]:
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = transform_synopse_variables_to_mex_variable_groups(
         synopse_variables_by_thema,
@@ -284,10 +295,15 @@ def synopse_variable_groups_by_identifier_in_primary_source(
         synopse_study_overviews,
     )
     load(transformed_variable_groups)
-    return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
+    return Output(
+        value={vg.identifierInPrimarySource: vg for vg in transformed_variable_groups},
+        metadata={
+            "num_items": len(transformed_variable_groups),
+        },
+    )
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "variable"})
 def synopse_extracted_variables(
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     synopse_variable_groups_by_identifier_in_primary_source: dict[
@@ -297,7 +313,7 @@ def synopse_extracted_variables(
         str, ExtractedResource
     ],
     synopse_study_overviews: list[SynopseStudyOverview],
-) -> list[ExtractedVariable]:
+) -> Output[list[ExtractedVariable]]:
     """Transforms Synopse data to extracted variables and load result."""
     extracted_variables = transform_synopse_variables_to_mex_variables(
         synopse_variables_by_thema,
@@ -306,7 +322,12 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
-    return extracted_variables
+    return Output(
+        value=extracted_variables,
+        metadata={
+            "num_items": len(extracted_variables),
+        },
+    )
 
 
 @entrypoint(Settings)
