@@ -232,7 +232,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_merged_person_ids_by_name_str,
     )
     load(transformed_study_data_resources)
-    resources_by_id =  transform_overviews_to_resource_lookup(
+    resources_by_id = transform_overviews_to_resource_lookup(
         synopse_study_overviews,
         transformed_study_data_resources,
     )
