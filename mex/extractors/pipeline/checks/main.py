@@ -157,7 +157,9 @@ def check_historical_rule(
         # fail if current is smaller than historic by threshold number of items
         return current_number_of_extracted_items >= historic_count - threshold
     if rule_name == "x_percent_less_than":
-        pass
+        # fail if current is less than historic by x percent
+        percent_threshold = (historic_count * threshold) / 100
+        return current_number_of_extracted_items >= historic_count - percent_threshold
     if rule_name == "x_percent_more_than":
         pass
 
@@ -216,6 +218,9 @@ def check_item_count_rule(
         return True
 
     # Handle historical rules
+    if rule["time_frame"] is None:
+        return True
+
     time_delta = parse_time_frame(rule["time_frame"])
     current_time = datetime.now(UTC)
     time_frame = current_time - time_delta
