@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -175,7 +175,7 @@ def ifsg_extracted_resources_state(
     return Output(
         value=mex_resource_state,
         metadata={
-            "num_items": len(mex_resource_state),
+            "num_items": MetadataValue.int(len(mex_resource_state)),
         },
     )
 
@@ -205,7 +205,7 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     return Output(
         value=mex_resource_disease,
         metadata={
-            "num_items": len(mex_resource_disease),
+            "num_items": MetadataValue.int(len(mex_resource_disease)),
         },
     )
 
@@ -229,7 +229,7 @@ def ifsg_extracted_variable_groups(
     return Output(
         value=extracted_variable_group,
         metadata={
-            "num_items": len(extracted_variable_group),
+            "num_items": MetadataValue.int(len(extracted_variable_group)),
         },
     )
 
@@ -260,7 +260,7 @@ def ifsg_extracted_variables(  # noqa: PLR0913
     return Output(
         value=extracted_variables,
         metadata={
-            "num_items": len(extracted_variables),
+            "num_items": MetadataValue.int(len(extracted_variables)),
         },
     )
 

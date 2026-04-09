@@ -1,4 +1,4 @@
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -118,7 +118,7 @@ def international_projects_extracted_activities(
     return Output(
         value=mex_sources,
         metadata={
-            "num_items": len(mex_sources),
+            "num_items": MetadataValue.int(len(mex_sources)),
         },
     )
 

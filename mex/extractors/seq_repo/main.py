@@ -1,4 +1,4 @@
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -109,7 +109,7 @@ def seq_repo_extracted_activities_by_id_str(
     return Output(
         value=activities_by_id_str,
         metadata={
-            "num_items": len(mex_activities),
+            "num_items": MetadataValue.int(len(mex_activities)),
         },
     )
 
@@ -158,7 +158,7 @@ def seq_repo_resources(  # noqa: PLR0913
     return Output(
         value=resources,
         metadata={
-            "num_items": len(resources),
+            "num_items": MetadataValue.int(len(resources)),
         },
     )
 

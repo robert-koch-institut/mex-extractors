@@ -1,7 +1,7 @@
 from itertools import groupby
 from typing import Any
 
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -239,7 +239,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     return Output(
         value=resources_by_id,
         metadata={
-            "num_items": len(resources_by_id),
+            "num_items": MetadataValue.int(len(resources_by_id)),
         },
     )
 
@@ -275,7 +275,9 @@ def synopse_extracted_activities(
     return Output(
         value=[*non_child_activities, *child_activities],
         metadata={
-            "num_items": len([*non_child_activities, *child_activities]),
+            "num_items": MetadataValue.int(
+                len([*non_child_activities, *child_activities])
+            ),
         },
     )
 
@@ -298,7 +300,7 @@ def synopse_variable_groups_by_identifier_in_primary_source(
     return Output(
         value={vg.identifierInPrimarySource: vg for vg in transformed_variable_groups},
         metadata={
-            "num_items": len(transformed_variable_groups),
+            "num_items": MetadataValue.int(len(transformed_variable_groups)),
         },
     )
 
@@ -325,7 +327,7 @@ def synopse_extracted_variables(
     return Output(
         value=extracted_variables,
         metadata={
-            "num_items": len(extracted_variables),
+            "num_items": MetadataValue.int(len(extracted_variables)),
         },
     )
 

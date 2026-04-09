@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -213,7 +213,7 @@ def grippeweb_extracted_variables(
     return Output(
         value=extracted_variables,
         metadata={
-            "num_items": len(extracted_variables),
+            "num_items": MetadataValue.int(len(extracted_variables)),
         },
     )
 

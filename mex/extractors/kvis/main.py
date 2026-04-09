@@ -1,4 +1,4 @@
-from dagster import Output, asset
+from dagster import MetadataValue, Output, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -89,7 +89,7 @@ def kvis_extracted_variables(
     return Output(
         value=None,
         metadata={
-            "num_items": len(extracted_variables),
+            "num_items": MetadataValue.int(len(extracted_variables)),
         },
     )
 
