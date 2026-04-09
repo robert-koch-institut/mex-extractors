@@ -39,22 +39,22 @@ _stats = defaultdict(lambda: {"count": 0, "errors": 0, "total_ms": 0.0})
 
 _original_send = requests.sessions.Session.send
 
-# match trailing "/123" (numbers only at the end)
+# match trailing "/123" and "/123/" inside urls
 _TRAILING_ID_RE = re.compile(r"/\d+$")
+_INSIDE_ID_RE = re.compile(r"/\d+/")
 
 
 def _normalize_path(path: str) -> str:
     if not path:
         return "/"
-    return _TRAILING_ID_RE.sub("/{id}", path)
+    return _INSIDE_ID_RE.sub("/{id}/", _TRAILING_ID_RE.sub("/{id}", path))
 
 
 def _logging_send(self, request, **kwargs):
     start = time.perf_counter()
     parts = urlsplit(request.url)
-
     normalized_path = _normalize_path(parts.path)
-    key = (parts.netloc, normalized_path)
+    key = (request.method, parts.netloc, normalized_path)
 
     try:
         response = _original_send(self, request, **kwargs)
@@ -86,10 +86,11 @@ def activate_http_summary_logging():
 
 
 def dump_http_summary():
-    for (host, path), data in sorted(_stats.items()):
+    for (method, host, path), data in sorted(_stats.items()):
         avg = data["total_ms"] / data["count"]
         http_log.info(
-            "summary host=%s url=%s count=%d errors=%d avg=%.1fms",
+            "%s host=%s url=%s count=%d errors=%d avg=%.1fms",
+            method,
             host,
             path,
             data["count"],
