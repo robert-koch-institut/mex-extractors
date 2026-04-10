@@ -107,7 +107,7 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
 def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
-    merged_contact_point = cast(
+    merged_contact_points = cast(
         "list[MergedContactPoint]",
         get_publishable_merged_items(
             query_string=str(settings.contact_point.mex_email),
