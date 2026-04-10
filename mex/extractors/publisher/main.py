@@ -116,7 +116,7 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
             reference_field="hadPrimarySource",
         ),
     )
-    return [merged_contact_point[0].identifier]
+    return [merged_contact_points[0].identifier]
 
 
 @asset(group_name="publisher")
