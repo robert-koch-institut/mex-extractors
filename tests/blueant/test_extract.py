@@ -2,6 +2,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
+from mex.common.models import PaginatedItemsContainer
 from mex.extractors.blueant.extract import (
     extract_blueant_project_leaders,
     extract_blueant_sources,
@@ -47,7 +48,7 @@ def test_extract_blueant_project_leaders_not_in_ldap(
     monkeypatch.setattr(
         LDAPConnector,
         "get_persons",
-        lambda _, **__: [],
+        lambda _, **__: PaginatedItemsContainer(items=[], total=0),
     )
     persons = extract_blueant_project_leaders([blueant_source])
     assert not persons
