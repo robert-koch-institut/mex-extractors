@@ -17,10 +17,12 @@ def filter_persons_with_approving_unique_consent(
         person_items: list of persons
         consent_items: list of consents
 
+    Raises:
+        MExError if any person has more than one consent. logs and returns all concerned
+                persons and consents.
+
     Returns:
         list of filtered persons with approving consent.
-        raises an error if any person has more than one consent. log all concerned
-                persons and consents
     """
     person_items_by_id = {person.identifier: person for person in person_items}
 

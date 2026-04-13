@@ -36,9 +36,10 @@ from mex.extractors.sinks.s3 import S3Sink
 
 @asset(group_name="publisher")
 def publisher_items_without_actors() -> PublisherItemsLike:
-    """All items with entity types that are neither an actor nor skipped.
+    """Get all items with entity types that are neither an actor nor skipped.
 
-    Actor types are: Person, ContactPoint and OrganizationalUnit.
+    Actor types are: Person, ContactPoint and OrganizationalUnit. These are fetched and
+    handled specially at a later point.
     """
     settings = Settings.get()
     allowed_entity_types = [
@@ -73,7 +74,7 @@ def publisher_merged_ldap_persons() -> list[MergedPerson]:
 
 @asset(group_name="publisher")
 def publisher_persons() -> PublisherItemsLike:
-    """Get publishable persons with positive consent."""
+    """Get publishable persons with exactly 1 consent which is approving."""
     merged_persons = cast(
         "list[MergedPerson]",
         get_publishable_merged_items(entity_type=["MergedPerson"]),
@@ -141,7 +142,7 @@ def publisher_items(
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
 ) -> PublisherItemsLike:
-    """All publishable items with updated contact references, where needed."""
+    """All publishable items with updated person/contact references, where needed."""
     allowed_actors = {
         actor.identifier
         for actor in publisher_persons.items + publisher_contact_points_and_units.items
