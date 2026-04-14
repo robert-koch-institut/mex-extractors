@@ -149,7 +149,7 @@ def extract_international_projects_project_leaders(
                     surname=analysed_name.surname,
                     given_name=analysed_name.given_name,
                     limit=2,
-                )
+                ).items
                 if len(persons) == 1 and persons[0].objectGUID:
                     ldap_persons.append(
                         LDAPPersonWithQuery(person=persons[0], query=name)

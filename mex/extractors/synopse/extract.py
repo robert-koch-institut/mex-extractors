@@ -111,7 +111,7 @@ def extract_synopse_project_contributors(
         for name in analyse_person_string(names):
             persons = ldap.get_persons(
                 surname=name.surname, given_name=name.given_name, limit=2
-            )
+            ).items
             if len(persons) == 1 and persons[0].objectGUID:
                 ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
     return ldap_persons
@@ -137,7 +137,7 @@ def extract_synopse_contact(
     return [
         account
         for mail in contact_list
-        for account in ldap.get_functional_accounts(mail=mail)
+        for account in ldap.get_functional_accounts(mail=mail).items
     ]
 
 

@@ -177,7 +177,7 @@ def extract_ldap_contact_points_by_emails(
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
     accounts = []
     for mail in emails:
-        accounts.extend(ldap.get_functional_accounts(mail=mail))
+        accounts.extend(ldap.get_functional_accounts(mail=mail).items)
     return accounts
 
 
@@ -201,7 +201,7 @@ def extract_ldap_contact_points_by_name(
     for split_name in split_names:
         persons = ldap.get_persons(
             surname=split_name.surname, given_name=split_name.given_name, limit=2
-        )
+        ).items
         if len(persons) == 1 and persons[0].objectGUID:
             ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
     return ldap_persons
