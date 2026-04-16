@@ -97,7 +97,7 @@ def extract_confluence_vvt_authors(authors: Iterable[str]) -> list[LDAPPersonWit
         for name in analyse_person_string(author):
             persons = ldap.get_persons(
                 surname=name.surname, given_name=name.given_name, limit=2
-            )
+            ).items
             if len(persons) == 1 and persons[0].objectGUID:
                 ldap_persons.append(
                     LDAPPersonWithQuery(person=persons[0], query=author)
