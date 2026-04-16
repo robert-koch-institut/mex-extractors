@@ -97,7 +97,7 @@ def get_ldap_merged_contact_id_by_mail(
         merged contact point id or None, if not exactly one result
     """
     connector = LDAPConnector.get()
-    functional_account = connector.get_functional_accounts(mail=mail, limit=limit)
+    functional_account = connector.get_functional_accounts(mail=mail, limit=limit).items
     if len(functional_account) != 1:
         return None
     extracted_contact_point = (
