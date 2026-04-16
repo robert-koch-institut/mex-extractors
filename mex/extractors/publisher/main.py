@@ -40,6 +40,8 @@ def publisher_items_without_actors() -> PublisherItemsLike:
 
     Actor types are: Person, ContactPoint and OrganizationalUnit. These are fetched and
     handled specially at a later point.
+    Settings:
+        publisher.skip_entity_types: entity type to skip on top of actor types.
     """
     settings = Settings.get()
     allowed_entity_types = [
