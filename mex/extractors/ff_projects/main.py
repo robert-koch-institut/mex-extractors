@@ -1,4 +1,4 @@
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -81,10 +81,11 @@ def ff_projects_organization_ids_by_query_str(
 
 @asset(group_name="ff_projects", metadata={"entity_type": "activity"})
 def ff_projects_activities(
+    context: AssetExecutionContext,
     ff_projects_sources: list[FFProjectsSource],
     ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
-) -> Output[list[ExtractedActivity]]:
+) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
     settings = Settings.get()
     ff_projects_activity = ActivityMapping.model_validate(
@@ -100,12 +101,8 @@ def ff_projects_activities(
         for ff_projects_source in ff_projects_sources
     ]
     load(extracted_activities)
-    return Output(
-        value=extracted_activities,
-        metadata={
-            "num_items": MetadataValue.int(len(extracted_activities)),
-        },
-    )
+    context.add_output_metadata({"num_items": len(extracted_activities)})
+    return extracted_activities
 
 
 @entrypoint(Settings)

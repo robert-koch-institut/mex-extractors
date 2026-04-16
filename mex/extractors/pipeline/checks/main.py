@@ -1,5 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from dagster import (
     AssetCheckExecutionContext,
@@ -13,6 +13,9 @@ from mex.common.logging import logger
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
 from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 # Rule type classifications
 STATIC_RULES = {
@@ -58,7 +61,7 @@ def parse_time_frame(time_frame: str) -> timedelta:
     return timedelta(days=num)
 
 
-def get_historical_events(events: list[EventLogRecord]) -> dict[datetime, int]:
+def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, int]:
     """Load all past events and refactor it to a dict."""
     result = {}
 
@@ -76,6 +79,25 @@ def get_historical_events(events: list[EventLogRecord]) -> dict[datetime, int]:
                 result[timestamp] = int(str(value))
 
     return result
+
+
+def get_latest_num_items(events: Sequence[EventLogRecord]) -> int | None:
+    """Get latest num_items metadata from materialization events."""
+    if not events:
+        return None
+
+    latest_materialization = events[0].asset_materialization
+    if latest_materialization is None:
+        return None
+
+    num_items_metadata = latest_materialization.metadata.get("num_items")
+    if num_items_metadata is None or not hasattr(num_items_metadata, "value"):
+        return None
+
+    if num_items_metadata.value is None:
+        return None
+
+    return int(str(num_items_metadata.value))
 
 
 def get_historic_count(
@@ -200,12 +222,9 @@ def check_item_count_rule(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
         )
     )
-    if events is None:
+    current_number_of_extracted_items = get_latest_num_items(events)
+    if current_number_of_extracted_items is None:
         return True
-
-    current_number_of_extracted_items = (
-        events[0].asset_materialization.metadata["num_items"].value
-    )
 
     # Handle static rules
     if rule_name in STATIC_RULES:

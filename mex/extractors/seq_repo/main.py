@@ -1,4 +1,4 @@
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -86,10 +86,11 @@ def seq_repo_merged_person_ids_by_query_string(
 
 @asset(group_name="seq_repo", metadata={"entity_type": "organization"})
 def seq_repo_extracted_activities_by_id_str(
+    context: AssetExecutionContext,
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
-) -> Output[dict[str, ExtractedActivity]]:
+) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
@@ -106,12 +107,8 @@ def seq_repo_extracted_activities_by_id_str(
     activities_by_id_str = {
         activity.identifierInPrimarySource: activity for activity in mex_activities
     }
-    return Output(
-        value=activities_by_id_str,
-        metadata={
-            "num_items": MetadataValue.int(len(mex_activities)),
-        },
-    )
+    context.add_output_metadata({"num_items": len(mex_activities)})
+    return activities_by_id_str
 
 
 @asset(group_name="seq_repo")
@@ -132,13 +129,14 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
 
 @asset(group_name="seq_repo", metadata={"entity_type": "resource"})
 def seq_repo_resources(  # noqa: PLR0913
+    context: AssetExecutionContext,
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
-) -> Output[list[ExtractedResource]]:
+) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
     settings = Settings.get()
     resource = ResourceMapping.model_validate(
@@ -155,12 +153,8 @@ def seq_repo_resources(  # noqa: PLR0913
         extracted_organization_rki,
     )
     load(resources)
-    return Output(
-        value=resources,
-        metadata={
-            "num_items": MetadataValue.int(len(resources)),
-        },
-    )
+    context.add_output_metadata({"num_items": len(resources)})
+    return resources
 
 
 @entrypoint(Settings)

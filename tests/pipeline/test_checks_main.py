@@ -4,13 +4,19 @@ from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
-from dagster import AssetCheckExecutionContext, AssetKey, EventRecordsFilter
+from dagster import (
+    AssetCheckExecutionContext,
+    AssetKey,
+    EventLogRecord,
+    EventRecordsFilter,
+)
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
     check_item_count_rule,
     get_historic_count,
     get_historical_events,
+    get_latest_num_items,
     get_rule,
     load_asset_check_from_settings,
     parse_time_frame,
@@ -113,6 +119,21 @@ def test_get_historical_events(
 ) -> None:
     result = get_historical_events(mock_events)
     assert sorted(result.values(), reverse=True) == expected_values
+
+
+def test_get_latest_num_items() -> None:
+    events = [
+        DummyEventLogRecord(
+            timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            metadata={"num_items": SimpleNamespace(value=132)},
+        ),
+        DummyEventLogRecord(
+            timestamp=datetime(2025, 7, 1, 12, 0, tzinfo=UTC).timestamp(),
+            metadata={"num_items": SimpleNamespace(value=120)},
+        ),
+    ]
+
+    assert get_latest_num_items(cast("list[EventLogRecord]", events)) == 132
 
 
 @pytest.mark.parametrize(

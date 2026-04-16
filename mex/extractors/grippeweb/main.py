@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -197,11 +197,12 @@ def grippeweb_extracted_variable_groups(
 
 @asset(group_name="grippeweb", metadata={"entity_type": "variable"})
 def grippeweb_extracted_variables(
+    context: AssetExecutionContext,
     grippeweb_variable: dict[str, Any],
     grippeweb_extracted_variable_groups: list[ExtractedVariableGroup],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
-) -> Output[list[ExtractedVariable]]:
+) -> list[ExtractedVariable]:
     """Transform Grippeweb default values to extracted variables and load to sinks."""
     extracted_variables = transform_grippeweb_variable_to_extracted_variables(
         VariableMapping.model_validate(grippeweb_variable),
@@ -210,12 +211,8 @@ def grippeweb_extracted_variables(
         grippeweb_extracted_parent_resource,
     )
     load(extracted_variables)
-    return Output(
-        value=extracted_variables,
-        metadata={
-            "num_items": MetadataValue.int(len(extracted_variables)),
-        },
-    )
+    context.add_output_metadata({"num_items": len(extracted_variables)})
+    return extracted_variables
 
 
 @entrypoint(Settings)
