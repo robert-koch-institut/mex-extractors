@@ -110,7 +110,7 @@ def confluence_vvt_sources_dict() -> dict[str, ConfluenceVvtPage]:
                         ConfluenceVvtRow(
                             cells=[
                                 ConfluenceVvtValue(
-                                    texts=["Al-Awlaqi, Sameh,", "Al-AwlaqiS@rki.de"]
+                                    texts=["Musterman, Max", "MustermanM@rki.de"]
                                 ),
                                 ConfluenceVvtValue(texts=["C1"]),
                                 ConfluenceVvtValue(texts=["FG99"]),
@@ -293,7 +293,7 @@ def confluence_vvt_sources_dict() -> dict[str, ConfluenceVvtPage]:
                         ConfluenceVvtRow(
                             cells=[
                                 ConfluenceVvtValue(
-                                    texts=["Al-Awlaqi, Sameh,", "Al-AwlaqiS@rki.de"]
+                                    texts=["Musterman, Max", "MustermanM@rki.de"]
                                 ),
                                 ConfluenceVvtValue(texts=["C1"]),
                                 ConfluenceVvtValue(texts=["FG99"]),
