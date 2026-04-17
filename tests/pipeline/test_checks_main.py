@@ -501,6 +501,7 @@ def test_check_not_exactly_x_items_generalized(
 
 @pytest.mark.parametrize(
     (
+        "current_count",
         "historical_events",
         "rule_threshold",
         "time_frame_str",
