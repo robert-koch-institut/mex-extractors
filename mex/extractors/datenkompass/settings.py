@@ -27,7 +27,7 @@ class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
         50, description="Maximum length for complete collected keywords string"
     )
     mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/mapping-to-external-schema/datenkompass"),
+        AssetsPath("mappings/publisher-pipelines/datenkompass"),
         description=(
             "Path to the directory with the datenkompass mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

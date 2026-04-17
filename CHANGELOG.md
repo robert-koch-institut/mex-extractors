@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - implement "not_exactly_x_items" check
-- AssetCheck `x_items_less_than` for open-data
 
 ### Changes
 
-- AssetCheck rule type classifications
+- publisher: code maintenance (typos, naming, unified db fetching)
+- datenkompass: updated mapping path in settings
 
 ### Deprecated
 
@@ -22,7 +22,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- confluence test data
+
 ### Security
+
+## [1.13.2] - 2026-04-10
+
+### Added
+
+- AssetCheck `x_items_less_than` for open-data
+
+### Changes
+
+- AssetCheck rule type classifications
+- update mex-common to 1.18.1
 
 ## [1.13.1] - 2026-04-02
 
