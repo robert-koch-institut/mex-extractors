@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -169,12 +169,13 @@ def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 @asset(group_name="sumo", metadata={"entity_type": "resource-nokeda"})
 def sumo_extracted_resource_nokeda(
+    context: AssetExecutionContext,
     sumo_extracted_resources_nokeda: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     sumo_extracted_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
-) -> Output[ExtractedResource]:
+) -> ExtractedResource:
     """Transform and load extracted Nokeda Resource from SUMO."""
     mex_resource_nokeda = transform_resource_nokeda_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_nokeda),
@@ -185,22 +186,19 @@ def sumo_extracted_resource_nokeda(
     )
     num_items = len([mex_resource_nokeda])
     load([mex_resource_nokeda])
-    return Output(
-        value=mex_resource_nokeda,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_resource_nokeda
 
 
 @asset(group_name="sumo", metadata={"entity_type": "resource-feat"})
 def sumo_extracted_resource_feat(
+    context: AssetExecutionContext,
     sumo_extracted_resources_feat: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
     sumo_extracted_resource_nokeda: ExtractedResource,
     sumo_extracted_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
-) -> Output[ExtractedResource]:
+) -> ExtractedResource:
     """Transform and load extracted SUMO Resource feat."""
     mex_resource_feat = transform_resource_feat_model_to_mex_resource(
         ResourceMapping.model_validate(sumo_extracted_resources_feat),
@@ -211,19 +209,16 @@ def sumo_extracted_resource_feat(
     )
     num_items = len([mex_resource_feat])
     load([mex_resource_feat])
-    return Output(
-        value=mex_resource_feat,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_resource_feat
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-group-nokeda-aux"})
 def sumo_extracted_variable_groups_nokeda_aux(
+    context: AssetExecutionContext,
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> Output[list[ExtractedVariableGroup]]:
+) -> list[ExtractedVariableGroup]:
     """Transform Nokeda auxiliary variables to MEx variable groups and load them."""
     mex_variable_groups_nokeda_aux = (
         transform_nokeda_aux_variable_to_mex_variable_group(
@@ -233,19 +228,16 @@ def sumo_extracted_variable_groups_nokeda_aux(
     )
     num_items = len(mex_variable_groups_nokeda_aux)
     load(mex_variable_groups_nokeda_aux)
-    return Output(
-        value=mex_variable_groups_nokeda_aux,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_variable_groups_nokeda_aux
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-group-nokeda"})
 def sumo_extracted_variable_groups_nokeda(
+    context: AssetExecutionContext,
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> Output[list[ExtractedVariableGroup]]:
+) -> list[ExtractedVariableGroup]:
     """Transform Nokeda variables to MEx variable groups and load them."""
     mex_variable_groups_model_nokeda = (
         transform_model_nokeda_variable_to_mex_variable_group(
@@ -255,19 +247,16 @@ def sumo_extracted_variable_groups_nokeda(
     )
     num_items = len(mex_variable_groups_model_nokeda)
     load(mex_variable_groups_model_nokeda)
-    return Output(
-        value=mex_variable_groups_model_nokeda,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_variable_groups_model_nokeda
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-group-feat"})
 def sumo_extracted_variable_group_feat(
+    context: AssetExecutionContext,
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> Output[list[ExtractedVariableGroup]]:
+) -> list[ExtractedVariableGroup]:
     """Transform SUMO Resource feat to MEx variable groups and load them."""
     mex_variable_groups_feat = transform_feat_variable_to_mex_variable_group(
         sumo_extracted_cc2_feat_projection,
@@ -275,20 +264,17 @@ def sumo_extracted_variable_group_feat(
     )
     num_items = len(mex_variable_groups_feat)
     load(mex_variable_groups_feat)
-    return Output(
-        value=mex_variable_groups_feat,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_variable_groups_feat
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-nokeda"})
 def sumo_extracted_variables_nokeda(
+    context: AssetExecutionContext,
     sumo_extracted_cc1_data_model_nokeda: list[Cc1DataModelNoKeda],
     sumo_extracted_variable_groups_nokeda: list[ExtractedVariableGroup],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> Output[list[ExtractedVariable]]:
+) -> list[ExtractedVariable]:
     """Transform Nokeda variables to extracted variables and load them."""
     sumo_cc1_data_valuesets = extract_cc1_data_valuesets()
     transformed_nokeda_model_variable = transform_nokeda_model_variable_to_mex_variable(
@@ -299,20 +285,17 @@ def sumo_extracted_variables_nokeda(
     )
     num_items = len(transformed_nokeda_model_variable)
     load(transformed_nokeda_model_variable)
-    return Output(
-        value=transformed_nokeda_model_variable,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return transformed_nokeda_model_variable
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-nokeda-aux"})
 def sumo_extracted_variables_nokeda_aux(
+    context: AssetExecutionContext,
     sumo_extracted_cc2_aux_model: list[Cc2AuxModel],
     sumo_extracted_variable_groups_nokeda_aux: list[ExtractedVariableGroup],
     sumo_extracted_resource_nokeda: ExtractedResource,
-) -> Output[list[ExtractedVariable]]:
+) -> list[ExtractedVariable]:
     """Transform Nokeda aux variables to extracted variables and load them."""
     sumo_cc2_aux_mapping = extract_cc2_aux_mapping(sumo_extracted_cc2_aux_model)
     sumo_cc2_aux_valuesets = extract_cc2_aux_valuesets()
@@ -326,20 +309,17 @@ def sumo_extracted_variables_nokeda_aux(
     )
     num_items = len(sumo_extracted_variables_nokeda_aux)
     load(sumo_extracted_variables_nokeda_aux)
-    return Output(
-        value=sumo_extracted_variables_nokeda_aux,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return sumo_extracted_variables_nokeda_aux
 
 
 @asset(group_name="sumo", metadata={"entity_type": "variable-feat-projection"})
 def sumo_extracted_variables_feat_projection(
+    context: AssetExecutionContext,
     sumo_extracted_cc2_feat_projection: list[Cc2FeatProjection],
     sumo_extracted_variable_group_feat: list[ExtractedVariableGroup],
     sumo_extracted_resource_feat: ExtractedResource,
-) -> Output[list[ExtractedVariable]]:
+) -> list[ExtractedVariable]:
     """Transform SUMO feat projection variables to extracted variables and load them."""
     transformed_feat_projection_variable = (
         transform_feat_projection_variable_to_mex_variable(
@@ -350,12 +330,8 @@ def sumo_extracted_variables_feat_projection(
     )
     num_items = len(transformed_feat_projection_variable)
     load(transformed_feat_projection_variable)
-    return Output(
-        value=transformed_feat_projection_variable,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return transformed_feat_projection_variable
 
 
 @entrypoint(Settings)

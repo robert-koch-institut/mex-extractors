@@ -1,9 +1,10 @@
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
+    ExtractedBibliographicResource,
     ExtractedConsent,
     ExtractedPerson,
 )
@@ -57,9 +58,10 @@ def endnote_extracted_consents(
 
 @asset(group_name="endnote", metadata={"entity_type": "bibliographic-resource"})
 def endnote_extracted_bibliographic_resources(
+    context: AssetExecutionContext,
     endnote_records: list[EndnoteRecord],
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
-) -> Output[int]:
+) -> list[ExtractedBibliographicResource]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
     endnote_bibliographic_resource_mapping = (
@@ -74,7 +76,8 @@ def endnote_extracted_bibliographic_resources(
     )
     num_items = len(extracted_bibliographic_resource)
     load(extracted_bibliographic_resource)
-    return Output(value=num_items, metadata={"num_items": MetadataValue.int(num_items)})
+    context.add_output_metadata({"num_items": num_items})
+    return extracted_bibliographic_resource
 
 
 @entrypoint(Settings)

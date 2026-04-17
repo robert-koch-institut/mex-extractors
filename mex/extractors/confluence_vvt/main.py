@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -9,6 +9,7 @@ from mex.common.ldap.transform import (
 )
 from mex.common.models import (
     ActivityMapping,
+    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
@@ -89,12 +90,13 @@ def confluence_vvt_merged_person_ids_by_query_str(
 
 @asset(group_name="confluence_vvt", metadata={"entity_type": "activity"})
 def extracted_confluence_vvt_activities(
+    context: AssetExecutionContext,
     confluence_vvt_pages: list[ConfluenceVvtPage],
     confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
     ],
     confluence_vvt_activity_mapping: dict[str, Any],
-) -> Output[int]:
+) -> list[ExtractedActivity]:
     """Transform and load Confluence VVT activities."""
     mex_activities = transform_confluence_vvt_activities_to_extracted_activities(
         confluence_vvt_pages,
@@ -104,12 +106,8 @@ def extracted_confluence_vvt_activities(
 
     num_items = len(mex_activities)
     load(mex_activities)
-    return Output(
-        value=num_items,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_activities
 
 
 @entrypoint(Settings)

@@ -1,6 +1,5 @@
 from dagster import (
-    MetadataValue,
-    Output,
+    AssetExecutionContext,
     asset,
 )
 
@@ -115,8 +114,9 @@ def open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
 
 @asset(group_name="open_data", metadata={"entity_type": "distribution"})
 def open_data_extracted_distributions(
+    context: AssetExecutionContext,
     open_data_parent_resources: list[OpenDataParentResource],
-) -> Output[list[ExtractedDistribution]]:
+) -> list[ExtractedDistribution]:
     """Extract distributions for open data & transform and load them to sinks."""
     settings = Settings.get()
     distribution_mapping = DistributionMapping.model_validate(
@@ -129,23 +129,20 @@ def open_data_extracted_distributions(
 
     num_items = len(mex_distributions)
     load(mex_distributions)
-    return Output(
-        value=mex_distributions,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_distributions
 
 
 @asset(group_name="open_data", metadata={"entity_type": "resource"})
 def open_data_parent_extracted_resources(  # noqa: PLR0913
+    context: AssetExecutionContext,
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
-) -> Output[list[ExtractedResource]]:
+) -> list[ExtractedResource]:
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
@@ -164,12 +161,8 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
 
     num_items = len(mex_sources)
     load(mex_sources)
-    return Output(
-        value=mex_sources,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return mex_sources
 
 
 @asset(group_name="open_data")

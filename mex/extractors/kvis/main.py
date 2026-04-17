@@ -1,4 +1,4 @@
-from dagster import MetadataValue, Output, asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -50,21 +50,18 @@ def kvis_extracted_resource_id(
 
 @asset(group_name="kvis", metadata={"entity_type": "variable-group"})
 def kvis_extracted_variable_groups(
+    context: AssetExecutionContext,
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_variables_table_entries: list[KVISVariables],
-) -> Output[list[ExtractedVariableGroup]]:
+) -> list[ExtractedVariableGroup]:
     """Transform and load extracted variable groups."""
     extracted_variable_groups = transform_kvis_variables_to_extracted_variable_groups(
         kvis_extracted_resource_id, kvis_variables_table_entries
     )
     num_items = len(extracted_variable_groups)
     load(extracted_variable_groups)
-    return Output(
-        value=extracted_variable_groups,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return extracted_variable_groups
 
 
 @asset(group_name="kvis")
