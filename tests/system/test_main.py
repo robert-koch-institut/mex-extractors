@@ -1,11 +1,17 @@
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import cast
 from unittest.mock import Mock, call, patch
 
+import pytest
+from dagster import AssetKey
+
 from mex.extractors.system.main import (
+    _delete_asset_metadata,
     system_clean_up_dagster_files,
     system_clean_up_dagster_runs,
+    system_clean_up_obsolete_assets,
     system_fetch_old_dagster_run_ids,
 )
 from tests.system.conftest import create_mock_dagster_run_records
@@ -137,3 +143,116 @@ def test_system_clean_up_dagster_runs_with_empty_list() -> None:
 
     mock_instance.delete_run.assert_not_called()  # delete_run was never called
     assert deleted_runs == []
+
+
+def test_system_clean_up_obsolete_assets() -> None:
+    """Test that obsolete assets are deleted and protected assets are NOT deleted."""
+    current_assets = {
+        AssetKey(["asset_1"]),
+        AssetKey(["asset_2"]),  # not yet run and therefore not known to dagster
+    }
+
+    historical_assets = {
+        AssetKey(["asset_1"]),  # still active
+        AssetKey(["protected_asset"]),  # protected
+        AssetKey(["obsolete_asset"]),  # outdated -> the only one to delete
+    }
+
+    mock_definitions = Mock()
+    mock_asset_graph = Mock()
+    mock_asset_graph.get_all_asset_keys.return_value = current_assets
+    mock_definitions.resolve_asset_graph.return_value = mock_asset_graph
+
+    mock_instance = Mock()
+    mock_instance.all_asset_keys.return_value = historical_assets
+
+    with (
+        patch(
+            "mex.extractors.system.main.load_job_definitions",
+            return_value=mock_definitions,
+        ),
+        patch(
+            "mex.extractors.system.main.DagsterInstance.get",
+            return_value=mock_instance,
+        ),
+        patch("mex.extractors.system.main._delete_asset_metadata") as mock_delete,
+    ):
+        system_clean_up_obsolete_assets()
+
+    assert mock_delete.call_count == 1
+    assert mock_delete.call_args[0][0] == AssetKey(["obsolete_asset"])
+
+
+def test_system_clean_up_obsolete_assets_no_obsolete() -> None:
+    """Test when there are no obsolete assets."""
+    current_assets = {
+        AssetKey(["asset_1"]),
+        AssetKey(["asset_2"]),
+    }
+
+    mock_definitions = Mock()
+    mock_asset_graph = Mock()
+    mock_asset_graph.get_all_asset_keys.return_value = current_assets
+    mock_definitions.resolve_asset_graph.return_value = mock_asset_graph
+
+    mock_instance = Mock()
+    mock_instance.all_asset_keys.return_value = current_assets  # historical == current
+
+    with (
+        patch(
+            "mex.extractors.system.main.load_job_definitions",
+            return_value=mock_definitions,
+        ),
+        patch(
+            "mex.extractors.system.main.DagsterInstance.get",
+            return_value=mock_instance,
+        ),
+        patch("mex.extractors.system.main._delete_asset_metadata") as mock_delete,
+    ):
+        system_clean_up_obsolete_assets()
+
+    # No deletions should occur
+    mock_delete.assert_not_called()
+
+
+def test_delete_asset_metadata_success() -> None:
+    """Test successful asset metadata deletion via subprocess."""
+    asset_key = AssetKey(["test_asset"])
+
+    with patch("mex.extractors.system.main.subprocess.run") as mock_run:
+        _delete_asset_metadata(asset_key)
+
+    mock_run.assert_called_once()
+    call_args = mock_run.call_args
+    assert call_args[0][0] == [
+        "dagster",
+        "asset",
+        "wipe",
+        '["test_asset"]',
+        "--noprompt",
+    ]
+
+
+def test_delete_asset_metadata_failure() -> None:
+    """Test error handling when asset deletion fails."""
+    asset_key = AssetKey(["failing_asset"])
+
+    # Create a CalledProcessError
+    error = subprocess.CalledProcessError(
+        returncode=1,
+        cmd=["dagster", "asset", "wipe", '["doesnt_matter"]', "--noprompt"],
+        stderr="stderr output",
+    )
+
+    with patch("mex.extractors.system.main.subprocess.run") as mock_run:
+        mock_run.side_effect = error
+        with (
+            patch("mex.extractors.system.main.logger.exception") as mock_logger,
+            pytest.raises(RuntimeError, match="Could not wipe Dagster metadata"),
+        ):
+            _delete_asset_metadata(asset_key)
+
+        mock_logger.assert_called_once()
+        # Verify the exception was logged with the correct asset key
+        call_args = mock_logger.call_args
+        assert "failing_asset" in str(call_args)
