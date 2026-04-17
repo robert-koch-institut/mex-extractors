@@ -80,7 +80,7 @@ def blueant_extracted_activities(
     num_items = len(extracted_activities)
     load(extracted_activities)
     context.add_output_metadata({"num_items": num_items})
-    return num_items
+    return extracted_activities
 
 
 @entrypoint(Settings)
