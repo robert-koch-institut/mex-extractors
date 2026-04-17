@@ -80,10 +80,10 @@ def ifsg_filtered_meta_fields(ifsg_meta_field: list[MetaField]) -> list[MetaFiel
 @asset(group_name="ifsg")
 def ifsg_filtered_variables(
     ifsg_meta_field: list[MetaField],
-    id_types_of_diseases: list[int],
+    ifsg_id_types_of_diseases: list[int],
 ) -> list[MetaField]:
     """Filter MetaField list."""
-    return filter_variables(ifsg_meta_field, id_types_of_diseases)
+    return filter_variables(ifsg_meta_field, ifsg_id_types_of_diseases)
 
 
 @asset(group_name="ifsg")
@@ -105,7 +105,7 @@ def ifsg_meta_schema2type() -> list[MetaSchema2Type]:
 
 
 @asset(group_name="ifsg")
-def id_types_of_diseases(
+def ifsg_id_types_of_diseases(
     ifsg_meta_schema2type: list[MetaSchema2Type], ifsg_meta_type: list[MetaType]
 ) -> list[int]:
     """Extract id_types that correspond to a disease."""
@@ -182,7 +182,7 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
     ifsg_extracted_resources_state: list[ExtractedResource],
     ifsg_meta_disease: list[MetaDisease],
     ifsg_meta_type: list[MetaType],
-    id_types_of_diseases: list[int],
+    ifsg_id_types_of_diseases: list[int],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extracted and loaded ifsg resource disease."""
@@ -192,7 +192,7 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
         ifsg_extracted_resources_state,
         ifsg_meta_disease,
         ifsg_meta_type,
-        id_types_of_diseases,
+        ifsg_id_types_of_diseases,
         extracted_organization_rki,
     )
     load(mex_resource_disease)
@@ -205,14 +205,14 @@ def ifsg_extracted_variable_groups(
     ifsg_variable_group: dict[str, Any],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_filtered_meta_fields: list[MetaField],
-    id_types_of_diseases: list[int],
+    ifsg_id_types_of_diseases: list[int],
 ) -> list[ExtractedVariableGroup]:
     """Extracted and loaded ifsg variable group."""
     extracted_variable_group = transform_ifsg_data_to_mex_variable_group(
         VariableGroupMapping.model_validate(ifsg_variable_group),
         ifsg_extracted_resources_disease,
         ifsg_filtered_meta_fields,
-        id_types_of_diseases,
+        ifsg_id_types_of_diseases,
     )
     load(extracted_variable_group)
 
