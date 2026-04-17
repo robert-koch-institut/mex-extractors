@@ -76,7 +76,7 @@ def endnote_extracted_bibliographic_resources(
     num_items = len(extracted_bibliographic_resource)
     load(extracted_bibliographic_resource)
     context.add_output_metadata({"num_items": num_items})
-    return num_items
+    return extracted_bibliographic_resource
 
 
 @entrypoint(Settings)
