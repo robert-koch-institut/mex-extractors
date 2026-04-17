@@ -1,7 +1,7 @@
 from itertools import groupby
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -205,8 +205,9 @@ def synopse_access_platform_id(
     return transformed_access_platforms.stableTargetId
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "resource"})
 def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913
+    context: AssetExecutionContext,
     synopse_projects: list[SynopseProject],
     synopse_studies: list[SynopseStudy],
     synopse_study_overviews: list[SynopseStudyOverview],
@@ -232,10 +233,12 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_merged_person_ids_by_name_str,
     )
     load(transformed_study_data_resources)
-    return transform_overviews_to_resource_lookup(
+    extracted_resource = transform_overviews_to_resource_lookup(
         synopse_study_overviews,
         transformed_study_data_resources,
     )
+    context.add_output_metadata({"num_items": len(extracted_resource)})
+    return extracted_resource
 
 
 @asset(group_name="synopse")
@@ -245,8 +248,9 @@ def synopse_activity() -> dict[str, Any]:
     return load_yaml(settings.synopse.mapping_path / "activity.yaml")
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "activity"})
 def synopse_extracted_activities(
+    context: AssetExecutionContext,
     synopse_projects: list[SynopseProject],
     synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
     synopse_merged_organization_ids_by_query_string: dict[
@@ -266,11 +270,14 @@ def synopse_extracted_activities(
 
     load(non_child_activities)
     load(child_activities)
-    return [*non_child_activities, *child_activities]
+    extracted_activities = [*non_child_activities, *child_activities]
+    context.add_output_metadata({"num_items": len(extracted_activities)})
+    return extracted_activities
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "variable_group"})
 def synopse_variable_groups_by_identifier_in_primary_source(
+    context: AssetExecutionContext,
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
@@ -284,11 +291,13 @@ def synopse_variable_groups_by_identifier_in_primary_source(
         synopse_study_overviews,
     )
     load(transformed_variable_groups)
+    context.add_output_metadata({"num_items": len(transformed_variable_groups)})
     return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
 
 
-@asset(group_name="synopse")
+@asset(group_name="synopse", metadata={"entity_type": "variable"})
 def synopse_extracted_variables(
+    context: AssetExecutionContext,
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
     synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
@@ -306,6 +315,7 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
+    context.add_output_metadata({"num_items": len(extracted_variables)})
     return extracted_variables
 
 
