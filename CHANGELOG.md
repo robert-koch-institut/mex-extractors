@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- implement AssetCheck `x_percent_less_than`
+- implement "not_exactly_x_items" check
 
 ### Changes
 
