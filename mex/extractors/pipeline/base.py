@@ -46,7 +46,7 @@ def run_job_in_process(group_name: str) -> bool:
 @sensor(
     job_name="publisher",
     default_status=DefaultSensorStatus.RUNNING,
-    minimum_interval_seconds=60 * 300,
+    minimum_interval_seconds=60 * 5,
 )
 def monitor_jobs_sensor(
     context: SensorEvaluationContext,  # noqa: ARG001

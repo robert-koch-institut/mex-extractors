@@ -9,6 +9,7 @@ from mex.common.ldap.transform import (
 )
 from mex.common.models import (
     ActivityMapping,
+    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
@@ -94,7 +95,7 @@ def confluence_vvt_extracted_activities(
         str, list[MergedPersonIdentifier]
     ],
     confluence_vvt_activity_mapping: dict[str, Any],
-) -> None:
+) -> list[ExtractedActivity]:
     """Transform and load Confluence VVT activities."""
     mex_activities = transform_confluence_vvt_activities_to_extracted_activities(
         confluence_vvt_pages,
@@ -102,6 +103,7 @@ def confluence_vvt_extracted_activities(
         confluence_vvt_merged_person_ids_by_query_str,
     )
     load(mex_activities)
+    return mex_activities
 
 
 @entrypoint(Settings)
