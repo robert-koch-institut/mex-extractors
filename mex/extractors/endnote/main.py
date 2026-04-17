@@ -4,6 +4,7 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     BibliographicResourceMapping,
     ConsentMapping,
+    ExtractedBibliographicResource,
     ExtractedConsent,
     ExtractedPerson,
 )
@@ -60,7 +61,7 @@ def endnote_extracted_bibliographic_resources(
     context: AssetExecutionContext,
     endnote_records: list[EndnoteRecord],
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
-) -> int:
+) -> list[ExtractedBibliographicResource]:
     """Extract bibliographic resources from endnote."""
     settings = Settings.get()
     endnote_bibliographic_resource_mapping = (

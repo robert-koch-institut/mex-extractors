@@ -30,6 +30,9 @@ HISTORICAL_RULES = {
     "x_percent_more_than",
 }
 ALL_RULES = STATIC_RULES | HISTORICAL_RULES
+LATEST_NUM_ITEMS_ERROR = (
+    "Unable to determine latest num_items from asset materialization events."
+)
 
 
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
@@ -81,21 +84,24 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
     return result
 
 
-def get_latest_num_items(events: Sequence[EventLogRecord]) -> int | None:
+def get_latest_num_items(events: Sequence[EventLogRecord]) -> int:
     """Get latest num_items metadata from materialization events."""
     if not events:
-        return None
+        raise ValueError(LATEST_NUM_ITEMS_ERROR)
 
     latest_materialization = events[0].asset_materialization
-    if latest_materialization is None:
-        return None
-
-    num_items_metadata = latest_materialization.metadata.get("num_items")
-    if num_items_metadata is None or not hasattr(num_items_metadata, "value"):
-        return None
-
-    if num_items_metadata.value is None:
-        return None
+    num_items_metadata = (
+        latest_materialization.metadata.get("num_items")
+        if latest_materialization is not None
+        else None
+    )
+    if (
+        latest_materialization is None
+        or num_items_metadata is None
+        or not hasattr(num_items_metadata, "value")
+        or num_items_metadata.value is None
+    ):
+        raise ValueError(LATEST_NUM_ITEMS_ERROR)
 
     return int(str(num_items_metadata.value))
 
@@ -223,8 +229,6 @@ def check_item_count_rule(
         )
     )
     current_number_of_extracted_items = get_latest_num_items(events)
-    if current_number_of_extracted_items is None:
-        return True
 
     # Handle static rules
     if rule_name in STATIC_RULES:

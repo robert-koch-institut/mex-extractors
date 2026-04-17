@@ -13,6 +13,7 @@ from dagster import (
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
+    LATEST_NUM_ITEMS_ERROR,
     check_item_count_rule,
     get_historic_count,
     get_historical_events,
@@ -134,6 +135,37 @@ def test_get_latest_num_items() -> None:
     ]
 
     assert get_latest_num_items(cast("list[EventLogRecord]", events)) == 132
+
+
+@pytest.mark.parametrize(
+    "events",
+    [
+        [],
+        [
+            SimpleNamespace(
+                asset_materialization=None,
+                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            )
+        ],
+        [
+            SimpleNamespace(
+                asset_materialization=SimpleNamespace(metadata={}),
+                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            )
+        ],
+        [
+            SimpleNamespace(
+                asset_materialization=SimpleNamespace(
+                    metadata={"num_items": SimpleNamespace(value=None)}
+                ),
+                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            )
+        ],
+    ],
+)
+def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
+    with pytest.raises(ValueError, match=LATEST_NUM_ITEMS_ERROR):
+        get_latest_num_items(cast("list[EventLogRecord]", events))
 
 
 @pytest.mark.parametrize(
