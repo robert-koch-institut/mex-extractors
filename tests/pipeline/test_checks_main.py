@@ -4,13 +4,20 @@ from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
-from dagster import AssetCheckExecutionContext, AssetKey, EventRecordsFilter
+from dagster import (
+    AssetCheckExecutionContext,
+    AssetKey,
+    EventLogRecord,
+    EventRecordsFilter,
+)
 from pytest import MonkeyPatch
 
 from mex.extractors.pipeline.checks.main import (
+    LATEST_NUM_ITEMS_ERROR,
     check_item_count_rule,
     get_historic_count,
     get_historical_events,
+    get_latest_num_items,
     get_rule,
     load_asset_check_from_settings,
     parse_time_frame,
@@ -113,6 +120,45 @@ def test_get_historical_events(
 ) -> None:
     result = get_historical_events(mock_events)
     assert sorted(result.values(), reverse=True) == expected_values
+
+
+def test_get_latest_num_items() -> None:
+    events = [
+        DummyEventLogRecord(
+            timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            metadata={"num_items": SimpleNamespace(value=132)},
+        ),
+        DummyEventLogRecord(
+            timestamp=datetime(2025, 7, 1, 12, 0, tzinfo=UTC).timestamp(),
+            metadata={"num_items": SimpleNamespace(value=120)},
+        ),
+    ]
+
+    assert get_latest_num_items(cast("list[EventLogRecord]", events)) == 132
+
+
+@pytest.mark.parametrize(
+    "events",
+    [
+        [
+            SimpleNamespace(
+                asset_materialization=SimpleNamespace(metadata={"num_items": object()}),
+                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            )
+        ],
+        [
+            SimpleNamespace(
+                asset_materialization=SimpleNamespace(
+                    metadata={"num_items": SimpleNamespace(value=None)}
+                ),
+                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+            )
+        ],
+    ],
+)
+def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
+    with pytest.raises(ValueError, match=LATEST_NUM_ITEMS_ERROR):
+        get_latest_num_items(cast("list[EventLogRecord]", events))
 
 
 @pytest.mark.parametrize(
@@ -451,3 +497,72 @@ def test_check_not_exactly_x_items_generalized(
             rule_name="not_exactly_x_items",
         )
         assert result is True
+        "historical_events",
+        "rule_threshold",
+        "time_frame_str",
+        "passed",
+    ),
+    [
+        pytest.param(
+            91,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            True,
+            id="passes_within_percent_threshold",
+        ),
+        pytest.param(
+            89,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            False,
+            id="fails_exceeds_percent_threshold",
+        ),
+        pytest.param(
+            105,
+            {
+                datetime(2025, 7, 10, 12, 0, tzinfo=UTC): 110,
+                datetime(2025, 7, 25, 12, 0, tzinfo=UTC): 100,
+            },
+            5,
+            "20d",
+            True,
+            id="passes_with_multiple_events",
+        ),
+        pytest.param(
+            190,
+            {datetime(2023, 6, 15, 12, 0, tzinfo=UTC): 200},
+            5,
+            "7d",
+            True,
+            id="passes_old_history_only",
+        ),
+        pytest.param(
+            50,
+            {},
+            10,
+            "30d",
+            True,
+            id="passes_no_historical_events",
+        ),
+    ],
+)
+def test_check_x_percent_less_than_generalized(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    historical_events: dict[datetime, int],
+    rule_threshold: int,
+    time_frame_str: str,
+    *,
+    passed: bool,
+) -> None:
+    run_item_count_test(
+        monkeypatch,
+        current_count=current_count,
+        historical_events=historical_events,
+        rule_threshold=rule_threshold,
+        time_frame_str=time_frame_str,
+        passed=passed,
+        rule_name_for_match="x_percent_less_than",
+    )

@@ -1,7 +1,4 @@
-from dagster import (
-    AssetExecutionContext,
-    asset,
-)
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids

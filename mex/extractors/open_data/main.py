@@ -1,7 +1,4 @@
-from dagster import (
-    AssetExecutionContext,
-    asset,
-)
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
@@ -127,9 +124,8 @@ def open_data_extracted_distributions(
         distribution_mapping,
     )
 
-    num_items = len(mex_distributions)
     load(mex_distributions)
-    context.add_output_metadata({"num_items": num_items})
+    context.add_output_metadata({"num_items": len(mex_distributions)})
     return mex_distributions
 
 
@@ -159,9 +155,8 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
         open_data_extracted_contact_points,
     )
 
-    num_items = len(mex_sources)
     load(mex_sources)
-    context.add_output_metadata({"num_items": num_items})
+    context.add_output_metadata({"num_items": len(mex_sources)})
     return mex_sources
 
 

@@ -74,8 +74,9 @@ def kvis_valuesets_by_variable_name(
     )
 
 
-@asset(group_name="kvis")
+@asset(group_name="kvis", metadata={"entity_type": "variable"})
 def kvis_extracted_variables(
+    context: AssetExecutionContext,
     kvis_extracted_resource_id: MergedResourceIdentifier,
     kvis_extracted_variable_groups: list[ExtractedVariableGroup],
     kvis_variables_table_entries: list[KVISVariables],
@@ -89,6 +90,7 @@ def kvis_extracted_variables(
         kvis_valuesets_by_variable_name,
     )
     load(extracted_variables)
+    context.add_output_metadata({"num_items": len(extracted_variables)})
 
 
 @entrypoint(Settings)
