@@ -18,7 +18,7 @@ def filter_persons_with_approving_unique_consent(
         consent_items: list of consents
 
     Raises:
-        MExError if any person has more than one consent. The error lists all concerned persons and consents.
+        MExError if any person has more than one consent. The error lists all concerned
                 persons and consents.
 
     Returns:
