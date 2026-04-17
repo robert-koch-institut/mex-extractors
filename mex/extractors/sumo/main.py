@@ -168,7 +168,7 @@ def sumo_extracted_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 
 @asset(group_name="sumo", metadata={"entity_type": "resource-nokeda"})
-def sumo_extracted_resource_nokeda(
+def sumo_extracted_resource_nokeda(  # noqa: PLR0913
     context: AssetExecutionContext,
     sumo_extracted_resources_nokeda: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
@@ -191,7 +191,7 @@ def sumo_extracted_resource_nokeda(
 
 
 @asset(group_name="sumo", metadata={"entity_type": "resource-feat"})
-def sumo_extracted_resource_feat(
+def sumo_extracted_resource_feat(  # noqa: PLR0913
     context: AssetExecutionContext,
     sumo_extracted_resources_feat: dict[str, Any],
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],

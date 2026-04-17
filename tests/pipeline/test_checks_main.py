@@ -497,6 +497,10 @@ def test_check_not_exactly_x_items_generalized(
             rule_name="not_exactly_x_items",
         )
         assert result is True
+
+
+@pytest.mark.parametrize(
+    (
         "historical_events",
         "rule_threshold",
         "time_frame_str",
