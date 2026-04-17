@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedResource,
     ResourceMapping,
 )
 from mex.extractors.biospecimen.extract import (
@@ -58,7 +57,7 @@ def biospecimen_extracted_resources(
     biospecimen_extracted_persons: list[ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
-) -> list[ExtractedResource]:
+) -> None:
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = Settings.get()
     resource_mapping = ResourceMapping.model_validate(
@@ -75,7 +74,6 @@ def biospecimen_extracted_resources(
         extracted_organizations,
     )
     load(mex_sources)
-    return mex_sources
 
 
 @entrypoint(Settings)

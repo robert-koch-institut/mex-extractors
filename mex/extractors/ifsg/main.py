@@ -6,7 +6,6 @@ from mex.common.cli import entrypoint
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedResource,
-    ExtractedVariable,
     ExtractedVariableGroup,
     ResourceMapping,
     VariableGroupMapping,
@@ -229,7 +228,7 @@ def ifsg_extracted_variables(  # noqa: PLR0913
     ifsg_meta_item: list[MetaItem],
     ifsg_meta_datatype: list[MetaDataType],
     ifsg_meta_schema2field: list[MetaSchema2Field],
-) -> list[ExtractedVariable]:
+) -> None:
     """Extracted and loaded ifsg variable."""
     extracted_variables = transform_ifsg_data_to_mex_variables(
         ifsg_filtered_variables,
@@ -242,7 +241,6 @@ def ifsg_extracted_variables(  # noqa: PLR0913
         ifsg_meta_schema2field,
     )
     load(extracted_variables)
-    return extracted_variables
 
 
 @entrypoint(Settings)
