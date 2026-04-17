@@ -1,14 +1,11 @@
-from dagster import (
-    MetadataValue,
-    Output,
-    asset,
-)
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_employee_ids
 from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ActivityMapping,
+    ExtractedActivity,
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
@@ -65,9 +62,10 @@ def blueant_merged_person_id_by_employee_id(
 
 @asset(group_name="blueant", metadata={"entity_type": "activity"})
 def blueant_extracted_activities(
+    context: AssetExecutionContext,
     blueant_sources: list[BlueAntSource],
     blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
-) -> Output[int]:
+) -> list[ExtractedActivity]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
@@ -82,12 +80,8 @@ def blueant_extracted_activities(
 
     num_items = len(extracted_activities)
     load(extracted_activities)
-    return Output(
-        value=num_items,
-        metadata={
-            "num_items": MetadataValue.int(num_items),
-        },
-    )
+    context.add_output_metadata({"num_items": num_items})
+    return extracted_activities
 
 
 @entrypoint(Settings)
