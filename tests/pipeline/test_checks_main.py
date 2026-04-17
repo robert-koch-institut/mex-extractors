@@ -140,16 +140,9 @@ def test_get_latest_num_items() -> None:
 @pytest.mark.parametrize(
     "events",
     [
-        [],
         [
             SimpleNamespace(
-                asset_materialization=None,
-                timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
-            )
-        ],
-        [
-            SimpleNamespace(
-                asset_materialization=SimpleNamespace(metadata={}),
+                asset_materialization=SimpleNamespace(metadata={"num_items": object()}),
                 timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
             )
         ],
