@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- fix CVE-2026-39892 (by updating cryptography in uv.lock)
+
 ## [1.13.2] - 2026-04-10
 
 ### Added
