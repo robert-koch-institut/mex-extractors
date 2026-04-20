@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -89,8 +89,9 @@ def international_projects_partner_organization_ids_by_query_string(
     )
 
 
-@asset(group_name="international_projects")
+@asset(group_name="international_projects", metadata={"entity_type": "activity"})
 def international_projects_extracted_activities(
+    context: AssetExecutionContext,
     international_projects_sources: list[InternationalProjectsSource],
     international_projects_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
@@ -115,6 +116,7 @@ def international_projects_extracted_activities(
         international_projects_partner_organization_ids_by_query_string,
     )
     load(mex_sources)
+    context.add_output_metadata({"num_items": len(mex_sources)})
     return mex_sources
 
 

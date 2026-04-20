@@ -38,6 +38,7 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
+            query_string=None,
             entity_type=[
                 "MergedAccessPlatform",
                 "MergedActivity",
@@ -60,11 +61,13 @@ def test_publisher_persons(mocked_backend: MagicMock) -> None:
     assert len(container.items) == 1
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
+            query_string=None,
             entity_type=["MergedPerson"],
             referenced_identifier=None,
             reference_field=None,
         ),
         call(
+            query_string=None,
             entity_type=["MergedConsent"],
             referenced_identifier=None,
             reference_field=None,
@@ -78,6 +81,7 @@ def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
     mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_merged_items.call_args_list == [
         call(
+            query_string=None,
             entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
             referenced_identifier=None,
             reference_field=None,

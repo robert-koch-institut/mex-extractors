@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 def get_publishable_merged_items(
     *,
+    query_string: str | None = None,
     entity_type: list[str] | None = None,
     referenced_identifier: list[str] | None = None,
     reference_field: str | None = None,
@@ -16,6 +17,7 @@ def get_publishable_merged_items(
     connector = BackendApiConnector.get()
 
     response = connector.fetch_all_merged_items(
+        query_string=query_string,
         entity_type=entity_type,
         referenced_identifier=referenced_identifier,
         reference_field=reference_field,

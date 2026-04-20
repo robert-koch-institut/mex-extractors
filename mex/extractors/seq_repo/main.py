@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -84,8 +84,9 @@ def seq_repo_merged_person_ids_by_query_string(
     }
 
 
-@asset(group_name="seq_repo")
+@asset(group_name="seq_repo", metadata={"entity_type": "organization"})
 def seq_repo_extracted_activities_by_id_str(
+    context: AssetExecutionContext,
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
@@ -103,7 +104,11 @@ def seq_repo_extracted_activities_by_id_str(
         seq_repo_merged_person_ids_by_query_string,
     )
     load(mex_activities)
-    return {activity.identifierInPrimarySource: activity for activity in mex_activities}
+    activities_by_id_str = {
+        activity.identifierInPrimarySource: activity for activity in mex_activities
+    }
+    context.add_output_metadata({"num_items": len(mex_activities)})
+    return activities_by_id_str
 
 
 @asset(group_name="seq_repo")
@@ -122,8 +127,9 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
     return mex_access_platform
 
 
-@asset(group_name="seq_repo")
+@asset(group_name="seq_repo", metadata={"entity_type": "resource"})
 def seq_repo_resources(  # noqa: PLR0913
+    context: AssetExecutionContext,
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
@@ -147,6 +153,7 @@ def seq_repo_resources(  # noqa: PLR0913
         extracted_organization_rki,
     )
     load(resources)
+    context.add_output_metadata({"num_items": len(resources)})
     return resources
 
 

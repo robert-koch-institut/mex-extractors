@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
@@ -195,8 +195,9 @@ def grippeweb_extracted_variable_groups(
     return extracted_variable_groups
 
 
-@asset(group_name="grippeweb")
+@asset(group_name="grippeweb", metadata={"entity_type": "variable"})
 def grippeweb_extracted_variables(
+    context: AssetExecutionContext,
     grippeweb_variable: dict[str, Any],
     grippeweb_extracted_variable_groups: list[ExtractedVariableGroup],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
@@ -210,6 +211,7 @@ def grippeweb_extracted_variables(
         grippeweb_extracted_parent_resource,
     )
     load(extracted_variables)
+    context.add_output_metadata({"num_items": len(extracted_variables)})
     return extracted_variables
 
 
