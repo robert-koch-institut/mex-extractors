@@ -1,6 +1,10 @@
 from pydantic import Field, HttpUrl, SecretStr
 from pydantic_settings import BaseSettings as PydanticBaseSettings
-from pydantic_settings import NestedSecretsSettingsSource, PydanticBaseSettingsSource
+from pydantic_settings import (
+    NestedSecretsSettingsSource,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 
 from mex.common.settings import BaseSettings
 from mex.common.types import AssetsPath, OpsPath
@@ -31,6 +35,10 @@ from mex.extractors.wikidata.settings import WikidataSettings
 
 class ExtractorSettings(BaseSettings):
     """Settings definition class for extractors and related scripts."""
+
+    model_config = SettingsConfigDict(
+        env_prefix="mex_extractors_",
+    )
 
     @classmethod
     def settings_customise_sources(
