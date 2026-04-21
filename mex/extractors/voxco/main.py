@@ -21,7 +21,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.extract import (
@@ -45,7 +45,7 @@ def voxco_variables_by_name_str() -> dict[str, list[VoxcoVariable]]:
 @asset(group_name="voxco")
 def voxco_resource_mappings() -> list[dict[str, Any]]:
     """Extract voxco resource mappings."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return [
         load_yaml(file)
         for file in Path(settings.voxco.mapping_path).glob("resource_*.yaml")
@@ -119,7 +119,7 @@ def voxco_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the voxco extractor job in-process."""
     run_job_in_process("voxco")

@@ -1,5 +1,5 @@
 from mex.common.models import VariableFilter
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.utils import load_yaml
 
 
@@ -12,7 +12,7 @@ def is_invalid_odk_variable(type_row: str | float) -> bool:
     Returns:
         True if type_row corresponds to invalid variable else False
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     variable_filter_mapping = VariableFilter.model_validate(
         load_yaml(settings.odk.mapping_path / "variable_filter.yaml")
     )

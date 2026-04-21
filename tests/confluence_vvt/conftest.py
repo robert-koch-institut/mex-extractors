@@ -8,7 +8,7 @@ from mex.common.models import ActivityMapping
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -30,7 +30,7 @@ def detail_page_data_json(detail_page_data_html: str) -> dict[str, Any]:
 
 
 @pytest.fixture
-def confluence_vvt_activity_mapping(settings: Settings) -> ActivityMapping:
+def confluence_vvt_activity_mapping(settings: ExtractorSettings) -> ActivityMapping:
     """Return confluence-vvt activity mapping from assets."""
     return ActivityMapping.model_validate(
         load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")

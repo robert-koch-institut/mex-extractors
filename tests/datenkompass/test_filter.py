@@ -9,7 +9,7 @@ from mex.extractors.datenkompass.filter import (
     find_descendant_units,
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
@@ -44,7 +44,7 @@ def test_filter_merged_resources_by_unit(
     mocked_units_by_ids = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     mocked_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "resource_filter.yaml")
     )

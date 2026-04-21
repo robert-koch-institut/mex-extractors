@@ -15,7 +15,7 @@ from mex.extractors.ifsg.models.meta_item import MetaItem
 from mex.extractors.ifsg.models.meta_schema2field import MetaSchema2Field
 from mex.extractors.ifsg.models.meta_schema2type import MetaSchema2Type
 from mex.extractors.ifsg.models.meta_type import MetaType
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -53,7 +53,7 @@ class IFSGConnector(BaseConnector):
 
     def __init__(self) -> None:
         """Create a new connector instance."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         if platform.system() != "Windows":  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607

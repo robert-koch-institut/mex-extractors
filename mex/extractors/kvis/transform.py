@@ -27,7 +27,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 from mex.extractors.wikidata.helpers import (
@@ -109,7 +109,7 @@ def transform_kvis_resource_to_extracted_resource(
     Returns:
         ExtractedResource
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     mapping = ResourceMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "resource.yaml")
     )
@@ -241,7 +241,7 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
     Returns:
         dictionary of setValues by variable
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "variable.yaml")
     )

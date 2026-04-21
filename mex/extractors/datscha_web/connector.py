@@ -7,7 +7,7 @@ from mex.extractors.datscha_web.parse_html import (
     parse_item_urls_from_overview_html,
     parse_single_item_html,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from mex.extractors.datscha_web.models.item import DatschaWebItem
@@ -20,12 +20,12 @@ class DatschaWebConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.url = settings.datscha_web.url
 
     def _set_authentication(self) -> None:
         """Authenticate to the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         credentials = {
             "vorname": settings.datscha_web.vorname.get_secret_value(),
             "nachname": settings.datscha_web.nachname.get_secret_value(),

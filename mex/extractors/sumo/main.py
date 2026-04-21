@@ -26,7 +26,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
@@ -65,7 +65,7 @@ def sumo_extracted_access_platform(
     extracted_organization_rki: ExtractedOrganization,
 ) -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "access-platform.yaml"),
     )
@@ -122,7 +122,7 @@ def sumo_extracted_activity(
     sumo_merged_contact_ids_by_email: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedActivity:
     """Extract, transform and load SUMO activity."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     sumo_activity = ActivityMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "activity.yaml"),
     )
@@ -137,14 +137,14 @@ def sumo_extracted_activity(
 @asset(group_name="sumo")
 def sumo_extracted_resources_nokeda() -> dict[str, Any]:
     """Extract Nokeda Resource from SUMO."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
 
 
 @asset(group_name="sumo")
 def sumo_extracted_resources_feat() -> dict[str, Any]:
     """Extract Resource feat from SUMO."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
 
 
@@ -310,7 +310,7 @@ def sumo_extracted_variables_feat_projection(
     return transformed_feat_projection_variable
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the sumo extractor job in-process."""
     run_job_in_process("sumo")

@@ -4,7 +4,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from mex.common.models import MergedConsent, MergedPerson
@@ -29,7 +29,7 @@ def extract_consents_for_persons(
     person_items: list[MergedPerson],
 ) -> list[MergedConsent]:
     """Get consents for ldap persons."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     connector = BackendApiConnector.get()
     person_ids = [str(person.identifier) for person in person_items]
 

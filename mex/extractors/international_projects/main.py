@@ -32,7 +32,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -104,7 +104,7 @@ def international_projects_extracted_activities(
     ],
 ) -> list[ExtractedActivity]:
     """Transform projects to extracted activities, load and return them."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.international_projects.mapping_path / "activity.yaml")
     )
@@ -120,7 +120,7 @@ def international_projects_extracted_activities(
     return mex_sources
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the international-projects extractor job in-process."""
     run_job_in_process("international_projects")

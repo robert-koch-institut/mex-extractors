@@ -4,7 +4,7 @@ import defusedxml.ElementTree as defused_ET
 
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.endnote.model import EndnoteRecord
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 def findall_text_from_record(record: ET.Element, path: str) -> list[str]:
@@ -25,7 +25,7 @@ def extract_endnote_records() -> list[EndnoteRecord]:
     Returns:
         list of endnote records
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     connector = DropApiConnector.get()
     file_names = connector.list_files("endnote")
     results: list[EndnoteRecord] = []

@@ -16,7 +16,7 @@ from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.types import UTC
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
@@ -31,7 +31,7 @@ class S3BaseSink(BaseSink):
 
     def __init__(self) -> None:
         """Instantiate a new S3 sink."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.client = boto3.client(
             service_name=self.SERVICE_NAME,
             endpoint_url=str(settings.s3_endpoint_url),
@@ -69,7 +69,7 @@ class S3Sink(S3BaseSink):
         Returns:
             Generator for the loaded items
         """
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         directory_path = self._build_directory_path()
         items_path = (directory_path / "items.ndjson").as_posix()
         total_count = 0
@@ -110,7 +110,7 @@ class S3Sink(S3BaseSink):
 
     def _load_metadata(self, metadata_path: str, checksum: str) -> None:
         """Write metadata file."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         backend_connector = BackendApiConnector.get()
         backend_version = backend_connector.system_status().version
         versions = {
@@ -153,7 +153,7 @@ class S3XlsxSink(S3BaseSink):
         Returns:
             Generator for the loaded items
         """
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         items_list = list(items)
 
         optional_unit_name_extension = (

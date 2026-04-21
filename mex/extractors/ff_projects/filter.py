@@ -7,7 +7,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable
@@ -60,7 +60,7 @@ def filter_and_log_ff_projects_source(  # noqa: PLR0911
     ff_projects_primary_source_id = get_extracted_primary_source_id_by_name(
         "ff-projects"
     )
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     identifier_in_primary_source = source.lfd_nr
 
     if source.foerderprogr in settings.ff_projects.skip_funding:

@@ -21,7 +21,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -44,7 +44,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
     Returns:
         ExtractedActivity or None
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     identifier_in_primary_source = page.get_identifier_in_primary_source()
     if not identifier_in_primary_source:
         return None

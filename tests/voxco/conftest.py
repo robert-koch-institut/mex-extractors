@@ -14,7 +14,7 @@ from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.model import VoxcoVariable
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
@@ -27,7 +27,7 @@ def voxco_merged_organization_ids_by_query_string() -> dict[
 
 
 @pytest.fixture
-def voxco_resource_mappings(settings: Settings) -> list[ResourceMapping]:
+def voxco_resource_mappings(settings: ExtractorSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.voxco.mapping_path / "resource_mock.yaml")
