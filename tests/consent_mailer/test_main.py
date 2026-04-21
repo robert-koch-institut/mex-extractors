@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from mex.common.models import MergedPerson
-from mex.common.types import AssetsPath
+from mex.common.types import OpsPath
 from mex.extractors.consent_mailer.main import (
     consent_mailer_send_emails,
 )
@@ -28,7 +28,7 @@ def _req_auth() -> tuple[str, str]:
 
 def _req_verify() -> bool | str:
     settings = ExtractorSettings.get()
-    if isinstance(settings.verify_session, AssetsPath):
+    if isinstance(settings.verify_session, OpsPath):
         return settings.verify_session._path.absolute().as_posix()
     return settings.verify_session
 

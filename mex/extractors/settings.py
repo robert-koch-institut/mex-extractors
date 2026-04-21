@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import NestedSecretsSettingsSource, PydanticBaseSettingsSource
 
 from mex.common.settings import BaseSettings
-from mex.common.types import AssetsPath
+from mex.common.types import AssetsPath, OpsPath
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
@@ -104,7 +104,7 @@ class ExtractorSettings(BaseSettings):
         "s3_bucket",
         description="The S3 bucket where to store objects.",
     )
-    s3_ssl_verify: bool | AssetsPath = Field(
+    s3_ssl_verify: bool | OpsPath = Field(
         default=True,
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
