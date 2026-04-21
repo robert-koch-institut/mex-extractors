@@ -63,17 +63,14 @@ class ExtractorSettings(BaseSettings):
     skip_extractors: list[str] = Field(
         [],
         description="Skip execution of these extractors in dagster",
-        validation_alias="MEX_SKIP_EXTRACTORS",
     )
     drop_api_key: SecretStr = Field(
         SecretStr("dummy_admin_key"),
         description="Drop API key with admin access to call all GET endpoints",
-        validation_alias="MEX_DROP_API_KEY",
     )
     drop_api_url: HttpUrl = Field(
         HttpUrl("http://localhost:8081/"),
         description="MEx drop API url.",
-        validation_alias="MEX_DROP_API_URL",
     )
     log_frequency: int = Field(
         10000,
@@ -82,7 +79,6 @@ class ExtractorSettings(BaseSettings):
     schedule: str = Field(
         "0 0 * * *",
         description="A valid cron string defining when to run extractor jobs",
-        validation_alias="MEX_SCHEDULE",
     )
     kerberos_user: str = Field(
         "user@domain.tld",
