@@ -64,7 +64,7 @@ def test_get_unit_shortname(
         delim,
     )
 
-    assert result == "C1; FG 99"
+    assert result == "C1; C1"
 
 
 def test_get_email(
@@ -395,7 +395,7 @@ def test_transform_resources(
 ) -> None:
     merged_resources_by_primary_source_by_unit = {
         "PRNT": {"relevant primary source": [mocked_merged_resource[0]]},
-        "FG 99": {"relevant primary source": [mocked_merged_resource[1]]},
+        "C1": {"relevant primary source": [mocked_merged_resource[1]]},
     }
     datenkompass_merged_organizational_units_by_id = {
         unit.identifier: unit for unit in mocked_merged_organizational_units
@@ -436,11 +436,11 @@ def test_transform_resources(
         "identifier": "IdentifierC1Resource",
     }
 
-    assert result["FG 99"]["relevant primary source"][0].model_dump() == {
+    assert result["C1"]["relevant primary source"][0].model_dump() == {
         "voraussetzungen": "RESTRICTED",
         "frequenz": None,
         "kontakt": None,
-        "organisationseinheit": "FG 99",
+        "organisationseinheit": "C1",
         "startdatum": None,
         "beschreibung": "n/a",
         "datenbank": None,
@@ -448,7 +448,7 @@ def test_transform_resources(
         "datennutzungszweck_erweitert": None,
         "schlagwort": "Infektionskrankheiten und -epidemiologie",
         "dk_format": "Format",
-        "titel": "Resource with unit FG 99",
+        "titel": "Resource with unit C1",
         "datenhalter": "Datenhalter",
         "hauptkategorie": "Hauptkategorie",
         "unterkategorie": "Unterkategorie",

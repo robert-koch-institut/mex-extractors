@@ -42,7 +42,7 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
     extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             grippeweb_access_platform,
-            [roland_resolved],
+            {roland_resolved.email[0]: roland_resolved.stableTargetId},
         )
     )
     expected = {
@@ -74,7 +74,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
     parent_resource, _ = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
         grippeweb_extracted_access_platform,
-        [roland_resolved],
+        {roland_resolved.fullName[0]: roland_resolved.stableTargetId},
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
     )
@@ -165,7 +165,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(
         transform_grippeweb_resource_mappings_to_extracted_resources(
             grippeweb_resource_mappings,
             grippeweb_extracted_access_platform,
-            [roland_resolved],
+            {roland_resolved.email[0]: roland_resolved.stableTargetId},
             grippeweb_merged_organization_ids_by_query_str,
             grippeweb_merged_contact_point_id_by_email,
         )

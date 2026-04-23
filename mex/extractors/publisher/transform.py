@@ -22,13 +22,13 @@ if TYPE_CHECKING:
 
 
 def get_unit_id_per_person(
-    publisher_merged_ldap_persons: list[MergedPerson],
+    publisher_merged_persons: list[MergedPerson],
     publisher_contact_points_and_units: PublisherItemsLike,
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address.
 
     Args:
-        publisher_merged_ldap_persons: Merged Persons with primary source ldap
+        publisher_merged_persons: Merged Persons with primary source ldap
         publisher_contact_points_and_units: Items container of units + contact points
 
     Returns:
@@ -47,7 +47,7 @@ def get_unit_id_per_person(
         person.identifier: [
             unit_id for unit_id in person.memberOf if unit_id in unit_id_if_email
         ]
-        for person in publisher_merged_ldap_persons
+        for person in publisher_merged_persons
     }
 
 
@@ -77,14 +77,14 @@ def update_actor_references_where_needed(
         if "MergedPerson" not in ref_types:
             continue
 
-        # keep allowed actors (contact points and units)
+            # keep allowed actors (contact points and units)
         allowed_field_identifiers = [
             identifier
             for identifier in getattr(item, field)
             if identifier in allowed_actors
         ]
 
-        # replace unpublishable persons with their unit id if unit has email
+        # replace un-allowed persons with their unit id if unit has email
         replacement_field_identifiers: set[MergedOrganizationalUnitIdentifier] = set()
         if "MergedOrganizationalUnit" in ref_types:
             replacement_field_identifiers = {

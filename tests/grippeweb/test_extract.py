@@ -2,16 +2,16 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedOrganizationIdentifier
+from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
+    extract_grippeweb_ldap_person_ids_by_query,
     extract_grippeweb_organizations,
     extract_ldap_actors_for_functional_accounts,
-    extract_ldap_persons,
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
+    from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import AccessPlatformMapping, ResourceMapping
 
 
@@ -56,14 +56,15 @@ def test_extract_ldap_actors_for_functional_accounts(
 def test_extract_ldap_persons(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_access_platform: AccessPlatformMapping,
-    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    ldap_persons = extract_ldap_persons(
+    ldap_persons = extract_grippeweb_ldap_person_ids_by_query(
         grippeweb_resource_mappings, grippeweb_access_platform
     )
 
-    assert len(ldap_persons) == 3
-    assert ldap_persons[0] == ldap_roland_resolved
+    assert ldap_persons == {
+        "Roland Resolved": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz"),
+        "resolvedr@rki.de": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz"),
+    }
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_grippeweb")

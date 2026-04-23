@@ -5,7 +5,6 @@ from dagster import asset
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
     transform_ldap_functional_accounts_to_extracted_contact_points,
-    transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
@@ -13,7 +12,6 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -44,7 +42,6 @@ from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.sumo.transform import (
     get_contact_merged_ids_by_emails,
-    get_contact_merged_ids_by_names,
     transform_feat_projection_variable_to_mex_variable,
     transform_feat_variable_to_mex_variable_group,
     transform_model_nokeda_variable_to_mex_variable_group,
@@ -60,10 +57,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="sumo")
-def sumo_extracted_access_platform(
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> ExtractedAccessPlatform:
+def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
     settings = Settings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
@@ -72,20 +66,9 @@ def sumo_extracted_access_platform(
     ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
         sumo_access_platform
     )
-    mex_actors_access_platform = transform_ldap_persons_with_query_to_extracted_persons(
-        ldap_contact_points_access_platform,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_actors_access_platform)
-
-    contact_merged_ids_by_name = get_contact_merged_ids_by_names(
-        mex_actors_access_platform
-    )
     transformed_access_platform = transform_sumo_access_platform_to_mex_access_platform(
         sumo_access_platform,
-        contact_merged_ids_by_name,
+        ldap_contact_points_access_platform,
     )
     load([transformed_access_platform])
 

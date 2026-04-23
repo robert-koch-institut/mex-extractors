@@ -6,14 +6,10 @@ from dagster import AssetExecutionContext, asset
 from mex.common.cli import entrypoint
 from mex.common.ldap.transform import (
     transform_ldap_functional_accounts_to_extracted_contact_points,
-    transform_ldap_persons_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -24,12 +20,13 @@ from mex.common.models import (
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
+    extract_grippeweb_ldap_person_ids_by_query,
     extract_grippeweb_organizations,
     extract_ldap_actors_for_functional_accounts,
-    extract_ldap_persons,
 )
 from mex.extractors.grippeweb.transform import (
     transform_grippeweb_access_platform_to_extracted_access_platform,
@@ -108,22 +105,12 @@ def grippeweb_merged_contact_point_id_by_email(
 def grippeweb_extracted_persons(
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_access_platform: dict[str, Any],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract ldap persons for grippeweb from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
-    ldap_persons = extract_ldap_persons(
+    return extract_grippeweb_ldap_person_ids_by_query(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
         AccessPlatformMapping.model_validate(grippeweb_access_platform),
     )
-    mex_persons = transform_ldap_persons_to_extracted_persons(
-        ldap_persons,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_persons)
-    return mex_persons
 
 
 @asset(group_name="grippeweb")
@@ -139,7 +126,7 @@ def grippeweb_merged_organization_ids_by_query_str(
 @asset(group_name="grippeweb")
 def grippeweb_extracted_access_platform(
     grippeweb_access_platform: dict[str, Any],
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform Grippeweb mappings to extracted access platform and load to sinks."""
     grippeweb_extracted_access_platform = (
@@ -156,7 +143,7 @@ def grippeweb_extracted_access_platform(
 def grippeweb_extracted_parent_resource(
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],

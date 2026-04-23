@@ -30,7 +30,7 @@ def test_transform_ff_projects_source_to_extracted_activity(
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
     organizations_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
     person_id = MergedPersonIdentifier.generate(seed=30)
-    person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
+    person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": person_id}
     laufzeit_bis = YearMonthDay("2019-08-31")
     laufzeit_von = YearMonthDay("2017-12-31")
 

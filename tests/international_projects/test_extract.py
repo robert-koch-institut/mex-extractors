@@ -1,7 +1,6 @@
 import pytest
 
-from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
-from mex.common.types import TemporalEntity
+from mex.common.types import MergedPersonIdentifier, TemporalEntity
 from mex.extractors.international_projects.extract import (
     extract_international_projects_project_leaders,
     extract_international_projects_sources,
@@ -70,16 +69,12 @@ def test_extract_international_projects_sources() -> None:
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_international_projects_project_leaders(
-    ldap_roland_resolved: LDAPPerson,
-) -> None:
-    expected = LDAPPersonWithQuery(
-        person=ldap_roland_resolved,
-        query="Roland Resolved",
-    )
+def test_extract_international_projects_project_leaders() -> None:
     international_projects_sources = extract_international_projects_sources()
     leaders = extract_international_projects_project_leaders(
         international_projects_sources
     )
 
-    assert leaders[0] == expected
+    assert leaders == {
+        "Roland Resolved": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+    }

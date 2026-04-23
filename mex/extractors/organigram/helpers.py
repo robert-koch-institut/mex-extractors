@@ -18,13 +18,11 @@ from mex.extractors.wikidata.helpers import (
 )
 
 if TYPE_CHECKING:
+    from mex.common.models import ExtractedOrganizationalUnit
     from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
-@lru_cache(maxsize=1)
-def _get_cached_unit_merged_ids_by_synonyms() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
+def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
     """Extract, transform and load the organigram, then group unit IDs by synonym.
 
     Returns:
@@ -41,6 +39,19 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
         rki_organization_id,
     )
     load(extracted_organizational_units)
+    return extracted_organizational_units
+
+
+@lru_cache(maxsize=1)
+def _get_cached_unit_merged_ids_by_synonyms() -> dict[
+    str, list[MergedOrganizationalUnitIdentifier]
+]:
+    """Extract, transform and load the organigram, then group unit IDs by synonym.
+
+    Returns:
+        Lookup of organizational unit identifiers by synonym
+    """
+    extracted_organizational_units = get_extracted_organizational_units()
     return get_unit_merged_ids_by_synonyms(extracted_organizational_units)
 
 

@@ -2,10 +2,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import LinkLanguage, MergedResourceIdentifier, TextLanguage
+from mex.common.types import MergedResourceIdentifier, TextLanguage
 from mex.extractors.kvis.transform import (
     lookup_kvis_functional_account_in_ldap_and_transform,
-    lookup_kvis_person_in_ldap_and_transform,
     transform_kvis_fieldvalues_table_entries_to_setvalues,
     transform_kvis_resource_to_extracted_resource,
     transform_kvis_table_entries_to_extracted_variables,
@@ -15,28 +14,9 @@ from mex.extractors.kvis.transform import (
 if TYPE_CHECKING:
     from mex.common.models import (
         ExtractedContactPoint,
-        ExtractedOrganization,
-        ExtractedOrganizationalUnit,
-        ExtractedPerson,
         ExtractedVariableGroup,
     )
     from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
-
-
-@pytest.mark.usefixtures("mocked_ldap")
-def test_lookup_kvis_person_in_ldap_and_transform(
-    juturna_felicitas: ExtractedPerson,
-    mocked_units_by_identifier_in_primary_source: dict[
-        str, ExtractedOrganizationalUnit
-    ],
-    extracted_organization_rki: ExtractedOrganization,
-) -> None:
-    person_id = lookup_kvis_person_in_ldap_and_transform(
-        juturna_felicitas.email[0],
-        mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
-    )
-    assert person_id == juturna_felicitas.stableTargetId
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -50,43 +30,31 @@ def test_lookup_kvis_functional_account_in_ldap_and_transform(
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
-def test_transform_kvis_resource_to_extracted_resource(
-    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-    contact_point: ExtractedContactPoint,
-    juturna_felicitas: ExtractedPerson,
-    frieda_fictitious: ExtractedPerson,
-) -> None:
-    extracted_resource = transform_kvis_resource_to_extracted_resource(
-        mocked_extracted_organizational_units,
-        extracted_organization_rki,
-    )
+def test_transform_kvis_resource_to_extracted_resource() -> None:
+    extracted_resource = transform_kvis_resource_to_extracted_resource()
     assert extracted_resource.model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "alternativeTitle": [{"language": TextLanguage.DE, "value": "KVIS"}],
-        "contact": [contact_point.stableTargetId],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "contributor": [
-            juturna_felicitas.stableTargetId,
-            frieda_fictitious.stableTargetId,
-        ],
-        "created": "1999",
-        "description": [{"language": TextLanguage.DE, "value": "Wörter"}],
-        "documentation": [
-            {"language": LinkLanguage.DE, "title": "a", "url": "http://www.a.b"},
-            {"language": LinkLanguage.DE, "title": "c", "url": "http://www.c.d"},
-        ],
-        "externalPartner": ["ga6xh6pgMwgq7DC7r6Wjqg"],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
         "identifierInPrimarySource": "kvis_resource",
-        "keyword": [{"language": TextLanguage.DE, "value": "Schlüsselwort"}],
+        "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
+        "created": "1999",
+        "contact": ["cMkmnNOoNVAohBA1XLNr9K"],
+        "theme": ["https://mex.rki.de/item/theme-11"],
+        "title": [{"value": "Titel", "language": "de"}],
+        "unitInCharge": ["bFQoRhcVH5IS5j"],
+        "alternativeTitle": [{"value": "KVIS", "language": "de"}],
+        "contributingUnit": ["bFQoRhcVH5IS5j"],
+        "contributor": ["cpKNwpoZTQ4GpIzBgO8DMx", "c2Yd8aNoLKIf7u6ubTUuc3"],
+        "description": [{"value": "Wörter", "language": "de"}],
+        "documentation": [
+            {"language": "de", "title": "a", "url": "http://www.a.b"},
+            {"language": "de", "title": "c", "url": "http://www.c.d"},
+        ],
+        "externalPartner": ["ga6xh6pgMwgq7DC7r6Wjqg"],
+        "keyword": [{"value": "Schlüsselwort", "language": "de"}],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": ["ga6xh6pgMwgq7DC7r6Wjqg"],
-        "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"language": TextLanguage.DE, "value": "Titel"}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
     }
 
 

@@ -115,13 +115,11 @@ def extracted_mex_access_platform(
 def extracted_mex_activities_dict(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_latest_sources,
         seq_repo_activity,
-        seq_repo_ldap_persons_with_query,
         seq_repo_merged_person_ids_by_query_string,
     )
     return {
@@ -143,10 +141,10 @@ def seq_repo_merged_person_ids_by_query_string(
     roland_resolved: ExtractedPerson,
     juturna_felicitas: ExtractedPerson,
     frieda_fictitious: ExtractedPerson,
-) -> dict[str, list[MergedPersonIdentifier]]:
+) -> dict[str, MergedPersonIdentifier]:
     """Get project coordinators merged ids."""
     return {
-        "ResolvedR": [roland_resolved.stableTargetId],
-        "FelicitasJ": [juturna_felicitas.stableTargetId],
-        "FictitiousF": [frieda_fictitious.stableTargetId],
+        "ResolvedR": roland_resolved.stableTargetId,
+        "FelicitasJ": juturna_felicitas.stableTargetId,
+        "FictitiousF": frieda_fictitious.stableTargetId,
     }

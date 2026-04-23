@@ -1,15 +1,13 @@
 import re
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import transform_ldap_person_to_extracted_person
 from mex.common.models import (
     DistributionMapping,
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
@@ -25,11 +23,17 @@ from mex.common.types import (
     MergedVariableGroupIdentifier,
     MIMEType,
 )
+from mex.extractors.ldap.helpers import (
+    get_ldap_extracted_person_by_query,
+)
 from mex.extractors.open_data.extract import (
     extract_files_for_parent_resource,
     extract_oldest_record_version_creationdate,
 )
-from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.organigram.helpers import (
+    get_extracted_organizational_units,
+    get_unit_merged_id_by_synonym,
+)
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -49,36 +53,31 @@ if TYPE_CHECKING:
 FALLBACK_UNIT = "mf4"
 
 
-def get_only_child_units(
-    selected_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-) -> list[MergedOrganizationalUnitIdentifier]:
-    """Return only those units which are no parents to other units within a list.
+def get_unit_ids_of_parent_units() -> set[MergedOrganizationalUnitIdentifier]:
+    """Return set of all units that are parent units.
 
-    Args:
-        selected_merged_organizational_unit_ids: list of unit ids to filter
-        extracted_organizational_units: list of all units to know who's a parent
-
-    Returns:
-        list of merged unit ids who are no parents to other units of the list
+    Return:
+        set of ids of parent units
     """
-    # create a dictionary of all extracted units by id
-    extracted_units_by_id = {
-        unit.stableTargetId: unit for unit in extracted_organizational_units
+    extracted_organizational_units = get_extracted_organizational_units()
+    return {
+        unit.parentUnit for unit in extracted_organizational_units if unit.parentUnit
     }
 
-    # get all units which are a parent of a unit in the selected list
-    merged_parent_unit_ids = [
-        extracted_units_by_id[unit_id].parentUnit
-        for unit_id in selected_merged_organizational_unit_ids
-        if extracted_units_by_id[unit_id].parentUnit
-    ]
 
-    return [  # only return those units in the selected list, which are no parents
-        merged_unit_id
-        for merged_unit_id in selected_merged_organizational_unit_ids
-        if merged_unit_id not in merged_parent_unit_ids
-    ]
+@lru_cache(maxsize=1024)
+def has_no_child_units(
+    unit_id: MergedOrganizationalUnitIdentifier,
+) -> bool:
+    """Check whether unit has child units.
+
+    Args:
+        unit_id: unit_id_to_check
+
+    Returns:
+        True if unit has no child else false
+    """
+    return unit_id not in get_unit_ids_of_parent_units()
 
 
 def transform_open_data_person_affiliations_to_organizations(
@@ -112,16 +111,17 @@ def transform_open_data_person_affiliations_to_organizations(
     return affiliation_dict
 
 
-def transform_open_data_persons_not_in_ldap(
+lru_cache(maxsize=1024)
+
+
+def transform_and_load_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
-    extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> ExtractedPerson:
     """Create ExtractedPerson for a person not matched with ldap.
 
     Args:
         person: list[OpenDataCreatorsOrContributors],
-        extracted_organization_rki: ExtractedOrganization of RKI,
         open_data_organization_ids_by_str: dictionary with ID by affiliation name
 
     Returns:
@@ -132,89 +132,52 @@ def transform_open_data_persons_not_in_ldap(
         if (
             person.affiliation
             and open_data_organization_ids_by_str[person.affiliation]
-            != extracted_organization_rki.stableTargetId
+            != get_wikidata_extracted_organization_id_by_name("RKI")
         )
         else None
     )
 
-    return ExtractedPerson(
+    extracted_person = ExtractedPerson(
         affiliation=affiliation,
         hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource=person.name,
         fullName=person.name,
+        orcidId=f"https://orcid.org/{person.orcid}" or None,
     )
+    load([extracted_person])
+    return extracted_person
 
 
-def lookup_person_in_ldap_and_transform(
-    person: OpenDataCreatorsOrContributors,
-    units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> ExtractedPerson | None:
-    """Lookup person in ldap. and transform to ExtractedPerson.
-
-    Args:
-        person: Open Data person (Creator Or Contributor),
-        units_by_identifier_in_primary_source: dict of primary sources by ID
-        extracted_organization_rki: ExtractedOrganization of RKI,
-
-    Returns:
-        ExtractedPerson if matched or None if match fails
-    """
-    ldap = LDAPConnector.get()
-    try:
-        ldap_person = ldap.get_person(display_name=person.name)
-        return transform_ldap_person_to_extracted_person(
-            ldap_person,
-            get_extracted_primary_source_id_by_name("ldap"),
-            units_by_identifier_in_primary_source,
-            extracted_organization_rki,
-        )
-    except MExError:
-        return None
-
-
-def transform_open_data_persons(
+def get_or_transform_open_data_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Lookup persons in ldap or create ExtractedPerson if match fails.
 
     Args:
         open_data_creators_contributors: list of Creators Or Contributors
-        extracted_organizational_units: list of Extracted Organizational Units
-        extracted_organization_rki: ExtractedOrganization of RKI,
         open_data_organization_ids_by_str: dictionary with ID by affiliation name
 
     Returns:
         list of Extracted Persons
     """
-    units_by_identifier_in_primary_source = {
-        unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
-    }
-
-    extracted_persons: dict[MergedPersonIdentifier, ExtractedPerson] = {}
+    extracted_persons: list[ExtractedPerson] = []
 
     for person in open_data_creators_contributors:
-        extracted_person = lookup_person_in_ldap_and_transform(
-            person,
-            units_by_identifier_in_primary_source,
-            extracted_organization_rki,
-        ) or transform_open_data_persons_not_in_ldap(
-            person,
-            extracted_organization_rki,
-            open_data_organization_ids_by_str,
-        )
+        if ldap_person_id := get_ldap_extracted_person_by_query(
+            display_name=person.name
+        ):
+            extracted_person = ldap_person_id
+        else:
+            extracted_person = transform_and_load_open_data_persons_not_in_ldap(
+                person,
+                open_data_organization_ids_by_str,
+            )
 
-        if extracted_person.stableTargetId not in extracted_persons:
-            extracted_persons[extracted_person.stableTargetId] = extracted_person
+        if extracted_person not in extracted_persons:
+            extracted_persons.append(extracted_person)
 
-        if person.orcid:
-            extracted_persons[extracted_person.stableTargetId].orcidId = [
-                f"https://orcid.org/{person.orcid}"
-            ]
-    return list(extracted_persons.values())
+    return extracted_persons
 
 
 def transform_open_data_distributions(
@@ -271,8 +234,7 @@ def transform_open_data_distributions(
 
 def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     open_data_parent_resource: list[OpenDataParentResource],
-    open_data_persons: list[ExtractedPerson],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    open_data_extracted_persons: list[ExtractedPerson],
     open_data_distribution: list[ExtractedDistribution],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -282,8 +244,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         open_data_parent_resource: open data parent resources
-        open_data_persons: list of ExtractedPerson
-        extracted_organizational_units: list of Extracted Organizational Units
+        open_data_extracted_persons: list y name
         open_data_distribution: list of Extracted open data Distributions
         resource_mapping: resource mapping model with default values
         extracted_organization_rki: ExtractedOrganization
@@ -297,14 +258,15 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         raise MExError(msg)
 
     extracted_resource = []
-
     person_stable_target_id_by_name = {
         str(p.fullName[0]): MergedPersonIdentifier(p.stableTargetId)
-        for p in open_data_persons
+        for p in open_data_extracted_persons
     }
     unit_stable_target_ids_by_person_name = {
-        p.fullName[0]: get_only_child_units(p.memberOf, extracted_organizational_units)
-        for p in open_data_persons
+        p.fullName[0]: [
+            department for department in p.memberOf if has_no_child_units(department)
+        ]
+        for p in open_data_extracted_persons
     }
     access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
     anonymization_pseudonymization = (
@@ -472,9 +434,11 @@ def transform_open_data_variables(
                 value_set = (
                     [f"{item.value}, {item.label}" for item in schema.categories]
                     if schema.categories
-                    else [str(item) for item in schema.constraints.enum]
-                    if schema.constraints and schema.constraints.enum
-                    else None
+                    else (
+                        [str(item) for item in schema.constraints.enum]
+                        if schema.constraints and schema.constraints.enum
+                        else None
+                    )
                 )
                 extracted_variables.append(
                     ExtractedVariable(

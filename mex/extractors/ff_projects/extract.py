@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.types import (
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     TemporalEntity,
     TemporalEntityPrecision,
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
@@ -152,9 +152,9 @@ def get_clean_names(name: str) -> str:
     return name.strip()
 
 
-def extract_ff_project_authors(
+def extract_ff_project_author_merged_ids(
     ff_projects_sources: Iterable[FFProjectsSource],
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons with their query string for FF Projects authors.
 
     Args:
@@ -163,9 +163,8 @@ def extract_ff_project_authors(
     Returns:
         List of LDAP persons with query
     """
-    ldap = LDAPConnector.get()
     seen = set()
-    ldap_persons = []
+    ldap_person_ids: dict[str, MergedPersonIdentifier] = {}
     for source in watch_progress(ff_projects_sources, "extract_ff_project_authors"):
         names = source.projektleiter
         if not names:
@@ -175,12 +174,11 @@ def extract_ff_project_authors(
         seen.add(names)
         clean_names = get_clean_names(names)
         for name in analyse_person_string(clean_names):
-            persons = ldap.get_persons(
-                surname=name.surname, given_name=name.given_name, limit=2
-            ).items
-            if len(persons) == 1 and persons[0].objectGUID:
-                ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
-    return ldap_persons
+            if person_id := get_ldap_merged_person_id_by_query(
+                surname=name.surname, given_name=name.given_name
+            ):
+                ldap_person_ids[names] = person_id
+    return ldap_person_ids
 
 
 def extract_ff_projects_organizations(

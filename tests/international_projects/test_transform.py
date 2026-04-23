@@ -32,7 +32,7 @@ def test_transform_international_projects_source_to_mex_source(
     funding_source_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
     partner_organizations_stable_target_ids_by_synonym = {"WHO": organization_id}
     person_id = MergedPersonIdentifier.generate(seed=30)
-    person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": [person_id]}
+    person_stable_target_ids_by_query_string = {"Dr Frieda Ficticious": person_id}
 
     international_projects_sources = extract_international_projects_sources()
 

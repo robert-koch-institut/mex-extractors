@@ -4,18 +4,14 @@ from typing import Any
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import (
     transform_ldap_functional_accounts_to_extracted_contact_points,
-    transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -39,7 +35,7 @@ from mex.extractors.synopse.extract import (
     extract_study_overviews,
     extract_synopse_contact,
     extract_synopse_organizations,
-    extract_synopse_project_contributors,
+    extract_synopse_project_contributor_ids_by_query,
     extract_variables,
 )
 from mex.extractors.synopse.filter import (
@@ -67,11 +63,11 @@ def synopse_projects() -> list[SynopseProject]:
 
 
 @asset(group_name="synopse")
-def synopse_ldap_persons_with_query(
+def synopse_ldap_person_ids(
     synopse_projects: list[SynopseProject],
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract project contributors from Synopse."""
-    return extract_synopse_project_contributors(synopse_projects)
+    return extract_synopse_project_contributor_ids_by_query(synopse_projects)
 
 
 @asset(group_name="synopse")
@@ -118,33 +114,6 @@ def synopse_variables_by_thema(
             sorted_variables, key=lambda v: v.thema_und_fragebogenausschnitt
         )
     }
-
-
-@asset(group_name="synopse")
-def synopse_merged_person_ids_by_name_str(
-    synopse_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, list[MergedPersonIdentifier]]:
-    """Get lookup from contributor name to extracted person stable target id.
-
-    Also transforms Synopse data to extracted persons
-    """
-    transformed_project_contributors = (
-        transform_ldap_persons_with_query_to_extracted_persons(
-            synopse_ldap_persons_with_query,
-            get_extracted_primary_source_id_by_name("ldap"),
-            extracted_organizational_units,
-            extracted_organization_rki,
-        )
-    )
-    load(transformed_project_contributors)
-    return get_merged_ids_by_query_string(  # only works after contributors are loaded
-        # reason: backend is queried for identities of contributors, contributors not
-        # in backend are skipped
-        synopse_ldap_persons_with_query,
-        get_extracted_primary_source_id_by_name("ldap"),
-    )
 
 
 @asset(group_name="synopse")
@@ -216,7 +185,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
+    synopse_ldap_person_ids: dict[str, MergedPersonIdentifier],
 ) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource identifier in primary source.
 
@@ -230,7 +199,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         synopse_access_platform_id,
-        synopse_merged_person_ids_by_name_str,
+        synopse_ldap_person_ids,
     )
     load(transformed_study_data_resources)
     extracted_resource = transform_overviews_to_resource_lookup(
@@ -252,7 +221,7 @@ def synopse_activity() -> dict[str, Any]:
 def synopse_extracted_activities(
     context: AssetExecutionContext,
     synopse_projects: list[SynopseProject],
-    synopse_merged_person_ids_by_name_str: dict[str, list[MergedPersonIdentifier]],
+    synopse_ldap_person_ids: dict[str, MergedPersonIdentifier],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -262,7 +231,7 @@ def synopse_extracted_activities(
     non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
-            synopse_merged_person_ids_by_name_str,
+            synopse_ldap_person_ids,
             ActivityMapping.model_validate(synopse_activity),
             synopse_merged_organization_ids_by_query_string,
         )

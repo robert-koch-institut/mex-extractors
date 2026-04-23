@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.extractors.drop import DropApiConnector
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.seq_repo.model import SeqRepoSource
+
+if TYPE_CHECKING:
+    from mex.common.types import MergedPersonIdentifier
 
 
 def extract_sources() -> list[SeqRepoSource]:
@@ -21,9 +25,9 @@ def extract_sources() -> list[SeqRepoSource]:
     return [SeqRepoSource.model_validate(item) for item in data]
 
 
-def extract_source_project_coordinator(
+def extract_source_project_coordinator_by_name(
     seq_repo_sources: dict[str, SeqRepoSource],
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons with their query string for source project coordinators.
 
     Args:
@@ -32,20 +36,12 @@ def extract_source_project_coordinator(
     Returns:
         List of LDAP persons with query
     """
-    ldap = LDAPConnector.get()
-    seen = set()
-    persons_with_query = []
+    person_id_by_name: dict[str, MergedPersonIdentifier] = {}
     for value in watch_progress(
-        seq_repo_sources.values(), "extract_source_project_coordinator"
+        seq_repo_sources.values(), "extract_source_project_coordinator_by_name"
     ):
-        names = value.project_coordinators
+        names = set(value.project_coordinators)
         for name in names:
-            if name in seen:
-                continue
-            seen.add(name)
-            persons = ldap.get_persons(mail=f"{name}@rki.de", limit=2).items
-            if len(persons) == 1 and persons[0].objectGUID:
-                persons_with_query.append(
-                    LDAPPersonWithQuery(person=persons[0], query=name)
-                )
-    return persons_with_query
+            if person_id := get_ldap_merged_person_id_by_query(mail=f"{name}@rki.de"):
+                person_id_by_name[name] = person_id
+    return person_id_by_name

@@ -27,9 +27,7 @@ def test_transform_blueant_sources_to_extracted_activities(
     blueant_activity: ActivityMapping,
 ) -> None:
     stable_target_ids_by_employee_id = {
-        "42": [
-            MergedPersonIdentifier.generate(seed=99),
-        ],
+        "42": MergedPersonIdentifier.generate(seed=99),
     }
     mex_sources = transform_blueant_sources_to_extracted_activities(
         [blueant_source, blueant_source_without_leader],

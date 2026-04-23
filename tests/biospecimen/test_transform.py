@@ -9,19 +9,13 @@ from mex.common.models import (
     ExtractedPerson,
     ResourceMapping,
 )
-from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     Link,
-    LinkLanguage,
-    TextLanguage,
     Theme,
 )
 from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
-)
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
 )
 
 if TYPE_CHECKING:
@@ -93,16 +87,12 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         Identifier.generate(seed=42)
     ]
 
-    synopse_merged_id = next(
-        filter(
-            lambda x: x.identifierInPrimarySource == "1234567",
-            synopse_extracted_activities,
-        )
-    ).stableTargetId
-
     resources = transform_biospecimen_resource_to_mex_resource(
         biospecimen_resources,
-        [roland_resolved, juturna_felicitas, frieda_fictitious],
+        {
+            person.email[0]: person.stableTargetId
+            for person in [roland_resolved, juturna_felicitas, frieda_fictitious]
+        },
         extracted_organization_rki,
         synopse_extracted_activities,
         resource_mapping,
@@ -110,66 +100,44 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     )
 
     expected = {
+        "hadPrimarySource": "fBlRVJ8z9yVH1fxXU9ZsjD",
+        "identifierInPrimarySource": "test_bioproben_Probe1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
+        "sizeOfDataBasis": "Testanzahl",
+        "temporal": "2021-09 bis 2021-10",
+        "wasGeneratedBy": "gEMgesHdSwermqdIEGirbk",
+        "contact": ["eXA2Qj5pKmI7HXIgcVqCfz"],
+        "theme": ["https://mex.rki.de/item/theme-36"],
+        "title": [{"value": "test_titel"}],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "alternativeTitle": [{"value": "alternativer Testitel"}],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
-        "conformsTo": [
-            "LOINC",
-        ],
-        "contact": [str(roland_resolved.stableTargetId)],
-        "description": [{"language": TextLanguage.DE, "value": "Testbeschreibung"}],
+        "conformsTo": ["LOINC"],
+        "description": [{"value": "Testbeschreibung", "language": "de"}],
         "documentation": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Testdokutitel",
-                "url": "Testdokupfad",
-            }
+            {"language": "de", "title": "Testdokutitel", "url": "Testdokupfad"}
         ],
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
-        "hadPrimarySource": str(get_extracted_primary_source_id_by_name("biospecimen")),
-        "hasLegalBasis": [
-            {
-                "language": TextLanguage.DE,
-                "value": "DSGVO",
-            },
-        ],
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "identifier": Joker(),
-        "identifierInPrimarySource": "test_bioproben_Probe1",
+        "hasLegalBasis": [{"value": "DSGVO", "language": "de"}],
         "instrumentToolOrApparatus": [{"value": "Testtool"}],
-        "keyword": [
-            {"language": TextLanguage.DE, "value": "Testschlagwort 1, Testschlagwort 2"}
-        ],
-        "language": [
-            "https://mex.rki.de/item/language-1",
-        ],
+        "keyword": [{"value": "Testschlagwort 1, Testschlagwort 2", "language": "de"}],
+        "language": ["https://mex.rki.de/item/language-1"],
         "loincId": ["https://loinc.org/12345-6"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D123"],
-        "method": [{"language": TextLanguage.EN, "value": "Testmethode"}],
-        "methodDescription": [
-            {"language": TextLanguage.DE, "value": "Testmethodenbeschreibung"}
-        ],
-        "publisher": [str(extracted_organization_rki.stableTargetId)],
+        "method": [{"value": "Testmethode", "language": "en"}],
+        "methodDescription": [{"value": "Testmethodenbeschreibung", "language": "de"}],
+        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
             "https://mex.rki.de/item/resource-creation-method-4",
         ],
-        "resourceTypeSpecific": [
-            {"language": TextLanguage.DE, "value": "spezieller Testtyp"}
-        ],
-        "rights": [{"language": TextLanguage.DE, "value": "Testrechte"}],
-        "sizeOfDataBasis": "Testanzahl",
-        "spatial": [{"language": TextLanguage.DE, "value": "räumlicher Testbezug"}],
-        "stableTargetId": Joker(),
-        "temporal": "2021-09 bis 2021-10",
-        "theme": [
-            "https://mex.rki.de/item/theme-36",
-        ],
-        "title": [{"value": "test_titel"}],
-        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
-        "wasGeneratedBy": str(synopse_merged_id),
-        # created_in_context_of is None, therefore not displayed
+        "resourceTypeSpecific": [{"value": "spezieller Testtyp", "language": "de"}],
+        "rights": [{"value": "Testrechte", "language": "de"}],
+        "spatial": [{"value": "räumlicher Testbezug", "language": "de"}],
+        "identifier": "bqGbj0OwcKeEXfce6SntlD",
+        "stableTargetId": "fTFbnOlBFeccJoQw4QfnIm",
     }
     assert resources[0].model_dump(exclude_none=True, exclude_defaults=True) == expected

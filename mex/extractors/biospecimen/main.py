@@ -1,15 +1,13 @@
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
     ExtractedResource,
     ResourceMapping,
 )
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_organizations,
@@ -20,9 +18,6 @@ from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
@@ -37,25 +32,15 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 @asset(group_name="biospecimen")
 def biospecimen_extracted_persons(
     biospecimen_resources: list[BiospecimenResource],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract ldap persons for biospecimen from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
-    ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
-    mex_persons = transform_ldap_persons_to_extracted_persons(
-        ldap_persons,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_persons)
-    return mex_persons
+    return extract_biospecimen_contacts_by_email(biospecimen_resources)
 
 
 @asset(group_name="biospecimen")
 def biospecimen_extracted_resources(
     biospecimen_resources: list[BiospecimenResource],
-    biospecimen_extracted_persons: list[ExtractedPerson],
+    biospecimen_extracted_persons: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:
