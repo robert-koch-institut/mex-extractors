@@ -2,3 +2,6 @@ rules:
   - fail_if: x_percent_less_than
     value: 20
     time_frame: 10m
+  - fail_if: x_percent_more_than
+    value: 20
+    time_frame: 10m

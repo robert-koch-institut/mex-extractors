@@ -490,7 +490,7 @@ def test_check_x_items_more_passed_generalized(  # noqa: PLR0913
         ),
     ],
 )
-def test_check_x_percent_less_than_generalized(  # noqa: PLR0913
+def test_check_x_percent_less_than_generalized(
     monkeypatch: MonkeyPatch,
     current_count: int,
     historical_events: dict[datetime, int],
@@ -507,4 +507,78 @@ def test_check_x_percent_less_than_generalized(  # noqa: PLR0913
         time_frame_str=time_frame_str,
         passed=passed,
         rule_name_for_match="x_percent_less_than",
+    )
+
+
+@pytest.mark.parametrize(
+    (
+        "current_count",
+        "historical_events",
+        "rule_threshold",
+        "time_frame_str",
+        "passed",
+    ),
+    [
+        pytest.param(
+            109,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            True,
+            id="passes_within_percent_threshold",
+        ),
+        pytest.param(
+            111,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            False,
+            id="fails_exceeds_percent_threshold",
+        ),
+        pytest.param(
+            104,
+            {
+                datetime(2025, 7, 10, 12, 0, tzinfo=UTC): 120,
+                datetime(2025, 7, 25, 12, 0, tzinfo=UTC): 100,
+            },
+            5,
+            "20d",
+            True,
+            id="passes_with_multiple_events",
+        ),
+        pytest.param(
+            210,
+            {datetime(2023, 6, 15, 12, 0, tzinfo=UTC): 200},
+            5,
+            "7d",
+            True,
+            id="passes_old_history_only",
+        ),
+        pytest.param(
+            50,
+            {},
+            10,
+            "30d",
+            True,
+            id="passes_no_historical_events",
+        ),
+    ],
+)
+def test_check_x_percent_more_than_generalized(
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    historical_events: dict[datetime, int],
+    rule_threshold: int,
+    time_frame_str: str,
+    *,
+    passed: bool,
+) -> None:
+    run_item_count_test(
+        monkeypatch,
+        current_count=current_count,
+        historical_events=historical_events,
+        rule_threshold=rule_threshold,
+        time_frame_str=time_frame_str,
+        passed=passed,
+        rule_name_for_match="x_percent_more_than",
     )
