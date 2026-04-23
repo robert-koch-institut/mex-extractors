@@ -490,7 +490,7 @@ def test_check_x_items_more_passed_generalized(  # noqa: PLR0913
         ),
     ],
 )
-def test_check_x_percent_less_than_generalized(
+def test_check_x_percent_less_than_generalized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     current_count: int,
     historical_events: dict[datetime, int],
@@ -564,7 +564,7 @@ def test_check_x_percent_less_than_generalized(
         ),
     ],
 )
-def test_check_x_percent_more_than_generalized(
+def test_check_x_percent_more_than_generalized(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     current_count: int,
     historical_events: dict[datetime, int],
