@@ -13,6 +13,7 @@ from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_to_extracted_person,
 )
+from mex.common.models import PaginatedItemsContainer
 from mex.common.transform import MExEncoder, normalize
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -145,12 +146,15 @@ def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
         serialized = json.dumps(obj, cls=MExEncoder, ensure_ascii=False)
         return set(normalize(serialized.lower()).split())
 
-    def mock_search(_self: LDAPConnector, **kwargs: dict[str, Any]) -> list[LDAPActor]:
+    def mock_search(
+        _self: LDAPConnector, **kwargs: dict[str, Any]
+    ) -> PaginatedItemsContainer[LDAPActor]:
         tokenized_query = tokenize(kwargs)
         actors_by_score = [
             (len(tokenized_query & tokenize(actor)), actor) for actor in actors
         ]
-        return [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
+        results = [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
+        return PaginatedItemsContainer[LDAPActor](items=results, total=len(results))
 
     return mock_search
 
@@ -190,7 +194,8 @@ def mocked_ldap(  # noqa: PLR0913
             pytest.skip("Ldap mock server not configured")
         else:
             # TODO(ND): Make this configurable in mex-common
+            # HS: turn off tls certificate validation because our mock ldap server uses a self-signed certificate
 
             from mex.common.ldap import connector as connector_module  # noqa: PLC0415
 
-            monkeypatch.setattr(connector_module, "AUTO_BIND_NO_TLS", "DEFAULT")
+            monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)

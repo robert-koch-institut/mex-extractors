@@ -3,7 +3,6 @@ from typing import cast
 
 from dagster import asset
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
@@ -12,7 +11,6 @@ from mex.common.models import (
     MergedConsent,
     MergedContactPoint,
     MergedPerson,
-    PaginatedItemsContainer,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -25,7 +23,7 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.publisher.filter import (
-    filter_persons_with_appoving_unique_consent,
+    filter_persons_with_approving_unique_consent,
 )
 from mex.extractors.publisher.transform import (
     get_unit_id_per_person,
@@ -38,9 +36,12 @@ from mex.extractors.sinks.s3 import S3Sink
 
 @asset(group_name="publisher")
 def publisher_items_without_actors() -> PublisherItemsLike:
-    """All items with entity types that are neither an actor nor skipped.
+    """Get all items with entity types that are neither an actor nor skipped.
 
-    Actor types are: Person, ContactPoint and OrganizationalUnit.
+    Actor types are: Person, ContactPoint and OrganizationalUnit. These are fetched and
+    handled specially at a later point.
+    Settings:
+        publisher.skip_entity_types: entity type to skip on top of actor types.
     """
     settings = Settings.get()
     allowed_entity_types = [
@@ -59,7 +60,7 @@ def publisher_items_without_actors() -> PublisherItemsLike:
 
 
 @asset(group_name="publisher")
-def publisher_merged_persons() -> list[MergedPerson]:
+def publisher_merged_ldap_persons() -> list[MergedPerson]:
     """Fetch all MergedPersons with Primary source = ldap."""
     return cast(
         "list[MergedPerson]",
@@ -75,7 +76,7 @@ def publisher_merged_persons() -> list[MergedPerson]:
 
 @asset(group_name="publisher")
 def publisher_persons() -> PublisherItemsLike:
-    """Get publishable persons with positive consent."""
+    """Get publishable persons with exactly 1 consent which is approving."""
     merged_persons = cast(
         "list[MergedPerson]",
         get_publishable_merged_items(entity_type=["MergedPerson"]),
@@ -84,7 +85,7 @@ def publisher_persons() -> PublisherItemsLike:
         "list[MergedConsent]",
         get_publishable_merged_items(entity_type=["MergedConsent"]),
     )
-    filtered_persons = filter_persons_with_appoving_unique_consent(
+    filtered_persons = filter_persons_with_approving_unique_consent(
         merged_persons, merged_consent
     )
     return ItemsContainer(items=filtered_persons)
@@ -96,9 +97,8 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
     settings = Settings.get()
     allowed_entity_types = [
         entity_type
-        for entity_type in MERGED_MODEL_CLASSES_BY_NAME
-        if entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
-        and entity_type not in settings.publisher.skip_entity_types
+        for entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
+        if entity_type not in settings.publisher.skip_entity_types
     ]
     merged_items = get_publishable_merged_items(
         entity_type=allowed_entity_types,
@@ -110,28 +110,26 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
 def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
     settings = Settings.get()
-    connector = BackendApiConnector.get()
-    response = cast(
-        "PaginatedItemsContainer[MergedContactPoint]",
-        connector.fetch_merged_items(
+    merged_contact_points = cast(
+        "list[MergedContactPoint]",
+        get_publishable_merged_items(
             query_string=str(settings.contact_point.mex_email),
             entity_type=["MergedContactPoint"],
             referenced_identifier=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
             reference_field="hadPrimarySource",
-            limit=1,
         ),
     )
-    return [item.identifier for item in response.items]
+    return [merged_contact_points[0].identifier]
 
 
 @asset(group_name="publisher")
 def publisher_fallback_unit_identifiers_by_person(
-    publisher_merged_persons: list[MergedPerson],
+    publisher_merged_ldap_persons: list[MergedPerson],
     publisher_contact_points_and_units: PublisherItemsLike,
 ) -> dict[MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]]:
     """For each Person get their unit IDs if the unit has an email address."""
     return get_unit_id_per_person(
-        publisher_merged_persons,
+        publisher_merged_ldap_persons,
         publisher_contact_points_and_units,
     )
 
@@ -146,10 +144,10 @@ def publisher_items(
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
 ) -> PublisherItemsLike:
-    """All publishable items with updated contact references, where needed."""
+    """All publishable items with updated person/contact references, where needed."""
     allowed_actors = {
-        person.identifier
-        for person in publisher_persons.items + publisher_contact_points_and_units.items
+        actor.identifier
+        for actor in publisher_persons.items + publisher_contact_points_and_units.items
     }
     for item in publisher_items_without_actors.items:
         update_actor_references_where_needed(

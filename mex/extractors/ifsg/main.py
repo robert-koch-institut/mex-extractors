@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -160,8 +160,9 @@ def ifsg_extracted_resource_parent(
     return mex_resource_parent
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "resource"})
 def ifsg_extracted_resources_state(
+    context: AssetExecutionContext,
     ifsg_resource_state_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
 ) -> list[ExtractedResource]:
@@ -171,12 +172,13 @@ def ifsg_extracted_resources_state(
         ifsg_extracted_resource_parent,
     )
     load(mex_resource_state)
-
+    context.add_output_metadata({"num_items": len(mex_resource_state)})
     return mex_resource_state
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "resource"})
 def ifsg_extracted_resources_disease(  # noqa: PLR0913
+    context: AssetExecutionContext,
     ifsg_resource_disease_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
     ifsg_extracted_resources_state: list[ExtractedResource],
@@ -196,12 +198,13 @@ def ifsg_extracted_resources_disease(  # noqa: PLR0913
         extracted_organization_rki,
     )
     load(mex_resource_disease)
-
+    context.add_output_metadata({"num_items": len(mex_resource_disease)})
     return mex_resource_disease
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "variable_group"})
 def ifsg_extracted_variable_groups(
+    context: AssetExecutionContext,
     ifsg_variable_group: dict[str, Any],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_filtered_meta_fields: list[MetaField],
@@ -215,12 +218,13 @@ def ifsg_extracted_variable_groups(
         id_types_of_diseases,
     )
     load(extracted_variable_group)
-
+    context.add_output_metadata({"num_items": len(extracted_variable_group)})
     return extracted_variable_group
 
 
-@asset(group_name="ifsg")
+@asset(group_name="ifsg", metadata={"entity_type": "variable"})
 def ifsg_extracted_variables(  # noqa: PLR0913
+    context: AssetExecutionContext,
     ifsg_filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
@@ -242,6 +246,7 @@ def ifsg_extracted_variables(  # noqa: PLR0913
         ifsg_meta_schema2field,
     )
     load(extracted_variables)
+    context.add_output_metadata({"num_items": len(extracted_variables)})
     return extracted_variables
 
 
