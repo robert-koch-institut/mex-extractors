@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - implement AssetCheck `x_percent_less_than`
 - implement AssetCheck `not_exactly_x_items`
+
 ### Changes
 
 - publisher: code maintenance (typos, naming, unified db fetching)
