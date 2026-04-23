@@ -75,13 +75,35 @@ def system_clean_up_dagster_runs(
     return deleted_run_ids
 
 
-def _delete_asset_metadata(asset_key: AssetKey) -> None:
-    """Delete obsolete Dagster assets and their metadata.
+def _cleanup_empty_parent_dirs(start_dir: Path, stop_at: Path) -> None:
+    current = start_dir
+    while current != stop_at and current.exists():
+        try:
+            current.rmdir()
+            current = current.parent
+        except OSError:
+            break
 
-    For this we're using Dagsters officially documented `dagster asset wipe` command.
-    """
+
+def _delete_asset_data(storage_base: Path, asset_key: AssetKey) -> None:
+    """Delete an obsolete Dagster asset, its files and metadata."""
+    asset_storage_path = storage_base.joinpath(*asset_key.path)
+
+    try:
+        if asset_storage_path.is_dir():
+            shutil.rmtree(asset_storage_path)
+            logger.info("Deleted local asset directory: %s", asset_storage_path)
+            _cleanup_empty_parent_dirs(asset_storage_path.parent, storage_base)
+        elif asset_storage_path.exists():
+            asset_storage_path.unlink()
+            logger.info("Deleted local asset file: %s", asset_storage_path)
+            _cleanup_empty_parent_dirs(asset_storage_path.parent, storage_base)
+    except Exception as error:
+        msg = f"Could not wipe Dagster files for asset key {asset_key.to_user_string()}"
+        raise RuntimeError(msg) from error
+
     asset_key_json = json.dumps(asset_key.path)
-
+    # Dagsters officially documented `dagster asset wipe` command.
     cmd = ["dagster", "asset", "wipe", asset_key_json, "--noprompt"]
 
     try:
@@ -92,17 +114,13 @@ def _delete_asset_metadata(asset_key: AssetKey) -> None:
             text=True,
         )
     except subprocess.CalledProcessError as exc:
-        logger.exception(
-            "Failed to wipe Dagster metadata for asset key %s. stdout=%s stderr=%s",
-            asset_key.to_user_string(),
-            exc.stdout,
-            exc.stderr,
-        )
         msg = (
             f"Could not wipe Dagster metadata "
             f"for asset key {asset_key.to_user_string()}"
         )
         raise RuntimeError(msg) from exc
+
+    logger.info(f"Wiped asset {asset_key_json}.")
 
 
 @asset(group_name="system_clean_up")
@@ -132,7 +150,8 @@ def system_clean_up_obsolete_assets() -> None:
         )
     ]
 
+    storage_base = Path(instance.root_directory) / "storage"
     for candidate in deletion_candidates:
-        _delete_asset_metadata(candidate)
+        _delete_asset_data(storage_base, candidate)
 
     logger.info("Deleted %s obsolete asset materializations.", len(deletion_candidates))

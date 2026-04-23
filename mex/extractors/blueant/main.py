@@ -32,7 +32,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="blueant")
-def blueant_sources() -> list[BlueAntSource]:
+def blueant_test_sources() -> list[BlueAntSource]:
     """Extract from blueant sources and filter content."""
     sources = extract_blueant_sources()
     blueant_primary_source_id = get_extracted_primary_source_id_by_name("blueant")
@@ -41,13 +41,13 @@ def blueant_sources() -> list[BlueAntSource]:
 
 
 @asset(group_name="blueant")
-def blueant_merged_person_id_by_employee_id(
-    blueant_sources: list[BlueAntSource],
+def blueant_test_merged_person_id_by_employee_id(
+    blueant_test_sources: list[BlueAntSource],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to mex-persons with stable target ID and group them by employee ID."""  # noqa: E501
-    ldap_project_leaders = extract_blueant_project_leaders(blueant_sources)
+    ldap_project_leaders = extract_blueant_project_leaders(blueant_test_sources)
     mex_project_leaders = transform_ldap_persons_to_extracted_persons(
         ldap_project_leaders,
         get_extracted_primary_source_id_by_name("ldap"),
@@ -61,10 +61,12 @@ def blueant_merged_person_id_by_employee_id(
 
 
 @asset(group_name="blueant", metadata={"entity_type": "activity"})
-def blueant_extracted_activities(
+def blueant_test_extracted_activities(
     context: AssetExecutionContext,
-    blueant_sources: list[BlueAntSource],
-    blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
+    blueant_test_sources: list[BlueAntSource],
+    blueant_test_merged_person_id_by_employee_id: dict[
+        str, list[MergedPersonIdentifier]
+    ],
 ) -> list[ExtractedActivity]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()
@@ -73,8 +75,8 @@ def blueant_extracted_activities(
     )
 
     extracted_activities = transform_blueant_sources_to_extracted_activities(
-        blueant_sources,
-        blueant_merged_person_id_by_employee_id,
+        blueant_test_sources,
+        blueant_test_merged_person_id_by_employee_id,
         activity,
     )
 
