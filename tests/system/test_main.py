@@ -145,7 +145,7 @@ def test_system_clean_up_dagster_runs_with_empty_list() -> None:
     assert deleted_runs == []
 
 
-def test_system_clean_up_obsolete_assets() -> None:
+def test_system_clean_up_obsolete_assets(tmp_path: Path) -> None:
     """Test that obsolete assets are deleted and protected assets are NOT deleted."""
     current_assets = {
         AssetKey(["asset_1"]),
@@ -165,6 +165,7 @@ def test_system_clean_up_obsolete_assets() -> None:
 
     mock_instance = Mock()
     mock_instance.all_asset_keys.return_value = historical_assets
+    mock_instance.root_directory = str(tmp_path)
 
     with (
         patch(
@@ -180,10 +181,10 @@ def test_system_clean_up_obsolete_assets() -> None:
         system_clean_up_obsolete_assets()
 
     assert mock_delete.call_count == 1
-    assert mock_delete.call_args[0][0] == AssetKey(["obsolete_asset"])
+    assert mock_delete.call_args[0][1] == AssetKey(["obsolete_asset"])
 
 
-def test_system_clean_up_obsolete_assets_no_obsolete() -> None:
+def test_system_clean_up_obsolete_assets_no_obsolete(tmp_path: Path) -> None:
     """Test when there are no obsolete assets."""
     current_assets = {
         AssetKey(["asset_1"]),
@@ -197,6 +198,7 @@ def test_system_clean_up_obsolete_assets_no_obsolete() -> None:
 
     mock_instance = Mock()
     mock_instance.all_asset_keys.return_value = current_assets  # historical == current
+    mock_instance.root_directory = str(tmp_path)
 
     with (
         patch(
