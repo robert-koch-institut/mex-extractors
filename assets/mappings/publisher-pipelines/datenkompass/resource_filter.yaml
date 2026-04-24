@@ -8,4 +8,4 @@ fields:
     filterRules:
       - forValues:
           - "PRNT"
-          - "FG 99"
+          - "C1"

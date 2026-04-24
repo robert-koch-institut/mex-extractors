@@ -27,14 +27,14 @@ if TYPE_CHECKING:
 def transform_seq_repo_activities_to_extracted_activities(
     seq_repo_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
+    seq_repo_merged_person_ids_by_name: dict[str, MergedPersonIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform seq-repo activities to list of unique ExtractedActivity.
 
     Args:
         seq_repo_sources: Seq Repo extracted sources
         seq_repo_activity: Seq Repo activity mapping models with default values
-        seq_repo_merged_person_ids_by_query_string: Seq Repo sources resolved project
+        seq_repo_merged_person_ids_by_name: Seq Repo sources resolved project
                                             coordinators ldap query results
 
     Returns:
@@ -52,10 +52,10 @@ def transform_seq_repo_activities_to_extracted_activities(
             continue
 
         extracted_activity = ExtractedActivity(
-            contact=list(seq_repo_merged_person_ids_by_query_string.values()),
+            contact=list(seq_repo_merged_person_ids_by_name.values()),
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=source.project_id,
-            involvedPerson=list(seq_repo_merged_person_ids_by_query_string.values()),
+            involvedPerson=list(seq_repo_merged_person_ids_by_name.values()),
             responsibleUnit=responsible_units,
             theme=theme,
             title=source.project_name,
@@ -72,7 +72,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
     seq_repo_resource: ResourceMapping,
-    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
+    seq_repo_merged_person_ids_by_name: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Transform seq-repo resources to ExtractedResource.
@@ -82,7 +82,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         seq_repo_activities: Seq Repo extracted activity for default values from mapping
         mex_access_platform: Extracted access platform
         seq_repo_resource: Seq Repo resource mapping model with default values
-        seq_repo_merged_person_ids_by_query_string: Seq Repo Sources
+        seq_repo_merged_person_ids_by_name: Seq Repo Sources
                                                                   resolved project
                                                                   coordinators merged
                                                                   ids
@@ -139,7 +139,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
             anonymizationPseudonymization=anonymization_pseudonymization,
-            contact=list(seq_repo_merged_person_ids_by_query_string.values()),
+            contact=list(seq_repo_merged_person_ids_by_name.values()),
             contributingUnit=contributing_unit,
             created=source.sequencing_date,
             description=description,

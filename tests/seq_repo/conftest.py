@@ -115,12 +115,12 @@ def extracted_mex_access_platform(
 def extracted_mex_activities_dict(
     seq_repo_latest_sources: dict[str, SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
+    seq_repo_merged_person_ids_by_name: dict[str, MergedPersonIdentifier],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_latest_sources,
         seq_repo_activity,
-        seq_repo_merged_person_ids_by_query_string,
+        seq_repo_merged_person_ids_by_name,
     )
     return {
         activity.identifierInPrimarySource: activity
@@ -137,7 +137,7 @@ def seq_repo_ldap_persons_with_query(
 
 
 @pytest.fixture
-def seq_repo_merged_person_ids_by_query_string(
+def seq_repo_merged_person_ids_by_name(
     roland_resolved: ExtractedPerson,
     juturna_felicitas: ExtractedPerson,
     frieda_fictitious: ExtractedPerson,

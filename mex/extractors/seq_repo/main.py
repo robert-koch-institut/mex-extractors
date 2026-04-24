@@ -56,7 +56,7 @@ def seq_repo_merged_person_ids_by_name(
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
     seq_repo_latest_source: dict[str, SeqRepoSource],
-    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
+    seq_repo_merged_person_ids_by_name: dict[str, MergedPersonIdentifier],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
     settings = Settings.get()
@@ -67,7 +67,7 @@ def seq_repo_extracted_activities_by_id_str(
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_latest_source,
         activity,
-        seq_repo_merged_person_ids_by_query_string,
+        seq_repo_merged_person_ids_by_name,
     )
     load(mex_activities)
     activities_by_id_str = {
@@ -99,7 +99,7 @@ def seq_repo_resources(  # noqa: PLR0913
     seq_repo_latest_source: dict[str, SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
-    seq_repo_merged_person_ids_by_query_string: dict[str, MergedPersonIdentifier],
+    seq_repo_merged_person_ids_by_name: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
@@ -113,7 +113,7 @@ def seq_repo_resources(  # noqa: PLR0913
         seq_repo_extracted_activities_by_id_str,
         seq_repo_extracted_access_platform,
         resource,
-        seq_repo_merged_person_ids_by_query_string,
+        seq_repo_merged_person_ids_by_name,
         extracted_organization_rki,
     )
     load(resources)
