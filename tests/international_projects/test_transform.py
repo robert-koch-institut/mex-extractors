@@ -1,23 +1,16 @@
 from typing import TYPE_CHECKING
 
 import pytest
-from pytz import timezone
 
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
-    TextLanguage,
-    YearMonthDay,
 )
 from mex.extractors.international_projects.extract import (
     extract_international_projects_sources,
 )
 from mex.extractors.international_projects.transform import (
     transform_international_projects_sources_to_extracted_activities,
-)
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
 )
 
 if TYPE_CHECKING:
@@ -47,26 +40,22 @@ def test_transform_international_projects_source_to_mex_source(
     )
 
     expected = {
-        "identifier": Joker(),
-        "hadPrimarySource": get_extracted_primary_source_id_by_name(
-            "international-projects"
-        ),
+        "hadPrimarySource": "fSwk5o6nXHVMdFuPHH0hRk",
         "identifierInPrimarySource": "0000-1000",
-        "stableTargetId": Joker(),
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "title": [{"value": "This is a test project full title", "language": "en"}],
         "activityType": ["https://mex.rki.de/item/activity-type-1"],
         "alternativeTitle": [{"value": "testAAbr"}],
-        "contact": ["cjna2jitPngp6yIV63cdi9"],
-        "end": [YearMonthDay(2021, 12, 31, tzinfo=timezone("UTC"))],
-        "externalAssociate": [organization_id],
-        "funderOrCommissioner": [organization_id],
+        "end": ["2021-12-31"],
+        "externalAssociate": ["bFQoRhcVH5DHU8"],
+        "funderOrCommissioner": ["bFQoRhcVH5DHU8"],
         "involvedUnit": ["cjna2jitPngp6yIV63cdi9"],
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
         "shortName": [{"value": "testAAbr"}],
-        "start": [YearMonthDay(2021, 7, 27, tzinfo=timezone("UTC"))],
+        "start": ["2021-07-27"],
         "theme": ["https://mex.rki.de/item/theme-37"],
-        "title": [
-            {"value": "This is a test project full title", "language": TextLanguage.EN}
-        ],
+        "identifier": "f6SlOxfcT1DJVuOnjGqeDl",
+        "stableTargetId": "gqf9aUfbi297puiQpriwzX",
     }
 
     assert (

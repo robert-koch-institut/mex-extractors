@@ -37,7 +37,7 @@ def test_extract_international_projects_sources() -> None:
             "funding_program": "GHPP2",
             "rki_internal_project_number": "0000-1000",
             "additional_rki_units": "",
-            "project_lead_rki_unit": "FG18",
+            "project_lead_rki_unit": "C1",
             "project_abbreviation": "testAAbr2",
             "start_date": TemporalEntity("2022-12-31"),
             "activity1": "Capacity building including trainings",
