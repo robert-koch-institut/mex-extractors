@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -56,8 +56,9 @@ def odk_merged_organization_ids_by_query_str(
     )
 
 
-@asset(group_name="odk")
+@asset(group_name="odk", metadata={"entity_type": "resource"})
 def odk_extracted_resources(
+    context: AssetExecutionContext,
     odk_resource_mappings: list[dict[str, Any]],
     odk_merged_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
     international_projects_extracted_activities: list[ExtractedActivity],
@@ -68,11 +69,15 @@ def odk_extracted_resources(
         odk_merged_organization_ids_by_query_str,
         international_projects_extracted_activities,
     )
-    return assign_resource_relations_and_load(extracted_resources_tuple)
+    extracted_resources = assign_resource_relations_and_load(extracted_resources_tuple)
+    num_items = len(extracted_resources)
+    context.add_output_metadata({"num_items": num_items})
+    return extracted_resources
 
 
-@asset(group_name="odk")
+@asset(group_name="odk", metadata={"entity_type": "variable"})
 def odk_extracted_variables(
+    context: AssetExecutionContext,
     odk_extracted_resources: list[ExtractedResource],
     odk_raw_data: list[ODKData],
 ) -> list[ExtractedVariable]:
@@ -87,8 +92,9 @@ def odk_extracted_variables(
         odk_raw_data,
         variable_mapping,
     )
-
+    num_items = len(extracted_variables)
     load(extracted_variables)
+    context.add_output_metadata({"num_items": num_items})
     return extracted_variables
 
 

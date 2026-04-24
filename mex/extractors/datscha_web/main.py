@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -70,8 +70,9 @@ def datscha_web_organization_ids_by_query_str(
     return extract_datscha_web_organizations(datscha_web_items)
 
 
-@asset(group_name="datscha_web")
+@asset(group_name="datscha_web", metadata={"entity_type": "activity"})
 def datscha_web_extracted_activities(
+    context: AssetExecutionContext,
     datscha_web_items: list[DatschaWebItem],
     datscha_web_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
@@ -82,7 +83,9 @@ def datscha_web_extracted_activities(
         datscha_web_person_ids_by_query_str,
         datscha_web_organization_ids_by_query_str,
     )
+    num_items = len(mex_sources)
     load(mex_sources)
+    context.add_output_metadata({"num_items": num_items})
     return mex_sources
 
 

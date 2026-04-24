@@ -152,8 +152,9 @@ def grippeweb_extracted_access_platform(
     return grippeweb_extracted_access_platform
 
 
-@asset(group_name="grippeweb")
-def grippeweb_extracted_parent_resource(
+@asset(group_name="grippeweb", metadata={"entity_type": "resource"})
+def grippeweb_extracted_parent_resource(  # noqa: PLR0913
+    context: AssetExecutionContext,
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: list[ExtractedPerson],
@@ -172,13 +173,16 @@ def grippeweb_extracted_parent_resource(
             grippeweb_merged_contact_point_id_by_email,
         )
     )
+    num_items = len([parent_resource, child_resource])
     load([parent_resource])
     load([child_resource])
+    context.add_output_metadata({"num_items": num_items})
     return parent_resource
 
 
-@asset(group_name="grippeweb")
+@asset(group_name="grippeweb", metadata={"entity_type": "variable-group"})
 def grippeweb_extracted_variable_groups(
+    context: AssetExecutionContext,
     grippeweb_variable_group: dict[str, Any],
     grippeweb_columns: dict[str, dict[str, list[Any]]],
     grippeweb_extracted_parent_resource: ExtractedResource,
@@ -191,7 +195,9 @@ def grippeweb_extracted_variable_groups(
             grippeweb_extracted_parent_resource,
         )
     )
+    num_items = len(extracted_variable_groups)
     load(extracted_variable_groups)
+    context.add_output_metadata({"num_items": num_items})
     return extracted_variable_groups
 
 

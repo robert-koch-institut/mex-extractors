@@ -1,6 +1,6 @@
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.extract import get_merged_ids_by_query_string
@@ -88,8 +88,9 @@ def confluence_vvt_merged_person_ids_by_query_str(
     )
 
 
-@asset(group_name="confluence_vvt")
+@asset(group_name="confluence_vvt", metadata={"entity_type": "activity"})
 def extracted_confluence_vvt_activities(
+    context: AssetExecutionContext,
     confluence_vvt_pages: list[ConfluenceVvtPage],
     confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
@@ -102,7 +103,10 @@ def extracted_confluence_vvt_activities(
         ActivityMapping.model_validate(confluence_vvt_activity_mapping),
         confluence_vvt_merged_person_ids_by_query_str,
     )
+
+    num_items = len(mex_activities)
     load(mex_activities)
+    context.add_output_metadata({"num_items": num_items})
     return mex_activities
 
 
