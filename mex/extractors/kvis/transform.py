@@ -15,6 +15,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
+    MergedPersonIdentifier,
     MergedResourceIdentifier,
     Text,
     TextLanguage,
@@ -92,14 +93,15 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         if mapping.contributingUnit[0].mappingRules[0].forValues
         else None
     )
-    contributor = (
-        [
-            get_ldap_merged_person_id_by_query(mail=c)
-            for c in mapping.contributor[0].mappingRules[0].forValues
-        ]
-        if mapping.contributor[0].mappingRules[0].forValues
-        else []
-    )
+    contributor: list[MergedPersonIdentifier] = []
+    if mapping.contributor[0].mappingRules[0].forValues:
+        for c in mapping.contributor[0].mappingRules[0].forValues:
+            try:
+                if person_id := get_ldap_merged_person_id_by_query(mail=c):
+                    contributor.append(person_id)
+            except MExError:
+                continue
+
     external_partner = (
         [partner_id]
         if mapping.externalPartner[0].mappingRules[0].forValues
