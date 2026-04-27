@@ -265,7 +265,7 @@ def test_delete_asset_data_error_no_path(tmp_path: Path) -> None:
     mock_run.assert_called_once()
 
 
-def test_delete_asset_metadata_failure(tmp_path: Path) -> None:
+def test_delete_asset_data_failure(tmp_path: Path) -> None:
     """Test error handling when asset metadata deletion via subprocess fails."""
     asset_key = AssetKey(["test_asset"])
 

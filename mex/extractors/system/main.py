@@ -75,16 +75,6 @@ def system_clean_up_dagster_runs(
     return deleted_run_ids
 
 
-def _cleanup_empty_parent_dirs(start_dir: Path, stop_at: Path) -> None:
-    current = start_dir
-    while current != stop_at and current.exists():
-        try:
-            current.rmdir()
-            current = current.parent
-        except OSError:
-            break
-
-
 def _delete_asset_data(storage_base: Path, asset_key: AssetKey) -> None:
     """Delete an obsolete Dagster asset, its files and metadata."""
     asset_storage_path = storage_base.joinpath(*asset_key.path)
@@ -93,11 +83,9 @@ def _delete_asset_data(storage_base: Path, asset_key: AssetKey) -> None:
         if asset_storage_path.is_dir():
             shutil.rmtree(asset_storage_path)
             logger.info("Deleted local asset directory: %s", asset_storage_path)
-            _cleanup_empty_parent_dirs(asset_storage_path.parent, storage_base)
         elif asset_storage_path.exists():
             asset_storage_path.unlink()
             logger.info("Deleted local asset file: %s", asset_storage_path)
-            _cleanup_empty_parent_dirs(asset_storage_path.parent, storage_base)
     except Exception as error:
         msg = f"Could not wipe Dagster files for asset key {asset_key.to_user_string()}"
         raise RuntimeError(msg) from error
