@@ -3,17 +3,12 @@ from typing import Any
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import (
-    transform_ldap_functional_accounts_to_extracted_contact_points,
-    transform_ldap_persons_with_query_to_extracted_persons,
-)
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -23,9 +18,6 @@ from mex.common.types import (
     MergedContactPointIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.extract import (
@@ -43,8 +35,6 @@ from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.sumo.transform import (
-    get_contact_merged_ids_by_emails,
-    get_contact_merged_ids_by_names,
     transform_feat_projection_variable_to_mex_variable,
     transform_feat_variable_to_mex_variable_group,
     transform_model_nokeda_variable_to_mex_variable_group,
@@ -60,10 +50,7 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="sumo")
-def sumo_extracted_access_platform(
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> ExtractedAccessPlatform:
+def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related LDAP actors."""
     settings = Settings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
@@ -72,20 +59,9 @@ def sumo_extracted_access_platform(
     ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
         sumo_access_platform
     )
-    mex_actors_access_platform = transform_ldap_persons_with_query_to_extracted_persons(
-        ldap_contact_points_access_platform,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_actors_access_platform)
-
-    contact_merged_ids_by_name = get_contact_merged_ids_by_names(
-        mex_actors_access_platform
-    )
     transformed_access_platform = transform_sumo_access_platform_to_mex_access_platform(
         sumo_access_platform,
-        contact_merged_ids_by_name,
+        ldap_contact_points_access_platform,
     )
     load([transformed_access_platform])
 
@@ -98,7 +74,7 @@ def sumo_merged_contact_ids_by_email(
     sumo_extracted_resources_feat: dict[str, Any],
 ) -> dict[str, MergedContactPointIdentifier]:
     """Load contacts related to resources and return them by their e-mail addresses."""
-    ldap_contact_points_resources = extract_ldap_contact_points_by_emails(
+    return extract_ldap_contact_points_by_emails(
         [
             ResourceMapping.model_validate(r)
             for r in [
@@ -107,14 +83,6 @@ def sumo_merged_contact_ids_by_email(
             ]
         ]
     )
-    mex_actors_resources = (
-        transform_ldap_functional_accounts_to_extracted_contact_points(
-            ldap_contact_points_resources,
-            get_extracted_primary_source_id_by_name("ldap"),
-        )
-    )
-    load(mex_actors_resources)
-    return get_contact_merged_ids_by_emails(mex_actors_resources)
 
 
 @asset(group_name="sumo")

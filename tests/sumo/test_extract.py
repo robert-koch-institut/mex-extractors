@@ -2,11 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.ldap.models import (
-    LDAPFunctionalAccount,
-    LDAPPerson,
-    LDAPPersonWithQuery,
-)
+from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
@@ -111,20 +107,20 @@ def test_extract_cc2_feat_projection() -> None:
 def test_extract_ldap_contact_points_by_emails(
     sumo_resources_feat: ResourceMapping,
     sumo_resources_nokeda: ResourceMapping,
-    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     contact_points = extract_ldap_contact_points_by_emails(
         [sumo_resources_feat, sumo_resources_nokeda]
     )
-    assert contact_points == [ldap_contact_point]
+    assert contact_points == {
+        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_ldap_contact_points_by_name(
     sumo_access_platform: AccessPlatformMapping,
-    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     sumo_contacts = extract_ldap_contact_points_by_name(sumo_access_platform)
-    assert sumo_contacts == [
-        LDAPPersonWithQuery(person=ldap_roland_resolved, query="Roland Resolved")
-    ]
+    assert sumo_contacts == {
+        "Roland Resolved": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+    }

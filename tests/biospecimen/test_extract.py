@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 from pandas import Series
 
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_resources,
@@ -15,7 +16,6 @@ from mex.extractors.biospecimen.extract import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from mex.common.ldap.models import LDAPPerson
     from mex.extractors.biospecimen.models.source import BiospecimenResource
     from mex.extractors.settings import Settings
 
@@ -23,11 +23,12 @@ if TYPE_CHECKING:
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_biospecimen_contacts_by_email(
     biospecimen_resources: Iterable[BiospecimenResource],
-    ldap_roland_resolved: LDAPPerson,
 ) -> None:
     ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
 
-    assert ldap_persons == [ldap_roland_resolved]
+    assert ldap_persons == {
+        "resolvedr@rki.de": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+    }
 
 
 def test_extract_biospecimen_resources() -> None:
@@ -36,35 +37,35 @@ def test_extract_biospecimen_resources() -> None:
 
     assert resources[0].model_dump(exclude_none=True) == {
         "file_name": "test_bioproben.xlsx",
-        "offizieller_titel_der_probensammlung": ["test_titel"],
-        "beschreibung": ["Testbeschreibung"],
-        "schlagworte": ["Testschlagwort 1, Testschlagwort 2"],
-        "methoden": ["Testmethode"],
-        "zeitlicher_bezug": ["2021-09 bis 2021-10"],
-        "rechte": "Testrechte",
-        "studienbezug": ["1234567"],
+        "sheet_name": "Probe1",
+        "zugriffsbeschraenkung": "restriktiv",
         "alternativer_titel": "alternativer Testitel",
         "anonymisiert_pseudonymisiert": "pseudonymisiert",
-        "externe_partner": "esterner Testpartner",
-        "id_loinc": ["12345-6"],
-        "id_mesh_begriff": ["D123"],
         "kontakt": ["resolvedr@rki.de"],
-        "methodenbeschreibung": ["Testmethodenbeschreibung"],
         "mitwirkende_fachabteilung": "mitwirkende Testabteilung",
         "mitwirkende_personen": "mitwirkende Testperson",
-        "raeumlicher_bezug": ["räumlicher Testbezug"],
-        "ressourcentyp_allgemein": "Bioproben",
-        "ressourcentyp_speziell": ["Infektionskrankheiten"],
-        "sheet_name": "Probe1",
-        "thema": [],
-        "tools_instrumente_oder_apparate": "Testtool",
-        "verantwortliche_fachabteilung": "PARENT Dept.",
-        "verwandte_publikation_doi": "testverwandedoi",
-        "verwandte_publikation_titel": "testverwandtepublikation",
-        "vorhandene_anzahl_der_proben": "Testanzahl",
+        "beschreibung": ["Testbeschreibung"],
         "weiterfuehrende_dokumentation_titel": "Testdokutitel",
         "weiterfuehrende_dokumentation_url_oder_dateipfad": "Testdokupfad",
-        "zugriffsbeschraenkung": "restriktiv",
+        "externe_partner": "esterner Testpartner",
+        "tools_instrumente_oder_apparate": "Testtool",
+        "schlagworte": ["Testschlagwort 1, Testschlagwort 2"],
+        "id_loinc": ["12345-6"],
+        "id_mesh_begriff": ["D123"],
+        "methoden": ["Testmethode"],
+        "methodenbeschreibung": ["Testmethodenbeschreibung"],
+        "verwandte_publikation_titel": "testverwandtepublikation",
+        "verwandte_publikation_doi": "testverwandedoi",
+        "ressourcentyp_allgemein": "Bioproben",
+        "ressourcentyp_speziell": ["Infektionskrankheiten"],
+        "rechte": "Testrechte",
+        "vorhandene_anzahl_der_proben": "Testanzahl",
+        "raeumlicher_bezug": ["räumlicher Testbezug"],
+        "zeitlicher_bezug": ["2021-09 bis 2021-10"],
+        "thema": [],
+        "offizieller_titel_der_probensammlung": ["test_titel"],
+        "verantwortliche_fachabteilung": "C1",
+        "studienbezug": ["1234567"],
     }
 
 

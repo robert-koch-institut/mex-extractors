@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING
 
 from mex.common.extract import parse_csv
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.synopse.models.project import SynopseProject
@@ -18,7 +20,11 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from mex.common.models import AccessPlatformMapping
-    from mex.common.types import MergedOrganizationIdentifier
+    from mex.common.types import (
+        MergedContactPointIdentifier,
+        MergedOrganizationIdentifier,
+        MergedPersonIdentifier,
+    )
 
 
 def extract_variables() -> list[SynopseVariable]:
@@ -87,9 +93,9 @@ def extract_projects() -> list[SynopseProject]:
     )
 
 
-def extract_synopse_project_contributors(
+def extract_synopse_project_contributor_ids_by_query(
     synopse_projects: Iterable[SynopseProject],
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons for Synopse project contributors.
 
     Args:
@@ -98,47 +104,46 @@ def extract_synopse_project_contributors(
     Returns:
         List of LDAP persons
     """
-    ldap = LDAPConnector.get()
     seen = set()
-    ldap_persons = []
+    ldap_person_ids_by_query: dict[str, MergedPersonIdentifier] = {}
     for project in watch_progress(
-        synopse_projects, "extract_synopse_project_contributors"
+        synopse_projects, "extract_synopse_project_contributor_ids_by_query"
     ):
         names = project.beitragende
         if names is None or "nicht mehr im RKI" in names or names in seen:
             continue
         seen.add(names)
         for name in analyse_person_string(names):
-            persons = ldap.get_persons(
-                surname=name.surname, given_name=name.given_name, limit=2
-            ).items
-            if len(persons) == 1 and persons[0].objectGUID:
-                ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
-    return ldap_persons
+            if person_id := get_ldap_merged_person_id_by_query(
+                surname=name.surname, given_name=name.given_name
+            ):
+                ldap_person_ids_by_query[f"{name.surname}\n{name.given_name}"] = (
+                    person_id
+                )
+    return ldap_person_ids_by_query
 
 
 def extract_synopse_contact(
     access_platform_mapping: AccessPlatformMapping,
-) -> list[LDAPFunctionalAccount]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Extract LDAP persons for Synopse project contact.
 
     Args:
         access_platform_mapping: Synopse access platform default values
 
     Returns:
-        contact LDAP persons
+        merged contact point id by mail
     """
-    ldap = LDAPConnector.get()
     contact_list: list[str] = []
     if access_platform_mapping.contact[0].mappingRules[0].forValues:
         contact_list.extend(
             access_platform_mapping.contact[0].mappingRules[0].forValues
         )
-    return [
-        account
+    return {
+        mail: contact_id
         for mail in contact_list
-        for account in ldap.get_functional_accounts(mail=mail).items
-    ]
+        if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
+    }
 
 
 def extract_study_overviews() -> list[SynopseStudyOverview]:

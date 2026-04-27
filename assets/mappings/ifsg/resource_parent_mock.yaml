@@ -16,7 +16,7 @@ alternativeTitle:
 contact:
   - mappingRules:
       - forValues:
-          - FG99
+          - C1
         rule:
 description:
   - mappingRules:
@@ -104,5 +104,5 @@ title:
 unitInCharge:
   - mappingRules:
       - forValues:
-          - FG99
+          - C1
         rule:

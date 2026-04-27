@@ -1,15 +1,9 @@
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import (
-    transform_ldap_persons_with_query_to_extracted_persons,
-)
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -49,23 +43,10 @@ def international_projects_sources() -> list[InternationalProjectsSource]:
 @asset(group_name="international_projects")
 def international_projects_person_ids_by_query_str(
     international_projects_sources: list[InternationalProjectsSource],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, list[MergedPersonIdentifier]]:
+) -> dict[str, MergedPersonIdentifier]:
     """Transform LDAP persons to extracted persons and group their IDs by query."""
-    ldap_project_leaders = extract_international_projects_project_leaders(
+    return extract_international_projects_project_leaders(
         international_projects_sources
-    )
-
-    mex_authors = transform_ldap_persons_with_query_to_extracted_persons(
-        ldap_project_leaders,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_authors)
-    return get_merged_ids_by_query_string(
-        ldap_project_leaders, get_extracted_primary_source_id_by_name("ldap")
     )
 
 
@@ -93,9 +74,7 @@ def international_projects_partner_organization_ids_by_query_string(
 def international_projects_extracted_activities(
     context: AssetExecutionContext,
     international_projects_sources: list[InternationalProjectsSource],
-    international_projects_person_ids_by_query_str: dict[
-        str, list[MergedPersonIdentifier]
-    ],
+    international_projects_person_ids_by_query_str: dict[str, MergedPersonIdentifier],
     international_projects_funding_sources_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

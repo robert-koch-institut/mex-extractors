@@ -1,13 +1,9 @@
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_employee_ids
-from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
     MergedPersonIdentifier,
@@ -43,28 +39,16 @@ def blueant_sources() -> list[BlueAntSource]:
 @asset(group_name="blueant")
 def blueant_merged_person_id_by_employee_id(
     blueant_sources: list[BlueAntSource],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, list[MergedPersonIdentifier]]:
+) -> dict[str, MergedPersonIdentifier]:
     """Transform LDAP persons to mex-persons with stable target ID and group them by employee ID."""  # noqa: E501
-    ldap_project_leaders = extract_blueant_project_leaders(blueant_sources)
-    mex_project_leaders = transform_ldap_persons_to_extracted_persons(
-        ldap_project_leaders,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_project_leaders)
-    return get_merged_ids_by_employee_ids(
-        ldap_project_leaders, get_extracted_primary_source_id_by_name("ldap")
-    )
+    return extract_blueant_project_leaders(blueant_sources)
 
 
 @asset(group_name="blueant", metadata={"entity_type": "activity"})
 def blueant_extracted_activities(
     context: AssetExecutionContext,
     blueant_sources: list[BlueAntSource],
-    blueant_merged_person_id_by_employee_id: dict[str, list[MergedPersonIdentifier]],
+    blueant_merged_person_id_by_employee_id: dict[str, MergedPersonIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = Settings.get()

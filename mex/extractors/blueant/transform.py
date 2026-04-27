@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 def transform_blueant_sources_to_extracted_activities(
     blueant_sources: Iterable[BlueAntSource],
-    person_stable_target_ids_by_employee_id: dict[str, list[MergedPersonIdentifier]],
+    person_stable_target_ids_by_employee_id: dict[str, MergedPersonIdentifier],
     activity: ActivityMapping,
 ) -> list[ExtractedActivity]:
     """Transform Blue Ant sources to ExtractedActivities.
@@ -89,7 +89,7 @@ def transform_blueant_sources_to_extracted_activities(
         # get contact employee or fallback to unit
         contact: Sequence[AnyContactIdentifier]
         if ple_id := source.projectLeaderEmployeeId:
-            contact = person_stable_target_ids_by_employee_id[ple_id]
+            contact = [person_stable_target_ids_by_employee_id[ple_id]]
         if not contact and department_ids:
             contact = department_ids
 

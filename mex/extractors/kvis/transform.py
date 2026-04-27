@@ -5,11 +5,8 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
-    transform_ldap_person_to_extracted_person,
 )
 from mex.common.models import (
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -23,6 +20,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -36,37 +34,6 @@ from mex.extractors.wikidata.helpers import (
 
 if TYPE_CHECKING:
     from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
-
-
-def lookup_kvis_person_in_ldap_and_transform(
-    person_email: str,
-    units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> MergedPersonIdentifier | None:
-    """Lookup person in ldap, transform to ExtractedPerson, load, and return stable ID.
-
-    Args:
-        person_email: email of person,
-        units_by_identifier_in_primary_source: dict of primary sources by ID
-        extracted_organization_rki: RKI extracted organization
-
-    Returns:
-        MergedPersonIdentifier if matched or None if match fails
-    """
-    ldap = LDAPConnector.get()
-    try:
-        ldap_person = ldap.get_person(mail=person_email)
-        extracted_person = transform_ldap_person_to_extracted_person(
-            ldap_person,
-            get_extracted_primary_source_id_by_name("ldap"),
-            units_by_identifier_in_primary_source,
-            extracted_organization_rki,
-        )
-    except MExError:
-        return None
-    else:
-        load([extracted_person])
-        return extracted_person.stableTargetId
 
 
 def lookup_kvis_functional_account_in_ldap_and_transform(
@@ -96,10 +63,7 @@ def lookup_kvis_functional_account_in_ldap_and_transform(
         return extracted_contact_point.stableTargetId
 
 
-def transform_kvis_resource_to_extracted_resource(
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> ExtractedResource:
+def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
     """Transform the Resource mapping to an extracted resource. No reading from KVIS.
 
     Args:
@@ -113,10 +77,6 @@ def transform_kvis_resource_to_extracted_resource(
     mapping = ResourceMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "resource.yaml")
     )
-
-    units_by_identifier_in_primary_source = {
-        unit.identifierInPrimarySource: unit for unit in extracted_organizational_units
-    }
 
     contact = (
         [
@@ -133,16 +93,15 @@ def transform_kvis_resource_to_extracted_resource(
         if mapping.contributingUnit[0].mappingRules[0].forValues
         else None
     )
-    contributor = (
-        [
-            lookup_kvis_person_in_ldap_and_transform(
-                c, units_by_identifier_in_primary_source, extracted_organization_rki
-            )
-            for c in mapping.contributor[0].mappingRules[0].forValues
-        ]
-        if mapping.contributor[0].mappingRules[0].forValues
-        else []
-    )
+    contributor: list[MergedPersonIdentifier] = []
+    if mapping.contributor[0].mappingRules[0].forValues:
+        for c in mapping.contributor[0].mappingRules[0].forValues:
+            try:
+                if person_id := get_ldap_merged_person_id_by_query(mail=c):
+                    contributor.append(person_id)
+            except MExError:
+                continue
+
     external_partner = (
         [partner_id]
         if mapping.externalPartner[0].mappingRules[0].forValues

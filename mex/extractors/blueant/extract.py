@@ -1,16 +1,15 @@
 from typing import TYPE_CHECKING
 
-from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from mex.common.ldap.models import LDAPPerson
+    from mex.common.types import MergedPersonIdentifier
 
 
 def extract_blueant_sources() -> list[BlueAntSource]:
@@ -51,18 +50,17 @@ def extract_blueant_sources() -> list[BlueAntSource]:
 
 def extract_blueant_project_leaders(
     blueant_sources: Iterable[BlueAntSource],
-) -> list[LDAPPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons for Blue Ant project leaders.
 
     Args:
         blueant_sources: Blue Ant sources
 
     Returns:
-        List of LDAP persons
+        LDAP person ids by query
     """
-    ldap = LDAPConnector.get()
     seen = set()
-    persons = []
+    person_ids_by_query: dict[str, MergedPersonIdentifier] = {}
     for source in watch_progress(blueant_sources, "extract_blueant_project_leaders"):
         employee_id = source.projectLeaderEmployeeId
         if not employee_id:
@@ -70,11 +68,9 @@ def extract_blueant_project_leaders(
         if employee_id in seen:
             continue
         seen.add(employee_id)
-        try:
-            persons.append(ldap.get_person(employee_id=employee_id))
-        except MExError:
-            continue
-    return persons
+        if person_id := get_ldap_merged_person_id_by_query(employee_id=employee_id):
+            person_ids_by_query[employee_id] = person_id
+    return person_ids_by_query
 
 
 def remove_prefixes_from_name(name: str) -> str:

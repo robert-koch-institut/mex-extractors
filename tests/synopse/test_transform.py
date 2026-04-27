@@ -216,7 +216,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "contributingUnit": [
-            "cjna2jitPngp6yIV63cdi9",  # FG 99
+            "cjna2jitPngp6yIV63cdi9",  # C1
             "6rqNvZSApUHlz8GkkVP48",  # C1
         ],
         "description": [
@@ -271,7 +271,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         extracted_organization_rki,
         synopse_resource,
         MergedAccessPlatformIdentifier.generate(seed=236),
-        {"Jane Doe": [MergedPersonIdentifier.generate(seed=237)]},
+        {"Jane Doe": MergedPersonIdentifier.generate(seed=237)},
     )
     assert len(resources) == 1
     assert resources[0].model_dump(exclude_defaults=True) == expected_resource
@@ -287,9 +287,7 @@ def test_transform_synopse_projects_to_mex_activities(
     roland_resolved: ExtractedPerson,
 ) -> None:
     synopse_project = synopse_projects[0]
-    contributor_merged_ids_by_name = {
-        "Roland Resolved": [roland_resolved.stableTargetId]
-    }
+    contributor_merged_ids_by_name = {"Roland Resolved": roland_resolved.stableTargetId}
 
     assert synopse_project.projektende
     assert synopse_project.projektbeginn

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
@@ -14,9 +13,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.types import (
-        MergedOrganizationIdentifier,
-    )
+    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
     from mex.extractors.voxco.model import VoxcoVariable
 
 
@@ -25,7 +22,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_extracted_persons: list[ExtractedPerson],
+    voxco_extracted_persons: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:
@@ -44,9 +41,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
         dict extracted voxco resource by identifier in primary source
     """
     resource_dict = {}
-    mex_persons_stable_target_id_by_email = {
-        person.email[0]: person.stableTargetId for person in voxco_extracted_persons
-    }
+
     international_project_by_identifier_in_primary_source = {
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in international_projects_extracted_activities
@@ -64,7 +59,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
         else:
             alternative_title = None
         if contact_values := resource.contact[0].mappingRules[0].forValues:
-            contact = mex_persons_stable_target_id_by_email[contact_values[1]]
+            contact = voxco_extracted_persons[contact_values[1]]
         else:
             contact = None
         if description_top_level := resource.description:

@@ -34,7 +34,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             sheet_name="Probe1",
             thema=["https://mex.rki.de/item/theme-1"],
             tools_instrumente_oder_apparate="Testtool",
-            verantwortliche_fachabteilung="PARENT Dept.",
+            verantwortliche_fachabteilung="C1",
             verwandte_publikation_doi="testverwandedoi",
             verwandte_publikation_titel="testverwandtepublikation",
             vorhandene_anzahl_der_proben="Testanzahl",

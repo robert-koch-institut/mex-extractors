@@ -4,9 +4,8 @@ from typing import TYPE_CHECKING, Any
 
 from pandas import DataFrame, ExcelFile, Series
 
-from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.biospecimen.models.source import BiospecimenResource
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
@@ -16,36 +15,29 @@ from mex.extractors.wikidata.helpers import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from mex.common.ldap.models import LDAPPerson
-    from mex.common.types import MergedOrganizationIdentifier
+    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
 
 
 def extract_biospecimen_contacts_by_email(
     biospecimen_resource: Iterable[BiospecimenResource],
-) -> list[LDAPPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons for Biospecimen contacts.
 
     Args:
         biospecimen_resource: Biospecimen resources
 
     Returns:
-        List of LDAP persons
+        LDAP person ids by query
     """
-    ldap = LDAPConnector.get()
-    seen = set()
-    persons = []
+    person_ids_by_query: dict[str, MergedPersonIdentifier] = {}
     for resource in watch_progress(
         biospecimen_resource, "extract_biospecimen_contacts_by_email"
     ):
-        for kontakt in resource.kontakt:
-            if kontakt in seen:
-                continue
-            try:
-                persons.append(ldap.get_person(mail=kontakt))
-                seen.add(kontakt)
-            except MExError:
-                continue
-    return persons
+        for kontakt in set(resource.kontakt):
+            if person_id := get_ldap_merged_person_id_by_query(mail=kontakt):
+                person_ids_by_query[kontakt] = person_id
+
+    return person_ids_by_query
 
 
 def extract_biospecimen_organizations(

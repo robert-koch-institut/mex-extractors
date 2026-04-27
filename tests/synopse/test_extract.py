@@ -2,17 +2,17 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
     extract_study_overviews,
     extract_synopse_contact,
-    extract_synopse_project_contributors,
+    extract_synopse_project_contributor_ids_by_query,
     extract_variables,
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import AccessPlatformMapping
     from mex.extractors.synopse.models.project import SynopseProject
 
@@ -91,21 +91,26 @@ def test_extract_projects() -> None:
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_synopse_project_contributors(synopse_project: SynopseProject) -> None:
-    persons = extract_synopse_project_contributors([synopse_project, synopse_project])
-    assert len(persons) == 1
-    assert persons[0].person.displayName == "Resolved, Roland"
+def test_extract_synopse_project_contributor_ids_by_query(
+    synopse_project: SynopseProject,
+) -> None:
+    persons = extract_synopse_project_contributor_ids_by_query(
+        [synopse_project, synopse_project]
+    )
+    assert persons == {
+        "Resolved\nRoland": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_contact(
     synopse_access_platform: AccessPlatformMapping,
-    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     actor = extract_synopse_contact(synopse_access_platform)
 
-    assert len(actor) == 1
-    assert actor[0] == ldap_contact_point
+    assert actor == {
+        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+    }
 
 
 def test_extract_study_overviews() -> None:

@@ -54,9 +54,10 @@ def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     }
 
 
-def get_wikidata_extracted_organization_id_by_name(
+@lru_cache(maxsize=1024)
+def get_wikidata_extracted_organization_by_name(
     name: str,
-) -> MergedOrganizationIdentifier | None:
+) -> ExtractedOrganization | None:
     """Use helper function to look up an organization and return its stableTargetId.
 
     An organization searched by its Wikidata id on Wikidata and loaded into the
@@ -72,5 +73,24 @@ def get_wikidata_extracted_organization_id_by_name(
             wikidata_organization_ids_by_label[name]
         )
     ):
-        return extracted_organization.stableTargetId
+        return extracted_organization
     return None
+
+
+def get_wikidata_extracted_organization_id_by_name(
+    name: str,
+) -> MergedOrganizationIdentifier | None:
+    """Use helper function to look up an organization and return its stableTargetId.
+
+    An organization searched by its Wikidata id on Wikidata and loaded into the
+    configured sink. Also it's stable target id is returned.
+
+    Returns:
+        ExtractedOrganization stableTargetId if one matching organization is found.
+        None if multiple matches / no match is found
+    """
+    return (
+        org.stableTargetId
+        if (org := get_wikidata_extracted_organization_by_name(name))
+        else None
+    )

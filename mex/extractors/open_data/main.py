@@ -1,4 +1,4 @@
-from dagster import AssetExecutionContext, asset
+from dagster import asset
 
 from mex.common.cli import entrypoint
 from mex.common.ldap.connector import LDAPConnector
@@ -10,7 +10,6 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedDistribution,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
@@ -32,10 +31,10 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
+    get_or_transform_open_data_persons,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
-    transform_open_data_persons,
     transform_open_data_variable_groups,
     transform_open_data_variables,
 )
@@ -79,19 +78,13 @@ def open_data_organization_ids_by_name_str(
 @asset(group_name="open_data")
 def open_data_extracted_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_name_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons and load them to sinks."""
-    open_data_persons = transform_open_data_persons(
+    return get_or_transform_open_data_persons(
         open_data_creators_contributors,
-        extracted_organizational_units,
-        extracted_organization_rki,
         open_data_organization_ids_by_name_str,
     )
-    load(open_data_persons)
-    return open_data_persons
 
 
 @asset(group_name="open_data")
@@ -109,9 +102,8 @@ def open_data_extracted_contact_points() -> list[ExtractedContactPoint]:
     return contact_point
 
 
-@asset(group_name="open_data", metadata={"entity_type": "distribution"})
+@asset(group_name="open_data")
 def open_data_extracted_distributions(
-    context: AssetExecutionContext,
     open_data_parent_resources: list[OpenDataParentResource],
 ) -> list[ExtractedDistribution]:
     """Extract distributions for open data & transform and load them to sinks."""
@@ -125,16 +117,13 @@ def open_data_extracted_distributions(
     )
 
     load(mex_distributions)
-    context.add_output_metadata({"num_items": len(mex_distributions)})
     return mex_distributions
 
 
-@asset(group_name="open_data", metadata={"entity_type": "resource"})
-def open_data_parent_extracted_resources(  # noqa: PLR0913
-    context: AssetExecutionContext,
+@asset(group_name="open_data")
+def open_data_parent_extracted_resources(
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     open_data_extracted_distributions: list[ExtractedDistribution],
     extracted_organization_rki: ExtractedOrganization,
     open_data_extracted_contact_points: list[ExtractedContactPoint],
@@ -148,7 +137,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         open_data_parent_resources,
         open_data_extracted_persons,
-        extracted_organizational_units,
         open_data_extracted_distributions,
         resource_mapping,
         extracted_organization_rki,
@@ -156,7 +144,6 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     )
 
     load(mex_sources)
-    context.add_output_metadata({"num_items": len(mex_sources)})
     return mex_sources
 
 
