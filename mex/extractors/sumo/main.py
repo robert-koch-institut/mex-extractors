@@ -3,9 +3,6 @@ from typing import Any
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import (
-    transform_ldap_functional_accounts_to_extracted_contact_points,
-)
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -21,9 +18,6 @@ from mex.common.types import (
     MergedContactPointIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.sumo.extract import (
@@ -41,7 +35,6 @@ from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.sumo.transform import (
-    get_contact_merged_ids_by_emails,
     transform_feat_projection_variable_to_mex_variable,
     transform_feat_variable_to_mex_variable_group,
     transform_model_nokeda_variable_to_mex_variable_group,
@@ -81,7 +74,7 @@ def sumo_merged_contact_ids_by_email(
     sumo_extracted_resources_feat: dict[str, Any],
 ) -> dict[str, MergedContactPointIdentifier]:
     """Load contacts related to resources and return them by their e-mail addresses."""
-    ldap_contact_points_resources = extract_ldap_contact_points_by_emails(
+    return extract_ldap_contact_points_by_emails(
         [
             ResourceMapping.model_validate(r)
             for r in [
@@ -90,14 +83,6 @@ def sumo_merged_contact_ids_by_email(
             ]
         ]
     )
-    mex_actors_resources = (
-        transform_ldap_functional_accounts_to_extracted_contact_points(
-            ldap_contact_points_resources,
-            get_extracted_primary_source_id_by_name("ldap"),
-        )
-    )
-    load(mex_actors_resources)
-    return get_contact_merged_ids_by_emails(mex_actors_resources)
 
 
 @asset(group_name="sumo")

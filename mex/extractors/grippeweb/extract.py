@@ -1,16 +1,21 @@
 from typing import TYPE_CHECKING, Any
 
-from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
-from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import AccessPlatformMapping, ResourceMapping
-    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
+    from mex.common.types import (
+        MergedContactPointIdentifier,
+        MergedOrganizationIdentifier,
+        MergedPersonIdentifier,
+    )
 
 
 def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]]:
@@ -28,21 +33,21 @@ def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]
 
 def extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
-) -> list[LDAPFunctionalAccount]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Extract LDAP actors functional accounts from grippeweb resource mapping contacts.
 
     Args:
         grippeweb_resource_mappings: list of resources default value mapping models
 
     Returns:
-        list of LDAP actors
+       merged contact identifier by mail
     """
-    ldap = LDAPConnector.get()
-    return [
-        ldap.get_functional_account(mail=mail)
+    return {
+        mail: contact_id
         for mapping in grippeweb_resource_mappings
         for mail in (mapping.contact[0].mappingRules[0].forValues or [])
-    ]
+        if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
+    }
 
 
 def extract_grippeweb_ldap_person_ids_by_query(

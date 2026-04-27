@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedPersonIdentifier
+from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
@@ -23,9 +23,6 @@ from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from mex.common.ldap.models import (
-        LDAPFunctionalAccount,
-    )
     from mex.common.models import (
         AccessPlatformMapping,
         ResourceMapping,
@@ -110,12 +107,13 @@ def test_extract_cc2_feat_projection() -> None:
 def test_extract_ldap_contact_points_by_emails(
     sumo_resources_feat: ResourceMapping,
     sumo_resources_nokeda: ResourceMapping,
-    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     contact_points = extract_ldap_contact_points_by_emails(
         [sumo_resources_feat, sumo_resources_nokeda]
     )
-    assert contact_points == [ldap_contact_point]
+    assert contact_points == {
+        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap")

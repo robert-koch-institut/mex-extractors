@@ -4,9 +4,6 @@ from typing import Any
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import (
-    transform_ldap_functional_accounts_to_extracted_contact_points,
-)
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
@@ -35,12 +32,8 @@ from mex.extractors.grippeweb.transform import (
     transform_grippeweb_variable_to_extracted_variables,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.sumo.transform import get_contact_merged_ids_by_emails
 from mex.extractors.utils import load_yaml
 
 
@@ -88,17 +81,9 @@ def grippeweb_merged_contact_point_id_by_email(
     grippeweb_resource_mappings: list[dict[str, Any]],
 ) -> dict[str, MergedContactPointIdentifier]:
     """Extract ldap actors for grippeweb from ldap and transform them to contact points and load them to sinks."""  # noqa: E501
-    ldap_actors = extract_ldap_actors_for_functional_accounts(
+    return extract_ldap_actors_for_functional_accounts(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
-    mex_actors_resources = (
-        transform_ldap_functional_accounts_to_extracted_contact_points(
-            ldap_actors,
-            get_extracted_primary_source_id_by_name("ldap"),
-        )
-    )
-    load(mex_actors_resources)
-    return get_contact_merged_ids_by_emails(mex_actors_resources)
 
 
 @asset(group_name="grippeweb")

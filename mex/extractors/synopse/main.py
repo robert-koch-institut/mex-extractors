@@ -4,9 +4,6 @@ from typing import Any
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import (
-    transform_ldap_functional_accounts_to_extracted_contact_points,
-)
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
@@ -24,9 +21,6 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.synopse.extract import (
@@ -141,16 +135,7 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
         load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
 
-    synopse_contact = extract_synopse_contact(synopse_access_platform)
-    contact_points = transform_ldap_functional_accounts_to_extracted_contact_points(
-        synopse_contact, get_extracted_primary_source_id_by_name("ldap")
-    )
-    load(contact_points)
-
-    return {
-        contact_point.email[0].lower(): contact_point.stableTargetId
-        for contact_point in contact_points
-    }
+    return extract_synopse_contact(synopse_access_platform)
 
 
 @asset(group_name="synopse")

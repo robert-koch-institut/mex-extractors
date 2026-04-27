@@ -2,7 +2,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
+from mex.common.types import (
+    MergedContactPointIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_ldap_person_ids_by_query,
@@ -11,7 +15,6 @@ from mex.extractors.grippeweb.extract import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import AccessPlatformMapping, ResourceMapping
 
 
@@ -43,13 +46,14 @@ def test_extract_columns_by_table_and_column_name() -> None:
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
 def test_extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
-    ldap_contact_point: LDAPFunctionalAccount,
 ) -> None:
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         grippeweb_resource_mappings
     )
 
-    assert ldap_actors[0] == ldap_contact_point
+    assert ldap_actors == {
+        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+    }
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
