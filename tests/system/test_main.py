@@ -1,11 +1,17 @@
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import cast
 from unittest.mock import Mock, call, patch
 
+import pytest
+from dagster import AssetKey
+
 from mex.extractors.system.main import (
+    _delete_asset_data,
     system_clean_up_dagster_files,
     system_clean_up_dagster_runs,
+    system_clean_up_obsolete_assets,
     system_fetch_old_dagster_run_ids,
 )
 from tests.system.conftest import create_mock_dagster_run_records
@@ -137,3 +143,137 @@ def test_system_clean_up_dagster_runs_with_empty_list() -> None:
 
     mock_instance.delete_run.assert_not_called()  # delete_run was never called
     assert deleted_runs == []
+
+
+def test_system_clean_up_obsolete_assets(tmp_path: Path) -> None:
+    """Test that obsolete assets are deleted and protected assets are NOT deleted."""
+    current_assets = {
+        AssetKey(["asset_1"]),
+        AssetKey(["asset_2"]),  # not yet run and therefore not known to dagster
+    }
+
+    historical_assets = {
+        AssetKey(["asset_1"]),  # still active
+        AssetKey(["protected_asset"]),  # protected
+        AssetKey(["obsolete_asset"]),  # outdated -> the only one to delete
+    }
+
+    mock_definitions = Mock()
+    mock_asset_graph = Mock()
+    mock_asset_graph.get_all_asset_keys.return_value = current_assets
+    mock_definitions.resolve_asset_graph.return_value = mock_asset_graph
+
+    mock_instance = Mock()
+    mock_instance.all_asset_keys.return_value = historical_assets
+    mock_instance.root_directory = str(tmp_path)
+
+    with (
+        patch(
+            "mex.extractors.system.main.load_job_definitions",
+            return_value=mock_definitions,
+        ),
+        patch(
+            "mex.extractors.system.main.DagsterInstance.get",
+            return_value=mock_instance,
+        ),
+        patch("mex.extractors.system.main._delete_asset_data") as mock_delete,
+    ):
+        system_clean_up_obsolete_assets()
+
+    assert mock_delete.call_count == 1
+    assert mock_delete.call_args[0][1] == AssetKey(["obsolete_asset"])
+
+
+def test_system_clean_up_obsolete_assets_no_obsolete(tmp_path: Path) -> None:
+    """Test when there are no obsolete assets."""
+    current_assets = {
+        AssetKey(["asset_1"]),
+        AssetKey(["asset_2"]),
+    }
+
+    mock_definitions = Mock()
+    mock_asset_graph = Mock()
+    mock_asset_graph.get_all_asset_keys.return_value = current_assets
+    mock_definitions.resolve_asset_graph.return_value = mock_asset_graph
+
+    mock_instance = Mock()
+    mock_instance.all_asset_keys.return_value = current_assets  # historical == current
+    mock_instance.root_directory = str(tmp_path)
+
+    with (
+        patch(
+            "mex.extractors.system.main.load_job_definitions",
+            return_value=mock_definitions,
+        ),
+        patch(
+            "mex.extractors.system.main.DagsterInstance.get",
+            return_value=mock_instance,
+        ),
+        patch("mex.extractors.system.main._delete_asset_data") as mock_delete,
+    ):
+        system_clean_up_obsolete_assets()
+
+    # No deletions should occur
+    mock_delete.assert_not_called()
+
+
+def test_delete_asset_data_folder_and_metadata_success(tmp_path: Path) -> None:
+    """Test successful asset folder and metadata deletion."""
+    asset_key = AssetKey(["test_asset"])
+    storage_base = tmp_path
+
+    asset_path = storage_base / "test_asset"
+    asset_path.mkdir()
+
+    with patch("mex.extractors.system.main.subprocess.run") as mock_run:
+        _delete_asset_data(storage_base, asset_key)
+
+    assert not asset_path.exists()
+
+    mock_run.assert_called_once()
+    call_args = mock_run.call_args
+    assert call_args[0][0] == [
+        "dagster",
+        "asset",
+        "wipe",
+        '["test_asset"]',
+        "--noprompt",
+    ]
+
+
+def test_delete_asset_data_file_success(tmp_path: Path) -> None:
+    """Test successful asset file deletion."""
+    asset_key = AssetKey(["test_asset"])
+    storage_base = tmp_path
+
+    asset_file = storage_base / "test_asset"
+    asset_file.write_text("data")
+
+    with patch("mex.extractors.system.main.subprocess.run"):
+        _delete_asset_data(storage_base, asset_key)
+
+    assert not asset_file.exists()
+
+
+def test_delete_asset_data_error_no_path(tmp_path: Path) -> None:
+    """Test correct behavior if path does not exist."""
+    asset_key = AssetKey(["test_asset"])
+
+    with patch("mex.extractors.system.main.subprocess.run") as mock_run:
+        _delete_asset_data(tmp_path, asset_key)
+
+    mock_run.assert_called_once()
+
+
+def test_delete_asset_data_failure(tmp_path: Path) -> None:
+    """Test error handling when asset metadata deletion via subprocess fails."""
+    asset_key = AssetKey(["test_asset"])
+
+    with (
+        patch(
+            "mex.extractors.system.main.subprocess.run",
+            side_effect=subprocess.CalledProcessError(1, "cmd"),
+        ),
+        pytest.raises(RuntimeError),
+    ):
+        _delete_asset_data(tmp_path, asset_key)
