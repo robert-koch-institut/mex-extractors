@@ -978,7 +978,7 @@ wheels = [
 
 [[package]]
 name = "mex-extractors"
-version = "1.13.2"
+version = "1.14.0"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
