@@ -52,15 +52,19 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
         merged person id or None, if not exactly one result
     """
     connector = LDAPConnector.get()
-    ldap_person = connector.get_person(
-        display_name=display_name,
-        employee_id=employee_id,
-        given_name=given_name,
-        mail=mail,
-        object_guid=object_guid,
-        sam_account_name=sam_account_name,
-        surname=surname,
-    )
+    try:
+        ldap_person = connector.get_person(
+            display_name=display_name,
+            employee_id=employee_id,
+            given_name=given_name,
+            mail=mail,
+            object_guid=object_guid,
+            sam_account_name=sam_account_name,
+            surname=surname,
+        )
+    except EmptySearchResultError:
+        return None
+
     extracted_organizational_units = {
         unit.identifierInPrimarySource: unit
         for unit in get_extracted_organizational_units()
