@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- implement AssetCheck `not_exactly_x_items`
+- implement AssetCheck `x_percent_more_than`
+
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.14.1] - 2026-04-30
+
+### Added
+
+- added orcid to assets primary-sources.json
+
+## [1.14.0] - 2026-04-29
+
+### Added
+
+- system: clean up of outdated dagster results
 - implement AssetCheck `x_percent_less_than`
 
 ### Changes
@@ -19,13 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - confluence test data
+- fix cookiecutter permissions
 
 ### Security
 
