@@ -439,6 +439,69 @@ def test_check_x_items_more_passed_generalized(  # noqa: PLR0913
 @pytest.mark.parametrize(
     (
         "current_count",
+        "expected_value",
+        "passed",
+    ),
+    [
+        pytest.param(17, 17, True, id="exact_match_passes"),
+        pytest.param(16, 17, False, id="below_threshold_fails"),
+        pytest.param(18, 17, False, id="above_threshold_fails"),
+        pytest.param(0, 17, False, id="zero_fails"),
+        pytest.param(100, 17, False, id="large_difference_fails"),
+    ],
+)
+def test_check_not_exactly_x_items_generalized(
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    expected_value: int,
+    *,
+    passed: bool,
+) -> None:
+    """Test not_exactly_x_items connection rule."""
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_rule",
+        lambda *_, **__: {"value": expected_value},
+    )
+
+    class MockEvent:
+        def __init__(self, num_items: int) -> None:
+            self.asset_materialization = SimpleNamespace(
+                metadata={"num_items": SimpleNamespace(value=num_items)}
+            )
+
+    class MockInstance:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
+            return [MockEvent(current_count)]
+
+    class MockContext:
+        instance = MockInstance()
+
+    context = cast("AssetCheckExecutionContext", MockContext())
+    asset_key = AssetKey(["test_asset"])
+
+    if not passed:
+        with pytest.raises(ValueError, match="failed not_exactly_x_items check"):
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="test",
+                entity_type="test",
+                rule_name="not_exactly_x_items",
+            )
+    else:
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="test",
+            entity_type="test",
+            rule_name="not_exactly_x_items",
+        )
+        assert result is True
+
+
+@pytest.mark.parametrize(
+    (
+        "current_count",
         "historical_events",
         "rule_threshold",
         "time_frame_str",
