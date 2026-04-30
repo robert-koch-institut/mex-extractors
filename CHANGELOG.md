@@ -9,14 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- implement AssetCheck `x_percent_less_than`
 - implement AssetCheck `x_percent_more_than`
 
 ### Changes
-
-- publisher: code maintenance (typos, naming, unified db fetching)
-- datenkompass: updated mapping path in settings
-- update mex-common to 1.19.0
 
 ### Deprecated
 
@@ -24,7 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.14.0] - 2026-04-29
+
+### Added
+
+- system: clean up of outdated dagster results
+- implement AssetCheck `x_percent_less_than`
+
+### Changes
+
+- publisher: code maintenance (typos, naming, unified db fetching)
+- datenkompass: updated mapping path in settings
+- update mex-common to 1.19.0
+- update lock file (2026_04_23)
+
+### Fixed
+
 - confluence test data
+- fix cookiecutter permissions
 
 ### Security
 
