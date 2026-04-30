@@ -23,11 +23,12 @@ if TYPE_CHECKING:
     from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
-def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
-    """Extract, transform and load the organigram, then group unit IDs by synonym.
+@lru_cache(maxsize=1)
+def _cached_get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
+    """Extract, transform and load the organigram, then return units.
 
     Returns:
-        Lookup of organizational unit identifiers by synonym
+        extracted organizational units
     """
     rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
     if not rki_organization_id:
@@ -48,6 +49,11 @@ def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
     return extracted_organizational_units
 
 
+def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
+    """Return chached organizational units."""
+    return _cached_get_extracted_organizational_units()
+
+
 @lru_cache(maxsize=1)
 def _get_cached_unit_merged_ids_by_synonyms() -> dict[
     str, list[MergedOrganizationalUnitIdentifier]
@@ -57,7 +63,7 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
     Returns:
         Lookup of organizational unit identifiers by synonym
     """
-    extracted_organizational_units = get_extracted_organizational_units()
+    extracted_organizational_units = _cached_get_extracted_organizational_units()
     return get_unit_merged_ids_by_synonyms(extracted_organizational_units)
 
 
