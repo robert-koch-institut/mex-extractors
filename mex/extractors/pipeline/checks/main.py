@@ -189,7 +189,9 @@ def check_historical_rule(
         percent_threshold = (historic_count * threshold) / 100
         return current_number_of_extracted_items >= historic_count - percent_threshold
     if rule_name == "x_percent_more_than":
-        pass
+        # fail if current is more than historic by x percent
+        percent_threshold = (historic_count * threshold) / 100
+        return current_number_of_extracted_items <= historic_count + percent_threshold
 
     return True
 
