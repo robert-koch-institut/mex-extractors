@@ -14,14 +14,19 @@ class SeqRepoSource(BaseRawData):
     """Model class for Seq Repo Source."""
 
     project_coordinators: list[str] = Field(alias="project-coordinators")
+    basepair_count: int = Field(alias="basepair-count")
     customer_org_unit_id: str | None = Field(None, alias="customer-org-unit-id")
     sequencing_date: str | None = Field(None, alias="sequencing-date")
+    igs_id: str | None = Field(None, alias="igs-id")
     lims_sample_id: str = Field(alias="lims-sample-id")
     sequencing_platform: str | None = Field(None, alias="sequencing-platform")
     species: str | None = Field(None, alias="species")
+    pathogen_code: str | None = Field(None, alias="pathogen-code")
     project_name: str = Field(alias="project-name")
     customer_sample_name: str = Field(alias="customer-sample-name")
     project_id: str = Field(alias="project-id")
+    reads_count: int = Field(alias="reads-count")
+    system_feedback: str | None = Field(None, alias="system-feedback")
 
     def get_partners(self) -> Sequence[str | None]:
         """Return partners from extractor."""
@@ -41,4 +46,4 @@ class SeqRepoSource(BaseRawData):
 
     def get_identifier_in_primary_source(self) -> str | None:
         """Return identifier in primary source from extractor."""
-        return self.project_id
+        return self.igs_id or self.lims_sample_id

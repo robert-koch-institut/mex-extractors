@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
+from uuid import UUID
 
 import pytest
 import requests
@@ -12,11 +13,8 @@ from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator,
     extract_sources,
 )
-from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
-
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
@@ -25,6 +23,7 @@ def test_extract_sources() -> None:
     sources = extract_sources()
     expected = {
         "project_coordinators": ["test_person", "test_person"],
+        "basepair_count": 1,
         "customer_org_unit_id": "FG99",
         "sequencing_date": "2023-08-07",
         "lims_sample_id": "test-sample-id",
@@ -33,9 +32,10 @@ def test_extract_sources() -> None:
         "project_name": "FG99-ABC-123",
         "customer_sample_name": "test-customer-name-1",
         "project_id": "TEST-ID",
+        "reads_count": 2,
     }
     assert len(sources) == 4
-    assert sources[0].model_dump() == expected
+    assert sources[0].model_dump(exclude_defaults=True) == expected
 
 
 def test_extract_sources_fails_on_unexpected_number_of_files(
@@ -58,20 +58,73 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator(
-    seq_repo_sources: Iterable[SeqRepoSource],
-    ldap_frieda_fictitious: LDAPPerson,
-    ldap_roland_resolved: LDAPPerson,
+    seq_repo_sources: list[SeqRepoSource],
 ) -> None:
-    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
-    project_coordinators = extract_source_project_coordinator(seq_repo_sources_dict)
+    project_coordinators = extract_source_project_coordinator(seq_repo_sources)
 
     assert project_coordinators == [
         LDAPPersonWithQuery(
-            person=ldap_frieda_fictitious,
+            person=LDAPPerson(
+                objectGUID=UUID("00000000-0000-4000-8000-000000000003"),
+                sAMAccountName="FictitiousF",
+                mail=["fictitiousf@rki.de"],
+                employeeID="71",
+                givenName=["Frieda"],
+                sn="Fictitious",
+                company=None,
+                department="FG99",
+                departmentNumber=None,
+                displayName="Fictitious, Frieda, Dr.",
+                ou=[],
+            ),
             query="FictitiousF",
         ),
         LDAPPersonWithQuery(
-            person=ldap_roland_resolved,
+            person=LDAPPerson(
+                objectGUID=UUID("00000000-0000-4000-8000-000000000001"),
+                sAMAccountName="ResolvedR",
+                mail=["resolvedr@rki.de"],
+                employeeID="42",
+                givenName=["Roland"],
+                sn="Resolved",
+                company=None,
+                department="parent-unit",
+                departmentNumber="FG99",
+                displayName="Resolved, Roland",
+                ou=[],
+            ),
             query="ResolvedR",
+        ),
+        LDAPPersonWithQuery(
+            person=LDAPPerson(
+                objectGUID=UUID("00000000-0000-4000-8000-000000000002"),
+                sAMAccountName="FelicitasJ",
+                mail=["felicitasj@rki.de"],
+                employeeID="70",
+                givenName=["Juturna"],
+                sn="Felicitás",
+                company=None,
+                department="FG99",
+                departmentNumber=None,
+                displayName="Felicitás, Juturna",
+                ou=[],
+            ),
+            query="FelicitasJ",
+        ),
+        LDAPPersonWithQuery(
+            person=LDAPPerson(
+                objectGUID=UUID("00000000-0000-4000-8000-000000000003"),
+                sAMAccountName="FictitiousF",
+                mail=["fictitiousf@rki.de"],
+                employeeID="71",
+                givenName=["Frieda"],
+                sn="Fictitious",
+                company=None,
+                department="FG99",
+                departmentNumber=None,
+                displayName="Fictitious, Frieda, Dr.",
+                ou=[],
+            ),
+            query="NonExistent",
         ),
     ]
