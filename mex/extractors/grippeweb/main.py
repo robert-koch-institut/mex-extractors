@@ -173,7 +173,9 @@ def grippeweb_extracted_parent_resource(  # noqa: PLR0913
             grippeweb_merged_contact_point_id_by_email,
         )
     )
-    num_items = len([item for item in (parent_resource, child_resource) if item is not None])
+    num_items = len(
+        [item for item in (parent_resource, child_resource) if item is not None]
+    )
     load([parent_resource])
     load([child_resource])
     context.add_output_metadata({"num_items": num_items})
