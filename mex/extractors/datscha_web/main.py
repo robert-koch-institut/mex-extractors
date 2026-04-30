@@ -78,7 +78,7 @@ def datscha_web_extracted_activities(
     datscha_web_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform Datscha Web to extracted activities and load them to the sinks."""
-    mex_sources = transform_datscha_web_items_to_mex_activities(
+    mex_activities = transform_datscha_web_items_to_mex_activities(
         datscha_web_items,
         datscha_web_person_ids_by_query_str,
         datscha_web_organization_ids_by_query_str,
