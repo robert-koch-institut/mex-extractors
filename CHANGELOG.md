@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.14.1] - 2026-04-30
+
+### Added
+
+- added orcid to assets primary-sources.json
+
 ## [1.14.0] - 2026-04-29
 
 ### Added
