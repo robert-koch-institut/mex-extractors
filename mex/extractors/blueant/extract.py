@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from mex.common.exceptions import EmptySearchResultError
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
@@ -69,11 +68,8 @@ def extract_blueant_project_leaders(
         if employee_id in seen:
             continue
         seen.add(employee_id)
-        try:
-            if person_id := get_ldap_merged_person_id_by_query(employee_id=employee_id):
-                person_ids_by_query[employee_id] = person_id
-        except EmptySearchResultError:  # some employees have left
-            continue
+        if person_id := get_ldap_merged_person_id_by_query(employee_id=employee_id):
+            person_ids_by_query[employee_id] = person_id
     return person_ids_by_query
 
 
