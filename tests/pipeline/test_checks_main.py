@@ -439,6 +439,69 @@ def test_check_x_items_more_passed_generalized(  # noqa: PLR0913
 @pytest.mark.parametrize(
     (
         "current_count",
+        "expected_value",
+        "passed",
+    ),
+    [
+        pytest.param(17, 17, True, id="exact_match_passes"),
+        pytest.param(16, 17, False, id="below_threshold_fails"),
+        pytest.param(18, 17, False, id="above_threshold_fails"),
+        pytest.param(0, 17, False, id="zero_fails"),
+        pytest.param(100, 17, False, id="large_difference_fails"),
+    ],
+)
+def test_check_not_exactly_x_items_generalized(
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    expected_value: int,
+    *,
+    passed: bool,
+) -> None:
+    """Test not_exactly_x_items connection rule."""
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_rule",
+        lambda *_, **__: {"value": expected_value},
+    )
+
+    class MockEvent:
+        def __init__(self, num_items: int) -> None:
+            self.asset_materialization = SimpleNamespace(
+                metadata={"num_items": SimpleNamespace(value=num_items)}
+            )
+
+    class MockInstance:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
+            return [MockEvent(current_count)]
+
+    class MockContext:
+        instance = MockInstance()
+
+    context = cast("AssetCheckExecutionContext", MockContext())
+    asset_key = AssetKey(["test_asset"])
+
+    if not passed:
+        with pytest.raises(ValueError, match="failed not_exactly_x_items check"):
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="test",
+                entity_type="test",
+                rule_name="not_exactly_x_items",
+            )
+    else:
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="test",
+            entity_type="test",
+            rule_name="not_exactly_x_items",
+        )
+        assert result is True
+
+
+@pytest.mark.parametrize(
+    (
+        "current_count",
         "historical_events",
         "rule_threshold",
         "time_frame_str",
@@ -507,4 +570,78 @@ def test_check_x_percent_less_than_generalized(  # noqa: PLR0913
         time_frame_str=time_frame_str,
         passed=passed,
         rule_name_for_match="x_percent_less_than",
+    )
+
+
+@pytest.mark.parametrize(
+    (
+        "current_count",
+        "historical_events",
+        "rule_threshold",
+        "time_frame_str",
+        "passed",
+    ),
+    [
+        pytest.param(
+            109,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            True,
+            id="passes_within_percent_threshold",
+        ),
+        pytest.param(
+            111,
+            {datetime(2025, 7, 22, 12, 0, tzinfo=UTC): 100},
+            10,
+            "7d",
+            False,
+            id="fails_exceeds_percent_threshold",
+        ),
+        pytest.param(
+            104,
+            {
+                datetime(2025, 7, 10, 12, 0, tzinfo=UTC): 120,
+                datetime(2025, 7, 25, 12, 0, tzinfo=UTC): 100,
+            },
+            5,
+            "20d",
+            True,
+            id="passes_with_multiple_events",
+        ),
+        pytest.param(
+            210,
+            {datetime(2023, 6, 15, 12, 0, tzinfo=UTC): 200},
+            5,
+            "7d",
+            True,
+            id="passes_old_history_only",
+        ),
+        pytest.param(
+            50,
+            {},
+            10,
+            "30d",
+            True,
+            id="passes_no_historical_events",
+        ),
+    ],
+)
+def test_check_x_percent_more_than_generalized(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    current_count: int,
+    historical_events: dict[datetime, int],
+    rule_threshold: int,
+    time_frame_str: str,
+    *,
+    passed: bool,
+) -> None:
+    run_item_count_test(
+        monkeypatch,
+        current_count=current_count,
+        historical_events=historical_events,
+        rule_threshold=rule_threshold,
+        time_frame_str=time_frame_str,
+        passed=passed,
+        rule_name_for_match="x_percent_more_than",
     )
