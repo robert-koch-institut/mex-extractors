@@ -50,7 +50,7 @@ def _cached_get_extracted_organizational_units() -> list[ExtractedOrganizational
 
 
 def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
-    """Return chached organizational units."""
+    """Return cached organizational units."""
     return _cached_get_extracted_organizational_units()
 
 

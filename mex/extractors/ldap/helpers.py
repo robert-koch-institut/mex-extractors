@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     )
 
 
+@lru_cache(maxsize=1024)
 def get_ldap_extracted_person_by_query(  # noqa: PLR0913
     display_name: str = "*",
     employee_id: str = "*",
@@ -92,7 +93,6 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
     return extracted_person
 
 
-@lru_cache(maxsize=1024)
 def get_ldap_merged_person_id_by_query(  # noqa: PLR0913
     display_name: str = "*",
     employee_id: str = "*",
