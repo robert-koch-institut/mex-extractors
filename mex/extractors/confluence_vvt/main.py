@@ -88,9 +88,8 @@ def confluence_vvt_merged_person_ids_by_query_str(
     )
 
 
-@asset(group_name="confluence_vvt", metadata={"entity_type": "activity"})
-def extracted_confluence_vvt_activities(
-    context: AssetExecutionContext,
+@asset(group_name="confluence_vvt"", metadata={"entity_type": "activity"})
+def confluence_vvt_extracted_activities(
     confluence_vvt_pages: list[ConfluenceVvtPage],
     confluence_vvt_merged_person_ids_by_query_str: dict[
         str, list[MergedPersonIdentifier]
