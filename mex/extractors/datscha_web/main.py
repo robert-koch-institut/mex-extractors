@@ -83,10 +83,10 @@ def datscha_web_extracted_activities(
         datscha_web_person_ids_by_query_str,
         datscha_web_organization_ids_by_query_str,
     )
-    num_items = len(mex_sources)
-    load(mex_sources)
+    num_items = len(mex_activities)
+    load(mex_activities)
     context.add_output_metadata({"num_items": num_items})
-    return mex_sources
+    return mex_activities
 
 
 @entrypoint(Settings)
