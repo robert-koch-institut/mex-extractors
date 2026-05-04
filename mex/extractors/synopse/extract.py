@@ -95,32 +95,35 @@ def extract_projects() -> list[SynopseProject]:
 
 def extract_synopse_project_contributor_ids_by_query(
     synopse_projects: Iterable[SynopseProject],
-) -> dict[str, MergedPersonIdentifier]:
-    """Extract LDAP persons for Synopse project contributors.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Extract Merged persons for Synopse project contributors.
 
     Args:
         synopse_projects: Synopse projects
 
     Returns:
-        List of LDAP persons
+        List of Merged persons
     """
     seen = set()
-    ldap_person_ids_by_query: dict[str, MergedPersonIdentifier] = {}
+    merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}
     for project in watch_progress(
         synopse_projects, "extract_synopse_project_contributor_ids_by_query"
     ):
         names = project.beitragende
-        if names is None or "nicht mehr im RKI" in names or names in seen:
+        if names is None or names in seen:
             continue
         seen.add(names)
-        for name in analyse_person_string(names):
-            if person_id := get_ldap_merged_person_id_by_query(
-                surname=name.surname, given_name=name.given_name
-            ):
-                ldap_person_ids_by_query[f"{name.surname}\n{name.given_name}"] = (
-                    person_id
+        collected_ids = [
+            person_id
+            for name in analyse_person_string(names)
+            if (
+                person_id := get_ldap_merged_person_id_by_query(
+                    surname=name.surname, given_name=name.given_name
                 )
-    return ldap_person_ids_by_query
+            )
+        ]
+        merged_person_ids_by_query[names] = collected_ids
+    return merged_person_ids_by_query
 
 
 def extract_synopse_contact(

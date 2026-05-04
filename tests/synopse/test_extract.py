@@ -98,7 +98,7 @@ def test_extract_synopse_project_contributor_ids_by_query(
         [synopse_project, synopse_project]
     )
     assert persons == {
-        "Resolved\nRoland": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
+        "Roland Resolved": [MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")]
     }
 
 

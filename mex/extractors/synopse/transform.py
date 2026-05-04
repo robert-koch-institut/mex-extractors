@@ -323,7 +323,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    synopse_merged_person_ids_by_str: dict[str, MergedPersonIdentifier],
+    synopse_merged_person_ids_by_str: dict[str, list[MergedPersonIdentifier]],
 ) -> list[ExtractedResource]:
     """Transform Synopse Studies to MEx resources.
 
@@ -408,7 +408,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             ]
         contributor: list[MergedPersonIdentifier] = []
         if project.beitragende in synopse_merged_person_ids_by_str:
-            contributor.append(synopse_merged_person_ids_by_str[project.beitragende])
+            contributor = synopse_merged_person_ids_by_str[project.beitragende]
         description_by_study_id[study.studien_id] = study.beschreibung
         synopse_variables = synopse_variables_by_study_id.get(int(study.studien_id))
         keywords_plain = []
@@ -527,7 +527,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
 
 def transform_synopse_projects_to_mex_activities(
     synopse_projects: Iterable[SynopseProject],
-    contributor_merged_ids_by_name: dict[str, MergedPersonIdentifier],
+    contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -596,7 +596,7 @@ def transform_synopse_projects_to_mex_activities(
 
 def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     synopse_project: SynopseProject,
-    contributor_merged_ids_by_name: dict[str, MergedPersonIdentifier],
+    contributor_merged_ids_by_name: dict[str, list[MergedPersonIdentifier]],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -694,10 +694,9 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         funder_or_commissioner = []
     involved_person = []
     if synopse_project.beitragende:
-        involved_person = [
-            contributor_merged_ids_by_name[name]
-            for name in synopse_project.beitragende.split(" ,")
-        ] or []
+        involved_person = (
+            contributor_merged_ids_by_name.get(synopse_project.beitragende) or []
+        )
     theme = (
         synopse_activity.theme[0].mappingRules[0].setValues
         if synopse_project.studien_id

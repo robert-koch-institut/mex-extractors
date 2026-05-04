@@ -57,9 +57,9 @@ def synopse_projects() -> list[SynopseProject]:
 
 
 @asset(group_name="synopse")
-def synopse_ldap_person_ids(
+def synopse_merged_person_ids_by_query_str(
     synopse_projects: list[SynopseProject],
-) -> dict[str, MergedPersonIdentifier]:
+) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract project contributors from Synopse."""
     return extract_synopse_project_contributor_ids_by_query(synopse_projects)
 
@@ -170,7 +170,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
-    synopse_ldap_person_ids: dict[str, MergedPersonIdentifier],
+    synopse_merged_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedResource]:
     """Get lookup from synopse_id to extracted resource identifier in primary source.
 
@@ -184,7 +184,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
         synopse_access_platform_id,
-        synopse_ldap_person_ids,
+        synopse_merged_person_ids_by_query_str,
     )
     load(transformed_study_data_resources)
     extracted_resource = transform_overviews_to_resource_lookup(
@@ -206,7 +206,7 @@ def synopse_activity() -> dict[str, Any]:
 def synopse_extracted_activities(
     context: AssetExecutionContext,
     synopse_projects: list[SynopseProject],
-    synopse_ldap_person_ids: dict[str, MergedPersonIdentifier],
+    synopse_merged_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -216,7 +216,7 @@ def synopse_extracted_activities(
     non_child_activities, child_activities = (
         transform_synopse_projects_to_mex_activities(
             synopse_projects,
-            synopse_ldap_person_ids,
+            synopse_merged_person_ids_by_query_str,
             ActivityMapping.model_validate(synopse_activity),
             synopse_merged_organization_ids_by_query_string,
         )
