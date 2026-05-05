@@ -1,7 +1,7 @@
 import json
 import os
 from typing import TYPE_CHECKING, Any
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
@@ -15,8 +15,6 @@ from mex.common.ldap.transform import (
 )
 from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.transform import MExEncoder, normalize
-from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.extractors.organigram import helpers
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -42,7 +40,7 @@ def ldap_roland_resolved() -> LDAPPerson:
         displayName="Resolved, Roland",
         objectGUID=UUID(int=1, version=4),
         department="parent-unit",
-        departmentNumber="C1",
+        departmentNumber="FG99",
         mail=["resolvedr@rki.de"],
     )
 
@@ -72,7 +70,7 @@ def ldap_juturna_felicitas() -> LDAPPerson:
         givenName=["Juturna"],
         displayName="Felicitás, Juturna",
         objectGUID=UUID(int=2, version=4),
-        department="C1",
+        department="FG99",
         mail=["felicitasj@rki.de"],
     )
 
@@ -102,7 +100,7 @@ def ldap_frieda_fictitious() -> LDAPPerson:
         givenName=["Frieda"],
         displayName="Fictitious, Frieda, Dr.",
         objectGUID=UUID(int=3, version=4),
-        department="C1",
+        department="FG99",
         mail=["fictitiousf@rki.de"],
     )
 
@@ -194,13 +192,6 @@ def mocked_ldap(  # noqa: PLR0913
             lambda *a, **kw: person_search(*a, **kw).items[0],
         )
 
-        # Create a mock organizational unit identifier
-        mock_unit_id = MergedOrganizationalUnitIdentifier.generate(seed=1234599)
-        # Mock get_extracted_unit_by_synonyms to return our mock unit
-        mocked_get_unit = Mock(return_value={"C1": [mock_unit_id]})
-        monkeypatch.setattr(
-            helpers, "_get_cached_unit_merged_ids_by_synonyms", mocked_get_unit
-        )
     elif request.param == "ldap_mock_server":
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")

@@ -25,7 +25,7 @@ alternativeTitle:
 contact:
   - mappingRules:
       - forValues:
-          - "C1"
+          - "FG99"
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -360,5 +360,5 @@ title:
 unitInCharge:
   - mappingRules:
       - forValues:
-          - "C1"
+          - "FG99"
         rule:

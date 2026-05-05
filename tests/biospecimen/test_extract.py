@@ -64,7 +64,7 @@ def test_extract_biospecimen_resources() -> None:
         "zeitlicher_bezug": ["2021-09 bis 2021-10"],
         "thema": [],
         "offizieller_titel_der_probensammlung": ["test_titel"],
-        "verantwortliche_fachabteilung": "C1",
+        "verantwortliche_fachabteilung": "PARENT Dept.",
         "studienbezug": ["1234567"],
     }
 

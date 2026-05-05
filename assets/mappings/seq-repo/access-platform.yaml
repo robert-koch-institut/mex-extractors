@@ -7,7 +7,7 @@ alternativeTitle:
 contact:
   - mappingRules:
       - forValues:
-          - C1
+          - fg99
         rule:
 description:
   - mappingRules:
@@ -37,5 +37,5 @@ title:
 unitInCharge:
   - mappingRules:
       - forValues:
-          - C1
+          - fg99
         rule:

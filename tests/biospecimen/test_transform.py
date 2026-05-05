@@ -110,7 +110,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "contact": ["eXA2Qj5pKmI7HXIgcVqCfz"],
         "theme": ["https://mex.rki.de/item/theme-36"],
         "title": [{"value": "test_titel"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
+        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
         "alternativeTitle": [{"value": "alternativer Testitel"}],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"

@@ -16,7 +16,7 @@ alternativeTitle:
 contact:
   - mappingRules:
       - forValues:
-          - C1
+          - FG99
         rule:
 documentation:
   - fieldInPrimarySource:
@@ -264,5 +264,5 @@ title:
 unitInCharge:
   - mappingRules:
       - forValues:
-          - C1
+          - FG99
         rule:
