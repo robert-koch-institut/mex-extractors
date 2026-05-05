@@ -57,11 +57,17 @@ def test_filter_merged_resources_by_unit(
 
     # 4 items before filtering. One to be filtered out because wrong unit
     assert len(mocked_resources_by_primary_source["relevant primary source"]) == 4
-
-    assert len(result["C1"]) == 1
-    assert len(result["C1"]["relevant primary source"]) == 1
+    assert len(result["PRNT"]) == 1
+    assert len(result["FG 99"]) == 1
+    assert len(result["PRNT"]["relevant primary source"]) == 1
+    assert len(result["FG 99"]["relevant primary source"]) == 2
     assert (
-        result["C1"]["relevant primary source"][0].identifier == "IdentifierC1Resource"
+        result["PRNT"]["relevant primary source"][0].identifier
+        == "IdentifierC1Resource"
+    )
+    assert (
+        result["FG 99"]["relevant primary source"][0].identifier
+        == "IdentifierFG99Resource"
     )
 
 
@@ -72,9 +78,9 @@ def test_find_descendant_units(
         unit.identifier: unit for unit in mocked_merged_organizational_units
     }
 
-    result = find_descendant_units(mocked_units_by_ids, "C1")
+    result = find_descendant_units(mocked_units_by_ids, "PRNT")
 
-    assert result == ["IdentifierUnitC1"]
+    assert result == ["IdentifierUnitC1", "IdentifierUnitPRNT"]
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
