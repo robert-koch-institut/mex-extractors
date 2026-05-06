@@ -90,7 +90,7 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.anonymizationPseudonymization[0].mappingRules[0].setValues
         )
         contact = grippeweb_merged_contact_point_id_by_email[
-            resource.contact[0].mappingRules[0].forValues[0].lower()  # type: ignore[index]
+            resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         contributing_unit = get_unit_merged_id_by_synonym(
             resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
@@ -98,11 +98,7 @@ def transform_grippeweb_resource_mappings_to_dict(
         contributor = [
             person_id
             for name in (resource.contributor[0].mappingRules[0].forValues or [])
-            if (
-                person_id := grippeweb_extracted_persons.get(
-                    f"{name.split(' ')[1]}, {name.split(' ')[0]}"
-                )
-            )
+            if (person_id := grippeweb_extracted_persons.get(name))
         ]
         created = resource.created[0].mappingRules[0].setValues
         description = resource.description[0].mappingRules[0].setValues
