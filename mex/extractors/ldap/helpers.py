@@ -1,14 +1,16 @@
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from mex.common.exceptions import EmptySearchResultError, MExError
+from mex.common.exceptions import (
+    EmptySearchResultError,
+    FoundMoreThanOneError,
+)
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_to_extracted_person,
 )
 from mex.extractors.organigram.helpers import (
-    _get_cached_unit_merged_ids_by_synonyms,
     get_extracted_organizational_units,
 )
 from mex.extractors.primary_source.helpers import (
@@ -23,7 +25,6 @@ if TYPE_CHECKING:
     from mex.common.models import ExtractedPerson
     from mex.common.types import (
         MergedContactPointIdentifier,
-        MergedOrganizationalUnitIdentifier,
         MergedPersonIdentifier,
     )
 
@@ -63,7 +64,7 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
             sam_account_name=sam_account_name,
             surname=surname,
         )
-    except EmptySearchResultError:
+    except EmptySearchResultError, FoundMoreThanOneError:
         return None
 
     extracted_organizational_units = {
@@ -74,15 +75,7 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
     if not rki_organization:
         msg = "RKI wikidata organization not found"
         raise EmptySearchResultError(msg)
-    unit_merged_ids_by_synonym = _get_cached_unit_merged_ids_by_synonyms()
-    person_unit_ids: list[MergedOrganizationalUnitIdentifier] = []
-    for unit in [ldap_person.department, ldap_person.departmentNumber]:
-        if not unit:
-            continue
-        if unit not in unit_merged_ids_by_synonym:
-            msg = f"Unit {unit} not found found in organigram."
-            raise MExError(msg)
-        person_unit_ids.extend(unit_merged_ids_by_synonym[unit])
+
     extracted_person = transform_ldap_person_to_extracted_person(
         ldap_person,
         get_extracted_primary_source_id_by_name("ldap"),
