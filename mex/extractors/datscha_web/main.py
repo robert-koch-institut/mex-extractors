@@ -1,14 +1,8 @@
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import (
-    transform_ldap_persons_with_query_to_extracted_persons,
-)
 from mex.common.models import (
     ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
     MergedOrganizationIdentifier,
@@ -17,7 +11,7 @@ from mex.common.types import (
 from mex.extractors.datscha_web.extract import (
     extract_datscha_web_items,
     extract_datscha_web_organizations,
-    extract_datscha_web_source_contacts,
+    extract_datscha_web_source_contact_ids_by_query,
 )
 from mex.extractors.datscha_web.models.item import DatschaWebItem
 from mex.extractors.datscha_web.transform import (
@@ -45,21 +39,9 @@ def datscha_web_items() -> list[DatschaWebItem]:
 @asset(group_name="datscha_web")
 def datscha_web_person_ids_by_query_str(
     datscha_web_items: list[DatschaWebItem],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract Datscha Web contact persons from LDAP and return them by query string."""
-    ldap_source_contacts = extract_datscha_web_source_contacts(datscha_web_items)
-    ldap_primary_source_id = get_extracted_primary_source_id_by_name("ldap")
-    mex_source_contacts = transform_ldap_persons_with_query_to_extracted_persons(
-        ldap_source_contacts,
-        ldap_primary_source_id,
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_source_contacts)
-
-    return get_merged_ids_by_query_string(ldap_source_contacts, ldap_primary_source_id)
+    return extract_datscha_web_source_contact_ids_by_query(datscha_web_items)
 
 
 @asset(group_name="datscha_web")
