@@ -122,19 +122,46 @@ def test_get_historical_events(
     assert sorted(result.values(), reverse=True) == expected_values
 
 
-def test_get_latest_num_items() -> None:
-    events = [
-        DummyEventLogRecord(
-            timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
-            metadata={"num_items": SimpleNamespace(value=132)},
+@pytest.mark.parametrize(
+    ("events", "rule_name", "expected"),
+    [
+        (
+            [
+                DummyEventLogRecord(
+                    timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+                    metadata={"num_items": SimpleNamespace(value=132)},
+                ),
+                DummyEventLogRecord(
+                    timestamp=datetime(2025, 7, 1, 12, 0, tzinfo=UTC).timestamp(),
+                    metadata={"num_items": SimpleNamespace(value=120)},
+                ),
+            ],
+            "x_items_more_than",
+            132,
         ),
-        DummyEventLogRecord(
-            timestamp=datetime(2025, 7, 1, 12, 0, tzinfo=UTC).timestamp(),
-            metadata={"num_items": SimpleNamespace(value=120)},
+        (
+            [
+                DummyEventLogRecord(
+                    timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+                    metadata={
+                        "outbound_connections": SimpleNamespace(
+                            value={"id-a": 4, "id-b": 2}
+                        )
+                    },
+                ),
+            ],
+            "less_than_x_outbound",
+            {"id-a": 4, "id-b": 2},
         ),
-    ]
-
-    assert get_latest_num_items(cast("list[EventLogRecord]", events)) == 132
+    ],
+)
+def test_get_latest_num_items(
+    events: list[Any], rule_name: str, expected: int | dict[str, int]
+) -> None:
+    assert (
+        get_latest_num_items(cast("list[EventLogRecord]", events), rule_name=rule_name)
+        == expected
+    )
 
 
 @pytest.mark.parametrize(
@@ -158,7 +185,9 @@ def test_get_latest_num_items() -> None:
 )
 def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
     with pytest.raises(ValueError, match=LATEST_NUM_ITEMS_ERROR):
-        get_latest_num_items(cast("list[EventLogRecord]", events))
+        get_latest_num_items(
+            cast("list[EventLogRecord]", events), rule_name="x_items_more_than"
+        )
 
 
 @pytest.mark.parametrize(

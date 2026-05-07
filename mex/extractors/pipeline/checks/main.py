@@ -84,7 +84,9 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
     return result
 
 
-def get_latest_num_items(events: Sequence[EventLogRecord]) -> int | None:
+def get_latest_num_items(
+    events: Sequence[EventLogRecord], rule_name: str
+) -> int | dict[str, int] | None:
     """Get latest num_items metadata from materialization events."""
     if not events:
         return None
@@ -93,7 +95,11 @@ def get_latest_num_items(events: Sequence[EventLogRecord]) -> int | None:
     if latest_materialization is None:
         return None
 
-    num_items_metadata = latest_materialization.metadata.get("num_items")
+    if rule_name == "less_than_x_outbound":
+        num_items_metadata = latest_materialization.metadata.get("outbound_connections")
+    else:
+        num_items_metadata = latest_materialization.metadata.get("num_items")
+
     if num_items_metadata is None:
         return None
 
@@ -102,6 +108,16 @@ def get_latest_num_items(events: Sequence[EventLogRecord]) -> int | None:
 
     if num_items_metadata.value is None:
         raise ValueError(LATEST_NUM_ITEMS_ERROR)
+
+    if rule_name == "less_than_x_outbound":
+        outbound_connections = num_items_metadata.value
+        if not isinstance(outbound_connections, dict):
+            raise ValueError(LATEST_NUM_ITEMS_ERROR)
+
+        return {
+            identifier: int(str(count))
+            for identifier, count in outbound_connections.items()
+        }
 
     return int(str(num_items_metadata.value))
 
@@ -136,7 +152,7 @@ def get_historic_count(
 
 def check_static_rule(
     rule_name: str,
-    current_number_of_extracted_items: int,  # noqa: ARG001
+    current_number_of_extracted_items: int | list[int] | dict[str, int],
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
@@ -148,14 +164,17 @@ def check_static_rule(
 
     Returns False if check fails, True if check passes.
     """
-    threshold = rule["value"] or 0  # noqa: F841
+    threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
         pass
     if rule_name == "less_than_x_inbound":
         pass
     if rule_name == "less_than_x_outbound":
-        pass
+        return all(
+            count < threshold
+            for count in current_number_of_extracted_items.values()  # type: ignore [union-attr]
+        )
 
     return True
 
@@ -230,7 +249,7 @@ def check_item_count_rule(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
         )
     )
-    current_number_of_extracted_items = get_latest_num_items(events)
+    current_number_of_extracted_items = get_latest_num_items(events, rule_name)
     if current_number_of_extracted_items is None:
         return True
 
@@ -259,7 +278,7 @@ def check_item_count_rule(
 
     if not check_historical_rule(
         rule_name,
-        current_number_of_extracted_items,
+        current_number_of_extracted_items,  # type: ignore [arg-type]
         historic_count,
         rule,
     ):
