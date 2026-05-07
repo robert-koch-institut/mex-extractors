@@ -152,7 +152,7 @@ def get_historic_count(
 
 def check_static_rule(
     rule_name: str,
-    current_number_of_extracted_items: int | list[int] | dict[str, int],
+    current_number_of_extracted_items: int | dict[str, int],
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
