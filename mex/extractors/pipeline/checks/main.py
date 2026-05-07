@@ -167,7 +167,7 @@ def check_static_rule(
     threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
-        pass
+        return current_number_of_extracted_items == threshold
     if rule_name == "less_than_x_inbound":
         pass
     if rule_name == "less_than_x_outbound":
