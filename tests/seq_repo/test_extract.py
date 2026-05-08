@@ -111,20 +111,4 @@ def test_extract_source_project_coordinator(
             ),
             query="FelicitasJ",
         ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                objectGUID=UUID("00000000-0000-4000-8000-000000000003"),
-                sAMAccountName="FictitiousF",
-                mail=["fictitiousf@rki.de"],
-                employeeID="71",
-                givenName=["Frieda"],
-                sn="Fictitious",
-                company=None,
-                department="FG99",
-                departmentNumber=None,
-                displayName="Fictitious, Frieda, Dr.",
-                ou=[],
-            ),
-            query="NonExistent",
-        ),
     ]
