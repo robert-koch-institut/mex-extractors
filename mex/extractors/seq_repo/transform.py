@@ -76,7 +76,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     return unique_activities
 
 
-def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
+def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
@@ -150,13 +150,9 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         ]
         modified = None
         created = None
-        temporal = None
         if sequencing_dates:
             modified = max(sequencing_dates)
             created = min(sequencing_dates)
-            if len(sequencing_dates) > 2:  # noqa: PLR2004
-                dates = ", ".join(sequencing_dates[1:-1])
-                temporal = f"Additional sequencing date(s): {dates}"
 
         activity = seq_repo_activities.get(source.project_id)
 
@@ -176,14 +172,16 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             keyword.append(Text(value=source.species))
         if source.pathogen_code:
             keyword.append(Text(value=source.pathogen_code.removesuffix("P")))
-        quality_information = (
-            [Text(value=source.system_feedback, language="en")]
-            if source.system_feedback
-            else []
-        )
-        size_of_data_basis = (
-            f"Basepairs: {source.basepair_count}, Reads: {source.reads_count}"
-        )
+        if source.sequencing_platform:
+            keyword.append(Text(value=source.sequencing_platform))
+        quality_information = [
+            Text(value=f"Basepairs: {source.basepair_count}", language="en"),
+            Text(value=f"Reads: {source.reads_count}", language="en"),
+        ]
+        if source.system_feedback:
+            quality_information.append(
+                Text(value=source.system_feedback, language="en")
+            )
         title = f"LIMS Sample ID {source.lims_sample_id} ({source.species})"
         extracted_resource = ExtractedResource(
             accessPlatform=mex_access_platform.stableTargetId,
@@ -196,7 +194,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=identifier_in_primary_source,
-            instrumentToolOrApparatus=source.sequencing_platform,
             keyword=keyword,
             modified=modified,
             publisher=extracted_organization_rki.stableTargetId,
@@ -205,9 +202,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
-            sizeOfDataBasis=size_of_data_basis,
             stateOfDataProcessing=state_of_data_processing,
-            temporal=temporal,
             theme=theme,
             title=title,
             unitInCharge=units_in_charge,

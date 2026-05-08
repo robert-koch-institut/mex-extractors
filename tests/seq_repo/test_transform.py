@@ -87,7 +87,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "created": "2023-08-07",
         "modified": "2023-08-07",
-        "sizeOfDataBasis": "Basepairs: 1, Reads: 2",
         "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
         "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
         "theme": [
@@ -105,13 +104,17 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},
         ],
-        "instrumentToolOrApparatus": [{"value": "TEST"}],
         "keyword": [
             {"value": "fastc", "language": "de"},
             {"value": "fastd", "language": "de"},
             {"value": "virus XYZ"},
+            {"value": "TEST"},
         ],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "qualityInformation": [
+            {"value": "Basepairs: 1", "language": "en"},
+            {"value": "Reads: 2", "language": "en"},
+        ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-4"
         ],
