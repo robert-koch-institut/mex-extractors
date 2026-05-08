@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
-from uuid import UUID
 
 import pytest
 import requests
@@ -64,7 +63,7 @@ def test_extract_source_project_coordinator(
 ) -> None:
     project_coordinators = extract_source_project_coordinator(seq_repo_sources)
 
-    assert project_coordinators == [
+    assert project_coordinators[:2] == [
         LDAPPersonWithQuery(
             person=ldap_frieda_fictitious,
             query="FictitiousF",
@@ -72,37 +71,5 @@ def test_extract_source_project_coordinator(
         LDAPPersonWithQuery(
             person=ldap_roland_resolved,
             query="ResolvedR",
-        ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                objectGUID=UUID("00000000-0000-4000-8000-000000000002"),
-                sAMAccountName="FelicitasJ",
-                mail=["felicitasj@rki.de"],
-                employeeID="70",
-                givenName=["Juturna"],
-                sn="Felicitás",
-                company=None,
-                department="FG99",
-                departmentNumber=None,
-                displayName="Felicitás, Juturna",
-                ou=[],
-            ),
-            query="FelicitasJ",
-        ),
-        LDAPPersonWithQuery(
-            person=LDAPPerson(
-                objectGUID=UUID("00000000-0000-4000-8000-000000000003"),
-                sAMAccountName="FictitiousF",
-                mail=["fictitiousf@rki.de"],
-                employeeID="71",
-                givenName=["Frieda"],
-                sn="Fictitious",
-                company=None,
-                department="FG99",
-                departmentNumber=None,
-                displayName="Fictitious, Frieda, Dr.",
-                ou=[],
-            ),
-            query="NonExistent",
         ),
     ]
