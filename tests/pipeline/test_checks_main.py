@@ -245,7 +245,7 @@ def test_get_historic_count(
 def run_item_count_test(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     *,
-    current_count: int,
+    current_count: int | dict[str, int],
     historical_events: dict[datetime, int],
     rule_threshold: int,
     time_frame_str: str,
@@ -281,10 +281,13 @@ def run_item_count_test(  # noqa: PLR0913
     )
 
     class MockEvent:
-        def __init__(self, num_items: int) -> None:
-            self.asset_materialization = SimpleNamespace(
-                metadata={"num_items": SimpleNamespace(value=num_items)}
-            )
+        def __init__(self, num_items: int | dict[str, int]) -> None:
+            if rule_name_for_match == "less_than_x_outbound":
+                metadata = {"outbound_connections": SimpleNamespace(value=num_items)}
+            else:
+                metadata = {"num_items": SimpleNamespace(value=num_items)}
+
+            self.asset_materialization = SimpleNamespace(metadata=metadata)
             self.timestamp = mocked_now.timestamp()
 
     class MockInstance:
@@ -524,6 +527,84 @@ def test_check_not_exactly_x_items_generalized(
             extractor="test",
             entity_type="test",
             rule_name="not_exactly_x_items",
+        )
+        assert result is True
+
+
+@pytest.mark.parametrize(
+    ("current_connections", "rule_threshold", "passed"),
+    [
+        pytest.param(
+            {"id-a": 6, "id-b": 100},
+            5,
+            True,
+            id="passes_above_threshold",
+        ),
+        pytest.param(
+            {"id-a": 15, "id-b": 1},
+            1,
+            True,
+            id="passes_at_threshold",
+        ),
+        pytest.param(
+            {"id-a": 6, "id-b": 0},
+            1,
+            False,
+            id="fails_below_threshold",
+        ),
+        pytest.param(
+            {},
+            5,
+            True,
+            id="passes_empty_connections",
+        ),
+    ],
+)
+def test_check_less_than_x_outbound_generalized(
+    monkeypatch: MonkeyPatch,
+    current_connections: dict[str, int],
+    rule_threshold: int,
+    passed: bool,  # noqa: FBT001
+) -> None:
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_rule",
+        lambda *_, **__: {"value": rule_threshold},
+    )
+
+    class MockEvent:
+        def __init__(self, outbound_connections: dict[str, int]) -> None:
+            self.asset_materialization = SimpleNamespace(
+                metadata={
+                    "outbound_connections": SimpleNamespace(value=outbound_connections)
+                }
+            )
+
+    class MockInstance:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
+            return [MockEvent(current_connections)]
+
+    class MockContext:
+        instance = MockInstance()
+
+    context = cast("AssetCheckExecutionContext", MockContext())
+    asset_key = AssetKey(["test_asset"])
+
+    if not passed:
+        with pytest.raises(ValueError, match="failed less_than_x_outbound check"):
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="test",
+                entity_type="test",
+                rule_name="less_than_x_outbound",
+            )
+    else:
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="test",
+            entity_type="test",
+            rule_name="less_than_x_outbound",
         )
         assert result is True
 

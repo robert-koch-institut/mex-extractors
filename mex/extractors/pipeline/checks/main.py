@@ -113,7 +113,6 @@ def get_latest_num_items(
         outbound_connections = num_items_metadata.value
         if not isinstance(outbound_connections, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
-
         return {
             identifier: int(str(count))
             for identifier, count in outbound_connections.items()
@@ -171,8 +170,9 @@ def check_static_rule(
     if rule_name == "less_than_x_inbound":
         pass
     if rule_name == "less_than_x_outbound":
+        # fail if any of the outbound connection counts is smaller than threshold
         return all(
-            count < threshold
+            count >= threshold
             for count in current_number_of_extracted_items.values()  # type: ignore [union-attr]
         )
 
