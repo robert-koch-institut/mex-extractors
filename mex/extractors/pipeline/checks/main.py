@@ -136,7 +136,7 @@ def get_historic_count(
 
 def check_static_rule(
     rule_name: str,
-    current_number_of_extracted_items: int,  # noqa: ARG001
+    current_number_of_extracted_items: int,
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
@@ -148,10 +148,10 @@ def check_static_rule(
 
     Returns False if check fails, True if check passes.
     """
-    threshold = rule["value"] or 0  # noqa: F841
+    threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
-        pass
+        return current_number_of_extracted_items == threshold
     if rule_name == "less_than_x_inbound":
         pass
     if rule_name == "less_than_x_outbound":
@@ -189,7 +189,9 @@ def check_historical_rule(
         percent_threshold = (historic_count * threshold) / 100
         return current_number_of_extracted_items >= historic_count - percent_threshold
     if rule_name == "x_percent_more_than":
-        pass
+        # fail if current is more than historic by x percent
+        percent_threshold = (historic_count * threshold) / 100
+        return current_number_of_extracted_items <= historic_count + percent_threshold
 
     return True
 
