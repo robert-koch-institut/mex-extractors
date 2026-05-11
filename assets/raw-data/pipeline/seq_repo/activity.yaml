@@ -2,3 +2,6 @@ rules:
   - fail_if: x_percent_less_than
     value: 5
     time_frame: 1d
+  - fail_if: x_percent_more_than
+    value: 5
+    time_frame: 1d

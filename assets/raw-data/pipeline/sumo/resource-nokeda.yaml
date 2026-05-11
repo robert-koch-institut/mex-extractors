@@ -1,0 +1,3 @@
+rules:
+  - fail_if: not_exactly_x_items
+    value: 1

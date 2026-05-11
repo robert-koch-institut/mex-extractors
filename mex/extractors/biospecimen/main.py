@@ -1,4 +1,4 @@
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -37,8 +37,9 @@ def biospecimen_extracted_persons(
     return extract_biospecimen_contacts_by_email(biospecimen_resources)
 
 
-@asset(group_name="biospecimen")
+@asset(group_name="biospecimen", metadata={"entity_type": "resource"})
 def biospecimen_extracted_resources(
+    context: AssetExecutionContext,
     biospecimen_resources: list[BiospecimenResource],
     biospecimen_extracted_persons: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
@@ -59,7 +60,9 @@ def biospecimen_extracted_resources(
         resource_mapping,
         extracted_organizations,
     )
+    num_items = len(mex_sources)
     load(mex_sources)
+    context.add_output_metadata({"num_items": num_items})
     return mex_sources
 
 
