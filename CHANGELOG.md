@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- rename class of `Settings` and all usages to `ExtractorSettings`
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/dd987e
 
 ### Deprecated
