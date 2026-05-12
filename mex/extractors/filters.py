@@ -4,7 +4,7 @@ from mex.common.models import ActivityFilter
 from mex.common.utils import any_contains_any
 from mex.extractors.logging import log_filter
 from mex.extractors.models import BaseRawData
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ def filter_by_global_rules[RawDataT: BaseRawData](
         primary_source_id: identifier of the primary source
         items: items, source or resource to be filtered
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     all_activity_filter_mapping = ActivityFilter.model_validate(
         load_yaml(settings.all_filter_mapping_path / "activity_filter.yaml")
     )

@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from mex.common.connector import HTTPConnector
 from mex.extractors.confluence_vvt.models import ConfluenceVvtPage
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 class ConfluenceVvtConnector(HTTPConnector):
@@ -12,12 +12,12 @@ class ConfluenceVvtConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.url = settings.confluence_vvt.url
 
     def _set_authentication(self) -> None:
         """Authenticate to the host."""
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         self.session.auth = (
             settings.confluence_vvt.username.get_secret_value(),
             settings.confluence_vvt.password.get_secret_value(),
@@ -32,7 +32,7 @@ class ConfluenceVvtConnector(HTTPConnector):
         Returns:
             ConfluenceVvtPage or None
         """
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         if page_id in settings.confluence_vvt.skip_pages:
             return None
 

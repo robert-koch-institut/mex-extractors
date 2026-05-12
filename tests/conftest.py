@@ -21,7 +21,7 @@ from mex.extractors.primary_source.helpers import (
     cached_load_extracted_primary_source_by_name,
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks.s3 import S3BaseSink
 
 if TYPE_CHECKING:
@@ -47,9 +47,9 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
 @pytest.fixture(autouse=True)
-def settings() -> Settings:
+def settings() -> ExtractorSettings:
     """Load the settings for this pytest session."""
-    return Settings.get()
+    return ExtractorSettings.get()
 
 
 @pytest.fixture(autouse=True)

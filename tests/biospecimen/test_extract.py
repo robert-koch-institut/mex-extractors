@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from mex.common.ldap.models import LDAPPerson
     from mex.extractors.biospecimen.models.source import BiospecimenResource
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -105,7 +105,7 @@ def test_get_clean_string(series: Series, expected_clean_string: str) -> None:
     assert clean_string == expected_clean_string
 
 
-def test_get_year_from_zeitlicher_bezug(settings: Settings) -> None:
+def test_get_year_from_zeitlicher_bezug(settings: ExtractorSettings) -> None:
     key_col = settings.biospecimen.key_col
     val_col = settings.biospecimen.val_col
 

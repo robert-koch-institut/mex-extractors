@@ -6,7 +6,7 @@ from pandas import ExcelFile
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
 from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
@@ -29,7 +29,7 @@ def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
     Returns:
         List of cc1_data_valuesets instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc1_data_valuesets_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     valuesets = []
@@ -60,7 +60,7 @@ def extract_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
     Returns:
         List of Cc1DataModelNoKeda instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc1_data_model_NoKeda_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "datamodel NoKeda"
@@ -80,7 +80,7 @@ def extract_cc2_aux_model() -> list[Cc2AuxModel]:
     Returns:
         List of cc2_aux_model instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc2_aux_model_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "datamodel aux"
@@ -105,7 +105,7 @@ def extract_cc2_aux_mapping(
     Returns:
         List of cc2_aux_mapping instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc2_aux_mapping_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     mappings = []
@@ -131,7 +131,7 @@ def extract_cc2_aux_valuesets() -> list[Cc2AuxValuesets]:
     Returns:
         List of cc2_aux_valuesets instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc2_aux_valuesets_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "aux_cedis_group"
@@ -151,7 +151,7 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
     Returns:
         List of cc2_feat_projection instances
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     excel_path = settings.sumo.raw_data_path / "cc2_feat_projection_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "feat_syndrome"

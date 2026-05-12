@@ -34,7 +34,7 @@ from mex.extractors.pipeline.base import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -54,7 +54,7 @@ def igs_schemas() -> dict[str, IGSSchema]:
 @asset(group_name="igs")
 def igs_resource_mapping() -> dict[str, Any]:
     """Extract IGS resource mapping."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.igs.mapping_path / "resource.yaml")
 
 
@@ -71,7 +71,7 @@ def igs_endpoint_counts(
 @asset(group_name="igs")
 def igs_access_platform_mapping() -> dict[str, Any]:
     """Extract IGS access platform mapping."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.igs.mapping_path / "access-platform.yaml")
 
 
@@ -139,7 +139,7 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     igs_extracted_resource_ids: list[MergedResourceIdentifier],
 ) -> dict[str, MergedVariableGroupIdentifier]:
     """Filter and transform IGS schema to extracted variable group."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     variable_group_filter = VariableGroupFilter.model_validate(
         load_yaml(settings.igs.mapping_path / "variable-group_filter.yaml")
     )
@@ -164,7 +164,7 @@ def igs_extracted_variables(
     ],
 ) -> None:
     """Transform igs schemas to extracted variables."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.igs.mapping_path / "variable.yaml")
     )
@@ -178,7 +178,7 @@ def igs_extracted_variables(
     )
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:
     """Run the IGS extractor job in-process."""
     run_job_in_process("igs")

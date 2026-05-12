@@ -5,7 +5,7 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.blueant.connector import BlueAntConnector
 from mex.extractors.blueant.models.source import BlueAntSource
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -89,7 +89,7 @@ def remove_prefixes_from_name(name: str) -> str:
     Return:
         string cleaned of prefixes
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
 
     for prefix in settings.blueant.delete_prefixes:
         name = name.removeprefix(prefix)

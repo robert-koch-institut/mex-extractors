@@ -32,7 +32,7 @@ from mex.extractors.seq_repo.transform import (
     transform_seq_repo_activities_to_extracted_activities,
     transform_seq_repo_resource_to_extracted_resource,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -92,7 +92,7 @@ def seq_repo_extracted_activities_by_id_str(
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
     )
@@ -114,7 +114,7 @@ def seq_repo_extracted_activities_by_id_str(
 @asset(group_name="seq_repo")
 def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Extract access platform from seq-repo."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "access-platform.yaml")
     )
@@ -138,7 +138,7 @@ def seq_repo_resources(  # noqa: PLR0913
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     resource = ResourceMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "resource.yaml")
     )
@@ -157,7 +157,7 @@ def seq_repo_resources(  # noqa: PLR0913
     return resources
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the seq-repo extractor job in-process."""
     run_job_in_process("seq_repo")

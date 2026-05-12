@@ -43,7 +43,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -115,7 +115,7 @@ def open_data_extracted_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
 ) -> list[ExtractedDistribution]:
     """Extract distributions for open data & transform and load them to sinks."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     distribution_mapping = DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
     )
@@ -140,7 +140,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     open_data_extracted_contact_points: list[ExtractedContactPoint],
 ) -> list[ExtractedResource]:
     """Transform parent resources to extracted resources & load them to the sinks."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     resource_mapping = ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )
@@ -231,7 +231,7 @@ def open_data_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the odk extractor job in-process."""
     run_job_in_process("open_data")

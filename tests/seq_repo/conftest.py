@@ -21,7 +21,7 @@ from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.types import MergedPersonIdentifier
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 
 @pytest.fixture
@@ -82,21 +82,21 @@ def seq_repo_latest_sources(
 
 
 @pytest.fixture
-def seq_repo_activity(settings: Settings) -> ActivityMapping:
+def seq_repo_activity(settings: ExtractorSettings) -> ActivityMapping:
     return ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity_mock.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_access_platform(settings: Settings) -> AccessPlatformMapping:
+def seq_repo_access_platform(settings: ExtractorSettings) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_resource(settings: Settings) -> ResourceMapping:
+def seq_repo_resource(settings: ExtractorSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "resource_mock.yaml")
     )

@@ -8,7 +8,7 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -81,7 +81,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
     Returns:
         List of Biospecimen resources
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     resources = []
     for file in watch_progress(
         Path(settings.biospecimen.raw_data_path).glob("*.xlsx"),
@@ -189,7 +189,7 @@ def extract_biospecimen_resource(
     Returns:
         Biospecimen resource
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     key_col = settings.biospecimen.key_col
     val_col = settings.biospecimen.val_col
 

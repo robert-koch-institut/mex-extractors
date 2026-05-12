@@ -9,7 +9,7 @@ from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.ldap.models import LDAPPerson
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 
 @pytest.fixture
@@ -44,7 +44,7 @@ def blueant_source_without_leader() -> BlueAntSource:
 
 
 @pytest.fixture
-def blueant_activity(settings: Settings) -> ActivityMapping:
+def blueant_activity(settings: ExtractorSettings) -> ActivityMapping:
     """Return activity default values."""
     return ActivityMapping.model_validate(
         load_yaml(settings.blueant.mapping_path / "activity_mock.yaml")

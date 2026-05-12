@@ -14,7 +14,7 @@ from mex.extractors.primary_source.helpers import (
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 
 @pytest.fixture
@@ -53,7 +53,7 @@ def endnote_records() -> list[EndnoteRecord]:
 
 
 @pytest.fixture
-def endnote_consent_mapping(settings: Settings) -> ConsentMapping:
+def endnote_consent_mapping(settings: ExtractorSettings) -> ConsentMapping:
     """Return endnote consent activity mapping from assets."""
     return ConsentMapping.model_validate(
         load_yaml(settings.endnote.mapping_path / "consent.yaml")
@@ -62,7 +62,7 @@ def endnote_consent_mapping(settings: Settings) -> ConsentMapping:
 
 @pytest.fixture
 def endnote_bibliographic_resource_mapping(
-    settings: Settings,
+    settings: ExtractorSettings,
 ) -> BibliographicResourceMapping:
     """Return endnote bibliographic resource mapping from assets."""
     return BibliographicResourceMapping.model_validate(

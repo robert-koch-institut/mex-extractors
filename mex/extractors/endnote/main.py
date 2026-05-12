@@ -16,7 +16,7 @@ from mex.extractors.endnote.transform import (
     extract_endnote_persons_by_person_string,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -44,7 +44,7 @@ def endnote_extracted_consents(
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
 ) -> list[ExtractedConsent]:
     """Extract records from endnote."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     endnote_consent_mapping = ConsentMapping.model_validate(
         load_yaml(settings.endnote.mapping_path / "consent.yaml")
     )
@@ -63,7 +63,7 @@ def endnote_extracted_bibliographic_resources(
     endnote_extracted_persons_by_name_str: dict[str, ExtractedPerson],
 ) -> list[ExtractedBibliographicResource]:
     """Extract bibliographic resources from endnote."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     endnote_bibliographic_resource_mapping = (
         BibliographicResourceMapping.model_validate(
             load_yaml(settings.endnote.mapping_path / "bibliographic-resource.yaml")
@@ -80,7 +80,7 @@ def endnote_extracted_bibliographic_resources(
     return extracted_bibliographic_resource
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the endnote extractor job in-process."""
     run_job_in_process("endnote")

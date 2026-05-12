@@ -5,7 +5,7 @@ from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.synopse.models.project import SynopseProject
 from mex.extractors.synopse.models.study import SynopseStudy
 from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
@@ -31,7 +31,7 @@ def extract_variables() -> list[SynopseVariable]:
     Returns:
         list for Synopse Variables
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return list(
         parse_csv(
             settings.synopse.variablenuebersicht_path,
@@ -51,7 +51,7 @@ def extract_study_data() -> list[SynopseStudy]:
     Returns:
         List of Synopse Studies
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return list(
         watch_progress(
             parse_csv(
@@ -74,7 +74,7 @@ def extract_projects() -> list[SynopseProject]:
     Returns:
         List of Synopse Projects
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return list(
         watch_progress(
             parse_csv(
@@ -151,7 +151,7 @@ def extract_study_overviews() -> list[SynopseStudyOverview]:
     Returns:
         List of Synopse Overviews
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return list(
         watch_progress(
             parse_csv(

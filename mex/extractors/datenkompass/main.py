@@ -40,7 +40,7 @@ from mex.extractors.datenkompass.transform import (
     transform_resources,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks.s3 import S3XlsxSink
 from mex.extractors.utils import load_yaml
 
@@ -95,7 +95,7 @@ def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
 @asset(group_name="datenkompass")
 def datenkompass_activity_filter_mapping() -> DatenkompassFilterMapping:
     """Get filter for datenkompass activities."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return DatenkompassFilterMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "activity_filter.yaml")
     )
@@ -104,7 +104,7 @@ def datenkompass_activity_filter_mapping() -> DatenkompassFilterMapping:
 @asset(group_name="datenkompass")
 def datenkompass_resource_filter_mapping() -> DatenkompassFilterMapping:
     """Load the Datenkompass resource filter mapping."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return DatenkompassFilterMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "resource_filter.yaml")
     )
@@ -164,7 +164,7 @@ def datenkompass_filtered_merged_activities(
 @asset(group_name="datenkompass")
 def datenkompass_merged_bibliographic_resources() -> list[MergedBibliographicResource]:
     """Get merged bibliographic resources."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     bibliographic_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
         load_yaml(
             settings.datenkompass.mapping_path / "bibliographic-resource_filter.yaml"
@@ -317,7 +317,7 @@ def datenkompass_s3_xlsx_publication(
             )
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the datenkompass job in-process."""
     run_job_in_process("datenkompass")

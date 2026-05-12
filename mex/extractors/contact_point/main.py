@@ -6,14 +6,14 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 
 
 @asset(group_name="contact_point")
 def contact_point_extracted_contact_points() -> list[ExtractedContactPoint]:
     """Load and return default contact points."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     extracted_contact_points = [
         ExtractedContactPoint(
             identifierInPrimarySource=str(settings.contact_point.mex_email),
@@ -25,7 +25,7 @@ def contact_point_extracted_contact_points() -> list[ExtractedContactPoint]:
     return extracted_contact_points
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the contact-point extractor job in-process."""
     run_job_in_process("contact_point")
