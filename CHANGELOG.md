@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- temporarily switch off not_exactly_x_items assets check
+
 ### Security
 
 ## [1.14.1] - 2026-04-30
