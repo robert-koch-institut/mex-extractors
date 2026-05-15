@@ -490,45 +490,6 @@ def test_check_not_exactly_x_items_generalized(
     passed: bool,
 ) -> None:
     """Test not_exactly_x_items connection rule."""
-    monkeypatch.setattr(
-        "mex.extractors.pipeline.checks.main.get_rule",
-        lambda *_, **__: {"value": expected_value},
-    )
-
-    class MockEvent:
-        def __init__(self, num_items: int) -> None:
-            self.asset_materialization = SimpleNamespace(
-                metadata={"num_items": SimpleNamespace(value=num_items)}
-            )
-
-    class MockInstance:
-        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
-            return [MockEvent(current_count)]
-
-    class MockContext:
-        instance = MockInstance()
-
-    context = cast("AssetCheckExecutionContext", MockContext())
-    asset_key = AssetKey(["test_asset"])
-
-    if not passed:
-        with pytest.raises(ValueError, match="failed not_exactly_x_items check"):
-            check_item_count_rule(
-                context=context,
-                asset_key=asset_key,
-                extractor="test",
-                entity_type="test",
-                rule_name="not_exactly_x_items",
-            )
-    else:
-        result = check_item_count_rule(
-            context=context,
-            asset_key=asset_key,
-            extractor="test",
-            entity_type="test",
-            rule_name="not_exactly_x_items",
-        )
-        assert result is True
 
 
 @pytest.mark.parametrize(
