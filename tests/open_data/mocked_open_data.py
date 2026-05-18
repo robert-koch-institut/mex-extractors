@@ -118,7 +118,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
 
     # TODO @MX-2075: remove
-    monkeypatch.setattr(transform, "FALLBACK_UNIT", "FG 99")
+    monkeypatch.setattr(transform, "FALLBACK_UNIT", "C1")
 
     # Create a mocked ZIP file with according folder structure, naming, and content."""
     json_contents = [

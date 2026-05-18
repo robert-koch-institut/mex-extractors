@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -55,23 +54,6 @@ def get_contact_merged_ids_by_emails(
         email.lower(): MergedContactPointIdentifier(actor.stableTargetId)
         for actor in mex_actor_resources
         for email in actor.email
-    }
-
-
-def get_contact_merged_ids_by_names(
-    mex_actors_access_platform: Iterable[ExtractedPerson],
-) -> dict[str, MergedPersonIdentifier]:
-    """Get merged id by name lookup.
-
-    Args:
-        mex_actors_access_platform: Iterable of extracted persons
-
-    Returns:
-        dict of contact merged ids by name
-    """
-    return {
-        f"{', '.join(a.givenName)} {', '.join(a.familyName)}": a.stableTargetId
-        for a in mex_actors_access_platform
     }
 
 

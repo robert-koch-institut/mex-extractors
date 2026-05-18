@@ -1,9 +1,8 @@
 from typing import TYPE_CHECKING
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.extractors.datscha_web.connector import DatschaWebConnector
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -12,7 +11,7 @@ from mex.extractors.wikidata.helpers import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from mex.common.types import MergedOrganizationIdentifier
+    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
     from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
@@ -32,9 +31,9 @@ def extract_datscha_web_items() -> list[DatschaWebItem]:
     return items
 
 
-def extract_datscha_web_source_contacts(
+def extract_datscha_web_source_contact_ids_by_query(
     datscha_web_items: Iterable[DatschaWebItem],
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract LDAP persons with their query string for datscha-web source contacts.
 
     Args:
@@ -43,27 +42,26 @@ def extract_datscha_web_source_contacts(
     Returns:
         List of LDAP persons with query
     """
-    ldap = LDAPConnector.get()
     seen = set()
-    persons_with_query = []
+    merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}
     for source in watch_progress(
         datscha_web_items, "extract_datscha_web_source_contacts"
     ):
         names = source.auskunftsperson
-        if not names:
-            continue
-        if names in seen:
+        if names is None or names in seen:
             continue
         seen.add(names)
-        for name in analyse_person_string(names):
-            persons = ldap.get_persons(
-                surname=name.surname, given_name=name.given_name, limit=2
-            ).items
-            if len(persons) == 1 and persons[0].objectGUID:
-                persons_with_query.append(
-                    LDAPPersonWithQuery(person=persons[0], query=names)
+        collected_ids = [
+            person_id
+            for name in analyse_person_string(names)
+            if (
+                person_id := get_ldap_merged_person_id_by_query(
+                    surname=name.surname, given_name=name.given_name
                 )
-    return persons_with_query
+            )
+        ]
+        merged_person_ids_by_query[names] = collected_ids
+    return merged_person_ids_by_query
 
 
 def extract_datscha_web_organizations(

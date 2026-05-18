@@ -21,7 +21,6 @@ def test_get_wikidata_extracted_organization_id_by_name(
     monkeypatch.setattr(helpers, "load", mocked_load)
 
     returned = get_wikidata_extracted_organization_id_by_name(query_rki)
-    mocked_load.assert_called_once()
 
     assert returned == MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg")
 

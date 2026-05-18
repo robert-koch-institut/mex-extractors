@@ -1,15 +1,21 @@
 from typing import TYPE_CHECKING, Any
 
-from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
     from mex.common.models import AccessPlatformMapping, ResourceMapping
-    from mex.common.types import MergedOrganizationIdentifier
+    from mex.common.types import (
+        MergedContactPointIdentifier,
+        MergedOrganizationIdentifier,
+        MergedPersonIdentifier,
+    )
 
 
 def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]]:
@@ -27,27 +33,27 @@ def extract_columns_by_table_and_column_name() -> dict[str, dict[str, list[Any]]
 
 def extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
-) -> list[LDAPFunctionalAccount]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Extract LDAP actors functional accounts from grippeweb resource mapping contacts.
 
     Args:
         grippeweb_resource_mappings: list of resources default value mapping models
 
     Returns:
-        list of LDAP actors
+       merged contact identifier by mail
     """
-    ldap = LDAPConnector.get()
-    return [
-        ldap.get_functional_account(mail=mail)
+    return {
+        mail: contact_id
         for mapping in grippeweb_resource_mappings
         for mail in (mapping.contact[0].mappingRules[0].forValues or [])
-    ]
+        if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
+    }
 
 
-def extract_ldap_persons(
+def extract_grippeweb_ldap_person_ids_by_query(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_access_platform: AccessPlatformMapping,
-) -> list[LDAPPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract LDAP persons for grippeweb.
 
     Args:
@@ -55,22 +61,24 @@ def extract_ldap_persons(
         grippeweb_access_platform: grippeweb access platform mapping model
 
     Returns:
-        list of LDAP persons
+        LDAP persons by name or mail
     """
-    ldap = LDAPConnector.get()
-    return [
-        *[
-            ldap.get_person(given_name=name.split(" ")[0], surname=name.split(" ")[1])
-            for mapping in grippeweb_resource_mappings
-            for name in (mapping.contributor[0].mappingRules[0].forValues or [])
-        ],
-        *[
-            ldap.get_person(mail=mail)
-            for mail in (
-                grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
+    return {
+        name: person_id
+        for mapping in grippeweb_resource_mappings
+        for name in (mapping.contributor[0].mappingRules[0].forValues or [])
+        if (
+            person_id := get_ldap_merged_person_id_by_query(
+                given_name=name.split(" ")[0], surname=name.split(" ")[1]
             )
-        ],
-    ]
+        )
+    } | {
+        mail: person_id
+        for mail in (
+            grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
+        )
+        if (person_id := get_ldap_merged_person_id_by_query(mail=mail))
+    }
 
 
 def extract_grippeweb_organizations(

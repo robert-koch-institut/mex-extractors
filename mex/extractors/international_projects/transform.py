@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 def transform_international_projects_source_to_extracted_activity(
     source: InternationalProjectsSource,
     international_projects_activity: ActivityMapping,
-    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    person_stable_target_ids_by_query_string: dict[str, MergedPersonIdentifier],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
@@ -57,10 +57,12 @@ def transform_international_projects_source_to_extracted_activity(
         return None
 
     project_lead = [
-        found_person[0]
+        found_person_id
         for person in source.get_project_lead_persons()
         if (
-            found_person := person_stable_target_ids_by_query_string.get(person.strip())
+            found_person_id := person_stable_target_ids_by_query_string.get(
+                person.strip()
+            )
         )
     ]
 
@@ -148,7 +150,7 @@ def transform_international_projects_source_to_extracted_activity(
 def transform_international_projects_sources_to_extracted_activities(
     international_projects_sources: Iterable[InternationalProjectsSource],
     international_projects_activity: ActivityMapping,
-    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    person_stable_target_ids_by_query_string: dict[str, MergedPersonIdentifier],
     funding_sources_stable_target_id_by_query: dict[str, MergedOrganizationIdentifier],
     partner_organizations_stable_target_id_by_query: dict[
         str, MergedOrganizationIdentifier
