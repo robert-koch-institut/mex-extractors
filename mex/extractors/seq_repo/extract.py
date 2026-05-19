@@ -2,12 +2,12 @@ from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
 from mex.extractors.drop import DropApiConnector
-from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
+from mex.extractors.ldap.helpers import get_ldap_extracted_person_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 if TYPE_CHECKING:
-    from mex.common.types import MergedPersonIdentifier
+    from mex.common.models import ExtractedPerson
 
 
 def extract_sources() -> list[SeqRepoSource]:
@@ -26,22 +26,22 @@ def extract_sources() -> list[SeqRepoSource]:
 
 
 def extract_source_project_coordinator_by_name(
-    seq_repo_sources: dict[str, SeqRepoSource],
-) -> dict[str, MergedPersonIdentifier]:
-    """Extract LDAP persons with their query string for source project coordinators.
+    seq_repo_sources: list[SeqRepoSource],
+) -> dict[str, ExtractedPerson]:
+    """Extract Persons with their query string for source project coordinators.
 
     Args:
         seq_repo_sources: Seq Repo sources
 
     Returns:
-        List of LDAP persons with query
+        List of Extracted persons with query
     """
-    person_id_by_name: dict[str, MergedPersonIdentifier] = {}
-    for value in watch_progress(
-        seq_repo_sources.values(), "extract_source_project_coordinator_by_name"
+    person_by_name: dict[str, ExtractedPerson] = {}
+    for source in watch_progress(
+        seq_repo_sources, "extract_source_project_coordinator_by_name"
     ):
-        names = set(value.project_coordinators)
+        names = set(source.project_coordinators)
         for name in names:
-            if person_id := get_ldap_merged_person_id_by_query(mail=f"{name}@rki.de"):
-                person_id_by_name[name] = person_id
-    return person_id_by_name
+            if person := get_ldap_extracted_person_by_query(sam_account_name=name):
+                person_by_name[name] = person
+    return person_by_name

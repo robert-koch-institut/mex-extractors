@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - use ldap convenience function
 - update lock file (2026_04_23)
+- seq-repo mapping update
 
 ### Fixed
 

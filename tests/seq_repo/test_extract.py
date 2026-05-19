@@ -12,11 +12,8 @@ from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator_by_name,
     extract_sources,
 )
-from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
-
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
@@ -25,6 +22,7 @@ def test_extract_sources() -> None:
     sources = extract_sources()
     expected = {
         "project_coordinators": ["test_person", "test_person"],
+        "basepair_count": 1,
         "customer_org_unit_id": "FG99",
         "sequencing_date": "2023-08-07",
         "lims_sample_id": "test-sample-id",
@@ -33,9 +31,10 @@ def test_extract_sources() -> None:
         "project_name": "FG99-ABC-123",
         "customer_sample_name": "test-customer-name-1",
         "project_id": "TEST-ID",
+        "reads_count": 2,
     }
     assert len(sources) == 4
-    assert sources[0].model_dump() == expected
+    assert sources[0].model_dump(exclude_defaults=True) == expected
 
 
 def test_extract_sources_fails_on_unexpected_number_of_files(
@@ -58,14 +57,14 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_source_project_coordinator_by_name(
-    seq_repo_sources: Iterable[SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
 ) -> None:
-    seq_repo_sources_dict = filter_sources_on_latest_sequencing_date(seq_repo_sources)
-    project_coordinators = extract_source_project_coordinator_by_name(
-        seq_repo_sources_dict
-    )
 
-    assert project_coordinators == {
-        "FictitiousF": MergedPersonIdentifier("c2Yd8aNoLKIf7u6ubTUuc3"),
-        "ResolvedR": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz"),
-    }
+    project_coordinators = extract_source_project_coordinator_by_name(seq_repo_sources)
+
+    assert project_coordinators["FictitiousF"].stableTargetId == MergedPersonIdentifier(
+        "c2Yd8aNoLKIf7u6ubTUuc3"
+    )
+    assert project_coordinators["ResolvedR"].stableTargetId == MergedPersonIdentifier(
+        "eXA2Qj5pKmI7HXIgcVqCfz"
+    )
