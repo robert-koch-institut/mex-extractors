@@ -36,12 +36,15 @@ def extract_source_project_coordinator_by_name(
     Returns:
         List of Extracted persons with query
     """
-    person_by_name: dict[str, ExtractedPerson] = {}
+    seen: set[str] = set()
+    persons_with_query: dict[str, ExtractedPerson] = {}
     for source in watch_progress(
         seq_repo_sources, "extract_source_project_coordinator_by_name"
     ):
-        names = set(source.project_coordinators)
-        for name in names:
+        for name in source.project_coordinators:
+            if name in seen:
+                continue
+            seen.add(name)
             if person := get_ldap_extracted_person_by_query(sam_account_name=name):
-                person_by_name[name] = person
-    return person_by_name
+                persons_with_query[name] = person
+    return persons_with_query
