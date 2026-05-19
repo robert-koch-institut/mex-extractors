@@ -1,0 +1,12 @@
+{
+    "person": {
+        "email": "fictitiousf@rki.de",
+        "firstname": "Frieda",
+        "id": 71,
+        "lastname": "Fictitious",
+        "personnelNumber": "71"
+    },
+    "status": {
+        "code": 200
+    }
+}
