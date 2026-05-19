@@ -1,3 +1,5 @@
+import logging
+
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
@@ -22,6 +24,7 @@ from mex.extractors.blueant.transform import (
     transform_blueant_sources_to_extracted_activities,
 )
 from mex.extractors.filters import filter_by_global_rules
+from mex.extractors.main import activate_http_summary_logging, dump_http_summary
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -87,4 +90,7 @@ def blueant_extracted_activities(
 @entrypoint(Settings)
 def run() -> None:  # pragma: no cover
     """Run the blueant extractor job in-process."""
+    logging.basicConfig(level=logging.INFO)
+    activate_http_summary_logging()
     run_job_in_process("blueant")
+    dump_http_summary()
