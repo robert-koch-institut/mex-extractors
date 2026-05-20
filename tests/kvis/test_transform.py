@@ -4,7 +4,6 @@ import pytest
 
 from mex.common.types import MergedResourceIdentifier, TextLanguage
 from mex.extractors.kvis.transform import (
-    lookup_kvis_functional_account_in_ldap_and_transform,
     transform_kvis_fieldvalues_table_entries_to_setvalues,
     transform_kvis_resource_to_extracted_resource,
     transform_kvis_table_entries_to_extracted_variables,
@@ -14,47 +13,45 @@ from mex.extractors.kvis.transform import (
 if TYPE_CHECKING:
     from mex.common.models import (
         ExtractedContactPoint,
+        ExtractedPerson,
         ExtractedVariableGroup,
     )
     from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
 
 
-@pytest.mark.usefixtures("mocked_ldap")
-def test_lookup_kvis_functional_account_in_ldap_and_transform(
-    contact_point: ExtractedContactPoint,
-) -> None:
-    contact_id = lookup_kvis_functional_account_in_ldap_and_transform(
-        contact_point.email[0],
-    )
-    assert contact_id == contact_point.stableTargetId
-
-
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
-def test_transform_kvis_resource_to_extracted_resource() -> None:
+def test_transform_kvis_resource_to_extracted_resource(
+    contact_point: ExtractedContactPoint,
+    juturna_felicitas: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
+) -> None:
     extracted_resource = transform_kvis_resource_to_extracted_resource()
     assert extracted_resource.model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
-        "identifierInPrimarySource": "kvis_resource",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "created": "1999",
-        "contact": ["cMkmnNOoNVAohBA1XLNr9K"],
-        "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"value": "Titel", "language": "de"}],
-        "unitInCharge": ["bFQoRhcVH5IS5j"],
         "alternativeTitle": [{"value": "KVIS", "language": "de"}],
-        "contributingUnit": ["bFQoRhcVH5IS5j"],
-        "contributor": ["cpKNwpoZTQ4GpIzBgO8DMx", "c2Yd8aNoLKIf7u6ubTUuc3"],
+        "contact": [contact_point.stableTargetId],
+        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributor": [
+            juturna_felicitas.stableTargetId,
+            frieda_fictitious.stableTargetId,
+        ],
+        "created": "1999",
         "description": [{"value": "Wörter", "language": "de"}],
         "documentation": [
             {"language": "de", "title": "a", "url": "http://www.a.b"},
             {"language": "de", "title": "c", "url": "http://www.c.d"},
         ],
         "externalPartner": ["ga6xh6pgMwgq7DC7r6Wjqg"],
+        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "identifierInPrimarySource": "kvis_resource",
         "keyword": [{"value": "Schlüsselwort", "language": "de"}],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": ["ga6xh6pgMwgq7DC7r6Wjqg"],
+        "theme": ["https://mex.rki.de/item/theme-11"],
+        "title": [{"value": "Titel", "language": "de"}],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
     }
 
 

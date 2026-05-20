@@ -2,10 +2,6 @@ from collections import defaultdict
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.transform import (
-    transform_ldap_functional_account_to_extracted_contact_point,
-)
 from mex.common.models import (
     ExtractedResource,
     ExtractedVariable,
@@ -14,19 +10,19 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import (
-    MergedContactPointIdentifier,
-    MergedPersonIdentifier,
     MergedResourceIdentifier,
     Text,
     TextLanguage,
 )
-from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
-from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -34,33 +30,6 @@ from mex.extractors.wikidata.helpers import (
 
 if TYPE_CHECKING:
     from mex.extractors.kvis.models.table_models import KVISFieldValues, KVISVariables
-
-
-def lookup_kvis_functional_account_in_ldap_and_transform(
-    mail: str,
-) -> MergedContactPointIdentifier | None:
-    """Lookup a functional email in ldap, transform to extracted contact point, load.
-
-    Args:
-        mail: email of functional account,
-
-    Returns:
-        MergedContactPointIdentifier if matched or None if match fails
-    """
-    ldap = LDAPConnector.get()
-    try:
-        ldap_contact = ldap.get_functional_account(mail=mail)
-        extracted_contact_point = (
-            transform_ldap_functional_account_to_extracted_contact_point(
-                ldap_contact,
-                get_extracted_primary_source_id_by_name("ldap"),
-            )
-        )
-    except MExError:
-        return None
-    else:
-        load([extracted_contact_point])
-        return extracted_contact_point.stableTargetId
 
 
 def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
@@ -80,7 +49,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
 
     contact = (
         [
-            lookup_kvis_functional_account_in_ldap_and_transform(c)
+            get_ldap_merged_contact_id_by_mail(mail=c)
             for c in mapping.contact[0].mappingRules[0].forValues
         ]
         if mapping.contact[0].mappingRules[0].forValues
@@ -93,15 +62,14 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         if mapping.contributingUnit[0].mappingRules[0].forValues
         else None
     )
-    contributor: list[MergedPersonIdentifier] = []
-    if mapping.contributor[0].mappingRules[0].forValues:
-        for c in mapping.contributor[0].mappingRules[0].forValues:
-            try:
-                if person_id := get_ldap_merged_person_id_by_query(mail=c):
-                    contributor.append(person_id)
-            except MExError:
-                continue
-
+    contributor = (
+        [
+            get_ldap_merged_person_id_by_query(mail=c)
+            for c in mapping.contributor[0].mappingRules[0].forValues
+        ]
+        if mapping.contributor[0].mappingRules[0].forValues
+        else []
+    )
     external_partner = (
         [partner_id]
         if mapping.externalPartner[0].mappingRules[0].forValues
