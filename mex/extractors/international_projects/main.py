@@ -43,7 +43,7 @@ def international_projects_sources() -> list[InternationalProjectsSource]:
 @asset(group_name="international_projects")
 def international_projects_person_ids_by_query_str(
     international_projects_sources: list[InternationalProjectsSource],
-) -> dict[str, MergedPersonIdentifier]:
+) -> dict[str, list[MergedPersonIdentifier]]:
     """Transform LDAP persons to extracted persons and group their IDs by query."""
     return extract_international_projects_project_leaders(
         international_projects_sources
@@ -74,7 +74,9 @@ def international_projects_partner_organization_ids_by_query_string(
 def international_projects_extracted_activities(
     context: AssetExecutionContext,
     international_projects_sources: list[InternationalProjectsSource],
-    international_projects_person_ids_by_query_str: dict[str, MergedPersonIdentifier],
+    international_projects_person_ids_by_query_str: dict[
+        str, list[MergedPersonIdentifier]
+    ],
     international_projects_funding_sources_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],

@@ -121,17 +121,17 @@ def extract_international_projects_source(
 
 def extract_international_projects_project_leaders(
     international_projects_sources: Iterable[InternationalProjectsSource],
-) -> dict[str, MergedPersonIdentifier]:
-    """Extract LDAP persons with their query string for project leaders.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Extract Merged person ids with their query string for project leaders.
 
     Args:
         international_projects_sources: international projects sources
 
     Returns:
-        List of LDAP persons with query
+        List of Merged person ids with query
     """
     seen = set()
-    ldap_person_ids_by_name: dict[str, MergedPersonIdentifier] = {}
+    merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}
     for source in watch_progress(
         international_projects_sources, "extract_international_projects_project_leaders"
     ):
@@ -143,13 +143,18 @@ def extract_international_projects_project_leaders(
             if name in seen:
                 continue
             seen.add(name)
-            for analysed_name in analyse_person_string(name):
-                if person_id := get_ldap_merged_person_id_by_query(
-                    surname=analysed_name.surname,
-                    given_name=analysed_name.given_name,
-                ):
-                    ldap_person_ids_by_name[name] = person_id
-    return ldap_person_ids_by_name
+            collected_ids = [
+                person_id
+                for analysed_name in analyse_person_string(name)
+                if (
+                    person_id := get_ldap_merged_person_id_by_query(
+                        surname=analysed_name.surname,
+                        given_name=analysed_name.given_name,
+                    )
+                )
+            ]
+            merged_person_ids_by_query[name] = collected_ids
+    return merged_person_ids_by_query
 
 
 def extract_international_projects_funding_sources(
