@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
+- link igs to seq-repo
 
 ### Changes
 
