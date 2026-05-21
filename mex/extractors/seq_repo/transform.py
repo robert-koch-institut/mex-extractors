@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import TYPE_CHECKING
 
 from mex.common.models import (
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 
 
 def transform_seq_repo_activities_to_extracted_activities(
-    seq_repo_sources: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
@@ -47,7 +48,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     theme = seq_repo_activity.theme[0].mappingRules[0].setValues
     unique_activities = []
 
-    for source in seq_repo_sources.values():
+    for source in seq_repo_sources:
         project_coordinators_ids, responsible_units = (
             get_resolved_project_coordinators_and_units(
                 source.project_coordinators,
@@ -75,8 +76,8 @@ def transform_seq_repo_activities_to_extracted_activities(
     return unique_activities
 
 
-def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
-    seq_repo_sources: dict[str, SeqRepoSource],
+def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
+    seq_repo_sources: list[SeqRepoSource],
     seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
     seq_repo_resource: ResourceMapping,
@@ -113,8 +114,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         seq_repo_resource.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     description = seq_repo_resource.description[0].mappingRules[0].setValues
-    method = seq_repo_resource.method[0].mappingRules[0].setValues
-
     resource_creation_method = (
         seq_repo_resource.resourceCreationMethod[0].mappingRules[0].setValues
     )
@@ -132,7 +131,29 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     shared_keyword = seq_repo_resource.keyword[0].mappingRules[0].setValues or []
 
     extracted_resources = []
-    for identifier_in_primary_source, source in seq_repo_sources.items():
+    sequence_dates_by_identifier_in_primary_source: dict[str, list[str]] = defaultdict(
+        list
+    )
+    for source in seq_repo_sources:
+        if source.sequencing_date:
+            sequence_dates_by_identifier_in_primary_source[
+                source.igs_id or source.lims_sample_id
+            ].append(source.sequencing_date)
+    seen: set[str] = set()
+    for source in seq_repo_sources:
+        identifier_in_primary_source = source.igs_id or source.lims_sample_id
+        if identifier_in_primary_source in seen:
+            continue
+        seen.add(identifier_in_primary_source)
+        sequencing_dates = sequence_dates_by_identifier_in_primary_source[
+            identifier_in_primary_source
+        ]
+        modified = None
+        created = None
+        if sequencing_dates:
+            modified = max(sequencing_dates)
+            created = min(sequencing_dates)
+
         activity = seq_repo_activities.get(source.project_id)
 
         project_coordinators_ids, units_in_charge = (
@@ -146,7 +167,22 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         if not units_in_charge or not project_coordinators_ids:
             continue
         contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
-        keyword = [*shared_keyword, Text(value=source.species)]
+        keyword = list(shared_keyword)
+        if source.species:
+            keyword.append(Text(value=source.species))
+        if source.pathogen_code:
+            keyword.append(Text(value=source.pathogen_code.removesuffix("P")))
+        if source.sequencing_platform:
+            keyword.append(Text(value=source.sequencing_platform))
+        quality_information = [
+            Text(value=f"Basepairs: {source.basepair_count}", language="en"),
+            Text(value=f"Reads: {source.reads_count}", language="en"),
+        ]
+        if source.system_feedback:
+            quality_information.append(
+                Text(value=source.system_feedback, language="en")
+            )
+        title = f"LIMS Sample ID {source.lims_sample_id} ({source.species})"
         extracted_resource = ExtractedResource(
             accessPlatform=mex_access_platform.stableTargetId,
             accessRestriction=access_restriction,
@@ -154,21 +190,21 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             anonymizationPseudonymization=anonymization_pseudonymization,
             contact=project_coordinators_ids,
             contributingUnit=contributing_unit,
-            created=source.sequencing_date,
+            created=created,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=identifier_in_primary_source,
-            instrumentToolOrApparatus=source.sequencing_platform,
             keyword=keyword,
-            method=method,
+            modified=modified,
             publisher=extracted_organization_rki.stableTargetId,
+            qualityInformation=quality_information,
             resourceCreationMethod=resource_creation_method,
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
             stateOfDataProcessing=state_of_data_processing,
             theme=theme,
-            title=f"{source.project_name} sample {source.customer_sample_name}",
+            title=title,
             unitInCharge=units_in_charge,
             wasGeneratedBy=activity.stableTargetId if activity else None,
         )
@@ -255,12 +291,13 @@ def get_resolved_project_coordinators_and_units(
 
         for query in seq_repo_ldap_persons_with_query:
             query_ldap: LDAPPersonWithQuery = query
-            if (sam_account_name := query_ldap.person.sAMAccountName) and (  # noqa: SIM102
-                department_number := query_ldap.person.departmentNumber
+            if (
+                (sam_account_name := query_ldap.person.sAMAccountName)
+                and (department_number := query_ldap.person.departmentNumber)
+                and sam_account_name.lower() == pc.lower()
             ):
-                if sam_account_name.lower() == pc.lower():
-                    units = get_unit_merged_id_by_synonym(department_number) or []
-                    for unit in units:
-                        if unit not in units_in_charge:
-                            units_in_charge.append(unit)
+                units = get_unit_merged_id_by_synonym(department_number) or []
+                for unit in units:
+                    if unit not in units_in_charge:
+                        units_in_charge.append(unit)
     return project_coordinators_ids, units_in_charge
