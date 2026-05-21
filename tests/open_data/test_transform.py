@@ -11,8 +11,8 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.extractors.open_data.transform import (
+    get_only_child_units,
     get_or_transform_open_data_persons,
-    get_unit_ids_of_parent_units,
     transform_and_load_open_data_persons_not_in_ldap,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
         ExtractedContactPoint,
         ExtractedDistribution,
         ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
         ResourceMapping,
     )
@@ -37,11 +38,17 @@ if TYPE_CHECKING:
     )
 
 
-def test_get_only_child_units() -> None:
-    no_parent_units = get_unit_ids_of_parent_units()
+def test_get_only_child_units(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> None:
+    no_parent_units = get_only_child_units(
+        [unit.stableTargetId for unit in mocked_extracted_organizational_units],
+        mocked_extracted_organizational_units,
+    )
 
-    assert list(no_parent_units) == [
-        MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")
+    assert no_parent_units == [  # Parent unit PRNT is filtered out
+        MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
+        MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),  # FG 99
     ]
 
 
@@ -56,6 +63,7 @@ def test_transform_open_data_person_affiliations_to_organizations(
 
 def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliation(
     mocked_open_data_creator_with_processed_affiliation: OpenDataCreatorsOrContributors,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     open_data_organization_ids_by_str = {
         "Universität": MergedOrganizationIdentifier.generate(seed=354)
@@ -63,6 +71,7 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliatio
 
     person = transform_and_load_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_processed_affiliation,
+        extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
     assert person.model_dump(exclude_defaults=True) == {
@@ -70,7 +79,6 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliatio
         "identifierInPrimarySource": "Resolved, Roland",
         "affiliation": ["bFQoRhcVH5DHZ8"],
         "fullName": ["Resolved, Roland"],
-        "orcidId": ["https://orcid.org/9876543210"],
         "identifier": "cOIOKJr1u78e6AxfUFAJ4u",
         "stableTargetId": "Y54iBGnQ5BCx4Hb7sMt7L",
     }
@@ -86,40 +94,43 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_ignore_affiliation
     }
     person = transform_and_load_open_data_persons_not_in_ldap(
         mocked_open_data_creator_with_affiliation_to_ignore,
+        extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
     assert person.model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
         "identifierInPrimarySource": "Felicitás, Juturna",
-        "affiliation": ["fxIeF3TWocUZoMGmBftJ6x"],
         "fullName": ["Felicitás, Juturna"],
-        "orcidId": ["https://orcid.org/0000-0002-1234-5678"],
         "identifier": "gfCLiDlCRkSTXic8WuawRm",
         "stableTargetId": "hA4zlscf5H7HsfqZYMGqXT",
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_transform_open_data_persons(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     open_data_organization_ids_by_str = {
         "RKI": MergedOrganizationIdentifier.generate(seed=354)
     }
     persons = get_or_transform_open_data_persons(
         [mocked_open_data_creator_with_affiliation_to_ignore],
+        extracted_organization_rki,
         open_data_organization_ids_by_str,
     )
     assert len(persons) == 1
     assert persons[0].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
-        "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
         "affiliation": ["ga6xh6pgMwgq7DC7r6Wjqg"],
         "email": ["felicitasj@rki.de"],
         "familyName": ["Felicitás"],
         "fullName": ["Felicitás, Juturna"],
         "givenName": ["Juturna"],
+        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
+        "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
         "identifier": "hiY0YTC5dUkBrf8ujMemjh",
+        "memberOf": ["cjna2jitPngp6yIV63cdi9"],
+        "orcidId": ["https://orcid.org/0000-0002-1234-5678"],
         "stableTargetId": "cpKNwpoZTQ4GpIzBgO8DMx",
     }
 
@@ -154,12 +165,14 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
     juturna_felicitas: ExtractedPerson,
     mocked_open_data_parent_resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     mocked_open_data_distribution: list[ExtractedDistribution],
     contact_point: ExtractedContactPoint,
 ) -> None:
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         mocked_open_data_parent_resource,
         [juturna_felicitas],
+        mocked_extracted_organizational_units,
         mocked_open_data_distribution,
         mocked_open_data_parent_resource_mapping,
         extracted_organization_rki,
@@ -172,21 +185,23 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "identifierInPrimarySource": "Eins",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
         "created": "2021",
-        "doi": "https://doi.org/10.3456/zenodo.7890",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
         "contact": ["cMkmnNOoNVAohBA1XLNr9K"],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
-        "unitInCharge": ["bFQoRhcVH5IS5j"],
+        "unitInCharge": [
+            "cjna2jitPngp6yIV63cdi9"
+        ],  # only child unit of Juturna Felicitás = C1
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
-        "contributingUnit": ["bFQoRhcVH5IS5j"],
         "contributor": ["cpKNwpoZTQ4GpIzBgO8DMx"],
+        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],  # default, always unit "FG 99"
         "description": [
             {"value": "Test1 <a href='test/2'>test3</a>", "language": "en"}
         ],
+        "doi": "https://doi.org/10.3456/zenodo.7890",
         "distribution": ["dMXXtqkXco7A1FslVtJWqR"],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
