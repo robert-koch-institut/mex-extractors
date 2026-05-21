@@ -47,7 +47,7 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-from mex.extractors.utils import load_yaml
+from mex.extractors.utils import count_outbound_connections, load_yaml
 
 
 @asset(group_name="synopse")
@@ -269,7 +269,17 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
-    context.add_output_metadata({"num_items": len(extracted_variables)})
+    outbound_by_identifier = {
+        v.identifierInPrimarySource: count_outbound_connections(v)
+        for v in extracted_variables
+    }
+
+    context.add_output_metadata(
+        {
+            "num_items": len(extracted_variables),
+            "outbound_connections": outbound_by_identifier,
+        }
+    )
     return extracted_variables
 
 
