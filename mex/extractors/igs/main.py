@@ -11,6 +11,7 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedContactPoint,
     ExtractedOrganization,
+    ExtractedResource,
     ResourceMapping,
     VariableGroupFilter,
     VariableMapping,
@@ -21,6 +22,7 @@ from mex.extractors.igs.extract import (
     extract_igs_info,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
+    extract_seq_repo_resource_ids_by_pathogen,
 )
 from mex.extractors.igs.filter import filter_igs_schemas
 from mex.extractors.igs.model import IGSInfo, IGSSchema
@@ -69,6 +71,14 @@ def igs_endpoint_counts(
 
 
 @asset(group_name="igs")
+def igs_seq_repo_resource_ids_by_pathogen(
+    seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
+) -> dict[str, MergedResourceIdentifier]:
+    """Extract seq-repo resource ids by igs ids."""
+    return extract_seq_repo_resource_ids_by_pathogen(seq_repo_resources, igs_schemas)
+
+
+@asset(group_name="igs")
 def igs_access_platform_mapping() -> dict[str, Any]:
     """Extract IGS access platform mapping."""
     settings = Settings.get()
@@ -104,6 +114,7 @@ def igs_extracted_resource_ids(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     igs_endpoint_counts: dict[str, str],
+    igs_seq_repo_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
 ) -> list[MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_extracted_resource(
@@ -114,6 +125,7 @@ def igs_extracted_resource_ids(  # noqa: PLR0913
         igs_schemas,
         igs_info,
         igs_endpoint_counts,
+        igs_seq_repo_resource_ids_by_pathogen,
     )
     load(extracted_resources.values())
     return [resource.stableTargetId for resource in extracted_resources.values()]
