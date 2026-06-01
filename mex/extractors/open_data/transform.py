@@ -1,5 +1,4 @@
 import re
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
@@ -116,9 +115,6 @@ def transform_open_data_person_affiliations_to_organizations(
     return affiliation_dict
 
 
-lru_cache(maxsize=1024)
-
-
 def transform_and_load_open_data_persons_not_in_ldap(
     person: OpenDataCreatorsOrContributors,
     extracted_organization_rki: ExtractedOrganization,
@@ -144,11 +140,13 @@ def transform_and_load_open_data_persons_not_in_ldap(
         else None
     )
 
+    orcid_id = f"https://orcid.org/{person.orcid}" if person.orcid else None
     extracted_person = ExtractedPerson(
         affiliation=affiliation,
         hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
         identifierInPrimarySource=person.name,
         fullName=person.name,
+        orcidId=orcid_id,
     )
     load([extracted_person])
     return extracted_person
@@ -170,8 +168,13 @@ def get_or_transform_open_data_persons(
         list of Extracted Persons
     """
     extracted_persons: list[ExtractedPerson] = []
+    seen: set[OpenDataCreatorsOrContributors] = set()
 
     for person in open_data_creators_contributors:
+        if person in seen:
+            continue
+        seen.add(person)
+
         if extracted_ldap_person := get_ldap_extracted_person_by_query(
             display_name=person.name
         ):
@@ -183,11 +186,11 @@ def get_or_transform_open_data_persons(
                 open_data_organization_ids_by_str,
             )
 
-        if person.orcid:
+        if person.orcid and not extracted_person.orcidId:
             extracted_person.orcidId = [f"https://orcid.org/{person.orcid}"]
+            load([extracted_person])
 
-        if extracted_person not in extracted_persons:
-            extracted_persons.append(extracted_person)
+        extracted_persons.append(extracted_person)
 
     return extracted_persons
 

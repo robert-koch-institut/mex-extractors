@@ -80,6 +80,7 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliatio
         "affiliation": ["bFQoRhcVH5DHZ8"],
         "fullName": ["Resolved, Roland"],
         "identifier": "cOIOKJr1u78e6AxfUFAJ4u",
+        "orcidId": ["https://orcid.org/9876543210"],
         "stableTargetId": "Y54iBGnQ5BCx4Hb7sMt7L",
     }
 
@@ -102,6 +103,7 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_ignore_affiliation
         "identifierInPrimarySource": "Felicitás, Juturna",
         "fullName": ["Felicitás, Juturna"],
         "identifier": "gfCLiDlCRkSTXic8WuawRm",
+        "orcidId": ["https://orcid.org/0000-0002-1234-5678"],
         "stableTargetId": "hA4zlscf5H7HsfqZYMGqXT",
     }
 
