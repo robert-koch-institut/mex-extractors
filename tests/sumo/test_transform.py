@@ -72,28 +72,26 @@ def test_transform_resource_nokeda_to_mex_resource(
         sumo_extracted_access_platform,
     )
     expected = {
+        "identifier": "feVlCRX2L1jeXiLYMOvHXF",
         "hadPrimarySource": "g2emcctcV6HXW0353Ye1AR",
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "test_project",
+        "stableTargetId": "hyxiQKMht5DgDtOv9awxjU",
+        "accessPlatform": ["bu75RAHAhH2aYxHhhA8HQH"],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "wasGeneratedBy": "3wCwpXX9YZ9UF4WCcMMvD",
         "contact": ["bFQoRhcVH5DHVf"],
-        "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"value": "test_project", "language": "de"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
-        "accessPlatform": ["bu75RAHAhH2aYxHhhA8HQH"],
         "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "description": [
-            {"value": "Echtzeitdaten der Routinedokumenation", "language": "de"}
+            {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
         ],
         "documentation": [
             {"language": "en", "title": "Confluence", "url": "https://link.com"}
         ],
         "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
         "keyword": [
-            {"value": "keyword1", "language": "de"},
-            {"value": "keyword2", "language": "de"},
+            {"language": "de", "value": "keyword1"},
+            {"language": "de", "value": "keyword2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
@@ -101,17 +99,19 @@ def test_transform_resource_nokeda_to_mex_resource(
             "https://mex.rki.de/item/resource-creation-method-3"
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
-        "resourceTypeSpecific": [{"value": "Daten", "language": "de"}],
+        "resourceTypeSpecific": [{"language": "de", "value": "Daten"}],
         "rights": [
             {
-                "value": "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des RKI zur Nutzung zur Verfügung gestellt werden.",
                 "language": "de",
+                "value": "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des RKI zur Nutzung zur Verfügung gestellt werden.",
             }
         ],
-        "spatial": [{"value": "Deutschland", "language": "de"}],
+        "spatial": [{"language": "de", "value": "Deutschland"}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-2"],
-        "identifier": "feVlCRX2L1jeXiLYMOvHXF",
-        "stableTargetId": "hyxiQKMht5DgDtOv9awxjU",
+        "theme": ["https://mex.rki.de/item/theme-11"],
+        "title": [{"language": "de", "value": "test_project"}],
+        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+        "wasGeneratedBy": "3wCwpXX9YZ9UF4WCcMMvD",
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
@@ -168,7 +168,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         ],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Syndrome"}],
-        "unitInCharge": get_unit_merged_id_by_synonym("C1"),
+        "unitInCharge": get_unit_merged_id_by_synonym("FG 99"),
         "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
