@@ -18,7 +18,7 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
-    get_wikidata_extracted_organization_by_name,
+    get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
@@ -71,8 +71,8 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
         unit.identifierInPrimarySource: unit
         for unit in get_extracted_organizational_units()
     }
-    rki_organization = get_wikidata_extracted_organization_by_name("RKI")
-    if not rki_organization:
+    rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
+    if not rki_organization_id:
         msg = "RKI wikidata organization not found"
         raise EmptySearchResultError(msg)
 
@@ -80,7 +80,7 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
         ldap_person,
         get_extracted_primary_source_id_by_name("ldap"),
         extracted_organizational_units,
-        rki_organization,
+        rki_organization_id,
     )
     load([extracted_person])
     return extracted_person
