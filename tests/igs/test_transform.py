@@ -44,6 +44,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         igs_schemas,
         igs_info,
         igs_endpoint_counts,
+        {"PATHOGEN": MergedResourceIdentifier.generate(seed=342)},
     )
     assert extracted_resource["PATHOGEN"].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
@@ -68,6 +69,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
             {"value": "Anzahl tests: 42", "language": "de"},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
+        "isPartOf": ["bFQoRhcVH5DHZW"],
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",
     }
 
