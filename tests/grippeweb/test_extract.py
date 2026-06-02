@@ -56,7 +56,7 @@ def test_extract_ldap_actors_for_functional_accounts(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb", "mocked_wikidata")
 def test_extract_ldap_persons(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_access_platform: AccessPlatformMapping,
