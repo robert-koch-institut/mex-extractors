@@ -11,7 +11,6 @@ from mex.common.models import (
     ExtractedPerson,
     ResourceMapping,
 )
-from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
@@ -37,6 +36,8 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_name="FG99-ABC-123",
             customer_sample_name="test-customer-name-1",
             project_id="TEST-ID",
+            basepair_count=1,
+            reads_count=2,
         ),
         SeqRepoSource(
             project_coordinators=["FelicitasJ", "NonExistent"],
@@ -48,6 +49,8 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_name="FG99-ABC-321",
             customer_sample_name="test-customer-name-2",
             project_id="TEST-ID",
+            basepair_count=3,
+            reads_count=4,
         ),
         SeqRepoSource(
             project_coordinators=["ResolvedR"],
@@ -59,6 +62,8 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_name="FG99-ABC-789",
             customer_sample_name="test-customer-name-3",
             project_id="TEST-ID-2",
+            basepair_count=5,
+            reads_count=6,
         ),
         SeqRepoSource(
             customer_org_unit_id="FG99",
@@ -67,18 +72,12 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             project_coordinators=["ResolvedR"],
             project_id="TEST-ID",
             project_name="SKIPPED BECAUSE MISSING DATE",
-            sequenced_sample_id="SEQ-321",
             sequencing_platform="TEST",
             species="Lab rat",
+            basepair_count=7,
+            reads_count=8,
         ),
     ]
-
-
-@pytest.fixture
-def seq_repo_latest_sources(
-    seq_repo_sources: list[SeqRepoSource],
-) -> dict[str, SeqRepoSource]:
-    return filter_sources_on_latest_sequencing_date(seq_repo_sources)
 
 
 @pytest.fixture
@@ -113,13 +112,13 @@ def extracted_mex_access_platform(
 
 @pytest.fixture
 def extracted_mex_activities_dict(
-    seq_repo_latest_sources: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
     seq_repo_activity: ActivityMapping,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
-        seq_repo_latest_sources,
+        seq_repo_sources,
         seq_repo_activity,
         seq_repo_ldap_persons_with_query,
         seq_repo_merged_person_ids_by_query_string,

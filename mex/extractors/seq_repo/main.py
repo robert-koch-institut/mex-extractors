@@ -25,7 +25,6 @@ from mex.extractors.seq_repo.extract import (
     extract_source_project_coordinator,
     extract_sources,
 )
-from mex.extractors.seq_repo.filter import filter_sources_on_latest_sequencing_date
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
@@ -38,27 +37,17 @@ from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="seq_repo")
-def seq_repo_source() -> list[SeqRepoSource]:
+def seq_repo_sources() -> list[SeqRepoSource]:
     """Extract sources from seq-repo."""
     return extract_sources()
 
 
 @asset(group_name="seq_repo")
-def seq_repo_latest_source(
-    seq_repo_source: list[SeqRepoSource],
-) -> dict[str, SeqRepoSource]:
-    """Filter latest sources from seq-repo source."""
-    return filter_sources_on_latest_sequencing_date(
-        seq_repo_source,
-    )
-
-
-@asset(group_name="seq_repo")
 def seq_repo_ldap_persons_with_query(
-    seq_repo_latest_source: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
 ) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
-    return extract_source_project_coordinator(seq_repo_latest_source)
+    return extract_source_project_coordinator(seq_repo_sources)
 
 
 @asset(group_name="seq_repo")
@@ -87,7 +76,7 @@ def seq_repo_merged_person_ids_by_query_string(
 @asset(group_name="seq_repo", metadata={"entity_type": "organization"})
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
-    seq_repo_latest_source: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
     seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
@@ -98,7 +87,7 @@ def seq_repo_extracted_activities_by_id_str(
     )
 
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
-        seq_repo_latest_source,
+        seq_repo_sources,
         activity,
         seq_repo_ldap_persons_with_query,
         seq_repo_merged_person_ids_by_query_string,
@@ -130,7 +119,7 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
 @asset(group_name="seq_repo", metadata={"entity_type": "resource"})
 def seq_repo_resources(  # noqa: PLR0913
     context: AssetExecutionContext,
-    seq_repo_latest_source: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
     seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
@@ -144,7 +133,7 @@ def seq_repo_resources(  # noqa: PLR0913
     )
 
     resources = transform_seq_repo_resource_to_extracted_resource(
-        seq_repo_latest_source,
+        seq_repo_sources,
         seq_repo_extracted_activities_by_id_str,
         seq_repo_extracted_access_platform,
         resource,

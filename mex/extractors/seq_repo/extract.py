@@ -22,7 +22,7 @@ def extract_sources() -> list[SeqRepoSource]:
 
 
 def extract_source_project_coordinator(
-    seq_repo_sources: dict[str, SeqRepoSource],
+    seq_repo_sources: list[SeqRepoSource],
 ) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons with their query string for source project coordinators.
 
@@ -35,10 +35,10 @@ def extract_source_project_coordinator(
     ldap = LDAPConnector.get()
     seen = set()
     persons_with_query = []
-    for value in watch_progress(
-        seq_repo_sources.values(), "extract_source_project_coordinator"
+    for source in watch_progress(
+        seq_repo_sources, "extract_source_project_coordinator"
     ):
-        names = value.project_coordinators
+        names = source.project_coordinators
         for name in names:
             if name in seen:
                 continue
