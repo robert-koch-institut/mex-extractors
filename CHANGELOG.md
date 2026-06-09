@@ -9,13 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/57105a
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/dd987e
-- update lock file(2026-05-12)
+- dependency update(2026-06-02)
 
 ### Deprecated
 
@@ -46,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: updated mapping path in settings
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
+- seq-repo mapping update
 
 ### Fixed
 
