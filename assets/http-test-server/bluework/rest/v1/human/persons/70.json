@@ -1,0 +1,12 @@
+{
+    "person": {
+        "email": "felicitasj@rki.de",
+        "firstname": "Felicitás",
+        "id": 70,
+        "lastname": "Juturna",
+        "personnelNumber": "70"
+    },
+    "status": {
+        "code": 200
+    }
+}

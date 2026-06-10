@@ -1,0 +1,9 @@
+{
+    "projectStatus": {
+        "id": 1,
+        "text": "Projektstatus1"
+    },
+    "status": {
+        "code": 200
+    }
+}
