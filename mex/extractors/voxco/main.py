@@ -4,23 +4,15 @@ from typing import Any
 from dagster import asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.transform import transform_ldap_persons_to_extracted_persons
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
     ResourceMapping,
 )
-from mex.common.types import (
-    MergedOrganizationIdentifier,
-)
+from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
@@ -65,21 +57,11 @@ def voxco_merged_organization_ids_by_query_string(
 @asset(group_name="voxco")
 def voxco_extracted_persons(
     voxco_resource_mappings: list[dict[str, Any]],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> list[ExtractedPerson]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract ldap persons for voxco, transform them and load them to sinks."""
-    ldap_persons = extract_ldap_persons_voxco(
+    return extract_ldap_persons_voxco(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )
-    mex_persons = transform_ldap_persons_to_extracted_persons(
-        ldap_persons,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(mex_persons)
-    return mex_persons
 
 
 @asset(group_name="voxco")
@@ -88,7 +70,7 @@ def voxco_extracted_resources_by_str(
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
-    voxco_extracted_persons: list[ExtractedPerson],
+    voxco_extracted_persons: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
 ) -> dict[str, ExtractedResource]:

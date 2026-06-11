@@ -4,12 +4,11 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.common.logging import logger
 from mex.common.types import (
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     TemporalEntity,
     TemporalEntityPrecision,
     YearMonthDay,
@@ -17,6 +16,7 @@ from mex.common.types import (
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
 from mex.extractors.wikidata.helpers import (
@@ -121,18 +121,17 @@ def extract_international_projects_source(
 
 def extract_international_projects_project_leaders(
     international_projects_sources: Iterable[InternationalProjectsSource],
-) -> list[LDAPPersonWithQuery]:
-    """Extract LDAP persons with their query string for project leaders.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Extract Merged person ids with their query string for project leaders.
 
     Args:
         international_projects_sources: international projects sources
 
     Returns:
-        List of LDAP persons with query
+        List of Merged person ids with query
     """
-    ldap = LDAPConnector.get()
     seen = set()
-    ldap_persons = []
+    merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}
     for source in watch_progress(
         international_projects_sources, "extract_international_projects_project_leaders"
     ):
@@ -144,17 +143,18 @@ def extract_international_projects_project_leaders(
             if name in seen:
                 continue
             seen.add(name)
-            for analysed_name in analyse_person_string(name):
-                persons = ldap.get_persons(
-                    surname=analysed_name.surname,
-                    given_name=analysed_name.given_name,
-                    limit=2,
-                ).items
-                if len(persons) == 1 and persons[0].objectGUID:
-                    ldap_persons.append(
-                        LDAPPersonWithQuery(person=persons[0], query=name)
+            collected_ids = [
+                person_id
+                for analysed_name in analyse_person_string(name)
+                if (
+                    person_id := get_ldap_merged_person_id_by_query(
+                        surname=analysed_name.surname,
+                        given_name=analysed_name.given_name,
                     )
-    return ldap_persons
+                )
+            ]
+            merged_person_ids_by_query[name] = collected_ids
+    return merged_person_ids_by_query
 
 
 def extract_international_projects_funding_sources(

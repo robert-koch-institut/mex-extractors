@@ -3,9 +3,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 from pandas import ExcelFile
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.settings import Settings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
@@ -18,6 +20,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 
 
 def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
@@ -164,26 +167,26 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 def extract_ldap_contact_points_by_emails(
     resources: list[ResourceMapping],
-) -> list[LDAPFunctionalAccount]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Extract contact points from ldap for email in resource contacts.
 
     Args:
         resources: list of sumo resource mapping models
 
     Returns:
-        List of ldap actors
+        List of merged contact point identifier by mail
     """
-    ldap = LDAPConnector.get()
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
-    accounts = []
-    for mail in emails:
-        accounts.extend(ldap.get_functional_accounts(mail=mail).items)
-    return accounts
+    return {
+        mail: contact_id
+        for mail in emails
+        if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
+    }
 
 
 def extract_ldap_contact_points_by_name(
     sumo_access_platform: AccessPlatformMapping,
-) -> list[LDAPPersonWithQuery]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract contact points from ldap for contact name in Sumo access platform.
 
     Args:
@@ -192,16 +195,17 @@ def extract_ldap_contact_points_by_name(
     Returns:
         List of ldap persons with query
     """
-    ldap = LDAPConnector.get()
     names = sumo_access_platform.contact[0].mappingRules[0].forValues or []
     split_names = [
         split_name for name in names for split_name in analyse_person_string(name)
     ]
-    ldap_persons = []
-    for split_name in split_names:
-        persons = ldap.get_persons(
-            surname=split_name.surname, given_name=split_name.given_name, limit=2
-        ).items
-        if len(persons) == 1 and persons[0].objectGUID:
-            ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
-    return ldap_persons
+
+    return {
+        f"{split_name.given_name} {split_name.surname}": person_id
+        for split_name in split_names
+        if (
+            person_id := get_ldap_merged_person_id_by_query(
+                surname=split_name.surname, given_name=split_name.given_name
+            )
+        )
+    }
