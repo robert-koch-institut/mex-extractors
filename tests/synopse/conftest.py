@@ -23,10 +23,10 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import Settings
-from mex.extractors.synopse.models.project import SynopseProject
-from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
+from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
+from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
+from mex.extractors.synopse.models.variable import Variablenuebersicht
 from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
 )
@@ -89,26 +89,26 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
 
 
 @pytest.fixture
-def synopse_study_overviews() -> list[SynopseStudyOverview]:
+def synopse_study_overviews() -> list[Datensatzuebersicht]:
     """Return a list Synopse Study Overviews."""
     return [
-        SynopseStudyOverview(
-            studien_id="12345",
-            ds_typ_id=17,
-            titel_datenset="set1",
-            synopse_id="synopse1",
+        Datensatzuebersicht(
+            StudienID="12345",
+            DStypID=17,
+            Titel_Datenset="set1",
+            SynopseID="synopse1",
         ),
-        SynopseStudyOverview(
-            studien_id="studie1",
-            ds_typ_id=18,
-            titel_datenset="set2",
-            synopse_id="synopse1",
+        Datensatzuebersicht(
+            StudienID="studie1",
+            DStypID=18,
+            Titel_Datenset="set2",
+            SynopseID="synopse1",
         ),
-        SynopseStudyOverview(
-            studien_id="studie2",
-            ds_typ_id=32,
-            titel_datenset="set2",
-            synopse_id="synopse2",
+        Datensatzuebersicht(
+            StudienID="studie2",
+            DStypID=32,
+            Titel_Datenset="set2",
+            SynopseID="synopse2",
         ),
     ]
 
@@ -150,117 +150,117 @@ def synopse_resources() -> list[ExtractedResource]:
 @pytest.fixture
 def synopse_variables(
     synopse_variables_raw: list[dict[str, str | int]],
-) -> list[SynopseVariable]:
+) -> list[Variablenuebersicht]:
     """Return a list Synopse Variables."""
-    return [SynopseVariable.model_validate(v) for v in synopse_variables_raw]
+    return [Variablenuebersicht.model_validate(v) for v in synopse_variables_raw]
 
 
 @pytest.fixture
 def synopse_variables_by_study_id(
-    synopse_variables: list[SynopseVariable],
-) -> dict[int, list[SynopseVariable]]:
+    synopse_variables: list[Variablenuebersicht],
+) -> dict[int, list[Variablenuebersicht]]:
     """Return a mapping from synopse studie id to the variables with this studie id."""
-    synopse_variables = sorted(synopse_variables, key=lambda v: v.studie_id)
+    synopse_variables = sorted(synopse_variables, key=lambda v: v.StudieID2)
     return {
-        studie_id: list(variables)
-        for studie_id, variables in groupby(
-            synopse_variables, key=lambda v: v.studie_id
+        StudieID2: list(variables)
+        for StudieID2, variables in groupby(
+            synopse_variables, key=lambda v: v.StudieID2
         )
     }
 
 
 @pytest.fixture
 def synopse_variables_by_thema(
-    synopse_variables: list[SynopseVariable],
-) -> dict[str, list[SynopseVariable]]:
+    synopse_variables: list[Variablenuebersicht],
+) -> dict[str, list[Variablenuebersicht]]:
     """Return a mapping from synopse thema to the variables with this thema."""
     synopse_variables = sorted(
-        synopse_variables, key=lambda v: v.thema_und_fragebogenausschnitt
+        synopse_variables, key=lambda v: v.textbox5
     )
     return {
         thema: list(variables)
         for thema, variables in groupby(
-            synopse_variables, key=lambda v: v.thema_und_fragebogenausschnitt
+            synopse_variables, key=lambda v: v.textbox5
         )
     }
 
 
 @pytest.fixture
-def synopse_studies() -> list[SynopseStudy]:
+def synopse_studies() -> list[MetadatenZuDatensaetzen]:
     """Return a list of Synopse Studies."""
     return [
-        SynopseStudy(
-            beitragende="Jane Doe",
-            beschreibung="ein heikles Unterfangen.",
-            dokumentation="Z:\\foo\\bar",
-            ds_typ_id=17,
-            erstellungs_datum="2022",
+        MetadatenZuDatensaetzen(
+            Beitragende="Jane Doe",
+            Beschreibung="ein heikles Unterfangen.",
+            #dokumentation="Z:\\foo\\bar",
+            DStypID=17,
+            #erstellungs_datum="2022",
             plattform_adresse="S:\\data",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="12345",
-            titel_datenset="Titel",
+            StudienID="12345",
+            Titel_Datenset="Titel",
             Studie="Studie123",
             zugangsbeschraenkung="protected",
         ),
-        SynopseStudy(
-            beschreibung="ein zweites heikles Unterfangen.",
-            dokumentation="X:\\foo\\bar",
-            ds_typ_id=16,
-            erstellungs_datum="2017",
+        MetadatenZuDatensaetzen(
+            Beschreibung="ein zweites heikles Unterfangen.",
+            #dokumentation="X:\\foo\\bar",
+            DStypID=16,
+            #erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="123456",
-            titel_datenset="Titel 2",
+            StudienID="123456",
+            Titel_Datenset="Titel 2",
             zugangsbeschraenkung="open",
         ),
-        SynopseStudy(
-            beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            dokumentation="interne Datennutzung",
-            ds_typ_id=16,
-            erstellungs_datum="2017",
+        MetadatenZuDatensaetzen(
+            Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
+            #dokumentation="interne Datennutzung",
+            DStypID=16,
+            #erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="123457",
-            titel_datenset="Study ohne Referenzen",
+            StudienID="123457",
+            Titel_Datenset="Study ohne Referenzen",
             zugangsbeschraenkung="sensitive",
         ),
-        SynopseStudy(
-            beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            dokumentation="https://asd.def",
-            ds_typ_id=16,
+        MetadatenZuDatensaetzen(
+            Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
+            #dokumentation="https://asd.def",
+            DStypID=16,
             erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="123458",
-            titel_datenset="Study 2 ohne Referenzen",
+            StudienID="123458",
+            Titel_Datenset="Study 2 ohne Referenzen",
             zugangsbeschraenkung="protected",
         ),
-        SynopseStudy(
-            beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            dokumentation="interne Datennutzung",
-            ds_typ_id=16,
-            erstellungs_datum="2017",
+        MetadatenZuDatensaetzen(
+            Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
+            #dokumentation="interne Datennutzung",
+            DStypID=16,
+            ##erstellungs_datum="2017",
             plattform_adresse="interne Datennutzung",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="123457",
-            titel_datenset="Study ohne Referenzen",
+            StudienID="123457",
+            Titel_Datenset="Study ohne Referenzen",
             zugangsbeschraenkung="sensitive",
         ),
-        SynopseStudy(
-            beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            dokumentation="https://asd.def",
-            ds_typ_id=16,
+        MetadatenZuDatensaetzen(
+            Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
+            #dokumentation="https://asd.def",
+            DStypID=16,
             erstellungs_datum="2017",
             plattform_adresse="https://asd.def",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
-            studien_id="123458",
-            titel_datenset="Study 2 ohne Referenzen",
+            StudienID="123458",
+            Titel_Datenset="Study 2 ohne Referenzen",
             zugangsbeschraenkung="open",
         ),
     ]
@@ -276,45 +276,45 @@ def synopse_access_platform() -> AccessPlatformMapping:
 
 
 @pytest.fixture
-def created_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
+def created_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, str]:
     """Return a lookup from study ID to created string."""
     return {
-        s.studien_id: s.erstellungs_datum
+        s.StudienID: s.erstellungs_datum
         for s in synopse_studies
         if s.erstellungs_datum
     }
 
 
 @pytest.fixture
-def description_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, str]:
+def description_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, str]:
     """Return a lookup from study ID to description string."""
-    return {s.studien_id: s.beschreibung for s in synopse_studies if s.beschreibung}
+    return {s.StudienID: s.Beschreibung for s in synopse_studies if s.Beschreibung}
 
 
 @pytest.fixture
-def documentation_by_study_id(synopse_studies: list[SynopseStudy]) -> dict[str, Link]:
+def documentation_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
     return {
-        s.studien_id: Link(url=s.dokumentation)
+        s.StudienID: Link(url=s.#dokumentation)
         for s in synopse_studies
-        if s.dokumentation
+        if s.#dokumentation
     }
 
 
 @pytest.fixture
 def keyword_text_by_study_id(
-    synopse_studies: list[SynopseStudy],
+    synopse_studies: list[MetadatenZuDatensaetzen],
 ) -> dict[str, list[Text]]:
     """Return a lookup from study ID to list of keyword Text."""
     return {
-        s.studien_id: [Text(value=s.schlagworte_themen)]
+        s.StudienID: [Text(value=s.schlagworte_themen)]
         for s in synopse_studies
         if s.schlagworte_themen
     }
 
 
 @pytest.fixture
-def synopse_study(synopse_studies: list[SynopseStudy]) -> SynopseStudy:
+def synopse_study(synopse_studies: list[MetadatenZuDatensaetzen]) -> MetadatenZuDatensaetzen:
     """Return a Synopse Study."""
     return synopse_studies[0]
 
@@ -329,49 +329,49 @@ def synopse_merged_organization_ids_by_query_string() -> dict[
 
 
 @pytest.fixture
-def synopse_projects() -> list[SynopseProject]:
+def synopse_projects() -> list[ProjektUndStudienverwaltung]:
     """Return a list of Synopse Projects."""
     return [
-        SynopseProject(
-            akronym_des_studientitels="BBCCDD_00",
-            anschlussprojekt="BBCCDD",
-            beitragende="Roland Resolved",
-            beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
-            externe_partner="Testpartner",
-            project_studientitel="Studie zu Lorem und Ipsum",
-            kontakt=["info@rki.de"],
-            projektbeginn="1999",
-            projektdokumentation="""Z:\\Projekte\\Dokumentation
+        ProjektUndStudienverwaltung(
+            Studie="BBCCDD_00",
+            Anschlussprojekt="BBCCDD",
+            Beitragende="Roland Resolved",
+            BeschreibungStudie="BBCCDD-Basiserhebung am RKI.",
+            Partner_extern="Testpartner",
+            ProjektStudientitel="Studie zu Lorem und Ipsum",
+            Kontakt=["info@rki.de"],
+            Projektbeginn="1999",
+            Projektdokumentation="""Z:\\Projekte\\Dokumentation
 
 - Fragebogen
 - Labor""",
-            projektende="2000",
-            studien_id="12345",
-            studienart_studientyp="Monitoring-Studie",
-            verantwortliche_oe="C1",
-            interne_partner="fg99, C1",
+            Projektende="2000",
+            StudienID="12345",
+            StudienArtTyp="Monitoring-Studie",
+            VerantwortlicheOE="C1",
+            Partner_intern="fg99, C1",
         ),
-        SynopseProject(
-            akronym_des_studientitels="BBCCDD",
-            beitragende="Roland Resolved",
-            beschreibung_der_studie="BBCCDD-Basiserhebung am RKI.",
-            project_studientitel="Studie zu Lorem und Ipsum",
-            kontakt=["info@rki.de"],
-            projektbeginn="1999",
-            projektdokumentation="""Z:\\Projekte\\Dokumentation
+        ProjektUndStudienverwaltung(
+            Studie="BBCCDD",
+            Beitragende="Roland Resolved",
+            BeschreibungStudie="BBCCDD-Basiserhebung am RKI.",
+            ProjektStudientitel="Studie zu Lorem und Ipsum",
+            Kontakt=["info@rki.de"],
+            Projektbeginn="1999",
+            Projektdokumentation="""Z:\\Projekte\\Dokumentation
 
 - Fragebogen
 - Labor""",
-            projektende="2000",
-            studien_id="12346",
-            studienart_studientyp="Monitoring-Studie",
-            verantwortliche_oe="C1",
+            Projektende="2000",
+            StudienID="12346",
+            StudienArtTyp="Monitoring-Studie",
+            VerantwortlicheOE="C1",
         ),
     ]
 
 
 @pytest.fixture
-def synopse_project(synopse_projects: list[SynopseProject]) -> SynopseProject:
+def synopse_project(synopse_projects: list[ProjektUndStudienverwaltung]) -> ProjektUndStudienverwaltung:
     """Return a Synopse Project."""
     return synopse_projects[0]
 
@@ -415,9 +415,9 @@ def resources_by_synopse_id(
 
 @pytest.fixture
 def extracted_variable_groups(
-    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[Variablenuebersicht]],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> list[ExtractedVariableGroup]:
     """Return a list of extracted variable groups."""
     return transform_synopse_variables_to_mex_variable_groups(

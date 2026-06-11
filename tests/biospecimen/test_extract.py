@@ -45,7 +45,7 @@ def test_extract_biospecimen_resources() -> None:
         "studienbezug": ["1234567"],
         "alternativer_titel": "alternativer Testitel",
         "anonymisiert_pseudonymisiert": "pseudonymisiert",
-        "externe_partner": "esterner Testpartner",
+        "Partner_extern": "esterner Testpartner",
         "id_loinc": ["12345-6"],
         "id_mesh_begriff": ["D123"],
         "kontakt": ["resolvedr@rki.de"],

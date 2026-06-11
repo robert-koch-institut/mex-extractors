@@ -6,10 +6,10 @@ from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
 from mex.extractors.logging import watch_progress
 from mex.extractors.settings import Settings
-from mex.extractors.synopse.models.project import SynopseProject
-from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
+from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
+from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
+from mex.extractors.synopse.models.variable import Variablenuebersicht
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from mex.common.types import MergedOrganizationIdentifier
 
 
-def extract_variables() -> list[SynopseVariable]:
+def extract_variables() -> list[Variablenuebersicht]:
     """Extract variables from `variablenuebersicht` report.
 
     Settings:
@@ -35,13 +35,13 @@ def extract_variables() -> list[SynopseVariable]:
     return list(
         parse_csv(
             settings.synopse.variablenuebersicht_path,
-            SynopseVariable,
+            Variablenuebersicht,
             delimiter=",",
         )
     )
 
 
-def extract_study_data() -> list[SynopseStudy]:
+def extract_study_data() -> list[MetadatenZuDatensaetzen]:
     """Extract study data from `metadaten_zu_datensaetzen` report.
 
     Settings:
@@ -56,7 +56,7 @@ def extract_study_data() -> list[SynopseStudy]:
         watch_progress(
             parse_csv(
                 settings.synopse.metadaten_zu_datensaetzen_path,
-                SynopseStudy,
+                MetadatenZuDatensaetzen,
                 delimiter=",",
             ),
             "extract_study_data",
@@ -64,7 +64,7 @@ def extract_study_data() -> list[SynopseStudy]:
     )
 
 
-def extract_projects() -> list[SynopseProject]:
+def extract_projects() -> list[ProjektUndStudienverwaltung]:
     """Extract projects from `projekt_und_studienverwaltung` report.
 
     Settings:
@@ -79,7 +79,7 @@ def extract_projects() -> list[SynopseProject]:
         watch_progress(
             parse_csv(
                 settings.synopse.projekt_und_studienverwaltung_path,
-                SynopseProject,
+                ProjektUndStudienverwaltung,
                 delimiter=",",
             ),
             "extract_projects",
@@ -88,7 +88,7 @@ def extract_projects() -> list[SynopseProject]:
 
 
 def extract_synopse_project_contributors(
-    synopse_projects: Iterable[SynopseProject],
+    synopse_projects: Iterable[ProjektUndStudienverwaltung],
 ) -> list[LDAPPersonWithQuery]:
     """Extract LDAP persons for Synopse project contributors.
 
@@ -104,7 +104,7 @@ def extract_synopse_project_contributors(
     for project in watch_progress(
         synopse_projects, "extract_synopse_project_contributors"
     ):
-        names = project.beitragende
+        names = project.Beitragende
         if names is None or "nicht mehr im RKI" in names or names in seen:
             continue
         seen.add(names)
@@ -141,7 +141,7 @@ def extract_synopse_contact(
     ]
 
 
-def extract_study_overviews() -> list[SynopseStudyOverview]:
+def extract_study_overviews() -> list[Datensatzuebersicht]:
     """Extract projects from `datensatzuebersicht` report.
 
     Settings:
@@ -156,7 +156,7 @@ def extract_study_overviews() -> list[SynopseStudyOverview]:
         watch_progress(
             parse_csv(
                 settings.synopse.datensatzuebersicht_path,
-                SynopseStudyOverview,
+                Datensatzuebersicht,
                 delimiter=",",
             ),
             "extract_study_overviews",
@@ -165,7 +165,7 @@ def extract_study_overviews() -> list[SynopseStudyOverview]:
 
 
 def extract_synopse_organizations(
-    synopse_projects: list[SynopseProject],
+    synopse_projects: list[ProjektUndStudienverwaltung],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Search and extract organization from wikidata.
 
@@ -176,7 +176,7 @@ def extract_synopse_organizations(
         Dict with organization label and WikidataOrganization
     """
     synopse_organizations = {
-        project.externe_partner for project in synopse_projects
+        project.Partner_extern for project in synopse_projects
     }.union(
         {
             project.foerderinstitution_oder_auftraggeber.split("(")[0]

@@ -3,22 +3,22 @@ from pydantic import ConfigDict, Field
 from mex.common.models import BaseModel
 
 
-class SynopseVariable(BaseModel):
+class Variablenuebersicht(BaseModel):
     """Model class for Synopse variables."""
 
     model_config = ConfigDict(extra="ignore", coerce_numbers_to_str=True)
 
-    auspraegungen: str | None = Field(None, alias="textbox49")
-    datentyp: str | None = Field(None, alias="textbox11")
-    originalfrage: str | None = Field(None, alias="Originalfrage")
-    studie_id: int = Field(..., alias="StudieID2")
-    studie: str = Field(..., alias="StudieID1")
-    synopse_id: str = Field(..., alias="SymopseID")
-    text_dt: str | None = Field(None, alias="textbox51")
-    thema_und_fragebogenausschnitt: str = Field(..., alias="textbox5")
-    unterthema: str = Field(..., alias="textbox2")
-    val_instrument: str | None = Field(None, alias="valInstrument")
-    varlabel: str | None = Field(None, alias="textbox21")
-    varname: str = Field(..., alias="textbox24")
-    int_var: bool = Field(..., alias="IntVar")
-    keep_varname: bool = Field(..., alias="KeepVarname")
+    Auspraegungen: str | None = None
+    Datentyp: str | None = None
+    Originalfrage: str | None = None
+    StudieID2: int = Field(...)
+    StudieID1: str = Field(...)
+    SymopseID: str = Field(...)
+    textbox51: str | None = None
+    textbox5: str = Field(...)
+    textbox2: str = Field(...)
+    valInstrument: str | None = None
+    textbox21: str | None = None
+    textbox24: str = Field(...)
+    IntVar: bool = Field(...)
+    KeepVarname: bool = Field(...)

@@ -3,7 +3,7 @@ from typing import Any
 import numpy as np
 import pytest
 
-from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.synopse.models.variable import Variablenuebersicht
 
 
 @pytest.mark.parametrize(
@@ -43,5 +43,5 @@ from mex.extractors.synopse.models.variable import SynopseVariable
     ids=["all_params", "missing_auspraegung"],
 )
 def test_synopse_variable_model(variable: dict[str, Any]) -> None:
-    syn_var = SynopseVariable.model_validate(variable)
+    syn_var = Variablenuebersicht.model_validate(variable)
     assert not any(v is np.nan for v in syn_var.model_dump().values())  # noqa: PLW0177
