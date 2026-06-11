@@ -112,6 +112,7 @@ def transform_odk_resources_to_mex_resources(
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                 hasLegalBasis=has_legal_basis,
+                healthCategory=resource.healthCategory[0].mappingRules[0].setValues,
                 keyword=resource.keyword[0].mappingRules[0].setValues,
                 language=resource.language[0].mappingRules[0].setValues,
                 meshId=resource.meshId[0].mappingRules[0].setValues,
