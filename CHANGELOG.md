@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - extraction of new model v5.0 field "healthCategory"
+- add first test data for http-test-server (blueant and datscha)
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
