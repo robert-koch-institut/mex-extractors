@@ -63,6 +63,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
                 "language": TextLanguage.DE,
             }
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [{"value": "Surveillance", "language": TextLanguage.DE}],
         "language": ["https://mex.rki.de/item/language-1"],
         "meshId": [

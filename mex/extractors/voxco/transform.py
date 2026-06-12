@@ -78,6 +78,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
             )
         else:
             external_partner = None
+        health_category = resource.healthCategory[0].mappingRules[0].setValues
         identifier_in_primary_source: str = (
             resource.identifierInPrimarySource[0].mappingRules[0].setValues  # type: ignore[assignment]
         )
@@ -123,6 +124,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
             description=description,
             externalPartner=external_partner,
             hadPrimarySource=get_extracted_primary_source_id_by_name("voxco"),
+            healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=language,
