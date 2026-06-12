@@ -50,6 +50,10 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
+healthCategory:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/health-category-1
 icd10code:
   - mappingRules:
       - setValues:

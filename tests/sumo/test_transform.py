@@ -107,6 +107,7 @@ def test_transform_resource_nokeda_to_mex_resource(
             }
         ],
         "externalPartner": Joker(),
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword1"},
             {
@@ -167,6 +168,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "isPartOf": [mex_resources_nokeda.stableTargetId],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},

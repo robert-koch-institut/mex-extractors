@@ -124,6 +124,7 @@ def transform_resource_feat_model_to_mex_resource(
         contributingUnit=contributing_unit,
         hasPersonalData=sumo_resource_feat.hasPersonalData[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
+        healthCategory=sumo_resource_feat.healthCategory[0].mappingRules[0].setValues,
         identifierInPrimarySource=sumo_resource_feat.title[0]
         .mappingRules[0]
         .setValues[0]  # type: ignore[index]
@@ -215,6 +216,7 @@ def transform_resource_nokeda_to_mex_resource(
         .mappingRules[0]
         .setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
+        healthCategory=sumo_resource_nokeda.healthCategory[0].mappingRules[0].setValues,
         identifierInPrimarySource=sumo_resource_nokeda.title[0]
         .mappingRules[0]
         .setValues[0]  # type: ignore[index]

@@ -104,6 +104,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"value": "fastc", "language": "de"},
             {"value": "fastd", "language": "de"},
