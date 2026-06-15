@@ -136,10 +136,6 @@ rights:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-sizeOfDataBasis:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
 spatial:
   - fieldInPrimarySource:
     mappingRules:
