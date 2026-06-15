@@ -136,7 +136,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             }
         ],
         "rights": [{"value": "Verfahren", "language": TextLanguage.DE}],
-        "sizeOfDataBasis": "Meldungen",
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "temporal": "seit 2011",

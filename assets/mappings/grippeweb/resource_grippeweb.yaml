@@ -120,9 +120,6 @@ rights:
       - setValues:
           - language: de
             value: "Verfahren"
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: "Meldungen"
 spatial:
   - mappingRules:
       - setValues:
