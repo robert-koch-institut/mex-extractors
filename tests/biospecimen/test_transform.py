@@ -127,6 +127,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 "url": "Testdokupfad",
             }
         ],
+        "end": "2021-10",
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("biospecimen")),
         "hasLegalBasis": [
@@ -163,7 +164,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "sizeOfDataBasis": "Testanzahl",
         "spatial": [{"language": TextLanguage.DE, "value": "räumlicher Testbezug"}],
         "stableTargetId": Joker(),
-        "temporal": "2021-09 bis 2021-10",
+        "start": "2021-09",
         "theme": [
             "https://mex.rki.de/item/theme-36",
         ],

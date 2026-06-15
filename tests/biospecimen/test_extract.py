@@ -9,7 +9,6 @@ from mex.extractors.biospecimen.extract import (
     extract_biospecimen_resources,
     get_clean_file_name,
     get_clean_string,
-    get_year_from_zeitlicher_bezug,
 )
 
 if TYPE_CHECKING:
@@ -17,7 +16,6 @@ if TYPE_CHECKING:
 
     from mex.common.ldap.models import LDAPPerson
     from mex.extractors.biospecimen.models.source import BiospecimenResource
-    from mex.extractors.settings import Settings
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -103,22 +101,3 @@ def test_get_clean_string(series: Series, expected_clean_string: str) -> None:
     clean_string = get_clean_string(series)
 
     assert clean_string == expected_clean_string
-
-
-def test_get_year_from_zeitlicher_bezug(settings: Settings) -> None:
-    key_col = settings.biospecimen.key_col
-    val_col = settings.biospecimen.val_col
-
-    test_df = None
-    zeitlicher_bezug = get_year_from_zeitlicher_bezug(
-        test_df, key_col, val_col, "zeitlicher Bezug"
-    )
-    assert zeitlicher_bezug is None
-
-    test_df = pd.DataFrame(
-        {key_col: ["zeitlicher Bezug"], val_col: ["Sept 2010-Dez 2012"]}
-    )
-    zeitlicher_bezug = get_year_from_zeitlicher_bezug(
-        test_df, key_col, val_col, "zeitlicher Bezug"
-    )
-    assert zeitlicher_bezug == "2010"

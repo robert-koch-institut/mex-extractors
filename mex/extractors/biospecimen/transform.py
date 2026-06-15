@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from mex.common.models import (
     ExtractedActivity,
@@ -12,7 +12,6 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedOrganizationIdentifier,
-    TemporalEntity,
 )
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
@@ -64,12 +63,11 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     for resource in watch_progress(
         biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
     ):
-        if resource.anonymisiert_pseudonymisiert:
-            anonymization_pseudonymization = AnonymizationPseudonymization.find(
-                resource.anonymisiert_pseudonymisiert
-            )
-        else:
-            anonymization_pseudonymization = None
+        anonymization_pseudonymization = (
+            AnonymizationPseudonymization.find(resource.anonymisiert_pseudonymisiert)
+            if resource.anonymisiert_pseudonymisiert
+            else None
+        )
         conforms_to = resource_mapping.conformsTo[0].mappingRules[0].setValues
         contributing_unit = (
             get_unit_merged_id_by_synonym(unit_name)
@@ -104,14 +102,15 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         was_generated_by = synopse_stable_target_id_by_studien_id.get(
             resource.studienbezug[0]
         )
-        if resource.weiterfuehrende_dokumentation_url_oder_dateipfad:
-            documentation = Link(
+        documentation = (
+            Link(
                 language="de",
                 title=resource.weiterfuehrende_dokumentation_titel,
                 url=resource.weiterfuehrende_dokumentation_url_oder_dateipfad,
             )
-        else:
-            documentation = None
+            if resource.weiterfuehrende_dokumentation_url_oder_dateipfad
+            else None
+        )
         loinc_id = (
             [f"https://loinc.org/{lid}" for lid in resource.id_loinc[0].split(", ")]
             if resource.id_loinc
@@ -132,6 +131,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         resource_creation_method = (
             resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
         )
+        if resource.zeitlicher_bezug and "bis" in resource.zeitlicher_bezug[0]:
+            start_end = resource.zeitlicher_bezug[0].split("bis")
+            start = start_end[0].strip()
+            end = start_end[1].strip()
         unit_in_charge = get_unit_merged_id_by_synonym(
             resource.verantwortliche_fachabteilung
         )
@@ -155,6 +158,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 contributor=contributor,
                 description=resource.beschreibung,
                 documentation=documentation,
+                end=end,
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
                 hasLegalBasis=has_legal_basis,
@@ -174,7 +178,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 rights=resource.rechte,
                 sizeOfDataBasis=resource.vorhandene_anzahl_der_proben,
                 spatial=resource.raeumlicher_bezug,
-                temporal=cast("list[TemporalEntity | str]", resource.zeitlicher_bezug),
+                start=start,
                 theme=theme,
                 title=resource.offizieller_titel_der_probensammlung,
                 unitInCharge=unit_in_charge,
