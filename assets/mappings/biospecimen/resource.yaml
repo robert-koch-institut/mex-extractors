@@ -89,10 +89,6 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
-loincId:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
 meshId:
   - fieldInPrimarySource:
     mappingRules:
