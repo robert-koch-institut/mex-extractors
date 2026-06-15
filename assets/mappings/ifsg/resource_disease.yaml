@@ -21,10 +21,8 @@ contact:
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
+hasCodeValues:
+  - mappingRules:
       - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
