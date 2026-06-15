@@ -102,6 +102,10 @@ methodDescription:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
+numberOfRecords:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publication:
   - fieldInPrimarySource:
     mappingRules:

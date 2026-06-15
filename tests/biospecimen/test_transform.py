@@ -151,6 +151,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "methodDescription": [
             {"language": TextLanguage.DE, "value": "Testmethodenbeschreibung"}
         ],
+        "numberOfRecords": 42,
         "publisher": [str(extracted_organization_rki.stableTargetId)],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -160,7 +161,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "spezieller Testtyp"}
         ],
         "rights": [{"language": TextLanguage.DE, "value": "Testrechte"}],
-        "sizeOfDataBasis": "Testanzahl",
         "spatial": [{"language": TextLanguage.DE, "value": "räumlicher Testbezug"}],
         "stableTargetId": Joker(),
         "temporal": "2021-09 bis 2021-10",
