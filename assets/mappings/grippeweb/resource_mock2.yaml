@@ -93,9 +93,6 @@ language:
 license:
   - mappingRules:
       - {}
-loincId:
-  - mappingRules:
-      - {}
 meshId:
   - mappingRules:
       - setValues:

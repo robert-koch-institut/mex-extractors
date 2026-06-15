@@ -112,7 +112,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             )
         else:
             documentation = None
-        loinc_id = resource.id_loinc[0].split(", ") if resource.id_loinc else []
+        has_code_values = resource.id_loinc[0].split(", ") if resource.id_loinc else []
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
@@ -153,7 +153,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 documentation=documentation,
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
-                hasCodeValues=loinc_id,
+                hasCodeValues=has_code_values,
                 hasLegalBasis=has_legal_basis,
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
