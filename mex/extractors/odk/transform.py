@@ -72,9 +72,11 @@ def transform_odk_resources_to_mex_resources(
         method_description = None
         if resource.methodDescription:
             method_description = resource.methodDescription[0].mappingRules[0].setValues
-        size_of_data_basis = None
-        if resource.sizeOfDataBasis:
-            size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
+        number_of_unique_individuals = None
+        if resource.numberOfUniqueIndividuals:
+            number_of_unique_individuals = (
+                resource.numberOfUniqueIndividuals[0].mappingRules[0].setValues
+            )
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
                 resource.wasGeneratedBy[0].mappingRules[0].forValues[0]  # type: ignore[index]
@@ -117,6 +119,7 @@ def transform_odk_resources_to_mex_resources(
                 meshId=resource.meshId[0].mappingRules[0].setValues,
                 method=resource.method[0].mappingRules[0].setValues,
                 methodDescription=method_description,
+                numberOfUniqueIndividuals=number_of_unique_individuals,
                 publisher=publisher,
                 resourceCreationMethod=resource.resourceCreationMethod[0]
                 .mappingRules[0]
@@ -128,7 +131,6 @@ def transform_odk_resources_to_mex_resources(
                 .mappingRules[0]
                 .setValues,
                 rights=resource.rights[0].mappingRules[0].setValues,
-                sizeOfDataBasis=size_of_data_basis,
                 spatial=resource.spatial[0].mappingRules[0].setValues,
                 temporal=resource.temporal[0].mappingRules[0].setValues,
                 theme=resource.theme[0].mappingRules[0].setValues,
