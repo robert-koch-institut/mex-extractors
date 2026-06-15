@@ -129,6 +129,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         ],
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("biospecimen")),
+        "hasCodeValues": [{"value": "12345-6"}],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -145,7 +146,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "language": [
             "https://mex.rki.de/item/language-1",
         ],
-        "loincId": ["https://loinc.org/12345-6"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D123"],
         "method": [{"language": TextLanguage.EN, "value": "Testmethode"}],
         "methodDescription": [

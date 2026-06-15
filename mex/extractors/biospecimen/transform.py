@@ -112,11 +112,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
             )
         else:
             documentation = None
-        loinc_id = (
-            [f"https://loinc.org/{lid}" for lid in resource.id_loinc[0].split(", ")]
-            if resource.id_loinc
-            else []
-        )
+        loinc_id = resource.id_loinc[0].split(", ") if resource.id_loinc else []
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
@@ -157,13 +153,13 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
                 documentation=documentation,
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
+                hasCodeValues=loinc_id,
                 hasLegalBasis=has_legal_basis,
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
                 instrumentToolOrApparatus=resource.tools_instrumente_oder_apparate,
                 keyword=resource.schlagworte,
                 language=language,
-                loincId=loinc_id,
                 meshId=mesh_id,
                 method=resource.methoden,
                 methodDescription=resource.methodenbeschreibung,
