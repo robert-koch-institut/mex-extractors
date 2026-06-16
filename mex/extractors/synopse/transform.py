@@ -437,6 +437,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if study.beschreibung
             else []
         )
+        end = TemporalEntity(study.feld_ende) if study.feld_ende else None
         has_legal_basis = (
             [Text(value=study.rechte, language=TextLanguage.DE)] if study.rechte else []
         )
@@ -468,9 +469,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             else []
         )
         rights = rights_by_ds_typ_id[str(study.ds_typ_id)]
-        temporal = None
-        if study.feld_start and study.feld_ende:
-            temporal = f"{study.feld_start}-{study.feld_ende}"
+        start = TemporalEntity(study.feld_start) if study.feld_start else None
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues
             if study.studien_id
@@ -488,6 +487,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 contributingUnit=contributing_unit,
                 contributor=contributor,
                 description=description,
+                end=end,
                 hasLegalBasis=has_legal_basis,
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
@@ -513,7 +513,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 resourceTypeSpecific=resource_type_specific,
                 rights=rights,
                 spatial=study.raeumlicher_bezug,
-                temporal=temporal,
+                start=start,
                 theme=theme,
                 title=title_by_study_id[study.studien_id],
                 unitInCharge=unit_in_charge,
