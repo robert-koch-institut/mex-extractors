@@ -29,13 +29,13 @@ def extract_odk_raw_data() -> list[ODKData]:
     for file in Path(settings.odk.raw_data_path).glob("*.xlsx"):
         xls = ExcelFile(file)
 
-        choices_sheet = xls.parse(
+        choices_sheet = xls.parse(  # type: ignore[attr-defined]
             sheet_name="choices", na_values=["", " "], keep_default_na=False
         )
         label_choices = get_column_dict_by_pattern(choices_sheet, "English")
         list_name_choices = choices_sheet["list_name"].to_list()
         name_choices = choices_sheet["name"].to_list()
-        survey_sheet = xls.parse(
+        survey_sheet = xls.parse(  # type: ignore[attr-defined]
             sheet_name="survey", na_values=["", " "], keep_default_na=False
         )
         label_survey = get_column_dict_by_pattern(survey_sheet, "English")
