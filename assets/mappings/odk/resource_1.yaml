@@ -37,6 +37,9 @@ description:
           - value: amet
             language: en
         rule:
+end:
+  - mappingRules:
+      - setValues: # "2021-07-27"
 externalPartner:
   - mappingRules:
       - forValues:
@@ -124,11 +127,9 @@ spatial:
             language: en
         rule:
     comment:
-temporal:
+start:
   - mappingRules:
-      - setValues: 2021-07-27 - 2021-12-31
-        rule:
-    comment:
+      - setValues: # "2021-12-31"
 theme:
   - mappingRules:
       - setValues:
