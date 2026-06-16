@@ -28,9 +28,6 @@ contributor:
       - forValues:
           - "Roland Resolved"
         rule:
-created:
-  - mappingRules:
-      - setValues: "2011"
 description:
   - mappingRules:
       - setValues:
@@ -128,13 +125,13 @@ spatial:
       - setValues:
           - language: de
             value: Deutschland
+start:
+  - mappingRules:
+      - setValues: "2011"
 stateOfDataProcessing:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-2 #Secondary data
-temporal:
-  - mappingRules:
-      - setValues: "seit 2011"
 theme:
   - mappingRules:
       - setValues:

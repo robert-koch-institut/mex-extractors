@@ -107,7 +107,6 @@ def transform_grippeweb_resource_mappings_to_dict(
                 )
             )
         ]
-        created = resource.created[0].mappingRules[0].setValues
         description = resource.description[0].mappingRules[0].setValues
         documentation = resource.documentation[0].mappingRules[0].setValues
         external_partner_identifier = get_or_create_external_partner(
@@ -150,10 +149,10 @@ def transform_grippeweb_resource_mappings_to_dict(
         rights = resource.rights[0].mappingRules[0].setValues
         size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
         spatial = resource.spatial[0].mappingRules[0].setValues
+        start = resource.start[0].mappingRules[0].setValues
         state_of_data_processing = (
             resource.stateOfDataProcessing[0].mappingRules[0].setValues
         )
-        temporal = resource.temporal[0].mappingRules[0].setValues
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
         unit_in_charge = get_unit_merged_id_by_synonym(
@@ -172,7 +171,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             contact=contact,
             contributingUnit=contributing_unit,
             contributor=contributor,
-            created=created,
             description=description,
             documentation=documentation,
             externalPartner=external_partner_identifier,
@@ -190,8 +188,8 @@ def transform_grippeweb_resource_mappings_to_dict(
             rights=rights,
             sizeOfDataBasis=size_of_data_basis,
             spatial=spatial,
+            start=start,
             stateOfDataProcessing=state_of_data_processing,
-            temporal=temporal,
             theme=theme,
             title=title,
             unitInCharge=unit_in_charge,

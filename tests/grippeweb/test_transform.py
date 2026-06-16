@@ -90,7 +90,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         "contact": [str(grippeweb_merged_contact_point_id_by_email["contactc@rki.de"])],
         "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "contributor": [str(roland_resolved.stableTargetId)],
-        "created": "2011",
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "documentation": [
             {
@@ -138,8 +137,8 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         "rights": [{"value": "Verfahren", "language": TextLanguage.DE}],
         "sizeOfDataBasis": "Meldungen",
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
+        "start": "2011",
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
-        "temporal": "seit 2011",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "unitInCharge": get_unit_merged_id_by_synonym("C1"),
