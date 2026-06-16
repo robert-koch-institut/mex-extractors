@@ -83,7 +83,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
         sheets = xls.book.worksheets
         for sheet in sheets:
             if sheet.sheet_state == "visible":
-                sheet_df = xls.parse(sheet_name=sheet.title, header=1)
+                sheet_df = xls.parse(sheet_name=sheet.title, header=1)  # type: ignore[attr-defined]
                 if resource := extract_biospecimen_resource(
                     sheet_df, str(sheet.title), file.name
                 ):
