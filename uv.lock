@@ -1093,7 +1093,7 @@ requires-dist = [
 dev = [
     { name = "ipdb", specifier = ">=0.13" },
     { name = "mypy", specifier = ">=1" },
-    { name = "pandas-stubs" },
+    { name = "pandas-stubs", specifier = ">=3" },
     { name = "pytest", specifier = ">=8" },
     { name = "pytest-cov", specifier = ">=6" },
     { name = "pytest-random-order", specifier = ">=1" },
