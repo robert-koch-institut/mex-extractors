@@ -30,7 +30,7 @@ def test_extract_blueant_sources_from_api_mocked() -> None:
     assert sources[0].model_dump() == expected_source
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_blueant_project_leaders(blueant_source: BlueAntSource) -> None:
     blueant_sources = [blueant_source, blueant_source, blueant_source]
     persons = extract_blueant_project_leaders(blueant_sources)
