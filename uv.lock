@@ -998,8 +998,8 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "2.0.1"
-source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2026_ldap_convenience_finetuning#88cb2c880d3eee101e5dea377100770adc08e048" }
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -1015,6 +1015,10 @@ dependencies = [
     { name = "pytz" },
     { name = "requests" },
     { name = "tabulate" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8f/c4/ae3361acd2f215c19576307058f74d6693ae6f3cc6afea701f9d87b95262/mex_common-2.1.0.tar.gz", hash = "sha256:ca375b93b84f5c2d8b10c60ba99567e8f49ace2c190302245385a05abe782812", size = 91635, upload-time = "2026-06-17T09:51:35.034Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/94/fb/6ffa72aaf35cc9fc723f8fcbdf79c9fd28c6353614d291607f61e9b4b691/mex_common-2.1.0-py3-none-any.whl", hash = "sha256:5848ea78a4a75f4bb8d12ff3d1a30b653a527a2c9be581acef9b814bb89afb97", size = 139158, upload-time = "2026-06-17T09:51:32.958Z" },
 ]
 
 [[package]]
@@ -1072,7 +1076,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
     { name = "mex-artificial", specifier = ">=2,<3" },
-    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2026_ldap_convenience_finetuning" },
+    { name = "mex-common", specifier = ">=2.1,<2.2" },
     { name = "networkx", specifier = ">=3" },
     { name = "numpy", specifier = ">=2" },
     { name = "openpyxl", specifier = ">=3,<4" },
