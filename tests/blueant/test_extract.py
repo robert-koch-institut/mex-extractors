@@ -1,8 +1,6 @@
 import pytest
-from pytest import MonkeyPatch
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.models import PaginatedItemsContainer
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.blueant.extract import (
     extract_blueant_project_leaders,
     extract_blueant_sources,
@@ -32,26 +30,12 @@ def test_extract_blueant_sources_from_api_mocked() -> None:
     assert sources[0].model_dump() == expected_source
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_blueant_project_leaders(blueant_source: BlueAntSource) -> None:
     blueant_sources = [blueant_source, blueant_source, blueant_source]
     persons = extract_blueant_project_leaders(blueant_sources)
 
-    assert len(persons) == 1
-    assert persons[0].employeeID == "42"
-
-
-@pytest.mark.usefixtures("mocked_ldap")
-def test_extract_blueant_project_leaders_not_in_ldap(
-    monkeypatch: MonkeyPatch, blueant_source: BlueAntSource
-) -> None:
-    monkeypatch.setattr(
-        LDAPConnector,
-        "get_persons",
-        lambda _, **__: PaginatedItemsContainer(items=[], total=0),
-    )
-    persons = extract_blueant_project_leaders([blueant_source])
-    assert not persons
+    assert persons == {"42": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")}
 
 
 @pytest.mark.usefixtures("mocked_ldap")

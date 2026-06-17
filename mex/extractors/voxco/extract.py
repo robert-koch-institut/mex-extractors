@@ -1,16 +1,15 @@
 from typing import TYPE_CHECKING
 
-from mex.common.ldap.connector import LDAPConnector
 from mex.extractors.drop import DropApiConnector
+from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.voxco.model import VoxcoVariable
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPPerson
     from mex.common.models import ResourceMapping
-    from mex.common.types import MergedOrganizationIdentifier
+    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
 
 
 def extract_voxco_variables() -> dict[str, list[VoxcoVariable]]:
@@ -61,17 +60,18 @@ def extract_voxco_organizations(
 
 def extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
-) -> list[LDAPPerson]:
-    """Extract LDAP persons for voxco.
+) -> dict[str, MergedPersonIdentifier]:
+    """Extract merged person ids by query.
 
     Args:
         voxco_resource_mappings: list of resource mapping models with default values
 
     Returns:
-        list of LDAP persons
+        dictionary of mrged person ids by query string
     """
-    ldap = LDAPConnector.get()
-    return [
-        ldap.get_person(mail=mapping.contact[0].mappingRules[0].forValues[1])  # type: ignore[index]
+    return {
+        contact[1]: person_id
         for mapping in voxco_resource_mappings
-    ]
+        if (contact := mapping.contact[0].mappingRules[0].forValues)
+        and (person_id := get_ldap_merged_person_id_by_query(mail=contact[1]))
+    }
