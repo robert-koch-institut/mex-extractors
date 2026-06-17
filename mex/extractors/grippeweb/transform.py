@@ -55,7 +55,7 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
     )
-    child_resource.isPartOf = [parent_resource.stableTargetId]
+    child_resource.relatedResource = [parent_resource.stableTargetId]
     return parent_resource, child_resource
 
 

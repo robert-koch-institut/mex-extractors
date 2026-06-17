@@ -60,9 +60,6 @@ icd10code:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb-plus
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -107,6 +104,9 @@ publisher:
       - forValues:
           - Robert Koch-Institut
         rule:
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
