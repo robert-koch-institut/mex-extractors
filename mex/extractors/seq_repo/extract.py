@@ -28,13 +28,13 @@ def extract_sources() -> list[SeqRepoSource]:
 def extract_source_project_coordinator_by_name(
     seq_repo_sources: list[SeqRepoSource],
 ) -> dict[str, ExtractedPerson]:
-    """Extract Persons with their query string for source project coordinators.
+    """Extract Persons by their query string for source project coordinators.
 
     Args:
         seq_repo_sources: Seq Repo sources
 
     Returns:
-        List of Extracted persons with query
+        dictionary of Extracted persons by query
     """
     seen: set[str] = set()
     persons_with_query: dict[str, ExtractedPerson] = {}

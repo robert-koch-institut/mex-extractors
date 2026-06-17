@@ -80,7 +80,7 @@ def grippeweb_variable_group() -> dict[str, Any]:
 def grippeweb_merged_contact_point_id_by_email(
     grippeweb_resource_mappings: list[dict[str, Any]],
 ) -> dict[str, MergedContactPointIdentifier]:
-    """Extract ldap actors for grippeweb from ldap and transform them to contact points and load them to sinks."""  # noqa: E501
+    """Extract contact points and return their merged contact point id by email."""
     return extract_ldap_actors_for_functional_accounts(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
@@ -91,7 +91,7 @@ def grippeweb_extracted_persons(
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_access_platform: dict[str, Any],
 ) -> dict[str, MergedPersonIdentifier]:
-    """Extract ldap persons for grippeweb from ldap and transform them to mex persons and load them to sinks."""  # noqa: E501
+    """Extract persons and return their merged person id by query."""
     return extract_grippeweb_ldap_person_ids_by_query(
         [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
         AccessPlatformMapping.model_validate(grippeweb_access_platform),

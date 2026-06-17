@@ -122,13 +122,13 @@ def extract_international_projects_source(
 def extract_international_projects_project_leaders(
     international_projects_sources: Iterable[InternationalProjectsSource],
 ) -> dict[str, list[MergedPersonIdentifier]]:
-    """Extract Merged person ids with their query string for project leaders.
+    """Extract Merged person ids by their query string for project leaders.
 
     Args:
         international_projects_sources: international projects sources
 
     Returns:
-        List of Merged person ids with query
+        dictionary of Merged person ids by query
     """
     seen = set()
     merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}

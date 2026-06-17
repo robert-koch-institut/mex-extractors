@@ -51,7 +51,7 @@ from mex.extractors.utils import load_yaml
 
 @asset(group_name="sumo")
 def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
-    """Transform and load SUMO access platform and related LDAP actors."""
+    """Transform and load SUMO access platform and related persons."""
     settings = Settings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "access-platform.yaml"),

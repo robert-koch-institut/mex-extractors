@@ -58,7 +58,7 @@ def voxco_merged_organization_ids_by_query_string(
 def voxco_extracted_persons(
     voxco_resource_mappings: list[dict[str, Any]],
 ) -> dict[str, MergedPersonIdentifier]:
-    """Extract ldap persons for voxco, transform them and load them to sinks."""
+    """Extract persons and return their merged person id by query."""
     return extract_ldap_persons_voxco(
         [ResourceMapping.model_validate(r) for r in voxco_resource_mappings]
     )

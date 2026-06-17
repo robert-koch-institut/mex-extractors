@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use ldap convenience function and refactor ldap and organigram helper functions
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
 - dependency update(2026-06-16)
 
@@ -47,7 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - publisher: code maintenance (typos, naming, unified db fetching)
 - datenkompass: updated mapping path in settings
 - update mex-common to 1.19.0
-- use ldap convenience function
 - update lock file (2026_04_23)
 - seq-repo mapping update
 

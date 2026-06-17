@@ -174,7 +174,7 @@ def extract_ldap_contact_points_by_emails(
         resources: list of sumo resource mapping models
 
     Returns:
-        List of merged contact point identifier by mail
+        dictionary of merged contact point identifier by mail
     """
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
     return {
@@ -187,13 +187,13 @@ def extract_ldap_contact_points_by_emails(
 def extract_ldap_contact_points_by_name(
     sumo_access_platform: AccessPlatformMapping,
 ) -> dict[str, MergedPersonIdentifier]:
-    """Extract contact points from ldap for contact name in Sumo access platform.
+    """Extract persons from ldap for contact name in Sumo access platform.
 
     Args:
         sumo_access_platform: SUMO access platform mapping model
 
     Returns:
-        List of ldap persons with query
+        dictionary of ldap persons with query
     """
     names = sumo_access_platform.contact[0].mappingRules[0].forValues or []
     split_names = [

@@ -61,13 +61,13 @@ def extract_voxco_organizations(
 def extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
 ) -> dict[str, MergedPersonIdentifier]:
-    """Extract LDAP persons for voxco.
+    """Extract merged person ids by query.
 
     Args:
         voxco_resource_mappings: list of resource mapping models with default values
 
     Returns:
-        list of LDAP persons
+        dictionary of mrged person ids by query string
     """
     return {
         contact[1]: person_id

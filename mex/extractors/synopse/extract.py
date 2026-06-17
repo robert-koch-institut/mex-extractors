@@ -102,7 +102,7 @@ def extract_synopse_project_contributor_ids_by_query(
         synopse_projects: Synopse projects
 
     Returns:
-        List of Merged persons
+        dictionary of Merged person IDs by query string
     """
     seen = set()
     merged_person_ids_by_query: dict[str, list[MergedPersonIdentifier]] = {}

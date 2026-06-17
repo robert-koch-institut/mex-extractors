@@ -39,7 +39,7 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
     sam_account_name: str = "*",
     surname: str = "*",
 ) -> ExtractedPerson | None:
-    """Extract, transform and load ldap person and return merged ID.
+    """Extract, transform and load ldap person and return extracted Person.
 
     Args:
         display_name: Display name of the person
@@ -51,7 +51,7 @@ def get_ldap_extracted_person_by_query(  # noqa: PLR0913
         surname: Surname of a person, defaults to non-null
 
     Returns:
-        merged person id or None, if not exactly one result
+        Extracted Person or None, if not exactly one result
     """
     connector = LDAPConnector.get()
     try:
