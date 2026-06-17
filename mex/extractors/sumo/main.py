@@ -28,7 +28,7 @@ from mex.extractors.sumo.extract import (
     extract_cc2_aux_valuesets,
     extract_cc2_feat_projection,
     extract_ldap_contact_points_by_emails,
-    extract_ldap_contact_points_by_name,
+    extract_ldap_persons_by_name,
 )
 from mex.extractors.sumo.filter import filter_and_log_cc2_aux_model
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
@@ -56,7 +56,7 @@ def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
     sumo_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "access-platform.yaml"),
     )
-    ldap_contact_points_access_platform = extract_ldap_contact_points_by_name(
+    ldap_contact_points_access_platform = extract_ldap_persons_by_name(
         sumo_access_platform
     )
     transformed_access_platform = transform_sumo_access_platform_to_mex_access_platform(

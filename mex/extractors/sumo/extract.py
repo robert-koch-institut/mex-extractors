@@ -184,7 +184,7 @@ def extract_ldap_contact_points_by_emails(
     }
 
 
-def extract_ldap_contact_points_by_name(
+def extract_ldap_persons_by_name(
     sumo_access_platform: AccessPlatformMapping,
 ) -> dict[str, MergedPersonIdentifier]:
     """Extract persons from ldap for contact name in Sumo access platform.
