@@ -97,7 +97,7 @@ def transform_odk_resources_to_mex_resources(
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
             if (partner := odk_merged_organization_ids_by_str.get(name))  # type: ignore[assignment]
         ]
-        resources_tuple[bool(resource.isPartOf)].append(
+        resources_tuple[bool(resource.relatedResource)].append(
             ExtractedResource(
                 identifierInPrimarySource=identifier_in_primary_source,
                 accessRestriction=resource.accessRestriction[0]
@@ -161,7 +161,7 @@ def assign_resource_relations_and_load(
     ).stableTargetId
     load(resources_tuple[0])
     for resource in resources_tuple[1]:
-        resource.isPartOf = [main_questionnaire_id]
+        resource.relatedResource = [main_questionnaire_id]
     load(resources_tuple[1])
     return [*resources_tuple[0], *resources_tuple[1]]
 

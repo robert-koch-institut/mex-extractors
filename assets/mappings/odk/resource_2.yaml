@@ -34,9 +34,6 @@ hasLegalBasis:
             value: Informed consent
           - language: de
             value: Informierte Einwilligung
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -67,6 +64,9 @@ publisher:
       - forValues:
           - duo dolores
         rule:
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
