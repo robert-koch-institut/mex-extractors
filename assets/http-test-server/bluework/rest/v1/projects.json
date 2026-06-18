@@ -1,0 +1,43 @@
+{
+    "projects": [
+        {
+            "clients": [
+                {
+                    "clientId": 101,
+                    "name": "Acme Corporation"
+                }
+            ],
+            "departmentId": 10,
+            "end": "2026-12-31",
+            "name": "Website Redesign",
+            "number": "PRJ-2026-001",
+            "projectLeaderId": 70,
+            "start": "2026-01-15",
+            "statusId": 1,
+            "typeId": 2
+        },
+        {
+            "clients": [
+                {
+                    "clientId": 102,
+                    "name": "Globex GmbH"
+                },
+                {
+                    "clientId": 103,
+                    "name": "Initech"
+                }
+            ],
+            "departmentId": 20,
+            "end": "2026-09-30",
+            "name": "Mobile App Development",
+            "number": "PRJ-2026-002",
+            "projectLeaderId": 71,
+            "start": "2026-03-01",
+            "statusId": 2,
+            "typeId": 1
+        }
+    ],
+    "status": {
+        "code": 200
+    }
+}

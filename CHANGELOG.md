@@ -9,17 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add less_than_x_inbound AssetCheck
+- add first test data for http-test-server (blueant and datscha)
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
 
 ### Changes
 
+- use ldap convenience function and refactor ldap and organigram helper functions
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- dependency update(2026-06-16)
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- temporarily switch off not_exactly_x_items assets check
 
 ### Security
 
@@ -42,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datenkompass: updated mapping path in settings
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
+- seq-repo mapping update
 
 ### Fixed
 

@@ -1,0 +1,14 @@
+{
+    "department": {
+        "active": true,
+        "additional": "FG99",
+        "deputyIds": [],
+        "fullName": "FG99",
+        "id": 10,
+        "position": 0,
+        "text": "FG99"
+    },
+    "status": {
+        "code": 200
+    }
+}

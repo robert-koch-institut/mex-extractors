@@ -490,20 +490,59 @@ def test_check_not_exactly_x_items_generalized(
     passed: bool,
 ) -> None:
     """Test not_exactly_x_items connection rule."""
+
+
+@pytest.mark.parametrize(
+    ("current_connections", "rule_threshold", "passed"),
+    [
+        pytest.param(
+            {"id-a": 6, "id-b": 100},
+            5,
+            True,
+            id="passes_above_threshold",
+        ),
+        pytest.param(
+            {"id-a": 15, "id-b": 1},
+            1,
+            True,
+            id="passes_at_threshold",
+        ),
+        pytest.param(
+            {"id-a": 6, "id-b": 0},
+            1,
+            False,
+            id="fails_below_threshold",
+        ),
+        pytest.param(
+            {},
+            5,
+            True,
+            id="passes_empty_connections",
+        ),
+    ],
+)
+def test_check_less_than_x_outbound_generalized(
+    monkeypatch: MonkeyPatch,
+    current_connections: dict[str, int],
+    rule_threshold: int,
+    passed: bool,  # noqa: FBT001
+) -> None:
     monkeypatch.setattr(
         "mex.extractors.pipeline.checks.main.get_rule",
-        lambda *_, **__: {"value": expected_value},
+        lambda *_, **__: {"value": rule_threshold},
     )
 
     class MockEvent:
-        def __init__(self, num_items: int) -> None:
+        def __init__(self, outbound_connections: dict[str, int]) -> None:
             self.asset_materialization = SimpleNamespace(
-                metadata={"num_items": SimpleNamespace(value=num_items)}
+                metadata={
+                    "outbound_connections": SimpleNamespace(value=outbound_connections)
+                }
             )
 
     class MockInstance:
         def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
-            return [MockEvent(current_count)]
+            return [MockEvent(current_connections)]
 
     class MockContext:
         instance = MockInstance()
@@ -512,13 +551,13 @@ def test_check_not_exactly_x_items_generalized(
     asset_key = AssetKey(["test_asset"])
 
     if not passed:
-        with pytest.raises(ValueError, match="failed not_exactly_x_items check"):
+        with pytest.raises(ValueError, match="failed less_than_x_outbound check"):
             check_item_count_rule(
                 context=context,
                 asset_key=asset_key,
                 extractor="test",
                 entity_type="test",
-                rule_name="not_exactly_x_items",
+                rule_name="less_than_x_outbound",
             )
     else:
         result = check_item_count_rule(
@@ -526,7 +565,7 @@ def test_check_not_exactly_x_items_generalized(
             asset_key=asset_key,
             extractor="test",
             entity_type="test",
-            rule_name="not_exactly_x_items",
+            rule_name="less_than_x_outbound",
         )
         assert result is True
 
