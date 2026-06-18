@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 def transform_ff_projects_source_to_extracted_activity(
     ff_projects_source: FFProjectsSource,
-    person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
+    person_stable_target_ids_by_query_string: dict[str, MergedPersonIdentifier],
     organization_stable_target_id_by_synonyms: dict[str, MergedOrganizationIdentifier],
     ff_projects_activity: ActivityMapping,
 ) -> ExtractedActivity:
@@ -50,10 +50,9 @@ def transform_ff_projects_source_to_extracted_activity(
         raise MExError(msg)
 
     project_lead = [
-        sti
+        person_stable_target_ids_by_query_string[person]
         for person in ff_projects_source.projektleiter.replace("/", ",").split(",")
         if person in person_stable_target_ids_by_query_string
-        for sti in person_stable_target_ids_by_query_string[person]
     ]
 
     orgs = [

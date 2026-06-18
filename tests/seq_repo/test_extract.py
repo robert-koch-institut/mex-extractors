@@ -6,10 +6,10 @@ import requests
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.extract import (
-    extract_source_project_coordinator,
+    extract_source_project_coordinator_by_name,
     extract_sources,
 )
 
@@ -56,20 +56,15 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 
 
 @pytest.mark.usefixtures("mocked_ldap")
-def test_extract_source_project_coordinator(
+def test_extract_source_project_coordinator_by_name(
     seq_repo_sources: list[SeqRepoSource],
-    ldap_frieda_fictitious: LDAPPerson,
-    ldap_roland_resolved: LDAPPerson,
 ) -> None:
-    project_coordinators = extract_source_project_coordinator(seq_repo_sources)
 
-    assert project_coordinators[:2] == [
-        LDAPPersonWithQuery(
-            person=ldap_frieda_fictitious,
-            query="FictitiousF",
-        ),
-        LDAPPersonWithQuery(
-            person=ldap_roland_resolved,
-            query="ResolvedR",
-        ),
-    ]
+    project_coordinators = extract_source_project_coordinator_by_name(seq_repo_sources)
+
+    assert project_coordinators["FictitiousF"].stableTargetId == MergedPersonIdentifier(
+        "c2Yd8aNoLKIf7u6ubTUuc3"
+    )
+    assert project_coordinators["ResolvedR"].stableTargetId == MergedPersonIdentifier(
+        "eXA2Qj5pKmI7HXIgcVqCfz"
+    )
