@@ -998,8 +998,8 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "2.0.1"
-source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F707%2Fhead#fcfa52af27d4108b7bff435ee510ba7a4a48ea01" }
+version = "2.1.0"
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx_2260_mex_model_v5#46b81191b35d0076580340cdf27fba4dda18e101" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -1072,7 +1072,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
     { name = "mex-artificial", specifier = ">=2,<3" },
-    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F707%2Fhead" },
+    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx_2260_mex_model_v5" },
     { name = "networkx", specifier = ">=3" },
     { name = "numpy", specifier = ">=2" },
     { name = "openpyxl", specifier = ">=3,<4" },
