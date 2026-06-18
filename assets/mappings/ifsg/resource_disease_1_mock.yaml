@@ -128,13 +128,6 @@ instrumentToolOrApparatus:
         setValues:
           - language: de
             value: Falldefinition E
-isPartOf:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - forValues:
-          - "0"
-        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
@@ -182,6 +175,13 @@ publication:
   - mappingRules:
       - setValues:
           - ctdBX3StWbg9nabBXgTjut
+relatedResource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

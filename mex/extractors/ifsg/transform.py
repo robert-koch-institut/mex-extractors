@@ -146,9 +146,9 @@ def transform_resource_state_to_mex_resource(
                 .mappingRules[0]
                 .setValues,
                 identifierInPrimarySource=id_bundesland,
-                isPartOf=ifsg_extracted_resource_parent.stableTargetId,
                 keyword=keyword,
                 language=resource_state.language[0].mappingRules[0].setValues,
+                relatedResource=ifsg_extracted_resource_parent.stableTargetId,
                 resourceCreationMethod=resource_state.resourceCreationMethod[0]
                 .mappingRules[0]
                 .setValues,
@@ -281,9 +281,9 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
     instrument_tool_or_apparatus = get_instrument_tool_or_apparatus(
         meta_disease_row, resource_disease
     )
-    is_part_of = [ifsg_extracted_resource_parent.stableTargetId]
+    related_resource = [ifsg_extracted_resource_parent.stableTargetId]
     if meta_disease_row.in_bundesland:
-        is_part_of.extend(
+        related_resource.extend(
             stable_target_id_by_bundesland_id[bundesland_id]
             for bundesland_id in meta_disease_row.in_bundesland.split(",")
             if bundesland_id in stable_target_id_by_bundesland_id
@@ -327,10 +327,10 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
             f"resource_disease_{meta_disease_row.id_type}_{meta_disease_row.id_schema}"
         ),
         instrumentToolOrApparatus=instrument_tool_or_apparatus,
-        isPartOf=is_part_of,
         keyword=keyword,
         language=resource_disease.language[0].mappingRules[0].setValues,
         publisher=extracted_organization_rki.stableTargetId,
+        relatedResource=related_resource,
         resourceCreationMethod=resource_disease.resourceCreationMethod[0]
         .mappingRules[0]
         .setValues,
