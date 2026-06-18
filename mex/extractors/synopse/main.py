@@ -237,7 +237,12 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_study_overviews,
         transformed_study_data_resources,
     )
-    context.add_output_metadata({"num_items": len(extracted_resource)})
+    context.add_output_metadata(
+        {
+            "num_items": len(extracted_resource),
+            "list_of_identifiers": list(extracted_resource.keys()),
+        }
+    )
     return extracted_resource
 
 

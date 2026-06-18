@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import yaml
 
+from mex.common.backend_api.connector import BackendApiConnector
+
 if TYPE_CHECKING:
     from os import PathLike
 
@@ -26,3 +28,20 @@ def count_outbound_connections(variable: ExtractedVariable) -> int:
         else:
             count += 1
     return count
+
+
+def count_inbound_connections(list_of_ids: list[str], target_type: str) -> int:
+    """Count the number of inbound connections for a given list of identifiers."""
+    # graph query to all target types, checking separately for each identifier
+    # if it is referenced, then add all counts together and return the total count
+    total_count = 0
+    connector = BackendApiConnector()
+    for identifier in list_of_ids:
+        result = connector.fetch_extracted_items(
+            entity_type=[target_type],
+            referenced_identifier=[identifier],
+        )
+        count_for_id = len(result.items)
+        total_count += count_for_id
+
+    return total_count
