@@ -57,11 +57,10 @@ def transform_international_projects_source_to_extracted_activity(
         return None
 
     project_lead = [
-        found_person[0]
-        for person in source.get_project_lead_persons()
-        if (
-            found_person := person_stable_target_ids_by_query_string.get(person.strip())
-        )
+        person_id
+        for query in source.get_project_lead_persons()
+        if (found_person_ids := person_stable_target_ids_by_query_string.get(query))
+        for person_id in found_person_ids
     ]
 
     project_lead_rki_unit = []
