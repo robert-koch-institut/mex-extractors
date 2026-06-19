@@ -39,7 +39,7 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
         voxco_resource_mappings,
         voxco_merged_organization_ids_by_query_string,
-        [roland_resolved],
+        {roland_resolved.email[0]: roland_resolved.stableTargetId},
         extracted_organization_rki,
         international_projects_extracted_activities,
     )
