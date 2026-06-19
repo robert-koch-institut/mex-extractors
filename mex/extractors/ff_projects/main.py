@@ -1,22 +1,16 @@
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.transform import (
-    transform_ldap_persons_with_query_to_extracted_persons,
-)
 from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
 )
 from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
 from mex.extractors.ff_projects.extract import (
-    extract_ff_project_authors,
+    extract_ff_project_author_merged_ids,
     extract_ff_projects_organizations,
     extract_ff_projects_sources,
 )
@@ -29,9 +23,6 @@ from mex.extractors.ff_projects.transform import (
     transform_ff_projects_source_to_extracted_activity,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
@@ -50,25 +41,9 @@ def ff_projects_sources() -> list[FFProjectsSource]:
 @asset(group_name="ff_projects")
 def ff_projects_person_ids_by_query_str(
     ff_projects_sources: list[FFProjectsSource],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, list[MergedPersonIdentifier]]:
+) -> dict[str, MergedPersonIdentifier]:
     """Extract authors for FF Projects from LDAP and group them by query."""
-    ldap_primary_source_id = get_extracted_primary_source_id_by_name("ldap")
-    ff_projects_authors = extract_ff_project_authors(ff_projects_sources)
-    extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
-        ff_projects_authors,
-        ldap_primary_source_id,
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(extracted_persons)
-    return {
-        str(query_string): [MergedPersonIdentifier(id_) for id_ in merged_ids]
-        for query_string, merged_ids in get_merged_ids_by_query_string(
-            ff_projects_authors, ldap_primary_source_id
-        ).items()
-    }
+    return extract_ff_project_author_merged_ids(ff_projects_sources)
 
 
 @asset(group_name="ff_projects")
@@ -83,7 +58,7 @@ def ff_projects_organization_ids_by_query_str(
 def ff_projects_activities(
     context: AssetExecutionContext,
     ff_projects_sources: list[FFProjectsSource],
-    ff_projects_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
+    ff_projects_person_ids_by_query_str: dict[str, MergedPersonIdentifier],
     ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
