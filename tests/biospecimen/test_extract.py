@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from mex.extractors.settings import Settings
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_biospecimen_contacts_by_email(
     biospecimen_resources: Iterable[BiospecimenResource],
 ) -> None:
@@ -59,7 +59,7 @@ def test_extract_biospecimen_resources() -> None:
         "ressourcentyp_allgemein": "Bioproben",
         "ressourcentyp_speziell": ["Infektionskrankheiten"],
         "rechte": "Testrechte",
-        "vorhandene_anzahl_der_proben": "Testanzahl",
+        "vorhandene_anzahl_der_proben": 42,
         "raeumlicher_bezug": ["räumlicher Testbezug"],
         "zeitlicher_bezug": ["2021-09 bis 2021-10"],
         "thema": [],

@@ -104,7 +104,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "identifierInPrimarySource": "test_bioproben_Probe1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "numberOfRecords": "42",
+        "numberOfRecords": 42,
         "temporal": "2021-09 bis 2021-10",
         "wasGeneratedBy": "gEMgesHdSwermqdIEGirbk",
         "contact": ["eXA2Qj5pKmI7HXIgcVqCfz"],
