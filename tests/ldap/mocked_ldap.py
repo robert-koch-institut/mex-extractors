@@ -13,7 +13,7 @@ from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_to_extracted_person,
 )
-from mex.common.models import PaginatedItemsContainer
+from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.transform import MExEncoder, normalize
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -57,7 +57,7 @@ def roland_resolved(
         ldap_roland_resolved,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
@@ -87,7 +87,7 @@ def juturna_felicitas(
         ldap_juturna_felicitas,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
@@ -117,7 +117,7 @@ def frieda_fictitious(
         ldap_frieda_fictitious,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
@@ -182,13 +182,16 @@ def mocked_ldap(  # noqa: PLR0913
                 [ldap_contact_point],
             ),
         )
+        person_search = ldap_mock_searcher(
+            [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
+        )
+        monkeypatch.setattr(LDAPConnector, "get_persons", person_search)
         monkeypatch.setattr(
             LDAPConnector,
-            "get_persons",
-            ldap_mock_searcher(
-                [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
-            ),
+            "get_person",
+            lambda *a, **kw: person_search(*a, **kw).items[0],
         )
+
     elif request.param == "ldap_mock_server":
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")

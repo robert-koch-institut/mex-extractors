@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from mex.common.models import (
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ResourceMapping,
 )
@@ -12,6 +11,7 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
 )
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     biospecimen_resources: Iterable[BiospecimenResource],
-    mex_persons: Iterable[ExtractedPerson],
+    person_stable_target_id_by_email: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,
     synopse_extracted_activities: Iterable[ExtractedActivity],
     resource_mapping: ResourceMapping,
@@ -38,7 +38,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
     Args:
         biospecimen_resources: Biospecimen resources
-        mex_persons: Iterable of ExtractedPersons
+        person_stable_target_id_by_email: merged person ids by kontakt
         synopse_extracted_activities: extracted synopse activities
         extracted_organization_rki: extracted organization
         resource_mapping: resource mapping model with default values
@@ -47,9 +47,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     Returns:
         List of ExtractedResource instances
     """
-    person_stable_target_id_by_email = {
-        str(p.email[0]): Identifier(p.stableTargetId) for p in mex_persons
-    }
     synopse_stable_target_id_by_studien_id = {
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in synopse_extracted_activities

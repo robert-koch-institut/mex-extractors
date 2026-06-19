@@ -4,7 +4,6 @@ from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ExtractedVariable,
     ExtractedVariableGroup,
@@ -22,13 +21,14 @@ if TYPE_CHECKING:
     from mex.common.types import (
         MergedContactPointIdentifier,
         MergedOrganizationIdentifier,
+        MergedPersonIdentifier,
     )
 
 
 def transform_grippeweb_resource_mappings_to_extracted_resources(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -62,7 +62,7 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
 def transform_grippeweb_resource_mappings_to_dict(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
@@ -83,9 +83,6 @@ def transform_grippeweb_resource_mappings_to_dict(
         tuple of grippeweb resources
     """
     resource_dict = {}
-    mex_persons_by_name = {
-        person.fullName[0]: person for person in grippeweb_extracted_persons
-    }
     for resource in grippeweb_resource_mappings:
         access_restriction = resource.accessRestriction[0].mappingRules[0].setValues
         accrual_periodicity = resource.accrualPeriodicity[0].mappingRules[0].setValues
@@ -93,19 +90,15 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.anonymizationPseudonymization[0].mappingRules[0].setValues
         )
         contact = grippeweb_merged_contact_point_id_by_email[
-            resource.contact[0].mappingRules[0].forValues[0].lower()  # type: ignore[index]
+            resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ]
         contributing_unit = get_unit_merged_id_by_synonym(
             resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
         contributor = [
-            person.stableTargetId
+            person_id
             for name in (resource.contributor[0].mappingRules[0].forValues or [])
-            if (
-                person := mex_persons_by_name.get(
-                    f"{name.split(' ')[1]}, {name.split(' ')[0]}"
-                )
-            )
+            if (person_id := grippeweb_extracted_persons.get(name))
         ]
         description = resource.description[0].mappingRules[0].setValues
         documentation = resource.documentation[0].mappingRules[0].setValues
@@ -233,7 +226,7 @@ def get_or_create_external_partner(
 
 def transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
-    grippeweb_extracted_persons: list[ExtractedPerson],
+    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform grippeweb access platform to ExtractedAccessPlatform.
 
@@ -244,16 +237,12 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     Returns:
         ExtractedAccessPlatform grippeweb
     """
-    mex_person_stable_target_id_by_email = {
-        str(person.email[0]): person.stableTargetId
-        for person in grippeweb_extracted_persons
-    }
     identifier_in_primary_source = (
         grippeweb_access_platform.identifierInPrimarySource[0].mappingRules[0].setValues
     )
 
     contact = [
-        mex_person_stable_target_id_by_email[email]
+        grippeweb_extracted_persons[email]
         for email in (
             grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
         )
