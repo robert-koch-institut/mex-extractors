@@ -63,6 +63,9 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
+hasCodeValues:
+  - mappingRules:
+      - rule:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
@@ -86,10 +89,6 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
-loincId:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
 meshId:
   - fieldInPrimarySource:
     mappingRules:
