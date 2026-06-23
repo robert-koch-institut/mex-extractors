@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 import yaml
@@ -11,8 +10,9 @@ if TYPE_CHECKING:
 
 def load_yaml(path: PathLike[str]) -> dict[str, Any]:
     """Load the contents of a YAML file from the given path and return as a dict."""
-    with Path(path).open(encoding="utf-8") as fh:
-        return cast("dict[str, Any]", yaml.safe_load(fh))
+    from mex.common.assets import get_assets_connector
+    file_contents = get_assets_connector().load_file(path)
+    return cast("dict[str, Any]", yaml.safe_load(file_contents.decode('utf-8')))
 
 
 def count_outbound_connections(variable: ExtractedVariable) -> int:
