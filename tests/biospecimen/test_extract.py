@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from mex.extractors.settings import Settings
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_biospecimen_contacts_by_email(
     biospecimen_resources: Iterable[BiospecimenResource],
 ) -> None:

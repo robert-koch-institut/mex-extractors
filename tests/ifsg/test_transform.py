@@ -185,6 +185,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
         "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "hasCodeValues": [{"value": "A1"}],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -197,7 +198,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "icd10code": ["A1"],
         "instrumentToolOrApparatus": [
             {"value": "Falldefinition B", "language": TextLanguage.DE},
             {"value": "Falldefinition C", "language": TextLanguage.DE},

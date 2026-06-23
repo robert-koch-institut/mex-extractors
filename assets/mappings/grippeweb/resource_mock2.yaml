@@ -59,6 +59,10 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
+hasCodeValues:
+  - mappingRules:
+      - setValues:
+          - J00-J99
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -67,10 +71,6 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
-icd10code:
-  - mappingRules:
-      - setValues:
-          - J00-J99
 identifierInPrimarySource:
   - mappingRules:
       - rule:
@@ -88,9 +88,6 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-1
 license:
-  - mappingRules:
-      - {}
-loincId:
   - mappingRules:
       - {}
 meshId:

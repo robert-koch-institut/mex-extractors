@@ -277,7 +277,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         transform resource disease row to ExtractedResource
     """
     name = meta_disease_row.disease_name
-    icd10code = [meta_disease_row.icd10_code]
+    has_code_values = [meta_disease_row.icd10_code]
     instrument_tool_or_apparatus = get_instrument_tool_or_apparatus(
         meta_disease_row, resource_disease
     )
@@ -322,7 +322,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
-        icd10code=[i for i in icd10code if i],
+        hasCodeValues=[hcv for hcv in has_code_values if hcv],
         identifierInPrimarySource=(
             f"resource_disease_{meta_disease_row.id_type}_{meta_disease_row.id_schema}"
         ),
