@@ -75,9 +75,6 @@ identifierInPrimarySource:
 instrumentToolOrApparatus:
   - mappingRules:
       - {}
-isPartOf:
-  - mappingRules:
-      - {}
 keyword:
   - mappingRules:
       - setValues:
@@ -124,6 +121,9 @@ publisher:
           - Robert Koch-Institut
         rule:
 qualityInformation:
+  - mappingRules:
+      - {}
+relatedResource:
   - mappingRules:
       - {}
 resourceCreationMethod:

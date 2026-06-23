@@ -169,7 +169,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(
             grippeweb_merged_contact_point_id_by_email,
         )
     )
-    assert child_resource.isPartOf == [parent_resource.stableTargetId]
+    assert child_resource.relatedResource == [parent_resource.stableTargetId]
 
 
 def test_transform_grippeweb_variable_group_to_extracted_variable_groups(
