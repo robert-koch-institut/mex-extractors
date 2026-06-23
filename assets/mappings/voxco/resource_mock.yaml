@@ -54,10 +54,6 @@ healthCategory:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/health-category-1
-icd10code:
-  - mappingRules:
-      - setValues:
-          - J00-J99
 identifierInPrimarySource:
   - mappingRules:
       - setValues: voxco-plus
