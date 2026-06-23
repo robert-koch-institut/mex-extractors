@@ -146,12 +146,12 @@ def test_transform_resource_feat_model_to_mex_resource(
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
-        "isPartOf": [mex_resources_nokeda.stableTargetId],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},
             {"language": TextLanguage.DE, "value": "keyword 2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
+        "relatedResource": [mex_resources_nokeda.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-1",
         ],

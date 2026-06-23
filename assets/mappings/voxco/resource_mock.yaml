@@ -57,9 +57,6 @@ healthCategory:
 identifierInPrimarySource:
   - mappingRules:
       - setValues: voxco-plus
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:

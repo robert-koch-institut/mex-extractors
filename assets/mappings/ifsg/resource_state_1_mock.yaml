@@ -152,9 +152,6 @@ identifierInPrimarySource:
 instrumentToolOrApparatus:
   - mappingRules:
       - {}
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -189,6 +186,9 @@ publication:
           - "10"
         setValues:
           - es1ddVZTauTiKXXcF2lcx2
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

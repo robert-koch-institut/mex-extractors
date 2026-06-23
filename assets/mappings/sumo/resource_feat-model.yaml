@@ -34,7 +34,6 @@ keyword:
       - setValues:
           - language: de
             value: keyword 2
-
 meshId:
   - mappingRules:
       - setValues:
