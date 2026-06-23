@@ -50,7 +50,7 @@ hasPersonalData:
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
+hasCodeValues:
   - mappingRules:
       - setValues:
           - "J00-J99" #Diseases of the respiratory system
