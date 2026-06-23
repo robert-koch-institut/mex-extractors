@@ -1,11 +1,11 @@
 import json
 from email.headerregistry import Address
 from email.message import EmailMessage
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
 
+from mex.common.assets import get_assets_connector
 from mex.extractors.settings import Settings
 
 if TYPE_CHECKING:
@@ -37,15 +37,13 @@ def transform_person_to_sendable_email(person: MergedPerson) -> EmailMessage | N
     if not to_field:
         return None
 
-    with Path(settings.consent_mailer.template_path / "config.json").open(
-        encoding="utf-8"
-    ) as fh:
-        configs = json.load(fh)
+    config_path = settings.consent_mailer.template_path / "config.json"
+    config_contents = get_assets_connector().load_file(config_path)
+    configs = json.loads(config_contents.decode('utf-8'))
 
-    with Path(settings.consent_mailer.template_path / "consent.html").open(
-        encoding="utf-8"
-    ) as fh:
-        template = Template(fh.read())
+    consent_path = settings.consent_mailer.template_path / "consent.html"
+    consent_contents = get_assets_connector().load_file(consent_path)
+    template = Template(consent_contents.decode('utf-8'))
 
     body = _generate_email_body(person, template, configs["consent"]["template_args"])
 
