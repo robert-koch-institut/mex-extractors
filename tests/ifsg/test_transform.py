@@ -123,11 +123,11 @@ def test_transform_resource_state_to_mex_resource(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "isPartOf": [str(ifsg_extracted_resource_parent.stableTargetId)],
         "keyword": [
             {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
+        "relatedResource": [str(ifsg_extracted_resource_parent.stableTargetId)],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
         ],
@@ -202,11 +202,6 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             {"value": "Falldefinition B", "language": TextLanguage.DE},
             {"value": "Falldefinition C", "language": TextLanguage.DE},
         ],
-        "isPartOf": [
-            str(ifsg_extracted_resource_parent.stableTargetId),
-            str(ifsg_extracted_resources_state[0].stableTargetId),
-            str(ifsg_extracted_resources_state[1].stableTargetId),
-        ],
         "keyword": [
             {"value": "virus"},
             {"value": "Epidemic"},
@@ -222,6 +217,11 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         ],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": [str(extracted_organization_rki.stableTargetId)],
+        "relatedResource": [
+            str(ifsg_extracted_resource_parent.stableTargetId),
+            str(ifsg_extracted_resources_state[0].stableTargetId),
+            str(ifsg_extracted_resources_state[1].stableTargetId),
+        ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
         ],

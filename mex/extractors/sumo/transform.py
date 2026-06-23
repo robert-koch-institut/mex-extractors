@@ -110,9 +110,9 @@ def transform_resource_feat_model_to_mex_resource(
         .mappingRules[0]
         .setValues[0]  # type: ignore[index]
         .value,
-        isPartOf=mex_resource_nokeda.stableTargetId,
         keyword=keyword,
         meshId=sumo_resource_feat.meshId[0].mappingRules[0].setValues[0],  # type: ignore[index]
+        relatedResource=mex_resource_nokeda.stableTargetId,
         resourceCreationMethod=sumo_resource_feat.resourceCreationMethod[0]
         .mappingRules[0]
         .setValues[0],  # type: ignore[index]
