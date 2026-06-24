@@ -37,6 +37,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     igs_endpoint_counts: dict[str, str],
+    igs_seq_repo_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
 ) -> dict[str, ExtractedResource]:
     """Transform IGS schemas to extracted resources.
 
@@ -48,6 +49,9 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
         igs_schemas: igs schema dictionary
         igs_info: IGS info
         igs_endpoint_counts: IGS endpoint count dictionary
+        igs_seq_repo_resource_ids_by_pathogen: seq-repo resource ids by pathogen
+                                                if represented by igs
+
 
     Returns:
         igs extracted resource by pathogen
@@ -72,6 +76,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
         else []
     )
+
     keywords_by_pathogen = {
         rule.forValues[0]: rule.setValues
         for rule in igs_resource_mapping.keyword[1].mappingRules
@@ -104,6 +109,9 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
+        is_part_of: list[MergedResourceIdentifier] = []
+        if seq_repo_id := igs_seq_repo_resource_ids_by_pathogen.get(pathogen):
+            is_part_of = [seq_repo_id]
         keyword = [
             *default_keywords,
             *keywords_by_pathogen[pathogen],
@@ -150,6 +158,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             .setValues,
             hasPurpose=igs_resource_mapping.hasPurpose[0].mappingRules[0].setValues,
             identifierInPrimarySource=identifier_in_primary_source,
+            isPartOf=is_part_of,
             keyword=keyword,
             language=igs_resource_mapping.language[0].mappingRules[0].setValues,
             meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
