@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- add wikidata-fixture to some extractor test
 - temporarily switch off not_exactly_x_items assets check
 
 ### Security
