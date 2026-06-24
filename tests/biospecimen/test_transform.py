@@ -132,7 +132,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         ],
         "resourceTypeSpecific": [{"value": "spezieller Testtyp", "language": "de"}],
         "rights": [{"value": "Testrechte", "language": "de"}],
-        "sizeOfDataBasis": "Testanzahl",
         "spatial": [{"value": "räumlicher Testbezug", "language": "de"}],
         "stableTargetId": "fTFbnOlBFeccJoQw4QfnIm",
         "temporal": "2021-09 bis 2021-10",
