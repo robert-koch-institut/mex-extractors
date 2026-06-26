@@ -1,4 +1,4 @@
-from itertools import groupby
+from itertools import chain, groupby
 from typing import Any
 
 from dagster import AssetExecutionContext, asset
@@ -47,7 +47,11 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-from mex.extractors.utils import count_outbound_connections, load_yaml
+from mex.extractors.utils import (
+    collect_related_identifiers,
+    count_outbound_connections,
+    load_yaml,
+)
 
 
 @asset(group_name="synopse")
@@ -191,7 +195,17 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_study_overviews,
         transformed_study_data_resources,
     )
-    context.add_output_metadata({"num_items": len(extracted_resource)})
+    inbound_connections = collect_related_identifiers(
+        chain.from_iterable(synopse_variables_by_study_id.values()),
+        ["usedIn"],
+    )
+    context.add_output_metadata(
+        {
+            "num_items": len(extracted_resource),
+            "list_of_identifiers": list(extracted_resource.keys()),
+            "inbound_connections": inbound_connections,
+        }
+    )
     return extracted_resource
 
 

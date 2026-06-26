@@ -3,3 +3,6 @@
 rules:
   - fail_if: not_exactly_x_items
     value: 2
+  - fail_if: less_than_x_inbound
+    value: 100
+    target_type: Variable
