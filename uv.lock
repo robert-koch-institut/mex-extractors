@@ -981,7 +981,7 @@ wheels = [
 
 [[package]]
 name = "mex-artificial"
-version = "2.0.0"
+version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
@@ -991,14 +991,14 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/68/bc/84d245bb4b041c746c86ccdb049b7f54fe35f28b3697e422149365ad5b56/mex_artificial-2.0.0.tar.gz", hash = "sha256:44f6882838b0101824daa09c02a37e04725250d13719b001e4747ce9b16a8127", size = 11982, upload-time = "2026-05-26T08:39:55.574Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/03/c6/1a09e636b5c3a153dde6ae21a6818805b99f251a1898b8a848db3c8859fa/mex_artificial-3.0.0.tar.gz", hash = "sha256:a8ea64c8eefa3a5445d19f07ea207889a9d0b0d605b0bd90e138eaef44c6a510", size = 12125, upload-time = "2026-06-24T11:27:39.984Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f1/d6/5d522c92a09451ca54f2c20d4c24db1856b0b8f4475327b8f911ebf4a706/mex_artificial-2.0.0-py3-none-any.whl", hash = "sha256:7db1239037442c18a0cc739b0e71e2641a3c6b8051bfa4fd41a889b0621543ae", size = 13026, upload-time = "2026-05-26T08:39:54.284Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/81/ddc862574703105abc08bcd64c9ed3232f231b33ca54a63d90ae027d7451/mex_artificial-3.0.0-py3-none-any.whl", hash = "sha256:a14e432b0f83a36deafad42a1fc13b70c7e5c6184e123c1b33cad3f957680a8e", size = 13172, upload-time = "2026-06-24T11:27:38.717Z" },
 ]
 
 [[package]]
 name = "mex-common"
-version = "2.1.0"
+version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
@@ -1016,9 +1016,9 @@ dependencies = [
     { name = "requests" },
     { name = "tabulate" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8f/c4/ae3361acd2f215c19576307058f74d6693ae6f3cc6afea701f9d87b95262/mex_common-2.1.0.tar.gz", hash = "sha256:ca375b93b84f5c2d8b10c60ba99567e8f49ace2c190302245385a05abe782812", size = 91635, upload-time = "2026-06-17T09:51:35.034Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/57/67/1daa9a874680b7f977dc17041b7c207da49e778d301e345725870adad2e7/mex_common-3.0.0.tar.gz", hash = "sha256:da9d56ec7e094facb372dbdb21834eeed18bfd878619c9f5f78f7bc0c2f9666e", size = 92959, upload-time = "2026-06-19T13:10:01.641Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/fb/6ffa72aaf35cc9fc723f8fcbdf79c9fd28c6353614d291607f61e9b4b691/mex_common-2.1.0-py3-none-any.whl", hash = "sha256:5848ea78a4a75f4bb8d12ff3d1a30b653a527a2c9be581acef9b814bb89afb97", size = 139158, upload-time = "2026-06-17T09:51:32.958Z" },
+    { url = "https://files.pythonhosted.org/packages/be/cb/f5a228e9aafee47ce95fbcb6a16af6d23c2c59a56589f35915dffc7cd5ed/mex_common-3.0.0-py3-none-any.whl", hash = "sha256:627c4e770c71ad327fe941f6d743c6dd59f3d18302c77728f90df5829b2f3429", size = 140048, upload-time = "2026-06-19T13:10:00.145Z" },
 ]
 
 [[package]]
@@ -1075,8 +1075,8 @@ requires-dist = [
     { name = "dagster-webserver", specifier = ">=1,<2" },
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
-    { name = "mex-artificial", specifier = ">=2,<3" },
-    { name = "mex-common", specifier = ">=2.1,<2.2" },
+    { name = "mex-artificial", specifier = ">=3,<4" },
+    { name = "mex-common", specifier = ">=3,<3.1" },
     { name = "networkx", specifier = ">=3" },
     { name = "numpy", specifier = ">=2" },
     { name = "openpyxl", specifier = ">=3,<4" },
@@ -1110,11 +1110,11 @@ dev = [
 
 [[package]]
 name = "mex-model"
-version = "4.10.2"
+version = "5.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/61/7f/51b0f655dadb375c48f555ff675819d59ccebba3da3592f452d122db73d9/mex_model-4.10.2.tar.gz", hash = "sha256:cec8503cebe2dd0ab25f34474ee1127aa39f0641d68c3e9d880a7cc9f7d2be48", size = 52177, upload-time = "2026-04-01T07:29:53.992Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/c5/e0c082b30674cdbcf0aee92e765478169175a015cd28ef9b0ecea4c54091/mex_model-5.0.1.tar.gz", hash = "sha256:4628b49de0fe6ee357a73327cd7ee34a5ffdbfc48db260cec1c2333ce4b5d2d6", size = 59979, upload-time = "2026-06-05T11:56:55.299Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/08/1e/8f3a752aa3fabbbcad846284a8e9293b142c70286011a60dab7356ef2ef0/mex_model-4.10.2-py3-none-any.whl", hash = "sha256:1a3f637bbae448acb3e484019de4f8060fb77aa33ce857bc13c09e1100daf572", size = 92122, upload-time = "2026-04-01T07:29:52.566Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/97/bd312c36633495550499b0b2970765c31d8124025483a8c76dbfdeddc4aa/mex_model-5.0.1-py3-none-any.whl", hash = "sha256:439742e2428650c5078942839befd8ec059dbe6f76355a0d93a1d016930a214a", size = 98202, upload-time = "2026-06-05T11:56:54.035Z" },
 ]
 
 [[package]]
