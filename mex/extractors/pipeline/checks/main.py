@@ -12,7 +12,7 @@ from dagster import (
 from mex.common.logging import logger
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import Settings
-from mex.extractors.utils import count_inbound_connections, load_yaml
+from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -96,7 +96,7 @@ def get_latest_num_items(
         return None
 
     metadata_key_by_rule = {
-        "less_than_x_inbound": "list_of_identifiers",
+        "less_than_x_inbound": "inbound_connections",
         "less_than_x_outbound": "outbound_connections",
     }
     num_items_metadata = latest_materialization.metadata.get(
@@ -113,12 +113,11 @@ def get_latest_num_items(
         raise ValueError(LATEST_NUM_ITEMS_ERROR)
 
     if rule_name == "less_than_x_outbound":
-        outbound_connections = num_items_metadata.value
-        if not isinstance(outbound_connections, dict):
+        connections = num_items_metadata.value
+        if not isinstance(connections, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
         return {
-            identifier: int(str(count))
-            for identifier, count in outbound_connections.items()
+            identifier: int(str(count)) for identifier, count in connections.items()
         }
 
     if rule_name == "less_than_x_inbound":
@@ -175,14 +174,13 @@ def check_static_rule(
     threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
-        if current_number_of_extracted_items == threshold:
+        if current_number_of_items == threshold:
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
     if rule_name == "less_than_x_inbound":
-        # fail if number of inbound connections is smaller than threshold
-        target_type = rule["target_type"]
-        count = count_inbound_connections(current_number_of_items, target_type)  # type: ignore [arg-type]
-        return count < threshold
+        if not isinstance(current_number_of_items, list):
+            raise ValueError(LATEST_NUM_ITEMS_ERROR)
+        return len(current_number_of_items) >= threshold
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold
         return all(

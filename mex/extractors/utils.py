@@ -3,9 +3,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import yaml
 
-from mex.common.backend_api.connector import BackendApiConnector
-
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
     from os import PathLike
 
     from mex.common.models import ExtractedVariable
@@ -30,18 +29,33 @@ def count_outbound_connections(variable: ExtractedVariable) -> int:
     return count
 
 
-def count_inbound_connections(list_of_ids: list[str], target_type: str) -> int:
-    """Count the number of inbound connections for a given list of identifiers."""
-    # graph query to all target types, checking separately for each identifier
-    # if it is referenced, then add all counts together and return the total count
-    total_count = 0
-    connector = BackendApiConnector()
-    for identifier in list_of_ids:
-        result = connector.fetch_extracted_items(
-            entity_type=[target_type],
-            referenced_identifier=[identifier],
-        )
-        count_for_id = len(result.items)
-        total_count += count_for_id
+def collect_related_identifiers(
+    items: Iterable[Any],
+    relation_fields: Sequence[str],
+) -> list[str]:
+    """Collect unique identifiers referenced by relation fields on a collection.
 
-    return total_count
+    This is generic enough for synopse variables as well as open_data distributions.
+    """
+    identifiers: list[str] = []
+    seen_identifiers: set[str] = set()
+
+    for item in items:
+        for relation_field in relation_fields:
+            related_values = getattr(item, relation_field, None)
+            if related_values is None:
+                continue
+
+            if not isinstance(related_values, list):
+                related_values = [related_values]
+
+            for related_value in related_values:
+                if related_value is None:
+                    continue
+                identifier = str(related_value)
+                if identifier in seen_identifiers:  # is
+                    continue  # this
+                seen_identifiers.add(identifier)  # necessary?
+                identifiers.append(identifier)
+
+    return identifiers

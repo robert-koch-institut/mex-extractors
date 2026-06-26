@@ -1,7 +1,8 @@
+from itertools import chain
 from pathlib import Path
 from typing import Any
 
-from dagster import asset
+from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
@@ -15,7 +16,7 @@ from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifie
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
+from mex.extractors.utils import collect_related_identifiers, load_yaml
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
@@ -87,8 +88,9 @@ def voxco_extracted_resources_by_str(
     return mex_resources
 
 
-@asset(group_name="voxco")
+@asset(group_name="voxco", metadata={"entity_type": "resource"})
 def voxco_extracted_variables(
+    context: AssetExecutionContext,
     voxco_extracted_resources_by_str: dict[str, ExtractedResource],
     voxco_variables_by_name_str: dict[str, list[VoxcoVariable]],
 ) -> list[ExtractedVariable]:
@@ -98,6 +100,15 @@ def voxco_extracted_variables(
         voxco_variables_by_name_str,
     )
     load(extracted_variables)
+    inbound_connections = collect_related_identifiers(
+        chain.from_iterable(voxco_extracted_resources_by_str.values()),
+        ["usedIn"],
+    )
+    context.add_output_metadata(
+        {
+            "inbound_connections": inbound_connections,
+        }
+    )
     return extracted_variables
 
 
