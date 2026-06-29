@@ -82,6 +82,11 @@ methodDescription:
         setValues:
           - language: en
             value: tempor
+numberOfUniqueIndividuals:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+        setValues: 999
 publisher:
   - mappingRules:
       - forValues:
@@ -110,10 +115,6 @@ rights:
         setValues:
           - language: de
             value: ut labore
-sizeOfDataBasis:
-  - mappingRules:
-      - rule:
-        setValues: et dolore
 spatial:
   - mappingRules:
       - rule:

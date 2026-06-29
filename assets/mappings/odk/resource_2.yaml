@@ -59,6 +59,10 @@ method:
           - value: et justo
             language: de
         rule:
+numberOfUniqueIndividuals:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publisher:
   - mappingRules:
       - forValues:

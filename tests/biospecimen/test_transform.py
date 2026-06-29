@@ -124,6 +124,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "meshId": ["http://id.nlm.nih.gov/mesh/D123"],
         "method": [{"value": "Testmethode", "language": "en"}],
         "methodDescription": [{"value": "Testmethodenbeschreibung", "language": "de"}],
+        "numberOfRecords": 42,
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -131,7 +132,6 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         ],
         "resourceTypeSpecific": [{"value": "spezieller Testtyp", "language": "de"}],
         "rights": [{"value": "Testrechte", "language": "de"}],
-        "sizeOfDataBasis": "Testanzahl",
         "spatial": [{"value": "räumlicher Testbezug", "language": "de"}],
         "stableTargetId": "fTFbnOlBFeccJoQw4QfnIm",
         "temporal": "2021-09 bis 2021-10",
