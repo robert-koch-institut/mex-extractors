@@ -140,7 +140,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.resourceTypeSpecific[0].mappingRules[0].setValues
         )
         rights = resource.rights[0].mappingRules[0].setValues
-        size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
         spatial = resource.spatial[0].mappingRules[0].setValues
         start = resource.start[0].mappingRules[0].setValues
         state_of_data_processing = (
@@ -179,7 +178,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
-            sizeOfDataBasis=size_of_data_basis,
             spatial=spatial,
             start=start,
             stateOfDataProcessing=state_of_data_processing,

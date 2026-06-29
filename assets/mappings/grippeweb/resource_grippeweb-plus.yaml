@@ -124,9 +124,6 @@ rights:
       - setValues:
           - language: de
             value: "Die Daten"
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: 500 Teilnehmende (Stand Mai 2023)
 spatial:
   - mappingRules:
       - setValues:

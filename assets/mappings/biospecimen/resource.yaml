@@ -105,6 +105,10 @@ methodDescription:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
+numberOfRecords:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publication:
   - fieldInPrimarySource:
     mappingRules:
@@ -132,10 +136,6 @@ resourceTypeSpecific:
     mappingRules:
       - rule:
 rights:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
-sizeOfDataBasis:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
