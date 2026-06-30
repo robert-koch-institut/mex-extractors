@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- add wikidata-fixture to some extractor test
+
 ### Security
 
 ## [1.15.0] - 2026-06-30
@@ -31,8 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
-
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
 - use ldap convenience function and refactor ldap and organigram helper functions
 - dependency update(2026-06-26)
 
