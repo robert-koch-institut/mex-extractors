@@ -68,7 +68,7 @@ def test_extract_international_projects_sources() -> None:
     assert source_dicts[1]["funding_program"] == expected[1]["funding_program"]
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_international_projects_project_leaders() -> None:
     international_projects_sources = extract_international_projects_sources()
     leaders = extract_international_projects_project_leaders(

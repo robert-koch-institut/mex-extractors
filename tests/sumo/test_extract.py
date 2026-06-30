@@ -116,7 +116,7 @@ def test_extract_ldap_contact_points_by_emails(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_ldap_persons_by_name(
     sumo_access_platform: AccessPlatformMapping,
 ) -> None:
