@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.15.0] - 2026-06-30
+
+### Added
+
 - add first test data for http-test-server (blueant and datscha)
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
@@ -22,15 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use ldap convenience function and refactor ldap and organigram helper functions
 - dependency update(2026-06-26)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - temporarily switch off not_exactly_x_items assets check
-
-### Security
 
 ## [1.14.1] - 2026-04-30
 
