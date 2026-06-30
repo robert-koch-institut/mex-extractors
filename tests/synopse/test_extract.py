@@ -90,7 +90,7 @@ def test_extract_projects() -> None:
     assert projects[0].model_dump(exclude_none=True) == expected_project
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_synopse_project_contributor_ids_by_query(
     synopse_project: SynopseProject,
 ) -> None:

@@ -55,7 +55,7 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
         extract_sources()
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_source_project_coordinator_by_name(
     seq_repo_sources: list[SeqRepoSource],
 ) -> None:
