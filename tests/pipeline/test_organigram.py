@@ -22,5 +22,6 @@ def test_extracted_organizational_units(
     assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
         ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("mf1", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
         ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
     ]
