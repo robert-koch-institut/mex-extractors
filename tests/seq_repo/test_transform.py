@@ -31,16 +31,9 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     expected = {
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "TEST-ID",
-        "contact": [
-            "c2Yd8aNoLKIf7u6ubTUuc3",
-            "eXA2Qj5pKmI7HXIgcVqCfz",
-        ],
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+        "contact": ["elEHmL68mc51YJyx8WjYTA"],
+        "responsibleUnit": ["elEHmL68mc51YJyx8WjYTA"],
         "title": [{"value": "FG99-ABC-123", "language": "de"}],
-        "involvedPerson": [
-            "c2Yd8aNoLKIf7u6ubTUuc3",
-            "eXA2Qj5pKmI7HXIgcVqCfz",
-        ],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
@@ -77,21 +70,18 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "created": "2023-08-07",
         "modified": "2023-08-07",
         "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
-        "contact": [
-            "c2Yd8aNoLKIf7u6ubTUuc3",
-            "eXA2Qj5pKmI7HXIgcVqCfz",
-        ],
-        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
+        "contact": ["elEHmL68mc51YJyx8WjYTA"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [{"value": "LIMS Sample ID test-sample-id (virus XYZ)"}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+        "unitInCharge": ["elEHmL68mc51YJyx8WjYTA"],
         "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
+        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
         "description": [
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},

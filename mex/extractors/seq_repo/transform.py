@@ -12,10 +12,12 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.ldap.helpers import get_ldap_merged_contact_id_by_mail
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -246,7 +248,11 @@ def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
     seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
 ) -> tuple[
-    list[MergedPersonIdentifier | MergedOrganizationalUnitIdentifier],
+    list[
+        MergedContactPointIdentifier
+        | MergedPersonIdentifier
+        | MergedOrganizationalUnitIdentifier
+    ],
     list[MergedOrganizationalUnitIdentifier],
 ]:
     """Get ldap resolved ids of project coordinators and units.
@@ -260,14 +266,22 @@ def get_resolved_project_coordinators_and_units(
         Resolved ids project coordinator and units
     """
     project_coordinators_ids: set[
-        MergedPersonIdentifier | MergedOrganizationalUnitIdentifier
+        MergedContactPointIdentifier
+        | MergedPersonIdentifier
+        | MergedOrganizationalUnitIdentifier
     ] = set()
     units_in_charge: set[MergedOrganizationalUnitIdentifier] = set()
     for pc in project_coordinators:
         person = seq_repo_extracted_persons_by_name.get(pc)
-        if not person:
+        contact_id = get_ldap_merged_contact_id_by_mail(mail=pc)
+        if not person or contact_id:
             continue
-        project_coordinators_ids.add(person.stableTargetId)
+        project_coordinators_ids.add(
+            cast(
+                "MergedContactPointIdentifier | MergedPersonIdentifier | MergedOrganizationalUnitIdentifier",  # noqa: E501
+                person.stableTargetId or contact_id,
+            )
+        )
         if unit := person.memberOf:
             units_in_charge.update(unit)
 
@@ -278,7 +292,7 @@ def get_resolved_project_coordinators_and_units(
         )
     if not project_coordinators_ids:
         project_coordinators_ids = cast(
-            "set[MergedPersonIdentifier|MergedOrganizationalUnitIdentifier]",
+            "set[MergedContactPointIdentifier |MergedPersonIdentifier|MergedOrganizationalUnitIdentifier]",  # noqa: E501
             get_unit_merged_id_by_synonym("mf1"),
         )
     return sorted(project_coordinators_ids), sorted(units_in_charge)
