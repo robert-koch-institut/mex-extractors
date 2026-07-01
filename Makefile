@@ -43,6 +43,7 @@ wheel:
 image:
 	# build the docker image
 	@ echo building docker image mex-extractors:${LATEST}; \
+	export DOCKER_BUILDKIT=1; \
 	docker build \
 		--tag rki/mex-extractors:${LATEST} \
 		--tag rki/mex-extractors:latest .; \

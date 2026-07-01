@@ -44,7 +44,7 @@ jobs:
           persist-credentials: false
 
       - name: Cache requirements
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         env:
           cache-name: cache-requirements
         with:
@@ -85,7 +85,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write  # Required for cosign signing
 
     steps:
       - name: Checkout repo
@@ -103,29 +102,15 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build, tag and push docker image
-        id: push_step
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v.7.1.0
         env:
           IMAGE: ghcr.io/${{ github.repository }}
           TAG: ${{ needs.release.outputs.tag }}
-        with:
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:${{ env.TAG }}
-          outputs: type=image,oci-mediatypes=true
-
-      - name: Install cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-        with:
-          cosign-release: 'v2.4.1'
-
-      - name: Sign Docker image keyless
-        env:
-          IMAGE: ghcr.io/${{ github.repository }}@${{ steps.push_step.outputs.digest }}
         run: |
-          cosign sign --yes "$IMAGE"
+          docker build . \
+          --tag ${IMAGE}:latest \
+          --tag ${IMAGE}:${{ github.sha }} \
+          --tag ${IMAGE}:${TAG}
+          docker push --all-tags ${IMAGE}
 
   distribute:
     runs-on: ubuntu-latest
@@ -143,7 +128,7 @@ jobs:
           persist-credentials: false
 
       - name: Cache requirements
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         env:
           cache-name: cache-requirements
         with:
@@ -164,6 +149,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uv build --out-dir dist
           gh release create ${{ needs.release.outputs.tag }} \
-          --generate-notes --latest --verify-tag dist/*
+          --generate-notes --latest --verify-tag
+          uv build --out-dir dist
+          for filename in dist/*; do
+            gh release upload ${{ needs.release.outputs.tag }} ${filename};
+          done
