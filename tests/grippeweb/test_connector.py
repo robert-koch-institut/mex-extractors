@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, cast
 from unittest.mock import ANY, MagicMock
 
-import pyodbc
+import pyodbc  # type: ignore[import-not-found]
 
 from mex.extractors.grippeweb.connector import GrippewebConnector
 from mex.extractors.settings import Settings
@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 def test_parse_rows_success() -> None:
     """Test the happy path of parsing rows by column name."""
-    # Create a fresh, empty instance bypassing Singleton logic
     connector = object.__new__(GrippewebConnector)
 
     cursor = MagicMock()
@@ -22,7 +21,6 @@ def test_parse_rows_success() -> None:
     ]
     cursor.description = [["Id"], ["StartedOn"], ["FinishedOn"], ["RepeatAfterDays"]]
 
-    # Inject mock connection directly
     connector._connection = MagicMock()
     cast(
         "MagicMock", connector._connection.cursor
@@ -52,11 +50,10 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
 
     settings = Settings.get()
 
-    # Manually trigger __init__ on a fresh instance to test _setup_connection
     connector = object.__new__(GrippewebConnector)
-    connector.__init__()
+    # Call __init__ from the class to satisfy mypy's strict instance checking
+    GrippewebConnector.__init__(connector)
 
-    # Assert kinit subprocess was called
     mock_popen.assert_called_once_with(
         ["kinit", settings.kerberos_user, "-V"],
         stdout=ANY,
@@ -67,7 +64,6 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
     mock_process.communicate.assert_called_once_with(
         input=settings.kerberos_password.get_secret_value()
     )
-    # Assert pyodbc connection was established
     mock_pyodbc_connect.assert_called_once_with(settings.grippeweb.mssql_connection_dsn)
 
 
@@ -82,7 +78,8 @@ def test_setup_connection_windows(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("pyodbc.connect", mock_pyodbc_connect)
 
     connector = object.__new__(GrippewebConnector)
-    connector.__init__()
+    # Call __init__ from the class to satisfy mypy's strict instance checking
+    GrippewebConnector.__init__(connector)
 
     mock_popen.assert_not_called()
     mock_pyodbc_connect.assert_called_once()
@@ -106,13 +103,11 @@ def test_parse_rows_retry_on_pyodbc_error(monkeypatch: MonkeyPatch) -> None:
         "MagicMock", connector._connection.cursor
     ).return_value.__enter__.return_value = mock_cursor
 
-    # Call the method
     result = connector.parse_columns_by_column_name("vActualQuestion")
 
-    # Assertions
     assert result == {"Id": ["AAA"]}
-    assert mock_cursor.execute.call_count == 2  # It tried twice
-    mock_reconnect.assert_called_once()  # It reconnected in between
+    assert mock_cursor.execute.call_count == 2
+    mock_reconnect.assert_called_once()
 
 
 def test_close_suppresses_error() -> None:
@@ -121,10 +116,9 @@ def test_close_suppresses_error() -> None:
     connector._connection = MagicMock()
 
     cast("MagicMock", connector._connection.close).side_effect = pyodbc.Error(
-        "Connection already dead"
+        "Connection dead"
     )
 
-    # This should not raise an exception because of contextlib.suppress
     connector.close()
 
     cast("MagicMock", connector._connection.close).assert_called_once()
