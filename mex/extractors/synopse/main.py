@@ -109,14 +109,10 @@ def synopse_variables_by_thema(
     synopse_variables: list[Variablenuebersicht],
 ) -> dict[str, list[Variablenuebersicht]]:
     """Convert Synopse data to synopse_variables_by_thema."""
-    sorted_variables = sorted(
-        synopse_variables, key=lambda v: v.textbox5
-    )
+    sorted_variables = sorted(synopse_variables, key=lambda v: v.textbox5)
     return {
         thema: list(variables)
-        for thema, variables in groupby(
-            sorted_variables, key=lambda v: v.textbox5
-        )
+        for thema, variables in groupby(sorted_variables, key=lambda v: v.textbox5)
     }
 
 

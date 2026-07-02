@@ -29,7 +29,6 @@ class ProjektUndStudienverwaltung(BaseRawData):
     Projektdokumentation: str | None = None
     StudienID: str = Field(...)
 
-
     def get_partners(self) -> Sequence[str | None]:
         """Return partners from extractor."""
         return [self.Partner_intern]

@@ -160,9 +160,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         resource_identifier = (
             f"{study.StudienID}-{study.Titel_Datenset}-{study.DStypID}"
         )
-        variable_group_identifier = (
-            f"{variable.textbox5}-{resource_identifier}"
-        )
+        variable_group_identifier = f"{variable.textbox5}-{resource_identifier}"
         belongs_to: list[MergedVariableGroupIdentifier] = []
         if (
             variable_group_identifier
@@ -722,15 +720,12 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         involvedPerson=involved_person,
         involvedUnit=involved_units,
         responsibleUnit=responsible_unit,
-        shortName=Text(
-            value=synopse_project.Studie, language=TextLanguage.DE
-        ),
+        shortName=Text(value=synopse_project.Studie, language=TextLanguage.DE),
         start=(
             TemporalEntity(synopse_project.Projektbeginn)
             if synopse_project.Projektbeginn
             else None
         ),
         theme=theme,
-        title=synopse_project.ProjektStudientitel
-        or synopse_project.Studie,
+        title=synopse_project.ProjektStudientitel or synopse_project.Studie,
     )

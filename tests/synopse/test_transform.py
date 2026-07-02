@@ -123,9 +123,7 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         group.identifierInPrimarySource: group for group in extracted_variable_groups
     }
     synopse_variables = [
-        var
-        for var in synopse_variables
-        if var.textbox5 == "Krankheiten (1101)"
+        var for var in synopse_variables if var.textbox5 == "Krankheiten (1101)"
     ]
     variable_group = variable_group_by_identifier_in_primary_source[
         "Krankheiten (1101)-12345-set1-17"

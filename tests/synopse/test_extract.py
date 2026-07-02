@@ -78,7 +78,7 @@ def test_extract_study_data() -> None:
 
 
 def test_extract_projects() -> None:
-    expected_project= {
+    expected_project = {
         "Studie": "BBCCDD1",
         "ProjektStudientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
         "BeschreibungStudie": "fg@example.com",
