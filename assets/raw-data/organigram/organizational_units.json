@@ -87,5 +87,32 @@
                 "value": "FG 99"
             }
         ]
+    },
+    {
+        "alternativeName": [
+            {
+                "value": "MF1"
+            }
+        ],
+        "email": [
+            "fg@example.com"
+        ],
+        "identifier": "mf1",
+        "name": [
+            {
+                "language": "de",
+                "value": "MF 1"
+            },
+            {
+                "language": "en",
+                "value": "Group 1"
+            }
+        ],
+        "shortName": [
+            {
+                "language": "de",
+                "value": "MF 1"
+            }
+        ]
     }
 ]

@@ -34,6 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - use ldap convenience function and refactor ldap and organigram helper functions
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- dependency update(2026-06-16)
+- implement seq-repo fallback rule for units
+
+### Deprecated
+
+### Removed
 - dependency update(2026-06-26)
 
 ### Fixed

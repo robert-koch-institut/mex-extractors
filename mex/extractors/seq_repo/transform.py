@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from mex.common.models import (
     AccessPlatformMapping,
@@ -12,10 +12,12 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
+    MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.ldap.helpers import get_ldap_merged_contact_id_by_mail
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -45,21 +47,16 @@ def transform_seq_repo_activities_to_extracted_activities(
     unique_activities = []
 
     for source in seq_repo_sources:
-        project_coordinators_ids, responsible_units = (
-            get_resolved_project_coordinators_and_units(
-                source.project_coordinators,
-                seq_repo_extracted_persons_by_name,
-            )
+        contact, responsible_units = get_resolved_project_coordinators_and_units(
+            source.project_coordinators,
+            seq_repo_extracted_persons_by_name,
         )
-
-        if not responsible_units or not project_coordinators_ids:
-            continue
-
+        involved_person = [c for c in contact if isinstance(c, MergedPersonIdentifier)]
         extracted_activity = ExtractedActivity(
-            contact=project_coordinators_ids,
+            contact=contact,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=source.project_id,
-            involvedPerson=project_coordinators_ids,
+            involvedPerson=involved_person,
             responsibleUnit=responsible_units,
             theme=theme,
             title=source.project_name,
@@ -71,7 +68,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     return unique_activities
 
 
-def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
+def transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
@@ -146,15 +143,10 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
 
         activity = seq_repo_activities.get(source.project_id)
 
-        project_coordinators_ids, units_in_charge = (
-            get_resolved_project_coordinators_and_units(
-                source.project_coordinators,
-                seq_repo_extracted_persons_by_name,
-            )
+        contact, units_in_charge = get_resolved_project_coordinators_and_units(
+            source.project_coordinators,
+            seq_repo_extracted_persons_by_name,
         )
-
-        if not units_in_charge or not project_coordinators_ids:
-            continue
         contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
         keyword = list(shared_keyword)
         if source.species:
@@ -177,7 +169,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
             anonymizationPseudonymization=anonymization_pseudonymization,
-            contact=project_coordinators_ids,
+            contact=contact,
             contributingUnit=contributing_unit,
             created=created,
             description=description,
@@ -255,7 +247,14 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
 def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
     seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
-) -> tuple[list[MergedPersonIdentifier], list[MergedOrganizationalUnitIdentifier]]:
+) -> tuple[
+    list[
+        MergedContactPointIdentifier
+        | MergedPersonIdentifier
+        | MergedOrganizationalUnitIdentifier
+    ],
+    list[MergedOrganizationalUnitIdentifier],
+]:
     """Get ldap resolved ids of project coordinators and units.
 
     Args:
@@ -266,14 +265,34 @@ def get_resolved_project_coordinators_and_units(
     Returns:
         Resolved ids project coordinator and units
     """
-    project_coordinators_ids: set[MergedPersonIdentifier] = set()
+    project_coordinators_ids: set[
+        MergedContactPointIdentifier
+        | MergedPersonIdentifier
+        | MergedOrganizationalUnitIdentifier
+    ] = set()
     units_in_charge: set[MergedOrganizationalUnitIdentifier] = set()
     for pc in project_coordinators:
         person = seq_repo_extracted_persons_by_name.get(pc)
-        if not person:
+        contact_id = get_ldap_merged_contact_id_by_mail(mail=pc)
+        if not person or contact_id:
             continue
-        project_coordinators_ids.add(person.stableTargetId)
+        project_coordinators_ids.add(
+            cast(
+                "MergedContactPointIdentifier | MergedPersonIdentifier | MergedOrganizationalUnitIdentifier",  # noqa: E501
+                person.stableTargetId or contact_id,
+            )
+        )
         if unit := person.memberOf:
             units_in_charge.update(unit)
 
+    if not units_in_charge:
+        units_in_charge = cast(
+            "set[MergedOrganizationalUnitIdentifier]",
+            get_unit_merged_id_by_synonym("mf1"),
+        )
+    if not project_coordinators_ids:
+        project_coordinators_ids = cast(
+            "set[MergedContactPointIdentifier |MergedPersonIdentifier|MergedOrganizationalUnitIdentifier]",  # noqa: E501
+            get_unit_merged_id_by_synonym("mf1"),
+        )
     return sorted(project_coordinators_ids), sorted(units_in_charge)

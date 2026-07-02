@@ -49,6 +49,7 @@ def test_get_only_child_units(
     assert no_parent_units == [  # Parent unit PRNT is filtered out
         MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
         MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),  # FG 99
+        MergedOrganizationalUnitIdentifier("elEHmL68mc51YJyx8WjYTA"),
     ]
 
 
