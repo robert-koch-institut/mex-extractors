@@ -4,6 +4,8 @@ from subprocess import PIPE, STDOUT, Popen
 from typing import Any, cast
 
 import backoff
+
+# https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
 import pyodbc  # type: ignore[import-not-found]
 
 from mex.common.connector import BaseConnector
