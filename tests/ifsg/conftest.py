@@ -245,7 +245,6 @@ def ifsg_extracted_resource_parent() -> ExtractedResource:
         rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
         spatial=[Text(value="Deutschland", language=TextLanguage.DE)],
         stateOfDataProcessing=[],
-        temporal=None,
         theme=["https://mex.rki.de/item/theme-11"],
         title=[
             Text(
@@ -288,7 +287,6 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
             spatial=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -321,7 +319,6 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
             spatial=[Text(value="Hamburg", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Hamburg", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -354,7 +351,6 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
             spatial=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -387,7 +383,6 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
             spatial=[Text(value="Hamburg", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Hamburg", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -435,7 +430,6 @@ def ifsg_extracted_resources_disease() -> list[ExtractedResource]:
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
             spatial=[Text(value="Deutschland", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=[
                 "https://mex.rki.de/item/theme-11",
             ],
