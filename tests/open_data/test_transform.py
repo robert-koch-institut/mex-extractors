@@ -186,7 +186,7 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
         "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
         "identifierInPrimarySource": "Eins",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
-        "created": "2021",
+        "start": "2021",
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "license": "https://mex.rki.de/item/license-1",
         "contact": ["cMkmnNOoNVAohBA1XLNr9K"],

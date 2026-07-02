@@ -63,8 +63,6 @@ class OpenDataParentResource(BaseModel):
 class OpenDataResourceVersion(BaseModel):
     """Model class for Versions of a record."""
 
-    created: str | None = None
-    id: int
     metadata: OpenDataMetadata
 
 
