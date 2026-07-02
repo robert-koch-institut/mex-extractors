@@ -62,6 +62,7 @@ def test_transform_odk_resources_to_mex_resources(
         "contact": get_unit_merged_id_by_synonym("C1"),
         "contributingUnit": get_unit_merged_id_by_synonym("C1"),
         "description": [{"value": "amet", "language": TextLanguage.EN}],
+        "end": "2021-07-27",
         "externalPartner": [
             str(odk_merged_organization_ids_by_str["consetetur"]),
             str(odk_merged_organization_ids_by_str["invidunt"]),
@@ -99,7 +100,7 @@ def test_transform_odk_resources_to_mex_resources(
             {"value": "magna", "language": TextLanguage.DE},
             {"value": "magna", "language": TextLanguage.EN},
         ],
-        "temporal": "2021-07-27 - 2021-12-31",
+        "start": "2021-12-31",
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-37",

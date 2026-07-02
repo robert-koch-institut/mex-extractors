@@ -22,6 +22,9 @@ description:
           - value: voluptua
             language: en
         rule:
+end:
+  - mappingRules:
+      - setValues: # "2021-07-27"
 externalPartner:
   - mappingRules:
       - forValues:
@@ -99,10 +102,9 @@ spatial:
           - value: Stet
             language: en
         rule:
-temporal:
+start:
   - mappingRules:
-      - setValues: 2021-05-01 - 2021-12-31
-        rule:
+      - setValues: # "2021-12-31"
 theme:
   - mappingRules:
       - setValues:

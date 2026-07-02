@@ -111,6 +111,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "documentation": [
             {"language": "de", "title": "Testdokutitel", "url": "Testdokupfad"}
         ],
+        "end": "2021-10",
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
         "hadPrimarySource": "fBlRVJ8z9yVH1fxXU9ZsjD",
         "hasCodeValues": [{"value": "12345-6"}],
@@ -134,7 +135,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "rights": [{"value": "Testrechte", "language": "de"}],
         "spatial": [{"value": "räumlicher Testbezug", "language": "de"}],
         "stableTargetId": "fTFbnOlBFeccJoQw4QfnIm",
-        "temporal": "2021-09 bis 2021-10",
+        "start": "2021-09",
         "theme": ["https://mex.rki.de/item/theme-36"],
         "title": [{"value": "test_titel"}],
         "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
