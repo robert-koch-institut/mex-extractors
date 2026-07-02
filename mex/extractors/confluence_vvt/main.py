@@ -79,7 +79,7 @@ def confluence_vvt_merged_person_ids_by_query_str(
         ldap_authors,
         get_extracted_primary_source_id_by_name("ldap"),
         extracted_organizational_units,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
     load(mex_authors)
 

@@ -1,0 +1,9 @@
+{
+    "status": {
+        "code": 200
+    },
+    "type": {
+        "description": "TypeDescription2",
+        "id": 2
+    }
+}

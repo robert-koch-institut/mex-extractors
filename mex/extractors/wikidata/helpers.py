@@ -54,6 +54,7 @@ def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     }
 
 
+@lru_cache(maxsize=1024)
 def get_wikidata_extracted_organization_id_by_name(
     name: str,
 ) -> MergedOrganizationIdentifier | None:

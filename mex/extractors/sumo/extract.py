@@ -3,9 +3,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 from pandas import ExcelFile
 
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPersonWithQuery
 from mex.common.ldap.transform import analyse_person_string
+from mex.extractors.ldap.helpers import (
+    get_ldap_merged_contact_id_by_mail,
+    get_ldap_merged_person_id_by_query,
+)
 from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
@@ -18,6 +20,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 
 
 def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
@@ -34,7 +37,7 @@ def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
     excel_file = ExcelFile(excel_path)
     valuesets = []
     for sheet_name in excel_file.sheet_names:
-        data_valuesets = excel_file.parse(sheet_name=sheet_name)
+        data_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
         for _, row in data_valuesets.iterrows():
             valuesets.append(
                 Cc1DataValuesets(
@@ -64,7 +67,7 @@ def extract_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
     excel_path = settings.sumo.raw_data_path / "cc1_data_model_NoKeda_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "datamodel NoKeda"
-    data_model_nokeda = excel_file.parse(sheet_name=sheet_name)
+    data_model_nokeda = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
     models = []
     for _, row in data_model_nokeda.iterrows():
         models.append(Cc1DataModelNoKeda(**row))
@@ -84,7 +87,7 @@ def extract_cc2_aux_model() -> list[Cc2AuxModel]:
     excel_path = settings.sumo.raw_data_path / "cc2_aux_model_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "datamodel aux"
-    aux_model = excel_file.parse(sheet_name=sheet_name)
+    aux_model = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
     models = []
     for _, row in aux_model.iterrows():
         models.append(Cc2AuxModel(**row))
@@ -111,7 +114,7 @@ def extract_cc2_aux_mapping(
     mappings = []
     for row in sumo_cc2_aux_model:
         sheet_name = row.depends_on_nokeda_variable
-        aux_mapping = excel_file.parse(sheet_name=sheet_name)
+        aux_mapping = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
         mappings.append(
             Cc2AuxMapping(
                 sheet_name=sheet_name,
@@ -135,7 +138,7 @@ def extract_cc2_aux_valuesets() -> list[Cc2AuxValuesets]:
     excel_path = settings.sumo.raw_data_path / "cc2_aux_valuesets_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "aux_cedis_group"
-    aux_valuesets = excel_file.parse(sheet_name=sheet_name)
+    aux_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
     valuesets = []
     for _, row in aux_valuesets.iterrows():
         valuesets.append(Cc2AuxValuesets(**row))
@@ -155,7 +158,7 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
     excel_path = settings.sumo.raw_data_path / "cc2_feat_projection_v3.0.3.xlsx"
     excel_file = ExcelFile(excel_path)
     sheet_name = "feat_syndrome"
-    aux_valuesets = excel_file.parse(sheet_name=sheet_name)
+    aux_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
     projections = []
     for _, row in aux_valuesets.iterrows():
         projections.append(Cc2FeatProjection(**row))
@@ -164,44 +167,45 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
 
 def extract_ldap_contact_points_by_emails(
     resources: list[ResourceMapping],
-) -> list[LDAPFunctionalAccount]:
+) -> dict[str, MergedContactPointIdentifier]:
     """Extract contact points from ldap for email in resource contacts.
 
     Args:
         resources: list of sumo resource mapping models
 
     Returns:
-        List of ldap actors
+        dictionary of merged contact point identifier by mail
     """
-    ldap = LDAPConnector.get()
     emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
-    accounts = []
-    for mail in emails:
-        accounts.extend(ldap.get_functional_accounts(mail=mail).items)
-    return accounts
+    return {
+        mail: contact_id
+        for mail in emails
+        if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
+    }
 
 
-def extract_ldap_contact_points_by_name(
+def extract_ldap_persons_by_name(
     sumo_access_platform: AccessPlatformMapping,
-) -> list[LDAPPersonWithQuery]:
-    """Extract contact points from ldap for contact name in Sumo access platform.
+) -> dict[str, MergedPersonIdentifier]:
+    """Extract persons from ldap for contact name in Sumo access platform.
 
     Args:
         sumo_access_platform: SUMO access platform mapping model
 
     Returns:
-        List of ldap persons with query
+        dictionary of ldap persons with query
     """
-    ldap = LDAPConnector.get()
     names = sumo_access_platform.contact[0].mappingRules[0].forValues or []
     split_names = [
         split_name for name in names for split_name in analyse_person_string(name)
     ]
-    ldap_persons = []
-    for split_name in split_names:
-        persons = ldap.get_persons(
-            surname=split_name.surname, given_name=split_name.given_name, limit=2
-        ).items
-        if len(persons) == 1 and persons[0].objectGUID:
-            ldap_persons.append(LDAPPersonWithQuery(person=persons[0], query=names))
-    return ldap_persons
+
+    return {
+        f"{split_name.given_name} {split_name.surname}": person_id
+        for split_name in split_names
+        if (
+            person_id := get_ldap_merged_person_id_by_query(
+                surname=split_name.surname, given_name=split_name.given_name
+            )
+        )
+    }

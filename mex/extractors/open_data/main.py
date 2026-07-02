@@ -32,10 +32,10 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchema,
 )
 from mex.extractors.open_data.transform import (
+    get_or_transform_open_data_persons,
     transform_open_data_distributions,
     transform_open_data_parent_resource_to_mex_resource,
     transform_open_data_person_affiliations_to_organizations,
-    transform_open_data_persons,
     transform_open_data_variable_groups,
     transform_open_data_variables,
 )
@@ -79,19 +79,15 @@ def open_data_organization_ids_by_name_str(
 @asset(group_name="open_data")
 def open_data_extracted_persons(
     open_data_creators_contributors: list[OpenDataCreatorsOrContributors],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
     extracted_organization_rki: ExtractedOrganization,
     open_data_organization_ids_by_name_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedPerson]:
     """Get Extracted persons and load them to sinks."""
-    open_data_persons = transform_open_data_persons(
+    return get_or_transform_open_data_persons(
         open_data_creators_contributors,
-        extracted_organizational_units,
         extracted_organization_rki,
         open_data_organization_ids_by_name_str,
     )
-    load(open_data_persons)
-    return open_data_persons
 
 
 @asset(group_name="open_data")

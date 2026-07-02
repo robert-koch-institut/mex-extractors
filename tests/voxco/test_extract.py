@@ -10,8 +10,7 @@ from mex.extractors.voxco.extract import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.ldap.models import LDAPPerson
-    from mex.common.models import ResourceMapping
+    from mex.common.models import ExtractedPerson, ResourceMapping
 
 
 @pytest.mark.usefixtures("mocked_drop")
@@ -41,11 +40,11 @@ def test_extract_voxco_organizations(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
-    ldap_roland_resolved: LDAPPerson,
+    roland_resolved: ExtractedPerson,
 ) -> None:
-    persons = extract_ldap_persons_voxco(voxco_resource_mappings)
+    person_ids = extract_ldap_persons_voxco(voxco_resource_mappings)
 
-    assert persons == [ldap_roland_resolved]
+    assert person_ids == {roland_resolved.email[0]: roland_resolved.stableTargetId}

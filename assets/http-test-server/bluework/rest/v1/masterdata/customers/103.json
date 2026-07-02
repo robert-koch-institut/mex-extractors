@@ -1,0 +1,16 @@
+{
+    "customer": {
+        "active": true,
+        "countryId": 18345,
+        "deputyIds": [],
+        "fullName": "CUSTOMER103",
+        "id": 103,
+        "position": 0,
+        "sector": "IT Systemhaus 03",
+        "text": "CUSTOMER103",
+        "typeId": 32
+    },
+    "status": {
+        "code": 200
+    }
+}

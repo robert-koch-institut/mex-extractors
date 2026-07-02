@@ -16,13 +16,24 @@ from mex.common.organigram.transform import (
 from mex.common.types import (
     MergedPrimarySourceIdentifier,
 )
-from mex.extractors.organigram.helpers import _get_cached_unit_merged_ids_by_synonyms
+from mex.extractors.ldap.helpers import (
+    get_ldap_extracted_person_by_query,
+    get_ldap_merged_contact_id_by_mail,
+)
+from mex.extractors.organigram.helpers import (
+    _cached_get_extracted_organizational_units,
+    _get_cached_unit_merged_ids_by_synonyms,
+)
 from mex.extractors.primary_source.helpers import (
     cached_load_extracted_primary_source_by_name,
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks.s3 import S3BaseSink
+from mex.extractors.wikidata.helpers import (
+    get_wikidata_extracted_organization_id_by_name,
+    get_wikidata_organization_ids_by_label,
+)
 
 if TYPE_CHECKING:
     from pytest import MonkeyPatch
@@ -55,8 +66,13 @@ def settings() -> ExtractorSettings:
 @pytest.fixture(autouse=True)
 def isolate_caches() -> None:
     # clear the cache to be able to test it.
+    _cached_get_extracted_organizational_units.cache_clear()
     _get_cached_unit_merged_ids_by_synonyms.cache_clear()
     cached_load_extracted_primary_source_by_name.cache_clear()
+    get_ldap_extracted_person_by_query.cache_clear()
+    get_ldap_merged_contact_id_by_mail.cache_clear()
+    get_wikidata_extracted_organization_id_by_name.cache_clear()
+    get_wikidata_organization_ids_by_label.cache_clear()
 
 
 @pytest.fixture

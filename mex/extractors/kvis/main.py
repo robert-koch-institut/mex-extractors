@@ -2,8 +2,6 @@ from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
 from mex.common.models import (
-    ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedVariableGroup,
 )
 from mex.common.types import MergedResourceIdentifier
@@ -36,14 +34,9 @@ def kvis_fieldvalues_table_entries() -> list[KVISFieldValues]:
 
 
 @asset(group_name="kvis")
-def kvis_extracted_resource_id(
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> MergedResourceIdentifier:
+def kvis_extracted_resource_id() -> MergedResourceIdentifier:
     """Create extracted resource and return its stableTargetID."""
-    extracted_resource = transform_kvis_resource_to_extracted_resource(
-        extracted_organizational_units, extracted_organization_rki
-    )
+    extracted_resource = transform_kvis_resource_to_extracted_resource()
     load([extracted_resource])
     return extracted_resource.stableTargetId
 
