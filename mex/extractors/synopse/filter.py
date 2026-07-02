@@ -6,12 +6,12 @@ from mex.extractors.primary_source.helpers import (
 )
 
 if TYPE_CHECKING:
-    from mex.extractors.synopse.models.variable import SynopseVariable
+    from mex.extractors.synopse.models.variable import Variablenuebersicht
 
 
 def filter_and_log_synopse_variables(
-    synopse_variables: list[SynopseVariable],
-) -> list[SynopseVariable]:
+    synopse_variables: list[Variablenuebersicht],
+) -> list[Variablenuebersicht]:
     """Filter out and log variables used for internal context.
 
     Args:
@@ -20,11 +20,11 @@ def filter_and_log_synopse_variables(
     Returns:
         list of filtered synopse variables
     """
-    filtered_variables: list[SynopseVariable] = []
+    filtered_variables: list[Variablenuebersicht] = []
     skipped_variable_ids: list[str] = []
     for variable in synopse_variables:
         if variable.int_var:
-            skipped_variable_ids.append(variable.synopse_id)
+            skipped_variable_ids.append(variable.SynopseID)
         else:
             filtered_variables.append(variable)
     logger.info(

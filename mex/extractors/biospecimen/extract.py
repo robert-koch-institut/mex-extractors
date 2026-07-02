@@ -52,12 +52,12 @@ def extract_biospecimen_organizations(
         dict with WikidataOrganization ID by externe partner
     """
     return {
-        resource.externe_partner: org_id
+        resource.Partner_extern: org_id
         for resource in biospecimen_resources
-        if resource.externe_partner
+        if resource.Partner_extern
         and (
             org_id := get_wikidata_extracted_organization_id_by_name(
-                resource.externe_partner
+                resource.Partner_extern
             )
         )
     }
@@ -209,7 +209,7 @@ def extract_biospecimen_resource(
         val_col,
         "weiterführende Dokumentation, URL oder Dateipfad",
     )
-    externe_partner = get_values(resource, key_col, val_col, "externe Partner")
+    Partner_extern = get_values(resource, key_col, val_col, "externe Partner")
     tools_instrumente_oder_apparate = get_values(
         resource, key_col, val_col, "Tools, Instrumente oder Apparate"
     )
@@ -262,7 +262,7 @@ def extract_biospecimen_resource(
         beschreibung=beschreibung,
         weiterfuehrende_dokumentation_titel=weiterfuehrende_dokumentation_titel,
         weiterfuehrende_dokumentation_url_oder_dateipfad=weiterfuehrende_dokumentation_url_oder_dateipfad,
-        externe_partner=externe_partner,
+        Partner_extern=Partner_extern,
         tools_instrumente_oder_apparate=tools_instrumente_oder_apparate,
         schlagworte=schlagworte,
         id_loinc=id_loinc,
