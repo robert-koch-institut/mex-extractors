@@ -139,10 +139,10 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
             identifier_in_primary_source
         ]
         modified = None
-        created = None
+        start = None
         if sequencing_dates:
             modified = max(sequencing_dates)
-            created = min(sequencing_dates)
+            start = min(sequencing_dates)
 
         activity = seq_repo_activities.get(source.project_id)
 
@@ -179,7 +179,6 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
             anonymizationPseudonymization=anonymization_pseudonymization,
             contact=project_coordinators_ids,
             contributingUnit=contributing_unit,
-            created=created,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             identifierInPrimarySource=identifier_in_primary_source,
@@ -191,6 +190,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
+            start=start,
             stateOfDataProcessing=state_of_data_processing,
             theme=theme,
             title=title,
