@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, cast
 from unittest.mock import ANY, MagicMock
 
 import pyodbc
-import pytest
 
 from mex.extractors.grippeweb.connector import GrippewebConnector
 from mex.extractors.settings import Settings
@@ -11,43 +10,25 @@ if TYPE_CHECKING:
     from pytest import MonkeyPatch
 
 
-@pytest.fixture(autouse=True)
-def _clear_connector_singleton() -> None:
-    """Ensure a fresh connector instance for each test."""
-    GrippewebConnector.__instances__.clear()  # type: ignore[attr-defined]
+def test_parse_rows_success() -> None:
+    """Test the happy path of parsing rows by column name."""
+    # Create a fresh, empty instance bypassing Singleton logic
+    connector = object.__new__(GrippewebConnector)
 
-
-def test_parse_rows_success(monkeypatch: MonkeyPatch) -> None:
-    mocked_connection = MagicMock()
     cursor = MagicMock()
     cursor.fetchall.return_value = [
-        (
-            "AAA",
-            "2023-11-01 00:00:00.0000000",
-            "2023-12-01 00:00:00.0000000",
-            "1",
-        ),
-        (
-            "BBB",
-            "2023-12-01 00:00:00.0000000",
-            "2024-01-01 00:00:00.0000000",
-            "2",
-        ),
+        ("AAA", "2023-11-01 00:00:00.0000000", "2023-12-01 00:00:00.0000000", "1"),
+        ("BBB", "2023-12-01 00:00:00.0000000", "2024-01-01 00:00:00.0000000", "2"),
     ]
-    cursor.description = [
-        ["Id"],
-        ["StartedOn"],
-        ["FinishedOn"],
-        ["RepeatAfterDays"],
-    ]
-    mocked_connection.cursor.return_value.__enter__.return_value = cursor
+    cursor.description = [["Id"], ["StartedOn"], ["FinishedOn"], ["RepeatAfterDays"]]
 
-    monkeypatch.setattr(
-        GrippewebConnector, "_setup_connection", lambda self: mocked_connection
-    )
+    # Inject mock connection directly
+    connector._connection = MagicMock()
+    cast(
+        "MagicMock", connector._connection.cursor
+    ).return_value.__enter__.return_value = cursor
 
-    connection = GrippewebConnector.get()
-    columns = connection.parse_columns_by_column_name("vActualQuestion")
+    columns = connector.parse_columns_by_column_name("vActualQuestion")
 
     assert columns == {
         "Id": ["AAA", "BBB"],
@@ -69,9 +50,11 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
     mock_pyodbc_connect = MagicMock()
     monkeypatch.setattr("pyodbc.connect", mock_pyodbc_connect)
 
-    # Initialize connector
-    connector = GrippewebConnector.get()
     settings = Settings.get()
+
+    # Manually trigger __init__ on a fresh instance to test _setup_connection
+    connector = object.__new__(GrippewebConnector)
+    connector.__init__()
 
     # Assert kinit subprocess was called
     mock_popen.assert_called_once_with(
@@ -98,7 +81,8 @@ def test_setup_connection_windows(monkeypatch: MonkeyPatch) -> None:
     mock_pyodbc_connect = MagicMock()
     monkeypatch.setattr("pyodbc.connect", mock_pyodbc_connect)
 
-    GrippewebConnector.get()
+    connector = object.__new__(GrippewebConnector)
+    connector.__init__()
 
     mock_popen.assert_not_called()
     mock_pyodbc_connect.assert_called_once()
@@ -106,15 +90,11 @@ def test_setup_connection_windows(monkeypatch: MonkeyPatch) -> None:
 
 def test_parse_rows_retry_on_pyodbc_error(monkeypatch: MonkeyPatch) -> None:
     """Test that a pyodbc.Error triggers a reconnect and retry."""
-    # Prevent actual connection setup
-    mock_connection = MagicMock()
-    mock_setup = MagicMock(return_value=mock_connection)
-    monkeypatch.setattr(GrippewebConnector, "_setup_connection", mock_setup)
-
     mock_reconnect = MagicMock()
     monkeypatch.setattr(GrippewebConnector, "reconnect", mock_reconnect)
 
-    connector = GrippewebConnector.get()
+    connector = object.__new__(GrippewebConnector)
+    connector._connection = MagicMock()
 
     # Setup cursor to fail on first call, succeed on second call
     mock_cursor = MagicMock()
@@ -122,7 +102,6 @@ def test_parse_rows_retry_on_pyodbc_error(monkeypatch: MonkeyPatch) -> None:
     mock_cursor.fetchall.return_value = [("AAA",)]
     mock_cursor.description = [["Id"]]
 
-    # Cast connector._connection.cursor to MagicMock to appease the type checker
     cast(
         "MagicMock", connector._connection.cursor
     ).return_value.__enter__.return_value = mock_cursor
@@ -136,15 +115,11 @@ def test_parse_rows_retry_on_pyodbc_error(monkeypatch: MonkeyPatch) -> None:
     mock_reconnect.assert_called_once()  # It reconnected in between
 
 
-def test_close_suppresses_error(monkeypatch: MonkeyPatch) -> None:
+def test_close_suppresses_error() -> None:
     """Test that closing a dead connection safely catches pyodbc.Error."""
-    mock_setup = MagicMock()
-    monkeypatch.setattr(GrippewebConnector, "_setup_connection", mock_setup)
-
-    connector = GrippewebConnector.get()
+    connector = object.__new__(GrippewebConnector)
     connector._connection = MagicMock()
 
-    # Cast connector._connection.close to MagicMock to appease the type checker
     cast("MagicMock", connector._connection.close).side_effect = pyodbc.Error(
         "Connection already dead"
     )
