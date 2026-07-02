@@ -231,6 +231,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
                 "value": "Niemand darf irgendwas.",
             },
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "identifier": Joker(),
         "identifierInPrimarySource": ("12345-Titel-17"),
         "keyword": [

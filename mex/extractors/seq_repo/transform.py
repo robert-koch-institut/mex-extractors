@@ -104,6 +104,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
         seq_repo_resource.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     description = seq_repo_resource.description[0].mappingRules[0].setValues
+    health_category = seq_repo_resource.healthCategory[0].mappingRules[0].setValues
     resource_creation_method = (
         seq_repo_resource.resourceCreationMethod[0].mappingRules[0].setValues
     )
@@ -182,6 +183,7 @@ def transform_seq_repo_resource_to_extracted_resource(  # noqa: C901, PLR0913
             created=created,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
+            healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             modified=modified,

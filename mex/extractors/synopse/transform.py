@@ -493,6 +493,9 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                     "report-server"
                 ),
                 hasPurpose=has_purpose,
+                healthCategory=synopse_resource.healthCategory[0]
+                .mappingRules[0]
+                .setValues,
                 identifierInPrimarySource=identifier_in_primary_source_by_study_id[
                     study.studien_id
                 ],

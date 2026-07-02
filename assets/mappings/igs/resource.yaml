@@ -49,6 +49,10 @@ hasLegalBasis:
 hasPurpose:
   - mappingRules:
       - setValues:
+healthCategory:
+  - mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/health-category-1
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
