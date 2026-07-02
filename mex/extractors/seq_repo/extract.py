@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 from mex.common.exceptions import MExError
-from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPPersonWithQuery
 from mex.extractors.drop import DropApiConnector
+from mex.extractors.ldap.helpers import get_ldap_extracted_person_by_query
 from mex.extractors.logging import watch_progress
 from mex.extractors.seq_repo.model import SeqRepoSource
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedPerson
 
 
 def extract_sources() -> list[SeqRepoSource]:
@@ -21,31 +25,26 @@ def extract_sources() -> list[SeqRepoSource]:
     return [SeqRepoSource.model_validate(item) for item in data]
 
 
-def extract_source_project_coordinator(
+def extract_source_project_coordinator_by_name(
     seq_repo_sources: list[SeqRepoSource],
-) -> list[LDAPPersonWithQuery]:
-    """Extract LDAP persons with their query string for source project coordinators.
+) -> dict[str, ExtractedPerson]:
+    """Extract Persons by their query string for source project coordinators.
 
     Args:
         seq_repo_sources: Seq Repo sources
 
     Returns:
-        List of LDAP persons with query
+        dictionary of Extracted persons by query
     """
-    ldap = LDAPConnector.get()
-    seen = set()
-    persons_with_query = []
+    seen: set[str] = set()
+    persons_with_query: dict[str, ExtractedPerson] = {}
     for source in watch_progress(
-        seq_repo_sources, "extract_source_project_coordinator"
+        seq_repo_sources, "extract_source_project_coordinator_by_name"
     ):
-        names = source.project_coordinators
-        for name in names:
+        for name in source.project_coordinators:
             if name in seen:
                 continue
             seen.add(name)
-            persons = ldap.get_persons(mail=f"{name}@rki.de", limit=2).items
-            if len(persons) == 1 and persons[0].objectGUID:
-                persons_with_query.append(
-                    LDAPPersonWithQuery(person=persons[0], query=name)
-                )
+            if person := get_ldap_extracted_person_by_query(sam_account_name=name):
+                persons_with_query[name] = person
     return persons_with_query

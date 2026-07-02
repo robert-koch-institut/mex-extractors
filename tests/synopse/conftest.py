@@ -295,9 +295,9 @@ def description_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> d
 def documentation_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
     return {
-        s.StudienID: Link(url=s.#dokumentation)
+        s.StudienID: Link(url=s.dokumentation)
         for s in synopse_studies
-        if s.#dokumentation
+        if s.dokumentation
     }
 
 

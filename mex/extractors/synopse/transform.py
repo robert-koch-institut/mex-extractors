@@ -692,11 +692,9 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         funder_or_commissioner = []
     involved_person = []
     if synopse_project.Beitragende:
-        involved_person = [
-            merged_id
-            for name in synopse_project.Beitragende.split(" ,")
-            for merged_id in contributor_merged_ids_by_name[name]
-        ] or []
+        involved_person = (
+            contributor_merged_ids_by_name.get(synopse_project.Beitragende) or []
+        )
     theme = (
         synopse_activity.theme[0].mappingRules[0].setValues
         if synopse_project.StudienID

@@ -22,7 +22,7 @@ def test_get_unit_merged_id_by_synonym(monkeypatch: MonkeyPatch) -> None:
     mock_unit_id = MergedOrganizationalUnitIdentifier.generate(seed=1234599)
 
     # Mock get_extracted_unit_by_synonyms to return our mock unit
-    mocked_get_unit = Mock(return_value={"C1": mock_unit_id})
+    mocked_get_unit = Mock(return_value={"C1": mock_unit_id, "fg99": mock_unit_id})
     monkeypatch.setattr(helpers, "get_unit_merged_ids_by_synonyms", mocked_get_unit)
 
     # Test successful lookup
