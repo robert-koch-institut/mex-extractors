@@ -83,6 +83,10 @@ methodDescription:
           - value: tempor
             language: en
         rule:
+numberOfUniqueIndividuals:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publisher:
   - mappingRules:
       - forValues:
@@ -110,11 +114,6 @@ rights:
           - value: "ut labore"
             language: de
         rule:
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: et dolore
-        rule:
-    comment:
 spatial:
   - mappingRules:
       - setValues:

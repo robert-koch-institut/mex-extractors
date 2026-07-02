@@ -144,12 +144,12 @@ def test_transform_resource_feat_model_to_mex_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
-        "isPartOf": [mex_resources_nokeda.stableTargetId],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},
             {"language": TextLanguage.DE, "value": "keyword 2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
+        "relatedResource": [mex_resources_nokeda.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-1",
         ],

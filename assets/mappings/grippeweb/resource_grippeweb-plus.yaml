@@ -53,16 +53,13 @@ hasPersonalData:
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
+hasCodeValues:
   - mappingRules:
       - setValues:
           - "J00-J99" #Diseases of the respiratory system
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb-plus
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -107,6 +104,9 @@ publisher:
       - forValues:
           - Robert Koch-Institut
         rule:
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -127,9 +127,6 @@ rights:
       - setValues:
           - language: de
             value: "Die Daten"
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: 500 Teilnehmende (Stand Mai 2023)
 spatial:
   - mappingRules:
       - setValues:

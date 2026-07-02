@@ -50,16 +50,9 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
-  - mappingRules:
-      - setValues:
-          - J00-J99
 identifierInPrimarySource:
   - mappingRules:
       - setValues: voxco-plus
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -118,9 +111,6 @@ rights:
       - setValues:
           - language: de
             value: Die Daten
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: 500 Teilnehmende (Stand Mai 2023)
 spatial:
   - mappingRules:
       - setValues:

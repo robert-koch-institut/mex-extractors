@@ -107,7 +107,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "icd10code": ["J00-J99"],
+        "hasCodeValues": [{"value": "J00-J99"}],
         "keyword": [{"value": "Citizen Science", "language": TextLanguage.EN}],
         "language": ["https://mex.rki.de/item/language-1"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D012140"],
@@ -136,7 +136,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             }
         ],
         "rights": [{"value": "Verfahren", "language": TextLanguage.DE}],
-        "sizeOfDataBasis": "Meldungen",
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "temporal": "seit 2011",
@@ -170,7 +169,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(
             grippeweb_merged_contact_point_id_by_email,
         )
     )
-    assert child_resource.isPartOf == [parent_resource.stableTargetId]
+    assert child_resource.relatedResource == [parent_resource.stableTargetId]
 
 
 def test_transform_grippeweb_variable_group_to_extracted_variable_groups(

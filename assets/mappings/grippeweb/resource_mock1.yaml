@@ -56,6 +56,10 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
+hasCodeValues:
+  - mappingRules:
+      - setValues:
+          - J00-J99
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -64,19 +68,12 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
-icd10code:
-  - mappingRules:
-      - setValues:
-          - J00-J99
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb-plus
 instrumentToolOrApparatus:
   - mappingRules:
       - {}
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -119,6 +116,9 @@ publisher:
       - forValues:
           - Robert Koch-Institut
         rule:
+relatedResource:
+  - mappingRules:
+      - {}
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -137,9 +137,6 @@ rights:
       - setValues:
           - language: de
             value: Die Daten
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: 500 Teilnehmende (Stand Mai 2023)
 spatial:
   - mappingRules:
       - setValues:

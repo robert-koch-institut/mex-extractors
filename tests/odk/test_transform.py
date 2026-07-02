@@ -79,6 +79,7 @@ def test_transform_odk_resources_to_mex_resources(
             {"value": "eirmod", "language": TextLanguage.DE},
         ],
         "methodDescription": [{"value": "tempor", "language": TextLanguage.EN}],
+        "numberOfUniqueIndividuals": 999,
         "publisher": [
             str(odk_merged_organization_ids_by_str["invidunt"]),
             str(odk_merged_organization_ids_by_str["consetetur"]),
@@ -94,7 +95,6 @@ def test_transform_odk_resources_to_mex_resources(
             },
         ],
         "rights": [{"value": "ut labore", "language": TextLanguage.DE}],
-        "sizeOfDataBasis": "et dolore",
         "spatial": [
             {"value": "magna", "language": TextLanguage.DE},
             {"value": "magna", "language": TextLanguage.EN},
