@@ -13,7 +13,7 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchemaCategories,
     OpenDataTableSchemaConstraints,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.utils import load_yaml
 from tests.open_data.mocked_open_data import create_mocked_parent_response
 
@@ -65,7 +65,7 @@ def mocked_open_data_distribution() -> list[ExtractedDistribution]:
 @pytest.fixture
 def mocked_open_data_distribution_mapping() -> DistributionMapping:
     """Return distribution mapping."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return DistributionMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "distribution.yaml")
     )
@@ -74,7 +74,7 @@ def mocked_open_data_distribution_mapping() -> DistributionMapping:
 @pytest.fixture
 def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     """Return parent resource mapping."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return ResourceMapping.model_validate(
         load_yaml(settings.open_data.mapping_path / "resource.yaml")
     )

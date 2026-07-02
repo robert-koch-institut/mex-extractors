@@ -4,7 +4,7 @@ from typing import Any
 
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 QUERY_BY_TABLE_NAME = {
     "vActualQuestion": "SELECT * FROM GrippeWeb.MEx.vActualQuestion",
@@ -21,7 +21,7 @@ class GrippewebConnector(BaseConnector):
         # https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
         import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
 
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         if platform.system() != "Windows":  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607

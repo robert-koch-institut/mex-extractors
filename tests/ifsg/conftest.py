@@ -28,7 +28,7 @@ from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorSettings
 
 
 @pytest.fixture
@@ -179,21 +179,21 @@ def meta_field() -> list[MetaField]:
 
 
 @pytest.fixture
-def ifsg_variable_group(settings: Settings) -> VariableGroupMapping:
+def ifsg_variable_group(settings: ExtractorSettings) -> VariableGroupMapping:
     return VariableGroupMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "variable-group_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_parent(settings: Settings) -> ResourceMapping:
+def resource_parent(settings: ExtractorSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "resource_parent_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_states(settings: Settings) -> list[ResourceMapping]:
+def resource_states(settings: ExtractorSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_state_1_mock.yaml")
@@ -205,7 +205,7 @@ def resource_states(settings: Settings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def resource_diseases(settings: Settings) -> list[ResourceMapping]:
+def resource_diseases(settings: ExtractorSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_disease_1_mock.yaml")

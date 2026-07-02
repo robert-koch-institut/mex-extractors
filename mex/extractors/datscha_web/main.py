@@ -22,7 +22,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 
 
@@ -71,7 +71,7 @@ def datscha_web_extracted_activities(
     return mex_activities
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the datscha-web extractor job in-process."""
     run_job_in_process("datscha_web")

@@ -5,7 +5,7 @@ from mex.extractors.logging import log_filter, watch_progress
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -45,7 +45,7 @@ def filter_and_log_blueant_source(
     Returns:
         False if source is filtered out, else True
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     identifier_in_primary_source = source.number
     if contains_any(source.name, settings.blueant.skip_labels):
         log_filter(

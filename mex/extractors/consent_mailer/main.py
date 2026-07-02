@@ -13,7 +13,7 @@ from mex.extractors.consent_mailer.filter import (
 )
 from mex.extractors.consent_mailer.transform import transform_person_to_sendable_email
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 @asset(group_name="consent_mailer")
@@ -34,7 +34,7 @@ def consent_mailer_send_emails(
         consent_mailer_merged_persons_without_consent: The list of persons that gets
         the consent email.
     """
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     host, port = settings.consent_mailer.smtp_server.split(":")
 
     mails_for_persons = [
@@ -48,7 +48,7 @@ def consent_mailer_send_emails(
                 s.send_message(mail)
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the consent mailer job in-process."""
     run_job_in_process("consent_mailer")

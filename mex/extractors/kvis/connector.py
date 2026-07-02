@@ -8,7 +8,7 @@ from mex.extractors.kvis.models.table_models import (
     KVISFieldValues,
     KVISVariables,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -27,7 +27,7 @@ class KVISConnector(BaseConnector):
         # https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
         import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
 
-        settings = Settings.get()
+        settings = ExtractorSettings.get()
         if platform.system() != "Windows":  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607

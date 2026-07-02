@@ -2,7 +2,7 @@ from collections.abc import Generator, Iterable, Sized
 from typing import TYPE_CHECKING, TypeVar
 
 from mex.common.logging import logger
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 if TYPE_CHECKING:
     from mex.common.types import MergedPrimarySourceIdentifier
@@ -49,7 +49,7 @@ def watch_progress[T](
         total = f"/{len(iterable)}"
     else:
         total = ""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     for index, item in enumerate(iterable, start=1):
         if index % settings.log_frequency == 0:
             logger.info("%s: %s%s", description, index, total)

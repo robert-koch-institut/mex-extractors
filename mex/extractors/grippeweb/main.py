@@ -32,7 +32,7 @@ from mex.extractors.grippeweb.transform import (
     transform_grippeweb_variable_to_extracted_variables,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -46,7 +46,7 @@ def grippeweb_columns() -> dict[str, dict[str, list[Any]]]:
 @asset(group_name="grippeweb")
 def grippeweb_access_platform() -> dict[str, Any]:
     """Extract Grippeweb `access_platform` default values."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(
         settings.grippeweb.mapping_path / "access-platform.yaml",
     )
@@ -55,7 +55,7 @@ def grippeweb_access_platform() -> dict[str, Any]:
 @asset(group_name="grippeweb")
 def grippeweb_resource_mappings() -> list[dict[str, Any]]:
     """Extract Grippeweb resource mappings."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return [
         load_yaml(file)
         for file in Path(settings.grippeweb.mapping_path).glob("resource_*.yaml")
@@ -65,14 +65,14 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
 @asset(group_name="grippeweb")
 def grippeweb_variable() -> dict[str, Any]:
     """Extract Grippeweb `variable` default values."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.grippeweb.mapping_path / "variable.yaml")
 
 
 @asset(group_name="grippeweb")
 def grippeweb_variable_group() -> dict[str, Any]:
     """Extract Grippeweb `variable_group` default values."""
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     return load_yaml(settings.grippeweb.mapping_path / "variable-group.yaml")
 
 
@@ -195,7 +195,7 @@ def grippeweb_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint(ExtractorSettings)
 def run() -> None:  # pragma: no cover
     """Run the Grippeweb extractor job in-process."""
     run_job_in_process("grippeweb")

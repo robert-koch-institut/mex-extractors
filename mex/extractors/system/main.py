@@ -9,14 +9,14 @@ from pytz import UTC
 
 from mex.common.logging import logger
 from mex.extractors.pipeline.base import load_job_definitions
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorSettings
 
 
 @asset(group_name="system_clean_up")
 def system_fetch_old_dagster_run_ids() -> list[str]:
     """Fetch ids of Dagster runs, which are old enough to be deleted."""
     instance = DagsterInstance.get()
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     # calculate the date threshold
     cutoff_date = datetime.datetime.now(tz=UTC) - datetime.timedelta(
         days=settings.system.max_run_age_in_days
@@ -127,7 +127,7 @@ def system_clean_up_obsolete_assets() -> None:
 
     obsolete_asset_keys = historical_asset_keys - current_asset_keys
 
-    settings = Settings.get()
+    settings = ExtractorSettings.get()
     protected_prefixes = settings.system.protected_asset_prefixes
 
     deletion_candidates = [
