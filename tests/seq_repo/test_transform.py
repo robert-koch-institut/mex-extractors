@@ -16,7 +16,6 @@ if TYPE_CHECKING:
         ExtractedAccessPlatform,
         ExtractedActivity,
         ExtractedOrganization,
-        ExtractedPerson,
         ResourceMapping,
     )
     from mex.extractors.seq_repo.model import SeqRepoSource
@@ -26,13 +25,12 @@ if TYPE_CHECKING:
 def test_transform_seq_repo_activities_to_extracted_activities(
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
 ) -> None:
     expected = {
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
         "identifierInPrimarySource": "TEST-ID",
-        "contact": ["elEHmL68mc51YJyx8WjYTA"],
-        "responsibleUnit": ["elEHmL68mc51YJyx8WjYTA"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "title": [{"value": "FG99-ABC-123", "language": "de"}],
         "theme": [
             "https://mex.rki.de/item/theme-11",
@@ -44,7 +42,6 @@ def test_transform_seq_repo_activities_to_extracted_activities(
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources,
         seq_repo_activity,
-        seq_repo_extracted_persons_by_name,
     )
     assert extracted_mex_activities
     assert (
@@ -54,12 +51,11 @@ def test_transform_seq_repo_activities_to_extracted_activities(
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
-def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
+def test_transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
     extracted_mex_activities_dict: dict[str, ExtractedActivity],
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
-    seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     expected_resource = {
@@ -70,13 +66,13 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         "created": "2023-08-07",
         "modified": "2023-08-07",
         "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
-        "contact": ["elEHmL68mc51YJyx8WjYTA"],
+        "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [{"value": "LIMS Sample ID test-sample-id (virus XYZ)"}],
-        "unitInCharge": ["elEHmL68mc51YJyx8WjYTA"],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
         "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
@@ -115,7 +111,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913
         extracted_mex_activities_dict,
         extracted_mex_access_platform,
         seq_repo_resource,
-        seq_repo_extracted_persons_by_name,
         extracted_organization_rki,
     )
 
