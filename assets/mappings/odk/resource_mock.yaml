@@ -47,6 +47,10 @@ hasLegalBasis:
         setValues:
           - language: en
             value: Informed consent
+healthCategory:
+  - mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/health-category-1
 identifierInPrimarySource:
   - comment:
     mappingRules:

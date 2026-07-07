@@ -62,6 +62,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
             {"value": "Pathogen", "language": "de"},
             {"value": "PATHOGEN"},
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
             {"value": "Test Präfix", "language": "de"},

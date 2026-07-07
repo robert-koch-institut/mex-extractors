@@ -108,6 +108,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
         hasPurpose=mapping.hasPurpose[0].mappingRules[0].setValues,
+        healthCategory=mapping.healthCategory[0].mappingRules[0].setValues,
         identifierInPrimarySource=mapping.identifierInPrimarySource[0]
         .mappingRules[0]
         .setValues,

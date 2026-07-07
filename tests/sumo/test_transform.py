@@ -89,6 +89,7 @@ def test_transform_resource_nokeda_to_mex_resource(
             {"language": "en", "title": "Confluence", "url": "https://link.com"}
         ],
         "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": "de", "value": "keyword1"},
             {"language": "de", "value": "keyword2"},
@@ -144,6 +145,7 @@ def test_transform_resource_feat_model_to_mex_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},
             {"language": TextLanguage.DE, "value": "keyword 2"},

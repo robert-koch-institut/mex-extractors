@@ -44,6 +44,7 @@ def test_transform_kvis_resource_to_extracted_resource(
         ],
         "externalPartner": ["ga6xh6pgMwgq7DC7r6Wjqg"],
         "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "identifierInPrimarySource": "kvis_resource",
         "keyword": [{"value": "Schlüsselwort", "language": "de"}],
         "language": ["https://mex.rki.de/item/language-1"],

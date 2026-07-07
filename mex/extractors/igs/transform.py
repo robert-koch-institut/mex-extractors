@@ -80,6 +80,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
     default_keywords = cast(
         "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
     )
+    health_category = igs_resource_mapping.healthCategory[0].mappingRules[0].setValues
     quality_information_intro = (
         igs_resource_mapping.qualityInformation[0].mappingRules[0].setValues[0].value  # type: ignore[index]
     )
@@ -148,6 +149,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             .mappingRules[0]
             .setValues,
             hasPurpose=igs_resource_mapping.hasPurpose[0].mappingRules[0].setValues,
+            healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=igs_resource_mapping.language[0].mappingRules[0].setValues,

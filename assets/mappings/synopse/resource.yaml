@@ -57,6 +57,9 @@ hasPersonalData:
 hadPrimarySource:
   - mappingRules:
       - rule:
+healthCategory:
+  - mappingRules:
+      - setValues:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:

@@ -68,6 +68,7 @@ def test_transform_odk_resources_to_mex_resources(
             str(odk_merged_organization_ids_by_str["invidunt"]),
             "gnhGhU3ATowGuV0KJwGuxB",
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"value": "elitr"},
             {"value": "sed", "language": TextLanguage.EN},
