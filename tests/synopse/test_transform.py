@@ -222,6 +222,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "description": [
             {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
         ],
+        "end": "1971-02",
         "hadPrimarySource": str(
             get_extracted_primary_source_id_by_name("report-server")
         ),
@@ -259,6 +260,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             },
         ],
         "stableTargetId": Joker(),
+        "start": "1970-01",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"language": TextLanguage.DE, "value": "Titel"}],
         "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],

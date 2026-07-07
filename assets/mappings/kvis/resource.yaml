@@ -24,9 +24,6 @@ contributor:
   - forValues:
     - FelicitasJ@rki.de
     - FictitiousF@rki.de
-created:
-- mappingRules:
-  - setValues: "1999"
 description:
 - mappingRules:
   - setValues:
@@ -96,6 +93,9 @@ resourceTypeSpecific:
 spatial:
 - mappingRules:
   - setValues:
+start:
+- mappingRules:
+  - setValues: "1999"
 theme:
 - mappingRules:
   - setValues:

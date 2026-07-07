@@ -141,7 +141,6 @@ def grippeweb_extracted_parent_resource() -> ExtractedResource:
         accessRestriction="https://mex.rki.de/item/access-restriction-2",
         accrualPeriodicity="https://mex.rki.de/item/frequency-15",
         contact=[MergedContactPointIdentifier.generate(42)],
-        temporal="seit 2011",
         theme=["https://mex.rki.de/item/theme-11"],
         title=[Text(value="GrippeWeb", language="de")],
         anonymizationPseudonymization=[

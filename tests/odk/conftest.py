@@ -156,7 +156,6 @@ def odk_extracted_resources() -> list[ExtractedResource]:
                 Text(value="magna", language="en"),
             ],
             stateOfDataProcessing=[],
-            temporal="2021-07-27 - 2021-12-31",
             theme=[
                 "https://mex.rki.de/item/theme-11",
                 "https://mex.rki.de/item/theme-37",

@@ -161,7 +161,6 @@ def mocked_merged_resource() -> list[MergedResource]:
                 "IdentifierUnitFG99",
                 "identifier4contactPt",
             ],
-            created="1970-01-01",
             doi="https://doi.org/10.1234_example",
             hasLegalBasis=[
                 Text(value="has basis", language="en"),
@@ -172,6 +171,7 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="word 1", language="en"),
                 Text(value="Wort 2", language="de"),
             ],
+            start="1970-01-01",
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Resource with unit C1"],
             wasGeneratedBy=["MergedActivityWithORG2"],

@@ -56,6 +56,10 @@ documentation:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
+end:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 externalPartner:
   - fieldInPrimarySource:
     mappingRules:
@@ -139,7 +143,7 @@ spatial:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-temporal:
+start:
   - fieldInPrimarySource:
     mappingRules:
       - rule:

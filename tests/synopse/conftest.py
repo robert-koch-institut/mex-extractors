@@ -195,6 +195,8 @@ def synopse_studies() -> list[SynopseStudy]:
             dokumentation="Z:\\foo\\bar",
             ds_typ_id=17,
             erstellungs_datum="2022",
+            feld_ende="1971-02",
+            feld_start="1970-01",
             plattform_adresse="S:\\data",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",

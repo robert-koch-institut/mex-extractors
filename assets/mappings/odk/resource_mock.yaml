@@ -28,6 +28,9 @@ description:
         setValues:
           - language: en
             value: amet
+end:
+  - mappingRules:
+      - setValues: "2021-07-27"
 externalPartner:
   - mappingRules:
       - forValues:
@@ -127,10 +130,9 @@ spatial:
             value: magna
           - language: en
             value: magna
-temporal:
+start:
   - mappingRules:
-      - rule:
-        setValues: 2021-07-27 - 2021-12-31
+      - setValues: "2021-12-31"
 theme:
   - mappingRules:
       - rule:

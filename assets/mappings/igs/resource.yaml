@@ -31,9 +31,6 @@ contributingUnit:
       - forValues:
           - PATHOGEN
         rule: C1
-created:
-  - mappingRules:
-      - setValues: "1970"
 description:
   - mappingRules:
       - setValues:
@@ -133,9 +130,9 @@ sizeOfDataBasis:
 spatial:
   - mappingRules:
       - setValues:
-temporal:
+start:
   - mappingRules:
-      - setValues:
+      - setValues: "1970"
 theme:
   - mappingRules:
       - setValues:

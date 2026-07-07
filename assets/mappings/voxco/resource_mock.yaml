@@ -29,9 +29,6 @@ contributor:
       - forValues:
           - Roland Resolved
         rule:
-created:
-  - mappingRules:
-      - setValues: "2020"
 description:
   - mappingRules:
       - setValues:
@@ -125,9 +122,6 @@ stateOfDataProcessing:
     mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-1
-temporal:
-  - mappingRules:
-      - setValues: seit 2020
 theme:
   - mappingRules:
       - setValues:

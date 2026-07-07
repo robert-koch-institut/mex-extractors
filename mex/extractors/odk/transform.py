@@ -111,6 +111,7 @@ def transform_odk_resources_to_mex_resources(
                 ),
                 contributingUnit=contributing_unit,
                 description=description,
+                end=resource.end[0].mappingRules[0].setValues,
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                 hasLegalBasis=has_legal_basis,
@@ -133,7 +134,7 @@ def transform_odk_resources_to_mex_resources(
                 .setValues,
                 rights=resource.rights[0].mappingRules[0].setValues,
                 spatial=resource.spatial[0].mappingRules[0].setValues,
-                temporal=resource.temporal[0].mappingRules[0].setValues,
+                start=resource.start[0].mappingRules[0].setValues,
                 theme=resource.theme[0].mappingRules[0].setValues,
                 title=resource.title[0].mappingRules[0].setValues,
                 unitInCharge=get_unit_merged_id_by_synonym(
