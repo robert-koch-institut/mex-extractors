@@ -34,6 +34,9 @@ hasLegalBasis:
             value: Informed consent
           - language: de
             value: Informierte Einwilligung
+healthCategory:
+  - mappingRules:
+      - setValues:
 keyword:
   - mappingRules:
       - setValues:
