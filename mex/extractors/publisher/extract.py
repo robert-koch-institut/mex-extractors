@@ -23,3 +23,12 @@ def get_publishable_merged_items(
         reference_field=reference_field,
     )
     return list(response)
+
+
+def get_publishable_merged_item_by_identifier(
+    identifier: str,
+) -> AnyMergedModel:
+    """Fetch a merged item from backend identified by its identifier."""
+    connector = BackendApiConnector.get()
+
+    return connector.get_merged_item(identifier)
