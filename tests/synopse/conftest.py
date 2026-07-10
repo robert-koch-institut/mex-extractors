@@ -174,14 +174,10 @@ def synopse_variables_by_thema(
     synopse_variables: list[Variablenuebersicht],
 ) -> dict[str, list[Variablenuebersicht]]:
     """Return a mapping from synopse thema to the variables with this thema."""
-    synopse_variables = sorted(
-        synopse_variables, key=lambda v: v.textbox5
-    )
+    synopse_variables = sorted(synopse_variables, key=lambda v: v.textbox5)
     return {
         thema: list(variables)
-        for thema, variables in groupby(
-            synopse_variables, key=lambda v: v.textbox5
-        )
+        for thema, variables in groupby(synopse_variables, key=lambda v: v.textbox5)
     }
 
 
@@ -192,9 +188,9 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         MetadatenZuDatensaetzen(
             Beitragende="Jane Doe",
             Beschreibung="ein heikles Unterfangen.",
-            #dokumentation="Z:\\foo\\bar",
+            # dokumentation="Z:\\foo\\bar",
             DStypID=17,
-            #erstellungs_datum="2022",
+            # erstellungs_datum="2022",
             plattform_adresse="S:\\data",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
@@ -205,9 +201,9 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         ),
         MetadatenZuDatensaetzen(
             Beschreibung="ein zweites heikles Unterfangen.",
-            #dokumentation="X:\\foo\\bar",
+            # dokumentation="X:\\foo\\bar",
             DStypID=16,
-            #erstellungs_datum="2017",
+            # erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
@@ -217,9 +213,9 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         ),
         MetadatenZuDatensaetzen(
             Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            #dokumentation="interne Datennutzung",
+            # dokumentation="interne Datennutzung",
             DStypID=16,
-            #erstellungs_datum="2017",
+            # erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
             rechte="Niemand darf irgendwas.",
             schlagworte_themen="Alkohol, Alter und Geschlecht, Drogen",
@@ -229,7 +225,7 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         ),
         MetadatenZuDatensaetzen(
             Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            #dokumentation="https://asd.def",
+            # dokumentation="https://asd.def",
             DStypID=16,
             erstellungs_datum="2017",
             plattform_adresse="blabli blubb",
@@ -241,7 +237,7 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         ),
         MetadatenZuDatensaetzen(
             Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            #dokumentation="interne Datennutzung",
+            # dokumentation="interne Datennutzung",
             DStypID=16,
             ##erstellungs_datum="2017",
             plattform_adresse="interne Datennutzung",
@@ -253,7 +249,7 @@ def synopse_studies() -> list[MetadatenZuDatensaetzen]:
         ),
         MetadatenZuDatensaetzen(
             Beschreibung="eine study ohne Variablen, Projekt, oder exctractedActivity.",
-            #dokumentation="https://asd.def",
+            # dokumentation="https://asd.def",
             DStypID=16,
             erstellungs_datum="2017",
             plattform_adresse="https://asd.def",
@@ -276,23 +272,27 @@ def synopse_access_platform() -> AccessPlatformMapping:
 
 
 @pytest.fixture
-def created_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, str]:
+def created_by_study_id(
+    synopse_studies: list[MetadatenZuDatensaetzen],
+) -> dict[str, str]:
     """Return a lookup from study ID to created string."""
     return {
-        s.StudienID: s.erstellungs_datum
-        for s in synopse_studies
-        if s.erstellungs_datum
+        s.StudienID: s.erstellungs_datum for s in synopse_studies if s.erstellungs_datum
     }
 
 
 @pytest.fixture
-def description_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, str]:
+def description_by_study_id(
+    synopse_studies: list[MetadatenZuDatensaetzen],
+) -> dict[str, str]:
     """Return a lookup from study ID to description string."""
     return {s.StudienID: s.Beschreibung for s in synopse_studies if s.Beschreibung}
 
 
 @pytest.fixture
-def documentation_by_study_id(synopse_studies: list[MetadatenZuDatensaetzen]) -> dict[str, Link]:
+def documentation_by_study_id(
+    synopse_studies: list[MetadatenZuDatensaetzen],
+) -> dict[str, Link]:
     """Return a lookup from study ID to documentation Link."""
     return {
         s.StudienID: Link(url=s.dokumentation)
@@ -314,7 +314,9 @@ def keyword_text_by_study_id(
 
 
 @pytest.fixture
-def synopse_study(synopse_studies: list[MetadatenZuDatensaetzen]) -> MetadatenZuDatensaetzen:
+def synopse_study(
+    synopse_studies: list[MetadatenZuDatensaetzen],
+) -> MetadatenZuDatensaetzen:
     """Return a Synopse Study."""
     return synopse_studies[0]
 
@@ -371,7 +373,9 @@ def synopse_projects() -> list[ProjektUndStudienverwaltung]:
 
 
 @pytest.fixture
-def synopse_project(synopse_projects: list[ProjektUndStudienverwaltung]) -> ProjektUndStudienverwaltung:
+def synopse_project(
+    synopse_projects: list[ProjektUndStudienverwaltung],
+) -> ProjektUndStudienverwaltung:
     """Return a Synopse Project."""
     return synopse_projects[0]
 
