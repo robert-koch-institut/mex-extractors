@@ -153,10 +153,24 @@ def test_get_historical_events(
             "less_than_x_outbound",
             {"id-a": 4, "id-b": 2},
         ),
+        (
+            [
+                DummyEventLogRecord(
+                    timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+                    metadata={
+                        "inbound_connections": SimpleNamespace(
+                            value=["id-a", "id-b", "id-a"]
+                        )
+                    },
+                ),
+            ],
+            "less_than_x_inbound",
+            ["id-a", "id-b", "id-a"],
+        ),
     ],
 )
 def test_get_latest_num_items(
-    events: list[Any], rule_name: str, expected: int | dict[str, int]
+    events: list[Any], rule_name: str, expected: int | dict[str, int] | list[str]
 ) -> None:
     assert (
         get_latest_num_items(cast("list[EventLogRecord]", events), rule_name=rule_name)
@@ -188,6 +202,63 @@ def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
         get_latest_num_items(
             cast("list[EventLogRecord]", events), rule_name="x_items_more_than"
         )
+
+
+@pytest.mark.parametrize(
+    ("current_count", "rule_threshold", "passed"),
+    [
+        pytest.param(["id-a", "id-b"], 1, True, id="passes_above_threshold"),
+        pytest.param(["id-a"], 2, False, id="fails_below_threshold"),
+        pytest.param([], 2, False, id="fails_empty"),
+    ],
+)
+def test_check_less_than_x_inbound_generalized(
+    monkeypatch: MonkeyPatch,
+    current_count: list[str],
+    rule_threshold: int,
+    passed: bool,  # noqa: FBT001
+) -> None:
+    monkeypatch.setattr(
+        "mex.extractors.pipeline.checks.main.get_rule",
+        lambda *_, **__: {"value": rule_threshold},
+    )
+
+    class MockEvent:
+        def __init__(self, inbound_connections: list[str]) -> None:
+            self.asset_materialization = SimpleNamespace(
+                metadata={
+                    "inbound_connections": SimpleNamespace(value=inbound_connections)
+                }
+            )
+
+    class MockInstance:
+        def get_event_records(self, _filter: EventRecordsFilter) -> list[MockEvent]:
+            return [MockEvent(current_count)]
+
+    class MockContext:
+        instance = MockInstance()
+
+    context = cast("AssetCheckExecutionContext", MockContext())
+    asset_key = AssetKey(["test_asset"])
+
+    if not passed:
+        with pytest.raises(ValueError, match="failed less_than_x_inbound check"):
+            check_item_count_rule(
+                context=context,
+                asset_key=asset_key,
+                extractor="test",
+                entity_type="test",
+                rule_name="less_than_x_inbound",
+            )
+    else:
+        result = check_item_count_rule(
+            context=context,
+            asset_key=asset_key,
+            extractor="test",
+            entity_type="test",
+            rule_name="less_than_x_inbound",
+        )
+        assert result is True
 
 
 @pytest.mark.parametrize(
