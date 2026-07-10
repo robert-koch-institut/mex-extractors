@@ -60,7 +60,7 @@ run: image
 start:
 	# start the service using docker compose
 	@ echo start mex-extractors:${LATEST} with compose; \
-	docker compose up --remove-orphans; \
+	docker compose up --build --remove-orphans; \
 
 docs:
 	# use sphinx to auto-generate html docs from code
