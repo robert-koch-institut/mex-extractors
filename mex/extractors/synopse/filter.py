@@ -23,8 +23,8 @@ def filter_and_log_synopse_variables(
     filtered_variables: list[Variablenuebersicht] = []
     skipped_variable_ids: list[str] = []
     for variable in synopse_variables:
-        if variable.int_var:
-            skipped_variable_ids.append(variable.SynopseID)
+        if variable.IntVar:
+            skipped_variable_ids.append(variable.SymopseID)
         else:
             filtered_variables.append(variable)
     logger.info(

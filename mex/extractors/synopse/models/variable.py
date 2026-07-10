@@ -8,17 +8,15 @@ class Variablenuebersicht(BaseModel):
 
     model_config = ConfigDict(extra="ignore", coerce_numbers_to_str=True)
 
-    Auspraegungen: str | None = None
-    Datentyp: str | None = None
-    Originalfrage: str | None = None
-    StudieID2: int = Field(...)
-    StudieID1: str = Field(...)
-    SymopseID: str = Field(...)
-    textbox51: str | None = None
     textbox5: str = Field(...)
-    textbox2: str = Field(...)
     valInstrument: str | None = None
+    textbox11: str | None = None
+    Originalfrage: str | None = None
+    SymopseID: str = Field(...)
     textbox21: str | None = None
     textbox24: str = Field(...)
+    textbox51: str | None = None
     IntVar: bool = Field(...)
-    KeepVarname: bool = Field(...)
+    StudieID1: str = Field(...)
+    StudieID2: int = Field(...)
+

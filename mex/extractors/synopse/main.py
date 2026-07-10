@@ -103,7 +103,7 @@ def synopse_variables_by_thema(
     return {
         thema: list(variables)
         for thema, variables in groupby(
-            sorted_variables, key=lambda v: v.thema_und_fragebogenausschnitt
+            sorted_variables, key=lambda v: v.textbox5
         )
     }
 

@@ -14,40 +14,35 @@ from mex.extractors.synopse.extract import (
 
 if TYPE_CHECKING:
     from mex.common.models import AccessPlatformMapping
+    from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 
 
 def test_extract_variables() -> None:
     expected_first_variable = {
-        "auspraegungen": "-95",
-        "datentyp": "Zahl",
-        "int_var": False,
-        "keep_varname": True,
-        "originalfrage": None,
-        "studie": "BBCCDD1",
-        "StudieID2": 1122999,
-        "SynopseID": "503",
-        "text_dt": "Eingangsfrage wn/kA",
         "textbox5": "Krankheiten (1101)",
-        "unterthema": "Lorem (110116)",
-        "val_instrument": None,
-        "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
-        "varname": "KLMNO_F4",
+        "valInstrument": None,
+        "textbox11": "Zahl",
+        "Originalfrage": None,
+        "SymopseID": "503",
+        "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
+        "textbox24": "KLMNO_F4",
+        "textbox51": "Eingangsfrage wn/kA",
+        "IntVar": False,
+        "StudieID1": "BBCCDD1",
+        "StudieID2": 1122999,
     }
     expected_second_variable = {
-        "auspraegungen": "-98",
-        "datentyp": "Zahl",
-        "int_var": False,
-        "keep_varname": True,
-        "originalfrage": None,
-        "studie": "BBCCDD1",
-        "StudieID2": 1122999,
-        "SynopseID": "503",
-        "text_dt": "Weiß nicht",
         "textbox5": "Krankheiten (1101)",
-        "unterthema": "Lorem (110116)",
-        "val_instrument": None,
-        "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
-        "varname": "KLMNO_F4",
+        "valInstrument": None,
+        "textbox11": "Zahl",
+        "Originalfrage": None,
+        "SymopseID": "503",
+        "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
+        "textbox24": "KLMNO_F4",
+        "textbox51": "Weiß nicht",
+        "IntVar": False,
+        "StudieID1": "BBCCDD1",
+        "StudieID2": 1122999,
     }
     variables = extract_variables()
     assert len(variables) == 16
@@ -57,19 +52,13 @@ def test_extract_variables() -> None:
 
 def test_extract_study_data() -> None:
     expected_study_data = {
-        "Beschreibung": "BBCCDD Basiserhebung, Kohorte",
-        "dateiformat": "sas,stata",
-        "DStypID": 17,
-        "erstellungs_datum": "2013",
-        "lizenz": "Reportserver",
-        "plattform": '"Z:\\Lorem\\Ipsum\\DATA\\BBCCDD\\Dokumentation',
-        "rechte": "restriktiv",
-        "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
-        "studie": "BBCCDD",
         "StudienID": "1234567",
+        "DStypID": 17,
         "Titel_Datenset": "BBCCDD",
-        "version": "V26",
-        "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
+        "Beschreibung": "BBCCDD Basiserhebung, Kohorte",
+        "SchlagworteThemen": "BBCCDD Basiserhebung, Kohorte",
+        "Rechte": "restriktiv",
+        "Zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
     study_data = extract_study_data()
     assert len(study_data) == 2
@@ -78,13 +67,11 @@ def test_extract_study_data() -> None:
 
 def test_extract_projects() -> None:
     expected_project = {
+        "StudienID": "1122999",
         "Studie": "BBCCDD1",
+        "StudienArtTyp": "Monitoring-Studie",
         "ProjektStudientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
         "BeschreibungStudie": "fg@example.com",
-        "StudienArtTyp": "Monitoring-Studie",
-        "StudienID": "1122999",
-        "verknuepfteRessourcen": "Studie zu Lorem und Ipsum",
-        "SchlagworteStudie": "CHLD",
     }
     projects = extract_projects()
     assert len(projects) == 4
@@ -93,7 +80,7 @@ def test_extract_projects() -> None:
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_synopse_project_contributor_ids_by_query(
-    synopse_project: SynopseProject,
+    synopse_project: ProjektUndStudienverwaltung,
 ) -> None:
     persons = extract_synopse_project_contributor_ids_by_query(
         [synopse_project, synopse_project]

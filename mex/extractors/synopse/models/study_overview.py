@@ -9,6 +9,7 @@ class Datensatzuebersicht(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
     StudienID: str = Field(...)
-    DStypID: int | None = Field(...)
     Titel_Datenset: str = Field(...)
     SynopseID: str = Field(...)
+    DStypID: int | None = Field(...)
+

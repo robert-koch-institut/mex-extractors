@@ -14,20 +14,20 @@ class ProjektUndStudienverwaltung(BaseRawData):
 
     model_config = ConfigDict(extra="ignore")
 
+    StudienID: str = Field(...)
     Studie: str | None = None
+    StudienArtTyp: str | None = None
     ProjektStudientitel: str = Field(...)
     BeschreibungStudie: str | None = None
-    StudienArtTyp: str | None = None
+    Beitragende: str | None = None
+    VerantwortlicheOE: str | None = None
+    Partner_intern: str | None = None
+    Partner_extern: str | None = None
     Projektbeginn: str | None = Field(None, ge="1891")
     Projektende: str | None = Field(None, ge="1891")
-    Beitragende: str | None = None
-    Partner_intern: str | None = None
-    VerantwortlicheOE: str | None = None
-    Partner_extern: str | None = None
     Auftraggeber: str | None = None
-    Anschlussprojekt: str | None = None
     Projektdokumentation: str | None = None
-    StudienID: str = Field(...)
+    Anschlussprojekt: str | None = None
 
     def get_partners(self) -> Sequence[str | None]:
         """Return partners from extractor."""

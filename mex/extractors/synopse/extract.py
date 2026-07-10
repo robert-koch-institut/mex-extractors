@@ -93,10 +93,10 @@ def extract_projects() -> list[ProjektUndStudienverwaltung]:
     )
 
 
-def extract_synopse_project_contributors(
+def extract_synopse_project_contributor_ids_by_query(
     synopse_projects: Iterable[ProjektUndStudienverwaltung],
-) -> list[LDAPPersonWithQuery]:
-    """Extract LDAP persons for Synopse project contributors.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Extract Merged persons for Synopse project contributors.
 
     Args:
         synopse_projects: Synopse projects
@@ -187,9 +187,9 @@ def extract_synopse_organizations(
         project.Partner_extern for project in synopse_projects
     }.union(
         {
-            project.foerderinstitution_oder_auftraggeber.split("(")[0]
+            project.Auftraggeber.split("(")[0]
             for project in synopse_projects
-            if project.foerderinstitution_oder_auftraggeber
+            if project.Auftraggeber
         }
     )
     return {

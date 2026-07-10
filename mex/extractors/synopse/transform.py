@@ -144,11 +144,11 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     """
     study_by_studien_id = {study.StudienID: study for study in study_overviews}
     # groupby requires sorted iterable
-    variables = sorted(variables, key=lambda x: x.SynopseID)
+    variables = sorted(variables, key=lambda x: x.SymopseID)
 
     extracted_variables = []
     for SynopseID, levels_iter in watch_progress(
-        groupby(variables, lambda x: x.SynopseID),
+        groupby(variables, lambda x: x.SymopseID),
         "transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables",
     ):
         levels = list(levels_iter)
@@ -184,20 +184,20 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         extracted_variables.append(
             ExtractedVariable(
                 belongsTo=belongs_to,
-                codingSystem=variable.val_instrument,
-                dataType=variable.datentyp,
+                codingSystem=variable.valInstrument,
+                dataType=variable.textbox11,
                 description=(
-                    Text(value=variable.originalfrage, language=TextLanguage("de"))
-                    if variable.originalfrage
+                    Text(value=variable.Originalfrage, language=TextLanguage("de"))
+                    if variable.Originalfrage
                     else []
                 ),
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
                 identifierInPrimarySource=SynopseID,
-                label=variable.varlabel or variable.varname,
+                label=variable.textbox21 or variable.textbox24,
                 usedIn=used_in,
-                valueSet=sorted({level.text_dt for level in levels if level.text_dt}),
+                valueSet=sorted({level.textbox51 for level in levels if level.textbox51}),
             )
         )
     return extracted_variables
@@ -372,7 +372,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         ):
             access_platform.append(synopse_access_platform_id)
         if (
-            zugangsbeschraenkung := study.zugangsbeschraenkung.split(":")[0]
+            zugangsbeschraenkung := study.Zugangsbeschraenkung.split(":")[0]
         ) and zugangsbeschraenkung in access_restriction_by_zugangsbeschraenkung:
             access_restriction = access_restriction_by_zugangsbeschraenkung[
                 zugangsbeschraenkung
@@ -670,18 +670,18 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
                 )
 
     if (
-        synopse_project.foerderinstitution_oder_auftraggeber
+        synopse_project.Auftraggeber
         in synopse_merged_organization_ids_by_query_string
     ):
         funder_or_commissioner = [
             synopse_merged_organization_ids_by_query_string[
-                synopse_project.foerderinstitution_oder_auftraggeber
+                synopse_project.Auftraggeber
             ]
         ]
-    elif synopse_project.foerderinstitution_oder_auftraggeber:
+    elif synopse_project.Auftraggeber:
         extracted_organization = ExtractedOrganization(
-            officialName=synopse_project.foerderinstitution_oder_auftraggeber,
-            identifierInPrimarySource=synopse_project.foerderinstitution_oder_auftraggeber,
+            officialName=synopse_project.Auftraggeber,
+            identifierInPrimarySource=synopse_project.Auftraggeber,
             hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         )
         load([extracted_organization])
