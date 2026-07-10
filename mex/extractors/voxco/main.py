@@ -1,4 +1,3 @@
-from itertools import chain
 from pathlib import Path
 from typing import Any
 
@@ -101,14 +100,11 @@ def voxco_extracted_variables(
     )
     load(extracted_variables)
     inbound_connections = collect_related_identifiers(
-        chain.from_iterable(voxco_extracted_resources_by_str.values()),
+        extracted_variables,
         ["usedIn"],
     )
-    context.add_output_metadata(
-        {
-            "inbound_connections": inbound_connections,
-        }
-    )
+
+    context.add_output_metadata({"inbound_connections": inbound_connections})
     return extracted_variables
 
 

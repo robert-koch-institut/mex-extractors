@@ -33,12 +33,8 @@ def collect_related_identifiers(
     items: Iterable[Any],
     relation_fields: Sequence[str],
 ) -> list[str]:
-    """Collect unique identifiers referenced by relation fields on a collection.
-
-    This is generic enough for synopse variables as well as open_data distributions.
-    """
+    """Collect identifiers referenced by relation fields on a collection."""
     identifiers: list[str] = []
-    seen_identifiers: set[str] = set()
 
     for item in items:
         for relation_field in relation_fields:
@@ -52,10 +48,6 @@ def collect_related_identifiers(
             for related_value in related_values:
                 if related_value is None:
                     continue
-                identifier = str(related_value)
-                if identifier in seen_identifiers:  # is
-                    continue  # this
-                seen_identifiers.add(identifier)  # necessary?
-                identifiers.append(identifier)
+                identifiers.append(str(related_value))
 
     return identifiers

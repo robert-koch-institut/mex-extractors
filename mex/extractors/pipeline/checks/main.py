@@ -174,10 +174,12 @@ def check_static_rule(
     threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
+        # fail if current number of extracted items is not equal to threshold
         if current_number_of_items == threshold:
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
     if rule_name == "less_than_x_inbound":
+        # fail if any of the inbound connection counts is smaller than threshold
         if not isinstance(current_number_of_items, list):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
         return len(current_number_of_items) >= threshold

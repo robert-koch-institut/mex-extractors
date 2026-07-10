@@ -1,4 +1,4 @@
-from itertools import chain, groupby
+from itertools import groupby
 from typing import Any
 
 from dagster import AssetExecutionContext, asset
@@ -195,15 +195,9 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_study_overviews,
         transformed_study_data_resources,
     )
-    inbound_connections = collect_related_identifiers(
-        chain.from_iterable(synopse_variables_by_study_id.values()),
-        ["usedIn"],
-    )
     context.add_output_metadata(
         {
             "num_items": len(extracted_resource),
-            "list_of_identifiers": list(extracted_resource.keys()),
-            "inbound_connections": inbound_connections,
         }
     )
     return extracted_resource
@@ -263,7 +257,7 @@ def synopse_variable_groups_by_identifier_in_primary_source(
     return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
 
 
-@asset(group_name="synopse", metadata={"entity_type": "variable"})
+@asset(group_name="synopse", metadata={"entity_type": ("variable", "resource")})
 def synopse_extracted_variables(
     context: AssetExecutionContext,
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
@@ -287,11 +281,16 @@ def synopse_extracted_variables(
         v.identifierInPrimarySource: count_outbound_connections(v)
         for v in extracted_variables
     }
+    inbound_connections = collect_related_identifiers(
+        extracted_variables,
+        ["usedIn"],
+    )
 
     context.add_output_metadata(
         {
             "num_items": len(extracted_variables),
             "outbound_connections": outbound_by_identifier,
+            "inbound_connections": inbound_connections,
         }
     )
     return extracted_variables
