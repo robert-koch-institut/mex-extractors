@@ -17,6 +17,7 @@ from mex.common.types import (
     Text,
 )
 from mex.extractors.ldap.helpers import get_ldap_merged_contact_id_by_mail
+from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -121,7 +122,9 @@ def transform_seq_repo_resource_to_extracted_resource(
                 source.igs_id or source.lims_sample_id
             ].append(source.sequencing_date)
     seen: set[str] = set()
-    for source in seq_repo_sources:
+    for source in watch_progress(
+        seq_repo_sources, "transform_seq_repo_resource_to_extracted_resource"
+    ):
         identifier_in_primary_source = source.igs_id or source.lims_sample_id
         if identifier_in_primary_source in seen:
             continue

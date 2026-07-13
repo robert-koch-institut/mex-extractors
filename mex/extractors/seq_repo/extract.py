@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from mex.common.exceptions import MExError
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.ldap.helpers import get_ldap_extracted_person_by_query
-from mex.extractors.logging import watch_progress
 from mex.extractors.seq_repo.model import SeqRepoSource
 
 if TYPE_CHECKING:
@@ -38,9 +37,7 @@ def extract_source_project_coordinator_by_name(
     """
     seen: set[str] = set()
     persons_with_query: dict[str, ExtractedPerson] = {}
-    for source in watch_progress(
-        seq_repo_sources, "extract_source_project_coordinator_by_name"
-    ):
+    for source in seq_repo_sources:
         for name in source.project_coordinators:
             if name in seen:
                 continue
