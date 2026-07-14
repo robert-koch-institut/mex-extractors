@@ -15,7 +15,7 @@ class BiospecimenResource(BaseModel):
     beschreibung: list[str]
     weiterfuehrende_dokumentation_titel: str | None
     weiterfuehrende_dokumentation_url_oder_dateipfad: str | None
-    Partner_extern: str | None
+    externe_partner: str | None
     tools_instrumente_oder_apparate: str | None
     schlagworte: list[str]
     id_loinc: list[str]

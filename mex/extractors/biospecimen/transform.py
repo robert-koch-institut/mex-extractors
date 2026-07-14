@@ -80,10 +80,10 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         )
         external_partner = (
             get_or_create_externe_partner(
-                resource.Partner_extern,
+                resource.externe_partner,
                 extracted_organizations,
             )
-            if resource.Partner_extern
+            if resource.externe_partner
             else []
         )
         has_personal_data = (
@@ -182,22 +182,22 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
 
 
 def get_or_create_externe_partner(
-    Partner_extern: str,
+    externe_partner: str,
     extracted_organizations: dict[str, MergedOrganizationIdentifier],
 ) -> MergedOrganizationIdentifier:
     """Get extracted organization for label or create new organization.
 
     Args:
-        Partner_extern: externe partner label
+        externe_partner: externe partner label
         extracted_organizations: merged organization identifier extracted from wikidata
     Returns:
         matched or created merged organization identifier
     """
-    if Partner_extern in extracted_organizations:
-        return extracted_organizations[Partner_extern]
+    if externe_partner in extracted_organizations:
+        return extracted_organizations[externe_partner]
     extracted_organization = ExtractedOrganization(
-        officialName=Partner_extern,
-        identifierInPrimarySource=Partner_extern,
+        officialName=externe_partner,
+        identifierInPrimarySource=externe_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
     )
     load([extracted_organization])

@@ -21,7 +21,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             studienbezug=["1234567"],
             alternativer_titel="alternativer Testitel",
             anonymisiert_pseudonymisiert="pseudonymisiert",
-            Partner_extern="esterner Testpartner",
+            externe_partner="esterner Testpartner",
             id_loinc=["12345-6"],
             id_mesh_begriff=["D123"],
             kontakt=["resolvedr@rki.de"],
