@@ -201,14 +201,14 @@ def test_transform_synopse_variables_to_mex_variables(
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
+def test_transform_synopse_data_to_mex_resources(
     synopse_project: ProjektUndStudienverwaltung,
     synopse_studies: list[MetadatenZuDatensaetzen],
-    synopse_variables_by_study_id: dict[int, list[Variablenuebersicht]],
     extracted_activity: ExtractedActivity,
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
+
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -235,9 +235,9 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Alkohol"},
             {"language": TextLanguage.DE, "value": "Alter und Geschlecht"},
             {"language": TextLanguage.DE, "value": "Drogen"},
-            {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
+        "modified": "2022",
         "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -246,7 +246,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "resourceTypeSpecific": [
             {
                 "language": TextLanguage.DE,
-                "value": "Monitoring-Studie",
+                "value": "Monitoring-studie",
             },
         ],
         "rights": [
@@ -264,7 +264,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     resources = transform_synopse_data_to_mex_resources(
         [synopse_studies[0]],
         [synopse_project],
-        synopse_variables_by_study_id,
         [extracted_activity],
         extracted_organization_rki,
         synopse_resource,
@@ -289,10 +288,11 @@ def test_transform_synopse_projects_to_mex_activities(
         "Roland Resolved": [roland_resolved.stableTargetId]
     }
 
-    assert synopse_project.Projektende
-    assert synopse_project.Projektbeginn
+    assert synopse_project.projektende
+    assert synopse_project.projektbeginn
+
     expected_activity = {
-        "abstract": [{"value": synopse_project.BeschreibungStudie}],
+        "abstract": [{"value": synopse_project.beschreibung_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "documentation": [
@@ -301,13 +301,13 @@ def test_transform_synopse_projects_to_mex_activities(
                 "title": "- Fragebogen\n- Labor",
             }
         ],
-        "end": [str(TemporalEntity(synopse_project.Projektende))],
+        "end": [str(TemporalEntity(synopse_project.projektende))],
         "externalAssociate": ["bWt8MuXvqsiYEDpjwYIT2S"],
         "hadPrimarySource": str(
             get_extracted_primary_source_id_by_name("report-server")
         ),
         "identifier": Joker(),
-        "identifierInPrimarySource": synopse_project.StudienID,
+        "identifierInPrimarySource": synopse_project.studien_id,
         "involvedPerson": ["eXA2Qj5pKmI7HXIgcVqCfz"],
         "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
         "involvedUnit": [
@@ -316,10 +316,10 @@ def test_transform_synopse_projects_to_mex_activities(
         ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
         "stableTargetId": Joker(),
-        "start": [str(TemporalEntity(synopse_project.Projektbeginn))],
+        "start": [str(TemporalEntity(synopse_project.projektbeginn))],
         "succeeds": Joker(),
         "theme": ["https://mex.rki.de/item/theme-36"],
-        "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
+        "title": [{"language": TextLanguage.DE, "value": "studie zu Lorem und Ipsum"}],
     }
 
     activities = transform_synopse_projects_to_mex_activities(

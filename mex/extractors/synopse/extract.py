@@ -109,7 +109,7 @@ def extract_synopse_project_contributor_ids_by_query(
     for project in watch_progress(
         synopse_projects, "extract_synopse_project_contributor_ids_by_query"
     ):
-        names = project.Beitragende
+        names = project.beitragende
         if names is None or names in seen:
             continue
         seen.add(names)
@@ -184,12 +184,12 @@ def extract_synopse_organizations(
         Dict with organization label and WikidataOrganization
     """
     synopse_organizations = {
-        project.Partner_extern for project in synopse_projects
+        project.partner_extern for project in synopse_projects
     }.union(
         {
-            project.Auftraggeber.split("(")[0]
+            project.auftraggeber.split("(")[0]
             for project in synopse_projects
-            if project.Auftraggeber
+            if project.auftraggeber
         }
     )
     return {

@@ -109,7 +109,7 @@ def transform_overviews_to_resource_lookup(
     ] = {}
     for study in study_overviews:
         if resource := resource_by_identifier_in_platform.get(
-            f"{study.StudienID}-{study.Titel_Datenset}-{study.DStypID}"
+            f"{study.studien_id}-{study.titel_datenset}-{study.dstyp_id}"
         ):
             synopse_extracted_resources_by_identifier_in_primary_source[
                 resource.identifierInPrimarySource
@@ -142,23 +142,23 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     Returns:
         List of ExtractedVariable
     """
-    study_by_studien_id = {study.StudienID: study for study in study_overviews}
+    study_by_studien_id = {study.studien_id: study for study in study_overviews}
     # groupby requires sorted iterable
-    variables = sorted(variables, key=lambda x: x.SymopseID)
+    variables = sorted(variables, key=lambda x: x.symopse_id)
 
     extracted_variables = []
-    for SynopseID, levels_iter in watch_progress(
-        groupby(variables, lambda x: x.SymopseID),
+    for synopse_id, levels_iter in watch_progress(
+        groupby(variables, lambda x: x.symopse_id),
         "transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables",
     ):
         levels = list(levels_iter)
         variable = levels[0]
-        if str(variable.StudieID2) in study_by_studien_id:
-            study = study_by_studien_id[str(variable.StudieID2)]
+        if str(variable.studie_id2) in study_by_studien_id:
+            study = study_by_studien_id[str(variable.studie_id2)]
         else:
             continue
         resource_identifier = (
-            f"{study.StudienID}-{study.Titel_Datenset}-{study.DStypID}"
+            f"{study.studien_id}-{study.titel_datenset}-{study.dstyp_id}"
         )
         variable_group_identifier = f"{variable.textbox5}-{resource_identifier}"
         belongs_to: list[MergedVariableGroupIdentifier] = []
@@ -184,20 +184,22 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
         extracted_variables.append(
             ExtractedVariable(
                 belongsTo=belongs_to,
-                codingSystem=variable.valInstrument,
+                codingSystem=variable.val_instrument,
                 dataType=variable.textbox11,
                 description=(
-                    Text(value=variable.Originalfrage, language=TextLanguage("de"))
-                    if variable.Originalfrage
+                    Text(value=variable.originalfrage, language=TextLanguage("de"))
+                    if variable.originalfrage
                     else []
                 ),
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
-                identifierInPrimarySource=SynopseID,
+                identifierInPrimarySource=synopse_id,
                 label=variable.textbox21 or variable.textbox24,
                 usedIn=used_in,
-                valueSet=sorted({level.textbox51 for level in levels if level.textbox51}),
+                valueSet=sorted(
+                    {level.textbox51 for level in levels if level.textbox51}
+                ),
             )
         )
     return extracted_variables
@@ -269,17 +271,17 @@ def transform_synopse_variables_to_mex_variable_groups(
     Returns:
         list of extracted variable groups
     """
-    study_by_studien_id = {study.StudienID: study for study in study_overviews}
+    study_by_studien_id = {study.studien_id: study for study in study_overviews}
     variable_groups: list[ExtractedVariableGroup] = []
     seen: list[str] = []
     for thema, variables in synopse_variables_by_thema.items():
         for variable in variables:
-            if (StudieID2 := str(variable.StudieID2)) in study_by_studien_id:
-                study = study_by_studien_id[StudieID2]
+            if (studie_id2 := str(variable.studie_id2)) in study_by_studien_id:
+                study = study_by_studien_id[studie_id2]
             else:
                 continue
             resource_identifier = (
-                f"{study.StudienID}-{study.Titel_Datenset}-{study.DStypID}"
+                f"{study.studien_id}-{study.titel_datenset}-{study.dstyp_id}"
             )
             identifier_in_primary_source = f"{thema}-{resource_identifier}"
             if identifier_in_primary_source in seen:
@@ -316,7 +318,6 @@ def transform_synopse_variables_to_mex_variable_groups(
 def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PLR0915
     synopse_studies: Iterable[MetadatenZuDatensaetzen],
     synopse_projects: Iterable[ProjektUndStudienverwaltung],
-    synopse_variables_by_study_id: dict[int, list[Variablenuebersicht]],
     extracted_activities: Iterable[ExtractedActivity],
     extracted_organization: ExtractedOrganization,
     synopse_resource: ResourceMapping,
@@ -328,8 +329,6 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     Args:
         synopse_studies: Iterable of Synopse Studies
         synopse_projects: Iterable of synopse projects
-        synopse_variables_by_study_id: mapping from synopse studie id to the variables
-            with this studie id
         extracted_activities: Iterable of extracted activities
         extracted_organization: extracted organization
         synopse_resource: resource default values
@@ -351,7 +350,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     }
     if contact_point_synonym := synopse_resource.contact[0].mappingRules[0].forValues:
         contact_point = get_unit_merged_id_by_synonym(contact_point_synonym[0])
-    synopse_projects_by_study_ids = {p.StudienID: p for p in synopse_projects}
+    synopse_projects_by_study_ids = {p.studien_id: p for p in synopse_projects}
     description_by_study_id: dict[str, str | None] = {}
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
     title_by_study_id: dict[str, Text] = {}
@@ -361,18 +360,18 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     }
     extracted_resources: list[ExtractedResource] = []
     for study in synopse_studies:
-        if study.StudienID in synopse_projects_by_study_ids:
-            project = synopse_projects_by_study_ids[study.StudienID]
+        if study.studien_id in synopse_projects_by_study_ids:
+            project = synopse_projects_by_study_ids[study.studien_id]
         else:
             continue
         access_platform: list[MergedAccessPlatformIdentifier] = []
         if synopse_resource.accessPlatform[0].mappingRules[0].forValues and (
-            str(study.DStypID)
+            str(study.dstyp_id)
             in synopse_resource.accessPlatform[0].mappingRules[0].forValues
         ):
             access_platform.append(synopse_access_platform_id)
         if (
-            zugangsbeschraenkung := study.Zugangsbeschraenkung.split(":")[0]
+            zugangsbeschraenkung := study.zugangsbeschraenkung.split(":")[0]
         ) and zugangsbeschraenkung in access_restriction_by_zugangsbeschraenkung:
             access_restriction = access_restriction_by_zugangsbeschraenkung[
                 zugangsbeschraenkung
@@ -386,62 +385,54 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         ] = []
         if (
             contact_point
-            and study.DStypID
+            and study.dstyp_id
             == synopse_resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ):
             contact.extend(contact_point)
-        if project.VerantwortlicheOE and (
-            unit_merged_ids := get_unit_merged_id_by_synonym(project.VerantwortlicheOE)
+        if project.verantwortliche_oe and (
+            unit_merged_ids := get_unit_merged_id_by_synonym(project.verantwortliche_oe)
         ):
             contact.extend(unit_merged_ids)
         else:
             continue
         contributing_unit: list[MergedOrganizationalUnitIdentifier] = []
-        if project.Partner_intern:
+        if project.partner_intern:
             contributing_unit = [
                 unit_id
-                for unit in project.Partner_intern.split(", ")
+                for unit in project.partner_intern.split(", ")
                 if (unit_merged_ids := get_unit_merged_id_by_synonym(unit))
                 for unit_id in unit_merged_ids
             ]
         contributor: list[MergedPersonIdentifier] = []
-        if project.Beitragende in synopse_merged_person_ids_by_str:
-            contributor = synopse_merged_person_ids_by_str[project.Beitragende]
-        description_by_study_id[study.StudienID] = study.Beschreibung
-        synopse_variables = synopse_variables_by_study_id.get(int(study.StudienID))
+        if project.beitragende in synopse_merged_person_ids_by_str:
+            contributor = synopse_merged_person_ids_by_str[project.beitragende]
+        description_by_study_id[study.studien_id] = study.beschreibung
         keywords_plain = []
         if study.schlagworte_themen:
             keywords_plain += list(re.split(r"\s*,\s*", study.schlagworte_themen))
-        if synopse_variables:
-            # add unique values of all textbox 2 entries from variable set for this
-            # study, remove suffix, e.g "Schlagwort (12345)" -> "Schlagwort"
-            keywords_plain.extend(
-                {
-                    re.sub(r"\s\(\d+\)", "", var.unterthema): None
-                    for var in synopse_variables
-                }
-            )
         keyword = [
             Text(value=word, language=TextLanguage.DE) for word in keywords_plain
         ]
-        identifier_in_primary_source_by_study_id[study.StudienID] = (
-            f"{study.StudienID}-{study.Titel_Datenset}-{study.DStypID}"
+        identifier_in_primary_source_by_study_id[study.studien_id] = (
+            f"{study.studien_id}-{study.titel_datenset}-{study.dstyp_id}"
         )
-        title_by_study_id[study.StudienID] = Text(
-            value=study.Titel_Datenset, language=TextLanguage("de")
+        title_by_study_id[study.studien_id] = Text(
+            value=study.titel_datenset, language=TextLanguage("de")
         )
         description = (
-            [Text(value=study.Beschreibung, language=TextLanguage.DE)]
-            if study.Beschreibung
+            [Text(value=study.beschreibung, language=TextLanguage.DE)]
+            if study.beschreibung
             else []
         )
         has_legal_basis = (
             [Text(value=study.rechte, language=TextLanguage.DE)] if study.rechte else []
         )
         has_purpose = (
-            [Text(value=study.zweck, language=TextLanguage.DE)] if study.zweck else []
+            [Text(value=study.zweck_der_datenverarbeitung, language=TextLanguage.DE)]
+            if study.zweck_der_datenverarbeitung
+            else []
         )
-        extracted_activity = extracted_activities_by_study_ids.get(study.StudienID)
+        extracted_activity = extracted_activities_by_study_ids.get(study.studien_id)
         modified = None
         for typ in get_args(ExtractedResource.model_fields["modified"].annotation):
             if study.datum_der_letzten_aenderung and typ is not NoneType:
@@ -461,21 +452,21 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             else []
         )
         resource_type_specific = (
-            [Text(value=project.StudienArtTyp, language=TextLanguage.DE)]
-            if project.StudienArtTyp
+            [Text(value=project.studien_art_typ, language=TextLanguage.DE)]
+            if project.studien_art_typ
             else []
         )
-        rights = rights_by_ds_typ_id[str(study.DStypID)]
+        rights = rights_by_ds_typ_id[str(study.dstyp_id)]
         temporal = None
-        if study.feld_start and study.feld_ende:
-            temporal = f"{study.feld_start}-{study.feld_ende}"
+        if study.feldstart and study.feldende:
+            temporal = f"{study.feldstart}-{study.feldende}"
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues
-            if study.StudienID
+            if study.studien_id
             in (synopse_resource.theme[0].mappingRules[0].forValues or ())
             else synopse_resource.theme[0].mappingRules[1].setValues
         )
-        unit_in_charge = get_unit_merged_id_by_synonym(project.VerantwortlicheOE)
+        unit_in_charge = get_unit_merged_id_by_synonym(project.verantwortliche_oe)
         if not unit_in_charge:
             continue
         extracted_resources.append(
@@ -492,7 +483,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 ),
                 hasPurpose=has_purpose,
                 identifierInPrimarySource=identifier_in_primary_source_by_study_id[
-                    study.StudienID
+                    study.studien_id
                 ],
                 keyword=keyword,
                 language=synopse_resource.language[0].mappingRules[0].setValues,
@@ -513,7 +504,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 spatial=study.raeumlicher_bezug,
                 temporal=temporal,
                 theme=theme,
-                title=title_by_study_id[study.StudienID],
+                title=title_by_study_id[study.studien_id],
                 unitInCharge=unit_in_charge,
                 wasGeneratedBy=(
                     extracted_activity.stableTargetId if extracted_activity else None
@@ -551,10 +542,10 @@ def transform_synopse_projects_to_mex_activities(
     # transform without setting succeeds because the activity that is referenced might
     # not yet be transformed
     for project in synopse_projects:
-        Anschlussprojekt = (
-            project.Anschlussprojekt.removesuffix("-Basiserhebung")
-            if project.Anschlussprojekt == "KiGGS-Basiserhebung"
-            else project.Anschlussprojekt
+        anschlussprojekt = (
+            project.anschlussprojekt.removesuffix("-Basiserhebung")
+            if project.anschlussprojekt == "KiGGS-Basiserhebung"
+            else project.anschlussprojekt
         )
         activity = transform_synopse_project_to_activity(
             project,
@@ -564,9 +555,9 @@ def transform_synopse_projects_to_mex_activities(
         )
         if not activity:
             continue
-        if Anschlussprojekt:
+        if anschlussprojekt:
             anschlussprojekt_by_activity_stable_target_id[activity.stableTargetId] = (
-                Anschlussprojekt
+                anschlussprojekt
             )
         activity_stable_target_id_by_short_name[activity.shortName[0].value] = (
             activity.stableTargetId
@@ -577,13 +568,13 @@ def transform_synopse_projects_to_mex_activities(
     non_child_activities: list[ExtractedActivity] = []
     child_activities: list[ExtractedActivity] = []
     for activity in activities:
-        if Anschlussprojekt := anschlussprojekt_by_activity_stable_target_id.get(
+        if anschlussprojekt := anschlussprojekt_by_activity_stable_target_id.get(
             activity.stableTargetId
         ):
             activity.succeeds = [
                 cast(
                     "MergedActivityIdentifier",
-                    activity_stable_target_id_by_short_name[Anschlussprojekt],
+                    activity_stable_target_id_by_short_name[anschlussprojekt],
                 )
             ]
             child_activities.append(activity)
@@ -614,14 +605,14 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         extracted activity
     """
     contact = None
-    if synopse_project.VerantwortlicheOE is not None:
-        contact = get_unit_merged_id_by_synonym(synopse_project.VerantwortlicheOE)
+    if synopse_project.verantwortliche_oe is not None:
+        contact = get_unit_merged_id_by_synonym(synopse_project.verantwortliche_oe)
     if contact is None:
         return None
     documentation = None
-    if Projektdokumentation := synopse_project.Projektdokumentation:
+    if projektdokumentation := synopse_project.projektdokumentation:
         try:
-            path_line, *remaining_lines = Projektdokumentation.strip().splitlines()
+            path_line, *remaining_lines = projektdokumentation.strip().splitlines()
             title_lines = [line for line in remaining_lines if line.startswith("-")]
             documentation = Link(
                 url=PureWindowsPath(path_line).as_uri(), title="\n".join(title_lines)
@@ -631,18 +622,18 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
 
     involved_units = [
         merged_id
-        for unit in (synopse_project.Partner_intern or "").split(", ")
+        for unit in (synopse_project.partner_intern or "").split(", ")
         if (merged_ids := get_unit_merged_id_by_synonym(unit.strip()))
         for merged_id in merged_ids
     ]
 
-    if synopse_project.VerantwortlicheOE and any(
+    if synopse_project.verantwortliche_oe and any(
         get_unit_merged_id_by_synonym(synonym)
-        for synonym in synopse_project.VerantwortlicheOE.split(" ,")
+        for synonym in synopse_project.verantwortliche_oe.split(" ,")
     ):
         responsible_unit = [
             unit_id
-            for synonym in synopse_project.VerantwortlicheOE.split(" ,")
+            for synonym in synopse_project.verantwortliche_oe.split(" ,")
             if (unit_ids := get_unit_merged_id_by_synonym(synonym))
             for unit_id in unit_ids
         ]
@@ -650,8 +641,8 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
         fg21_ids = get_unit_merged_id_by_synonym("FG21")
         responsible_unit = fg21_ids or []
     external_associate = []
-    if synopse_project.Partner_extern:
-        for org in synopse_project.Partner_extern.split(", "):
+    if synopse_project.partner_extern:
+        for org in synopse_project.partner_extern.split(", "):
             if org in synopse_merged_organization_ids_by_query_string:
                 external_associate.append(
                     synopse_merged_organization_ids_by_query_string[org]
@@ -669,19 +660,16 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
                     MergedOrganizationIdentifier(extracted_organization.stableTargetId)
                 )
 
-    if (
-        synopse_project.Auftraggeber
-        in synopse_merged_organization_ids_by_query_string
-    ):
+    if synopse_project.auftraggeber in synopse_merged_organization_ids_by_query_string:
         funder_or_commissioner = [
             synopse_merged_organization_ids_by_query_string[
-                synopse_project.Auftraggeber
+                synopse_project.auftraggeber
             ]
         ]
-    elif synopse_project.Auftraggeber:
+    elif synopse_project.auftraggeber:
         extracted_organization = ExtractedOrganization(
-            officialName=synopse_project.Auftraggeber,
-            identifierInPrimarySource=synopse_project.Auftraggeber,
+            officialName=synopse_project.auftraggeber,
+            identifierInPrimarySource=synopse_project.auftraggeber,
             hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
         )
         load([extracted_organization])
@@ -691,39 +679,39 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
     else:
         funder_or_commissioner = []
     involved_person = []
-    if synopse_project.Beitragende:
+    if synopse_project.beitragende:
         involved_person = (
-            contributor_merged_ids_by_name.get(synopse_project.Beitragende) or []
+            contributor_merged_ids_by_name.get(synopse_project.beitragende) or []
         )
     theme = (
         synopse_activity.theme[0].mappingRules[0].setValues
-        if synopse_project.StudienID
+        if synopse_project.studien_id
         in (synopse_activity.theme[0].mappingRules[0].forValues or ())
         else synopse_activity.theme[0].mappingRules[1].setValues
     )
     return ExtractedActivity(
-        abstract=synopse_project.BeschreibungStudie,
+        abstract=synopse_project.beschreibung_studie,
         activityType=synopse_activity.activityType[0].mappingRules[0].setValues,
         contact=contact,
         documentation=documentation,
         end=(
-            TemporalEntity(synopse_project.Projektende)
-            if synopse_project.Projektende
+            TemporalEntity(synopse_project.projektende)
+            if synopse_project.projektende
             else None
         ),
         externalAssociate=external_associate,
         funderOrCommissioner=funder_or_commissioner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
-        identifierInPrimarySource=synopse_project.StudienID,
+        identifierInPrimarySource=synopse_project.studien_id,
         involvedPerson=involved_person,
         involvedUnit=involved_units,
         responsibleUnit=responsible_unit,
-        shortName=Text(value=synopse_project.Studie, language=TextLanguage.DE),
+        shortName=Text(value=synopse_project.studie, language=TextLanguage.DE),
         start=(
-            TemporalEntity(synopse_project.Projektbeginn)
-            if synopse_project.Projektbeginn
+            TemporalEntity(synopse_project.projektbeginn)
+            if synopse_project.projektbeginn
             else None
         ),
         theme=theme,
-        title=synopse_project.ProjektStudientitel or synopse_project.Studie,
+        title=synopse_project.projekt_studientitel or synopse_project.studie,
     )

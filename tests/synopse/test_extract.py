@@ -20,29 +20,29 @@ if TYPE_CHECKING:
 def test_extract_variables() -> None:
     expected_first_variable = {
         "textbox5": "Krankheiten (1101)",
-        "valInstrument": None,
+        "val_instrument": None,
         "textbox11": "Zahl",
-        "Originalfrage": None,
-        "SymopseID": "503",
+        "originalfrage": None,
+        "symopse_id": "503",
         "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
         "textbox24": "KLMNO_F4",
         "textbox51": "Eingangsfrage wn/kA",
-        "IntVar": False,
-        "StudieID1": "BBCCDD1",
-        "StudieID2": 1122999,
+        "int_var": False,
+        "studie_id1": "BBCCDD1",
+        "studie_id2": 1122999,
     }
     expected_second_variable = {
         "textbox5": "Krankheiten (1101)",
-        "valInstrument": None,
+        "val_instrument": None,
         "textbox11": "Zahl",
-        "Originalfrage": None,
-        "SymopseID": "503",
+        "originalfrage": None,
+        "symopse_id": "503",
         "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
         "textbox24": "KLMNO_F4",
         "textbox51": "Weiß nicht",
-        "IntVar": False,
-        "StudieID1": "BBCCDD1",
-        "StudieID2": 1122999,
+        "int_var": False,
+        "studie_id1": "BBCCDD1",
+        "studie_id2": 1122999,
     }
     variables = extract_variables()
     assert len(variables) == 16
@@ -52,13 +52,13 @@ def test_extract_variables() -> None:
 
 def test_extract_study_data() -> None:
     expected_study_data = {
-        "StudienID": "1234567",
-        "DStypID": 17,
-        "Titel_Datenset": "BBCCDD",
-        "Beschreibung": "BBCCDD Basiserhebung, Kohorte",
-        "SchlagworteThemen": "BBCCDD Basiserhebung, Kohorte",
-        "Rechte": "restriktiv",
-        "Zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
+        "studien_id": "1234567",
+        "dstyp_id": 17,
+        "titel_datenset": "BBCCDD",
+        "beschreibung": "BBCCDD Basiserhebung, Kohorte",
+        "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
+        "rechte": "restriktiv",
+        "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
     study_data = extract_study_data()
     assert len(study_data) == 2
@@ -67,11 +67,11 @@ def test_extract_study_data() -> None:
 
 def test_extract_projects() -> None:
     expected_project = {
-        "StudienID": "1122999",
-        "Studie": "BBCCDD1",
-        "StudienArtTyp": "Monitoring-Studie",
-        "ProjektStudientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
-        "BeschreibungStudie": "fg@example.com",
+        "studien_id": "1122999",
+        "studie": "BBCCDD1",
+        "studien_art_typ": "Monitoring-Studie",
+        "projekt_studientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
+        "beschreibung_studie": "fg@example.com",
     }
     projects = extract_projects()
     assert len(projects) == 4
@@ -103,10 +103,10 @@ def test_extract_synopse_contact(
 
 def test_extract_study_overviews() -> None:
     expected_overview = {
-        "DStypID": 15,
-        "StudienID": "1234567",
-        "SynopseID": "405",
-        "Titel_Datenset": "BBCCDD",
+        "dstyp_id": 15,
+        "studien_id": "1234567",
+        "synopse_id": "405",
+        "titel_datenset": "BBCCDD",
     }
     overviews = extract_study_overviews()
     assert len(overviews) == 9

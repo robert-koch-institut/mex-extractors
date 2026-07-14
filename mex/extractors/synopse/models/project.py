@@ -14,37 +14,37 @@ class ProjektUndStudienverwaltung(BaseRawData):
 
     model_config = ConfigDict(extra="ignore")
 
-    StudienID: str = Field(...)
-    Studie: str | None = None
-    StudienArtTyp: str | None = None
-    ProjektStudientitel: str = Field(...)
-    BeschreibungStudie: str | None = None
-    Beitragende: str | None = None
-    VerantwortlicheOE: str | None = None
-    Partner_intern: str | None = None
-    Partner_extern: str | None = None
-    Projektbeginn: str | None = Field(None, ge="1891")
-    Projektende: str | None = Field(None, ge="1891")
-    Auftraggeber: str | None = None
-    Projektdokumentation: str | None = None
-    Anschlussprojekt: str | None = None
+    studien_id: str = Field(..., alias="StudienID")
+    studie: str | None = Field(None, alias="Studie")
+    studien_art_typ: str | None = Field(None, alias="StudienArtTyp")
+    projekt_studientitel: str = Field(..., alias="ProjektStudientitel")
+    beschreibung_studie: str | None = Field(None, alias="BeschreibungStudie")
+    beitragende: str | None = Field(None, alias="Beitragende")
+    verantwortliche_oe: str | None = Field(None, alias="VerantwortlicheOE")
+    partner_intern: str | None = Field(None, alias="Partner_intern")
+    partner_extern: str | None = Field(None, alias="Partner_extern")
+    projektbeginn: str | None = Field(None, alias="Projektbeginn", ge="1891")
+    projektende: str | None = Field(None, alias="Projektende", ge="1891")
+    auftraggeber: str | None = Field(None, alias="Auftraggeber")
+    projektdokumentation: str | None = Field(None, alias="Projektdokumentation")
+    anschlussprojekt: str | None = Field(None, alias="Anschlussprojekt")
 
     def get_partners(self) -> Sequence[str | None]:
         """Return partners from extractor."""
-        return [self.Partner_intern]
+        return [self.partner_intern]
 
     def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
-        return TemporalEntity(self.Projektbeginn) if self.Projektbeginn else None
+        return TemporalEntity(self.projektbeginn) if self.projektbeginn else None
 
     def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
-        return TemporalEntity(self.Projektende) if self.Projektende else None
+        return TemporalEntity(self.projektende) if self.projektende else None
 
     def get_units(self) -> Sequence[str | None]:
         """Return units from extractor."""
-        return [self.VerantwortlicheOE]
+        return [self.verantwortliche_oe]
 
     def get_identifier_in_primary_source(self) -> str | None:
         """Return identifier in primary source from extractor."""
-        return self.StudienID
+        return self.studien_id

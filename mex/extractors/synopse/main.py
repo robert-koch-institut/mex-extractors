@@ -87,10 +87,12 @@ def synopse_variables_by_study_id(
     synopse_variables: list[Variablenuebersicht],
 ) -> dict[int, list[Variablenuebersicht]]:
     """Convert Synopse data to synopse_variables_by_study_id."""
-    sorted_variables = sorted(synopse_variables, key=lambda v: v.StudieID2)
+    sorted_variables = sorted(synopse_variables, key=lambda v: v.studie_id2)
     return {
-        StudieID2: list(variables)
-        for StudieID2, variables in groupby(sorted_variables, key=lambda v: v.StudieID2)
+        studie_id2: list(variables)
+        for studie_id2, variables in groupby(
+            sorted_variables, key=lambda v: v.studie_id2
+        )
     }
 
 
@@ -102,9 +104,7 @@ def synopse_variables_by_thema(
     sorted_variables = sorted(synopse_variables, key=lambda v: v.textbox5)
     return {
         thema: list(variables)
-        for thema, variables in groupby(
-            sorted_variables, key=lambda v: v.textbox5
-        )
+        for thema, variables in groupby(sorted_variables, key=lambda v: v.textbox5)
     }
 
 
@@ -163,7 +163,6 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     synopse_projects: list[ProjektUndStudienverwaltung],
     synopse_studies: list[MetadatenZuDatensaetzen],
     synopse_study_overviews: list[Datensatzuebersicht],
-    synopse_variables_by_study_id: dict[int, list[Variablenuebersicht]],
     synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
@@ -177,7 +176,6 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
     transformed_study_data_resources = transform_synopse_data_to_mex_resources(
         synopse_studies,
         synopse_projects,
-        synopse_variables_by_study_id,
         synopse_extracted_activities,
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),

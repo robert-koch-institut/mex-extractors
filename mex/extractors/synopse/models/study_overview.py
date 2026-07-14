@@ -8,8 +8,7 @@ class Datensatzuebersicht(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    StudienID: str = Field(...)
-    Titel_Datenset: str = Field(...)
-    SynopseID: str = Field(...)
-    DStypID: int | None = Field(...)
-
+    studien_id: str = Field(..., alias="StudienID")
+    titel_datenset: str = Field(..., alias="Titel_Datenset")
+    synopse_id: str = Field(..., alias="SynopseID")
+    dstyp_id: int | None = Field(None, alias="DStypID")
