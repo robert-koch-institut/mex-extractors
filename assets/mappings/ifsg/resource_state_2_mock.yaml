@@ -26,6 +26,11 @@ contact:
   - mappingRules:
       - forValues:
           - FG99
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Das Infektionsschutzgesetz"
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:

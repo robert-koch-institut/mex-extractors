@@ -18,6 +18,11 @@ contributingUnit:
       - forValues:
           - C1
         rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Echtzeitdaten der Routinedokumenation
 hadPrimarySource:
   - mappingRules:
       - {}
