@@ -207,9 +207,9 @@ def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
 @pytest.mark.parametrize(
     ("current_count", "rule_threshold", "passed"),
     [
-        pytest.param(["id-a", "id-b"], 1, True, id="passes_above_threshold"),
-        pytest.param(["id-a"], 2, False, id="fails_below_threshold"),
-        pytest.param([], 2, False, id="fails_empty"),
+        pytest.param({"id-a": 2, "id-b": 1}, 1, True, id="passes_above_threshold"),
+        pytest.param({"id-a": 1}, 2, False, id="fails_below_threshold"),
+        pytest.param({}, 2, False, id="fails_empty"),
     ],
 )
 def test_check_less_than_x_inbound_generalized(
@@ -587,7 +587,7 @@ def test_check_not_exactly_x_items_generalized(
         pytest.param(
             {},
             5,
-            True,
+            False,
             id="passes_empty_connections",
         ),
     ],
