@@ -1,6 +1,9 @@
 from types import SimpleNamespace
 
-from mex.extractors.utils import collect_related_identifiers
+from mex.extractors.utils import (
+    collect_related_identifier_counts,
+    collect_related_identifiers,
+)
 
 
 def test_collect_related_identifiers_keeps_duplicate_references() -> None:
@@ -16,3 +19,16 @@ def test_collect_related_identifiers_keeps_duplicate_references() -> None:
         "resource-b",
         "resource-b",
     ]
+
+
+def test_collect_related_identifier_counts_groups_duplicate_references() -> None:
+    items = [
+        SimpleNamespace(usedIn="resource-a"),
+        SimpleNamespace(usedIn="resource-a"),
+        SimpleNamespace(usedIn=["resource-b", None, "resource-b"]),
+    ]
+
+    assert collect_related_identifier_counts(items, ["usedIn"]) == {
+        "resource-a": 2,
+        "resource-b": 2,
+    }

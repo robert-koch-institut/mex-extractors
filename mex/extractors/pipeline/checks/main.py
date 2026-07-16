@@ -86,7 +86,7 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
 
 def get_latest_num_items(
     events: Sequence[EventLogRecord], rule_name: str
-) -> int | list[str] | dict[str, int] | None:
+) -> int | dict[str, int] | None:
     """Get latest metadata from materialization events."""
     if not events:
         return None
@@ -121,10 +121,12 @@ def get_latest_num_items(
         }
 
     if rule_name == "less_than_x_inbound":
-        identifiers = num_items_metadata.value
-        if not isinstance(identifiers, list):
+        connections = num_items_metadata.value
+        if not isinstance(connections, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
-        return [str(identifier) for identifier in identifiers]
+        return {
+            identifier: int(str(count)) for identifier, count in connections.items()
+        }
 
     return int(str(num_items_metadata.value))
 
@@ -157,9 +159,9 @@ def get_historic_count(
     return 0
 
 
-def check_static_rule(
+def check_static_rule(  # noqa: PLR0911
     rule_name: str,
-    current_number_of_items: int | list[str] | dict[str, int],
+    current_number_of_items: int | dict[str, int],
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
@@ -180,11 +182,15 @@ def check_static_rule(
         return True  # TODO @MX-2298: revert to returning the result of the comparison
     if rule_name == "less_than_x_inbound":
         # fail if any of the inbound connection counts is smaller than threshold
-        if not isinstance(current_number_of_items, list):
+        if not isinstance(current_number_of_items, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
-        return len(current_number_of_items) >= threshold
+        if not current_number_of_items and threshold > 0:
+            return False
+        return all(count >= threshold for count in current_number_of_items.values())
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold
+        if not current_number_of_items and threshold > 0:
+            return False
         return all(
             count >= threshold
             for count in current_number_of_items.values()  # type: ignore [union-attr]

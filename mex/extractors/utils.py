@@ -19,7 +19,7 @@ def load_yaml(path: PathLike[str]) -> dict[str, Any]:
 def count_outbound_connections(variable: ExtractedVariable) -> int:
     """Count the number of outbound connections for a given ExtractedVariable."""
     count = 0
-    for value in (variable.belongsTo, variable.usedIn, variable.hadPrimarySource):
+    for value in (variable.belongsTo, variable.usedIn):
         if value is None:
             continue
         if isinstance(value, list):
@@ -51,3 +51,16 @@ def collect_related_identifiers(
                 identifiers.append(str(related_value))
 
     return identifiers
+
+
+def collect_related_identifier_counts(
+    items: Iterable[Any],
+    relation_fields: Sequence[str],
+) -> dict[str, int]:
+    """Collect counts of identifiers referenced by relation fields on a collection."""
+    identifier_counts: dict[str, int] = {}
+
+    for identifier in collect_related_identifiers(items, relation_fields):
+        identifier_counts[identifier] = identifier_counts.get(identifier, 0) + 1
+
+    return identifier_counts

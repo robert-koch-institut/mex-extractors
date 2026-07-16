@@ -48,7 +48,7 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variables,
 )
 from mex.extractors.utils import (
-    collect_related_identifiers,
+    collect_related_identifier_counts,
     count_outbound_connections,
     load_yaml,
 )
@@ -281,7 +281,7 @@ def synopse_extracted_variables(
         v.identifierInPrimarySource: count_outbound_connections(v)
         for v in extracted_variables
     }
-    inbound_connections = collect_related_identifiers(
+    inbound_connections = collect_related_identifier_counts(
         extracted_variables,
         ["usedIn"],
     )

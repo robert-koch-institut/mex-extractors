@@ -15,7 +15,10 @@ from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifie
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import Settings
 from mex.extractors.sinks import load
-from mex.extractors.utils import collect_related_identifiers, load_yaml
+from mex.extractors.utils import (
+    collect_related_identifier_counts,
+    load_yaml,
+)
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
@@ -99,7 +102,7 @@ def voxco_extracted_variables(
         voxco_variables_by_name_str,
     )
     load(extracted_variables)
-    inbound_connections = collect_related_identifiers(
+    inbound_connections = collect_related_identifier_counts(
         extracted_variables,
         ["usedIn"],
     )

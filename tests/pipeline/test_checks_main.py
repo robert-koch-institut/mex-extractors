@@ -159,18 +159,18 @@ def test_get_historical_events(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
                         "inbound_connections": SimpleNamespace(
-                            value=["id-a", "id-b", "id-a"]
+                            value={"id-a": 2, "id-b": 1}
                         )
                     },
                 ),
             ],
             "less_than_x_inbound",
-            ["id-a", "id-b", "id-a"],
+            {"id-a": 2, "id-b": 1},
         ),
     ],
 )
 def test_get_latest_num_items(
-    events: list[Any], rule_name: str, expected: int | dict[str, int] | list[str]
+    events: list[Any], rule_name: str, expected: int | dict[str, int]
 ) -> None:
     assert (
         get_latest_num_items(cast("list[EventLogRecord]", events), rule_name=rule_name)
@@ -214,7 +214,7 @@ def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
 )
 def test_check_less_than_x_inbound_generalized(
     monkeypatch: MonkeyPatch,
-    current_count: list[str],
+    current_count: dict[str, int],
     rule_threshold: int,
     passed: bool,  # noqa: FBT001
 ) -> None:
@@ -224,7 +224,7 @@ def test_check_less_than_x_inbound_generalized(
     )
 
     class MockEvent:
-        def __init__(self, inbound_connections: list[str]) -> None:
+        def __init__(self, inbound_connections: dict[str, int]) -> None:
             self.asset_materialization = SimpleNamespace(
                 metadata={
                     "inbound_connections": SimpleNamespace(value=inbound_connections)
