@@ -194,7 +194,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
-                identifierInPrimarySource=synopse_id,
+                identifierInPrimarySource=symopse_id,
                 label=variable.textbox21 or variable.textbox24,
                 usedIn=used_in,
                 valueSet=sorted(
@@ -456,7 +456,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if project.studien_art_typ
             else []
         )
-        rights = rights_by_dstyp_id[str(study.dstyp_id)]
+        rights = rights_by_ds_typ_id[str(study.dstyp_id)]
         temporal = None
         if study.feldstart and study.feldende:
             temporal = f"{study.feldstart}-{study.feldende}"
