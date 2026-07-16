@@ -17,9 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- add wikidata-fixture to some extractor test
-
 ### Security
+
+## [1.15.2] - 2026-07-09
+
+### Changes
+
+- upgrade dependency versions
+
+## [1.15.1] - 2026-07-09
+
+### Added
+
+- add reconnection logic in grippeweb for refreshing kerberos tickets
+
+### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
+
+### Fixed
+
+- add wikidata-fixture to some extractor test
 
 ## [1.15.0] - 2026-06-30
 

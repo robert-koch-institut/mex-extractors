@@ -1,6 +1,12 @@
+import contextlib
 import platform
 from subprocess import PIPE, STDOUT, Popen
-from typing import Any
+from typing import Any, cast
+
+import backoff
+
+# https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
+import pyodbc  # type: ignore[import-not-found]
 
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
@@ -18,9 +24,10 @@ class GrippewebConnector(BaseConnector):
 
     def __init__(self) -> None:
         """Create a new connector instance."""
-        # https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
-        import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
+        self._connection = self._setup_connection()
 
+    def _setup_connection(self) -> pyodbc.Connection:
+        """Set up a new pyodbc connection, refreshing the Kerberos ticket if needed."""
         settings = ExtractorSettings.get()
         if platform.system() != "Windows":  # pragma: no cover
             process = Popen(  # noqa: S603
@@ -34,9 +41,25 @@ class GrippewebConnector(BaseConnector):
                 input=settings.kerberos_password.get_secret_value()
             )
             logger.info(stdout)
-            logger.error(stderr)
-        self._connection = pyodbc.connect(settings.grippeweb.mssql_connection_dsn)
+            if stderr:
+                logger.error(stderr)
 
+        return pyodbc.connect(settings.grippeweb.mssql_connection_dsn)
+
+    def reconnect(self) -> None:
+        """Close current connection and initiate a new one."""
+        self.close()
+        self._connection = self._setup_connection()
+
+    @backoff.on_exception(
+        wait_gen=backoff.fibo,
+        exception=pyodbc.Error,  # Catches OperationalError, DatabaseError, etc.
+        max_tries=2,
+        logger=logger,
+        on_backoff=lambda details: cast(
+            "GrippewebConnector", details["args"][0]
+        ).reconnect(),
+    )
     def parse_columns_by_column_name(self, table_name: str) -> dict[str, list[Any]]:
         """Execute whitelisted queries and zip results to column name."""
         with self._connection.cursor() as cursor:
@@ -52,4 +75,6 @@ class GrippewebConnector(BaseConnector):
 
     def close(self) -> None:
         """Close the underlying connection."""
-        self._connection.close()
+        if getattr(self, "_connection", None):
+            with contextlib.suppress(pyodbc.Error):
+                self._connection.close()
