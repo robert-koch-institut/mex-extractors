@@ -170,6 +170,16 @@ def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
     deque(s3.load(publisher_items.items), maxlen=0)
 
 
+@asset(group_name="publisher")
+def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
+    """Write received merged items to sink which can be either s3 (default) or as ndjson."""
+    settings = Settings.get()
+    if settings.publisher.sink == "s3":
+        sink = S3Sink.get()
+    # else sink = NdjsonSink.get() #TODO
+    # deque(s3.load(publisher_items.items), maxlen=0) oder Ndjson sink
+
+
 @entrypoint(Settings)
 def run() -> None:  # pragma: no cover
     """Run the publisher job in-process."""
