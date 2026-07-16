@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import lru_cache
 from typing import TYPE_CHECKING, cast
 
 from mex.common.models import (
@@ -7,6 +8,7 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
+    ExtractedPerson,
     ExtractedResource,
     ResourceMapping,
 )
@@ -16,13 +18,15 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
-from mex.extractors.ldap.helpers import get_ldap_merged_contact_id_by_mail
+from mex.extractors.ldap.helpers import (
+    get_ldap_extracted_person_by_query,
+    get_ldap_merged_contact_id_by_mail,
+)
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.seq_repo.extract import extract_source_project_coordinator_by_name
 from mex.extractors.settings import Settings
 
 if TYPE_CHECKING:
@@ -47,7 +51,7 @@ def transform_seq_repo_activities_to_extracted_activities(
 
     for source in seq_repo_sources:
         contact, responsible_units = get_resolved_project_coordinators_and_units(
-            source.project_coordinators, seq_repo_sources
+            source.project_coordinators
         )
         involved_person = [c for c in contact if isinstance(c, MergedPersonIdentifier)]
         extracted_activity = ExtractedActivity(
@@ -141,7 +145,7 @@ def transform_seq_repo_resource_to_extracted_resource(
         activity = seq_repo_activities.get(source.project_id)
 
         contact, units_in_charge = get_resolved_project_coordinators_and_units(
-            source.project_coordinators, seq_repo_sources
+            source.project_coordinators
         )
         contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
         keyword = list(shared_keyword)
@@ -240,9 +244,27 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     )
 
 
+@lru_cache(maxsize=1024)
+def extract_person_or_contact_point_id_by_name(
+    project_coordinator: str,
+) -> MergedContactPointIdentifier | ExtractedPerson | None:
+    """Extract Persons by their query string for source project coordinators.
+
+    Args:
+        project_coordinator: string of project coordinator
+
+    Returns:
+        extracted person, contact id or None
+    """
+    if person := get_ldap_extracted_person_by_query(
+        sam_account_name=project_coordinator
+    ):
+        return person
+    return get_ldap_merged_contact_id_by_mail(mail=f"{project_coordinator}@rki.de")
+
+
 def get_resolved_project_coordinators_and_units(
     project_coordinators: list[str],
-    seq_repo_sources: list[SeqRepoSource],
 ) -> tuple[
     list[
         MergedContactPointIdentifier
@@ -255,14 +277,10 @@ def get_resolved_project_coordinators_and_units(
 
     Args:
         project_coordinators: Seq Repo raw project coordinator names
-        seq_repo_sources: Seq Repo extracted sources
 
     Returns:
         Resolved ids project coordinator and units
     """
-    seq_repo_extracted_persons_by_name = extract_source_project_coordinator_by_name(
-        seq_repo_sources
-    )
     settings = Settings.get()
     project_coordinators_ids: set[
         MergedContactPointIdentifier
@@ -271,18 +289,15 @@ def get_resolved_project_coordinators_and_units(
     ] = set()
     units_in_charge: set[MergedOrganizationalUnitIdentifier] = set()
     for pc in project_coordinators:
-        person = seq_repo_extracted_persons_by_name.get(pc)
-        contact_id = get_ldap_merged_contact_id_by_mail(mail=f"{pc}@rki.de")
-        if not person or contact_id:
+        person_or_contact_id = extract_person_or_contact_point_id_by_name(pc)
+        if not person_or_contact_id:
             continue
-        project_coordinators_ids.add(
-            cast(
-                "MergedContactPointIdentifier | MergedPersonIdentifier | MergedOrganizationalUnitIdentifier",  # noqa: E501
-                person.stableTargetId or contact_id,
-            )
-        )
-        if unit := person.memberOf:
-            units_in_charge.update(unit)
+        if isinstance(person_or_contact_id, ExtractedPerson):
+            project_coordinators_ids.add(person_or_contact_id.stableTargetId)
+            if unit := person_or_contact_id.memberOf:
+                units_in_charge.update(unit)
+        else:
+            project_coordinators_ids.add(person_or_contact_id)
 
     if not units_in_charge:
         units_in_charge = cast(
