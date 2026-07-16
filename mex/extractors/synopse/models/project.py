@@ -17,7 +17,7 @@ class ProjektUndStudienverwaltung(BaseRawData):
     studien_id: str = Field(..., alias="StudienID")
     studie: str | None = Field(None, alias="Studie")
     studien_art_typ: str | None = Field(None, alias="StudienArtTyp")
-    projekt_studientitel: str = Field(..., alias="ProjektStudientitel")
+    projekt_studientitel: str | None = Field(None, alias="ProjektStudientitel")
     beschreibung_studie: str | None = Field(None, alias="BeschreibungStudie")
     beitragende: str | None = Field(None, alias="Beitragende")
     verantwortliche_oe: str | None = Field(None, alias="VerantwortlicheOE")
