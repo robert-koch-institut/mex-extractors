@@ -12,7 +12,6 @@ from mex.extractors.synopse.models.variable import Variablenuebersicht
         {
             "textbox49": -97,
             "originalfrage": None,
-            "studie_id1": "STUDY1",
             "studie_id2": 12345,
             "symopse_id": 1,
             "textbox51": "Nicht erhoben",
@@ -27,7 +26,6 @@ from mex.extractors.synopse.models.variable import Variablenuebersicht
         {
             "textbox49": np.nan,
             "originalfrage": None,
-            "studie_id1": "STUDY1",
             "studie_id2": 12345,
             "symopse_id": 1,
             "textbox51": np.nan,

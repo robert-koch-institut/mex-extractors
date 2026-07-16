@@ -28,7 +28,6 @@ def test_extract_variables() -> None:
         "textbox24": "KLMNO_F4",
         "textbox51": "Eingangsfrage wn/kA",
         "int_var": False,
-        "studie_id1": "BBCCDD1",
         "studie_id2": 1122999,
     }
     expected_second_variable = {
@@ -41,7 +40,6 @@ def test_extract_variables() -> None:
         "textbox24": "KLMNO_F4",
         "textbox51": "Weiß nicht",
         "int_var": False,
-        "studie_id1": "BBCCDD1",
         "studie_id2": 1122999,
     }
     variables = extract_variables()

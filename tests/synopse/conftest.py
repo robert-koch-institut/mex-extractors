@@ -40,7 +40,6 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
         {  # var 1, auspraegung 1
             "textbox49": -97,
             "originalfrage": None,
-            "studie_id1": "STUDY1",
             "studie_id2": 12345,
             "symopse_id": 1,
             "textbox51": "Nicht erhoben",
@@ -56,7 +55,6 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
         {  # var 1, auspraegung 2
             "textbox49": -98,
             "originalfrage": None,
-            "studie_id1": "STUDY1",
             "studie_id2": 12345,
             "symopse_id": 1,
             "textbox51": "Weiß nicht",
@@ -72,7 +70,6 @@ def synopse_variables_raw() -> list[dict[str, str | int | float | None]]:
         {  # var 2, missing var label, val_instrument
             "textbox49": 1,
             "originalfrage": None,
-            "studie_id1": "STUDY1",
             "studie_id2": 12345,
             "symopse_id": 2,
             "textbox51": "Ja",
