@@ -147,7 +147,7 @@ def transform_synopse_variables_belonging_to_same_variable_group_to_mex_variable
     variables = sorted(variables, key=lambda x: x.symopse_id)
 
     extracted_variables = []
-    for synopse_id, levels_iter in watch_progress(
+    for symopse_id, levels_iter in watch_progress(
         groupby(variables, lambda x: x.symopse_id),
         "transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables",
     ):
