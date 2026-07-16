@@ -17,7 +17,7 @@ def test_extract_blueant_sources_from_api() -> None:
     assert sources[0].model_fields_set == BlueAntSource.model_fields.keys()
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mocked_blueant")
+@pytest.mark.usefixtures("mocked_blueant")
 def test_extract_blueant_sources_from_api_mocked() -> None:
     expected_source = {
         k: v
