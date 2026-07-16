@@ -424,7 +424,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if study.beschreibung
             else []
         )
-        end = TemporalEntity(study.feld_ende) if study.feld_ende else None
+        end = TemporalEntity(study.feldende) if study.feldende else None
         has_legal_basis = (
             [Text(value=study.rechte, language=TextLanguage.DE)] if study.rechte else []
         )
@@ -458,7 +458,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             else []
         )
         rights = rights_by_dstyp_id[str(study.dstyp_id)]
-        start = TemporalEntity(study.feld_start) if study.feld_start else None
+        start = TemporalEntity(study.feldstart) if study.feldstart else None
 
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues

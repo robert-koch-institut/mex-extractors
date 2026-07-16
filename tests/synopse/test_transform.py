@@ -4,7 +4,6 @@ import pytest
 
 from mex.common.testing import Joker
 from mex.common.types import (
-    Identifier,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationIdentifier,
@@ -210,60 +209,37 @@ def test_transform_synopse_data_to_mex_resources(
 ) -> None:
 
     expected_resource = {
-        "accessPlatform": [str(Identifier.generate(seed=236))],
+        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "identifierInPrimarySource": "12345-Titel-17",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
+        "modified": "2022",
+        "wasGeneratedBy": "fIwPZ5WUfvpP3V2xdFFnTr",
         "contact": ["6rqNvZSApUHlz8GkkVP48"],
-        "contributingUnit": [
-            "cjna2jitPngp6yIV63cdi9",  # FG 99
-            "6rqNvZSApUHlz8GkkVP48",  # C1
-        ],
-        "description": [
-            {"language": TextLanguage.DE, "value": "ein heikles Unterfangen."}
-        ],
-        "end": "1971-02",
-        "hadPrimarySource": str(
-            get_extracted_primary_source_id_by_name("report-server")
-        ),
-        "hasLegalBasis": [
-            {
-                "language": TextLanguage.DE,
-                "value": "Niemand darf irgendwas.",
-            },
-        ],
+        "theme": ["https://mex.rki.de/item/theme-11"],
+        "title": [{"value": "Titel", "language": "de"}],
+        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
+        "accessPlatform": ["bFQoRhcVH5DHYe"],
+        "contributingUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
+        "description": [{"value": "ein heikles Unterfangen.", "language": "de"}],
+        "hasLegalBasis": [{"value": "Niemand darf irgendwas.", "language": "de"}],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
-        "identifier": Joker(),
-        "identifierInPrimarySource": ("12345-Titel-17"),
         "keyword": [
-            {"language": TextLanguage.DE, "value": "Alkohol"},
-            {"language": TextLanguage.DE, "value": "Alter und Geschlecht"},
-            {"language": TextLanguage.DE, "value": "Drogen"},
+            {"value": "Alkohol", "language": "de"},
+            {"value": "Alter und Geschlecht", "language": "de"},
+            {"value": "Drogen", "language": "de"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "modified": "2022",
-        "publisher": [extracted_organization_rki.stableTargetId],
+        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceCreationMethod": [
-            "https://mex.rki.de/item/resource-creation-method-2",
+            "https://mex.rki.de/item/resource-creation-method-2"
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
-        "resourceTypeSpecific": [
-            {
-                "language": TextLanguage.DE,
-                "value": "Monitoring-studie",
-            },
-        ],
-        "rights": [
-            {
-                "language": TextLanguage.DE,
-                "value": "Lorem",
-            },
-        ],
-        "stableTargetId": Joker(),
-        "start": "1970-01",
-        "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"language": TextLanguage.DE, "value": "Titel"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
-        "wasGeneratedBy": str(extracted_activity.stableTargetId),
+        "resourceTypeSpecific": [{"value": "Monitoring-studie", "language": "de"}],
+        "rights": [{"value": "Lorem", "language": "de"}],
+        "identifier": "c8uxmFTO2QmNb7xmfUReke",
+        "stableTargetId": "ecfQkgjG0kk6bqlO0pdCbx",
     }
+
     resources = transform_synopse_data_to_mex_resources(
         [synopse_studies[0]],
         [synopse_project],
