@@ -36,10 +36,10 @@ if TYPE_CHECKING:
         ExtractedVariableGroup,
         ResourceMapping,
     )
-    from mex.extractors.synopse.models.project import SynopseProject
-    from mex.extractors.synopse.models.study import SynopseStudy
-    from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-    from mex.extractors.synopse.models.variable import SynopseVariable
+    from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
+    from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
+    from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
+    from mex.extractors.synopse.models.variable import Variablenuebersicht
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
@@ -76,7 +76,7 @@ def test_transform_synopse_studies_into_access_platforms(
 
 
 def test_transform_overviews_to_resource_lookup(
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
     synopse_resources: list[ExtractedResource],
 ) -> None:
     lookup = transform_overviews_to_resource_lookup(
@@ -86,9 +86,9 @@ def test_transform_overviews_to_resource_lookup(
 
 
 def test_transform_synopse_variables_to_mex_variable_groups(
-    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[Variablenuebersicht]],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> None:
     expected_variable_group = {
         "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
@@ -114,18 +114,16 @@ def test_transform_synopse_variables_to_mex_variable_groups(
 
 
 def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_variables(
-    synopse_variables: list[SynopseVariable],
+    synopse_variables: list[Variablenuebersicht],
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
     }
     synopse_variables = [
-        var
-        for var in synopse_variables
-        if var.thema_und_fragebogenausschnitt == "Krankheiten (1101)"
+        var for var in synopse_variables if var.textbox5 == "Krankheiten (1101)"
     ]
     variable_group = variable_group_by_identifier_in_primary_source[
         "Krankheiten (1101)-12345-set1-17"
@@ -171,10 +169,10 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
 
 
 def test_transform_synopse_variables_to_mex_variables(
-    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[Variablenuebersicht]],
     extracted_variable_groups: list[ExtractedVariableGroup],
     resources_by_synopse_id: dict[str, ExtractedResource],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> None:
     variable_group_by_identifier_in_primary_source = {
         group.identifierInPrimarySource: group for group in extracted_variable_groups
@@ -203,14 +201,14 @@ def test_transform_synopse_variables_to_mex_variables(
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
-    synopse_project: SynopseProject,
-    synopse_studies: list[SynopseStudy],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
+def test_transform_synopse_data_to_mex_resources(
+    synopse_project: ProjektUndStudienverwaltung,
+    synopse_studies: list[MetadatenZuDatensaetzen],
     extracted_activity: ExtractedActivity,
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
 ) -> None:
+
     expected_resource = {
         "accessPlatform": [str(Identifier.generate(seed=236))],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
@@ -239,9 +237,9 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
             {"language": TextLanguage.DE, "value": "Alkohol"},
             {"language": TextLanguage.DE, "value": "Alter und Geschlecht"},
             {"language": TextLanguage.DE, "value": "Drogen"},
-            {"language": TextLanguage.DE, "value": "Krankheiten allgemein"},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
+        "modified": "2022",
         "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -250,7 +248,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
         "resourceTypeSpecific": [
             {
                 "language": TextLanguage.DE,
-                "value": "Monitoring-Studie",
+                "value": "Monitoring-studie",
             },
         ],
         "rights": [
@@ -269,7 +267,6 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
     resources = transform_synopse_data_to_mex_resources(
         [synopse_studies[0]],
         [synopse_project],
-        synopse_variables_by_study_id,
         [extracted_activity],
         extracted_organization_rki,
         synopse_resource,
@@ -282,7 +279,7 @@ def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_projects_to_mex_activities(
-    synopse_projects: list[SynopseProject],
+    synopse_projects: list[ProjektUndStudienverwaltung],
     synopse_activity: ActivityMapping,
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -296,8 +293,9 @@ def test_transform_synopse_projects_to_mex_activities(
 
     assert synopse_project.projektende
     assert synopse_project.projektbeginn
+
     expected_activity = {
-        "abstract": [{"value": synopse_project.beschreibung_der_studie}],
+        "abstract": [{"value": synopse_project.beschreibung_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
         "contact": ["6rqNvZSApUHlz8GkkVP48"],
         "documentation": [
@@ -324,7 +322,7 @@ def test_transform_synopse_projects_to_mex_activities(
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],
         "succeeds": Joker(),
         "theme": ["https://mex.rki.de/item/theme-36"],
-        "title": [{"language": TextLanguage.DE, "value": "Studie zu Lorem und Ipsum"}],
+        "title": [{"language": TextLanguage.DE, "value": "studie zu Lorem und Ipsum"}],
     }
 
     activities = transform_synopse_projects_to_mex_activities(

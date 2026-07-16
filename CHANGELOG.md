@@ -80,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 
