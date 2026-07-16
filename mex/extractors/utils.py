@@ -19,7 +19,7 @@ def load_yaml(path: PathLike[str]) -> dict[str, Any]:
 def count_outbound_connections(variable: ExtractedVariable) -> int:
     """Count the number of outbound connections for a given ExtractedVariable."""
     count = 0
-    for value in (variable.belongsTo, variable.usedIn):
+    for value in variable.belongsTo:
         if value is None:
             continue
         if isinstance(value, list):
