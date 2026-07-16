@@ -40,7 +40,7 @@ def test_extract_voxco_organizations(
     }
 
 
-@pytest.mark.usefixtures("mocked_ldap")
+@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_ldap_persons_voxco(
     voxco_resource_mappings: list[ResourceMapping],
     roland_resolved: ExtractedPerson,
