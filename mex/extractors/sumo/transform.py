@@ -478,7 +478,7 @@ def transform_feat_projection_variable_to_mex_variable(
     return [
         ExtractedVariable(
             belongsTo=stable_target_id_by_label_values[
-                f"{variable.feature_domain} {variable.feature_subdomain}" or ""
+                f"{variable.feature_domain} {variable.feature_subdomain}"
             ],
             description=Text(value=variable.feature_description),
             hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
