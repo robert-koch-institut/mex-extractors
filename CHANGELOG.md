@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- ruff sim222 compliance
+
 ### Security
 
 ## [1.15.2] - 2026-07-09
