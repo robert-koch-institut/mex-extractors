@@ -257,7 +257,7 @@ def synopse_variable_groups_by_identifier_in_primary_source(
     return {vg.identifierInPrimarySource: vg for vg in transformed_variable_groups}
 
 
-@asset(group_name="synopse", metadata={"entity_type": ("variable", "resource")})
+@asset(group_name="synopse", metadata={"entity_type": "variable"})
 def synopse_extracted_variables(
     context: AssetExecutionContext,
     synopse_variables_by_thema: dict[str, list[SynopseVariable]],
@@ -277,11 +277,11 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
-    outbound_by_identifier = {
+    outbound_connections_variable_group = {
         v.identifierInPrimarySource: count_outbound_connections(v)
         for v in extracted_variables
     }
-    inbound_connections = collect_related_identifier_counts(
+    outbound_connections_resource = collect_related_identifier_counts(
         extracted_variables,
         ["usedIn"],
     )
@@ -289,8 +289,9 @@ def synopse_extracted_variables(
     context.add_output_metadata(
         {
             "num_items": len(extracted_variables),
-            "outbound_connections": outbound_by_identifier,
-            "inbound_connections": inbound_connections,
+            "outbound_connections_variable_group": outbound_connections_variable_group,
+            "outbound_connections_resource": outbound_connections_resource,
+            "outbound_connections": outbound_connections_variable_group,
         }
     )
     return extracted_variables

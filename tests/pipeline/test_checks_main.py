@@ -38,22 +38,32 @@ def test_parse_time_frame(input_str: str, expected: timedelta) -> None:
 
 
 def test_get_rule(monkeypatch: MonkeyPatch) -> None:
-    rule_dict = {
-        "fail_if": "x_items_more_than",
-        "value": 10,
-        "time_frame": "7d",
-        "target_type": None,
-    }
-    check_model = AssetCheck(rules=[AssetCheckRule(**rule_dict)])
+    rule_dicts = [
+        {
+            "fail_if": "less_than_x_outbound",
+            "value": 1,
+            "time_frame": None,
+            "target_type": "VariableGroup",
+        },
+        {
+            "fail_if": "less_than_x_outbound",
+            "value": 2,
+            "time_frame": None,
+            "target_type": "Resource",
+        },
+    ]
+    check_model = AssetCheck(
+        rules=[AssetCheckRule(**rule_dict) for rule_dict in rule_dicts]
+    )
 
     monkeypatch.setattr(
         "mex.extractors.pipeline.checks.main.load_asset_check_from_settings",
         lambda *args, **kwargs: check_model,
     )
 
-    rule = get_rule("x_items_more_than", "dummy", "dummy")
-    assert rule["value"] == 10
-    assert rule["time_frame"] == "7d"
+    rule = get_rule("less_than_x_outbound", "dummy", "dummy", "Resource")
+    assert rule["value"] == 2
+    assert rule["target_type"] == "Resource"
 
 
 def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
@@ -123,7 +133,7 @@ def test_get_historical_events(
 
 
 @pytest.mark.parametrize(
-    ("events", "rule_name", "expected"),
+    ("events", "rule_name", "target_type", "expected"),
     [
         (
             [
@@ -137,6 +147,7 @@ def test_get_historical_events(
                 ),
             ],
             "x_items_more_than",
+            None,
             132,
         ),
         (
@@ -144,13 +155,14 @@ def test_get_historical_events(
                 DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
-                        "outbound_connections": SimpleNamespace(
+                        "outbound_connections_variable_group": SimpleNamespace(
                             value={"id-a": 4, "id-b": 2}
                         )
                     },
                 ),
             ],
             "less_than_x_outbound",
+            "VariableGroup",
             {"id-a": 4, "id-b": 2},
         ),
         (
@@ -158,22 +170,30 @@ def test_get_historical_events(
                 DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
-                        "inbound_connections": SimpleNamespace(
+                        "outbound_connections_resource": SimpleNamespace(
                             value={"id-a": 2, "id-b": 1}
                         )
                     },
                 ),
             ],
-            "less_than_x_inbound",
+            "less_than_x_outbound",
+            "Resource",
             {"id-a": 2, "id-b": 1},
         ),
     ],
 )
 def test_get_latest_num_items(
-    events: list[Any], rule_name: str, expected: int | dict[str, int]
+    events: list[Any],
+    rule_name: str,
+    target_type: str | None,
+    expected: int | dict[str, int],
 ) -> None:
     assert (
-        get_latest_num_items(cast("list[EventLogRecord]", events), rule_name=rule_name)
+        get_latest_num_items(
+            cast("list[EventLogRecord]", events),
+            rule_name=rule_name,
+            target_type=target_type,
+        )
         == expected
     )
 
@@ -207,8 +227,10 @@ def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
 @pytest.mark.parametrize(
     ("current_count", "rule_threshold", "passed"),
     [
-        pytest.param({"id-a": 2, "id-b": 1}, 1, True, id="passes_above_threshold"),
-        pytest.param({"id-a": 1}, 2, False, id="fails_below_threshold"),
+        pytest.param({"id-a": 2, "id-b": 1}, 3, True, id="passes_at_total_threshold"),
+        pytest.param(
+            {"id-a": 1, "id-b": 1}, 3, False, id="fails_below_total_threshold"
+        ),
         pytest.param({}, 2, False, id="fails_empty"),
     ],
 )

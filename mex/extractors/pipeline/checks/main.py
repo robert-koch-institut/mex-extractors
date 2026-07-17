@@ -45,11 +45,22 @@ def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetChe
     return AssetCheck.model_validate(load_yaml(path))
 
 
-def get_rule(rule: str, extractor: str, entity_type: str) -> dict[str, Any]:
+def get_rule(
+    rule: str,
+    extractor: str,
+    entity_type: str,
+    target_type: str | None = None,
+) -> dict[str, Any]:
     """Load rule model from YAML file for given rule type."""
     check_model = load_asset_check_from_settings(
         extractor=extractor, entity_type=entity_type
     )
+    if target_type is not None:
+        return next(
+            r
+            for r in check_model.rules
+            if r.fail_if == rule and r.target_type == target_type
+        ).model_dump()
     return next(r for r in check_model.rules if r.fail_if == rule).model_dump()
 
 
@@ -85,7 +96,9 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
 
 
 def get_latest_num_items(
-    events: Sequence[EventLogRecord], rule_name: str
+    events: Sequence[EventLogRecord],
+    rule_name: str,
+    target_type: str | None = None,
 ) -> int | dict[str, int] | None:
     """Get latest metadata from materialization events."""
     if not events:
@@ -96,12 +109,19 @@ def get_latest_num_items(
         return None
 
     metadata_key_by_rule = {
-        "less_than_x_inbound": "inbound_connections",
-        "less_than_x_outbound": "outbound_connections",
+        ("less_than_x_inbound", None): "inbound_connections",
+        ("less_than_x_outbound", None): "outbound_connections",
+        (
+            "less_than_x_outbound",
+            "VariableGroup",
+        ): "outbound_connections_variable_group",
+        ("less_than_x_outbound", "Resource"): "outbound_connections_resource",
     }
-    num_items_metadata = latest_materialization.metadata.get(
-        metadata_key_by_rule.get(rule_name, "num_items")
+    metadata_key = metadata_key_by_rule.get(
+        (rule_name, target_type),
+        metadata_key_by_rule.get((rule_name, None), "num_items"),
     )
+    num_items_metadata = latest_materialization.metadata.get(metadata_key)
 
     if num_items_metadata is None:
         return None
@@ -181,12 +201,12 @@ def check_static_rule(  # noqa: PLR0911
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
     if rule_name == "less_than_x_inbound":
-        # fail if any of the inbound connection counts is smaller than threshold
+        # fail if accumulated inbound connection count is smaller than threshold
         if not isinstance(current_number_of_items, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
         if not current_number_of_items and threshold > 0:
             return False
-        return all(count >= threshold for count in current_number_of_items.values())
+        return sum(current_number_of_items.values()) >= threshold
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold
         if not current_number_of_items and threshold > 0:
@@ -234,12 +254,13 @@ def check_historical_rule(
     return True
 
 
-def check_item_count_rule(
+def check_item_count_rule(  # noqa: PLR0913
     context: AssetCheckExecutionContext,
     rule_name: str,
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
+    target_type: str | None = None,
 ) -> bool:
     """Checks extracted items are complying to given rule and threshold.
 
@@ -249,6 +270,7 @@ def check_item_count_rule(
         asset_key: Dagster AssetKey object.
         extractor: Name of the extractor that produced the asset.
         entity_type: Entity Type for the asset check.
+        target_type: Optional target type to disambiguate duplicate rule names.
 
     Returns True if check passes, raises ValueError if check fails.
     """
@@ -257,7 +279,7 @@ def check_item_count_rule(
         raise ValueError(msg)
 
     try:
-        rule = get_rule(rule_name, extractor, entity_type)
+        rule = get_rule(rule_name, extractor, entity_type, target_type)
     except FileNotFoundError:
         logger.error("No asset check rules found for %s", asset_key)
         return True
@@ -268,7 +290,7 @@ def check_item_count_rule(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
         )
     )
-    current_number_of_items = get_latest_num_items(events, rule_name)
+    current_number_of_items = get_latest_num_items(events, rule_name, target_type)
     if current_number_of_items is None:
         return True
 
