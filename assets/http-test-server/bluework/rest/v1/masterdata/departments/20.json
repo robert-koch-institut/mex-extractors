@@ -1,0 +1,14 @@
+{
+    "department": {
+        "active": true,
+        "additional": "C1",
+        "deputyIds": [],
+        "fullName": "C1",
+        "id": 20,
+        "position": 0,
+        "text": "C1"
+    },
+    "status": {
+        "code": 200
+    }
+}

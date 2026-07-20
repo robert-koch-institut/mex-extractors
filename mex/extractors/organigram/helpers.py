@@ -13,22 +13,22 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.sorters import topological_sort
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
+    from mex.common.models import ExtractedOrganizationalUnit
     from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
 @lru_cache(maxsize=1)
-def _get_cached_unit_merged_ids_by_synonyms() -> dict[
-    str, list[MergedOrganizationalUnitIdentifier]
-]:
-    """Extract, transform and load the organigram, then group unit IDs by synonym.
+def _cached_get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
+    """Extract, transform and load the organigram, then return units.
 
     Returns:
-        Lookup of organizational unit identifiers by synonym
+        extracted organizational units
     """
     rki_organization_id = get_wikidata_extracted_organization_id_by_name("RKI")
     if not rki_organization_id:
@@ -40,7 +40,30 @@ def _get_cached_unit_merged_ids_by_synonyms() -> dict[
         get_extracted_primary_source_id_by_name("organigram"),
         rki_organization_id,
     )
+    topological_sort(
+        extracted_organizational_units,
+        "stableTargetId",
+        parent_key="parentUnit",
+    )
     load(extracted_organizational_units)
+    return extracted_organizational_units
+
+
+def get_extracted_organizational_units() -> list[ExtractedOrganizationalUnit]:
+    """Return cached organizational units."""
+    return _cached_get_extracted_organizational_units()
+
+
+@lru_cache(maxsize=1)
+def _get_cached_unit_merged_ids_by_synonyms() -> dict[
+    str, list[MergedOrganizationalUnitIdentifier]
+]:
+    """Extract, transform and load the organigram, then group unit IDs by synonym.
+
+    Returns:
+        Lookup of organizational unit identifiers by synonym
+    """
+    extracted_organizational_units = _cached_get_extracted_organizational_units()
     return get_unit_merged_ids_by_synonyms(extracted_organizational_units)
 
 

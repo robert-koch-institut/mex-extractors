@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
@@ -6,15 +5,10 @@ import requests
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.extractors.drop import DropApiConnector
 from mex.extractors.seq_repo.extract import (
-    extract_source_project_coordinator,
     extract_sources,
 )
-
-if TYPE_CHECKING:
-    from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 @pytest.mark.usefixtures("mocked_drop")
@@ -53,23 +47,3 @@ def test_extract_sources_fails_on_unexpected_number_of_files(
 
     with pytest.raises(MExError, match=r"Expected exactly one seq-repo file"):
         extract_sources()
-
-
-@pytest.mark.usefixtures("mocked_ldap")
-def test_extract_source_project_coordinator(
-    seq_repo_sources: list[SeqRepoSource],
-    ldap_frieda_fictitious: LDAPPerson,
-    ldap_roland_resolved: LDAPPerson,
-) -> None:
-    project_coordinators = extract_source_project_coordinator(seq_repo_sources)
-
-    assert project_coordinators[:2] == [
-        LDAPPersonWithQuery(
-            person=ldap_frieda_fictitious,
-            query="FictitiousF",
-        ),
-        LDAPPersonWithQuery(
-            person=ldap_roland_resolved,
-            query="ResolvedR",
-        ),
-    ]

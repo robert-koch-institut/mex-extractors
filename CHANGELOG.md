@@ -9,16 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- implement AssetCheck `less_than_x_outbound`
-- implement AssetCheck `not_exactly_x_items`
-- implement AssetCheck `x_percent_more_than`
-- link igs to seq-repo
-
 ### Changes
-
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/57105a
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/dd987e
-- dependency update(2026-06-02)
 
 ### Deprecated
 
@@ -26,9 +17,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- temporarily switch off not_exactly_x_items assets check
+- ruff sim222 compliance
 
 ### Security
+
+## [1.15.2] - 2026-07-09
+
+### Changes
+
+- upgrade dependency versions
+
+## [1.15.1] - 2026-07-09
+
+### Added
+
+- add reconnection logic in grippeweb for refreshing kerberos tickets
+
+### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
+
+### Fixed
+
+- add wikidata-fixture to some extractor test
+
+## [1.15.0] - 2026-06-30
+
+### Added
+
+- add first test data for http-test-server (blueant and datscha)
+- implement AssetCheck `less_than_x_outbound`
+- implement AssetCheck `not_exactly_x_items`
+- implement AssetCheck `x_percent_more_than`
+- link igs to seq-repo
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
+- use ldap convenience function and refactor ldap and organigram helper functions
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- dependency update(2026-06-16)
+- implement seq-repo fallback rule for units
+
+### Deprecated
+
+### Removed
+- dependency update(2026-06-26)
+
+### Fixed
+
+- temporarily switch off not_exactly_x_items assets check
 
 ## [1.14.1] - 2026-04-30
 
@@ -50,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 

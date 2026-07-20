@@ -1,28 +1,17 @@
 from dagster import AssetExecutionContext, asset
 
 from mex.common.cli import entrypoint
-from mex.common.ldap.extract import get_merged_ids_by_query_string
-from mex.common.ldap.models import LDAPPersonWithQuery
-from mex.common.ldap.transform import (
-    transform_ldap_persons_with_query_to_extracted_persons,
-)
 from mex.common.models import (
     AccessPlatformMapping,
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedOrganizationalUnit,
     ExtractedResource,
     ResourceMapping,
 )
-from mex.common.types import MergedPersonIdentifier
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.seq_repo.extract import (
-    extract_source_project_coordinator,
     extract_sources,
 )
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -42,55 +31,19 @@ def seq_repo_sources() -> list[SeqRepoSource]:
     return extract_sources()
 
 
-@asset(group_name="seq_repo")
-def seq_repo_ldap_persons_with_query(
-    seq_repo_sources: list[SeqRepoSource],
-) -> list[LDAPPersonWithQuery]:
-    """Extract source project coordinators."""
-    return extract_source_project_coordinator(seq_repo_sources)
-
-
-@asset(group_name="seq_repo")
-def seq_repo_merged_person_ids_by_query_string(
-    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
-    extracted_organization_rki: ExtractedOrganization,
-) -> dict[str, list[MergedPersonIdentifier]]:
-    """Get project coordinators merged ids."""
-    extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
-        seq_repo_ldap_persons_with_query,
-        get_extracted_primary_source_id_by_name("ldap"),
-        extracted_organizational_units,
-        extracted_organization_rki,
-    )
-    load(extracted_persons)
-    return {
-        str(query_string): [MergedPersonIdentifier(id_) for id_ in merged_ids]
-        for query_string, merged_ids in get_merged_ids_by_query_string(
-            seq_repo_ldap_persons_with_query,
-            get_extracted_primary_source_id_by_name("ldap"),
-        ).items()
-    }
-
-
 @asset(group_name="seq_repo", metadata={"entity_type": "organization"})
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
     )
-
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources,
         activity,
-        seq_repo_ldap_persons_with_query,
-        seq_repo_merged_person_ids_by_query_string,
     )
     load(mex_activities)
     activities_by_id_str = {
@@ -117,13 +70,11 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
 
 
 @asset(group_name="seq_repo", metadata={"entity_type": "resource"})
-def seq_repo_resources(  # noqa: PLR0913
+def seq_repo_resources(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
-    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
@@ -137,8 +88,6 @@ def seq_repo_resources(  # noqa: PLR0913
         seq_repo_extracted_activities_by_id_str,
         seq_repo_extracted_access_platform,
         resource,
-        seq_repo_ldap_persons_with_query,
-        seq_repo_merged_person_ids_by_query_string,
         extracted_organization_rki,
     )
     load(resources)

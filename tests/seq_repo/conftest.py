@@ -8,7 +8,6 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedAccessPlatform,
     ExtractedActivity,
-    ExtractedPerson,
     ResourceMapping,
 )
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -19,7 +18,6 @@ from mex.extractors.seq_repo.transform import (
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.common.types import MergedPersonIdentifier
     from mex.extractors.settings import Settings
 
 
@@ -114,14 +112,10 @@ def extracted_mex_access_platform(
 def extracted_mex_activities_dict(
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_activity: ActivityMapping,
-    seq_repo_ldap_persons_with_query: list[LDAPPersonWithQuery],
-    seq_repo_merged_person_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedActivity]:
     extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources,
         seq_repo_activity,
-        seq_repo_ldap_persons_with_query,
-        seq_repo_merged_person_ids_by_query_string,
     )
     return {
         activity.identifierInPrimarySource: activity
@@ -135,17 +129,3 @@ def seq_repo_ldap_persons_with_query(
 ) -> list[LDAPPersonWithQuery]:
     """Extract source project coordinators."""
     return [LDAPPersonWithQuery(person=ldap_roland_resolved, query="ResolvedR")]
-
-
-@pytest.fixture
-def seq_repo_merged_person_ids_by_query_string(
-    roland_resolved: ExtractedPerson,
-    juturna_felicitas: ExtractedPerson,
-    frieda_fictitious: ExtractedPerson,
-) -> dict[str, list[MergedPersonIdentifier]]:
-    """Get project coordinators merged ids."""
-    return {
-        "ResolvedR": [roland_resolved.stableTargetId],
-        "FelicitasJ": [juturna_felicitas.stableTargetId],
-        "FictitiousF": [frieda_fictitious.stableTargetId],
-    }
