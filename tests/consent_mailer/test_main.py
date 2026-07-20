@@ -9,7 +9,7 @@ from mex.extractors.consent_mailer.main import (
     consent_mailer_send_emails,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.mark.usefixtures("mocked_consent_backend_api_connector")
@@ -19,7 +19,7 @@ def test_job() -> None:
 
 
 def _req_auth() -> tuple[str, str]:
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     return (
         settings.consent_mailer.mailpit_api_user.get_secret_value(),
         settings.consent_mailer.mailpit_api_password.get_secret_value(),
@@ -27,14 +27,14 @@ def _req_auth() -> tuple[str, str]:
 
 
 def _req_verify() -> bool | str:
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     if isinstance(settings.verify_session, OpsPath):
         return settings.verify_session._path.absolute().as_posix()
     return settings.verify_session
 
 
 def _delete_messages() -> None:
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     response = requests.delete(
         f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",
         timeout=3,
@@ -46,7 +46,7 @@ def _delete_messages() -> None:
 
 
 def _get_messages() -> Any:  # noqa: ANN401
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
 
     response = requests.get(
         f"{settings.consent_mailer.mailpit_api_url}/api/v1/messages",

@@ -355,7 +355,7 @@ def test_transform_feat_projection_variable_to_mex_variable(
         "stableTargetId": Joker(),
         "belongsTo": [
             stable_target_id_by_label_values[
-                f"{variable.feature_domain} {variable.feature_subdomain}" or ""
+                f"{variable.feature_domain} {variable.feature_subdomain}"
             ]
         ],
         "description": [{"value": "specific RSV-ICD-10 codes"}],

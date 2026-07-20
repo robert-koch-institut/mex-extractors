@@ -7,7 +7,7 @@ from mex.common.connector import HTTPConnector
 from mex.common.exceptions import MExError
 from mex.extractors.blueant.models.person import BlueAntPerson, BlueAntPersonResponse
 from mex.extractors.blueant.models.project import BlueAntProject, BlueAntProjectResponse
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 
 
 class BlueAntConnector(HTTPConnector):
@@ -15,12 +15,12 @@ class BlueAntConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = ExtractorSettings.get()
+        settings = ExtractorsSettings.get()
         self.url = urljoin(settings.blueant.url, "rest/v1/")
 
     def _set_authentication(self) -> None:
         """Authenticate to the host."""
-        settings = ExtractorSettings.get()
+        settings = ExtractorsSettings.get()
         api_key = settings.blueant.api_key.get_secret_value()
         self.session.headers["Authorization"] = f"Bearer {api_key}"
 

@@ -30,7 +30,7 @@ from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import ExtractorSettings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
 
 
 @pytest.fixture
-def sumo_resources_feat(settings: ExtractorSettings) -> ResourceMapping:
+def sumo_resources_feat(settings: ExtractorsSettings) -> ResourceMapping:
     """Return feat SumoResource."""
     return ResourceMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "resource_feat_mock.yaml")
@@ -48,7 +48,7 @@ def sumo_resources_feat(settings: ExtractorSettings) -> ResourceMapping:
 
 
 @pytest.fixture
-def sumo_resources_nokeda(settings: ExtractorSettings) -> ResourceMapping:
+def sumo_resources_nokeda(settings: ExtractorsSettings) -> ResourceMapping:
     """Return feat SumoResource."""
     return ResourceMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
@@ -56,7 +56,7 @@ def sumo_resources_nokeda(settings: ExtractorSettings) -> ResourceMapping:
 
 
 @pytest.fixture
-def sumo_access_platform(settings: ExtractorSettings) -> AccessPlatformMapping:
+def sumo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "access-platform_mock.yaml")
@@ -78,7 +78,7 @@ def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
 
 
 @pytest.fixture
-def sumo_activity(settings: ExtractorSettings) -> ActivityMapping:
+def sumo_activity(settings: ExtractorsSettings) -> ActivityMapping:
     """Return Sumo Activity."""
     return ActivityMapping.model_validate(
         load_yaml(settings.sumo.mapping_path / "activity_mock.yaml")

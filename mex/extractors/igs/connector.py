@@ -4,7 +4,7 @@ import requests
 
 from mex.common.connector import HTTPConnector
 from mex.common.exceptions import MExError
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 
 
 class IGSConnector(HTTPConnector):
@@ -12,7 +12,7 @@ class IGSConnector(HTTPConnector):
 
     def _set_url(self) -> None:
         """Set url of the host."""
-        settings = ExtractorSettings.get()
+        settings = ExtractorsSettings.get()
         self.url = settings.igs.url
 
     def _check_availability(self) -> None:

@@ -4,7 +4,7 @@ from unittest.mock import ANY, MagicMock
 import pyodbc  # type: ignore[import-not-found]
 
 from mex.extractors.grippeweb.connector import GrippewebConnector
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from pytest import MonkeyPatch
@@ -48,7 +48,7 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
     mock_pyodbc_connect = MagicMock()
     monkeypatch.setattr("pyodbc.connect", mock_pyodbc_connect)
 
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
 
     connector = object.__new__(GrippewebConnector)
     # Call __init__ from the class to satisfy mypy's strict instance checking

@@ -21,7 +21,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.synopse.extract import (
     extract_projects,
@@ -35,10 +35,10 @@ from mex.extractors.synopse.extract import (
 from mex.extractors.synopse.filter import (
     filter_and_log_synopse_variables,
 )
-from mex.extractors.synopse.models.project import SynopseProject
-from mex.extractors.synopse.models.study import SynopseStudy
-from mex.extractors.synopse.models.study_overview import SynopseStudyOverview
-from mex.extractors.synopse.models.variable import SynopseVariable
+from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
+from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
+from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
+from mex.extractors.synopse.models.variable import Variablenuebersicht
 from mex.extractors.synopse.transform import (
     transform_overviews_to_resource_lookup,
     transform_synopse_data_to_mex_resources,
@@ -51,68 +51,66 @@ from mex.extractors.utils import count_outbound_connections, load_yaml
 
 
 @asset(group_name="synopse")
-def synopse_projects() -> list[SynopseProject]:
+def synopse_projects() -> list[ProjektUndStudienverwaltung]:
     """Extract projects from Synopse."""
     return extract_projects()
 
 
 @asset(group_name="synopse")
 def synopse_merged_person_ids_by_query_str(
-    synopse_projects: list[SynopseProject],
+    synopse_projects: list[ProjektUndStudienverwaltung],
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Extract project contributors from Synopse."""
     return extract_synopse_project_contributor_ids_by_query(synopse_projects)
 
 
 @asset(group_name="synopse")
-def synopse_studies() -> list[SynopseStudy]:
+def synopse_studies() -> list[MetadatenZuDatensaetzen]:
     """Extract studies from Synopse."""
     return extract_study_data()
 
 
 @asset(group_name="synopse")
-def synopse_study_overviews() -> list[SynopseStudyOverview]:
+def synopse_study_overviews() -> list[Datensatzuebersicht]:
     """Extract study overviews from Synopse."""
     return extract_study_overviews()
 
 
 @asset(group_name="synopse")
-def synopse_variables() -> list[SynopseVariable]:
+def synopse_variables() -> list[Variablenuebersicht]:
     """Extract variables from Synopse."""
     return filter_and_log_synopse_variables(extract_variables())
 
 
 @asset(group_name="synopse")
 def synopse_variables_by_study_id(
-    synopse_variables: list[SynopseVariable],
-) -> dict[int, list[SynopseVariable]]:
+    synopse_variables: list[Variablenuebersicht],
+) -> dict[int, list[Variablenuebersicht]]:
     """Convert Synopse data to synopse_variables_by_study_id."""
-    sorted_variables = sorted(synopse_variables, key=lambda v: v.studie_id)
+    sorted_variables = sorted(synopse_variables, key=lambda v: v.studie_id2)
     return {
-        studie_id: list(variables)
-        for studie_id, variables in groupby(sorted_variables, key=lambda v: v.studie_id)
-    }
-
-
-@asset(group_name="synopse")
-def synopse_variables_by_thema(
-    synopse_variables: list[SynopseVariable],
-) -> dict[str, list[SynopseVariable]]:
-    """Convert Synopse data to synopse_variables_by_thema."""
-    sorted_variables = sorted(
-        synopse_variables, key=lambda v: v.thema_und_fragebogenausschnitt
-    )
-    return {
-        thema: list(variables)
-        for thema, variables in groupby(
-            sorted_variables, key=lambda v: v.thema_und_fragebogenausschnitt
+        studie_id2: list(variables)
+        for studie_id2, variables in groupby(
+            sorted_variables, key=lambda v: v.studie_id2
         )
     }
 
 
 @asset(group_name="synopse")
+def synopse_variables_by_thema(
+    synopse_variables: list[Variablenuebersicht],
+) -> dict[str, list[Variablenuebersicht]]:
+    """Convert Synopse data to synopse_variables_by_thema."""
+    sorted_variables = sorted(synopse_variables, key=lambda v: v.textbox5)
+    return {
+        thema: list(variables)
+        for thema, variables in groupby(sorted_variables, key=lambda v: v.textbox5)
+    }
+
+
+@asset(group_name="synopse")
 def synopse_merged_organization_ids_by_query_string(
-    synopse_projects: list[SynopseProject],
+    synopse_projects: list[ProjektUndStudienverwaltung],
 ) -> dict[str, MergedOrganizationIdentifier]:
     """Extract organizations for FF Projects from wikidata and group them by query."""
     return extract_synopse_organizations(synopse_projects)
@@ -121,7 +119,7 @@ def synopse_merged_organization_ids_by_query_string(
 @asset(group_name="synopse")
 def synopse_resource() -> dict[str, Any]:
     """Extract and transform synopse resource default values."""
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     return load_yaml(settings.synopse.mapping_path / "resource.yaml")
 
 
@@ -130,7 +128,7 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
     str, MergedContactPointIdentifier
 ]:
     """Get lookup of ldap functional accounts by email."""
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
@@ -145,7 +143,7 @@ def synopse_access_platform_id(
     ],
 ) -> MergedAccessPlatformIdentifier:
     """Transform Synopse data to extracted access platforms and load result."""
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
@@ -162,24 +160,22 @@ def synopse_access_platform_id(
 @asset(group_name="synopse", metadata={"entity_type": "resource"})
 def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913
     context: AssetExecutionContext,
-    synopse_projects: list[SynopseProject],
-    synopse_studies: list[SynopseStudy],
-    synopse_study_overviews: list[SynopseStudyOverview],
-    synopse_variables_by_study_id: dict[int, list[SynopseVariable]],
+    synopse_projects: list[ProjektUndStudienverwaltung],
+    synopse_studies: list[MetadatenZuDatensaetzen],
+    synopse_study_overviews: list[Datensatzuebersicht],
     synopse_extracted_activities: list[ExtractedActivity],
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: dict[str, Any],
     synopse_access_platform_id: MergedAccessPlatformIdentifier,
     synopse_merged_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
 ) -> dict[str, ExtractedResource]:
-    """Get lookup from synopse_id to extracted resource identifier in primary source.
+    """Get lookup from SynopseID to extracted resource identifier in primary source.
 
     Also transforms Synopse data to extracted resources
     """
     transformed_study_data_resources = transform_synopse_data_to_mex_resources(
         synopse_studies,
         synopse_projects,
-        synopse_variables_by_study_id,
         synopse_extracted_activities,
         extracted_organization_rki,
         ResourceMapping.model_validate(synopse_resource),
@@ -198,14 +194,14 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
 @asset(group_name="synopse")
 def synopse_activity() -> dict[str, Any]:
     """Extract and transform synopse activity default values."""
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     return load_yaml(settings.synopse.mapping_path / "activity.yaml")
 
 
 @asset(group_name="synopse", metadata={"entity_type": "activity"})
 def synopse_extracted_activities(
     context: AssetExecutionContext,
-    synopse_projects: list[SynopseProject],
+    synopse_projects: list[ProjektUndStudienverwaltung],
     synopse_merged_person_ids_by_query_str: dict[str, list[MergedPersonIdentifier]],
     synopse_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -232,11 +228,11 @@ def synopse_extracted_activities(
 @asset(group_name="synopse", metadata={"entity_type": "variable_group"})
 def synopse_variable_groups_by_identifier_in_primary_source(
     context: AssetExecutionContext,
-    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[Variablenuebersicht]],
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> dict[str, ExtractedVariableGroup]:
     """Transforms Synopse data to extracted variable groups and load result."""
     transformed_variable_groups = transform_synopse_variables_to_mex_variable_groups(
@@ -252,14 +248,14 @@ def synopse_variable_groups_by_identifier_in_primary_source(
 @asset(group_name="synopse", metadata={"entity_type": "variable"})
 def synopse_extracted_variables(
     context: AssetExecutionContext,
-    synopse_variables_by_thema: dict[str, list[SynopseVariable]],
+    synopse_variables_by_thema: dict[str, list[Variablenuebersicht]],
     synopse_variable_groups_by_identifier_in_primary_source: dict[
         str, ExtractedVariableGroup
     ],
     synopse_extracted_resources_by_identifier_in_primary_source: dict[
         str, ExtractedResource
     ],
-    synopse_study_overviews: list[SynopseStudyOverview],
+    synopse_study_overviews: list[Datensatzuebersicht],
 ) -> list[ExtractedVariable]:
     """Transforms Synopse data to extracted variables and load result."""
     extracted_variables = transform_synopse_variables_to_mex_variables(
@@ -283,7 +279,7 @@ def synopse_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(ExtractorSettings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the synopse extractor job in-process."""
     run_job_in_process("synopse")

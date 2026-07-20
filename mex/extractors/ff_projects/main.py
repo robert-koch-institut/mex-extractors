@@ -23,7 +23,7 @@ from mex.extractors.ff_projects.transform import (
     transform_ff_projects_source_to_extracted_activity,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -62,7 +62,7 @@ def ff_projects_activities(
     ff_projects_organization_ids_by_query_str: dict[str, MergedOrganizationIdentifier],
 ) -> list[ExtractedActivity]:
     """Transform FF Projects to extracted activities and load them to the sinks."""
-    settings = ExtractorSettings.get()
+    settings = ExtractorsSettings.get()
     ff_projects_activity = ActivityMapping.model_validate(
         load_yaml(settings.ff_projects.mapping_path / "activity.yaml"),
     )
@@ -80,7 +80,7 @@ def ff_projects_activities(
     return extracted_activities
 
 
-@entrypoint(ExtractorSettings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the ff-projects extractor job in-process."""
     run_job_in_process("ff_projects")

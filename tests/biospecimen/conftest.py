@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import ResourceMapping
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.settings import ExtractorSettings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 
 
@@ -50,6 +50,6 @@ def resource_mapping() -> ResourceMapping:
     """Mock resource mapping."""
     return ResourceMapping.model_validate(
         load_yaml(
-            ExtractorSettings.get().biospecimen.mapping_path / "resource_mock.yaml"
+            ExtractorsSettings.get().biospecimen.mapping_path / "resource_mock.yaml"
         )
     )

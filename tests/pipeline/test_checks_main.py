@@ -67,7 +67,7 @@ def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
             return cls()
 
     monkeypatch.setattr(
-        "mex.extractors.pipeline.checks.main.ExtractorSettings", MockSettings
+        "mex.extractors.pipeline.checks.main.ExtractorsSettings", MockSettings
     )
 
     model = load_asset_check_from_settings("blueant", "activity")

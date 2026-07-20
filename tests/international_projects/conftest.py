@@ -6,12 +6,12 @@ from mex.common.models import ActivityMapping
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import ExtractorSettings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
 def international_projects_mapping_activity(
-    settings: ExtractorSettings,
+    settings: ExtractorsSettings,
 ) -> ActivityMapping:
     return ActivityMapping.model_validate(
         load_yaml(settings.international_projects.mapping_path / "activity_mock.yaml")

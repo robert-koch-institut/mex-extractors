@@ -18,7 +18,7 @@ from mex.extractors.odk.model import ODKData
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import ExtractorSettings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def international_projects_extracted_activities() -> list[ExtractedActivity]:
 
 
 @pytest.fixture
-def odk_resource_mappings(settings: ExtractorSettings) -> list[ResourceMapping]:
+def odk_resource_mappings(settings: ExtractorsSettings) -> list[ResourceMapping]:
     """Mocked odk resource mappings."""
     return [
         ResourceMapping.model_validate(
@@ -103,7 +103,7 @@ def odk_resource_mappings(settings: ExtractorSettings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def odk_variable_mapping(settings: ExtractorSettings) -> VariableMapping:
+def odk_variable_mapping(settings: ExtractorsSettings) -> VariableMapping:
     """Mocked odk variable mappings."""
     return VariableMapping.model_validate(
         load_yaml(settings.odk.mapping_path / "variable.yaml")

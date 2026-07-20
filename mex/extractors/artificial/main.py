@@ -11,7 +11,6 @@ from mex.common.models import (
     ItemsContainer,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import ExtractorSettings
 from mex.extractors.sinks import load
 
 if TYPE_CHECKING:
@@ -34,7 +33,7 @@ def artificial_data() -> ArtificialData:
     return ItemsContainer(items=artificial_data)
 
 
-@entrypoint(ExtractorSettings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the artificial data job in-process."""
     run_job_in_process("artificial")
