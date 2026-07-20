@@ -27,7 +27,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from mex.extractors.seq_repo.model import SeqRepoSource
@@ -281,7 +281,7 @@ def get_resolved_project_coordinators_and_units(
     Returns:
         Resolved ids project coordinator and units
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     project_coordinators_ids: set[
         MergedContactPointIdentifier
         | MergedPersonIdentifier
