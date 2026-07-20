@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+
 ### Deprecated
 
 ### Removed

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from mex.extractors.biospecimen.models.source import BiospecimenResource
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
@@ -106,7 +106,7 @@ def test_get_clean_string(series: Series, expected_clean_string: str) -> None:
     assert clean_string == expected_clean_string
 
 
-def test_get_year_from_zeitlicher_bezug(settings: Settings) -> None:
+def test_get_year_from_zeitlicher_bezug(settings: ExtractorsSettings) -> None:
     key_col = settings.biospecimen.key_col
     val_col = settings.biospecimen.val_col
 
