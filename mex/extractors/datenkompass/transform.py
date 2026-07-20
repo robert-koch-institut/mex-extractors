@@ -2,12 +2,7 @@ from typing import TYPE_CHECKING, TypeVar, cast
 
 from bs4 import BeautifulSoup
 
-from mex.common.types.vocabulary import (
-    BibliographicResourceType,
-    Frequency,
-    License,
-    Theme,
-)
+from mex.common.types import BibliographicResourceType, Frequency, License, Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
