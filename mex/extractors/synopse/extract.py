@@ -7,7 +7,7 @@ from mex.extractors.ldap.helpers import (
     get_ldap_merged_person_id_by_query,
 )
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
 from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
@@ -37,7 +37,7 @@ def extract_variables() -> list[Variablenuebersicht]:
     Returns:
         list for Synopse Variables
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return list(
         parse_csv(
             settings.synopse.variablenuebersicht_path,
@@ -57,7 +57,7 @@ def extract_study_data() -> list[MetadatenZuDatensaetzen]:
     Returns:
         List of Synopse Studies
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return list(
         watch_progress(
             parse_csv(
@@ -80,7 +80,7 @@ def extract_projects() -> list[ProjektUndStudienverwaltung]:
     Returns:
         List of Synopse Projects
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return list(
         watch_progress(
             parse_csv(
@@ -159,7 +159,7 @@ def extract_study_overviews() -> list[Datensatzuebersicht]:
     Returns:
         List of Synopse Overviews
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return list(
         watch_progress(
             parse_csv(

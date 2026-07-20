@@ -2,19 +2,14 @@ from typing import TYPE_CHECKING, TypeVar, cast
 
 from bs4 import BeautifulSoup
 
-from mex.common.types.vocabulary import (
-    BibliographicResourceType,
-    Frequency,
-    License,
-    Theme,
-)
+from mex.common.types import BibliographicResourceType, Frequency, License, Theme
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
     DatenkompassResource,
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
@@ -288,7 +283,7 @@ def handle_setval(set_value: list[str] | str | None) -> str:
     Returns:
         stringified value of setValues.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     delim = settings.datenkompass.list_delimiter
 
     if isinstance(set_value, str):
@@ -355,7 +350,7 @@ def transform_activities(
     Returns:
         list of DatenkompassActivity instances.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
 
     activity_mapping = DatenkompassMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
@@ -474,7 +469,7 @@ def transform_bibliographic_resources(
     Returns:
         list of DatenkompassBibliographicResource instances.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
 
     bibliographic_resource_mapping = DatenkompassMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
@@ -607,7 +602,7 @@ def transform_resources(
     Returns:
         list of DatenkompassResource instances.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     resource_mapping = DatenkompassMapping.model_validate(
         load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
     )
