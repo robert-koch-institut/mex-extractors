@@ -2,11 +2,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import Text
-from mex.common.types.vocabulary import Theme
-from mex.extractors.datenkompass.models.item import (
-    DatenkompassActivity,
-)
+from mex.common.types import Text, Theme
+from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import (
     DatenkompassMapping,
     DatenkompassMappingField,
