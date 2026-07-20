@@ -7,13 +7,11 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedOrganization,
-    ExtractedPerson,
     ExtractedResource,
     ResourceMapping,
 )
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.seq_repo.extract import (
-    extract_source_project_coordinator_by_name,
     extract_sources,
 )
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -33,30 +31,19 @@ def seq_repo_sources() -> list[SeqRepoSource]:
     return extract_sources()
 
 
-@asset(group_name="seq_repo")
-def seq_repo_extracted_persons_by_name(
-    seq_repo_sources: list[SeqRepoSource],
-) -> dict[str, ExtractedPerson]:
-    """Extract source project coordinators."""
-    return extract_source_project_coordinator_by_name(seq_repo_sources)
-
-
 @asset(group_name="seq_repo", metadata={"entity_type": "organization"})
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
 ) -> dict[str, ExtractedActivity]:
     """Extract activities from seq-repo."""
     settings = Settings.get()
     activity = ActivityMapping.model_validate(
         load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
     )
-
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources,
         activity,
-        seq_repo_extracted_persons_by_name,
     )
     load(mex_activities)
     activities_by_id_str = {
@@ -83,12 +70,11 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
 
 
 @asset(group_name="seq_repo", metadata={"entity_type": "resource"})
-def seq_repo_resources(  # noqa: PLR0913
+def seq_repo_resources(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_extracted_activities_by_id_str: dict[str, ExtractedActivity],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
-    seq_repo_extracted_persons_by_name: dict[str, ExtractedPerson],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
@@ -102,7 +88,6 @@ def seq_repo_resources(  # noqa: PLR0913
         seq_repo_extracted_activities_by_id_str,
         seq_repo_extracted_access_platform,
         resource,
-        seq_repo_extracted_persons_by_name,
         extracted_organization_rki,
     )
     load(resources)
