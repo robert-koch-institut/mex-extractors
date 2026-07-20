@@ -111,6 +111,7 @@ def test_transform_resource_state_to_mex_resource(
             {"value": "Meldedaten Schleswig-Holstein", "language": TextLanguage.DE}
         ],
         "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "description": [{"language": "de", "value": "Das Infektionsschutzgesetz"}],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -185,6 +186,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
         "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "description": [{"value": "Das Infektionsschutzgesetz", "language": "de"}],
         "hasCodeValues": [{"value": "A1"}],
         "hasLegalBasis": [
             {

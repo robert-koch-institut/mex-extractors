@@ -139,6 +139,7 @@ def transform_resource_state_to_mex_resource(
                 .setValues,
                 alternativeTitle=bundesland_meldedaten,
                 contact=contact,
+                description=resource_state.description[0].mappingRules[0].setValues,
                 documentation=documentation,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
                 hasLegalBasis=resource_state.hasLegalBasis[0].mappingRules[0].setValues,
@@ -319,6 +320,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
         contact=get_unit_merged_id_by_synonym(
             resource_disease.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ),
+        description=resource_disease.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,

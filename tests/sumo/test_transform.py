@@ -145,6 +145,9 @@ def test_transform_resource_feat_model_to_mex_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
+        "description": [
+            {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
+        ],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},

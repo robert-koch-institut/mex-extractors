@@ -14,6 +14,11 @@ contributingUnit:
   - mappingRules:
       - forValues:
           - Abteilung
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Echtzeitdaten der Routinedokumenation
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
