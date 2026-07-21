@@ -30,7 +30,7 @@ from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -49,7 +49,7 @@ def confluence_vvt_pages() -> list[ConfluenceVvtPage]:
 @asset(group_name="confluence_vvt")
 def confluence_vvt_activity_mapping() -> dict[str, Any]:
     """Return activity mapping."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
 
 
@@ -110,7 +110,7 @@ def confluence_vvt_extracted_activities(
     return mex_activities
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the confluence-vvt extractor job in-process."""
     run_job_in_process("confluence_vvt")

@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.16.0] - 2026-07-20
+
+### Changes
+
+- BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+
+### Fixed
+
+- ruff sim222 compliance
+
 ## [1.15.2] - 2026-07-09
 
 ### Changes
@@ -52,6 +62,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - use ldap convenience function and refactor ldap and organigram helper functions
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- dependency update(2026-06-16)
+- implement seq-repo fallback rule for units
+
+### Removed
 - dependency update(2026-06-26)
 
 ### Fixed
@@ -78,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 
