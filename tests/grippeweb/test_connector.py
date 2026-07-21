@@ -2,8 +2,9 @@ from typing import TYPE_CHECKING, cast
 from unittest.mock import ANY, MagicMock
 
 import pyodbc  # type: ignore[import-not-found]
+import pytest
 
-from mex.extractors.grippeweb.connector import GrippewebConnector
+from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
 from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
@@ -40,6 +41,9 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
     """Test connection setup triggers kinit on non-Windows platforms."""
     monkeypatch.setattr("platform.system", lambda: "Linux")
 
+    settings = ExtractorsSettings.get()
+    monkeypatch.setattr(settings.grippeweb, "kerberos_enabled", True)
+
     mock_process = MagicMock()
     mock_process.communicate.return_value = ("kinit success", "")
     mock_popen = MagicMock(return_value=mock_process)
@@ -47,8 +51,6 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
 
     mock_pyodbc_connect = MagicMock()
     monkeypatch.setattr("pyodbc.connect", mock_pyodbc_connect)
-
-    settings = ExtractorsSettings.get()
 
     connector = object.__new__(GrippewebConnector)
     # Call __init__ from the class to satisfy mypy's strict instance checking
@@ -122,3 +124,25 @@ def test_close_suppresses_error() -> None:
     connector.close()
 
     cast("MagicMock", connector._connection.close).assert_called_once()
+
+
+@pytest.mark.integration
+def test_parse_columns_by_column_name_integration(
+    mocked_grippeweb_sql_tables: dict[str, dict[str, list[str | None]]],
+) -> None:
+    """Parse every table against the seeded SQL Server fixture (sql-testing-seed).
+
+    Requires a live, seeded server reachable via the grippeweb DSN
+    (``MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN``); kerberos stays disabled so
+    the connector uses the DSN's SQL auth directly.
+    """
+    connector = GrippewebConnector()
+    try:
+        columns_by_table = {
+            table_name: connector.parse_columns_by_column_name(table_name)
+            for table_name in QUERY_BY_TABLE_NAME
+        }
+    finally:
+        connector.close()
+
+    assert columns_by_table == mocked_grippeweb_sql_tables

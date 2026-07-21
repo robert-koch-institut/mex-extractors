@@ -54,7 +54,9 @@ class IFSGConnector(BaseConnector):
     def __init__(self) -> None:
         """Create a new connector instance."""
         settings = ExtractorsSettings.get()
-        if platform.system() != "Windows":  # pragma: no cover
+        if (
+            settings.ifsg.kerberos_enabled and platform.system() != "Windows"
+        ):  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607
                 stdout=PIPE,
