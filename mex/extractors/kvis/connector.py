@@ -28,7 +28,9 @@ class KVISConnector(BaseConnector):
         import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
 
         settings = ExtractorsSettings.get()
-        if platform.system() != "Windows":  # pragma: no cover
+        if (
+            settings.kvis.kerberos_enabled and platform.system() != "Windows"
+        ):  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607
                 stdout=PIPE,

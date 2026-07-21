@@ -29,7 +29,9 @@ class GrippewebConnector(BaseConnector):
     def _setup_connection(self) -> pyodbc.Connection:
         """Set up a new pyodbc connection, refreshing the Kerberos ticket if needed."""
         settings = ExtractorsSettings.get()
-        if platform.system() != "Windows":  # pragma: no cover
+        if (
+            settings.grippeweb.kerberos_enabled and platform.system() != "Windows"
+        ):  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607
                 stdout=PIPE,

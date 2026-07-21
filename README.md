@@ -153,10 +153,18 @@ To verify an image manually:
 ### grippeweb extractor
 
 - `uv run grippeweb` extracts grippeweb metadata from grippeweb database
+- BREAKING: Kerberos is now opt-in — set `grippeweb.kerberos_enabled` (env
+  `MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true`) to obtain a kinit ticket before
+  connecting to the real RKI SQL server; it is disabled by default (e.g. for SQL auth
+  against a local/seeded test server)
 
 ### ifsg extractor
 
 - `uv run ifsg` extracts sources from the ifsg data base
+- BREAKING: Kerberos is now opt-in — set `ifsg.kerberos_enabled` (env
+  `MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true`) to obtain a kinit ticket before
+  connecting to the real RKI SQL server; it is disabled by default (e.g. for SQL auth
+  against a local/seeded test server)
 
 ### international-projects extractor
 
@@ -165,6 +173,10 @@ To verify an image manually:
 ### kvis extractor
 
 - `uv run kvis` extracts KVIS metadata from KVIS database
+- BREAKING: Kerberos is now opt-in — set `kvis.kerberos_enabled` (env
+  `MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true`) to obtain a kinit ticket before
+  connecting to the real RKI SQL server; it is disabled by default (e.g. for SQL auth
+  against a local/seeded test server)
 
 ### odk extractor
 

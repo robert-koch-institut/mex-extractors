@@ -15,10 +15,18 @@ class GrippewebSettings(BaseModel):
         ),
     )
     mssql_connection_dsn: str = Field(
-        "DRIVER={ODBC Driver 18 for SQL Server};SERVER=domain.tld;DATABASE=database",
+        "DRIVER={ODBC Driver 18 for SQL Server};SERVER=domain.tld;DATABASE=grippeweb",
         description=(
             "Connection string for the ODBC Driver for SQL Server: "
             "https://learn.microsoft.com/en-us/sql/connect/odbc/"
             "dsn-connection-string-attribute"
+        ),
+    )
+    kerberos_enabled: bool = Field(
+        False,  # noqa: FBT003
+        description=(
+            "Whether to obtain a Kerberos ticket via kinit before connecting. "
+            "Disabled by default (e.g. for SQL auth against a test server); enable "
+            "it to authenticate against the real RKI SQL server."
         ),
     )
