@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 # Rule type classifications
 STATIC_RULES = {
-    "less_than_x_inbound",
     "less_than_x_outbound",
     "not_exactly_x_items",
 }
@@ -45,11 +44,22 @@ def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetChe
     return AssetCheck.model_validate(load_yaml(path))
 
 
-def get_rule(rule: str, extractor: str, entity_type: str) -> dict[str, Any]:
+def get_rule(
+    rule: str,
+    extractor: str,
+    entity_type: str,
+    target_type: str | None = None,
+) -> dict[str, Any]:
     """Load rule model from YAML file for given rule type."""
     check_model = load_asset_check_from_settings(
         extractor=extractor, entity_type=entity_type
     )
+    if target_type is not None:
+        return next(
+            r
+            for r in check_model.rules
+            if r.fail_if == rule and r.target_type == target_type
+        ).model_dump()
     return next(r for r in check_model.rules if r.fail_if == rule).model_dump()
 
 
@@ -85,9 +95,11 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
 
 
 def get_latest_num_items(
-    events: Sequence[EventLogRecord], rule_name: str
+    events: Sequence[EventLogRecord],
+    rule_name: str,
+    target_type: str | None = None,
 ) -> int | dict[str, int] | None:
-    """Get latest num_items metadata from materialization events."""
+    """Get latest metadata from materialization events."""
     if not events:
         return None
 
@@ -95,10 +107,22 @@ def get_latest_num_items(
     if latest_materialization is None:
         return None
 
+    metadata_key_by_rule = {
+        (
+            "less_than_x_outbound",
+            "VariableGroup",
+        ): "outbound_connections_variable_group",
+        ("less_than_x_outbound", "Resource"): "outbound_connections_resource",
+    }
     if rule_name == "less_than_x_outbound":
-        num_items_metadata = latest_materialization.metadata.get("outbound_connections")
+        if target_type is None:
+            msg = f"target_type is required for rule '{rule_name}'"
+            raise ValueError(msg)
+        metadata_key = metadata_key_by_rule.get((rule_name, target_type), "num_items")
     else:
-        num_items_metadata = latest_materialization.metadata.get("num_items")
+        metadata_key = "num_items"
+
+    num_items_metadata = latest_materialization.metadata.get(metadata_key)
 
     if num_items_metadata is None:
         return None
@@ -110,12 +134,11 @@ def get_latest_num_items(
         raise ValueError(LATEST_NUM_ITEMS_ERROR)
 
     if rule_name == "less_than_x_outbound":
-        outbound_connections = num_items_metadata.value
-        if not isinstance(outbound_connections, dict):
+        connections = num_items_metadata.value
+        if not isinstance(connections, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
         return {
-            identifier: int(str(count))
-            for identifier, count in outbound_connections.items()
+            identifier: int(str(count)) for identifier, count in connections.items()
         }
 
     return int(str(num_items_metadata.value))
@@ -151,14 +174,14 @@ def get_historic_count(
 
 def check_static_rule(
     rule_name: str,
-    current_number_of_extracted_items: int | dict[str, int],
+    current_number_of_items: int | dict[str, int],
     rule: dict[str, Any],
 ) -> bool:
     """Check rules that validate current state (no historical data needed).
 
     Args:
         rule_name: Name of the static rule.
-        current_number_of_extracted_items: Current count of extracted items.
+        current_number_of_items: Current count of extracted items.
         rule: Rule configuration from YAML.
 
     Returns False if check fails, True if check passes.
@@ -166,24 +189,25 @@ def check_static_rule(
     threshold = rule["value"] or 0
 
     if rule_name == "not_exactly_x_items":
-        if current_number_of_extracted_items == threshold:
+        # fail if current number of extracted items is not equal to threshold
+        if current_number_of_items == threshold:
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
-    if rule_name == "less_than_x_inbound":
-        pass
+        return sum(current_number_of_items.values()) >= threshold
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold
+        if not current_number_of_items and threshold > 0:
+            return False
         return all(
             count >= threshold
-            for count in current_number_of_extracted_items.values()  # type: ignore [union-attr]
+            for count in current_number_of_items.values()  # type: ignore [union-attr]
         )
-
     return True
 
 
 def check_historical_rule(
     rule_name: str,
-    current_number_of_extracted_items: int,
+    current_number_of_items: int,
     historic_count: int,
     rule: dict[str, Any],
 ) -> bool:
@@ -191,7 +215,7 @@ def check_historical_rule(
 
     Args:
         rule_name: Name of the historical rule.
-        current_number_of_extracted_items: Current count of extracted items.
+        current_number_of_items: Current count of extracted items.
         historic_count: Historical count for comparison.
         rule: Rule configuration from YAML.
 
@@ -201,28 +225,29 @@ def check_historical_rule(
 
     if rule_name == "x_items_more_than":
         # fail if current is larger than historic by threshold number of items
-        return current_number_of_extracted_items <= historic_count + threshold
+        return current_number_of_items <= historic_count + threshold
     if rule_name == "x_items_less_than":
         # fail if current is smaller than historic by threshold number of items
-        return current_number_of_extracted_items >= historic_count - threshold
+        return current_number_of_items >= historic_count - threshold
     if rule_name == "x_percent_less_than":
         # fail if current is less than historic by x percent
         percent_threshold = (historic_count * threshold) / 100
-        return current_number_of_extracted_items >= historic_count - percent_threshold
+        return current_number_of_items >= historic_count - percent_threshold
     if rule_name == "x_percent_more_than":
         # fail if current is more than historic by x percent
         percent_threshold = (historic_count * threshold) / 100
-        return current_number_of_extracted_items <= historic_count + percent_threshold
+        return current_number_of_items <= historic_count + percent_threshold
 
     return True
 
 
-def check_item_count_rule(
+def check_item_count_rule(  # noqa: PLR0913
     context: AssetCheckExecutionContext,
     rule_name: str,
     asset_key: AssetKey,
     extractor: str,
     entity_type: str,
+    target_type: str | None = None,
 ) -> bool:
     """Checks extracted items are complying to given rule and threshold.
 
@@ -232,6 +257,7 @@ def check_item_count_rule(
         asset_key: Dagster AssetKey object.
         extractor: Name of the extractor that produced the asset.
         entity_type: Entity Type for the asset check.
+        target_type: Optional target type to disambiguate duplicate rule names.
 
     Returns True if check passes, raises ValueError if check fails.
     """
@@ -240,7 +266,7 @@ def check_item_count_rule(
         raise ValueError(msg)
 
     try:
-        rule = get_rule(rule_name, extractor, entity_type)
+        rule = get_rule(rule_name, extractor, entity_type, target_type)
     except FileNotFoundError:
         logger.error("No asset check rules found for %s", asset_key)
         return True
@@ -251,16 +277,16 @@ def check_item_count_rule(
             event_type=DagsterEventType.ASSET_MATERIALIZATION,
         )
     )
-    current_number_of_extracted_items = get_latest_num_items(events, rule_name)
-    if current_number_of_extracted_items is None:
+    current_number_of_items = get_latest_num_items(events, rule_name, target_type)
+    if current_number_of_items is None:
         return True
 
     # Handle static rules
     if rule_name in STATIC_RULES:
-        if not check_static_rule(rule_name, current_number_of_extracted_items, rule):
+        if not check_static_rule(rule_name, current_number_of_items, rule):
             msg = (
                 f"Asset {asset_key} failed {rule_name} check: "
-                f"{current_number_of_extracted_items} not meeting threshold."
+                f"{current_number_of_items} not meeting threshold."
             )
             raise ValueError(msg)
         return True
@@ -280,13 +306,13 @@ def check_item_count_rule(
 
     if not check_historical_rule(
         rule_name,
-        current_number_of_extracted_items,  # type: ignore [arg-type]
+        current_number_of_items,  # type: ignore [arg-type]
         historic_count,
         rule,
     ):
         msg = (
             f"Asset {asset_key} failed {rule_name} check: "
-            f"{current_number_of_extracted_items} not meeting threshold."
+            f"{current_number_of_items} not meeting threshold."
         )
         raise ValueError(msg)
 

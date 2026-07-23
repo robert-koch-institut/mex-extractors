@@ -152,6 +152,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     )
 
     load(mex_sources)
+
     context.add_output_metadata({"num_items": len(mex_sources)})
     return mex_sources
 

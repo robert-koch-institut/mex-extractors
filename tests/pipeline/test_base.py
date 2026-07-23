@@ -126,8 +126,33 @@ def test_monitor_triggers_if_new_jobs_finished() -> None:
             ],
             2,
         ),
+        (
+            "synopse",
+            {"entity_type": "variable"},
+            4,
+            [
+                {
+                    "fail_if": "less_than_x_outbound",
+                    "value": 1,
+                    "time_frame": None,
+                    "target_type": "VariableGroup",
+                },
+                {
+                    "fail_if": "less_than_x_outbound",
+                    "value": 1,
+                    "time_frame": None,
+                    "target_type": "Resource",
+                },
+            ],
+            2,
+        ),
     ],
-    ids=["one_check_created", "no_check_created", "two_checks_created"],
+    ids=[
+        "one_check_created",
+        "no_check_created",
+        "two_checks_created",
+        "duplicate_rule_names_with_target_type",
+    ],
 )
 def test_asset_checks_created(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,

@@ -105,10 +105,17 @@ def monitor_jobs_sensor(
 
 
 def create_asset_check(
-    asset_key: AssetKey, group_name: str, entity_name: str, rule: str
+    asset_key: AssetKey,
+    group_name: str,
+    entity_name: str,
+    rule: str,
+    target_type: str | None = None,
 ) -> AssetChecksDefinition:
     """Creating dynamical asset check for all rules."""
-    check_name = f"check_{asset_key.to_user_string()}_{rule.replace(' ', '_')}"
+    target_suffix = f"_{target_type.lower()}" if target_type else ""
+    check_name = (
+        f"check_{asset_key.to_user_string()}_{rule.replace(' ', '_')}{target_suffix}"
+    )
 
     @asset_check(asset=asset_key, blocking=True, name=check_name)
     def check(
@@ -121,6 +128,7 @@ def create_asset_check(
             extractor=group_name,
             entity_type=entity_name,
             rule_name=rule,
+            target_type=target_type,
         )
         return AssetCheckResult(passed=passed, severity=AssetCheckSeverity.ERROR)
 
@@ -156,7 +164,11 @@ def load_job_definitions() -> Definitions:
 
             for rule in rules_for_asset.rules:
                 created_check = create_asset_check(
-                    asset_key, group_name, entity_name, rule.fail_if
+                    asset_key,
+                    group_name,
+                    entity_name,
+                    rule.fail_if,
+                    rule.target_type,
                 )
                 checks.append(created_check)
 
