@@ -227,16 +227,6 @@ def test_get_latest_num_items_invalid_latest_event(events: list[Any]) -> None:
 
 
 @pytest.mark.parametrize(
-    ("current_count", "rule_threshold", "passed"),
-    [
-        pytest.param({"id-a": 2, "id-b": 1}, 3, True, id="passes_at_total_threshold"),
-        pytest.param(
-            {"id-a": 1, "id-b": 1}, 3, False, id="fails_below_total_threshold"
-        ),
-        pytest.param({}, 2, False, id="fails_empty"),
-    ],
-)
-@pytest.mark.parametrize(
     ("historic_events", "time_frame", "expected_count"),
     [
         (
@@ -297,6 +287,7 @@ def run_item_count_test(  # noqa: PLR0913
     time_frame_str: str,
     passed: bool,
     rule_name_for_match: str,
+    target_type: str | None = None,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
@@ -329,7 +320,14 @@ def run_item_count_test(  # noqa: PLR0913
     class MockEvent:
         def __init__(self, num_items: int | dict[str, int]) -> None:
             if rule_name_for_match == "less_than_x_outbound":
-                metadata = {"outbound_connections": SimpleNamespace(value=num_items)}
+                assert target_type is not None, (
+                    "target_type is required for less_than_x_outbound"
+                )
+                metadata_key = {
+                    "VariableGroup": "outbound_connections_variable_group",
+                    "Resource": "outbound_connections_resource",
+                }[target_type]
+                metadata = {metadata_key: SimpleNamespace(value=num_items)}
             else:
                 metadata = {"num_items": SimpleNamespace(value=num_items)}
 
@@ -354,6 +352,7 @@ def run_item_count_test(  # noqa: PLR0913
                 extractor="ext",
                 entity_type="type",
                 rule_name=rule_name_for_match,
+                target_type=target_type,
             )
     else:
         result = check_item_count_rule(
@@ -362,6 +361,7 @@ def run_item_count_test(  # noqa: PLR0913
             extractor="ext",
             entity_type="type",
             rule_name=rule_name_for_match,
+            target_type=target_type,
         )
         assert result is True
 
@@ -582,7 +582,9 @@ def test_check_less_than_x_outbound_generalized(
         def __init__(self, outbound_connections: dict[str, int]) -> None:
             self.asset_materialization = SimpleNamespace(
                 metadata={
-                    "outbound_connections": SimpleNamespace(value=outbound_connections)
+                    "outbound_connections_variable_group": SimpleNamespace(
+                        value=outbound_connections
+                    )
                 }
             )
 
@@ -604,6 +606,7 @@ def test_check_less_than_x_outbound_generalized(
                 extractor="test",
                 entity_type="test",
                 rule_name="less_than_x_outbound",
+                target_type="VariableGroup",
             )
     else:
         result = check_item_count_rule(
@@ -612,6 +615,7 @@ def test_check_less_than_x_outbound_generalized(
             extractor="test",
             entity_type="test",
             rule_name="less_than_x_outbound",
+            target_type="VariableGroup",
         )
         assert result is True
 

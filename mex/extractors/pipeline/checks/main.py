@@ -108,17 +108,20 @@ def get_latest_num_items(
         return None
 
     metadata_key_by_rule = {
-        ("less_than_x_outbound", None): "outbound_connections",
         (
             "less_than_x_outbound",
             "VariableGroup",
         ): "outbound_connections_variable_group",
         ("less_than_x_outbound", "Resource"): "outbound_connections_resource",
     }
-    metadata_key = metadata_key_by_rule.get(
-        (rule_name, target_type),
-        metadata_key_by_rule.get((rule_name, None), "num_items"),
-    )
+    if rule_name == "less_than_x_outbound":
+        if target_type is None:
+            msg = f"target_type is required for rule '{rule_name}'"
+            raise ValueError(msg)
+        metadata_key = metadata_key_by_rule.get((rule_name, target_type), "num_items")
+    else:
+        metadata_key = "num_items"
+
     num_items_metadata = latest_materialization.metadata.get(metadata_key)
 
     if num_items_metadata is None:
