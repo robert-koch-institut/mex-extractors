@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 # Rule type classifications
 STATIC_RULES = {
-    "less_than_x_inbound",
     "less_than_x_outbound",
     "not_exactly_x_items",
 }
@@ -109,7 +108,6 @@ def get_latest_num_items(
         return None
 
     metadata_key_by_rule = {
-        ("less_than_x_inbound", None): "inbound_connections",
         ("less_than_x_outbound", None): "outbound_connections",
         (
             "less_than_x_outbound",
@@ -133,14 +131,6 @@ def get_latest_num_items(
         raise ValueError(LATEST_NUM_ITEMS_ERROR)
 
     if rule_name == "less_than_x_outbound":
-        connections = num_items_metadata.value
-        if not isinstance(connections, dict):
-            raise ValueError(LATEST_NUM_ITEMS_ERROR)
-        return {
-            identifier: int(str(count)) for identifier, count in connections.items()
-        }
-
-    if rule_name == "less_than_x_inbound":
         connections = num_items_metadata.value
         if not isinstance(connections, dict):
             raise ValueError(LATEST_NUM_ITEMS_ERROR)
@@ -179,7 +169,7 @@ def get_historic_count(
     return 0
 
 
-def check_static_rule(  # noqa: PLR0911
+def check_static_rule(
     rule_name: str,
     current_number_of_items: int | dict[str, int],
     rule: dict[str, Any],
@@ -200,12 +190,6 @@ def check_static_rule(  # noqa: PLR0911
         if current_number_of_items == threshold:
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
-    if rule_name == "less_than_x_inbound":
-        # fail if accumulated inbound connection count is smaller than threshold
-        if not isinstance(current_number_of_items, dict):
-            raise ValueError(LATEST_NUM_ITEMS_ERROR)
-        if not current_number_of_items and threshold > 0:
-            return False
         return sum(current_number_of_items.values()) >= threshold
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold

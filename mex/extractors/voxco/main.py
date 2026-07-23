@@ -90,7 +90,7 @@ def voxco_extracted_resources_by_str(
     return mex_resources
 
 
-@asset(group_name="voxco", metadata={"entity_type": "resource"})
+@asset(group_name="voxco", metadata={"entity_type": "variable"})
 def voxco_extracted_variables(
     context: AssetExecutionContext,
     voxco_extracted_resources_by_str: dict[str, ExtractedResource],
@@ -102,12 +102,14 @@ def voxco_extracted_variables(
         voxco_variables_by_name_str,
     )
     load(extracted_variables)
-    inbound_connections = collect_related_identifier_counts(
+    outbound_connections_resource = collect_related_identifier_counts(
         extracted_variables,
         ["usedIn"],
     )
 
-    context.add_output_metadata({"inbound_connections": inbound_connections})
+    context.add_output_metadata(
+        {"outbound_connections_resource": outbound_connections_resource}
+    )
     return extracted_variables
 
 

@@ -49,7 +49,6 @@ from mex.extractors.synopse.transform import (
 )
 from mex.extractors.utils import (
     collect_related_identifier_counts,
-    count_outbound_connections,
     load_yaml,
 )
 
@@ -273,10 +272,10 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
-    outbound_connections_variable_group = {
-        v.identifierInPrimarySource: count_outbound_connections(v)
-        for v in extracted_variables
-    }
+    outbound_connections_variable_group = collect_related_identifier_counts(
+        extracted_variables,
+        ["belongsTo"],
+    )
     outbound_connections_resource = collect_related_identifier_counts(
         extracted_variables,
         ["usedIn"],
@@ -287,7 +286,6 @@ def synopse_extracted_variables(
             "num_items": len(extracted_variables),
             "outbound_connections_variable_group": outbound_connections_variable_group,
             "outbound_connections_resource": outbound_connections_resource,
-            "outbound_connections": outbound_connections_variable_group,
         }
     )
     return extracted_variables
