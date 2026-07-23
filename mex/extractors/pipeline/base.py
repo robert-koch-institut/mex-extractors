@@ -32,7 +32,7 @@ from mex.extractors.pipeline.checks.main import (
     check_item_count_rule,
     load_asset_check_from_settings,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 
 
 def run_job_in_process(group_name: str) -> bool:
@@ -137,7 +137,7 @@ def create_asset_check(
 
 def load_job_definitions() -> Definitions:
     """Scan the given module for assets, define jobs and io and return definitions."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
 
     resources = {"io_manager": FilesystemIOManager()}
     module = import_module("mex.extractors")

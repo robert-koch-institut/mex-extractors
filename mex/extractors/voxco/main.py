@@ -13,7 +13,7 @@ from mex.common.models import (
 )
 from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import (
     collect_related_identifier_counts,
@@ -40,7 +40,7 @@ def voxco_variables_by_name_str() -> dict[str, list[VoxcoVariable]]:
 @asset(group_name="voxco")
 def voxco_resource_mappings() -> list[dict[str, Any]]:
     """Extract voxco resource mappings."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return [
         load_yaml(file)
         for file in Path(settings.voxco.mapping_path).glob("resource_*.yaml")
@@ -111,7 +111,7 @@ def voxco_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the voxco extractor job in-process."""
     run_job_in_process("voxco")

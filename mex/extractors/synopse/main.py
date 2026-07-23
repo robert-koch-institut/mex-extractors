@@ -21,7 +21,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.synopse.extract import (
     extract_projects,
@@ -123,7 +123,7 @@ def synopse_merged_organization_ids_by_query_string(
 @asset(group_name="synopse")
 def synopse_resource() -> dict[str, Any]:
     """Extract and transform synopse resource default values."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return load_yaml(settings.synopse.mapping_path / "resource.yaml")
 
 
@@ -132,7 +132,7 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
     str, MergedContactPointIdentifier
 ]:
     """Get lookup of ldap functional accounts by email."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
@@ -147,7 +147,7 @@ def synopse_access_platform_id(
     ],
 ) -> MergedAccessPlatformIdentifier:
     """Transform Synopse data to extracted access platforms and load result."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
         load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
     )
@@ -202,7 +202,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
 @asset(group_name="synopse")
 def synopse_activity() -> dict[str, Any]:
     """Extract and transform synopse activity default values."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return load_yaml(settings.synopse.mapping_path / "activity.yaml")
 
 
@@ -293,7 +293,7 @@ def synopse_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the synopse extractor job in-process."""
     run_job_in_process("synopse")
