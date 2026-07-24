@@ -22,6 +22,9 @@ description:
           - value: voluptua
             language: en
         rule:
+end:
+  - mappingRules:
+      - setValues: # "2021-07-27"
 externalPartner:
   - mappingRules:
       - forValues:
@@ -34,9 +37,9 @@ hasLegalBasis:
             value: Informed consent
           - language: de
             value: Informierte Einwilligung
-isPartOf:
+healthCategory:
   - mappingRules:
-      - rule:
+      - setValues:
 keyword:
   - mappingRules:
       - setValues:
@@ -62,11 +65,18 @@ method:
           - value: et justo
             language: de
         rule:
+numberOfUniqueIndividuals:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publisher:
   - mappingRules:
       - forValues:
           - duo dolores
         rule:
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -95,10 +105,9 @@ spatial:
           - value: Stet
             language: en
         rule:
-temporal:
+start:
   - mappingRules:
-      - setValues: 2021-05-01 - 2021-12-31
-        rule:
+      - setValues: # "2021-12-31"
 theme:
   - mappingRules:
       - setValues:

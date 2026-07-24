@@ -66,7 +66,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
         if rule.forValues and rule.rule
         for for_value in rule.forValues
     }
-    created = igs_resource_mapping.created[0].mappingRules[0].setValues
+    start = igs_resource_mapping.start[0].mappingRules[0].setValues
     unit_in_charge = (
         get_unit_merged_id_by_synonym(for_value[0])
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
@@ -80,6 +80,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
     default_keywords = cast(
         "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
     )
+    health_category = igs_resource_mapping.healthCategory[0].mappingRules[0].setValues
     quality_information_intro = (
         igs_resource_mapping.qualityInformation[0].mappingRules[0].setValues[0].value  # type: ignore[index]
     )
@@ -139,7 +140,6 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             .setValues,
             contact=contact,
             contributingUnit=contributing_units,
-            created=created,
             description=igs_resource_mapping.description[0].mappingRules[0].setValues,
             documentation=igs_resource_mapping.documentation[0]
             .mappingRules[0]
@@ -149,6 +149,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             .mappingRules[0]
             .setValues,
             hasPurpose=igs_resource_mapping.hasPurpose[0].mappingRules[0].setValues,
+            healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=igs_resource_mapping.language[0].mappingRules[0].setValues,
@@ -172,6 +173,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             rights=igs_resource_mapping.rights[0].mappingRules[0].setValues,
             spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
             sizeOfDataBasis=size_of_databasis,
+            start=start,
             theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
             title=title,
             unitInCharge=unit_in_charge,

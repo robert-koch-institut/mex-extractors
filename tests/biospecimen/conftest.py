@@ -37,7 +37,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             verantwortliche_fachabteilung="PARENT Dept.",
             verwandte_publikation_doi="testverwandedoi",
             verwandte_publikation_titel="testverwandtepublikation",
-            vorhandene_anzahl_der_proben="Testanzahl",
+            vorhandene_anzahl_der_proben=42,
             weiterfuehrende_dokumentation_titel="Testdokutitel",
             weiterfuehrende_dokumentation_url_oder_dateipfad="Testdokupfad",
             zugriffsbeschraenkung="restriktiv",

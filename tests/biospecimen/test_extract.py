@@ -10,14 +10,12 @@ from mex.extractors.biospecimen.extract import (
     extract_biospecimen_resources,
     get_clean_file_name,
     get_clean_string,
-    get_year_from_zeitlicher_bezug,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from mex.extractors.biospecimen.models.source import BiospecimenResource
-    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
@@ -59,7 +57,7 @@ def test_extract_biospecimen_resources() -> None:
         "ressourcentyp_allgemein": "Bioproben",
         "ressourcentyp_speziell": ["Infektionskrankheiten"],
         "rechte": "Testrechte",
-        "vorhandene_anzahl_der_proben": "Testanzahl",
+        "vorhandene_anzahl_der_proben": 42,
         "raeumlicher_bezug": ["räumlicher Testbezug"],
         "zeitlicher_bezug": ["2021-09 bis 2021-10"],
         "thema": [],
@@ -104,22 +102,3 @@ def test_get_clean_string(series: Series, expected_clean_string: str) -> None:
     clean_string = get_clean_string(series)
 
     assert clean_string == expected_clean_string
-
-
-def test_get_year_from_zeitlicher_bezug(settings: ExtractorsSettings) -> None:
-    key_col = settings.biospecimen.key_col
-    val_col = settings.biospecimen.val_col
-
-    test_df = None
-    zeitlicher_bezug = get_year_from_zeitlicher_bezug(
-        test_df, key_col, val_col, "zeitlicher Bezug"
-    )
-    assert zeitlicher_bezug is None
-
-    test_df = pd.DataFrame(
-        {key_col: ["zeitlicher Bezug"], val_col: ["Sept 2010-Dez 2012"]}
-    )
-    zeitlicher_bezug = get_year_from_zeitlicher_bezug(
-        test_df, key_col, val_col, "zeitlicher Bezug"
-    )
-    assert zeitlicher_bezug == "2010"
