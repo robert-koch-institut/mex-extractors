@@ -13,8 +13,10 @@ if TYPE_CHECKING:
     from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import (
         AccessPlatformMapping,
+        ExtractedResource,
         ResourceMapping,
     )
+    from mex.common.types import MergedResourceIdentifier
 
 
 def extract_igs_info() -> IGSInfo:
@@ -72,6 +74,42 @@ def extract_endpoint_counts(
         else:
             endpoint_counts[endpoint] = connector.get_endpoint_count(endpoint=endpoint)
     return endpoint_counts
+
+
+def extract_seq_repo_resource_ids_by_pathogen(
+    seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
+) -> dict[str, MergedResourceIdentifier]:
+    """Extract seq-repo resources if igs-id is represented in igs.
+
+    Args:
+        seq_repo_resources: seq repo resources
+        igs_schemas: igs schemas by schema name
+
+    Returns:
+        seq repo resource ids by igs ids
+    """
+    pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
+    pathogens_by_igs_id = {
+        resource.identifierInPrimarySource: pathogen
+        for resource in seq_repo_resources
+        for pathogen in pathogens
+        if pathogen in resource.identifierInPrimarySource
+    }
+    connector = IGSConnector.get()
+
+    return {
+        pathogen: resource.stableTargetId
+        for resource in seq_repo_resources
+        if (pathogen := pathogens_by_igs_id.get(resource.identifierInPrimarySource))
+        and connector.get_endpoint_count(
+            endpoint="/samples/count",
+            params={
+                "pathogens": pathogen,
+                "igs_id": resource.identifierInPrimarySource,
+                "include_deleted": "false",
+            },
+        )
+    }
 
 
 def extract_ldap_actors_by_mail(
