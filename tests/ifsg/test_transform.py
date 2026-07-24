@@ -111,6 +111,7 @@ def test_transform_resource_state_to_mex_resource(
             {"value": "Meldedaten Schleswig-Holstein", "language": TextLanguage.DE}
         ],
         "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "description": [{"language": "de", "value": "Das Infektionsschutzgesetz"}],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -123,11 +124,11 @@ def test_transform_resource_state_to_mex_resource(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "isPartOf": [str(ifsg_extracted_resource_parent.stableTargetId)],
         "keyword": [
             {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
+        "relatedResource": [str(ifsg_extracted_resource_parent.stableTargetId)],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
         ],
@@ -185,6 +186,8 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
         "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "description": [{"value": "Das Infektionsschutzgesetz", "language": "de"}],
+        "hasCodeValues": [{"value": "A1"}],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -197,15 +200,9 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "icd10code": ["A1"],
         "instrumentToolOrApparatus": [
             {"value": "Falldefinition B", "language": TextLanguage.DE},
             {"value": "Falldefinition C", "language": TextLanguage.DE},
-        ],
-        "isPartOf": [
-            str(ifsg_extracted_resource_parent.stableTargetId),
-            str(ifsg_extracted_resources_state[0].stableTargetId),
-            str(ifsg_extracted_resources_state[1].stableTargetId),
         ],
         "keyword": [
             {"value": "virus"},
@@ -222,6 +219,11 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
         ],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": [str(extracted_organization_rki.stableTargetId)],
+        "relatedResource": [
+            str(ifsg_extracted_resource_parent.stableTargetId),
+            str(ifsg_extracted_resources_state[0].stableTargetId),
+            str(ifsg_extracted_resources_state[1].stableTargetId),
+        ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
         ],

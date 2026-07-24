@@ -424,6 +424,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if study.beschreibung
             else []
         )
+        end = TemporalEntity(study.feldende) if study.feldende else None
         has_legal_basis = (
             [Text(value=study.rechte, language=TextLanguage.DE)] if study.rechte else []
         )
@@ -457,9 +458,8 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             else []
         )
         rights = rights_by_dstyp_id[str(study.dstyp_id)]
-        temporal = None
-        if study.feldstart and study.feldende:
-            temporal = f"{study.feldstart}-{study.feldende}"
+        start = TemporalEntity(study.feldstart) if study.feldstart else None
+
         theme = (
             synopse_resource.theme[0].mappingRules[0].setValues
             if study.studien_id
@@ -477,11 +477,15 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 contributingUnit=contributing_unit,
                 contributor=contributor,
                 description=description,
+                end=end,
                 hasLegalBasis=has_legal_basis,
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
                 hasPurpose=has_purpose,
+                healthCategory=synopse_resource.healthCategory[0]
+                .mappingRules[0]
+                .setValues,
                 identifierInPrimarySource=identifier_in_primary_source_by_study_id[
                     study.studien_id
                 ],
@@ -502,7 +506,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 resourceTypeSpecific=resource_type_specific,
                 rights=rights,
                 spatial=study.raeumlicher_bezug,
-                temporal=temporal,
+                start=start,
                 theme=theme,
                 title=title_by_study_id[study.studien_id],
                 unitInCharge=unit_in_charge,
