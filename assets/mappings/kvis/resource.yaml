@@ -24,9 +24,6 @@ contributor:
   - forValues:
     - FelicitasJ@rki.de
     - FictitiousF@rki.de
-created:
-- mappingRules:
-  - setValues: "1999"
 description:
 - mappingRules:
   - setValues:
@@ -54,6 +51,10 @@ hasLegalBasis:
 hasPurpose:
 - mappingRules:
   - setValues:
+healthCategory:
+  - mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/health-category-1
 identifierInPrimarySource:
 - mappingRules:
   - setValues: kvis_resource
@@ -92,6 +93,9 @@ resourceTypeSpecific:
 spatial:
 - mappingRules:
   - setValues:
+start:
+- mappingRules:
+  - setValues: "1999"
 theme:
 - mappingRules:
   - setValues:

@@ -8,8 +8,7 @@ from mex.extractors.pipeline.organigram import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import ExtractedOrganizationalUnit
-    from mex.common.models.organization import ExtractedOrganization
+    from mex.common.models import ExtractedOrganization, ExtractedOrganizationalUnit
 
 
 def test_extracted_organizational_units(

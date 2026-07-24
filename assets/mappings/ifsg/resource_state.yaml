@@ -26,6 +26,11 @@ contact:
   - mappingRules:
       - forValues:
           - "FG99"
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Das Infektionsschutzgesetz"
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -149,9 +154,6 @@ identifierInPrimarySource:
       - forValues:
           - "16"
         setValues: "16"
-isPartOf:
-  - mappingRules:
-      - rule:
 keyword:
   - mappingRules:
       - setValues:
@@ -165,6 +167,9 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-1
     comment:
+relatedResource:
+  - mappingRules:
+      - rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

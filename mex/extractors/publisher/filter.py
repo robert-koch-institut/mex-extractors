@@ -10,7 +10,7 @@ from mex.common.organigram.helpers import (
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.publisher.extract import get_publishable_merged_items
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
@@ -89,7 +89,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
     Returns:
         dictionary of Bibliographic Resources by allowed units
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     all_activity_filter_mapping = ActivityFilter.model_validate(
         load_yaml(settings.publisher.mapping_path / "__all__/activity_filter.yaml")
     )

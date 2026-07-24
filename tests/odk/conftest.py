@@ -18,7 +18,7 @@ from mex.extractors.odk.model import ODKData
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def international_projects_extracted_activities() -> list[ExtractedActivity]:
 
 
 @pytest.fixture
-def odk_resource_mappings(settings: Settings) -> list[ResourceMapping]:
+def odk_resource_mappings(settings: ExtractorsSettings) -> list[ResourceMapping]:
     """Mocked odk resource mappings."""
     return [
         ResourceMapping.model_validate(
@@ -103,7 +103,7 @@ def odk_resource_mappings(settings: Settings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def odk_variable_mapping(settings: Settings) -> VariableMapping:
+def odk_variable_mapping(settings: ExtractorsSettings) -> VariableMapping:
     """Mocked odk variable mappings."""
     return VariableMapping.model_validate(
         load_yaml(settings.odk.mapping_path / "variable.yaml")
@@ -147,16 +147,15 @@ def odk_extracted_resources() -> list[ExtractedResource]:
                 Text(value="eirmod", language="de"),
             ],
             methodDescription=[Text(value="tempor", language="en")],
+            numberOfUniqueIndividuals=999,
             publisher=["bFQoRhcVH5DHU6"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
             rights=[Text(value="ut labore", language="de")],
-            sizeOfDataBasis="et dolore",
             spatial=[
                 Text(value="magna", language="de"),
                 Text(value="magna", language="en"),
             ],
             stateOfDataProcessing=[],
-            temporal="2021-07-27 - 2021-12-31",
             theme=[
                 "https://mex.rki.de/item/theme-11",
                 "https://mex.rki.de/item/theme-37",

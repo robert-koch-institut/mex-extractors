@@ -35,7 +35,7 @@ from mex.extractors.publisher.transform import (
     transform_merged_bibliographic_resources_for_csv,
     update_actor_references_where_needed,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.s3 import S3Sink
 
 if TYPE_CHECKING:
@@ -51,7 +51,7 @@ def publisher_items_without_actors() -> PublisherItemsLike:
     Settings:
         publisher.skip_entity_types: entity type to skip on top of actor types.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     allowed_entity_types = [
         entity_type
         for entity_type in MERGED_MODEL_CLASSES_BY_NAME
@@ -102,7 +102,7 @@ def publisher_persons() -> PublisherItemsLike:
 @asset(group_name="publisher")
 def publisher_contact_points_and_units() -> PublisherItemsLike:
     """Get publishable contact points and organizational units."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     allowed_entity_types = [
         entity_type
         for entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
@@ -117,7 +117,7 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
 @asset(group_name="publisher")
 def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     merged_contact_points = cast(
         "list[MergedContactPoint]",
         get_publishable_merged_items(
@@ -197,7 +197,7 @@ def publisher_bibliographic_resources_for_csv_by_unit() -> dict[
     )
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the publisher job in-process."""
     run_job_in_process("publisher")

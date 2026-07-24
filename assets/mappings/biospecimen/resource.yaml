@@ -56,11 +56,18 @@ documentation:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
+end:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 externalPartner:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
 hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasCodeValues:
   - mappingRules:
       - rule:
 hasPersonalData:
@@ -86,10 +93,6 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1 # German
-loincId:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
 meshId:
   - fieldInPrimarySource:
     mappingRules:
@@ -99,6 +102,10 @@ method:
     mappingRules:
       - rule:
 methodDescription:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
+numberOfRecords:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
@@ -132,15 +139,11 @@ rights:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-sizeOfDataBasis:
-  - fieldInPrimarySource:
-    mappingRules:
-      - rule:
 spatial:
   - fieldInPrimarySource:
     mappingRules:
       - rule:
-temporal:
+start:
   - fieldInPrimarySource:
     mappingRules:
       - rule:

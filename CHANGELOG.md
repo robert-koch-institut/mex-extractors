@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - publish CSV of publications to be downloadable on MEx
+- add and wrap up extraction of new non-required fields
 
 ### Changes
+
+- use publishing endpoint for datenkompass and publisher. Needs mex-backend 3.0.0
 
 ### Deprecated
 
@@ -20,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.16.0] - 2026-07-20
+
+### Changes
+
+- BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
+
+### Fixed
+
+- ruff sim222 compliance
 
 ## [1.15.2] - 2026-07-09
 
@@ -54,6 +68,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - use ldap convenience function and refactor ldap and organigram helper functions
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- dependency update(2026-06-16)
+- implement seq-repo fallback rule for units
+
+### Removed
 - dependency update(2026-06-26)
 
 ### Fixed
