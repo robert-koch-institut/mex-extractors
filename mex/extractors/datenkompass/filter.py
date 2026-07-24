@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any, cast, overload
 
 from mex.common.exceptions import MExError
-from mex.common.organigram.helpers import find_descendants
+from mex.common.organigram.helpers import get_all_descendant_unit_ids
 from mex.extractors.datenkompass.extract import (
     get_extracted_item_stable_target_ids,
     get_merged_items,
@@ -130,7 +130,7 @@ def find_descendant_units(
             if unit.shortName and unit.shortName[0].value == parent_unit_name
         )
     )
-    descendants = find_descendants(
+    descendants = get_all_descendant_unit_ids(
         fetched_merged_organizational_units,
         str(parent_id),
     )

@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- publish CSV of publications to be downloadable on MEx
 - add and wrap up extraction of new non-required fields
 
 ### Changes
 
-- use publishing endpoint for datenkompass and publisher
+- use publishing endpoint for datenkompass and publisher. Needs mex-backend 3.0.0
 
 ### Deprecated
 
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 
@@ -97,7 +99,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
-- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 

@@ -19,7 +19,7 @@ from mex.extractors.publisher.main import (
 )
 
 if TYPE_CHECKING:
-    from mex.extractors.publisher.types import PublisherItemsLike
+    from mex.extractors.publisher.models import PublisherItemsLike
 
 
 @pytest.mark.usefixtures(
