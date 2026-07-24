@@ -393,8 +393,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         "MergedContactPoint": mocked_merged_contact_point,
     }
 
-    def fetch_all_merged_items(
+    def fetch_all_publishable_merged_items(
         *,
+        publishing_target: str = "target",  # noqa: ARG001
         query_string: str | None = None,  # noqa: ARG001
         entity_type: list[str] | None = None,
         referenced_identifier: list[str] | None = None,  # noqa: ARG001
@@ -423,9 +424,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         )
 
     backend = MagicMock(
-        fetch_all_merged_items=MagicMock(
-            spec=BackendApiConnector.fetch_all_merged_items,
-            side_effect=fetch_all_merged_items,
+        fetch_all_publishable_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_all_publishable_merged_items,
+            side_effect=fetch_all_publishable_merged_items,
         ),
         fetch_extracted_items=MagicMock(
             spec=BackendApiConnector.fetch_extracted_items,
@@ -436,7 +437,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         BackendApiConnector, "_check_availability", MagicMock(return_value=True)
     )
     monkeypatch.setattr(
-        BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
+        BackendApiConnector,
+        "fetch_all_publishable_merged_items",
+        backend.fetch_all_publishable_merged_items,
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items

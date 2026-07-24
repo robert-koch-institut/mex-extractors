@@ -16,7 +16,8 @@ def extract_ldap_persons() -> list[MergedPerson]:
     return cast(
         "list[MergedPerson]",
         list(
-            connector.fetch_all_merged_items(
+            connector.fetch_all_publishable_merged_items(
+                publishing_target="invenio",
                 entity_type=["MergedPerson"],
                 reference_field="hadPrimarySource",
                 referenced_identifier=[get_extracted_primary_source_id_by_name("ldap")],
@@ -43,7 +44,8 @@ def extract_consents_for_persons(
         partial_merged_consents = cast(
             "list[MergedConsent]",
             list(
-                connector.fetch_all_merged_items(
+                connector.fetch_all_publishable_merged_items(
+                    publishing_target="invenio",
                     entity_type=["MergedConsent"],
                     reference_field="hasDataSubject" if partial_person_ids else None,
                     referenced_identifier=partial_person_ids,
