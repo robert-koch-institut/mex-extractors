@@ -136,7 +136,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         ],
         "rights": [{"value": "Verfahren", "language": TextLanguage.DE}],
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
-        "start": "2011",
+        "start": ["2011"],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
