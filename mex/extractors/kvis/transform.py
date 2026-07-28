@@ -102,13 +102,13 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         contact=contact,
         contributingUnit=contributing_unit,
         contributor=contributor,
-        created=mapping.created[0].mappingRules[0].setValues,
         description=mapping.description[0].mappingRules[0].setValues,
         documentation=mapping.documentation[0].mappingRules[0].setValues,
         externalPartner=external_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
         hasPurpose=mapping.hasPurpose[0].mappingRules[0].setValues,
+        healthCategory=mapping.healthCategory[0].mappingRules[0].setValues,
         identifierInPrimarySource=mapping.identifierInPrimarySource[0]
         .mappingRules[0]
         .setValues,
@@ -124,6 +124,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         resourceTypeGeneral=mapping.resourceTypeGeneral[0].mappingRules[0].setValues,
         resourceTypeSpecific=mapping.resourceTypeSpecific[0].mappingRules[0].setValues,
         spatial=mapping.spatial[0].mappingRules[0].setValues,
+        start=mapping.start[0].mappingRules[0].setValues,
         theme=mapping.theme[0].mappingRules[0].setValues,
         title=mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,

@@ -28,9 +28,6 @@ contributor:
       - forValues:
           - "Roland Resolved"
         rule:
-created:
-  - mappingRules:
-      - setValues: "2011"
 description:
   - mappingRules:
       - setValues:
@@ -53,7 +50,7 @@ hasPersonalData:
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
+hasCodeValues:
   - mappingRules:
       - setValues:
           - "J00-J99" #Diseases of the respiratory system
@@ -120,21 +117,18 @@ rights:
       - setValues:
           - language: de
             value: "Verfahren"
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: "Meldungen"
 spatial:
   - mappingRules:
       - setValues:
           - language: de
             value: Deutschland
+start:
+  - mappingRules:
+      - setValues: "2011"
 stateOfDataProcessing:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/data-processing-state-2 #Secondary data
-temporal:
-  - mappingRules:
-      - setValues: "seit 2011"
 theme:
   - mappingRules:
       - setValues:

@@ -152,8 +152,9 @@ def fetch_merged_items(  # noqa: PLR0913
     return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
 
 
-def fetch_all_merged_items(
+def fetch_all_publishable_merged_items(  # noqa: PLR0913
     *,
+    publishing_target: str = "target",  # noqa: ARG001
     query_string: str | None = None,  # noqa: ARG001
     identifier: str | None = None,  # noqa: ARG001
     entity_type: list[str] | None = None,
@@ -230,9 +231,9 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
         fetch_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_merged_items, side_effect=fetch_merged_items
         ),
-        fetch_all_merged_items=MagicMock(
-            spec=BackendApiConnector.fetch_all_merged_items,
-            side_effect=fetch_all_merged_items,
+        fetch_all_publishable_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_all_publishable_merged_items,
+            side_effect=fetch_all_publishable_merged_items,
         ),
         fetch_extracted_items=MagicMock(
             spec=BackendApiConnector.fetch_extracted_items,
@@ -253,7 +254,9 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
         BackendApiConnector, "fetch_merged_items", backend.fetch_merged_items
     )
     monkeypatch.setattr(
-        BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
+        BackendApiConnector,
+        "fetch_all_publishable_merged_items",
+        backend.fetch_all_publishable_merged_items,
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items

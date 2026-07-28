@@ -36,8 +36,9 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
     assert len(container.items) == 1
     assert isinstance(container.items[0], MergedBibliographicResource)
     mocked_backend.fetch_extracted_items.assert_not_called()
-    assert mocked_backend.fetch_all_merged_items.call_args_list == [
+    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
         call(
+            publishing_target="invenio",
             query_string=None,
             entity_type=[
                 "MergedAccessPlatform",
@@ -59,14 +60,16 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
 def test_publisher_persons(mocked_backend: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_persons())
     assert len(container.items) == 1
-    assert mocked_backend.fetch_all_merged_items.call_args_list == [
+    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
         call(
+            publishing_target="invenio",
             query_string=None,
             entity_type=["MergedPerson"],
             referenced_identifier=None,
             reference_field=None,
         ),
         call(
+            publishing_target="invenio",
             query_string=None,
             entity_type=["MergedConsent"],
             referenced_identifier=None,
@@ -79,8 +82,9 @@ def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_contact_points_and_units())
     assert len(container.items) == 2
     mocked_backend.fetch_extracted_items.assert_not_called()
-    assert mocked_backend.fetch_all_merged_items.call_args_list == [
+    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
         call(
+            publishing_target="invenio",
             query_string=None,
             entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
             referenced_identifier=None,

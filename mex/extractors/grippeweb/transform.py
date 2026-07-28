@@ -55,7 +55,7 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
     )
-    child_resource.isPartOf = [parent_resource.stableTargetId]
+    child_resource.relatedResource = [parent_resource.stableTargetId]
     return parent_resource, child_resource
 
 
@@ -100,7 +100,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             for name in (resource.contributor[0].mappingRules[0].forValues or [])
             if (person_id := grippeweb_extracted_persons.get(name))
         ]
-        created = resource.created[0].mappingRules[0].setValues
         description = resource.description[0].mappingRules[0].setValues
         documentation = resource.documentation[0].mappingRules[0].setValues
         external_partner_identifier = get_or_create_external_partner(
@@ -110,7 +109,7 @@ def transform_grippeweb_resource_mappings_to_dict(
 
         has_legal_basis = resource.hasLegalBasis[0].mappingRules[0].setValues
         has_personal_data = resource.hasPersonalData[0].mappingRules[0].setValues
-        icd10code = resource.icd10code[0].mappingRules[0].setValues
+        has_code_values = resource.hasCodeValues[0].mappingRules[0].setValues
         identifier_in_primary_source_mapping_rules = resource.identifierInPrimarySource[
             0
         ].mappingRules[0]
@@ -141,12 +140,11 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.resourceTypeSpecific[0].mappingRules[0].setValues
         )
         rights = resource.rights[0].mappingRules[0].setValues
-        size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
         spatial = resource.spatial[0].mappingRules[0].setValues
+        start = resource.start[0].mappingRules[0].setValues
         state_of_data_processing = (
             resource.stateOfDataProcessing[0].mappingRules[0].setValues
         )
-        temporal = resource.temporal[0].mappingRules[0].setValues
         theme = resource.theme[0].mappingRules[0].setValues
         title = resource.title[0].mappingRules[0].setValues
         unit_in_charge = get_unit_merged_id_by_synonym(
@@ -165,12 +163,11 @@ def transform_grippeweb_resource_mappings_to_dict(
             contact=contact,
             contributingUnit=contributing_unit,
             contributor=contributor,
-            created=created,
             description=description,
             documentation=documentation,
             externalPartner=external_partner_identifier,
             hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
-            icd10code=icd10code,
+            hasCodeValues=has_code_values,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=language,
@@ -181,10 +178,9 @@ def transform_grippeweb_resource_mappings_to_dict(
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
-            sizeOfDataBasis=size_of_data_basis,
             spatial=spatial,
+            start=start,
             stateOfDataProcessing=state_of_data_processing,
-            temporal=temporal,
             theme=theme,
             title=title,
             unitInCharge=unit_in_charge,

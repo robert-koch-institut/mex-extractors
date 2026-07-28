@@ -27,7 +27,7 @@ class BiospecimenResource(BaseModel):
     ressourcentyp_allgemein: str | None
     ressourcentyp_speziell: list[str]
     rechte: str | None
-    vorhandene_anzahl_der_proben: str | None
+    vorhandene_anzahl_der_proben: int | None
     raeumlicher_bezug: list[str]
     zeitlicher_bezug: list[str]
     thema: list[str]

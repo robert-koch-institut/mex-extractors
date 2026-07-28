@@ -9,13 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add and wrap up extraction of new non-required fields
+
 ### Changes
+
+- use publishing endpoint for datenkompass and publisher
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+-  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
 
 ### Security
 

@@ -328,7 +328,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
             for person in resource.metadata.contributors
             if (c := person_stable_target_id_by_name.get(str(person.name)))
         ]
-        created = extract_oldest_record_version_creationdate(resource.id)
+        start = extract_oldest_record_version_creationdate(resource.id)
         creator = [
             c
             for person in resource.metadata.creators
@@ -379,7 +379,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 contact=contact,
                 contributingUnit=contributing_unit,
                 contributor=contributor,
-                created=created,
                 creator=creator,
                 description=description,
                 distribution=distribution,
@@ -394,6 +393,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
                 resourceTypeGeneral=resource_type_general,
+                start=start,
                 theme=theme,
                 title=resource.title,
                 unitInCharge=unit_in_charge,
