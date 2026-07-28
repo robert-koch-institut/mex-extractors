@@ -32,6 +32,7 @@ from mex.extractors.publisher.transform import (
 from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.settings import Settings
 from mex.extractors.sinks.s3 import S3Sink
+from mex.extractors.sinks.ndjson import NdjsonSink
 
 
 @asset(group_name="publisher")
@@ -174,8 +175,11 @@ def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
 def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
     """Write received merged items to sink which can be either s3 (default) or as ndjson."""
     settings = Settings.get()
-    if settings.publisher.sink == "s3":
+    if settings.publisher.sink.lower() == "ndjson":
+        sink= NdjsonSink()
+    else:
         sink = S3Sink.get()
+    deque(sink.load(publisher_items.items), maxlen=0)
     # else sink = NdjsonSink.get() #TODO
     # deque(s3.load(publisher_items.items), maxlen=0) oder Ndjson sink
 
