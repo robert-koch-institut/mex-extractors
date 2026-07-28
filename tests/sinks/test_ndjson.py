@@ -1,11 +1,12 @@
-
-from pathlib import Path
+import json
 from typing import TYPE_CHECKING
 
+from mex.common.transform import MExEncoder
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 
 if TYPE_CHECKING:
+    from pathlib import Path
 
     from pytest import MonkeyPatch
 
@@ -14,18 +15,26 @@ if TYPE_CHECKING:
 
 def test_ndjson_load(
     extracted_organization_rki: ExtractedOrganization,
+    tmp_path: Path,
     monkeypatch: MonkeyPatch,
 ) -> None:
     settings = ExtractorsSettings.get()
-    project_root = Path.cwd()
-    monkeypatch.setattr(settings, "work_dir", project_root)
+    monkeypatch.setattr(settings, "work_dir", tmp_path)
     sink = NdjsonSink()
     result = list(sink.load([extracted_organization_rki]))
+
     assert result == [extracted_organization_rki]
 
-    output_file = project_root / "publisher_items.ndjson"
+    output_file = tmp_path / "publisher_items.ndjson"
     assert output_file.exists()
 
-    #output = ("publisher_items.ndjson").read_text()
-    output = output_file.read_text(encoding="utf-8")
-    assert "ExtractedOrganization" in output
+    expected = (
+        json.dumps(
+            extracted_organization_rki,
+            sort_keys=True,
+            cls=MExEncoder,
+        )
+        + "\n"
+    )
+
+    assert (tmp_path / "publisher_items.ndjson").read_text(encoding="utf-8") == expected

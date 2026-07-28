@@ -165,16 +165,10 @@ def publisher_items(
 
 
 @asset(group_name="publisher")
-def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
-    """Write received merged items to s3 sink."""
-    s3 = S3Sink.get()
-    deque(s3.load(publisher_items.items), maxlen=0)
-
-@asset(group_name="publisher")
 def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
     """Write received merged items to the configured sink."""
     settings = ExtractorsSettings.get()
-
+    sink: S3Sink | NdjsonSink
     if settings.publisher.sink == "s3":
         sink = S3Sink.get()
     else:
