@@ -30,7 +30,7 @@ from mex.extractors.publisher.transform import (
     update_actor_references_where_needed,
 )
 from mex.extractors.publisher.types import PublisherItemsLike
-from mex.extractors.settings import ExtractorsSettings, Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3Sink
 
