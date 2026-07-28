@@ -7,7 +7,7 @@ from pandas import DataFrame, ExcelFile, Series
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -73,7 +73,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
     Returns:
         List of Biospecimen resources
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     resources = []
     for file in watch_progress(
         Path(settings.biospecimen.raw_data_path).glob("*.xlsx"),
@@ -142,28 +142,6 @@ def get_clean_file_name(file_name: str) -> str:
     return re.sub(r"[_\-\.]", "", file_name)
 
 
-def get_year_from_zeitlicher_bezug(
-    resource: DataFrame | None, key_col: str, val_col: str, field_name: str
-) -> str | None:
-    """Extract the first four connected digits of the string as year.
-
-    Args:
-        resource: Biospecimen resource
-        key_col: column in the file with keys
-        val_col: column in the file with values
-        field_name: column name of extracted field
-
-    Returns:
-        string with first four digits treated as zeitlicher_bezug year
-    """
-    zeitlicher_bezug = get_values(resource, key_col, val_col, field_name)
-    if zeitlicher_bezug is not None:
-        match = re.search(r"\d{4}", zeitlicher_bezug)
-        if match:
-            return match.group(0)
-    return None
-
-
 def extract_biospecimen_resource(
     resource: DataFrame, sheet_name: str, file_name: str
 ) -> BiospecimenResource | None:
@@ -181,7 +159,7 @@ def extract_biospecimen_resource(
     Returns:
         Biospecimen resource
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     key_col = settings.biospecimen.key_col
     val_col = settings.biospecimen.val_col
 

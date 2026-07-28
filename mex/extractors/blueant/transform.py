@@ -20,10 +20,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from mex.common.models.activity import AnyContactIdentifier
-    from mex.common.types import (
-        MergedOrganizationIdentifier,
-        MergedPersonIdentifier,
-    )
+    from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
     from mex.extractors.blueant.models.source import BlueAntSource
 
 

@@ -22,6 +22,9 @@ description:
             value: Testbeschreibung
           - language: en
             value: test description
+healthCategory:
+  - mappingRules:
+      - setValues:
 keyword:
   - mappingRules:
       - setValues:

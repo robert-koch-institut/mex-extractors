@@ -18,7 +18,7 @@ from mex.extractors.biospecimen.transform import (
     transform_biospecimen_resource_to_mex_resource,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -46,7 +46,7 @@ def biospecimen_extracted_resources(
     synopse_extracted_activities: list[ExtractedActivity],
 ) -> list[ExtractedResource]:
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     resource_mapping = ResourceMapping.model_validate(
         load_yaml(settings.biospecimen.mapping_path / "resource.yaml")
     )
@@ -66,7 +66,7 @@ def biospecimen_extracted_resources(
     return mex_sources
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the biospecimen extractor job in-process."""
     run_job_in_process("biospecimen")

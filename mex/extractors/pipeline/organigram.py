@@ -1,10 +1,7 @@
 from dagster import asset
 
-from mex.common.models import ExtractedOrganizationalUnit
-from mex.common.models.organization import ExtractedOrganization
-from mex.common.organigram.extract import (
-    extract_organigram_units,
-)
+from mex.common.models import ExtractedOrganization, ExtractedOrganizationalUnit
+from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
