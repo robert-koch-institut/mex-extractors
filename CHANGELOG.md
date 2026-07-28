@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add and wrap up extraction of new non-required fields
+- extrators settings has configuration option for publishing sink: extactor_settings.publisher.sink
+- allowed values for publishing sink: ndjson or S3 (default: S3)
+
 
 ### Changes
 
 - use publishing endpoint for datenkompass and publisher
+- publisher is not hardcoded anymore to s3
+
 
 ### Deprecated
 

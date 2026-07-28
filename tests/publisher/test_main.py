@@ -1,9 +1,13 @@
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.models import ExtractedOrganization, ItemsContainer, MergedBibliographicResource
+from mex.common.models import (
+    ExtractedOrganization,
+    ItemsContainer,
+    MergedBibliographicResource,
+)
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -18,10 +22,12 @@ from mex.extractors.publisher.main import (
     publisher_persons,
     publisher_sink_load,
 )
-from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3Sink
+
+if TYPE_CHECKING:
+    from mex.extractors.publisher.types import PublisherItemsLike
 
 
 @pytest.mark.usefixtures(
@@ -118,7 +124,6 @@ def test_publisher_items(
         ),
     )
     assert len(container.items) == 4
-
 
 
 @pytest.mark.parametrize(
