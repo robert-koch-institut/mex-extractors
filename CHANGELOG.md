@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
+
 ### Security
 
 ## [1.16.0] - 2026-07-20

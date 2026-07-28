@@ -64,7 +64,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
         "identifierInPrimarySource": "test-sample-id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
-        "start": "2023-08-07",
+        "start": ["2023-08-07"],
         "modified": "2023-08-07",
         "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
         "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
