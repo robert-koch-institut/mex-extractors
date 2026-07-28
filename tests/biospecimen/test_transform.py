@@ -100,35 +100,32 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
     )
 
     expected = {
-        "hadPrimarySource": "fBlRVJ8z9yVH1fxXU9ZsjD",
-        "identifierInPrimarySource": "test_bioproben_Probe1",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "sizeOfDataBasis": "Testanzahl",
-        "temporal": "2021-09 bis 2021-10",
-        "wasGeneratedBy": "gEMgesHdSwermqdIEGirbk",
-        "contact": ["eXA2Qj5pKmI7HXIgcVqCfz"],
-        "theme": ["https://mex.rki.de/item/theme-36"],
-        "title": [{"value": "test_titel"}],
-        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
         "alternativeTitle": [{"value": "alternativer Testitel"}],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "conformsTo": ["LOINC"],
+        "contact": ["eXA2Qj5pKmI7HXIgcVqCfz"],
         "description": [{"value": "Testbeschreibung", "language": "de"}],
         "documentation": [
             {"language": "de", "title": "Testdokutitel", "url": "Testdokupfad"}
         ],
+        "end": "2021-10",
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
+        "hadPrimarySource": "fBlRVJ8z9yVH1fxXU9ZsjD",
+        "hasCodeValues": [{"value": "12345-6"}],
         "hasLegalBasis": [{"value": "DSGVO", "language": "de"}],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
+        "identifier": "bqGbj0OwcKeEXfce6SntlD",
+        "identifierInPrimarySource": "test_bioproben_Probe1",
         "instrumentToolOrApparatus": [{"value": "Testtool"}],
         "keyword": [{"value": "Testschlagwort 1, Testschlagwort 2", "language": "de"}],
         "language": ["https://mex.rki.de/item/language-1"],
-        "loincId": ["https://loinc.org/12345-6"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D123"],
         "method": [{"value": "Testmethode", "language": "en"}],
         "methodDescription": [{"value": "Testmethodenbeschreibung", "language": "de"}],
+        "numberOfRecords": 42,
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2",
@@ -137,7 +134,11 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
         "resourceTypeSpecific": [{"value": "spezieller Testtyp", "language": "de"}],
         "rights": [{"value": "Testrechte", "language": "de"}],
         "spatial": [{"value": "räumlicher Testbezug", "language": "de"}],
-        "identifier": "bqGbj0OwcKeEXfce6SntlD",
         "stableTargetId": "fTFbnOlBFeccJoQw4QfnIm",
+        "start": "2021-09",
+        "theme": ["https://mex.rki.de/item/theme-36"],
+        "title": [{"value": "test_titel"}],
+        "unitInCharge": ["hIiJpZXVppHvoyeP0QtAoS"],
+        "wasGeneratedBy": "gEMgesHdSwermqdIEGirbk",
     }
     assert resources[0].model_dump(exclude_none=True, exclude_defaults=True) == expected

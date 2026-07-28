@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import ResourceMapping
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 
 
@@ -37,7 +37,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
             verantwortliche_fachabteilung="PARENT Dept.",
             verwandte_publikation_doi="testverwandedoi",
             verwandte_publikation_titel="testverwandtepublikation",
-            vorhandene_anzahl_der_proben="Testanzahl",
+            vorhandene_anzahl_der_proben=42,
             weiterfuehrende_dokumentation_titel="Testdokutitel",
             weiterfuehrende_dokumentation_url_oder_dateipfad="Testdokupfad",
             zugriffsbeschraenkung="restriktiv",
@@ -49,5 +49,7 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 def resource_mapping() -> ResourceMapping:
     """Mock resource mapping."""
     return ResourceMapping.model_validate(
-        load_yaml(Settings.get().biospecimen.mapping_path / "resource_mock.yaml")
+        load_yaml(
+            ExtractorsSettings.get().biospecimen.mapping_path / "resource_mock.yaml"
+        )
     )

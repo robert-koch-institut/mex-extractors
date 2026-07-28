@@ -30,7 +30,7 @@ from mex.extractors.publisher.transform import (
     update_actor_references_where_needed,
 )
 from mex.extractors.publisher.types import PublisherItemsLike
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3Sink
 
@@ -44,7 +44,7 @@ def publisher_items_without_actors() -> PublisherItemsLike:
     Settings:
         publisher.skip_entity_types: entity type to skip on top of actor types.
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     allowed_entity_types = [
         entity_type
         for entity_type in MERGED_MODEL_CLASSES_BY_NAME
@@ -95,7 +95,7 @@ def publisher_persons() -> PublisherItemsLike:
 @asset(group_name="publisher")
 def publisher_contact_points_and_units() -> PublisherItemsLike:
     """Get publishable contact points and organizational units."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     allowed_entity_types = [
         entity_type
         for entity_type in ["MergedContactPoint", "MergedOrganizationalUnit"]
@@ -110,7 +110,7 @@ def publisher_contact_points_and_units() -> PublisherItemsLike:
 @asset(group_name="publisher")
 def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifier]:
     """Get the mex contact point as a fallback contact."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     merged_contact_points = cast(
         "list[MergedContactPoint]",
         get_publishable_merged_items(
@@ -171,20 +171,7 @@ def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
     deque(s3.load(publisher_items.items), maxlen=0)
 
 
-@asset(group_name="publisher")
-def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
-    """Write received merged items to sink which can be either s3 (default) or as ndjson."""
-    settings = Settings.get()
-    if settings.publisher.sink.lower() == "ndjson":
-        sink = NdjsonSink()
-    else:
-        sink = S3Sink.get()
-    deque(sink.load(publisher_items.items), maxlen=0)
-    # else sink = NdjsonSink.get() #TODO
-    # deque(s3.load(publisher_items.items), maxlen=0) oder Ndjson sink
-
-
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the publisher job in-process."""
     run_job_in_process("publisher")

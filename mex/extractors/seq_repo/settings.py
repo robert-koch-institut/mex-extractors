@@ -7,6 +7,10 @@ from mex.common.types import AssetsPath
 class SeqRepoSettings(BaseModel):
     """Settings submodel for the SeqRepo extractor."""
 
+    fallback_unit: str = Field(
+        "C1",
+        description=("Default unit if unit can't be extracted otherwise."),
+    )
     mapping_path: AssetsPath = Field(
         AssetsPath("mappings/seq-repo"),
         description=(

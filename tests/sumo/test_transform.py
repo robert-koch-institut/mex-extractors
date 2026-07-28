@@ -89,6 +89,7 @@ def test_transform_resource_nokeda_to_mex_resource(
             {"language": "en", "title": "Confluence", "url": "https://link.com"}
         ],
         "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": "de", "value": "keyword1"},
             {"language": "de", "value": "keyword2"},
@@ -144,12 +145,16 @@ def test_transform_resource_feat_model_to_mex_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
         "contributingUnit": [Joker()],
-        "isPartOf": [mex_resources_nokeda.stableTargetId],
+        "description": [
+            {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
+        ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},
             {"language": TextLanguage.DE, "value": "keyword 2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
+        "relatedResource": [mex_resources_nokeda.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-1",
         ],
@@ -355,7 +360,7 @@ def test_transform_feat_projection_variable_to_mex_variable(
         "stableTargetId": Joker(),
         "belongsTo": [
             stable_target_id_by_label_values[
-                f"{variable.feature_domain} {variable.feature_subdomain}" or ""
+                f"{variable.feature_domain} {variable.feature_subdomain}"
             ]
         ],
         "description": [{"value": "specific RSV-ICD-10 codes"}],

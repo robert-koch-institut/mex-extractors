@@ -28,7 +28,7 @@ from mex.extractors.ifsg.models.meta_type import MetaType
 from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
-    from mex.extractors.settings import Settings
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
@@ -179,21 +179,21 @@ def meta_field() -> list[MetaField]:
 
 
 @pytest.fixture
-def ifsg_variable_group(settings: Settings) -> VariableGroupMapping:
+def ifsg_variable_group(settings: ExtractorsSettings) -> VariableGroupMapping:
     return VariableGroupMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "variable-group_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_parent(settings: Settings) -> ResourceMapping:
+def resource_parent(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(settings.ifsg.mapping_path / "resource_parent_mock.yaml")
     )
 
 
 @pytest.fixture
-def resource_states(settings: Settings) -> list[ResourceMapping]:
+def resource_states(settings: ExtractorsSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_state_1_mock.yaml")
@@ -205,7 +205,7 @@ def resource_states(settings: Settings) -> list[ResourceMapping]:
 
 
 @pytest.fixture
-def resource_diseases(settings: Settings) -> list[ResourceMapping]:
+def resource_diseases(settings: ExtractorsSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
             load_yaml(settings.ifsg.mapping_path / "resource_disease_1_mock.yaml")
@@ -229,7 +229,6 @@ def ifsg_extracted_resource_parent() -> ExtractedResource:
         contact=["bFQoRhcVH5DHU6"],
         contributingUnit=[],
         contributor=[],
-        created=None,
         creator=[],
         description=[
             Text(value="Das Infektionsschutzgesetz", language=TextLanguage.DE)
@@ -237,18 +236,15 @@ def ifsg_extracted_resource_parent() -> ExtractedResource:
         distribution=[],
         documentation=[],
         externalPartner=[],
-        icd10code=[],
         instrumentToolOrApparatus=[],
-        isPartOf=[],
         keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
         language=["https://mex.rki.de/item/language-1"],
+        relatedResource=[],
         resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
         resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
         rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-        sizeOfDataBasis=None,
         spatial=[Text(value="Deutschland", language=TextLanguage.DE)],
         stateOfDataProcessing=[],
-        temporal=None,
         theme=["https://mex.rki.de/item/theme-11"],
         title=[
             Text(
@@ -277,24 +273,20 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             contact=["bFQoRhcVH5DHU6"],
             contributingUnit=[],
             contributor=[],
-            created=None,
             creator=[],
             description=[],
             distribution=[],
             documentation=[],
             externalPartner=[],
-            icd10code=[],
             instrumentToolOrApparatus=[],
-            isPartOf=["eMzHOpNx0evkZAHMle6ZKd"],
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
+            relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-            sizeOfDataBasis=None,
             spatial=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -313,24 +305,20 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             contact=["bFQoRhcVH5DHU6"],
             contributingUnit=[],
             contributor=[],
-            created=None,
             creator=[],
             description=[],
             distribution=[],
             documentation=[],
             externalPartner=[],
-            icd10code=[],
             instrumentToolOrApparatus=[],
-            isPartOf=["eMzHOpNx0evkZAHMle6ZKd"],
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
+            relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-            sizeOfDataBasis=None,
             spatial=[Text(value="Hamburg", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Hamburg", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -349,24 +337,20 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             contact=["bFQoRhcVH5DHU6"],
             contributingUnit=[],
             contributor=[],
-            created=None,
             creator=[],
             description=[],
             distribution=[],
             documentation=[],
             externalPartner=[],
-            icd10code=[],
             instrumentToolOrApparatus=[],
-            isPartOf=["eMzHOpNx0evkZAHMle6ZKd"],
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
+            relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-            sizeOfDataBasis=None,
             spatial=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Schleswig-Holstein", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -385,24 +369,20 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             contact=["bFQoRhcVH5DHU6"],
             contributingUnit=[],
             contributor=[],
-            created=None,
             creator=[],
             description=[],
             distribution=[],
             documentation=[],
             externalPartner=[],
-            icd10code=[],
             instrumentToolOrApparatus=[],
-            isPartOf=["eMzHOpNx0evkZAHMle6ZKd"],
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
+            relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-            sizeOfDataBasis=None,
             spatial=[Text(value="Hamburg", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=["https://mex.rki.de/item/theme-11"],
             title=[Text(value="Hamburg", language=TextLanguage.DE)],
             unitInCharge=["bFQoRhcVH5DHU7"],
@@ -425,21 +405,14 @@ def ifsg_extracted_resources_disease() -> list[ExtractedResource]:
             contact=["bFQoRhcVH5DHU6"],
             contributingUnit=[],
             contributor=[],
-            created=None,
             creator=[],
             description=[],
             distribution=[],
             documentation=[],
             externalPartner=[],
-            icd10code=["A1"],
             instrumentToolOrApparatus=[
                 Text(value="Falldefinition B", language=TextLanguage.DE),
                 Text(value="Falldefinition C", language=TextLanguage.DE),
-            ],
-            isPartOf=[
-                "hWaaedrfn2ammVuBSZL4TD",
-                "dwbN9TmQwDrEp6a0qriDIf",
-                "dEefZZfVSd6l9Lj8JZqjg",
             ],
             keyword=[
                 Text(value="virus", language=None),
@@ -447,13 +420,16 @@ def ifsg_extracted_resources_disease() -> list[ExtractedResource]:
                 Text(value="virus", language=None),
             ],
             language=["https://mex.rki.de/item/language-1"],
+            relatedResource=[
+                "hWaaedrfn2ammVuBSZL4TD",
+                "dwbN9TmQwDrEp6a0qriDIf",
+                "dEefZZfVSd6l9Lj8JZqjg",
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
-            sizeOfDataBasis=None,
             spatial=[Text(value="Deutschland", language=TextLanguage.DE)],
             stateOfDataProcessing=[],
-            temporal=None,
             theme=[
                 "https://mex.rki.de/item/theme-11",
             ],

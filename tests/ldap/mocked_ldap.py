@@ -13,7 +13,7 @@ from mex.common.ldap.transform import (
     transform_ldap_functional_account_to_extracted_contact_point,
     transform_ldap_person_to_extracted_person,
 )
-from mex.common.models.base.container import PaginatedItemsContainer
+from mex.common.models import PaginatedItemsContainer
 from mex.common.transform import MExEncoder, normalize
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,

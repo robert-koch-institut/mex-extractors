@@ -90,7 +90,6 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         "contact": [str(grippeweb_merged_contact_point_id_by_email["contactc@rki.de"])],
         "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
         "contributor": [str(roland_resolved.stableTargetId)],
-        "created": "2011",
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "documentation": [
             {
@@ -107,7 +106,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "icd10code": ["J00-J99"],
+        "hasCodeValues": [{"value": "J00-J99"}],
         "keyword": [{"value": "Citizen Science", "language": TextLanguage.EN}],
         "language": ["https://mex.rki.de/item/language-1"],
         "meshId": ["http://id.nlm.nih.gov/mesh/D012140"],
@@ -136,10 +135,9 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             }
         ],
         "rights": [{"value": "Verfahren", "language": TextLanguage.DE}],
-        "sizeOfDataBasis": "Meldungen",
         "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
+        "start": "2011",
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
-        "temporal": "seit 2011",
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "unitInCharge": get_unit_merged_id_by_synonym("C1"),
@@ -170,7 +168,7 @@ def test_transform_grippeweb_resource_mappings_to_extracted_resources(
             grippeweb_merged_contact_point_id_by_email,
         )
     )
-    assert child_resource.isPartOf == [parent_resource.stableTargetId]
+    assert child_resource.relatedResource == [parent_resource.stableTargetId]
 
 
 def test_transform_grippeweb_variable_group_to_extracted_variable_groups(

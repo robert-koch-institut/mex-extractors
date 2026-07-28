@@ -31,9 +31,6 @@ contributingUnit:
       - forValues:
           - PATHOGEN
         rule: C1
-created:
-  - mappingRules:
-      - setValues: "1970"
 description:
   - mappingRules:
       - setValues:
@@ -49,6 +46,10 @@ hasLegalBasis:
 hasPurpose:
   - mappingRules:
       - setValues:
+healthCategory:
+  - mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/health-category-1
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -129,9 +130,9 @@ sizeOfDataBasis:
 spatial:
   - mappingRules:
       - setValues:
-temporal:
+start:
   - mappingRules:
-      - setValues:
+      - setValues: "1970"
 theme:
   - mappingRules:
       - setValues:

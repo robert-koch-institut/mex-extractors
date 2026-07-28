@@ -35,12 +35,12 @@ conformsTo:
 contact:
   - mappingRules:
       - {}
-created:
-  - mappingRules:
-      - {}
 hadPrimarySource:
   - mappingRules:
       - {}
+hasCodeValues:
+  - mappingRules:
+      - rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:

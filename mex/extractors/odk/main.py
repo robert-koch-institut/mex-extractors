@@ -25,7 +25,7 @@ from mex.extractors.odk.transform import (
     transform_odk_resources_to_mex_resources,
 )
 from mex.extractors.pipeline import run_job_in_process
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import load_yaml
 
@@ -39,7 +39,7 @@ def odk_raw_data() -> list[ODKData]:
 @asset(group_name="odk")
 def odk_resource_mappings() -> list[dict[str, Any]]:
     """Extract odk resource mappings."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return [
         load_yaml(file)
         for file in Path(settings.odk.mapping_path).glob("resource_*.yaml")
@@ -82,7 +82,7 @@ def odk_extracted_variables(
     odk_raw_data: list[ODKData],
 ) -> list[ExtractedVariable]:
     """Transform odk data to mex variables and load to sinks."""
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.odk.mapping_path / "variable.yaml")
     )
@@ -98,7 +98,7 @@ def odk_extracted_variables(
     return extracted_variables
 
 
-@entrypoint(Settings)
+@entrypoint()
 def run() -> None:  # pragma: no cover
     """Run the odk extractor job in-process."""
     run_job_in_process("odk")

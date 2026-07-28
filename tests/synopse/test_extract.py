@@ -14,41 +14,33 @@ from mex.extractors.synopse.extract import (
 
 if TYPE_CHECKING:
     from mex.common.models import AccessPlatformMapping
-    from mex.extractors.synopse.models.project import SynopseProject
+    from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 
 
 def test_extract_variables() -> None:
     expected_first_variable = {
-        "auspraegungen": "-95",
-        "datentyp": "Zahl",
-        "int_var": False,
-        "keep_varname": True,
-        "originalfrage": None,
-        "studie": "BBCCDD1",
-        "studie_id": 1122999,
-        "synopse_id": "503",
-        "text_dt": "Eingangsfrage wn/kA",
-        "thema_und_fragebogenausschnitt": "Krankheiten (1101)",
-        "unterthema": "Lorem (110116)",
+        "textbox5": "Krankheiten (1101)",
         "val_instrument": None,
-        "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
-        "varname": "KLMNO_F4",
+        "textbox11": "Zahl",
+        "originalfrage": None,
+        "symopse_id": "503",
+        "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
+        "textbox24": "KLMNO_F4",
+        "textbox51": "Eingangsfrage wn/kA",
+        "int_var": False,
+        "studie_id2": 1122999,
     }
     expected_second_variable = {
-        "auspraegungen": "-98",
-        "datentyp": "Zahl",
-        "int_var": False,
-        "keep_varname": True,
-        "originalfrage": None,
-        "studie": "BBCCDD1",
-        "studie_id": 1122999,
-        "synopse_id": "503",
-        "text_dt": "Weiß nicht",
-        "thema_und_fragebogenausschnitt": "Krankheiten (1101)",
-        "unterthema": "Lorem (110116)",
+        "textbox5": "Krankheiten (1101)",
         "val_instrument": None,
-        "varlabel": "Lorem Symptome: Halsschmerzen (1. Tag)",
-        "varname": "KLMNO_F4",
+        "textbox11": "Zahl",
+        "originalfrage": None,
+        "symopse_id": "503",
+        "textbox21": "Lorem Symptome: Halsschmerzen (1. Tag)",
+        "textbox24": "KLMNO_F4",
+        "textbox51": "Weiß nicht",
+        "int_var": False,
+        "studie_id2": 1122999,
     }
     variables = extract_variables()
     assert len(variables) == 16
@@ -58,18 +50,12 @@ def test_extract_variables() -> None:
 
 def test_extract_study_data() -> None:
     expected_study_data = {
-        "beschreibung": "BBCCDD Basiserhebung, Kohorte",
-        "dateiformat": "sas,stata",
-        "ds_typ_id": 17,
-        "erstellungs_datum": "2013",
-        "lizenz": "Reportserver",
-        "plattform": '"Z:\\Lorem\\Ipsum\\DATA\\BBCCDD\\Dokumentation',
-        "rechte": "restriktiv",
-        "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
-        "studie": "BBCCDD",
         "studien_id": "1234567",
+        "dstyp_id": 17,
         "titel_datenset": "BBCCDD",
-        "version": "V26",
+        "beschreibung": "BBCCDD Basiserhebung, Kohorte",
+        "schlagworte_themen": "BBCCDD Basiserhebung, Kohorte",
+        "rechte": "restriktiv",
         "zugangsbeschraenkung": "S:BBCCDD-Basis Variablennamen - XYZ-Reports",
     }
     study_data = extract_study_data()
@@ -79,11 +65,11 @@ def test_extract_study_data() -> None:
 
 def test_extract_projects() -> None:
     expected_project = {
-        "akronym_des_studientitels": "BBCCDD1",
-        "beschreibung_der_studie": "fg@example.com",
-        "project_studientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
         "studien_id": "1122999",
-        "studienart_studientyp": "Monitoring-Studie",
+        "studie": "BBCCDD1",
+        "studien_art_typ": "Monitoring-Studie",
+        "projekt_studientitel": "Mit der BBCCDD-Basiserhebung hat das Robert Koch-Institut umfassende Daten zur Gesundheit der in Deutschland lebenden Lorems gesammelt. Das Studienprogramm umfasste neben Befragungen auch Ipsumalysen.",
+        "beschreibung_studie": "fg@example.com",
     }
     projects = extract_projects()
     assert len(projects) == 4
@@ -92,7 +78,7 @@ def test_extract_projects() -> None:
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_synopse_project_contributor_ids_by_query(
-    synopse_project: SynopseProject,
+    synopse_project: ProjektUndStudienverwaltung,
 ) -> None:
     persons = extract_synopse_project_contributor_ids_by_query(
         [synopse_project, synopse_project]
@@ -115,7 +101,7 @@ def test_extract_synopse_contact(
 
 def test_extract_study_overviews() -> None:
     expected_overview = {
-        "ds_typ_id": 15,
+        "dstyp_id": 15,
         "studien_id": "1234567",
         "synopse_id": "405",
         "titel_datenset": "BBCCDD",

@@ -18,13 +18,16 @@ contact:
       - forValues:
           - FG99
         rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Das Infektionsschutzgesetz"
 hadPrimarySource:
   - mappingRules:
       - rule:
-icd10code:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
+hasCodeValues:
+  - mappingRules:
       - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
@@ -60,13 +63,6 @@ instrumentToolOrApparatus:
         setValues:
           - language: de
             value: Falldefinition E
-isPartOf:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - forValues:
-          - "0"
-        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
@@ -113,6 +109,13 @@ language:
 publisher:
   - mappingRules:
       - rule:
+relatedResource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
 resourceTypeGeneral:
   - mappingRules:
       - setValues:

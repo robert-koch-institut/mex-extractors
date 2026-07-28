@@ -22,7 +22,7 @@ from mex.extractors.grippeweb.connector import GrippewebConnector
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 
 
@@ -42,7 +42,7 @@ def grippeweb_merged_organization_ids_by_query_str() -> dict[
 
 @pytest.fixture
 def grippeweb_access_platform() -> AccessPlatformMapping:
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return AccessPlatformMapping.model_validate(
         load_yaml(settings.grippeweb.mapping_path / "access-platform_mock.yaml")
     )
@@ -50,7 +50,7 @@ def grippeweb_access_platform() -> AccessPlatformMapping:
 
 @pytest.fixture
 def grippeweb_resource_mappings() -> list[ResourceMapping]:
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     resource_1 = ResourceMapping.model_validate(
         load_yaml(settings.grippeweb.mapping_path / "resource_mock1.yaml")
     )
@@ -119,7 +119,7 @@ def mocked_grippeweb_sql_tables() -> dict[str, dict[str, list[str | None]]]:
 
 @pytest.fixture
 def grippeweb_variable_group() -> VariableGroupMapping:
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return VariableGroupMapping.model_validate(
         load_yaml(settings.grippeweb.mapping_path / "variable-group_mock.yaml")
     )
@@ -127,7 +127,7 @@ def grippeweb_variable_group() -> VariableGroupMapping:
 
 @pytest.fixture
 def grippeweb_variable() -> VariableMapping:
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     return VariableMapping.model_validate(
         load_yaml(settings.grippeweb.mapping_path / "variable_mock.yaml")
     )
@@ -141,14 +141,13 @@ def grippeweb_extracted_parent_resource() -> ExtractedResource:
         accessRestriction="https://mex.rki.de/item/access-restriction-2",
         accrualPeriodicity="https://mex.rki.de/item/frequency-15",
         contact=[MergedContactPointIdentifier.generate(42)],
-        temporal="seit 2011",
         theme=["https://mex.rki.de/item/theme-11"],
         title=[Text(value="GrippeWeb", language="de")],
         anonymizationPseudonymization=[
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         description=[Text(value="GrippeWeb", language="de")],
-        icd10code=["J00-J99"],
+        hasCodeValues=[{"value": "J00-J99"}],
         keyword=[Text(value="Citizen Science", language="en")],
         language=["https://mex.rki.de/item/language-1"],
         meshId=["http://id.nlm.nih.gov/mesh/D012140"],

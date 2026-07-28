@@ -22,7 +22,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.settings import Settings
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.utils import load_yaml
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
@@ -42,7 +42,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
     Returns:
         ExtractedResource
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     mapping = ResourceMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "resource.yaml")
     )
@@ -102,13 +102,13 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         contact=contact,
         contributingUnit=contributing_unit,
         contributor=contributor,
-        created=mapping.created[0].mappingRules[0].setValues,
         description=mapping.description[0].mappingRules[0].setValues,
         documentation=mapping.documentation[0].mappingRules[0].setValues,
         externalPartner=external_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
         hasPurpose=mapping.hasPurpose[0].mappingRules[0].setValues,
+        healthCategory=mapping.healthCategory[0].mappingRules[0].setValues,
         identifierInPrimarySource=mapping.identifierInPrimarySource[0]
         .mappingRules[0]
         .setValues,
@@ -124,6 +124,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         resourceTypeGeneral=mapping.resourceTypeGeneral[0].mappingRules[0].setValues,
         resourceTypeSpecific=mapping.resourceTypeSpecific[0].mappingRules[0].setValues,
         spatial=mapping.spatial[0].mappingRules[0].setValues,
+        start=mapping.start[0].mappingRules[0].setValues,
         theme=mapping.theme[0].mappingRules[0].setValues,
         title=mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,
@@ -168,7 +169,7 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
     Returns:
         dictionary of setValues by variable
     """
-    settings = Settings.get()
+    settings = ExtractorsSettings.get()
     variable_mapping = VariableMapping.model_validate(
         load_yaml(settings.kvis.mapping_path / "variable.yaml")
     )

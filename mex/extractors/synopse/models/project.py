@@ -9,37 +9,37 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class SynopseProject(BaseRawData):
+class ProjektUndStudienverwaltung(BaseRawData):
     """Model for synopse projects with aliases to match CSV columns."""
 
     model_config = ConfigDict(extra="ignore")
 
-    akronym_des_studientitels: str | None = Field(None, alias="Studie")
-    project_studientitel: str | None = Field(..., alias="ProjektStudientitel")
-    beschreibung_der_studie: str | None = Field(None, alias="BeschreibungStudie")
-    studienart_studientyp: str | None = Field(None, alias="StudienArtTyp")
-    projektbeginn: str | None = Field(None, ge="1891", alias="Projektbeginn")
-    projektende: str | None = Field(None, ge="1891", alias="Projektende")
-    beitragende: str | None = Field(None, alias="Beitragende")
-    interne_partner: str | None = Field(None, alias="Partner_intern")
-    verantwortliche_oe: str | None = Field(None, alias="VerantwortlicheOE")
-    externe_partner: str | None = Field(None, alias="Partner_extern")
-    foerderinstitution_oder_auftraggeber: str | None = Field(None, alias="Auftraggeber")
-    anschlussprojekt: str | None = Field(None, alias="Anschlussprojekt")
-    projektdokumentation: str | None = Field(None, alias="Projektdokumentation")
     studien_id: str = Field(..., alias="StudienID")
+    studie: str | None = Field(None, alias="Studie")
+    studien_art_typ: str | None = Field(None, alias="StudienArtTyp")
+    projekt_studientitel: str | None = Field(None, alias="ProjektStudientitel")
+    beschreibung_studie: str | None = Field(None, alias="BeschreibungStudie")
+    beitragende: str | None = Field(None, alias="Beitragende")
+    verantwortliche_oe: str | None = Field(None, alias="VerantwortlicheOE")
+    partner_intern: str | None = Field(None, alias="Partner_intern")
+    partner_extern: str | None = Field(None, alias="Partner_extern")
+    projektbeginn: str | None = Field(None, alias="Projektbeginn", ge="1891")
+    projektende: str | None = Field(None, alias="Projektende", ge="1891")
+    auftraggeber: str | None = Field(None, alias="Auftraggeber")
+    projektdokumentation: str | None = Field(None, alias="Projektdokumentation")
+    anschlussprojekt: str | None = Field(None, alias="Anschlussprojekt")
 
     def get_partners(self) -> Sequence[str | None]:
         """Return partners from extractor."""
-        return [self.interne_partner]
+        return [self.partner_intern]
 
     def get_start_year(self) -> TemporalEntity | None:
         """Return start year from extractor."""
-        return TemporalEntity(self.projektende) if self.projektende else None
+        return TemporalEntity(self.projektbeginn) if self.projektbeginn else None
 
     def get_end_year(self) -> TemporalEntity | None:
         """Return end year from extractor."""
-        return TemporalEntity(self.projektbeginn) if self.projektbeginn else None
+        return TemporalEntity(self.projektende) if self.projektende else None
 
     def get_units(self) -> Sequence[str | None]:
         """Return units from extractor."""
