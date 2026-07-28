@@ -171,7 +171,7 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="word 1", language="en"),
                 Text(value="Wort 2", language="de"),
             ],
-            start="1970-01-01",
+            start=["1970-01-01"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Resource with unit C1"],
             wasGeneratedBy=["MergedActivityWithORG2"],
