@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.13-trixie # PINNED! Newer versions are incompatible. See MX-2398
+    image: postgres:16.13-trixie # PINNED! Do not update outside MX-2398
     environment:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
