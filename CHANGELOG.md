@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- pin postgres version to 16.13 for now.
-
 ### Security
+
+## [1.17.1] - 2026-07-29
+
+### Fixed
+
+- pin postgres version to 16.13 for now.
 
 ## [1.17.0] - 2026-07-29
 
