@@ -20,6 +20,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.assets.helpers import load_yaml
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
@@ -47,7 +48,7 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-from mex.extractors.utils import count_outbound_connections, load_yaml
+from mex.extractors.utils import count_outbound_connections
 
 
 @asset(group_name="synopse")
@@ -120,7 +121,7 @@ def synopse_merged_organization_ids_by_query_string(
 def synopse_resource() -> dict[str, Any]:
     """Extract and transform synopse resource default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.synopse.mapping_path / "resource.yaml")
+    return load_yaml(f"{settings.synopse.mapping_path}/resource.yaml")
 
 
 @asset(group_name="synopse")
@@ -130,7 +131,7 @@ def synopse_merged_contact_point_ids_by_query_string() -> dict[
     """Get lookup of ldap functional accounts by email."""
     settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
+        load_yaml(f"{settings.synopse.mapping_path}/access-platform.yaml"),
     )
 
     return extract_synopse_contact(synopse_access_platform)
@@ -145,7 +146,7 @@ def synopse_access_platform_id(
     """Transform Synopse data to extracted access platforms and load result."""
     settings = ExtractorsSettings.get()
     synopse_access_platform = AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform.yaml"),
+        load_yaml(f"{settings.synopse.mapping_path}/access-platform.yaml"),
     )
 
     transformed_access_platforms = transform_synopse_studies_into_access_platforms(
@@ -195,7 +196,7 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
 def synopse_activity() -> dict[str, Any]:
     """Extract and transform synopse activity default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.synopse.mapping_path / "activity.yaml")
+    return load_yaml(f"{settings.synopse.mapping_path}/activity.yaml")
 
 
 @asset(group_name="synopse", metadata={"entity_type": "activity"})

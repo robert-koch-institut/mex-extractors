@@ -1,7 +1,6 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class OpenDataSettings(BaseModel):
@@ -11,8 +10,8 @@ class OpenDataSettings(BaseModel):
     community_rki: str = Field(
         "robertkochinstitut", description="Zenodo communitiy of rki"
     )
-    mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/open-data"),
+    mapping_path: str = Field(
+        "mappings/open-data",
         description=(
             "Path to the directory with the open data mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

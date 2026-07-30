@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any
 
 from dagster import asset
@@ -12,10 +11,11 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import MergedOrganizationIdentifier, MergedPersonIdentifier
+from mex.extractors.assets import load_yaml
+from mex.extractors.assets.helpers import glob_files
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
@@ -40,7 +40,7 @@ def voxco_resource_mappings() -> list[dict[str, Any]]:
     settings = ExtractorsSettings.get()
     return [
         load_yaml(file)
-        for file in Path(settings.voxco.mapping_path).glob("resource_*.yaml")
+        for file in glob_files(settings.voxco.mapping_path, "resource_*.yaml")
     ]
 
 

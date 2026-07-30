@@ -8,10 +8,10 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import MergedPrimarySourceIdentifier
+from mex.extractors.assets import load_yaml
 from mex.extractors.igs.extract import extract_igs_schemas
 from mex.extractors.igs.model import IGSInfo, IGSPropertiesSchema, IGSSchema
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def igs_endpoint_counts() -> dict[str, str]:
 def igs_access_platform_mapping() -> AccessPlatformMapping:
     settings = ExtractorsSettings.get()
     return AccessPlatformMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "access-platform.yaml")
+        load_yaml(f"{settings.igs.mapping_path}/access-platform.yaml")
     )
 
 
@@ -36,7 +36,7 @@ def igs_access_platform_mapping() -> AccessPlatformMapping:
 def igs_resource_mapping() -> ResourceMapping:
     settings = ExtractorsSettings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.igs.mapping_path}/resource.yaml")
     )
 
 
@@ -44,7 +44,7 @@ def igs_resource_mapping() -> ResourceMapping:
 def igs_variable_mapping() -> VariableMapping:
     settings = ExtractorsSettings.get()
     return VariableMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "variable.yaml")
+        load_yaml(f"{settings.igs.mapping_path}/variable.yaml")
     )
 
 

@@ -8,6 +8,7 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import MergedPersonIdentifier
+from mex.extractors.assets import load_yaml
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_organizations,
@@ -20,7 +21,6 @@ from mex.extractors.biospecimen.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="biospecimen")
@@ -48,7 +48,7 @@ def biospecimen_extracted_resources(
     """Transform biospecimen resources to extracted resources and load them to the sinks."""  # noqa: E501
     settings = ExtractorsSettings.get()
     resource_mapping = ResourceMapping.model_validate(
-        load_yaml(settings.biospecimen.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.biospecimen.mapping_path}/resource.yaml")
     )
     extracted_organizations = extract_biospecimen_organizations(biospecimen_resources)
 

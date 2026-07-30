@@ -1,14 +1,13 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class GrippewebSettings(BaseModel):
     """Settings definition for the infection protection act data."""
 
-    mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/grippeweb"),
+    mapping_path: str = Field(
+        "mappings/grippeweb",
         description=(
             "Path to the directory with the Grippeweb mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

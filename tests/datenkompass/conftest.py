@@ -36,17 +36,17 @@ from mex.common.types import (
     TextLanguage,
     Theme,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
 def mocked_activity_mapping() -> DatenkompassMapping:
     settings = ExtractorsSettings.get()
     return DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/activity.yaml")
     )
 
 

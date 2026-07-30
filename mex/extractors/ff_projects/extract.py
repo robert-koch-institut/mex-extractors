@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from functools import lru_cache
+from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -12,6 +13,7 @@ from mex.common.types import (
     TemporalEntity,
     TemporalEntityPrecision,
 )
+from mex.extractors.assets.helpers import read_bytes
 from mex.extractors.ff_projects.models.source import FFProjectsSource
 from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
@@ -35,8 +37,9 @@ def extract_ff_projects_sources() -> list[FFProjectsSource]:
         List of FF Projects sources
     """
     settings = ExtractorsSettings.get()
+    raw_bytes = read_bytes(settings.ff_projects.file_path)
     ff_projects_excel = pd.read_excel(
-        settings.ff_projects.file_path,
+        BytesIO(raw_bytes),
         keep_default_na=False,
         parse_dates=True,
     )

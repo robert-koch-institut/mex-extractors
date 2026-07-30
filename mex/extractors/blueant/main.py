@@ -8,6 +8,7 @@ from mex.common.models import (
 from mex.common.types import (
     MergedPersonIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.blueant.extract import (
     extract_blueant_project_leaders,
     extract_blueant_sources,
@@ -24,7 +25,6 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="blueant")
@@ -53,7 +53,7 @@ def blueant_extracted_activities(
     """Transform blueant sources to extracted activities and load them to the sinks."""
     settings = ExtractorsSettings.get()
     activity = ActivityMapping.model_validate(
-        load_yaml(settings.blueant.mapping_path / "activity.yaml")
+        load_yaml(f"{settings.blueant.mapping_path}/activity.yaml")
     )
 
     extracted_activities = transform_blueant_sources_to_extracted_activities(

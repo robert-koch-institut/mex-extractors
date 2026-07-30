@@ -1,7 +1,6 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
@@ -26,8 +25,8 @@ class DatenkompassSettings(BaseModel, str_strip_whitespace=False):
     max_keyword_str_length: int = Field(
         50, description="Maximum length for complete collected keywords string"
     )
-    mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/publisher-pipelines/datenkompass"),
+    mapping_path: str = Field(
+        "mappings/publisher-pipelines/datenkompass",
         description=(
             "Path to the directory with the datenkompass mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."

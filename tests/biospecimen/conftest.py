@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from mex.common.models import ResourceMapping
+from mex.extractors.assets import load_yaml
 from mex.extractors.biospecimen.models.source import BiospecimenResource
-from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
+
+if TYPE_CHECKING:
+    from mex.extractors.settings import ExtractorsSettings
 
 
 @pytest.fixture
@@ -46,10 +50,8 @@ def biospecimen_resources() -> list[BiospecimenResource]:
 
 
 @pytest.fixture
-def resource_mapping() -> ResourceMapping:
+def resource_mapping(settings: ExtractorsSettings) -> ResourceMapping:
     """Mock resource mapping."""
     return ResourceMapping.model_validate(
-        load_yaml(
-            ExtractorsSettings.get().biospecimen.mapping_path / "resource_mock.yaml"
-        )
+        load_yaml(f"{settings.biospecimen.mapping_path}/resource_mock.yaml")
     )

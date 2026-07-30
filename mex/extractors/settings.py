@@ -7,7 +7,7 @@ from pydantic_settings import (
 )
 
 from mex.common.settings import BaseSettings
-from mex.common.types import AssetsPath, OpsPath
+from mex.common.types import OpsPath  # noqa: TC001
 from mex.extractors.biospecimen.settings import BiospecimenSettings
 from mex.extractors.blueant.settings import BlueAntSettings
 from mex.extractors.confluence_vvt.settings import ConfluenceVvtSettings
@@ -57,15 +57,15 @@ class ExtractorsSettings(BaseSettings):
             NestedSecretsSettingsSource(file_secret_settings),
         )
 
-    all_filter_mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/__all__"),
+    all_filter_mapping_path: str = Field(
+        "mappings/__all__",
         description=(
             "Path to the directory with the biospecimen mapping files containing the "
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
-    all_checks_path: AssetsPath = Field(
-        AssetsPath("checks/__final__"),
+    all_checks_path: str = Field(
+        "checks/__final__",
         description="Path to the directory with checks config for each extractor.",
     )
     skip_extractors: list[str] = Field(

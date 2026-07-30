@@ -9,6 +9,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.filters import filter_by_global_rules
 from mex.extractors.international_projects.extract import (
     extract_international_projects_funding_sources,
@@ -28,7 +29,6 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="international_projects")
@@ -87,7 +87,7 @@ def international_projects_extracted_activities(
     """Transform projects to extracted activities, load and return them."""
     settings = ExtractorsSettings.get()
     activity = ActivityMapping.model_validate(
-        load_yaml(settings.international_projects.mapping_path / "activity.yaml")
+        load_yaml(f"{settings.international_projects.mapping_path}/activity.yaml")
     )
     mex_sources = transform_international_projects_sources_to_extracted_activities(
         international_projects_sources,

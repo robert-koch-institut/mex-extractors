@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any
 
 from dagster import AssetExecutionContext, asset
@@ -19,6 +18,8 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.assets import load_yaml
+from mex.extractors.assets.helpers import glob_files
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_ldap_person_ids_by_query,
@@ -34,7 +35,6 @@ from mex.extractors.grippeweb.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="grippeweb")
@@ -48,7 +48,7 @@ def grippeweb_access_platform() -> dict[str, Any]:
     """Extract Grippeweb `access_platform` default values."""
     settings = ExtractorsSettings.get()
     return load_yaml(
-        settings.grippeweb.mapping_path / "access-platform.yaml",
+        f"{settings.grippeweb.mapping_path}/access-platform.yaml",
     )
 
 
@@ -56,9 +56,10 @@ def grippeweb_access_platform() -> dict[str, Any]:
 def grippeweb_resource_mappings() -> list[dict[str, Any]]:
     """Extract Grippeweb resource mappings."""
     settings = ExtractorsSettings.get()
+
     return [
         load_yaml(file)
-        for file in Path(settings.grippeweb.mapping_path).glob("resource_*.yaml")
+        for file in glob_files(settings.grippeweb.mapping_path, "resource_*.yaml")
     ]
 
 
@@ -66,14 +67,14 @@ def grippeweb_resource_mappings() -> list[dict[str, Any]]:
 def grippeweb_variable() -> dict[str, Any]:
     """Extract Grippeweb `variable` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.grippeweb.mapping_path / "variable.yaml")
+    return load_yaml(f"{settings.grippeweb.mapping_path}/variable.yaml")
 
 
 @asset(group_name="grippeweb")
 def grippeweb_variable_group() -> dict[str, Any]:
     """Extract Grippeweb `variable_group` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.grippeweb.mapping_path / "variable-group.yaml")
+    return load_yaml(f"{settings.grippeweb.mapping_path}/variable-group.yaml")
 
 
 @asset(group_name="grippeweb")

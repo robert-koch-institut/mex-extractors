@@ -16,6 +16,7 @@ from mex.common.models import (
     VariableMapping,
 )
 from mex.common.types import MergedResourceIdentifier, MergedVariableGroupIdentifier
+from mex.extractors.assets import load_yaml
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
     extract_igs_info,
@@ -36,7 +37,6 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="igs")
@@ -55,7 +55,7 @@ def igs_schemas() -> dict[str, IGSSchema]:
 def igs_resource_mapping() -> dict[str, Any]:
     """Extract IGS resource mapping."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.igs.mapping_path / "resource.yaml")
+    return load_yaml(f"{settings.igs.mapping_path}/resource.yaml")
 
 
 @asset(group_name="igs")
@@ -72,7 +72,7 @@ def igs_endpoint_counts(
 def igs_access_platform_mapping() -> dict[str, Any]:
     """Extract IGS access platform mapping."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.igs.mapping_path / "access-platform.yaml")
+    return load_yaml(f"{settings.igs.mapping_path}/access-platform.yaml")
 
 
 @asset(group_name="igs")
@@ -141,7 +141,7 @@ def igs_extracted_variable_group_ids_by_identifier_in_primary_source(
     """Filter and transform IGS schema to extracted variable group."""
     settings = ExtractorsSettings.get()
     variable_group_filter = VariableGroupFilter.model_validate(
-        load_yaml(settings.igs.mapping_path / "variable-group_filter.yaml")
+        load_yaml(f"{settings.igs.mapping_path}/variable-group_filter.yaml")
     )
     filtered_schemas = filter_igs_schemas(igs_schemas, variable_group_filter)
     extracted_variable_groups = transformed_igs_schemas_to_variable_group(
@@ -166,7 +166,7 @@ def igs_extracted_variables(
     """Transform igs schemas to extracted variables."""
     settings = ExtractorsSettings.get()
     variable_mapping = VariableMapping.model_validate(
-        load_yaml(settings.igs.mapping_path / "variable.yaml")
+        load_yaml(f"{settings.igs.mapping_path}/variable.yaml")
     )
     load(
         transform_igs_schemas_to_variables(

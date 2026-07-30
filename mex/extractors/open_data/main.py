@@ -21,6 +21,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.open_data.extract import (
     extract_open_data_persons_from_open_data_parent_resources,
     extract_parent_resources,
@@ -45,7 +46,6 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 OPEN_DATA_EMAIL = "opendata@rki.de"
 
@@ -113,7 +113,7 @@ def open_data_extracted_distributions(
     """Extract distributions for open data & transform and load them to sinks."""
     settings = ExtractorsSettings.get()
     distribution_mapping = DistributionMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "distribution.yaml")
+        load_yaml(f"{settings.open_data.mapping_path}/distribution.yaml")
     )
     mex_distributions = transform_open_data_distributions(
         open_data_parent_resources,
@@ -138,7 +138,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     """Transform parent resources to extracted resources & load them to the sinks."""
     settings = ExtractorsSettings.get()
     resource_mapping = ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.open_data.mapping_path}/resource.yaml")
     )
 
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
