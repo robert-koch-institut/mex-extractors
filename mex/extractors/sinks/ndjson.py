@@ -17,11 +17,7 @@ class NdjsonSink(BaseSink):
     """Sink that writes models as NDJSON to a local file."""
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
-        """Write items as NDJSON to a local file.
-
-        Settings:
-            work_dir: Base directory for output files.
-        """
+        """Write items as NDJSON to a local file."""
         settings = ExtractorsSettings.get()
         output_path = Path(settings.work_dir) / "publisher_items.ndjson"
         with output_path.open("w", encoding="utf-8") as f:
