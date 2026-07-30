@@ -29,4 +29,3 @@ class NdjsonSink(BaseSink):
                 f.write(json.dumps(item, sort_keys=True, cls=MExEncoder))
                 f.write("\n")
                 yield item
-
