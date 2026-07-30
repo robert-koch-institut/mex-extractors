@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add and wrap up extraction of new non-required fields
+- assets helper functions
 
 ### Changes
 
