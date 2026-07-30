@@ -717,7 +717,7 @@ def transform_resources(
                         frequenz=frequenz,
                         kontakt=kontakt,
                         organisationseinheit=organisationseinheit,
-                        startdatum=str(item.start) if item.start else None,
+                        startdatum=str(item.start[0]) if item.start else None,
                         beschreibung=beschreibung,
                         datenbank=item.doi,
                         rechtsgrundlagen_benennung=rechtsgrundlagen_benennung,

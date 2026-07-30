@@ -49,7 +49,7 @@ def test_transform_kvis_resource_to_extracted_resource(
         "keyword": [{"value": "Schlüsselwort", "language": "de"}],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": ["ga6xh6pgMwgq7DC7r6Wjqg"],
-        "start": "1999",
+        "start": ["1999"],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Titel", "language": "de"}],
         "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
