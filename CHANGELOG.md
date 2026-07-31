@@ -10,11 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - publish CSV of publications to be downloadable on MEx
-- add and wrap up extraction of new non-required fields
+- link igs to seq-repo
 
 ### Changes
-
-- use publishing endpoint for datenkompass and publisher. Needs mex-backend 3.0.0
 
 ### Deprecated
 
@@ -22,9 +20,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
-
 ### Security
+
+## [1.17.1] - 2026-07-29
+
+### Fixed
+
+- pin postgres version to 16.13 for now.
+
+## [1.17.0] - 2026-07-29
+
+### Added
+
+- add and wrap up extraction of new non-required fields
+
+### Changes
+
+- use publishing endpoint for datenkompass and publisher
+
+### Fixed
+
+-  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
 
 ## [1.16.0] - 2026-07-20
 
