@@ -32,7 +32,6 @@ class DatschaWebConnector(HTTPConnector):
             "pw": settings.datscha_web.pw.get_secret_value(),
             "organisation": settings.datscha_web.organisation,
         }
-
         response = self.session.post(
             urljoin(self.url, "login.php"), data=credentials, timeout=1
         )
@@ -42,6 +41,10 @@ class DatschaWebConnector(HTTPConnector):
                 f"{list(map(str.upper, credentials.keys()))}?"
             )
             raise MExError(msg)
+
+    def _check_availability(self) -> None:
+        """Send a HEAD request to verify datscha is available."""
+        self._send_request("HEAD", urljoin(self.url, "verzeichnis.php"), params={})
 
     def get_item_urls(self) -> list[str]:
         """Accumulate datscha item URLs by scraping the page `verzeichnis.php`.
