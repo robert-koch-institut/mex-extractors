@@ -78,7 +78,7 @@ def extract_endpoint_counts(
 
 def extract_seq_repo_resource_ids_by_pathogen(
     seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
-) -> dict[str, MergedResourceIdentifier]:
+) -> dict[str, list[MergedResourceIdentifier]]:
     """Extract seq-repo resources if igs-id is represented in igs.
 
     Args:
@@ -86,7 +86,7 @@ def extract_seq_repo_resource_ids_by_pathogen(
         igs_schemas: igs schemas by schema name
 
     Returns:
-        seq repo resource ids by igs ids
+        seq repo resource id list by pathogen
     """
     pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
     pathogens_by_igs_id = {
@@ -96,20 +96,20 @@ def extract_seq_repo_resource_ids_by_pathogen(
         if pathogen in resource.identifierInPrimarySource
     }
     connector = IGSConnector.get()
+    resource_ids_by_pathogen: dict[str, list[MergedResourceIdentifier]] = {}
 
-    return {
-        pathogen: resource.stableTargetId
-        for resource in seq_repo_resources
-        if (pathogen := pathogens_by_igs_id.get(resource.identifierInPrimarySource))
-        and connector.get_endpoint_count(
+    for resource in seq_repo_resources:
+        pathogen = pathogens_by_igs_id.get(resource.identifierInPrimarySource)
+        if pathogen and connector.get_endpoint_count(
             endpoint="/samples/count",
             params={
                 "pathogens": pathogen,
-                "igs_id": resource.identifierInPrimarySource,
+                "filter_str": f'.igs_id="{resource.identifierInPrimarySource}"',
                 "include_deleted": "false",
             },
-        )
-    }
+        ):
+            resource_ids_by_pathogen[pathogen].append(resource.stableTargetId)
+    return resource_ids_by_pathogen
 
 
 def extract_ldap_actors_by_mail(

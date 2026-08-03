@@ -37,7 +37,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     igs_endpoint_counts: dict[str, str],
-    igs_seq_repo_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    igs_seq_repo_resource_ids_by_pathogen: dict[str, list[MergedResourceIdentifier]],
 ) -> dict[str, ExtractedResource]:
     """Transform IGS schemas to extracted resources.
 
@@ -110,9 +110,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
-        is_part_of: list[MergedResourceIdentifier] = []
-        if seq_repo_id := igs_seq_repo_resource_ids_by_pathogen.get(pathogen):
-            is_part_of = [seq_repo_id]
+        is_part_of = igs_seq_repo_resource_ids_by_pathogen.get(pathogen, [])
         keyword = [
             *default_keywords,
             *keywords_by_pathogen[pathogen],
