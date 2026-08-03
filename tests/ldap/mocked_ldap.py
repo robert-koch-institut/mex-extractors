@@ -160,7 +160,7 @@ def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
 
 
 @pytest.fixture(params=["ldap_patched_connector", "ldap_mock_server"])
-def mocked_ldap(  # noqa: PLR0913
+def mocked_ldap(  # noqa: PLR0913, PLR0917
     request: pytest.FixtureRequest,
     monkeypatch: MonkeyPatch,
     ldap_contact_point: LDAPFunctionalAccount,

@@ -157,7 +157,7 @@ def test_get_instrument_tool_or_apparatus(
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913
+def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
     resource_diseases: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
     ifsg_extracted_resources_state: list[ExtractedResource],
@@ -268,7 +268,7 @@ def test_transform_ifsg_data_to_mex_variable_group(
     assert extracted_variable_group[0].model_dump(exclude_defaults=True) == expected
 
 
-def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913
+def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913, PLR0917
     meta_field: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
