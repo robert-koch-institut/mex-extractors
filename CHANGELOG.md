@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
+this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Added
 
-- tests: integration tests with mex-backend. Setup: start neo4j and testing-backend with MEX_DEBUG=True
+- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
+  backend setup, will be automated in MX-1523.
 
 ### Changes
 
@@ -41,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
+- patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
 
 ## [1.16.0] - 2026-07-20
 
@@ -88,11 +89,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - use ldap convenience function and refactor ldap and organigram helper functions
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-- dependency update(2026-06-16)
+- dependency update (2026-06-16)
 - implement seq-repo fallback rule for units
 
 ### Removed
-- dependency update(2026-06-26)
+
+- dependency update (2026-06-26)
 
 ### Fixed
 
@@ -169,7 +171,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
+- path to s3 items file is now
+  `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
 - update mex-common to 1.16.1
 
 ## [1.11.0] - 2026-03-13
@@ -201,7 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
+- ff-projects: fixed extract_ff_projects_organizations () and get_or_create_organization
+  () to match organizations with wikidata
 
 ## [1.9.0] - 2026-02-10
 
@@ -318,12 +322,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- bumped cookiecutter template
+  to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- bumped cookiecutter template
+  to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - replace `@watch` decorator with `watch_progress` function calls across all extractors
 - replace generator functions with list-returning functions for dagster compatibility
 - update extractors to handle multiple organizational units per synonym mapping
-- open-data: only get FG, not department unit (or 'least' unit) for resource unitInCharge
+- open-data: only get FG, not department unit (or 'least' unit) for resource
+  unitInCharge
 - open-data: update max number of items per page (25) in Zenodo API request
 
 ### Fixed
@@ -342,7 +349,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- bumped cookiecutter template
+  to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - implement igs resource mapping update
 
 ## [1.4.0] - 2025-10-28
@@ -373,8 +381,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - optional value fields for igs access platform and resource
 - update mex-common dependency to 1.5
 - persons have rki org as affiliation
-- create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink (writs xlsx)
-- publisher: replace references to non-consenting person ids with their respective unit ids
+- create s3 sink base class and bequeath to s3Sink (writes ndjson) and new S3XlsxSink
+  (writs xlsx)
+- publisher: replace references to non-consenting person ids with their respective unit
+  ids
 
 ### Changes
 
@@ -420,20 +430,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `AssetCheckRule` model into `mex.extractors.pipeline.checks.models.check`
-- assetcheck implementation for `x_items_more_than`-rule in `mex.extractors.pipeline.checks.main`
-- AssetChecks `x_items_more_than` for blueant `mex.extractors.blueant.checks` and endnote `mex.extractors.endnote.checks`
+- assetcheck implementation for `x_items_more_than`-rule in
+  `mex.extractors.pipeline.checks.main`
+- AssetChecks `x_items_more_than` for blueant `mex.extractors.blueant.checks` and
+  endnote `mex.extractors.endnote.checks`
 - tests for blueant, endnote and pipeline
 - yaml rule data for testing `assets\raw-data\pipeline\{extractor}\{entityType}`
 - `all_checks_path` added in `mex.extractors.settings` for rules
 - finished consent-mailer pipeline
 - settings for the content-mailer
-  - smtp server address for sending mails
-  - mailHog api endpoint url for testing mail sending
+    - smtp server address for sending mails
+    - mailHog api endpoint url for testing mail sending
 - add return values to all assets for debugging and bookkeeping
 
 ### Changes
 
-- `extracted_endnote_bibliographic_resources()` and `extracted_blueant_activities()` return `Output`-object
+- `extracted_endnote_bibliographic_resources()` and `extracted_blueant_activities()`
+  return `Output`-object
 - improve usage of backend endpoints for merged items
 - add resources by unit filter to datenkompass
 - update mex-common dependency to 1.2
@@ -650,7 +663,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - split seq-repo load function into new asset
-- apply all activity filters to all extractors(except synopse) with activities
+- apply all activity filters to all extractors (except synopse) with activities
 - refactor filter functionality to filter module
 
 ### Removed
@@ -681,8 +694,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - output settings as job metadata
 - update mex-common to 0.54.3
 - expand publisher filter to not push MergedPersons
-- quickfix publisher to always write an ndjson directly to S3
-  (will become outdated by MX-1808)
+- quickfix publisher to always write an ndjson directly to S3 (will become outdated by
+  MX-1808)
 
 ## [0.29.1] - 2025-03-14
 
@@ -878,8 +891,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - combine seq-repo distribution and resource extraction in one asset
 - duplicate seq-repo activities are filtered out
-- make dependent extractors explicitly depend on each other
-  (grippeweb on confluence-vvt, biospecimen on synopse, odk on international-projects)
+- make dependent extractors explicitly depend on each other (grippeweb on
+  confluence-vvt, biospecimen on synopse, odk on international-projects)
 - add publisher pipeline to pull all merged items from backend and write them to ndjson
 - BREAKING: integrate extractor specific settings in main extractor settings class.
   Environment variables change from `EXTRACTOR_PARAMETER` to `MEX_EXTRACTOR__PARAMETER`,
