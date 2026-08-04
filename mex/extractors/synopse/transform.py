@@ -315,7 +315,7 @@ def transform_synopse_variables_to_mex_variable_groups(
     return variable_groups
 
 
-def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PLR0915
+def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PLR0915, PLR0917
     synopse_studies: Iterable[MetadatenZuDatensaetzen],
     synopse_projects: Iterable[ProjektUndStudienverwaltung],
     extracted_activities: Iterable[ExtractedActivity],
