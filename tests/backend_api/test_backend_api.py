@@ -1,26 +1,30 @@
+import os
+
 import pytest
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, ExtractedContactPoint
 from mex.common.sinks.backend_api import BackendApiSink
 
-# force tests to run in the exact same worker process to avoid interfering effects
-pytestmark = pytest.mark.xdist_group(name="backend_api")
+IN_CI = os.environ.get("CI") == "true"
+
+pytestmark = [
+    # force tests to run in the exact same worker process to avoid interfering effects
+    pytest.mark.xdist_group(name="backend_api"),
+    # skip backend integration tests outside CI for now, to avoid manual backend setup, addressed in MX-1523
+    pytest.mark.skipif(not IN_CI, reason="Test requires CI environment"),
+]
 
 
 @pytest.mark.integration
-def test_backend_api_is_available(in_continuous_integration: bool) -> None:  # noqa: FBT001
-    if not in_continuous_integration:
-        pytest.skip("Test requires CI environment")
+def test_backend_api_is_available() -> None:
     connector = BackendApiConnector.get()  # already health-checks on construction
     status = connector.system_status()
     assert status.status == "ok"
 
 
 @pytest.mark.integration
-def test_identity_assign_is_idempotent(in_continuous_integration: bool) -> None:  # noqa: FBT001
-    if not in_continuous_integration:
-        pytest.skip("Test requires CI environment")
+def test_identity_assign_is_idempotent() -> None:
     # use the connector directly, bypassing BackendApiIdentityProvider's
     # client-side lru_cache, so both assigns actually hit the backend
     identifier_in_primary_source = "extractors-identity-roundtrip"
@@ -39,9 +43,7 @@ def test_identity_assign_is_idempotent(in_continuous_integration: bool) -> None:
 
 
 @pytest.mark.integration
-def test_ingest_roundtrip(in_continuous_integration: bool) -> None:  # noqa: FBT001
-    if not in_continuous_integration:
-        pytest.skip("Test requires CI environment")
+def test_ingest_roundtrip() -> None:
     identifier_in_primary_source = "extractors-ingest-roundtrip"
     contact_point = ExtractedContactPoint(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
