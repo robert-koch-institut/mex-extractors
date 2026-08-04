@@ -106,7 +106,7 @@ def igs_extracted_contact_points_by_mail_str(
 
 
 @asset(group_name="igs")
-def igs_extracted_resource_ids(  # noqa: PLR0913
+def igs_extracted_resource_ids(  # noqa: PLR0913, PLR0917
     igs_resource_mapping: dict[str, Any],
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     igs_extracted_access_platform: ExtractedAccessPlatform,

@@ -29,7 +29,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 
-def transform_igs_extracted_resource(  # noqa: PLR0913
+def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     igs_extracted_access_platform: ExtractedAccessPlatform,

@@ -371,7 +371,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
 
 
 @pytest.fixture
-def mocked_backend_datenkompass(  # noqa: PLR0913
+def mocked_backend_datenkompass(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
