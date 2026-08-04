@@ -24,6 +24,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Security
 
+## [1.18.0] - 2026-08-03
+
+### Fixed
+
+- use explicit paths for availability checks in datscha-web and blueant connectors
+
 ## [1.17.1] - 2026-07-29
 
 ### Fixed
