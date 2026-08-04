@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- tests: integration tests with mex-backend. Setup: start neo4j and testing-backend with MEX_DEBUG=True
+
 ### Changes
 
 ### Deprecated
