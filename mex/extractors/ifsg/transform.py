@@ -207,7 +207,7 @@ def get_instrument_tool_or_apparatus(
     return instrument_tool_or_apparatus
 
 
-def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
+def transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
     resource_disease: ResourceMapping,
     ifsg_extracted_resource_parent: ExtractedResource,
     ifsg_extracted_resources_state: list[ExtractedResource],
@@ -254,7 +254,7 @@ def transform_resource_disease_to_mex_resource(  # noqa: PLR0913
     ]
 
 
-def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913
+def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
     meta_disease_row: MetaDisease,
     resource_disease: ResourceMapping,
     ifsg_extracted_resource_parent: ExtractedResource,
@@ -399,7 +399,7 @@ def transform_ifsg_data_to_mex_variable_group(
     ]
 
 
-def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913
+def transform_ifsg_data_to_mex_variables(  # noqa: PLR0913, PLR0917
     filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],
     ifsg_extracted_variable_groups: list[ExtractedVariableGroup],
