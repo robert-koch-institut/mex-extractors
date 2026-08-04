@@ -4,14 +4,20 @@ from uuid import UUID
 import pytest
 
 from mex.common.ldap.models import LDAPFunctionalAccount
+from mex.common.types import MergedResourceIdentifier
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
     extract_igs_schemas,
     extract_ldap_actors_by_mail,
+    extract_seq_repo_resource_ids_by_pathogen,
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedResource,
+        ResourceMapping,
+    )
     from mex.extractors.igs.model import IGSSchema
 
 
@@ -62,3 +68,15 @@ def test_extract_ldap_actors_by_mail(
         ),
     }
     assert ldap_actors == expected
+
+
+def test_extract_seq_repo_resource_ids_by_pathogen(
+    seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
+) -> None:
+    ids_by_pathogen = extract_seq_repo_resource_ids_by_pathogen(
+        seq_repo_resources, igs_schemas
+    )
+
+    assert ids_by_pathogen == {
+        "PATHOGEN": [MergedResourceIdentifier("gjYT8loBgS914bMLbRHzP5")]
+    }
