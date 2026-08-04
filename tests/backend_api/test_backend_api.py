@@ -9,8 +9,6 @@ from mex.common.sinks.backend_api import BackendApiSink
 IN_CI = os.environ.get("CI") == "true"
 
 pytestmark = [
-    # force tests to run in the exact same worker process to avoid interfering effects
-    pytest.mark.xdist_group(name="backend_api"),
     # skip backend integration tests outside CI for now, to avoid manual backend setup, addressed in MX-1523
     pytest.mark.skipif(not IN_CI, reason="Test requires CI environment"),
 ]
