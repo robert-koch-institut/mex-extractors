@@ -84,6 +84,10 @@ jobs:
           MEX_BACKEND_API_KEY: write_key
         run: make test
 
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose logs mex-backend neo4j
+
       - name: Cleanup containers
         if: always()
         run: docker compose down slapd mailpit neo4j mex-backend
