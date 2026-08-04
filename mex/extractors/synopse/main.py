@@ -158,7 +158,7 @@ def synopse_access_platform_id(
 
 
 @asset(group_name="synopse", metadata={"entity_type": "resource"})
-def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913
+def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR0913, PLR0917
     context: AssetExecutionContext,
     synopse_projects: list[ProjektUndStudienverwaltung],
     synopse_studies: list[MetadatenZuDatensaetzen],
