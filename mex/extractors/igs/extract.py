@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import TYPE_CHECKING, cast
 
 from mex.common.ldap.connector import LDAPConnector
@@ -96,7 +97,9 @@ def extract_seq_repo_resource_ids_by_pathogen(
         if pathogen in resource.identifierInPrimarySource
     }
     connector = IGSConnector.get()
-    resource_ids_by_pathogen: dict[str, list[MergedResourceIdentifier]] = {}
+    resource_ids_by_pathogen: defaultdict[str, list[MergedResourceIdentifier]] = (
+        defaultdict(list)
+    )
 
     for resource in seq_repo_resources:
         pathogen = pathogens_by_igs_id.get(resource.identifierInPrimarySource)
@@ -109,6 +112,7 @@ def extract_seq_repo_resource_ids_by_pathogen(
             },
         ):
             resource_ids_by_pathogen[pathogen].append(resource.stableTargetId)
+
     return resource_ids_by_pathogen
 
 
