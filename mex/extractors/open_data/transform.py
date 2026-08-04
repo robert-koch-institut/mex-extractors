@@ -247,7 +247,7 @@ def transform_open_data_distributions(
     return extracted_distributions
 
 
-def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
+def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
     open_data_parent_resource: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
     extracted_organizational_units: list[ExtractedOrganizationalUnit],

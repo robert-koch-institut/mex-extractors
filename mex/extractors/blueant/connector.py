@@ -24,11 +24,15 @@ class BlueAntConnector(HTTPConnector):
         api_key = settings.blueant.api_key.get_secret_value()
         self.session.headers["Authorization"] = f"Bearer {api_key}"
 
+    def _check_availability(self) -> None:
+        """Send a HEAD request to verify blueant is available."""
+        self._send_request("HEAD", urljoin(self.url, "projects"), params={})
+
     def _get_json_from_api(self, relative_url: str) -> dict[str, Any]:
         """Get json from blueant api.
 
         Args:
-            relative_url (str): relative url of the api
+            relative_url: relative url of the api
 
         Raises:
             MExError if Blue Ant API returns an error in the response body
@@ -61,7 +65,7 @@ class BlueAntConnector(HTTPConnector):
         that happens, the extractor should return nothing
 
         Args:
-            client_id: int: id of the client
+            client_id: id of the client
 
         Returns:
             str name of the client or None if no client was found
@@ -76,10 +80,10 @@ class BlueAntConnector(HTTPConnector):
         """Get description for type id.
 
         Args:
-            type_id: int: id of the type
+            type_id: id of the type
 
         Returns:
-            str: description of the type
+            description of the type
         """
         dct = self._get_json_from_api(f"masterdata/projects/types/{type_id}")
         return str(dct["type"]["description"])
@@ -88,10 +92,10 @@ class BlueAntConnector(HTTPConnector):
         """Get name for status id.
 
         Args:
-            status_id: int: id of the status
+            status_id: id of the status
 
         Returns:
-            str: name of the status
+            name of the status
         """
         dct = self._get_json_from_api(f"masterdata/projects/statuses/{status_id}")
         return str(dct["projectStatus"]["text"])
@@ -100,15 +104,22 @@ class BlueAntConnector(HTTPConnector):
         """Get name for department id.
 
         Args:
-            department_id: int: id of the department
+            department_id: id of the department
 
         Returns:
-            str: name of the department
+            name of the department
         """
         dct = self._get_json_from_api(f"masterdata/departments/{department_id}")
         return str(dct["department"]["text"])
 
     def get_person(self, person_id: int) -> BlueAntPerson:
-        """Get map of Blue Ant person IDs to employee IDs."""
+        """Get map of Blue Ant person IDs to employee IDs.
+
+        Args:
+            person_id: id of the person
+
+        Returns:
+            Blueant person object
+        """
         dct = self._get_json_from_api(f"human/persons/{person_id}")
         return BlueAntPersonResponse.model_validate(dct).person

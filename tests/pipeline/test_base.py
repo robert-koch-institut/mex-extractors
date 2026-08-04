@@ -129,7 +129,7 @@ def test_monitor_triggers_if_new_jobs_finished() -> None:
     ],
     ids=["one_check_created", "no_check_created", "two_checks_created"],
 )
-def test_asset_checks_created(  # noqa: PLR0913
+def test_asset_checks_created(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     group_name: str,
     metadata: dict[str, str],

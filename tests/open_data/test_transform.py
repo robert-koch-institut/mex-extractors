@@ -162,7 +162,7 @@ def test_transform_open_data_distributions(
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_open_data", "mocked_wikidata")
-def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913
+def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
     mocked_open_data_parent_resource: list[OpenDataParentResource],
     juturna_felicitas: ExtractedPerson,
     mocked_open_data_parent_resource_mapping: ResourceMapping,

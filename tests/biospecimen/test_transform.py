@@ -73,7 +73,7 @@ def synopse_extracted_activities() -> list[ExtractedActivity]:
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
+def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
     biospecimen_resources: list[BiospecimenResource],
     roland_resolved: ExtractedPerson,
     juturna_felicitas: ExtractedPerson,
