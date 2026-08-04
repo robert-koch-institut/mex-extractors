@@ -9,14 +9,18 @@ pytestmark = pytest.mark.xdist_group(name="backend_api")
 
 
 @pytest.mark.integration
-def test_backend_api_is_available() -> None:
+def test_backend_api_is_available(in_continuous_integration: bool) -> None:  # noqa: FBT001
+    if not in_continuous_integration:
+        pytest.skip("Test requires CI environment")
     connector = BackendApiConnector.get()  # already health-checks on construction
     status = connector.system_status()
     assert status.status == "ok"
 
 
 @pytest.mark.integration
-def test_identity_assign_is_idempotent() -> None:
+def test_identity_assign_is_idempotent(in_continuous_integration: bool) -> None:  # noqa: FBT001
+    if not in_continuous_integration:
+        pytest.skip("Test requires CI environment")
     # use the connector directly, bypassing BackendApiIdentityProvider's
     # client-side lru_cache, so both assigns actually hit the backend
     identifier_in_primary_source = "extractors-identity-roundtrip"
@@ -35,7 +39,9 @@ def test_identity_assign_is_idempotent() -> None:
 
 
 @pytest.mark.integration
-def test_ingest_roundtrip() -> None:
+def test_ingest_roundtrip(in_continuous_integration: bool) -> None:  # noqa: FBT001
+    if not in_continuous_integration:
+        pytest.skip("Test requires CI environment")
     identifier_in_primary_source = "extractors-ingest-roundtrip"
     contact_point = ExtractedContactPoint(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
