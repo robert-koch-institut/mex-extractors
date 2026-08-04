@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
+
 ### Deprecated
 
 ### Removed

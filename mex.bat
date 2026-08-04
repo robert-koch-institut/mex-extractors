@@ -46,7 +46,7 @@ exit /b %errorlevel%
 :test
 @REM run the unit and integration test suites
 echo running all tests
-uv run pytest --numprocesses=auto --dist=worksteal -m "not requires_rki_infrastructure"
+uv run pytest --numprocesses=auto --dist=worksteal
 exit /b %errorlevel%
 
 
