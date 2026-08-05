@@ -73,7 +73,7 @@ def igs_endpoint_counts(
 @asset(group_name="igs")
 def igs_seq_repo_resource_ids_by_pathogen(
     seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
-) -> dict[str, MergedResourceIdentifier]:
+) -> dict[str, list[MergedResourceIdentifier]]:
     """Extract seq-repo resource ids by igs ids."""
     return extract_seq_repo_resource_ids_by_pathogen(seq_repo_resources, igs_schemas)
 
@@ -114,7 +114,7 @@ def igs_extracted_resource_ids(  # noqa: PLR0913, PLR0917
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     igs_endpoint_counts: dict[str, str],
-    igs_seq_repo_resource_ids_by_pathogen: dict[str, MergedResourceIdentifier],
+    igs_seq_repo_resource_ids_by_pathogen: dict[str, list[MergedResourceIdentifier]],
 ) -> list[MergedResourceIdentifier]:
     """Transform IGS resource from IGS schemas."""
     extracted_resources = transform_igs_extracted_resource(

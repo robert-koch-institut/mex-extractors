@@ -44,7 +44,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         igs_schemas,
         igs_info,
         igs_endpoint_counts,
-        {"PATHOGEN": MergedResourceIdentifier.generate(seed=342)},
+        {"PATHOGEN": [MergedResourceIdentifier.generate(seed=342)]},
     )
     assert extracted_resource["PATHOGEN"].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
