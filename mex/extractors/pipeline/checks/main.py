@@ -286,7 +286,7 @@ def check_item_count_rule(  # noqa: PLR0913
         if not check_static_rule(rule_name, current_number_of_items, rule):
             msg = (
                 f"Asset {asset_key} failed {rule_name} check: "
-                f"{current_number_of_items} not meeting threshold."
+                f"{current_number_of_items} not meeting threshold of {rule['value']}."
             )
             raise ValueError(msg)
         return True
