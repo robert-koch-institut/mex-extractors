@@ -193,7 +193,6 @@ def check_static_rule(
         if current_number_of_items == threshold:
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
-        return sum(current_number_of_items.values()) >= threshold
     if rule_name == "less_than_x_outbound":
         # fail if any of the outbound connection counts is smaller than threshold
         if not current_number_of_items and threshold > 0:
@@ -241,7 +240,7 @@ def check_historical_rule(
     return True
 
 
-def check_item_count_rule(  # noqa: PLR0913
+def check_item_count_rule(  # noqa: PLR0913, PLR0917
     context: AssetCheckExecutionContext,
     rule_name: str,
     asset_key: AssetKey,
