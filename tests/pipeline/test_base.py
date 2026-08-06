@@ -154,7 +154,7 @@ def test_monitor_triggers_if_new_jobs_finished() -> None:
         "duplicate_rule_names_with_target_type",
     ],
 )
-def test_asset_checks_created(  # noqa: PLR0913
+def test_asset_checks_created(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     group_name: str,
     metadata: dict[str, str],

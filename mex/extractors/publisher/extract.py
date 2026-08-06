@@ -16,7 +16,8 @@ def get_publishable_merged_items(
     """Read publishable merged items from backend."""
     connector = BackendApiConnector.get()
 
-    response = connector.fetch_all_merged_items(
+    response = connector.fetch_all_publishable_merged_items(
+        publishing_target="invenio",
         query_string=query_string,
         entity_type=entity_type,
         referenced_identifier=referenced_identifier,

@@ -72,9 +72,11 @@ def transform_odk_resources_to_mex_resources(
         method_description = None
         if resource.methodDescription:
             method_description = resource.methodDescription[0].mappingRules[0].setValues
-        size_of_data_basis = None
-        if resource.sizeOfDataBasis:
-            size_of_data_basis = resource.sizeOfDataBasis[0].mappingRules[0].setValues
+        number_of_unique_individuals = None
+        if resource.numberOfUniqueIndividuals:
+            number_of_unique_individuals = (
+                resource.numberOfUniqueIndividuals[0].mappingRules[0].setValues
+            )
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
                 resource.wasGeneratedBy[0].mappingRules[0].forValues[0]  # type: ignore[index]
@@ -97,7 +99,7 @@ def transform_odk_resources_to_mex_resources(
             for name in (resource.publisher[0].mappingRules[0].forValues or [])
             if (partner := odk_merged_organization_ids_by_str.get(name))  # type: ignore[assignment]
         ]
-        resources_tuple[bool(resource.isPartOf)].append(
+        resources_tuple[bool(resource.relatedResource)].append(
             ExtractedResource(
                 identifierInPrimarySource=identifier_in_primary_source,
                 accessRestriction=resource.accessRestriction[0]
@@ -109,14 +111,17 @@ def transform_odk_resources_to_mex_resources(
                 ),
                 contributingUnit=contributing_unit,
                 description=description,
+                end=resource.end[0].mappingRules[0].setValues,
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                 hasLegalBasis=has_legal_basis,
+                healthCategory=resource.healthCategory[0].mappingRules[0].setValues,
                 keyword=resource.keyword[0].mappingRules[0].setValues,
                 language=resource.language[0].mappingRules[0].setValues,
                 meshId=resource.meshId[0].mappingRules[0].setValues,
                 method=resource.method[0].mappingRules[0].setValues,
                 methodDescription=method_description,
+                numberOfUniqueIndividuals=number_of_unique_individuals,
                 publisher=publisher,
                 resourceCreationMethod=resource.resourceCreationMethod[0]
                 .mappingRules[0]
@@ -128,9 +133,8 @@ def transform_odk_resources_to_mex_resources(
                 .mappingRules[0]
                 .setValues,
                 rights=resource.rights[0].mappingRules[0].setValues,
-                sizeOfDataBasis=size_of_data_basis,
                 spatial=resource.spatial[0].mappingRules[0].setValues,
-                temporal=resource.temporal[0].mappingRules[0].setValues,
+                start=resource.start[0].mappingRules[0].setValues,
                 theme=resource.theme[0].mappingRules[0].setValues,
                 title=resource.title[0].mappingRules[0].setValues,
                 unitInCharge=get_unit_merged_id_by_synonym(
@@ -161,7 +165,7 @@ def assign_resource_relations_and_load(
     ).stableTargetId
     load(resources_tuple[0])
     for resource in resources_tuple[1]:
-        resource.isPartOf = [main_questionnaire_id]
+        resource.relatedResource = [main_questionnaire_id]
     load(resources_tuple[1])
     return [*resources_tuple[0], *resources_tuple[1]]
 

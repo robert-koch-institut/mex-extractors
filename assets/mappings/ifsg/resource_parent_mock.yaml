@@ -43,9 +43,6 @@ identifierInPrimarySource:
 instrumentToolOrApparatus:
   - mappingRules:
       - {}
-isPartOf:
-  - mappingRules:
-      - {}
 keyword:
   - mappingRules:
       - setValues:

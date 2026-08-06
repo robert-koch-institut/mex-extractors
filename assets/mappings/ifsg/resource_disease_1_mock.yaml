@@ -18,6 +18,11 @@ contact:
       - forValues:
           - FG99
         rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: "Das Infektionsschutzgesetz"
 documentation:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -79,6 +84,9 @@ documentation:
 hadPrimarySource:
   - mappingRules:
       - {}
+hasCodeValues:
+  - mappingRules:
+      - rule:
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -89,11 +97,6 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
-icd10code:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - rule:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -128,13 +131,6 @@ instrumentToolOrApparatus:
         setValues:
           - language: de
             value: Falldefinition E
-isPartOf:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
-      - forValues:
-          - "0"
-        rule:
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
@@ -182,6 +178,13 @@ publication:
   - mappingRules:
       - setValues:
           - ctdBX3StWbg9nabBXgTjut
+relatedResource:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - forValues:
+          - "0"
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - setValues:

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.usefixtures("mocked_igs", "mocked_wikidata")
-def test_transform_igs_extracted_resource(  # noqa: PLR0913
+def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
     igs_resource_mapping: ResourceMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
     extracted_access_platform: ExtractedAccessPlatform,
@@ -44,12 +44,13 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
         igs_schemas,
         igs_info,
         igs_endpoint_counts,
+        {"PATHOGEN": [MergedResourceIdentifier.generate(seed=342)]},
     )
     assert extracted_resource["PATHOGEN"].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
         "identifierInPrimarySource": "test_title_PATHOGEN",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "created": "1970",
+        "start": ["1970"],
         "sizeOfDataBasis": "Anzahl Proben: 7",
         "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
         "theme": ["https://mex.rki.de/item/theme-11"],
@@ -62,12 +63,14 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913
             {"value": "Pathogen", "language": "de"},
             {"value": "PATHOGEN"},
         ],
+        "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
             {"value": "Test Präfix", "language": "de"},
             {"value": "Anzahl tests: 42", "language": "de"},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
+        "isPartOf": ["bFQoRhcVH5DHZW"],
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",
     }
 

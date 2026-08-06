@@ -33,10 +33,8 @@ contributor:
     locationInPrimarySource:
     mappingRules:
       - rule:
-created:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
+end:
+  - mappingRules:
       - rule:
 description:
   - fieldInPrimarySource:
@@ -59,6 +57,9 @@ hasPersonalData:
 hadPrimarySource:
   - mappingRules:
       - rule:
+healthCategory:
+  - mappingRules:
+      - setValues:
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
@@ -120,10 +121,8 @@ spatial:
       - setValues:
           - language: de
             value: Deutschland
-temporal:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
+start:
+  - mappingRules:
       - rule:
 theme:
   - fieldInPrimarySource:

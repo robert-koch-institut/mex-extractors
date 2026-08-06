@@ -147,16 +147,15 @@ def odk_extracted_resources() -> list[ExtractedResource]:
                 Text(value="eirmod", language="de"),
             ],
             methodDescription=[Text(value="tempor", language="en")],
+            numberOfUniqueIndividuals=999,
             publisher=["bFQoRhcVH5DHU6"],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
             rights=[Text(value="ut labore", language="de")],
-            sizeOfDataBasis="et dolore",
             spatial=[
                 Text(value="magna", language="de"),
                 Text(value="magna", language="en"),
             ],
             stateOfDataProcessing=[],
-            temporal="2021-07-27 - 2021-12-31",
             theme=[
                 "https://mex.rki.de/item/theme-11",
                 "https://mex.rki.de/item/theme-37",

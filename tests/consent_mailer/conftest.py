@@ -51,8 +51,9 @@ def mocked_consent_backend_api_connector(
     call_counter = {"count": 0}
 
     class FakeConnector:
-        def fetch_all_merged_items(
+        def fetch_all_publishable_merged_items(
             self,
+            publishing_target: str = "target",  # noqa: ARG002
             _: str | None = None,
             __: str | None = None,
             entity_type: list[str] | None = None,

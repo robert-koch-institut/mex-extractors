@@ -125,7 +125,7 @@ def grippeweb_extracted_access_platform(
 
 
 @asset(group_name="grippeweb", metadata={"entity_type": "resource"})
-def grippeweb_extracted_parent_resource(  # noqa: PLR0913
+def grippeweb_extracted_parent_resource(  # noqa: PLR0913, PLR0917
     context: AssetExecutionContext,
     grippeweb_resource_mappings: list[dict[str, Any]],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
