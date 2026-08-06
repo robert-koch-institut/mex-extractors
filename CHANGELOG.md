@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add final outbound checks for synopse and voxco
+
 ### Changes
 
 - enable slapd ldapmock for github testing
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix igs isPartof
 - ruff and mypy hints
 
 ### Security

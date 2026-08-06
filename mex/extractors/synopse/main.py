@@ -47,7 +47,10 @@ from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
     transform_synopse_variables_to_mex_variables,
 )
-from mex.extractors.utils import count_outbound_connections, load_yaml
+from mex.extractors.utils import (
+    collect_related_identifier_counts,
+    load_yaml,
+)
 
 
 @asset(group_name="synopse")
@@ -187,7 +190,11 @@ def synopse_extracted_resources_by_identifier_in_primary_source(  # noqa: PLR091
         synopse_study_overviews,
         transformed_study_data_resources,
     )
-    context.add_output_metadata({"num_items": len(extracted_resource)})
+    context.add_output_metadata(
+        {
+            "num_items": len(extracted_resource),
+        }
+    )
     return extracted_resource
 
 
@@ -265,15 +272,20 @@ def synopse_extracted_variables(
         synopse_study_overviews,
     )
     load(extracted_variables)
-    outbound_by_identifier = {
-        v.identifierInPrimarySource: count_outbound_connections(v)
-        for v in extracted_variables
-    }
+    outbound_connections_variable_group = collect_related_identifier_counts(
+        extracted_variables,
+        ["belongsTo"],
+    )
+    outbound_connections_resource = collect_related_identifier_counts(
+        extracted_variables,
+        ["usedIn"],
+    )
 
     context.add_output_metadata(
         {
             "num_items": len(extracted_variables),
-            "outbound_connections": outbound_by_identifier,
+            "outbound_connections_variable_group": outbound_connections_variable_group,
+            "outbound_connections_resource": outbound_connections_resource,
         }
     )
     return extracted_variables

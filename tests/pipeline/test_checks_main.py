@@ -38,22 +38,32 @@ def test_parse_time_frame(input_str: str, expected: timedelta) -> None:
 
 
 def test_get_rule(monkeypatch: MonkeyPatch) -> None:
-    rule_dict = {
-        "fail_if": "x_items_more_than",
-        "value": 10,
-        "time_frame": "7d",
-        "target_type": None,
-    }
-    check_model = AssetCheck(rules=[AssetCheckRule(**rule_dict)])
+    rule_dicts = [
+        {
+            "fail_if": "less_than_x_outbound",
+            "value": 1,
+            "time_frame": None,
+            "target_type": "VariableGroup",
+        },
+        {
+            "fail_if": "less_than_x_outbound",
+            "value": 2,
+            "time_frame": None,
+            "target_type": "Resource",
+        },
+    ]
+    check_model = AssetCheck(
+        rules=[AssetCheckRule(**rule_dict) for rule_dict in rule_dicts]
+    )
 
     monkeypatch.setattr(
         "mex.extractors.pipeline.checks.main.load_asset_check_from_settings",
         lambda *args, **kwargs: check_model,
     )
 
-    rule = get_rule("x_items_more_than", "dummy", "dummy")
-    assert rule["value"] == 10
-    assert rule["time_frame"] == "7d"
+    rule = get_rule("less_than_x_outbound", "dummy", "dummy", "Resource")
+    assert rule["value"] == 2
+    assert rule["target_type"] == "Resource"
 
 
 def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
@@ -125,7 +135,7 @@ def test_get_historical_events(
 
 
 @pytest.mark.parametrize(
-    ("events", "rule_name", "expected"),
+    ("events", "rule_name", "target_type", "expected"),
     [
         (
             [
@@ -139,6 +149,7 @@ def test_get_historical_events(
                 ),
             ],
             "x_items_more_than",
+            None,
             132,
         ),
         (
@@ -146,22 +157,45 @@ def test_get_historical_events(
                 DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
-                        "outbound_connections": SimpleNamespace(
+                        "outbound_connections_variable_group": SimpleNamespace(
                             value={"id-a": 4, "id-b": 2}
                         )
                     },
                 ),
             ],
             "less_than_x_outbound",
+            "VariableGroup",
             {"id-a": 4, "id-b": 2},
+        ),
+        (
+            [
+                DummyEventLogRecord(
+                    timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
+                    metadata={
+                        "outbound_connections_resource": SimpleNamespace(
+                            value={"id-a": 2, "id-b": 1}
+                        )
+                    },
+                ),
+            ],
+            "less_than_x_outbound",
+            "Resource",
+            {"id-a": 2, "id-b": 1},
         ),
     ],
 )
 def test_get_latest_num_items(
-    events: list[Any], rule_name: str, expected: int | dict[str, int]
+    events: list[Any],
+    rule_name: str,
+    target_type: str | None,
+    expected: int | dict[str, int],
 ) -> None:
     assert (
-        get_latest_num_items(cast("list[EventLogRecord]", events), rule_name=rule_name)
+        get_latest_num_items(
+            cast("list[EventLogRecord]", events),
+            rule_name=rule_name,
+            target_type=target_type,
+        )
         == expected
     )
 
@@ -253,6 +287,7 @@ def run_item_count_test(  # noqa: PLR0913
     time_frame_str: str,
     passed: bool,
     rule_name_for_match: str,
+    target_type: str | None = None,
 ) -> None:
     mocked_now = datetime(2025, 8, 1, 12, 0, tzinfo=UTC)
 
@@ -285,7 +320,14 @@ def run_item_count_test(  # noqa: PLR0913
     class MockEvent:
         def __init__(self, num_items: int | dict[str, int]) -> None:
             if rule_name_for_match == "less_than_x_outbound":
-                metadata = {"outbound_connections": SimpleNamespace(value=num_items)}
+                assert target_type is not None, (
+                    "target_type is required for less_than_x_outbound"
+                )
+                metadata_key = {
+                    "VariableGroup": "outbound_connections_variable_group",
+                    "Resource": "outbound_connections_resource",
+                }[target_type]
+                metadata = {metadata_key: SimpleNamespace(value=num_items)}
             else:
                 metadata = {"num_items": SimpleNamespace(value=num_items)}
 
@@ -310,6 +352,7 @@ def run_item_count_test(  # noqa: PLR0913
                 extractor="ext",
                 entity_type="type",
                 rule_name=rule_name_for_match,
+                target_type=target_type,
             )
     else:
         result = check_item_count_rule(
@@ -318,6 +361,7 @@ def run_item_count_test(  # noqa: PLR0913
             extractor="ext",
             entity_type="type",
             rule_name=rule_name_for_match,
+            target_type=target_type,
         )
         assert result is True
 
@@ -518,7 +562,7 @@ def test_check_not_exactly_x_items_generalized(
         pytest.param(
             {},
             5,
-            True,
+            False,
             id="passes_empty_connections",
         ),
     ],
@@ -538,7 +582,9 @@ def test_check_less_than_x_outbound_generalized(
         def __init__(self, outbound_connections: dict[str, int]) -> None:
             self.asset_materialization = SimpleNamespace(
                 metadata={
-                    "outbound_connections": SimpleNamespace(value=outbound_connections)
+                    "outbound_connections_variable_group": SimpleNamespace(
+                        value=outbound_connections
+                    )
                 }
             )
 
@@ -560,6 +606,7 @@ def test_check_less_than_x_outbound_generalized(
                 extractor="test",
                 entity_type="test",
                 rule_name="less_than_x_outbound",
+                target_type="VariableGroup",
             )
     else:
         result = check_item_count_rule(
@@ -568,6 +615,7 @@ def test_check_less_than_x_outbound_generalized(
             extractor="test",
             entity_type="test",
             rule_name="less_than_x_outbound",
+            target_type="VariableGroup",
         )
         assert result is True
 
