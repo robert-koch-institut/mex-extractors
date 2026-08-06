@@ -22,3 +22,7 @@ class PublisherSettings(BaseModel):
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
+    praes_unit_identifier: str = Field(
+        "OrganizationalUnit_0",  # "parent-unit"
+        description="Identifier of the highest organizational unit.",
+    )

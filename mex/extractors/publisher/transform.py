@@ -140,7 +140,7 @@ def get_resolved_names(identifier: AnyMergedIdentifier, field: str) -> str:
     name_list = getattr(merged_item, field)
 
     if not name_list:
-        return f"stableTargetId: '{identifier}'"
+        return f"stableTargetId_{identifier}"
 
     name = name_list[0]
 
@@ -200,7 +200,7 @@ def transform_merged_bibliographic_resources_for_csv(
             bibliographic_resources_for_csv_by_unit[key_unit_short_name].append(
                 BibliographicResourceForCsv(
                     contributingUnit=contributing_unit,
-                    publicationYear=bibliographic_resource.publicationYear,
+                    publicationYear=str(bibliographic_resource.publicationYear),
                     creator=creator,
                     title=title,
                     journal=journal,

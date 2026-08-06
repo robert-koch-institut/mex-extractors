@@ -1,9 +1,6 @@
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from mex.common.models import AnyMergedModel, BaseModel
-
-if TYPE_CHECKING:
-    from mex.common.types import Year
 
 
 @runtime_checkable
@@ -17,7 +14,7 @@ class BibliographicResourceForCsv(BaseModel):
     """pydantic model of Bibliographic Resources for writing to csv."""
 
     contributingUnit: list[str] | None
-    publicationYear: Year | None
+    publicationYear: str | None
     creator: list[str]
     title: list[str]
     journal: list[str] | None

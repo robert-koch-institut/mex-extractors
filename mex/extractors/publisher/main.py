@@ -36,7 +36,7 @@ from mex.extractors.publisher.transform import (
     update_actor_references_where_needed,
 )
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.sinks.s3 import S3Sink
+from mex.extractors.sinks.s3 import S3CsvSink, S3Sink
 
 if TYPE_CHECKING:
     from mex.common.models import MergedBibliographicResource
@@ -195,6 +195,29 @@ def publisher_bibliographic_resources_for_csv_by_unit() -> dict[
     return transform_merged_bibliographic_resources_for_csv(
         merged_bibliographic_resources_by_unit
     )
+
+
+@asset(group_name="publisher")
+def publisher_csv_load(
+    publisher_bibliographic_resources_for_csv_by_unit: dict[
+        str, list[BibliographicResourceForCsv]
+    ],
+) -> None:
+    """Write BibliographicResourceForCsv as CSV to s3 sink."""
+    s3csv = S3CsvSink()
+    for (
+        unit_name,
+        publications,
+    ) in publisher_bibliographic_resources_for_csv_by_unit.items():
+        publications_sorted_by_year = sorted(
+            publications,
+            key=lambda item: (
+                item.publicationYear is not None,
+                item.publicationYear or 0,
+            ),
+            reverse=True,
+        )
+        deque(s3csv.load(publications_sorted_by_year, unit_name=unit_name), maxlen=0)
 
 
 @entrypoint()

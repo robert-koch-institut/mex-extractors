@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, cast
 
+from mex.common.backend_api import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.models import ActivityFilter
 from mex.common.organigram.helpers import (
@@ -89,6 +90,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
     Returns:
         dictionary of Bibliographic Resources by allowed units
     """
+    connector = BackendApiConnector.get()
     settings = ExtractorsSettings.get()
     all_activity_filter_mapping = ActivityFilter.model_validate(
         load_yaml(settings.publisher.mapping_path / "__all__/activity_filter.yaml")
@@ -97,11 +99,11 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         field.fieldInPrimarySource: field
         for field in all_activity_filter_mapping.fields
     }
-    if activity_filter_rule_by_field["responsibleUnit"].filterRules[0].forValues:
+    if activity_filter_rule_by_field["responsibleUnit"].filterRules[1].forValues:
         forbidden_unit_ids = {
             unit_id
             for unit_name in activity_filter_rule_by_field["responsibleUnit"]
-            .filterRules[0]
+            .filterRules[1]
             .forValues
             for unit_id in (get_unit_merged_id_by_synonym(unit_name) or [])
         }
@@ -114,9 +116,10 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         get_publishable_merged_items(entity_type=["MergedOrganizationalUnit"]),
     )
     unit_praes_stid = next(
-        unit.identifier
-        for unit in merged_organisational_units
-        if unit.identifier == "praes"
+        unit.stableTargetId
+        for unit in connector.fetch_extracted_items(
+            query_string=settings.publisher.praes_unit_identifier
+        ).items
     )
 
     bibliographic_resource_by_department: defaultdict[
@@ -135,6 +138,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
                 str(department_unit_id),
             )
         )
+        descendant_unit_ids.add(department_unit_id)
         bibliographic_resource_by_department[department_unit_id] = [
             publication
             for publication in merged_bibliographic_resource
