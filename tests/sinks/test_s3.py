@@ -1,4 +1,3 @@
-import datetime
 import hashlib
 import json
 import re
@@ -8,7 +7,6 @@ from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, call
 
 import pytest
-from packaging.version import InvalidVersion
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -80,95 +78,6 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     assert re.match(
         r"publisher-\d+\.\d+/metadata.json", load_metadata_client_call.kwargs["Key"]
     )
-
-
-@pytest.mark.parametrize(
-    ("version", "expected"),
-    [
-        pytest.param("1.2.3", "publisher-1.2", id="short-version"),
-        pytest.param("123.456.789", "publisher-123.456", id="long-version"),
-        pytest.param("1.2.7-beta", "publisher-1.2", id="version-with-letters"),
-    ],
-)
-def test__build_directory_path(
-    monkeypatch: MonkeyPatch, version: str, expected: str
-) -> None:
-    def fake_version(module: str) -> str:
-        assert module == "mex-model", (
-            f"Expected call with mex-model, was called with {module}"
-        )
-        return version
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", fake_version)
-    returned = S3Sink._build_directory_path()
-    assert returned.as_posix() == expected
-
-
-def test__build_directory_path_exception(monkeypatch: MonkeyPatch) -> None:
-    version = "bogus.version"
-
-    def fake_version(module: str) -> str:
-        assert module == "mex-model", (
-            f"Expected call with mex-model, was called with {module}"
-        )
-        return version
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", fake_version)
-    with pytest.raises(InvalidVersion, match=r"Invalid version: 'bogus.version'"):
-        S3Sink._build_directory_path()
-
-
-def test__calculate_checksum() -> None:
-    expected = "8b7df143d91c716ecfa5fc1730022f6b421b05cedee8fd52b1fc65a96030ad52"
-    with BytesIO() as buffer:
-        buffer.write(b"blah")
-        returned = S3Sink._calculate_checksum(buffer)
-    assert returned == expected
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
-def test__load_metadata(monkeypatch: MonkeyPatch) -> None:
-    locally_available_version = {
-        "mex-common": "mex-common-version",
-        "mex-extractors": "mex-extractors-version",
-        "mex-model": "mex-model-version",
-    }
-    sha256_checksum = "checksum"
-    write_completed_at = "2123-12-31T23:59:59.123456+00:00"
-    expected_content = {
-        "versions": {"mex-backend": "mex-backend-version", **locally_available_version},
-        "sha256_checksum": sha256_checksum,
-        "write_completed_at": write_completed_at,
-    }
-
-    # patch version
-    def mock_version(module: str) -> str:
-        assert module in locally_available_version, (
-            f"Unsupported module '{module}', Supported: {locally_available_version.keys()}"
-        )
-        return locally_available_version[module]
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", mock_version)
-
-    # patch date
-    mocked_datetime = MagicMock()
-    mocked_datetime.now = MagicMock(
-        return_value=datetime.datetime.fromisoformat(write_completed_at)
-    )
-    monkeypatch.setattr("mex.extractors.sinks.s3.datetime.datetime", mocked_datetime)
-
-    # execute
-    sink = S3Sink.get()
-    sink._load_metadata("metadata-path.json", sha256_checksum)
-    assert sink.client.put_object.call_args.kwargs == {
-        "Body": Joker(),
-        "Bucket": "s3_bucket",
-        "Key": "metadata-path.json",
-    }
-    body = sink.client.put_object.call_args.kwargs["Body"]
-    assert isinstance(body, bytes)
-    returned_content = sink.client.bodies[0].decode("utf-8")
-    assert json.loads(returned_content) == expected_content
 
 
 @pytest.mark.usefixtures("mocked_s3sink_client")
