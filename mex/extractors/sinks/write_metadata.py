@@ -2,14 +2,17 @@ import datetime
 import hashlib
 import json
 from importlib import metadata
-from io import BytesIO, StringIO
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from packaging.version import Version
 
 from mex.common.backend_api import BackendApiConnector
 from mex.common.transform import MExEncoder
 from mex.common.types import UTC
+
+if TYPE_CHECKING:
+    from io import BytesIO, StringIO
 
 
 def build_directory_path(prefix: str | None) -> Path:
@@ -23,6 +26,7 @@ def build_directory_path(prefix: str | None) -> Path:
 def calculate_checksum(buffer: BytesIO | StringIO) -> str:
     """Calculate sha256 checksum of the buffer."""
     data = buffer.getvalue()
+    buffer.seek(0)
 
     if isinstance(data, str):
         data = data.encode("utf-8")  # handle StringIO type

@@ -22,7 +22,7 @@ class PublisherSettings(BaseModel):
             "default values, absolute path or relative to `assets_dir`."
         ),
     )
-    praes_unit_identifier: str = Field(
-        "OrganizationalUnit_0",  # "parent-unit"
-        description="Identifier of the highest organizational unit.",
+    departments_for_publications_csv: list[str] = Field(
+        ["c1", "fg99"],
+        description="list of departments for which to publish publications.",
     )

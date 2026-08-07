@@ -1,14 +1,9 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, cast
 
-from mex.common.backend_api import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.models import ActivityFilter
-from mex.common.organigram.helpers import (
-    get_all_descendant_unit_ids,
-    get_first_level_child_unit_ids,
-)
-from mex.common.types import MergedOrganizationalUnitIdentifier
+from mex.common.organigram.helpers import get_all_descendant_unit_ids
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.settings import ExtractorsSettings
@@ -23,6 +18,7 @@ if TYPE_CHECKING:
     )
     from mex.common.types import (
         MergedConsentIdentifier,
+        MergedOrganizationalUnitIdentifier,
         MergedPersonIdentifier,
     )
 
@@ -90,7 +86,6 @@ def cluster_and_filter_bibliographic_resources_by_unit(
     Returns:
         dictionary of Bibliographic Resources by allowed units
     """
-    connector = BackendApiConnector.get()
     settings = ExtractorsSettings.get()
     all_activity_filter_mapping = ActivityFilter.model_validate(
         load_yaml(settings.publisher.mapping_path / "__all__/activity_filter.yaml")
@@ -115,30 +110,32 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         "list[MergedOrganizationalUnit]",
         get_publishable_merged_items(entity_type=["MergedOrganizationalUnit"]),
     )
-    unit_praes_stid = next(
-        unit.stableTargetId
-        for unit in connector.fetch_extracted_items(
-            query_string=settings.publisher.praes_unit_identifier
-        ).items
-    )
 
     bibliographic_resource_by_department: defaultdict[
         MergedOrganizationalUnitIdentifier, list[MergedBibliographicResource]
     ] = defaultdict(list)
 
-    for department_unit_id_str in get_first_level_child_unit_ids(
-        merged_organisational_units, unit_praes_stid
-    ):
-        department_unit_id: MergedOrganizationalUnitIdentifier = (
-            MergedOrganizationalUnitIdentifier(department_unit_id_str)
-        )
+    for department_unit_name in settings.publisher.departments_for_publications_csv:
+        if (
+            not (
+                department_unit_ids := get_unit_merged_id_by_synonym(
+                    department_unit_name
+                )
+            )
+            or len(department_unit_ids) != 1
+        ):
+            msg = f"Error finding stableTargetId for department {department_unit_name}"
+            raise MExError(msg)
+
+        department_unit_id = department_unit_ids[0]
+
         descendant_unit_ids = set(
             get_all_descendant_unit_ids(
                 merged_organisational_units,
                 str(department_unit_id),
             )
         )
-        descendant_unit_ids.add(department_unit_id)
+        descendant_unit_ids.add(str(department_unit_id))
         bibliographic_resource_by_department[department_unit_id] = [
             publication
             for publication in merged_bibliographic_resource

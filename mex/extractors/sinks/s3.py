@@ -211,9 +211,8 @@ class S3CsvSink(S3BaseSink):
             sep=";",
         )
         checksum = calculate_checksum(csv_buffer)
-        csv_buffer.seek(0)
-        breakpoint()
 
+        csv_buffer.seek(0)
         self.client.put_object(
             Body=csv_buffer.getvalue().encode("utf-8"),
             Bucket=settings.s3_bucket_key,
