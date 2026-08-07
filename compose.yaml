@@ -10,7 +10,7 @@ services:
   dagster-daemon:
     build:
       context: .
-    entrypoint: ["dagster-daemon", "run", "-w", "workspace.yaml"]
+    entrypoint: [ "dagster-daemon", "run", "-w", "workspace.yaml" ]
     depends_on:
       - postgres
     volumes:
@@ -21,11 +21,11 @@ services:
       context: .
     ports:
       - 3000:3000
-    entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml"]
+    entrypoint: [ "dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml" ]
     depends_on:
       - postgres
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/dagit_info"]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/dagit_info" ]
       interval: 30s
       timeout: 10s
       start_period: 60s
@@ -52,6 +52,33 @@ services:
       - MP_UI_AUTH=user:password
     expose:
       - 8025
+  neo4j:
+    image: neo4j:2026.06-community
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_usage__report_enabled=false
+    ports:
+      - 7687:7687
+    healthcheck:
+      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  mex-backend:
+    image: ghcr.io/robert-koch-institut/mex-backend:4.2.2
+    entrypoint: testing-backend
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    environment:
+      - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
+      - MEX_DEBUG=true
+    expose:
+      - 8080
 volumes:
   pgdata:
   dagster:

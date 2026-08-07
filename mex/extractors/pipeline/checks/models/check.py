@@ -9,7 +9,6 @@ class AssetCheckRule(BaseModel):
     """Model to define asset checks against the count of an extractor asset."""
 
     fail_if: Literal[
-        "less_than_x_inbound",
         "less_than_x_outbound",
         "not_exactly_x_items",
         "x_items_less_than",
