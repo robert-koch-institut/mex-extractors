@@ -32,8 +32,9 @@ unit:
 
 test:
 	# run the unit and integration test suites
+	# single worker: integration tests share one live backend/graph instance
 	@ echo running all tests; \
-	uv run pytest --numprocesses=auto --dist=worksteal -m "not requires_rki_infrastructure"; \
+	uv run pytest -m "not requires_rki_infrastructure"; \
 
 wheel:
 	# build the python package

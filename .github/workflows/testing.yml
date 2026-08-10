@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 1
 
       - name: Start containers
-        run: docker compose up -d slapd mailpit
+        run: docker compose up -d slapd mailpit neo4j mex-backend
 
       - name: Cache requirements
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -68,12 +68,26 @@ jobs:
           echo ${{ matrix.python-version }} > .python-version
           make install
 
+      - name: Wait for mex-backend readiness
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/v0/_system/check && exit 0
+            sleep 2
+          done
+          echo "mex-backend did not become ready in time" >&2
+          exit 1
+
       - name: Run test suite
         env:
           MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
-#          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
+          MEX_BACKEND_API_URL: http://localhost:8080/
+          MEX_BACKEND_API_KEY: write_key
         run: make test
+
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose logs mex-backend neo4j
 
       - name: Cleanup containers
         if: always()
-        run: docker compose down slapd mailpit
+        run: docker compose down slapd mailpit neo4j mex-backend
