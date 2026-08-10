@@ -40,7 +40,7 @@ jobs:
         env:
           cache-name: cache-requirements
         with:
-          +          path: ~/.cache/uv
+          path: ~/.cache/uv
           key: ${{ env.cache-name }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-
