@@ -1,14 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
-    from os import PathLike
-
-
-def load_yaml(path: PathLike[str]) -> dict[str, Any]:
-    """Load the contents of a YAML file from the given path and return as a dict."""
-    with Path(path).open(encoding="utf-8") as fh:
-        return cast("dict[str, Any]", yaml.safe_load(fh))
 
 
 def collect_related_identifiers(

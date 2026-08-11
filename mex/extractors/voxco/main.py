@@ -18,7 +18,6 @@ from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import (
     collect_related_identifier_counts,
-    load_yaml,
 )
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,

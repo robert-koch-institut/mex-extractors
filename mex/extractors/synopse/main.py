@@ -50,7 +50,6 @@ from mex.extractors.synopse.transform import (
 )
 from mex.extractors.utils import (
     collect_related_identifier_counts,
-    load_yaml,
 )
 
 
