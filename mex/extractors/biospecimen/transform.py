@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
-def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913
+def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
     biospecimen_resources: Iterable[BiospecimenResource],
     person_stable_target_id_by_email: dict[str, MergedPersonIdentifier],
     extracted_organization_rki: ExtractedOrganization,

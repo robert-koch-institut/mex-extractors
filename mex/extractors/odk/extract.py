@@ -32,13 +32,13 @@ def extract_odk_raw_data() -> list[ODKData]:
         raw_bytes = read_bytes(file_path)
         xls = ExcelFile(BytesIO(raw_bytes))
 
-        choices_sheet = xls.parse(  # type: ignore[attr-defined]
+        choices_sheet = xls.parse(
             sheet_name="choices", na_values=["", " "], keep_default_na=False
         )
         label_choices = get_column_dict_by_pattern(choices_sheet, "English")
         list_name_choices = choices_sheet["list_name"].to_list()
         name_choices = choices_sheet["name"].to_list()
-        survey_sheet = xls.parse(  # type: ignore[attr-defined]
+        survey_sheet = xls.parse(
             sheet_name="survey", na_values=["", " "], keep_default_na=False
         )
         label_survey = get_column_dict_by_pattern(survey_sheet, "English")

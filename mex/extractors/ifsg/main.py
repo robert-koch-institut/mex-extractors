@@ -177,7 +177,7 @@ def ifsg_extracted_resources_state(
 
 
 @asset(group_name="ifsg", metadata={"entity_type": "resource"})
-def ifsg_extracted_resources_disease(  # noqa: PLR0913
+def ifsg_extracted_resources_disease(  # noqa: PLR0913, PLR0917
     context: AssetExecutionContext,
     ifsg_resource_disease_dict: dict[str, Any],
     ifsg_extracted_resource_parent: ExtractedResource,
@@ -223,7 +223,7 @@ def ifsg_extracted_variable_groups(
 
 
 @asset(group_name="ifsg", metadata={"entity_type": "variable"})
-def ifsg_extracted_variables(  # noqa: PLR0913
+def ifsg_extracted_variables(  # noqa: PLR0913, PLR0917
     context: AssetExecutionContext,
     ifsg_filtered_variables: list[MetaField],
     ifsg_extracted_resources_disease: list[ExtractedResource],

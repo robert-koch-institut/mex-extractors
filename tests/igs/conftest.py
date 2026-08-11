@@ -4,6 +4,7 @@ from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedContactPoint,
+    ExtractedResource,
     ResourceMapping,
     VariableMapping,
 )
@@ -110,3 +111,62 @@ def extracted_access_platform() -> ExtractedAccessPlatform:
             "unitInCharge": ["bFQoRhcVH5DHU8"],
         }
     )
+
+
+@pytest.fixture
+def seq_repo_resources() -> list[ExtractedResource]:
+    return [
+        ExtractedResource.model_validate(
+            {
+                "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
+                "identifierInPrimarySource": "PATHOGEN",
+                "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
+                "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
+                "start": ["2023-08-07"],
+                "modified": "2023-08-07",
+                "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
+                "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
+                "theme": [
+                    "https://mex.rki.de/item/theme-11",
+                    "https://mex.rki.de/item/theme-23",
+                ],
+                "title": [{"value": "LIMS Sample ID test-sample-id (virus XYZ)"}],
+                "unitInCharge": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+                "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
+                "anonymizationPseudonymization": [
+                    "https://mex.rki.de/item/anonymization-pseudonymization-2"
+                ],
+                "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
+                "description": [
+                    {"value": "Testbeschreibung", "language": "de"},
+                    {"value": "test description", "language": "en"},
+                ],
+                "healthCategory": ["https://mex.rki.de/item/health-category-1"],
+                "keyword": [
+                    {"value": "fastc", "language": "de"},
+                    {"value": "fastd", "language": "de"},
+                    {"value": "virus XYZ"},
+                    {"value": "TEST"},
+                ],
+                "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+                "qualityInformation": [
+                    {"value": "Basepairs: 1", "language": "en"},
+                    {"value": "Reads: 2", "language": "en"},
+                ],
+                "resourceCreationMethod": [
+                    "https://mex.rki.de/item/resource-creation-method-4"
+                ],
+                "resourceTypeGeneral": [
+                    "https://mex.rki.de/item/resource-type-general-13"
+                ],
+                "resourceTypeSpecific": [
+                    {"value": "Sequencing Data", "language": "de"},
+                    {"value": "Sequenzdaten", "language": "de"},
+                ],
+                "rights": [{"value": "Example content", "language": "de"}],
+                "stateOfDataProcessing": [
+                    "https://mex.rki.de/item/data-processing-state-1"
+                ],
+            }
+        )
+    ]

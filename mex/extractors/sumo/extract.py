@@ -41,7 +41,7 @@ def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
     excel_file = ExcelFile(BytesIO(raw_bytes))
     valuesets = []
     for sheet_name in excel_file.sheet_names:
-        data_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+        data_valuesets = excel_file.parse(sheet_name=sheet_name)
         for _, row in data_valuesets.iterrows():
             valuesets.append(
                 Cc1DataValuesets(
@@ -73,7 +73,7 @@ def extract_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
     )
     excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "datamodel NoKeda"
-    data_model_nokeda = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+    data_model_nokeda = excel_file.parse(sheet_name=sheet_name)
     models = []
     for _, row in data_model_nokeda.iterrows():
         models.append(Cc1DataModelNoKeda(**row))
@@ -93,7 +93,7 @@ def extract_cc2_aux_model() -> list[Cc2AuxModel]:
     raw_bytes = read_bytes(f"{settings.sumo.raw_data_path}/cc2_aux_model_v3.0.3.xlsx")
     excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "datamodel aux"
-    aux_model = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+    aux_model = excel_file.parse(sheet_name=sheet_name)
     models = []
     for _, row in aux_model.iterrows():
         models.append(Cc2AuxModel(**row))
@@ -120,7 +120,7 @@ def extract_cc2_aux_mapping(
     mappings = []
     for row in sumo_cc2_aux_model:
         sheet_name = row.depends_on_nokeda_variable
-        aux_mapping = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+        aux_mapping = excel_file.parse(sheet_name=sheet_name)
         mappings.append(
             Cc2AuxMapping(
                 sheet_name=sheet_name,
@@ -146,7 +146,7 @@ def extract_cc2_aux_valuesets() -> list[Cc2AuxValuesets]:
     )
     excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "aux_cedis_group"
-    aux_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+    aux_valuesets = excel_file.parse(sheet_name=sheet_name)
     valuesets = []
     for _, row in aux_valuesets.iterrows():
         valuesets.append(Cc2AuxValuesets(**row))
@@ -168,7 +168,7 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
     )
     excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "feat_syndrome"
-    aux_valuesets = excel_file.parse(sheet_name=sheet_name)  # type: ignore[attr-defined]
+    aux_valuesets = excel_file.parse(sheet_name=sheet_name)
     projections = []
     for _, row in aux_valuesets.iterrows():
         projections.append(Cc2FeatProjection(**row))

@@ -126,7 +126,7 @@ def open_data_extracted_distributions(
 
 
 @asset(group_name="open_data", metadata={"entity_type": "resource"})
-def open_data_parent_extracted_resources(  # noqa: PLR0913
+def open_data_parent_extracted_resources(  # noqa: PLR0913, PLR0917
     context: AssetExecutionContext,
     open_data_parent_resources: list[OpenDataParentResource],
     open_data_extracted_persons: list[ExtractedPerson],
@@ -152,6 +152,7 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913
     )
 
     load(mex_sources)
+
     context.add_output_metadata({"num_items": len(mex_sources)})
     return mex_sources
 
