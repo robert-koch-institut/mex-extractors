@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.13-trixie # PINNED! Do not update outside MX-2398
+    image: postgres:16.13-trixie@sha256:5d143123fdf80462d1778cd4f24b9f7ca13c87174bca19141fb194c5a1ebca59 # PINNED! Do not update outside MX-2398
     environment:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
@@ -34,7 +34,7 @@ services:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
   slapd:
-    image: thoteam/slapd-server-mock
+    image: thoteam/slapd-server-mock@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
     ports:
       - 636:636
     volumes:
@@ -42,7 +42,7 @@ services:
     expose:
       - 636
   mailpit:
-    image: axllent/mailpit:v1.30
+    image: axllent/mailpit:v1.30@sha256:d5ecbb067db3705fa953d79e1b7f81ef84038df67aba6c52825d8c02a1ea748a
     ports:
       - 1025:1025
       - 8025:8025
@@ -53,7 +53,7 @@ services:
     expose:
       - 8025
   neo4j:
-    image: neo4j:2026.06-community
+    image: neo4j:2026.06-community@sha256:42fd5b9ead4dd4211f6f91bd831c358e4e2117367d04633fbf88682ca4792b30
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_dbms_usage__report_enabled=false
@@ -66,7 +66,7 @@ services:
       retries: 5
       start_period: 30s
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.2.2
+    image: ghcr.io/robert-koch-institut/mex-backend:4.2.2@sha256:b122baae0d12298f54628cd141b1d4bf386cbd441dc8b3a81ebd25699ab5f4ae
     entrypoint: testing-backend
     depends_on:
       neo4j:
