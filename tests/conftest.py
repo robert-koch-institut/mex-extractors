@@ -5,9 +5,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
+    MergedOrganizationalUnit,
 )
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
@@ -93,6 +95,21 @@ def mocked_extracted_organizational_units(
         get_extracted_primary_source_id_by_name("organigram"),
         extracted_organization_rki.stableTargetId,
     )
+
+
+@pytest.fixture
+def mocked_merged_organizational_units(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnit]:
+    return [
+        create_merged_item(
+            identifier=extracted_unit.stableTargetId,
+            extracted_items=[extracted_unit],
+            rule_set=None,
+            validation="strict",
+        )
+        for extracted_unit in mocked_extracted_organizational_units
+    ]
 
 
 @pytest.fixture

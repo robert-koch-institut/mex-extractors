@@ -17,6 +17,7 @@ from mex.common.models import (
     MergedPerson,
     MergedPrimarySource,
     PaginatedItemsContainer,
+    VersionStatus,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -226,7 +227,20 @@ def fetch_extracted_items(
 
 
 @pytest.fixture
-def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
+def mocked_backend(
+    monkeypatch: MonkeyPatch,
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+) -> MagicMock:
+
+    def fetch_publishable_merged_items(
+        *,
+        publishing_target: str,  # noqa: ARG001
+        identifier: str | None = None,  # noqa: ARG001
+    ) -> PaginatedItemsContainer[AnyMergedModel]:
+        return PaginatedItemsContainer[AnyMergedModel](
+            total=42, items=[mocked_merged_organizational_units[0]]
+        )
+
     backend = MagicMock(
         fetch_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_merged_items, side_effect=fetch_merged_items
@@ -239,15 +253,21 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
             spec=BackendApiConnector.fetch_extracted_items,
             side_effect=fetch_extracted_items,
         ),
+        fetch_publishable_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_publishable_merged_items,
+            side_effect=fetch_publishable_merged_items,
+        ),
     )
     monkeypatch.setattr(
         BackendApiConnector, "_check_availability", MagicMock(return_value=True)
     )
     monkeypatch.setattr(
         BackendApiConnector,
-        "request",
+        "system_status",
         MagicMock(
-            return_value={"status": "Fabulous", "version": "mex-backend-version"}
+            return_value=VersionStatus.model_validate(
+                {"status": "Fabulous", "version": "mex-backend-version"}
+            )
         ),
     )
     monkeypatch.setattr(
@@ -260,5 +280,10 @@ def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items
+    )
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "fetch_publishable_merged_items",
+        backend.fetch_publishable_merged_items,
     )
     return backend

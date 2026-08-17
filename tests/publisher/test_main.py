@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 @pytest.mark.usefixtures(
     "mocked_backend",
     "mocked_s3sink_client",  # needed for hardcoded upload to S3. Remove with MX-1808
+    "mocked_wikidata",
 )
 def test_run() -> None:
     assert run_job_in_process("publisher")

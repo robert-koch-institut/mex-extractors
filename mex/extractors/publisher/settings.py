@@ -23,6 +23,6 @@ class PublisherSettings(BaseModel):
         ),
     )
     departments_for_publications_csv: list[str] = Field(
-        ["c1", "fg99"],
+        ["C1", "fg99"],
         description="list of departments for which to publish publications.",
     )
