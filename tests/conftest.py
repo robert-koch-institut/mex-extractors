@@ -1,6 +1,6 @@
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from unittest.mock import MagicMock
 
 import pytest
@@ -102,11 +102,14 @@ def mocked_merged_organizational_units(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> list[MergedOrganizationalUnit]:
     return [
-        create_merged_item(
-            identifier=extracted_unit.stableTargetId,
-            extracted_items=[extracted_unit],
-            rule_set=None,
-            validation="strict",
+        cast(
+            "MergedOrganizationalUnit",
+            create_merged_item(
+                identifier=extracted_unit.stableTargetId,
+                extracted_items=[extracted_unit],
+                rule_set=None,
+                validation="strict",
+            ),
         )
         for extracted_unit in mocked_extracted_organizational_units
     ]
