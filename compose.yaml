@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.13-trixie # PINNED! Do not update outside MX-2398
+    image: postgres:16.15-trixie@sha256:e17e86066e5ef83e0952a9347f5c792b7ece00972e2aa787a6986f471b3dd3d5 # PINNED! Do not update outside MX-2398
     environment:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
