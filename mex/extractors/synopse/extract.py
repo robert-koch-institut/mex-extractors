@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from mex.common.extract import parse_csv
 from mex.common.ldap.transform import analyse_person_string
 from mex.extractors.ldap.helpers import (
     get_ldap_merged_contact_id_by_mail,
@@ -12,6 +11,7 @@ from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
 from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
 from mex.extractors.synopse.models.variable import Variablenuebersicht
+from mex.extractors.utils import parse_csv
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
