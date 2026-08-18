@@ -12,17 +12,13 @@ ENV PIP_PROGRESS_BAR=off
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN uv export --frozen --no-hashes --no-dev --output-file requirements.lock
-
-RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.lock
-RUN pip wheel --no-cache-dir --wheel-dir /build/wheels --no-deps .
+RUN uv export --no-dev --no-editable | uv pip install --system --no-deps -r -
 
 RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEE4D7792F748182B" \
         | gpg --dearmor -o /build/microsoft-prod.gpg \
     && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] \
         https://packages.microsoft.com/debian/13/prod trixie main" \
         > /build/mssql-release.list
-
 
 FROM python:3.14-slim-trixie
 
