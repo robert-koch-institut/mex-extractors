@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update to mex-common 3.2
+- use reference filters for backend api connector
+
 ### Deprecated
 
 ### Removed
