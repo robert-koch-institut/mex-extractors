@@ -11,14 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add and wrap up extraction of new non-required fields
 - assets helper functions
-- add final outbound checks for synopse and voxco
-- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
-  backend setup, will be automated in MX-1523.
-
 ### Changes
 
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
-- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
+- update to mex-common 3.2
+- use reference filters for backend api connector
+- BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
+  set the respective <source>.kerberos_enabled setting
+  (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,
+  MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
+  against the real RKI SQL server
 
 ### Deprecated
 
@@ -26,10 +27,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.19.0] - 2026-08-17
+
+### Added
+
+- moved mex.common.extract.parse_csv to mex.extractors.utils to rid mex-common of pandas
+- add final outbound checks for synopse and voxco
+- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
+  backend setup, will be automated in MX-1523.
+
+### Changes
+
+- stop using `Vocabulary.__concepts__` in datencompass for fw-compat with static enums
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
+- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
+
+### Fixed
+
 - fix igs isPartof
 - ruff and mypy hints
-
-### Security
 
 ## [1.18.0] - 2026-08-03
 

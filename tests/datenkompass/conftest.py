@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.identity import Identity, get_provider
 from mex.common.models import (
     AnyExtractedModel,
@@ -398,8 +398,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913, PLR0917
         publishing_target: str = "target",  # noqa: ARG001
         query_string: str | None = None,  # noqa: ARG001
         entity_type: list[str] | None = None,
-        referenced_identifier: list[str] | None = None,  # noqa: ARG001
-        reference_field: str | None = None,  # noqa: ARG001
+        reference_filters: list[ReferenceFilter] | None = None,  # noqa: ARG001
     ) -> list[AnyMergedModel]:
         if entity_type and len(entity_type) > 0:
             key = entity_type[0]
@@ -411,8 +410,7 @@ def mocked_backend_datenkompass(  # noqa: PLR0913, PLR0917
     def fetch_extracted_items(
         *,
         entity_type: list[str] | None = None,
-        referenced_identifier: list[str] | None = None,  # noqa: ARG001
-        reference_field: str | None = None,  # noqa: ARG001
+        reference_filters: list[ReferenceFilter] | None = None,  # noqa: ARG001
         skip: int,  # noqa: ARG001
         limit: int,  # noqa: ARG001
     ) -> PaginatedItemsContainer[AnyExtractedModel]:

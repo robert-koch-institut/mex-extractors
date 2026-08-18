@@ -3,6 +3,7 @@ from typing import cast
 
 from dagster import asset
 
+from mex.common.backend_api.connector import ReferenceFilter
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MergedActivity,
@@ -19,8 +20,8 @@ from mex.common.types import (
 )
 from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.extract import (
+    get_datenkompass_merged_items,
     get_filtered_primary_source_ids,
-    get_merged_items,
 )
 from mex.extractors.datenkompass.filter import (
     filter_activities_by_organization,
@@ -54,7 +55,7 @@ def datenkompass_merged_organizational_units_by_id() -> dict[
         organization.identifier: organization
         for organization in cast(
             "list[MergedOrganizationalUnit]",
-            get_merged_items(entity_type=["MergedOrganizationalUnit"]),
+            get_datenkompass_merged_items(entity_type=["MergedOrganizationalUnit"]),
         )
     }
 
@@ -68,7 +69,7 @@ def datenkompass_merged_contact_points_by_id() -> dict[
         cp.identifier: cp
         for cp in cast(
             "list[MergedContactPoint]",
-            get_merged_items(entity_type=["MergedContactPoint"]),
+            get_datenkompass_merged_items(entity_type=["MergedContactPoint"]),
         )
     }
 
@@ -86,7 +87,8 @@ def datenkompass_person_name_str_by_id() -> dict[MergedPersonIdentifier, str]:
             )
         )
         for person in cast(
-            "list[MergedPerson]", get_merged_items(entity_type=["MergedPerson"])
+            "list[MergedPerson]",
+            get_datenkompass_merged_items(entity_type=["MergedPerson"]),
         )
         if person.fullName or person.familyName
     }
@@ -128,10 +130,14 @@ def datenkompass_merged_activities_by_primary_source(
         merged_activities_by_primary_source = {
             fps: cast(
                 "list[MergedActivity]",
-                get_merged_items(
+                get_datenkompass_merged_items(
                     entity_type=entity_type,
-                    referenced_identifier=get_filtered_primary_source_ids(fps),
-                    reference_field="hadPrimarySource",
+                    reference_filters=[
+                        ReferenceFilter(
+                            field="hadPrimarySource",
+                            identifiers=get_filtered_primary_source_ids(fps),
+                        )
+                    ],
                 ),
             )
             for fps in filtered_primary_sources
@@ -177,10 +183,13 @@ def datenkompass_merged_bibliographic_resources() -> list[MergedBibliographicRes
     primary_source_ids = get_filtered_primary_source_ids(filtered_primary_sources)
     return cast(
         "list[MergedBibliographicResource]",
-        get_merged_items(
+        get_datenkompass_merged_items(
             entity_type=entity_type,
-            referenced_identifier=primary_source_ids,
-            reference_field="hadPrimarySource",
+            reference_filters=[
+                ReferenceFilter(
+                    field="hadPrimarySource", identifiers=primary_source_ids
+                )
+            ],
         ),
     )
 
@@ -198,10 +207,14 @@ def datenkompass_merged_resources_by_primary_source(
         merged_resources_by_primary_source = {
             fps: cast(
                 "list[MergedResource]",
-                get_merged_items(
+                get_datenkompass_merged_items(
                     entity_type=entity_type,
-                    referenced_identifier=get_filtered_primary_source_ids(fps),
-                    reference_field="hadPrimarySource",
+                    reference_filters=[
+                        ReferenceFilter(
+                            field="hadPrimarySource",
+                            identifiers=get_filtered_primary_source_ids(fps),
+                        )
+                    ],
                 ),
             )
             for fps in filtered_primary_sources

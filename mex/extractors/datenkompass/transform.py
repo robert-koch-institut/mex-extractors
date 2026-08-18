@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import TYPE_CHECKING, Final, cast
 
 from bs4 import BeautifulSoup
 
@@ -11,8 +11,12 @@ from mex.extractors.datenkompass.models.item import (
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.utils import load_yaml
+from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     from pydantic import BaseModel
 
     from mex.common.models import (
@@ -28,16 +32,16 @@ if TYPE_CHECKING:
         MergedOrganizationalUnitIdentifier,
         MergedPersonIdentifier,
         Text,
+        VocabularyEnum,
     )
     from mex.extractors.datenkompass.models.mapping import DatenkompassMappingField
 
-VocabularyT = TypeVar(
-    "VocabularyT",
-    Theme,
-    BibliographicResourceType,
-    Frequency,
-    License,
-)
+GERMAN_LABEL_BY_CONCEPT_ID: Final[dict[str, str]] = {
+    concept["identifier"]: pref_label["de"]
+    for concepts in VOCABULARY_JSON_BY_NAME.values()
+    for concept in concepts
+    if (pref_label := concept.get("prefLabel"))
+}
 
 
 def fix_quotes(string: str) -> str:
@@ -186,32 +190,22 @@ def get_title(item: MergedActivity) -> list[str]:
     return collected_titles
 
 
-def get_german_vocabulary[
-    VocabularyT: (Theme, BibliographicResourceType, Frequency, License)
-](
-    entries: list[VocabularyT] | None,
-) -> list[str | None]:
-    """Get german prefLabel for Vocabularies.
+def get_german_vocabulary(entries: Iterable[VocabularyEnum] | None) -> list[str]:
+    """Get the german prefLabels for vocabulary entries.
+
+    Entries without a german prefLabel are skipped.
 
     Args:
-        entries: list of vocabulary type entries.
+        entries: iterable of vocabulary enum entries, or None.
 
     Returns:
-        list of german Vocabulary entries as strings.
+        list of german vocabulary labels as strings.
     """
-    if entries:
-        return [
-            next(
-                (
-                    concept.prefLabel.de
-                    for concept in type(entry).__concepts__
-                    if str(concept.identifier) == entry.value
-                ),
-                None,
-            )
-            for entry in entries
-        ]
-    return []
+    return [
+        label
+        for entry in entries or []
+        if (label := GERMAN_LABEL_BY_CONCEPT_ID.get(entry.value))
+    ]
 
 
 def get_datenbank(item: MergedBibliographicResource) -> str | None:
@@ -295,7 +289,7 @@ def handle_setval(set_value: list[str] | str | None) -> str:
 
 
 def filter_schlagworte(
-    words: list[str | None],
+    words: Sequence[str],
     delim: str,
     min_word_length: int,
     max_string_length: int,
@@ -540,7 +534,7 @@ def transform_bibliographic_resources(
             creator_collection += " / et al."
         titel = f"{title_collection} ({creator_collection})"
         vocab = get_german_vocabulary(item.bibliographicResourceType)
-        beschreibung = f"{delim.join(v for v in vocab if v is not None)}. "
+        beschreibung = f"{delim.join(vocab)}. "
         beschreibung += get_abstract_or_description(item.abstract, delim)
         voraussetzungen = next(
             handle_setval(rule.setValues)
@@ -644,11 +638,11 @@ def transform_resources(
         default_by_fieldname["kommentar"].mappingRules[0].setValues
     )
 
-    result_resoures_by_primary_source_by_unit: dict[
+    result_resources_by_primary_source_by_unit: dict[
         str, dict[str, list[DatenkompassResource]]
     ] = {}
     for unit, inner_dict in merged_resources_by_primary_source_by_unit.items():
-        result_resoures_by_primary_source: dict[str, list[DatenkompassResource]] = {}
+        result_resources_by_primary_source: dict[str, list[DatenkompassResource]] = {}
         for primary_source, merged_resources_list in inner_dict.items():
             datenkompass_resources = []
             for item in merged_resources_list:
@@ -658,13 +652,13 @@ def transform_resources(
                     if rule.forValues
                     and rule.forValues[0] == item.accessRestriction.name
                 )
-                frequenz_vocabulary = (
-                    get_german_vocabulary([item.accrualPeriodicity])
-                    if item.accrualPeriodicity
-                    else []
-                )
                 frequenz = (
-                    delim.join(f for f in frequenz_vocabulary if f is not None) or None
+                    delim.join(
+                        get_german_vocabulary(
+                            [item.accrualPeriodicity] if item.accrualPeriodicity else []
+                        )
+                    )
+                    or None
                 )
                 kontakt = get_resource_email(
                     item.contact,
@@ -689,12 +683,7 @@ def transform_resources(
                     [item.license] if item.license else [],
                 )
                 rechtsgrundlagen_benennung = (
-                    delim.join(
-                        entry
-                        for entry in rechtsgrundlagen_benennung_collection
-                        if entry is not None
-                    )
-                    or None
+                    delim.join(rechtsgrundlagen_benennung_collection) or None
                 )
                 schlagwort_collection = get_german_vocabulary(item.theme) + [
                     entry.value for entry in item.keyword
@@ -738,8 +727,8 @@ def transform_resources(
                         entityType=item.entityType,
                     ),
                 )
-            result_resoures_by_primary_source[primary_source] = datenkompass_resources
-        result_resoures_by_primary_source_by_unit[unit] = (
-            result_resoures_by_primary_source
+            result_resources_by_primary_source[primary_source] = datenkompass_resources
+        result_resources_by_primary_source_by_unit[unit] = (
+            result_resources_by_primary_source
         )
-    return result_resoures_by_primary_source_by_unit
+    return result_resources_by_primary_source_by_unit

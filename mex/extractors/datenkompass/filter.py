@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING, Any, cast, overload
 
+from mex.common.backend_api.connector import ReferenceFilter
 from mex.common.exceptions import MExError
 from mex.common.organigram.helpers import find_descendants
 from mex.extractors.datenkompass.extract import (
+    get_datenkompass_merged_items,
     get_extracted_item_stable_target_ids,
-    get_merged_items,
 )
 from mex.extractors.settings import ExtractorsSettings
 
@@ -37,7 +38,7 @@ def filter_activities_by_organization(
         organization.identifier
         for organization in cast(
             "list[MergedOrganization]",
-            get_merged_items(
+            get_datenkompass_merged_items(
                 query_string=settings.datenkompass.organization_filter,
                 entity_type=["MergedOrganization"],
             ),
@@ -187,7 +188,14 @@ def filter_merged_items_for_primary_source(
             set(
                 get_extracted_item_stable_target_ids(
                     [entity_type],
-                    mex_editor_merged_item_ids[counter : counter + stepwidth],
+                    [
+                        ReferenceFilter(
+                            field="stableTargetId",
+                            identifiers=mex_editor_merged_item_ids[
+                                counter : counter + stepwidth
+                            ],
+                        )
+                    ],
                 )
             )
         )
