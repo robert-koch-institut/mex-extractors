@@ -17,6 +17,7 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import (
     MergedPrimarySourceIdentifier,
+    Validation,
 )
 from mex.extractors.ldap.helpers import (
     get_ldap_extracted_person_by_query,
@@ -108,7 +109,7 @@ def mocked_merged_organizational_units(
                 identifier=extracted_unit.stableTargetId,
                 extracted_items=[extracted_unit],
                 rule_set=None,
-                validation="strict",
+                validation=Validation.STRICT,
             ),
         )
         for extracted_unit in mocked_extracted_organizational_units
