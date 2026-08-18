@@ -34,7 +34,7 @@ test:
 	# run the unit and integration test suites
 	# single worker: integration tests share one live backend/graph instance
 	@ echo running all tests; \
-	uv run pytest -m "not requires_rki_infrastructure" -k "test_parse_columns_by_column_name_integration or test_parse_rows_integration"; \
+	uv run pytest -m "not requires_rki_infrastructure"; \
 
 wheel:
 	# build the python package
