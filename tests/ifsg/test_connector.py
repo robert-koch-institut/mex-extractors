@@ -61,7 +61,7 @@ def test_parse_rows_integration(
     """Parse every IFSG table against the seeded SQL Server fixture (sql-testing-seed).
 
     Requires a live, seeded server reachable via the ifsg DSN
-    (``MEX_EXTRACTORS_IFSG__MSSQL_CONNECTION_DSN``); kerberos stays disabled so the
+    (`MEX_EXTRACTORS_IFSG__MSSQL_CONNECTION_DSN`); kerberos stays disabled so the
     connector uses the DSN's SQL auth directly. Rows are validated into their models
     so the assertion is robust to column-name and row-order differences.
     """

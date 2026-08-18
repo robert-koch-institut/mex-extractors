@@ -130,7 +130,7 @@ def test_parse_columns_by_column_name_integration(
     """Parse every table against the seeded SQL Server fixture (sql-testing-seed).
 
     Requires a live, seeded server reachable via the grippeweb DSN
-    (``MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN``); kerberos stays disabled so
+    (`MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN`); kerberos stays disabled so
     the connector uses the DSN's SQL auth directly.
     """
     connector = GrippewebConnector()

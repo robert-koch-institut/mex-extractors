@@ -100,8 +100,8 @@ services:
       mssql:
         condition: service_healthy
     environment:
-      - SEED_HOST=mssql
-      - SEED_SA_PASSWORD=MEx_testing1234
+      - MEX_TESTING_SQL_SEED_HOST=mssql
+      - MEX_TESTING_SQL_SEED_SA_PASSWORD=MEx_testing1234
     restart: "no"
 volumes:
   pgdata:
