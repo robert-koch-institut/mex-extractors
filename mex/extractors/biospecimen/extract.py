@@ -83,7 +83,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
         sheets = xls.book.worksheets
         for sheet in sheets:
             if sheet.sheet_state == "visible":
-                sheet_df = xls.parse(sheet_name=sheet.title, header=1)  # type: ignore[attr-defined]
+                sheet_df = xls.parse(sheet_name=sheet.title, header=1)
                 if resource := extract_biospecimen_resource(
                     sheet_df, str(sheet.title), file.name
                 ):
@@ -140,28 +140,6 @@ def get_clean_file_name(file_name: str) -> str:
         cleaned file name string
     """
     return re.sub(r"[_\-\.]", "", file_name)
-
-
-def get_year_from_zeitlicher_bezug(
-    resource: DataFrame | None, key_col: str, val_col: str, field_name: str
-) -> str | None:
-    """Extract the first four connected digits of the string as year.
-
-    Args:
-        resource: Biospecimen resource
-        key_col: column in the file with keys
-        val_col: column in the file with values
-        field_name: column name of extracted field
-
-    Returns:
-        string with first four digits treated as zeitlicher_bezug year
-    """
-    zeitlicher_bezug = get_values(resource, key_col, val_col, field_name)
-    if zeitlicher_bezug is not None:
-        match = re.search(r"\d{4}", zeitlicher_bezug)
-        if match:
-            return match.group(0)
-    return None
 
 
 def extract_biospecimen_resource(

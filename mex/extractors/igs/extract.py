@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import TYPE_CHECKING, cast
 
 from mex.common.ldap.connector import LDAPConnector
@@ -13,8 +14,10 @@ if TYPE_CHECKING:
     from mex.common.ldap.models import LDAPFunctionalAccount
     from mex.common.models import (
         AccessPlatformMapping,
+        ExtractedResource,
         ResourceMapping,
     )
+    from mex.common.types import MergedResourceIdentifier
 
 
 def extract_igs_info() -> IGSInfo:
@@ -72,6 +75,45 @@ def extract_endpoint_counts(
         else:
             endpoint_counts[endpoint] = connector.get_endpoint_count(endpoint=endpoint)
     return endpoint_counts
+
+
+def extract_seq_repo_resource_ids_by_pathogen(
+    seq_repo_resources: list[ExtractedResource], igs_schemas: dict[str, IGSSchema]
+) -> dict[str, list[MergedResourceIdentifier]]:
+    """Extract seq-repo resources if igs-id is represented in igs.
+
+    Args:
+        seq_repo_resources: seq repo resources
+        igs_schemas: igs schemas by schema name
+
+    Returns:
+        seq repo resource id list by pathogen
+    """
+    pathogens = cast("IGSEnumSchema", igs_schemas["igsmodels__enums__Pathogen"]).enum
+    pathogens_by_igs_id = {
+        resource.identifierInPrimarySource: pathogen
+        for resource in seq_repo_resources
+        for pathogen in pathogens
+        if pathogen in resource.identifierInPrimarySource
+    }
+    connector = IGSConnector.get()
+    resource_ids_by_pathogen: defaultdict[str, list[MergedResourceIdentifier]] = (
+        defaultdict(list)
+    )
+
+    for resource in seq_repo_resources:
+        pathogen = pathogens_by_igs_id.get(resource.identifierInPrimarySource)
+        if pathogen and connector.get_endpoint_count(
+            endpoint="/samples/count",
+            params={
+                "pathogens": pathogen,
+                "filter_str": f'.igs_id="{resource.identifierInPrimarySource}"',
+                "include_deleted": "false",
+            },
+        ):
+            resource_ids_by_pathogen[pathogen].append(resource.stableTargetId)
+
+    return resource_ids_by_pathogen
 
 
 def extract_ldap_actors_by_mail(

@@ -100,6 +100,7 @@ def transform_seq_repo_resource_to_extracted_resource(
         seq_repo_resource.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     description = seq_repo_resource.description[0].mappingRules[0].setValues
+    health_category = seq_repo_resource.healthCategory[0].mappingRules[0].setValues
     resource_creation_method = (
         seq_repo_resource.resourceCreationMethod[0].mappingRules[0].setValues
     )
@@ -137,10 +138,10 @@ def transform_seq_repo_resource_to_extracted_resource(
             identifier_in_primary_source
         ]
         modified = None
-        created = None
+        start = None
         if sequencing_dates:
             modified = max(sequencing_dates)
-            created = min(sequencing_dates)
+            start = min(sequencing_dates)
 
         activity = seq_repo_activities.get(source.project_id)
 
@@ -171,9 +172,9 @@ def transform_seq_repo_resource_to_extracted_resource(
             anonymizationPseudonymization=anonymization_pseudonymization,
             contact=contact,
             contributingUnit=contributing_unit,
-            created=created,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
+            healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             modified=modified,
@@ -183,6 +184,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
+            start=start,
             stateOfDataProcessing=state_of_data_processing,
             theme=theme,
             title=title,

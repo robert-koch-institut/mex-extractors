@@ -141,14 +141,13 @@ def grippeweb_extracted_parent_resource() -> ExtractedResource:
         accessRestriction="https://mex.rki.de/item/access-restriction-2",
         accrualPeriodicity="https://mex.rki.de/item/frequency-15",
         contact=[MergedContactPointIdentifier.generate(42)],
-        temporal="seit 2011",
         theme=["https://mex.rki.de/item/theme-11"],
         title=[Text(value="GrippeWeb", language="de")],
         anonymizationPseudonymization=[
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         description=[Text(value="GrippeWeb", language="de")],
-        icd10code=["J00-J99"],
+        hasCodeValues=[{"value": "J00-J99"}],
         keyword=[Text(value="Citizen Science", language="en")],
         language=["https://mex.rki.de/item/language-1"],
         meshId=["http://id.nlm.nih.gov/mesh/D012140"],

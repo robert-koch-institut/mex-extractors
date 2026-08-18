@@ -31,12 +31,12 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: Start containers
-        run: docker compose up -d slapd mailpit mssql sql-testing-seed
+        run: docker compose up -d slapd mailpit neo4j mex-backend mssql sql-testing-seed
 
       - name: Install Microsoft ODBC Driver 18
         run: |
@@ -61,13 +61,13 @@ jobs:
         env:
           cache-name: cache-environment
         with:
-          path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          path: ~/.cache/uv
+          key: ${{ env.cache-name }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: 3.14
 
@@ -76,16 +76,29 @@ jobs:
           echo ${{ matrix.python-version }} > .python-version
           make install
 
+      - name: Wait for mex-backend readiness
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/v0/_system/check && exit 0
+            sleep 2
+          done
+          echo "mex-backend did not become ready in time" >&2
+          exit 1
+
       - name: Run test suite
         env:
           MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
-#          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
-          # kerberos stays disabled (default): connect to the seeded test server via SQL auth
+          MEX_BACKEND_API_URL: http://localhost:8080/
+          MEX_BACKEND_API_KEY: write_key
           MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=GrippeWeb;UID=sa;PWD=${{ env.MSSQL_SA_PASSWORD || 'MEx_testing1234' }};TrustServerCertificate=yes"
           MEX_EXTRACTORS_KVIS__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=KVIS;UID=sa;PWD=${{ env.MSSQL_SA_PASSWORD || 'MEx_testing1234' }};TrustServerCertificate=yes"
           MEX_EXTRACTORS_IFSG__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=SurvNet3Meta;UID=sa;PWD=${{ env.MSSQL_SA_PASSWORD || 'MEx_testing1234' }};TrustServerCertificate=yes"
         run: make test
 
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose logs mex-backend neo4j
+
       - name: Cleanup containers
         if: always()
-        run: docker compose down slapd mailpit mssql sql-testing-seed
+        run: docker compose down slapd mailpit neo4j mex-backend mssql sql-testing-seed

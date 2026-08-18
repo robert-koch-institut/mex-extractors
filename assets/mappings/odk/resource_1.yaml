@@ -37,6 +37,9 @@ description:
           - value: amet
             language: en
         rule:
+end:
+  - mappingRules:
+      - setValues: # "2021-07-27"
 externalPartner:
   - mappingRules:
       - forValues:
@@ -50,6 +53,9 @@ hasLegalBasis:
             value: Informed consent
           - language: de
             value: Informierte Einwilligung
+healthCategory:
+  - mappingRules:
+      - setValues:
 keyword:
   - mappingRules:
       - setValues:
@@ -83,6 +89,10 @@ methodDescription:
           - value: tempor
             language: en
         rule:
+numberOfUniqueIndividuals:
+  - fieldInPrimarySource:
+    mappingRules:
+      - rule:
 publisher:
   - mappingRules:
       - forValues:
@@ -110,11 +120,6 @@ rights:
           - value: "ut labore"
             language: de
         rule:
-sizeOfDataBasis:
-  - mappingRules:
-      - setValues: et dolore
-        rule:
-    comment:
 spatial:
   - mappingRules:
       - setValues:
@@ -124,11 +129,9 @@ spatial:
             language: en
         rule:
     comment:
-temporal:
+start:
   - mappingRules:
-      - setValues: 2021-07-27 - 2021-12-31
-        rule:
-    comment:
+      - setValues: # "2021-12-31"
 theme:
   - mappingRules:
       - setValues:

@@ -161,7 +161,6 @@ def mocked_merged_resource() -> list[MergedResource]:
                 "IdentifierUnitFG99",
                 "identifier4contactPt",
             ],
-            created="1970-01-01",
             doi="https://doi.org/10.1234_example",
             hasLegalBasis=[
                 Text(value="has basis", language="en"),
@@ -172,6 +171,7 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="word 1", language="en"),
                 Text(value="Wort 2", language="de"),
             ],
+            start=["1970-01-01"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Resource with unit C1"],
             wasGeneratedBy=["MergedActivityWithORG2"],
@@ -371,7 +371,7 @@ def mocked_datenkompass_activity() -> list[DatenkompassActivity]:
 
 
 @pytest.fixture
-def mocked_backend_datenkompass(  # noqa: PLR0913
+def mocked_backend_datenkompass(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     mocked_merged_activities: list[MergedActivity],
     mocked_merged_bibliographic_resource: list[MergedBibliographicResource],
@@ -393,8 +393,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         "MergedContactPoint": mocked_merged_contact_point,
     }
 
-    def fetch_all_merged_items(
+    def fetch_all_publishable_merged_items(
         *,
+        publishing_target: str = "target",  # noqa: ARG001
         query_string: str | None = None,  # noqa: ARG001
         entity_type: list[str] | None = None,
         referenced_identifier: list[str] | None = None,  # noqa: ARG001
@@ -423,9 +424,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         )
 
     backend = MagicMock(
-        fetch_all_merged_items=MagicMock(
-            spec=BackendApiConnector.fetch_all_merged_items,
-            side_effect=fetch_all_merged_items,
+        fetch_all_publishable_merged_items=MagicMock(
+            spec=BackendApiConnector.fetch_all_publishable_merged_items,
+            side_effect=fetch_all_publishable_merged_items,
         ),
         fetch_extracted_items=MagicMock(
             spec=BackendApiConnector.fetch_extracted_items,
@@ -436,7 +437,9 @@ def mocked_backend_datenkompass(  # noqa: PLR0913
         BackendApiConnector, "_check_availability", MagicMock(return_value=True)
     )
     monkeypatch.setattr(
-        BackendApiConnector, "fetch_all_merged_items", backend.fetch_all_merged_items
+        BackendApiConnector,
+        "fetch_all_publishable_merged_items",
+        backend.fetch_all_publishable_merged_items,
     )
     monkeypatch.setattr(
         BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items
