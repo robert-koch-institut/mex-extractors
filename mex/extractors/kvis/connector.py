@@ -1,4 +1,3 @@
-import platform
 from subprocess import PIPE, STDOUT, Popen
 from typing import TYPE_CHECKING, Any
 
@@ -28,9 +27,7 @@ class KVISConnector(BaseConnector):
         import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
 
         settings = ExtractorsSettings.get()
-        if (
-            settings.kvis.kerberos_enabled and platform.system() != "Windows"
-        ):  # pragma: no cover
+        if settings.kvis.kerberos_enabled:  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607
                 stdout=PIPE,

@@ -37,10 +37,7 @@ def test_parse_rows_success() -> None:
     }
 
 
-def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
-    """Test connection setup triggers kinit on non-Windows platforms."""
-    monkeypatch.setattr("platform.system", lambda: "Linux")
-
+def test_setup_connection_kerberos_enabled(monkeypatch: MonkeyPatch) -> None:
     settings = ExtractorsSettings.get()
     monkeypatch.setattr(settings.grippeweb, "kerberos_enabled", True)
 
@@ -69,9 +66,9 @@ def test_setup_connection_non_windows(monkeypatch: MonkeyPatch) -> None:
     mock_pyodbc_connect.assert_called_once_with(settings.grippeweb.mssql_connection_dsn)
 
 
-def test_setup_connection_windows(monkeypatch: MonkeyPatch) -> None:
-    """Test connection setup skips kinit on Windows platforms."""
-    monkeypatch.setattr("platform.system", lambda: "Windows")
+def test_setup_connection_kerberos_disabled(monkeypatch: MonkeyPatch) -> None:
+    settings = ExtractorsSettings.get()
+    monkeypatch.setattr(settings.grippeweb, "kerberos_enabled", False)
 
     mock_popen = MagicMock()
     monkeypatch.setattr("mex.extractors.grippeweb.connector.Popen", mock_popen)

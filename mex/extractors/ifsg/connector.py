@@ -1,4 +1,3 @@
-import platform
 from subprocess import PIPE, STDOUT, Popen
 from typing import TYPE_CHECKING, Any
 
@@ -54,9 +53,7 @@ class IFSGConnector(BaseConnector):
     def __init__(self) -> None:
         """Create a new connector instance."""
         settings = ExtractorsSettings.get()
-        if (
-            settings.ifsg.kerberos_enabled and platform.system() != "Windows"
-        ):  # pragma: no cover
+        if settings.ifsg.kerberos_enabled:  # pragma: no cover
             process = Popen(  # noqa: S603
                 ["kinit", settings.kerberos_user, "-V"],  # noqa: S607
                 stdout=PIPE,
