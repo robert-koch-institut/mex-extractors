@@ -22,3 +22,11 @@ class KVISSettings(BaseModel):
             "dsn-connection-string-attribute"
         ),
     )
+    kerberos_enabled: bool = Field(
+        False,  # noqa: FBT003
+        description=(
+            "Whether to obtain a Kerberos ticket via kinit before connecting. "
+            "Disabled by default (e.g. for SQL auth against a test server); enable "
+            "it to authenticate against the real RKI SQL server."
+        ),
+    )
