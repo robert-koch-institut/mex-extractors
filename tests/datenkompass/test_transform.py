@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import Text, Theme
+from mex.common.types import Frequency, License, Text, Theme
 from mex.extractors.datenkompass.models.item import DatenkompassActivity
 from mex.extractors.datenkompass.models.mapping import (
     DatenkompassMapping,
@@ -140,8 +140,22 @@ def test_get_title(mocked_merged_activities: list[MergedActivity]) -> None:
 
 
 def test_get_german_vocabulary() -> None:
-    result = get_german_vocabulary([Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]])
-    assert result == ["Infektionskrankheiten und -epidemiologie"]
+    result = get_german_vocabulary(
+        [
+            Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"],
+            Frequency["IRREGULAR"],
+            License["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"],
+        ]
+    )
+    assert result == [
+        "Infektionskrankheiten und -epidemiologie",
+        "unregelmäßig",
+        "Creative Commons Namensnennung 4.0 International",
+    ]
+
+
+def test_get_german_vocabulary_none() -> None:
+    assert get_german_vocabulary(None) == []
 
 
 def test_get_datenbank(
@@ -307,9 +321,7 @@ def test_handle_setval_none_raises_error() -> None:
     ],
     ids=["filter for length", "last word just fits", "all filtered out", "empty input"],
 )
-def test_filter_schlagworte(
-    input_value: list[str | None], expected_output: str
-) -> None:
+def test_filter_schlagworte(input_value: list[str], expected_output: str) -> None:
     result = filter_schlagworte(
         input_value,
         "||",

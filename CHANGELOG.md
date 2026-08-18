@@ -10,15 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - publish CSV of publications to be downloadable on MEx
-- moved mex.common.extract.parse_csv to mex.extractors.utils to rid mex-common of pandas
-- add final outbound checks for synopse and voxco
-- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
-  backend setup, will be automated in MX-1523.
 
 ### Changes
-
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
-- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
 
 ### Deprecated
 
@@ -26,10 +19,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.19.0] - 2026-08-17
+
+### Added
+
+- moved mex.common.extract.parse_csv to mex.extractors.utils to rid mex-common of pandas
+- add final outbound checks for synopse and voxco
+- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
+  backend setup, will be automated in MX-1523.
+
+### Changes
+
+- stop using `Vocabulary.__concepts__` in datencompass for fw-compat with static enums
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
+- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
+
+### Fixed
+
 - fix igs isPartof
 - ruff and mypy hints
-
-### Security
 
 ## [1.18.0] - 2026-08-03
 
