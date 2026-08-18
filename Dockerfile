@@ -36,14 +36,6 @@ ENV MEX_WORK_DIR=/app/work
 
 WORKDIR /app
 
-COPY --from=builder /build/wheels /wheels
-
-RUN pip install --no-cache-dir \
-    --no-index \
-    --find-links=/wheels \
-    /wheels/*.whl \
-    && rm -rf /wheels
-
 COPY --from=builder /build/microsoft-prod.gpg /usr/share/keyrings/microsoft-prod.gpg
 COPY --from=builder /build/mssql-release.list /etc/apt/sources.list.d/mssql-release.list
 
@@ -51,23 +43,16 @@ RUN apt-get update \
     && ACCEPT_EULA=Y apt-get install -y krb5-user msodbcsql18 unixodbc \
     && rm -rf /var/lib/apt/lists/*
 
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "10001" \
-    mex
+COPY --from=builder /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
-RUN chown mex:mex /app
-RUN mkdir /app/dagster && chown mex:mex /app/dagster
-RUN mkdir /app/work && chown mex:mex /app/work
+RUN install -d -o 10001 -g 10001 /app /app/dagster /app/work
 
-COPY --chown=mex assets /app/assets
-COPY --chown=mex workspace.yaml /app/workspace.yaml
-COPY --chown=mex dagster.yaml /app/dagster/dagster.yaml
+COPY --chown=10001:10001 assets /app/assets
+COPY --chown=10001:10001 workspace.yaml /app/workspace.yaml
+COPY --chown=10001:10001 dagster.yaml /app/dagster/dagster.yaml
 
-USER mex
+USER 10001
 
 EXPOSE 3000
 
