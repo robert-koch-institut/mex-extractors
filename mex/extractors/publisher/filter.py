@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 from mex.common.exceptions import MExError
 from mex.common.models import ActivityFilter
-from mex.common.organigram.helpers import get_all_descendant_unit_ids
+from mex.common.organigram.helpers import find_descendants
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.settings import ExtractorsSettings
@@ -130,7 +130,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         department_unit_id = department_unit_ids[0]
 
         descendant_unit_ids = set(
-            get_all_descendant_unit_ids(
+            find_descendants(
                 merged_organisational_units,
                 str(department_unit_id),
             )
