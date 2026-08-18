@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Final, cast
 
 from bs4 import BeautifulSoup
 
-from mex.common.types import BibliographicResourceType, Frequency, License, Theme
 from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -11,7 +10,6 @@ from mex.extractors.datenkompass.models.item import (
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
