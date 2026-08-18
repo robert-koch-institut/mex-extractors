@@ -77,6 +77,12 @@ services:
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_DEBUG=true
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/v0/_system/check', timeout=3).raise_for_status()" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     expose:
       - 8080
   mssql:
