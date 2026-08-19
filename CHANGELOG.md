@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add and wrap up extraction of new non-required fields
 - assets helper functions
+- added slapd healthcheck in compose file
+
 ### Changes
 
 - update to mex-common 3.2
@@ -20,12 +22,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,
   MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
   against the real RKI SQL server
+- move backend healthcheck into compose file
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- align linting and testing workflows and Dockerfile with cookiecutter
+- fixed dagster healthcheck in compose file
 
 ### Security
 
