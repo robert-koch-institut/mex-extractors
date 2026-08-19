@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update to mex-common 3.2
+- use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
   set the respective <source>.kerberos_enabled setting
   (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,

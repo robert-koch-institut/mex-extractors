@@ -1,17 +1,18 @@
 import pytest
 
+from mex.common.backend_api.connector import ReferenceFilter
 from mex.common.models import MergedActivity
 from mex.common.types import LinkLanguage, TextLanguage
 from mex.extractors.datenkompass.extract import (
+    get_datenkompass_merged_items,
     get_extracted_item_stable_target_ids,
     get_filtered_primary_source_ids,
-    get_merged_items,
 )
 
 
 @pytest.mark.usefixtures("mocked_backend_datenkompass")
-def test_get_merged_items_mocked() -> None:
-    items = get_merged_items(entity_type=["MergedActivity"])
+def test_get_datenkompass_merged_items_mocked() -> None:
+    items = get_datenkompass_merged_items(entity_type=["MergedActivity"])
     assert len(items) == 3  # 3 mocked MergedActivites
     assert isinstance(items[1], MergedActivity)
     assert items[0].model_dump(exclude_defaults=True) == {
@@ -48,7 +49,13 @@ def test_get_merged_items_mocked() -> None:
 @pytest.mark.usefixtures("mocked_backend_datenkompass", "mocked_provider")
 def test_get_extracted_item_stable_target_ids() -> None:
     result = get_extracted_item_stable_target_ids(
-        ["ExtractedResource"], ["thisdoesnotmatter"]
+        ["ExtractedResource"],
+        [
+            ReferenceFilter(
+                field="stableTargetId",
+                identifiers=["thisdoesnotmatter"],
+            )
+        ],
     )
     assert result == ["IdMergedWithExtracted"]
 

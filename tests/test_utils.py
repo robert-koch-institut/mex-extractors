@@ -3,11 +3,12 @@ from io import StringIO
 from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
-from mex.common.extract import get_dtypes_for_model, parse_csv
 from mex.common.models import BaseModel
 from mex.extractors.utils import (
     collect_related_identifier_counts,
     collect_related_identifiers,
+    get_dtypes_for_model,
+    parse_csv,
 )
 
 if TYPE_CHECKING:  # pragma: no cover

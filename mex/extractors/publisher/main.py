@@ -3,6 +3,7 @@ from typing import cast
 
 from dagster import asset
 
+from mex.common.backend_api.connector import ReferenceFilter
 from mex.common.cli import entrypoint
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
@@ -66,10 +67,12 @@ def publisher_merged_ldap_persons() -> list[MergedPerson]:
         "list[MergedPerson]",
         get_publishable_merged_items(
             entity_type=["MergedPerson"],
-            referenced_identifier=[
-                str(get_extracted_primary_source_id_by_name("ldap"))
+            reference_filters=[
+                ReferenceFilter(
+                    field="hadPrimarySource",
+                    identifiers=[str(get_extracted_primary_source_id_by_name("ldap"))],
+                )
             ],
-            reference_field="hadPrimarySource",
         ),
     )
 
@@ -115,8 +118,12 @@ def publisher_fallback_contact_identifiers() -> list[MergedContactPointIdentifie
         get_publishable_merged_items(
             query_string=str(settings.contact_point.mex_email),
             entity_type=["MergedContactPoint"],
-            referenced_identifier=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
-            reference_field="hadPrimarySource",
+            reference_filters=[
+                ReferenceFilter(
+                    field="hadPrimarySource",
+                    identifiers=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID],
+                )
+            ],
         ),
     )
     return [merged_contact_points[0].identifier]
