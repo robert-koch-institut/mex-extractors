@@ -70,7 +70,7 @@ def filter_persons_with_approving_unique_consent(
 
 
 def cluster_and_filter_bibliographic_resources_by_unit(
-    merged_bibliographic_resource: list[MergedBibliographicResource],
+    merged_bibliographic_resources: list[MergedBibliographicResource],
 ) -> dict[MergedOrganizationalUnitIdentifier, list[MergedBibliographicResource]]:
     """Sort Bibliographic Resources by unit and filter out 'forbidden' units.
 
@@ -81,7 +81,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
     unpublishable unit.
 
     Args:
-        merged_bibliographic_resource: Merged Bibliographic Resources as list
+        merged_bibliographic_resources: Merged Bibliographic Resources as list
 
     Returns:
         dictionary of Bibliographic Resources by allowed units
@@ -129,6 +129,9 @@ def cluster_and_filter_bibliographic_resources_by_unit(
 
         department_unit_id = department_unit_ids[0]
 
+        if department_unit_id in forbidden_unit_ids:
+            continue
+
         descendant_unit_ids = set(
             find_descendants(
                 merged_organisational_units,
@@ -138,7 +141,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         descendant_unit_ids.add(str(department_unit_id))
         bibliographic_resource_by_department[department_unit_id] = [
             publication
-            for publication in merged_bibliographic_resource
+            for publication in merged_bibliographic_resources
             if (
                 any(
                     str(unit_id) in descendant_unit_ids

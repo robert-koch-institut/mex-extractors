@@ -4,6 +4,7 @@ from mex.common.models import (
     AnyMergedModel,
     ItemsContainer,
     MergedActivity,
+    MergedBibliographicResource,
     MergedPerson,
 )
 from mex.common.types import (
@@ -12,7 +13,9 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.publisher.transform import (
+    get_resolved_names,
     get_unit_id_per_person,
+    transform_merged_bibliographic_resources_for_csv,
     update_actor_references_where_needed,
 )
 
@@ -120,3 +123,34 @@ def test_update_actor_references_where_needed_with_unit_fallback(
         "responsibleUnit": ["thisUnitIsResponsible"],
         "title": [{"value": "Activity with Unit ID Fallback", "language": "en"}],
     }
+
+
+@pytest.mark.usefixtures("mocked_backend")
+def test_get_resolved_names() -> None:
+    result = get_resolved_names(
+        MergedOrganizationalUnitIdentifier("someUnitIdentifier"), "shortName"
+    )
+    assert result == "C1"
+
+
+@pytest.mark.usefixtures("mocked_backend")
+def test_transform_merged_bibliographic_resources_for_csv(
+    merged_bibliographic_resource_list: list[MergedBibliographicResource],
+) -> None:
+    merged_bibliographic_resources_by_unit = {
+        MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"): [
+            merged_bibliographic_resource_list[2]
+        ]
+    }
+
+    result = transform_merged_bibliographic_resources_for_csv(
+        merged_bibliographic_resources_by_unit
+    )
+
+    assert result.keys() == {"hIiJpZXVppHvoyeP0QtAoS"}
+    assert (
+        result["hIiJpZXVppHvoyeP0QtAoS"][0].model_dump(
+            exclude_defaults=True, mode="json"
+        )
+        == {}
+    )
