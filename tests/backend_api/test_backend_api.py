@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, ExtractedContactPoint
 from mex.common.sinks.backend_api import BackendApiSink
 
@@ -54,7 +54,11 @@ def test_ingest_roundtrip() -> None:
 
     connector = BackendApiConnector.get()
     result = connector.fetch_extracted_items(
-        stable_target_id=str(contact_point.stableTargetId),
+        reference_filters=[
+            ReferenceFilter(
+                field="stableTargetId", identifiers=[str(contact_point.stableTargetId)]
+            )
+        ],
     )
     assert result.total == 1
     assert result.items[0].identifierInPrimarySource == identifier_in_primary_source

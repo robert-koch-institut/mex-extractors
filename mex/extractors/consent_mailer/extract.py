@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, cast
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from mex.common.models import MergedConsent, MergedPerson
 
 
-def extract_ldap_persons() -> list[MergedPerson]:
+def extract_consent_mailer_ldap_persons() -> list[MergedPerson]:
     """Get all persons from primary source LDAP."""
     connector = BackendApiConnector.get()
     return cast(
@@ -19,8 +19,12 @@ def extract_ldap_persons() -> list[MergedPerson]:
             connector.fetch_all_publishable_merged_items(
                 publishing_target="invenio",
                 entity_type=["MergedPerson"],
-                reference_field="hadPrimarySource",
-                referenced_identifier=[get_extracted_primary_source_id_by_name("ldap")],
+                reference_filters=[
+                    ReferenceFilter(
+                        field="hadPrimarySource",
+                        identifiers=[get_extracted_primary_source_id_by_name("ldap")],
+                    )
+                ],
             )
         ),
     )
@@ -47,8 +51,13 @@ def extract_consents_for_persons(
                 connector.fetch_all_publishable_merged_items(
                     publishing_target="invenio",
                     entity_type=["MergedConsent"],
-                    reference_field="hasDataSubject" if partial_person_ids else None,
-                    referenced_identifier=partial_person_ids,
+                    reference_filters=[
+                        ReferenceFilter(
+                            field="hasDataSubject", identifiers=partial_person_ids
+                        )
+                    ]
+                    if partial_person_ids
+                    else None,
                 )
             ),
         )

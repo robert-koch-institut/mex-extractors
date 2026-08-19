@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
@@ -134,8 +134,7 @@ def fetch_merged_items(  # noqa: PLR0913
     query_string: str | None = None,  # noqa: ARG001
     identifier: str | None = None,  # noqa: ARG001
     entity_type: list[str] | None = None,
-    referenced_identifier: list[str] | None = None,  # noqa: ARG001
-    reference_field: str | None = None,  # noqa: ARG001
+    reference_filters: list[ReferenceFilter] | None = None,  # noqa: ARG001
     skip: int = 0,  # noqa: ARG001
     limit: int = 100,  # noqa: ARG001
 ) -> PaginatedItemsContainer[AnyMergedModel]:
@@ -153,14 +152,13 @@ def fetch_merged_items(  # noqa: PLR0913
     return PaginatedItemsContainer[AnyMergedModel](total=len(items), items=items)
 
 
-def fetch_all_publishable_merged_items(  # noqa: PLR0913
+def fetch_all_publishable_merged_items(
     *,
     publishing_target: str = "target",  # noqa: ARG001
     query_string: str | None = None,  # noqa: ARG001
     identifier: str | None = None,  # noqa: ARG001
     entity_type: list[str] | None = None,
-    referenced_identifier: list[str] | None = None,  # noqa: ARG001
-    reference_field: str | None = None,  # noqa: ARG001
+    reference_filters: list[ReferenceFilter] | None = None,  # noqa: ARG001
 ) -> list[AnyMergedModel]:
     merged_items: list[AnyMergedModel] = [
         MergedPrimarySource(

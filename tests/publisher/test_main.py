@@ -51,8 +51,7 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
                 "MergedVariable",
                 "MergedVariableGroup",
             ],
-            referenced_identifier=None,
-            reference_field=None,
+            reference_filters=None,
         ),
     ]
 
@@ -66,15 +65,13 @@ def test_publisher_persons(mocked_backend: MagicMock) -> None:
             publishing_target="invenio",
             query_string=None,
             entity_type=["MergedPerson"],
-            referenced_identifier=None,
-            reference_field=None,
+            reference_filters=None,
         ),
         call(
             publishing_target="invenio",
             query_string=None,
             entity_type=["MergedConsent"],
-            referenced_identifier=None,
-            reference_field=None,
+            reference_filters=None,
         ),
     ]
 
@@ -88,8 +85,7 @@ def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
             publishing_target="invenio",
             query_string=None,
             entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
-            referenced_identifier=None,
-            reference_field=None,
+            reference_filters=None,
         )
     ]
 
