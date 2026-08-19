@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 1
 
       - name: Start containers
-        run: docker compose up -d slapd mailpit neo4j mex-backend mssql sql-testing-seed
+        run: docker compose up --detach slapd mailpit neo4j mex-backend mssql sql-testing-seed
 
       - name: Install Microsoft ODBC Driver 18
         run: |
@@ -72,18 +72,10 @@ jobs:
           python-version: 3.14
 
       - name: Install requirements
-        run: |
-          echo ${{ matrix.python-version }} > .python-version
-          make install
+        run: make install
 
-      - name: Wait for mex-backend readiness
-        run: |
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:8080/v0/_system/check && exit 0
-            sleep 2
-          done
-          echo "mex-backend did not become ready in time" >&2
-          exit 1
+      - name: Wait for container readiness
+        run: docker compose up --wait slapd mailpit neo4j mex-backend mssql
 
       - name: Run test suite
         env:
@@ -95,10 +87,10 @@ jobs:
           MEX_EXTRACTORS_IFSG__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=SurvNet3Meta;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"
         run: make test
 
-      - name: Dump container logs on failure
+      - name: Show container logs
         if: failure()
-        run: docker compose logs mex-backend neo4j
+        run: docker compose logs --no-color --timestamps
 
       - name: Cleanup containers
         if: always()
-        run: docker compose down slapd mailpit neo4j mex-backend mssql sql-testing-seed
+        run: docker compose down --volumes --remove-orphans
