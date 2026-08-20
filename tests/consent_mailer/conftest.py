@@ -57,26 +57,21 @@ def mocked_consent_backend_api_connector(
             _: str | None = None,
             __: str | None = None,
             entity_type: list[str] | None = None,
-            referenced_identifier: list[str] | None = None,
-            reference_field: str | None = None,
+            reference_filters: list[connector.ReferenceFilter] | None = None,
         ) -> Generator[AnyMergedModel]:
             call_counter["count"] += 1
             if (
                 entity_type
                 and "MergedPerson" in entity_type
-                and reference_field == "hadPrimarySource"
+                and reference_filters
+                and reference_filters[0].field == "hadPrimarySource"
             ):
                 return (x for x in person_store)
 
-            if (
-                entity_type
-                and referenced_identifier
-                and "MergedConsent" in entity_type
-                and reference_field == "hasDataSubject"
-            ):
-                consents = list(
+            if entity_type and reference_filters and "MergedConsent" in entity_type:
+                consents: list[MergedConsent] = list(
                     filter(
-                        lambda x: x.hasDataSubject in referenced_identifier,
+                        lambda x: x.hasDataSubject in reference_filters[0].identifiers,
                         consent_store,
                     )
                 )

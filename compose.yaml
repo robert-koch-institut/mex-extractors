@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.13-trixie # PINNED! Do not update outside MX-2398
+    image: postgres:16.15-trixie@sha256:e17e86066e5ef83e0952a9347f5c792b7ece00972e2aa787a6986f471b3dd3d5 # PINNED! Do not update outside MX-2398
     environment:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
@@ -10,7 +10,7 @@ services:
   dagster-daemon:
     build:
       context: .
-    entrypoint: ["dagster-daemon", "run", "-w", "workspace.yaml"]
+    entrypoint: [ "dagster-daemon", "run", "-w", "workspace.yaml" ]
     depends_on:
       - postgres
     volumes:
@@ -21,11 +21,11 @@ services:
       context: .
     ports:
       - 3000:3000
-    entrypoint: ["dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml"]
+    entrypoint: [ "dagster-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml" ]
     depends_on:
       - postgres
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/dagit_info"]
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/server_info', timeout=3).raise_for_status()" ]
       interval: 30s
       timeout: 10s
       start_period: 60s
@@ -34,15 +34,20 @@ services:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
   slapd:
-    image: thoteam/slapd-server-mock
+    image: thoteam/slapd-server-mock@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
+    platform: linux/amd64
     ports:
       - 636:636
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-o", "tls_reqcert=never", "-H", "ldaps://localhost:636", "-b", "dc=ldapmock,dc=local", "-D", "cn=admin,dc=ldapmock,dc=local", "-w", "adminpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - ./assets/raw-data/ldap/:/bootstrap/
-    expose:
-      - 636
   mailpit:
-    image: axllent/mailpit:v1.30
+    image: axllent/mailpit:v1.30@sha256:d5ecbb067db3705fa953d79e1b7f81ef84038df67aba6c52825d8c02a1ea748a
     ports:
       - 1025:1025
       - 8025:8025
@@ -50,10 +55,64 @@ services:
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
-    expose:
-      - 8025
+  neo4j:
+    image: neo4j:2026.07-community@sha256:6ea87e9f43d1cf6c6a00a709d05aab626c9a5128aded8673804d087c0232434e
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_usage__report_enabled=false
+    ports:
+      - 7687:7687
+    healthcheck:
+      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  mex-backend:
+    image: ghcr.io/robert-koch-institut/mex-backend:4.3.0@sha256:2bf56266af2cda657c995ef315b713c1feed3bfaed136cda87e7bf11cdde0127
+    entrypoint: testing-backend
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    environment:
+      - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
+      - MEX_DEBUG=true
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/v0/_system/check', timeout=3).raise_for_status()" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest@sha256:46f719fd3457d4e7e8e5845fe00c35c20e7bae7ff1e8b9fe595f2a81029f5ba8
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=MEx_testing1234
+    ports:
+      - 1433:1433
+    volumes:
+      - mssql:/var/opt/mssql
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  sql-testing-seed:
+    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:0.2.0@sha256:04e7e73e7f61cbceb8e252b9cf987a3eec5728148f551a322be6e8de262e3cee
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      - MEX_TESTING_SQL_SEED_HOST=mssql
+      - MEX_TESTING_SQL_SEED_SA_PASSWORD=MEx_testing1234
+    restart: "no"
 volumes:
   pgdata:
+  mssql:
   dagster:
     driver: local
     driver_opts:

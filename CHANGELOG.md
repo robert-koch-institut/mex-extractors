@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
 
+- added slapd healthcheck in compose file
+
+### Changes
+
+- update to mex-common 3.2
+- use reference filters for backend api connector
+- BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
+  set the respective <source>.kerberos_enabled setting
+  (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,
+  MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
+  against the real RKI SQL server
+- move backend healthcheck into compose file
 
 ### Deprecated
 
@@ -26,7 +38,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- align linting and testing workflows and Dockerfile with cookiecutter
+- fixed dagster healthcheck in compose file
+
 ### Security
+
+## [1.19.0] - 2026-08-17
+
+### Added
+
+- moved mex.common.extract.parse_csv to mex.extractors.utils to rid mex-common of pandas
+- add final outbound checks for synopse and voxco
+- tests: integration tests with mex-backend in CI. Skipped locally to avoid manual
+  backend setup, will be automated in MX-1523.
+
+### Changes
+
+- stop using `Vocabulary.__concepts__` in datencompass for fw-compat with static enums
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
+- tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
+
+### Fixed
+
+- fix igs isPartof
+- ruff and mypy hints
+
+## [1.18.0] - 2026-08-03
+
+### Fixed
+
+- use explicit paths for availability checks in datscha-web and blueant connectors
 
 ## [1.17.1] - 2026-07-29
 
@@ -46,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--  patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
+- patch dependency to mex-common 3.1.1 and update resources to fixed start and end type.
 
 ## [1.16.0] - 2026-07-20
 
@@ -86,17 +127,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
+- link igs to seq-repo
 
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - use ldap convenience function and refactor ldap and organigram helper functions
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-- dependency update(2026-06-16)
+- dependency update (2026-06-16)
 - implement seq-repo fallback rule for units
 
 ### Removed
-- dependency update(2026-06-26)
+
+- dependency update (2026-06-26)
 
 ### Fixed
 
@@ -173,7 +216,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- path to s3 items file is now `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
+- path to s3 items file is now
+  `publisher-{mex-model major version}.{mex-model minor version}/items.ndjson`
 - update mex-common to 1.16.1
 
 ## [1.11.0] - 2026-03-13
@@ -205,7 +249,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- ff-projects: fixed extract_ff_projects_organizations() and get_or_create_organization() to match organizations with wikidata
+- ff-projects: fixed extract_ff_projects_organizations() and
+  get_or_create_organization() to match organizations with wikidata
 
 ## [1.9.0] - 2026-02-10
 

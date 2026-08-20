@@ -8,3 +8,6 @@ rules:
   - fail_if: less_than_x_outbound
     value: 1
     target_type: VariableGroup
+  - fail_if: less_than_x_outbound
+    value: 1
+    target_type: Resource

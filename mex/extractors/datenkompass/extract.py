@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.exceptions import MExError
 from mex.common.identity import get_provider
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
@@ -10,20 +10,18 @@ if TYPE_CHECKING:
     from mex.common.types import MergedIdentifier
 
 
-def get_merged_items(
+def get_datenkompass_merged_items(
     *,
     query_string: str | None = None,
     entity_type: list[str] | None = None,
-    referenced_identifier: list[str] | None = None,
-    reference_field: str | None = None,
+    reference_filters: list[ReferenceFilter] | None = None,
 ) -> list[AnyMergedModel]:
     """Fetch merged items from backend.
 
     Args:
         query_string: Query string.
         entity_type: List of entity types.
-        referenced_identifier: List of Identifier.
-        reference_field: List of fields accepting identifiers.
+        reference_filters: Advanced reference filters to search for
 
     Returns:
         List of merged items.
@@ -34,8 +32,7 @@ def get_merged_items(
         publishing_target="datenkompass",
         query_string=query_string,
         entity_type=entity_type,
-        referenced_identifier=referenced_identifier,
-        reference_field=reference_field,
+        reference_filters=reference_filters,
     )
 
     return list(response)
@@ -43,24 +40,22 @@ def get_merged_items(
 
 def get_extracted_item_stable_target_ids(
     entity_type: list[str],
-    referenced_identifier: list[str] | None,
+    reference_filters: list[ReferenceFilter] | None = None,
 ) -> list[MergedIdentifier]:
     """Fetch extracted items from backend and return their stableTargetId.
 
     Args:
         entity_type: List of entity types.
-        referenced_identifier: list of MergedIdentifiers to filter for
+        reference_filters: Advanced reference filters to search for
 
     Returns:
         List of stableTargetIds of extracted items of the given entity type(s).
     """
-    reference_field = "stableTargetId"
     connector = BackendApiConnector.get()
 
     response = connector.fetch_extracted_items(
         entity_type=entity_type,
-        referenced_identifier=referenced_identifier,
-        reference_field=reference_field,
+        reference_filters=reference_filters,
         skip=0,
         limit=1,
     )
@@ -72,8 +67,7 @@ def get_extracted_item_stable_target_ids(
         extracted_items.extend(
             connector.fetch_extracted_items(
                 entity_type=entity_type,
-                referenced_identifier=referenced_identifier,
-                reference_field=reference_field,
+                reference_filters=reference_filters,
                 skip=item_counter,
                 limit=item_number_limit,
             ).items
