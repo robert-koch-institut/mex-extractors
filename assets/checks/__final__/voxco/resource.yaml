@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../__schema__/AssetCheck.json
+
+rules:
+  - fail_if: not_exactly_x_items
+    value: 2

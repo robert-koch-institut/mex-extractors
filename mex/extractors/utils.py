@@ -42,7 +42,7 @@ def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
 
 
 def parse_csv[BaseModelT: BaseModel](  # noqa: C901
-    path_or_buffer: str,
+    path: str,
     into: type[BaseModelT],
     chunksize: int = 10000,
     summary_batch_size: int = 10000,
@@ -51,7 +51,7 @@ def parse_csv[BaseModelT: BaseModel](  # noqa: C901
     """Parse a CSV file into an iterable of the given model type.
 
     Args:
-        path_or_buffer: Location of CSV file or read buffer with CSV content
+        path: Location of CSV file
         into: Type of model to parse
         chunksize: Buffer size for chunked reading
         summary_batch_size: Batch size for summary logs
@@ -63,7 +63,7 @@ def parse_csv[BaseModelT: BaseModel](  # noqa: C901
     error_summary: defaultdict[str, int] = defaultdict(int)
     total_rows_processed = 0
     total_rows_successfully_processed = 0
-    csv_bytes = read_bytes(path_or_buffer)
+    csv_bytes = read_bytes(path)
     with pd.read_csv(
         BytesIO(csv_bytes),
         chunksize=chunksize,
