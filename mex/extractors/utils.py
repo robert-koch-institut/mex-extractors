@@ -1,4 +1,5 @@
 from collections import defaultdict
+from io import BytesIO
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
@@ -8,12 +9,13 @@ import yaml
 from pydantic import ValidationError
 
 from mex.common.logging import logger
+from mex.extractors.assets.helpers import read_bytes
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Generator, Iterable, Sequence
     from os import PathLike
 
-    from pandas._typing import Dtype, ReadCsvBuffer
+    from pandas._typing import Dtype
 
     from mex.common.models import BaseModel
 
@@ -40,7 +42,7 @@ def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
 
 
 def parse_csv[BaseModelT: BaseModel](  # noqa: C901
-    path_or_buffer: str | PathLike[str] | ReadCsvBuffer[Any],
+    path_or_buffer: str,
     into: type[BaseModelT],
     chunksize: int = 10000,
     summary_batch_size: int = 10000,
@@ -61,9 +63,9 @@ def parse_csv[BaseModelT: BaseModel](  # noqa: C901
     error_summary: defaultdict[str, int] = defaultdict(int)
     total_rows_processed = 0
     total_rows_successfully_processed = 0
-
+    csv_bytes = read_bytes(path_or_buffer)
     with pd.read_csv(
-        path_or_buffer,
+        BytesIO(csv_bytes),
         chunksize=chunksize,
         dtype=get_dtypes_for_model(into),
         **kwargs,

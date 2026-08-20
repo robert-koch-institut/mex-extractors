@@ -31,7 +31,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
     return extract_sources()
 
 
-@asset(group_name="seq_repo", metadata={"entity_type": "organization"})
+@asset(group_name="seq_repo", metadata={"entity_type": "activity"})
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
