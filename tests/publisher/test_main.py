@@ -1,9 +1,13 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.models import MergedBibliographicResource
+from mex.common.models import (
+    ExtractedOrganization,
+    ItemsContainer,
+    MergedBibliographicResource,
+)
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -16,7 +20,11 @@ from mex.extractors.publisher.main import (
     publisher_items,
     publisher_items_without_actors,
     publisher_persons,
+    publisher_sink_load,
 )
+from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.sinks.ndjson import NdjsonSink
+from mex.extractors.sinks.s3 import S3Sink
 
 if TYPE_CHECKING:
     from mex.extractors.publisher.models import PublisherItemsLike
@@ -111,3 +119,31 @@ def test_publisher_items(
         ),
     )
     assert len(container.items) == 4
+
+
+@pytest.mark.parametrize(
+    ("sink_name", "sink_class"),
+    [
+        pytest.param("s3", S3Sink),
+        pytest.param("ndjson", NdjsonSink),
+    ],
+)
+def test_publisher_sink_load(
+    extracted_organization_rki: ExtractedOrganization,
+    monkeypatch: pytest.MonkeyPatch,
+    sink_name: str,
+    sink_class: type[Any],
+) -> None:
+    settings = ExtractorsSettings.get()
+    settings.publisher.sink = sink_name
+
+    sink = MagicMock()
+    sink.load.return_value = iter(())
+
+    get_mock = MagicMock(return_value=sink)
+    monkeypatch.setattr(sink_class, "get", get_mock)
+
+    publisher_sink_load(ItemsContainer(items=[extracted_organization_rki]))
+
+    get_mock.assert_called_once_with()
+    sink.load.assert_called_once_with([extracted_organization_rki])

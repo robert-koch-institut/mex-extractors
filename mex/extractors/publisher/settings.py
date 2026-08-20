@@ -26,3 +26,8 @@ class PublisherSettings(BaseModel):
         ["PRNT", "fg99"],
         description="list of departments for which to publish publications.",
     )
+
+    sink: str = Field(
+        "s3",
+        description="Publisher sink: 'ndjson' or 's3'",
+    )

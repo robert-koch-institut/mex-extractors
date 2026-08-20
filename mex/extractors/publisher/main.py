@@ -37,6 +37,7 @@ from mex.extractors.publisher.transform import (
     update_actor_references_where_needed,
 )
 from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3CsvSink, S3Sink
 
 if TYPE_CHECKING:
@@ -179,10 +180,16 @@ def publisher_items(
 
 
 @asset(group_name="publisher")
-def publisher_s3_load(publisher_items: PublisherItemsLike) -> None:
-    """Write received merged items to s3 sink."""
-    s3 = S3Sink.get()
-    deque(s3.load(publisher_items.items), maxlen=0)
+def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
+    """Write received merged items to the configured sink."""
+    settings = ExtractorsSettings.get()
+    sink: S3Sink | NdjsonSink
+    if settings.publisher.sink == "s3":
+        sink = S3Sink.get()
+    else:
+        sink = NdjsonSink.get()
+
+    deque(sink.load(publisher_items.items), maxlen=0)
 
 
 @asset(group_name="publisher")
