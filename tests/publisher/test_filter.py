@@ -1,5 +1,6 @@
 import re
 from typing import TYPE_CHECKING
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -54,19 +55,37 @@ def test_filter_persons_with_approving_unique_consent__raise(
 
 @pytest.mark.usefixtures("mocked_backend", "mocked_wikidata")
 def test_cluster_and_filter_bibliographic_resources_by_unit(
+    monkeypatch: pytest.MonkeyPatch,
     merged_bibliographic_resource_list: list[MergedBibliographicResource],
 ) -> None:
+    mocked_find_descendants = MagicMock(return_value=[])
+
+    monkeypatch.setattr(
+        "mex.extractors.publisher.filter.find_descendants",
+        mocked_find_descendants,
+    )
+
     publication_by_department = cluster_and_filter_bibliographic_resources_by_unit(
         merged_bibliographic_resource_list
     )
-    assert publication_by_department.keys() == {"hIiJpZXVppHvoyeP0QtAoS"}
 
+    mocked_find_descendants.assert_called_once()
+    assert publication_by_department.keys() == {"hIiJpZXVppHvoyeP0QtAoS"}
+    assert (
+        len(
+            publication_by_department[
+                MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")
+            ]
+        )
+        == 1
+    )
     assert publication_by_department[
         MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")
     ][0].model_dump(exclude_defaults=True, mode="json") == {
         "accessRestriction": Joker(),
-        "creator": ["PersonIdentifier"],
-        "title": [{"value": "title 1, Unit Parent"}],
         "contributingUnit": ["hIiJpZXVppHvoyeP0QtAoS"],
+        "creator": ["PersonIdentifier"],
         "identifier": "PublicationOfPRNTUnit",
+        "publicationYear": "2042",
+        "title": [{"value": "title 1, Unit Parent"}],
     }

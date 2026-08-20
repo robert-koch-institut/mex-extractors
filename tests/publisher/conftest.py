@@ -240,15 +240,9 @@ def mocked_backend(
         ),
     )
     monkeypatch.setattr(
-        BackendApiConnector, "fetch_merged_items", backend.fetch_merged_items
-    )
-    monkeypatch.setattr(
         BackendApiConnector,
         "fetch_all_publishable_merged_items",
         backend.fetch_all_publishable_merged_items,
-    )
-    monkeypatch.setattr(
-        BackendApiConnector, "fetch_extracted_items", backend.fetch_extracted_items
     )
     monkeypatch.setattr(
         BackendApiConnector,

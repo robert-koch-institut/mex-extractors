@@ -1,8 +1,13 @@
+from unittest.mock import MagicMock
+
 import pytest
 
+from mex.common.backend_api import BackendApiConnector
 from mex.common.models import (
+    AnyMergedModel,
     MergedOrganizationalUnit,
     MergedPrimarySource,
+    PaginatedItemsContainer,
 )
 from mex.extractors.publisher.extract import (
     get_publishable_merged_item_by_identifier,
@@ -17,9 +22,30 @@ def test_get_publishable_merged_items_mocked() -> None:
     assert items[0] == MergedPrimarySource(identifier="fakeFakeSource")
 
 
-@pytest.mark.usefixtures("mocked_backend")
-def test_get_publishable_merged_item_by_identifier_mocked(
+def test_get_publishable_merged_item_by_identifier(
+    monkeypatch: pytest.MonkeyPatch,
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> None:
-    item = get_publishable_merged_item_by_identifier("someIdentifier")
-    assert item == mocked_merged_organizational_units[0]
+    expected = mocked_merged_organizational_units[0]
+
+    fetch_publishable_merged_items = MagicMock(
+        return_value=PaginatedItemsContainer[AnyMergedModel](
+            total=1,
+            items=[expected],
+        )
+    )
+
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "fetch_publishable_merged_items",
+        fetch_publishable_merged_items,
+    )
+
+    result = get_publishable_merged_item_by_identifier(str(expected.identifier))
+
+    assert result == expected
+
+    fetch_publishable_merged_items.assert_called_once_with(
+        publishing_target="invenio",
+        identifier=str(expected.identifier),
+    )

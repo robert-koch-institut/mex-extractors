@@ -36,7 +36,6 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_items_without_actors())
     assert len(container.items) == 1
     assert isinstance(container.items[0], MergedBibliographicResource)
-    mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
         call(
             publishing_target="invenio",
@@ -79,7 +78,6 @@ def test_publisher_persons(mocked_backend: MagicMock) -> None:
 def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_contact_points_and_units())
     assert len(container.items) == 2
-    mocked_backend.fetch_extracted_items.assert_not_called()
     assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
         call(
             publishing_target="invenio",
