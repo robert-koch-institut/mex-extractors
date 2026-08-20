@@ -14,3 +14,8 @@ class PublisherSettings(BaseModel):
         ["endnote"],
         description="Allow persons from these primary sources to be published.",
     )
+
+    sink: str = Field(
+        "s3",
+        description="Publisher sink: 'ndjson' or 's3'",
+    )
