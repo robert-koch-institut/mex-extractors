@@ -1,5 +1,4 @@
 from datetime import UTC, datetime, timedelta, tzinfo
-from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
 
@@ -66,19 +65,7 @@ def test_get_rule(monkeypatch: MonkeyPatch) -> None:
     assert rule["target_type"] == "Resource"
 
 
-def test_load_asset_check_from_settings(monkeypatch: MonkeyPatch) -> None:
-    yaml_path = Path(__file__).parent.parent.parent / "assets" / "raw-data" / "pipeline"
-
-    class MockSettings:
-        all_checks_path = yaml_path
-
-        @classmethod
-        def get(cls) -> MockSettings:
-            return cls()
-
-    monkeypatch.setattr(
-        "mex.extractors.pipeline.checks.main.ExtractorsSettings", MockSettings
-    )
+def test_load_asset_check_from_settings() -> None:
 
     model = load_asset_check_from_settings("blueant", "activity")
     assert model.model_dump() == {
