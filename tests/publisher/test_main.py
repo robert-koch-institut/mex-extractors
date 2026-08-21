@@ -3,10 +3,14 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
+from mex.common.exceptions import MExError
 from mex.common.models import (
+    AnyMergedModel,
     ExtractedOrganization,
     ItemsContainer,
     MergedBibliographicResource,
+    MergedOrganizationalUnit,
+    MergedPerson,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -33,78 +37,113 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.usefixtures(
-    "mocked_backend",
+    "mocked_backend_publisher",
     "mocked_s3sink_client",  # needed for hardcoded upload to S3. Remove with MX-1808
     "mocked_wikidata",
 )
-def test_run() -> None:
+def test_run(
+    monkeypatch: pytest.MonkeyPatch,
+    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+) -> None:
+    merged_items_by_identifier: dict[str, AnyMergedModel] = {
+        str(unit.identifier): unit for unit in mocked_merged_organizational_units
+    }
+    merged_items_by_identifier["PersonIdentifier"] = MergedPerson(
+        identifier="PersonIdentifier",
+        fullName=["Dr. Test Person"],
+    )
+
+    def mocked_get_publishable_merged_item_by_identifier(
+        identifier: object,
+    ) -> AnyMergedModel:
+        if item := merged_items_by_identifier.get(str(identifier)):
+            return item
+
+        msg = f"Unexpected identifier lookup in test_run: {identifier!r}"
+        raise MExError(msg)
+
+    monkeypatch.setattr(
+        "mex.extractors.publisher.transform.get_publishable_merged_item_by_identifier",
+        mocked_get_publishable_merged_item_by_identifier,
+    )
     assert run_job_in_process("publisher")
 
 
-@pytest.mark.usefixtures("mocked_backend")
-def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
+@pytest.mark.usefixtures("mocked_backend_publisher")
+def test_publisher_items_without_actors(mocked_backend_publisher: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_items_without_actors())
     assert len(container.items) == 1
     assert isinstance(container.items[0], MergedBibliographicResource)
-    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
-        call(
-            publishing_target="invenio",
-            query_string=None,
-            entity_type=[
-                "MergedAccessPlatform",
-                "MergedActivity",
-                "MergedBibliographicResource",
-                "MergedDistribution",
-                "MergedOrganization",
-                "MergedResource",
-                "MergedVariable",
-                "MergedVariableGroup",
-            ],
-            reference_filters=None,
-        ),
-    ]
+    assert (
+        mocked_backend_publisher.fetch_all_publishable_merged_items.call_args_list
+        == [
+            call(
+                publishing_target="invenio",
+                query_string=None,
+                entity_type=[
+                    "MergedAccessPlatform",
+                    "MergedActivity",
+                    "MergedBibliographicResource",
+                    "MergedDistribution",
+                    "MergedOrganization",
+                    "MergedResource",
+                    "MergedVariable",
+                    "MergedVariableGroup",
+                ],
+                reference_filters=None,
+            ),
+        ]
+    )
 
 
-@pytest.mark.usefixtures("mocked_backend")
-def test_publisher_persons(mocked_backend: MagicMock) -> None:
+@pytest.mark.usefixtures("mocked_backend_publisher")
+def test_publisher_persons(mocked_backend_publisher: MagicMock) -> None:
     container = cast("PublisherItemsLike", publisher_persons())
     assert len(container.items) == 1
-    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
-        call(
-            publishing_target="invenio",
-            query_string=None,
-            entity_type=["MergedPerson"],
-            reference_filters=None,
-        ),
-        call(
-            publishing_target="invenio",
-            query_string=None,
-            entity_type=["MergedConsent"],
-            reference_filters=None,
-        ),
-    ]
+    assert (
+        mocked_backend_publisher.fetch_all_publishable_merged_items.call_args_list
+        == [
+            call(
+                publishing_target="invenio",
+                query_string=None,
+                entity_type=["MergedPerson"],
+                reference_filters=None,
+            ),
+            call(
+                publishing_target="invenio",
+                query_string=None,
+                entity_type=["MergedConsent"],
+                reference_filters=None,
+            ),
+        ]
+    )
 
 
-def test_publisher_contact_points_and_units(mocked_backend: MagicMock) -> None:
+def test_publisher_contact_points_and_units(
+    mocked_backend_publisher: MagicMock,
+) -> None:
     container = cast("PublisherItemsLike", publisher_contact_points_and_units())
     assert len(container.items) == 2
-    assert mocked_backend.fetch_all_publishable_merged_items.call_args_list == [
-        call(
-            publishing_target="invenio",
-            query_string=None,
-            entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
-            reference_filters=None,
-        )
-    ]
+    assert (
+        mocked_backend_publisher.fetch_all_publishable_merged_items.call_args_list
+        == [
+            call(
+                publishing_target="invenio",
+                query_string=None,
+                entity_type=["MergedContactPoint", "MergedOrganizationalUnit"],
+                reference_filters=None,
+            )
+        ]
+    )
 
 
-@pytest.mark.usefixtures("mocked_backend")
+@pytest.mark.usefixtures("mocked_backend_publisher")
 def test_publisher_fallback_contact_identifiers() -> None:
     identifiers = publisher_fallback_contact_identifiers()
     assert identifiers == [MergedContactPointIdentifier("fakeFakeContact")]
 
 
-@pytest.mark.usefixtures("mocked_backend")
+@pytest.mark.usefixtures("mocked_backend_publisher")
 def test_publisher_items(
     mocked_publisher_fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]

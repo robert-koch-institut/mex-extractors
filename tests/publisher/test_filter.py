@@ -53,7 +53,7 @@ def test_filter_persons_with_approving_unique_consent__raise(
         )
 
 
-@pytest.mark.usefixtures("mocked_backend", "mocked_wikidata")
+@pytest.mark.usefixtures("mocked_backend_publisher", "mocked_wikidata")
 def test_cluster_and_filter_bibliographic_resources_by_unit(
     monkeypatch: pytest.MonkeyPatch,
     merged_bibliographic_resource_list: list[MergedBibliographicResource],

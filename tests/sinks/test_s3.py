@@ -5,12 +5,10 @@ import re
 from collections import deque
 from io import BytesIO, StringIO
 from typing import TYPE_CHECKING
-from unittest.mock import MagicMock, call
+from unittest.mock import call
 
 import pytest
-from pytest import MonkeyPatch
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.testing import Joker
 from mex.common.transform import MExEncoder
 from mex.extractors.publisher.models import BibliographicResourceForCsv
@@ -20,20 +18,7 @@ if TYPE_CHECKING:
     from mex.common.models import ExtractedOrganization
 
 
-@pytest.fixture
-def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
-    monkeypatch.setattr(BackendApiConnector, "_check_availability", MagicMock())
-    monkeypatch.setattr(
-        BackendApiConnector,
-        "request",
-        MagicMock(
-            return_value={"status": "Fabulous", "version": "mex-backend-version"}
-        ),
-    )
-    return BackendApiConnector.get()
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
 def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     items_generator = (item for item in [extracted_organization_rki])
     expected_items = [extracted_organization_rki]
@@ -93,7 +78,7 @@ def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
     assert sink.client.put_object.call_args.kwargs["Body"]
 
 
-@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
 def test_s3csv_load() -> None:
     items = [
         BibliographicResourceForCsv(
@@ -186,6 +171,6 @@ def test_s3csv_load_requires_unit_name() -> None:
     sink = S3CsvSink()
 
     with pytest.raises(
-        RuntimeError, match=r"No Unit Name provided for loading publications."
+        RuntimeError, match=r"No Unit Name provided for loading publications\."
     ):
         list(sink.load([item]))

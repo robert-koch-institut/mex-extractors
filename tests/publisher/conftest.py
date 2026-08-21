@@ -13,7 +13,6 @@ from mex.common.models import (
     MergedOrganizationalUnit,
     MergedPerson,
     MergedPrimarySource,
-    PaginatedItemsContainer,
     VersionStatus,
 )
 from mex.common.types import (
@@ -203,28 +202,11 @@ def fetch_all_publishable_merged_items(
 
 
 @pytest.fixture
-def mocked_backend(
-    monkeypatch: MonkeyPatch,
-    mocked_merged_organizational_units: list[MergedOrganizationalUnit],
-) -> MagicMock:
-
-    def fetch_publishable_merged_items(
-        *,
-        publishing_target: str,  # noqa: ARG001
-        identifier: str | None = None,  # noqa: ARG001
-    ) -> PaginatedItemsContainer[AnyMergedModel]:
-        return PaginatedItemsContainer[AnyMergedModel](
-            total=42, items=[mocked_merged_organizational_units[0]]
-        )
-
+def mocked_backend_publisher(monkeypatch: MonkeyPatch) -> MagicMock:
     backend = MagicMock(
         fetch_all_publishable_merged_items=MagicMock(
             spec=BackendApiConnector.fetch_all_publishable_merged_items,
             side_effect=fetch_all_publishable_merged_items,
-        ),
-        fetch_publishable_merged_items=MagicMock(
-            spec=BackendApiConnector.fetch_publishable_merged_items,
-            side_effect=fetch_publishable_merged_items,
         ),
     )
     monkeypatch.setattr(

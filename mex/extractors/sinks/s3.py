@@ -165,7 +165,7 @@ class S3XlsxSink(S3BaseSink):
 
 
 class S3CsvSink(S3BaseSink):
-    """Special sink to load models as CDV file into S3 bucket and publish metadata."""
+    """Special sink to load models as CSV file into S3 bucket and publish metadata."""
 
     def load(
         self,

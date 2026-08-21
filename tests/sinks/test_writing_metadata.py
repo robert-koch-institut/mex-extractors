@@ -7,25 +7,11 @@ import pytest
 from packaging.version import InvalidVersion
 from pytest import MonkeyPatch
 
-from mex.common.backend_api import BackendApiConnector
 from mex.extractors.sinks.write_metadata import (
     build_directory_path,
     calculate_checksum,
     create_metadata_content,
 )
-
-
-@pytest.fixture
-def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
-    monkeypatch.setattr(BackendApiConnector, "_check_availability", MagicMock())
-    monkeypatch.setattr(
-        BackendApiConnector,
-        "request",
-        MagicMock(
-            return_value={"status": "Fabulous", "version": "mex-backend-version"}
-        ),
-    )
-    return BackendApiConnector.get()
 
 
 @pytest.mark.parametrize(
@@ -77,7 +63,7 @@ def test_calculate_checksum() -> None:
     assert returned == expected
 
 
-@pytest.mark.usefixtures("mocked_backend")
+@pytest.mark.usefixtures("mocked_backend_s3")
 def test_create_metadata_content(monkeypatch: MonkeyPatch) -> None:
     locally_available_version = {
         "mex-backend": "mex-backend-version",

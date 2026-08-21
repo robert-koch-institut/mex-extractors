@@ -16,7 +16,7 @@ from mex.extractors.publisher.extract import (
 )
 
 
-@pytest.mark.usefixtures("mocked_backend")
+@pytest.mark.usefixtures("mocked_backend_publisher")
 def test_get_publishable_merged_items_mocked() -> None:
     items = get_publishable_merged_items()
     assert len(items) == 6
