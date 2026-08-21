@@ -74,6 +74,7 @@ synopse = "mex.extractors.synopse.main:run"
 voxco = "mex.extractors.voxco.main:run"
 datenkompass = "mex.extractors.datenkompass.main:run"
 publisher = "mex.extractors.publisher.main:run"
+mex-webserver = "mex.extractors.system.api:run"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
