@@ -9,20 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add and wrap up extraction of new non-required fields
+- publish CSV of publications to be downloadable on MEx
 - extrators settings has configuration option for publishing sink: extactor_settings.publisher.sink
 - allowed values for publishing sink: ndjson or S3 (default: S3)
-
+- added slapd healthcheck in compose file
 
 ### Changes
 
 - use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
-
-- added slapd healthcheck in compose file
-
-### Changes
-
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
@@ -65,6 +60,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.18.0] - 2026-08-03
 
+### Added
+
+- link igs to seq-repo
+
 ### Fixed
 
 - use explicit paths for availability checks in datscha-web and blueant connectors
@@ -94,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 
@@ -127,7 +127,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
-- link igs to seq-repo
 
 ### Changes
 
@@ -165,7 +164,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
-- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 

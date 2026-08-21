@@ -1,5 +1,5 @@
 from collections import deque
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from dagster import asset
 
@@ -24,16 +24,24 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.publisher.filter import (
+    cluster_and_filter_bibliographic_resources_by_unit,
     filter_persons_with_approving_unique_consent,
+)
+from mex.extractors.publisher.models import (
+    BibliographicResourceForCsv,
+    PublisherItemsLike,
 )
 from mex.extractors.publisher.transform import (
     get_unit_id_per_person,
+    transform_merged_bibliographic_resources_for_csv,
     update_actor_references_where_needed,
 )
-from mex.extractors.publisher.types import PublisherItemsLike
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
-from mex.extractors.sinks.s3 import S3Sink
+from mex.extractors.sinks.s3 import S3CsvSink, S3Sink
+
+if TYPE_CHECKING:
+    from mex.common.models import MergedBibliographicResource
 
 
 @asset(group_name="publisher")
@@ -182,6 +190,48 @@ def publisher_sink_load(publisher_items: PublisherItemsLike) -> None:
         sink = NdjsonSink.get()
 
     deque(sink.load(publisher_items.items), maxlen=0)
+
+
+@asset(group_name="publisher")
+def publisher_bibliographic_resources_for_csv_by_unit() -> dict[
+    str, list[BibliographicResourceForCsv]
+]:
+    """Extract the bibliographic resources and transform to format for the csv list."""
+    merged_bibliographic_resources = cast(
+        "list[MergedBibliographicResource]",
+        get_publishable_merged_items(entity_type=["MergedBibliographicResource"]),
+    )
+    merged_bibliographic_resources_by_unit = (
+        cluster_and_filter_bibliographic_resources_by_unit(
+            merged_bibliographic_resources
+        )
+    )
+    return transform_merged_bibliographic_resources_for_csv(
+        merged_bibliographic_resources_by_unit
+    )
+
+
+@asset(group_name="publisher")
+def publisher_csv_load(
+    publisher_bibliographic_resources_for_csv_by_unit: dict[
+        str, list[BibliographicResourceForCsv]
+    ],
+) -> None:
+    """Write BibliographicResourceForCsv as CSV to s3 sink."""
+    s3csv = S3CsvSink()
+    for (
+        unit_name,
+        publications,
+    ) in publisher_bibliographic_resources_for_csv_by_unit.items():
+        publications_sorted_by_year = sorted(
+            publications,
+            key=lambda item: (
+                item.publicationYear is not None,
+                item.publicationYear or 0,
+            ),
+            reverse=True,
+        )
+        deque(s3csv.load(publications_sorted_by_year, unit_name=unit_name), maxlen=0)
 
 
 @entrypoint()

@@ -1,13 +1,15 @@
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from unittest.mock import MagicMock
 
 import pytest
 
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
+    MergedOrganizationalUnit,
 )
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
@@ -15,6 +17,7 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import (
     MergedPrimarySourceIdentifier,
+    Validation,
 )
 from mex.extractors.ldap.helpers import (
     get_ldap_extracted_person_by_query,
@@ -93,6 +96,24 @@ def mocked_extracted_organizational_units(
         get_extracted_primary_source_id_by_name("organigram"),
         extracted_organization_rki.stableTargetId,
     )
+
+
+@pytest.fixture
+def mocked_merged_organizational_units(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnit]:
+    return [
+        cast(
+            "MergedOrganizationalUnit",
+            create_merged_item(
+                identifier=extracted_unit.stableTargetId,
+                extracted_items=[extracted_unit],
+                rule_set=None,
+                validation=Validation.STRICT,
+            ),
+        )
+        for extracted_unit in mocked_extracted_organizational_units
+    ]
 
 
 @pytest.fixture

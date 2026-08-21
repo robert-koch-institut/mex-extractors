@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
+from mex.common.exceptions import MExError
 
 if TYPE_CHECKING:
     from mex.common.models import AnyMergedModel
@@ -21,3 +22,28 @@ def get_publishable_merged_items(
         reference_filters=reference_filters,
     )
     return list(response)
+
+
+def get_publishable_merged_item_by_identifier(
+    identifier: str,
+) -> AnyMergedModel:
+    """Fetch a merged item from backend identified by its identifier."""
+    connector = BackendApiConnector.get()
+
+    result = connector.fetch_publishable_merged_items(
+        publishing_target="invenio",
+        identifier=identifier,
+    ).items
+
+    if len(result) == 0:
+        msg = (
+            f"Merged item '{identifier}' does not exist or is not publishable to the "
+            f"publishing target."
+        )
+        raise MExError(msg)
+
+    if len(result) > 1:
+        msg = f"More than one merged item found for '{identifier}'."
+        raise MExError(msg)
+
+    return result[0]
