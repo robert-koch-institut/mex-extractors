@@ -149,6 +149,7 @@ def test_transform_merged_bibliographic_resources_for_csv(
 ) -> None:
     def fake_get_resolved_names(identifier: str, field_name: str) -> str:
         resolved_names = {
+            ("6rqNvZSApUHlz8GkkVP48", "shortName"): "C1",
             ("hIiJpZXVppHvoyeP0QtAoS", "shortName"): "parent",
             ("PersonIdentifier", "fullName"): "Dr. Test Person",
         }
@@ -161,19 +162,29 @@ def test_transform_merged_bibliographic_resources_for_csv(
 
     result = transform_merged_bibliographic_resources_for_csv(
         {
-            MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS"): [
-                merged_bibliographic_resource_list[2]
-            ],
+            MergedOrganizationalUnitIdentifier(
+                "hIiJpZXVppHvoyeP0QtAoS"
+            ): merged_bibliographic_resource_list[0:2],
         }
     )
 
     assert result.keys() == {"parent"}
-    assert result["parent"][0].model_dump(
-        exclude_defaults=True, exclude_none=True, mode="json"
-    ) == {
+    assert len(result["parent"]) == 2
+    assert result["parent"][0].model_dump(exclude_defaults=True, mode="json") == {
+        "accessRestriction": Joker(),
+        "contributingUnit": ["C1"],
+        "creator": ["Dr. Test Person"],
+        "doi": None,
+        "journal": [],
+        "publicationYear": None,
+        "publisher": [],
+        "title": ["title 1, Unit C1"],
+    }
+    assert result["parent"][1].model_dump(exclude_defaults=True, mode="json") == {
         "accessRestriction": Joker(),
         "contributingUnit": ["parent"],
         "creator": ["Dr. Test Person"],
+        "doi": None,
         "journal": [],
         "publicationYear": "2042",
         "publisher": [],

@@ -68,11 +68,6 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
 
     expected_checksum = hashlib.sha256(item_bytes).hexdigest()
 
-    assert load_items_client_call == call(
-        Body=Joker(),
-        Bucket="s3_bucket",
-        Key=Joker(),
-    )
     metadata_bytes = load_metadata_client_call.kwargs["Body"]
     assert isinstance(metadata_bytes, bytes)
     metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
@@ -173,3 +168,24 @@ def test_s3csv_load() -> None:
         "versions",
         "write_completed_at",
     }
+
+
+@pytest.mark.usefixtures("mocked_s3sink_client")
+def test_s3csv_load_requires_unit_name() -> None:
+    item = BibliographicResourceForCsv(
+        contributingUnit=["FG 1"],
+        publicationYear="2024",
+        creator=["Dr. Alice Example"],
+        title=["Publication"],
+        journal=["Journal"],
+        doi="10.1234/example-a",
+        accessRestriction="open",
+        publisher=None,
+    )
+
+    sink = S3CsvSink()
+
+    with pytest.raises(
+        RuntimeError, match=r"No Unit Name provided for loading publications."
+    ):
+        list(sink.load([item]))

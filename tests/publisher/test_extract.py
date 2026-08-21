@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from mex.common.backend_api import BackendApiConnector
+from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyMergedModel,
     MergedOrganizationalUnit,
@@ -49,3 +50,37 @@ def test_get_publishable_merged_item_by_identifier(
         publishing_target="invenio",
         identifier=str(expected.identifier),
     )
+
+
+@pytest.mark.parametrize(
+    ("items", "expected_message"),
+    [
+        ([], "does not exist or is not publishable"),
+        (
+            [
+                MergedPrimarySource(identifier="aaaaaaaaaaaaaa"),
+                MergedPrimarySource(identifier="bbbbbbbbbbbbbb"),
+            ],
+            "More than one merged item found",
+        ),
+    ],
+)
+def test_get_publishable_merged_item_by_identifier_raises(
+    monkeypatch: pytest.MonkeyPatch,
+    items: list[AnyMergedModel],
+    expected_message: str,
+) -> None:
+    """Raise if more or less than one item is found."""
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "fetch_publishable_merged_items",
+        MagicMock(
+            return_value=PaginatedItemsContainer[AnyMergedModel](
+                total=len(items),
+                items=items,
+            )
+        ),
+    )
+
+    with pytest.raises(MExError, match=expected_message):
+        get_publishable_merged_item_by_identifier("some-id")

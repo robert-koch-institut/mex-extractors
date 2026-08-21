@@ -130,17 +130,17 @@ def merged_bibliographic_resource_list() -> list[MergedBibliographicResource]:
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             creator=["PersonIdentifier"],
-            identifier="PublicationOfFG99",
-            title=[Text(value="title 1, Unit FG99", language=None)],
-            contributingUnit=["cjna2jitPngp6yIV63cdi9"],  # FG99
-        ),
-        MergedBibliographicResource(
-            accessRestriction=AccessRestriction["OPEN"],
-            creator=["PersonIdentifier"],
             identifier="PublicationOfPRNTUnit",
             publicationYear="2042",
             title=[Text(value="title 1, Unit Parent", language=None)],
             contributingUnit=["hIiJpZXVppHvoyeP0QtAoS"],  # PRNT
+        ),
+        MergedBibliographicResource(
+            accessRestriction=AccessRestriction["OPEN"],
+            creator=["PersonIdentifier"],
+            identifier="PublicationOfFG99",
+            title=[Text(value="title 1, Unit FG99", language=None)],
+            contributingUnit=["cjna2jitPngp6yIV63cdi9"],  # FG99
         ),
     ]
 

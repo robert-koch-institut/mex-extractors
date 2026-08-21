@@ -185,7 +185,7 @@ class S3CsvSink(S3BaseSink):
         settings = ExtractorsSettings.get()
 
         if unit_name is None:
-            msg = "No Unit Name provided."
+            msg = "No Unit Name provided for loading publications."
             raise RuntimeError(msg)
 
         unitname = unit_name.replace(" ", "")

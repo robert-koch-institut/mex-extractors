@@ -16,12 +16,14 @@ from mex.common.types import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.publisher.main import (
     publisher_contact_points_and_units,
+    publisher_csv_load,
     publisher_fallback_contact_identifiers,
     publisher_items,
     publisher_items_without_actors,
     publisher_persons,
     publisher_sink_load,
 )
+from mex.extractors.publisher.models import BibliographicResourceForCsv
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3Sink
@@ -147,3 +149,44 @@ def test_publisher_sink_load(
 
     get_mock.assert_called_once_with()
     sink.load.assert_called_once_with([extracted_organization_rki])
+
+
+def test_publisher_csv_load_sorts_by_publication_year(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test sorting of Publications by Year (newest to oldest)."""
+    older = BibliographicResourceForCsv(
+        contributingUnit=["FG 1"],
+        publicationYear="1999",
+        creator=["A"],
+        title=["Older"],
+        journal=[],
+        doi=None,
+        accessRestriction="open",
+        publisher=[],
+    )
+    newer = BibliographicResourceForCsv(
+        contributingUnit=["FG 1"],
+        publicationYear="2022",
+        creator=["B"],
+        title=["Newer"],
+        journal=[],
+        doi=None,
+        accessRestriction="open",
+        publisher=[],
+    )
+
+    sink = MagicMock()
+    sink.load.return_value = iter(())
+
+    monkeypatch.setattr(
+        "mex.extractors.publisher.main.S3CsvSink",
+        MagicMock(return_value=sink),
+    )
+
+    publisher_csv_load({"FG 1": [older, newer]})
+
+    sink.load.assert_called_once_with(
+        [newer, older],
+        unit_name="FG 1",
+    )

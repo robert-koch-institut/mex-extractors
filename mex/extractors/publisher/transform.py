@@ -177,6 +177,11 @@ def transform_merged_bibliographic_resources_for_csv(
     ) in merged_bibliographic_resources_by_unit.items():
         key_unit_short_name = get_resolved_names(key_unit_id, "shortName")
         for bibliographic_resource in merged_bibliographic_resources:
+            access_restriction = (
+                type(bibliographic_resource.accessRestriction)
+                .__concepts__[0]
+                .prefLabel.de
+            )
             contributing_unit = [
                 get_resolved_names(merged_unit_id, "shortName")
                 for merged_unit_id in bibliographic_resource.contributingUnit
@@ -185,28 +190,28 @@ def transform_merged_bibliographic_resources_for_csv(
                 get_resolved_names(merged_person_id, "fullName")
                 for merged_person_id in bibliographic_resource.creator
             ]
-            title = [title.value for title in bibliographic_resource.title]
             journal = [journal.value for journal in bibliographic_resource.journal]
-            access_restriction = (
-                type(bibliographic_resource.accessRestriction)
-                .__concepts__[0]
-                .prefLabel.de
-            )
             publisher = [
                 get_resolved_names(merged_organization_id, "officialName")
                 for merged_organization_id in bibliographic_resource.publisher
             ]
+            publication_year = (
+                str(bibliographic_resource.publicationYear)
+                if bibliographic_resource.publicationYear is not None
+                else None
+            )
+            title = [title.value for title in bibliographic_resource.title]
 
             bibliographic_resources_for_csv_by_unit[key_unit_short_name].append(
                 BibliographicResourceForCsv(
-                    contributingUnit=contributing_unit,
-                    publicationYear=str(bibliographic_resource.publicationYear),
-                    creator=creator,
-                    title=title,
-                    journal=journal,
-                    doi=bibliographic_resource.doi,
                     accessRestriction=access_restriction,
+                    contributingUnit=contributing_unit,
+                    creator=creator,
+                    doi=bibliographic_resource.doi,
+                    journal=journal,
+                    publicationYear=publication_year,
                     publisher=publisher,
+                    title=title,
                 )
             )
 
