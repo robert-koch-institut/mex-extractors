@@ -4,8 +4,8 @@ import pytest
 
 from mex.common.models import ActivityMapping
 from mex.common.types import TemporalEntity
+from mex.extractors.assets import load_yaml
 from mex.extractors.blueant.models.source import BlueAntSource
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.ldap.models import LDAPPerson
@@ -47,5 +47,5 @@ def blueant_source_without_leader() -> BlueAntSource:
 def blueant_activity(settings: ExtractorsSettings) -> ActivityMapping:
     """Return activity default values."""
     return ActivityMapping.model_validate(
-        load_yaml(settings.blueant.mapping_path / "activity_mock.yaml")
+        load_yaml(f"{settings.blueant.mapping_path}/activity_mock.yaml")
     )

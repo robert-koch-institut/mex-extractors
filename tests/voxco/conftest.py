@@ -10,7 +10,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.extractors.utils import load_yaml
+from mex.extractors.assets import load_yaml
 from mex.extractors.voxco.model import VoxcoVariable
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ def voxco_merged_organization_ids_by_query_string() -> dict[
 def voxco_resource_mappings(settings: ExtractorsSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
-            load_yaml(settings.voxco.mapping_path / "resource_mock.yaml")
+            load_yaml(f"{settings.voxco.mapping_path}/resource_mock.yaml")
         )
     ]
 

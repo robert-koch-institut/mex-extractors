@@ -11,6 +11,7 @@ from mex.common.models import (
     ResourceMapping,
     VariableGroupMapping,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.ifsg.extract import extract_sql_table
 from mex.extractors.ifsg.filter import (
     filter_empty_statement_area_group,
@@ -38,7 +39,6 @@ from mex.extractors.ifsg.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="ifsg")
@@ -122,28 +122,28 @@ def ifsg_meta_type() -> list[MetaType]:
 def ifsg_resource_disease_dict() -> dict[str, Any]:
     """Extract `resource_disease` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.ifsg.mapping_path / "resource_disease.yaml")
+    return load_yaml(f"{settings.ifsg.mapping_path}/resource_disease.yaml")
 
 
 @asset(group_name="ifsg")
 def ifsg_resource_parent_dict() -> dict[str, Any]:
     """Extract `resource_parent` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.ifsg.mapping_path / "resource_parent.yaml")
+    return load_yaml(f"{settings.ifsg.mapping_path}/resource_parent.yaml")
 
 
 @asset(group_name="ifsg")
 def ifsg_resource_state_dict() -> dict[str, Any]:
     """Extract `resource_state` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.ifsg.mapping_path / "resource_state.yaml")
+    return load_yaml(f"{settings.ifsg.mapping_path}/resource_state.yaml")
 
 
 @asset(group_name="ifsg")
 def ifsg_variable_group() -> dict[str, Any]:
     """Extract `ifsg_variable_group` default values."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.ifsg.mapping_path / "variable-group.yaml")
+    return load_yaml(f"{settings.ifsg.mapping_path}/variable-group.yaml")
 
 
 @asset(group_name="ifsg")

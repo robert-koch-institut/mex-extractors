@@ -1,8 +1,10 @@
+from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from pandas import DataFrame, ExcelFile
 
+from mex.extractors.assets.helpers import glob_files, read_bytes
 from mex.extractors.odk.model import ODKData
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.wikidata.helpers import (
@@ -26,8 +28,9 @@ def extract_odk_raw_data() -> list[ODKData]:
     """
     settings = ExtractorsSettings.get()
     raw_data = []
-    for file in Path(settings.odk.raw_data_path).glob("*.xlsx"):
-        xls = ExcelFile(file)
+    for file_path in glob_files(settings.odk.raw_data_path, "*.xlsx"):
+        raw_bytes = read_bytes(file_path)
+        xls = ExcelFile(BytesIO(raw_bytes))
 
         choices_sheet = xls.parse(
             sheet_name="choices", na_values=["", " "], keep_default_na=False
@@ -43,7 +46,7 @@ def extract_odk_raw_data() -> list[ODKData]:
         name_survey = survey_sheet["name"].to_list()
         raw_data.append(
             ODKData(
-                file_name=file.name,
+                file_name=Path(file_path).name,
                 label_survey=label_survey,
                 label_choices=label_choices,
                 list_name_choices=list_name_choices,

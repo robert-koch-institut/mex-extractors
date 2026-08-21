@@ -9,6 +9,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.ff_projects.extract import (
     extract_ff_project_author_merged_ids,
     extract_ff_projects_organizations,
@@ -25,7 +26,6 @@ from mex.extractors.ff_projects.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="ff_projects")
@@ -64,7 +64,7 @@ def ff_projects_activities(
     """Transform FF Projects to extracted activities and load them to the sinks."""
     settings = ExtractorsSettings.get()
     ff_projects_activity = ActivityMapping.model_validate(
-        load_yaml(settings.ff_projects.mapping_path / "activity.yaml"),
+        load_yaml(f"{settings.ff_projects.mapping_path}/activity.yaml"),
     )
     extracted_activities = [
         transform_ff_projects_source_to_extracted_activity(

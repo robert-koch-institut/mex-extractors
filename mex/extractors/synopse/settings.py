@@ -1,7 +1,6 @@
 from pydantic import Field, SecretStr
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class SynopseSettings(BaseModel):
@@ -18,32 +17,32 @@ class SynopseSettings(BaseModel):
         SecretStr("password"),
         description="Report Server password",
     )
-    variablenuebersicht_path: AssetsPath = Field(
-        AssetsPath("raw-data/synopse/variablenuebersicht.csv"),
+    variablenuebersicht_path: str = Field(
+        "raw-data/synopse/variablenuebersicht.csv",
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
-    projekt_und_studienverwaltung_path: AssetsPath = Field(
-        AssetsPath("raw-data/synopse/projekt_und_studienverwaltung.csv"),
+    projekt_und_studienverwaltung_path: str = Field(
+        "raw-data/synopse/projekt_und_studienverwaltung.csv",
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
-    metadaten_zu_datensaetzen_path: AssetsPath = Field(
-        AssetsPath("raw-data/synopse/metadaten_zu_datensaetzen.csv"),
+    metadaten_zu_datensaetzen_path: str = Field(
+        "raw-data/synopse/metadaten_zu_datensaetzen.csv",
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
-    datensatzuebersicht_path: AssetsPath = Field(
-        AssetsPath("raw-data/synopse/datensatzuebersicht.csv"),
+    datensatzuebersicht_path: str = Field(
+        "raw-data/synopse/datensatzuebersicht.csv",
         description=(
             "Path of the export in CSV format, absolute or relative to `asset_dir`"
         ),
     )
-    mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/synopse"),
+    mapping_path: str = Field(
+        "mappings/synopse",
         description=(
             "Path to the directory with the synopse mapping files"
             "values, absolute path or relative to `assets_dir`."

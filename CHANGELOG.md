@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add and wrap up extraction of new non-required fields
+- assets helper functions
 - extrators settings has configuration option for publishing sink: extactor_settings.publisher.sink
 - allowed values for publishing sink: ndjson or S3 (default: S3)
 

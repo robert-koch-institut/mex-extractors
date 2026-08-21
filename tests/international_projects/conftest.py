@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from mex.common.models import ActivityMapping
-from mex.extractors.utils import load_yaml
+from mex.extractors.assets import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -14,5 +14,5 @@ def international_projects_mapping_activity(
     settings: ExtractorsSettings,
 ) -> ActivityMapping:
     return ActivityMapping.model_validate(
-        load_yaml(settings.international_projects.mapping_path / "activity_mock.yaml")
+        load_yaml(f"{settings.international_projects.mapping_path}/activity_mock.yaml")
     )

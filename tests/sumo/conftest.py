@@ -21,13 +21,13 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.sumo.models.cc1_data_model_nokeda import Cc1DataModelNoKeda
 from mex.extractors.sumo.models.cc1_data_valuesets import Cc1DataValuesets
 from mex.extractors.sumo.models.cc2_aux_mapping import Cc2AuxMapping
 from mex.extractors.sumo.models.cc2_aux_model import Cc2AuxModel
 from mex.extractors.sumo.models.cc2_aux_valuesets import Cc2AuxValuesets
 from mex.extractors.sumo.models.cc2_feat_projection import Cc2FeatProjection
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -43,7 +43,7 @@ def contact_merged_ids_by_emails() -> dict[str, MergedContactPointIdentifier]:
 def sumo_resources_feat(settings: ExtractorsSettings) -> ResourceMapping:
     """Return feat SumoResource."""
     return ResourceMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "resource_feat_mock.yaml")
+        load_yaml(f"{settings.sumo.mapping_path}/resource_feat_mock.yaml")
     )
 
 
@@ -51,7 +51,7 @@ def sumo_resources_feat(settings: ExtractorsSettings) -> ResourceMapping:
 def sumo_resources_nokeda(settings: ExtractorsSettings) -> ResourceMapping:
     """Return feat SumoResource."""
     return ResourceMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "resource_nokeda_mock.yaml")
+        load_yaml(f"{settings.sumo.mapping_path}/resource_nokeda_mock.yaml")
     )
 
 
@@ -59,7 +59,7 @@ def sumo_resources_nokeda(settings: ExtractorsSettings) -> ResourceMapping:
 def sumo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
     """Return Sumo Access Platform."""
     return AccessPlatformMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "access-platform_mock.yaml")
+        load_yaml(f"{settings.sumo.mapping_path}/access-platform_mock.yaml")
     )
 
 
@@ -81,7 +81,7 @@ def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
 def sumo_activity(settings: ExtractorsSettings) -> ActivityMapping:
     """Return Sumo Activity."""
     return ActivityMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "activity_mock.yaml")
+        load_yaml(f"{settings.sumo.mapping_path}/activity_mock.yaml")
     )
 
 

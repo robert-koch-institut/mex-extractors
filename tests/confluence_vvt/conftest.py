@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, cast
 import pytest
 
 from mex.common.models import ActivityMapping
-from mex.extractors.utils import load_yaml
+from mex.extractors.assets import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -33,5 +33,5 @@ def detail_page_data_json(detail_page_data_html: str) -> dict[str, Any]:
 def confluence_vvt_activity_mapping(settings: ExtractorsSettings) -> ActivityMapping:
     """Return confluence-vvt activity mapping from assets."""
     return ActivityMapping.model_validate(
-        load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
+        load_yaml(f"{settings.confluence_vvt.template_v1_mapping_path}/activity.yaml")
     )

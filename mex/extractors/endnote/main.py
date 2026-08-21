@@ -8,6 +8,7 @@ from mex.common.models import (
     ExtractedConsent,
     ExtractedPerson,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.endnote.extract import extract_endnote_records
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.endnote.transform import (
@@ -18,7 +19,6 @@ from mex.extractors.endnote.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="endnote")
@@ -46,7 +46,7 @@ def endnote_extracted_consents(
     """Extract records from endnote."""
     settings = ExtractorsSettings.get()
     endnote_consent_mapping = ConsentMapping.model_validate(
-        load_yaml(settings.endnote.mapping_path / "consent.yaml")
+        load_yaml(f"{settings.endnote.mapping_path}/consent.yaml")
     )
     endnote_extracted_consents = extract_endnote_consents(
         list(endnote_extracted_persons_by_name_str.values()),
@@ -66,7 +66,7 @@ def endnote_extracted_bibliographic_resources(
     settings = ExtractorsSettings.get()
     endnote_bibliographic_resource_mapping = (
         BibliographicResourceMapping.model_validate(
-            load_yaml(settings.endnote.mapping_path / "bibliographic-resource.yaml")
+            load_yaml(f"{settings.endnote.mapping_path}/bibliographic-resource.yaml")
         )
     )
     extracted_bibliographic_resource = extract_endnote_bibliographic_resource(

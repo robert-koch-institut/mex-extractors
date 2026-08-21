@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
+import yaml
 from dagster import (
     AssetCheckExecutionContext,
     AssetKey,
@@ -10,9 +11,9 @@ from dagster import (
 )
 
 from mex.common.logging import logger
+from mex.extractors.assets.helpers import read_bytes
 from mex.extractors.pipeline.checks.models.check import AssetCheck
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -37,11 +38,9 @@ LATEST_NUM_ITEMS_ERROR = (
 def load_asset_check_from_settings(extractor: str, entity_type: str) -> AssetCheck:
     """Load AssetCheck model from YAML for a given extractor and entity type."""
     settings = ExtractorsSettings.get()
-    path = settings.all_checks_path / extractor / f"{entity_type}.yaml"
-    if not path.exists():
-        msg = "No asset check YAML found at %s"
-        raise FileNotFoundError(msg, path)
-    return AssetCheck.model_validate(load_yaml(path))
+    path = f"{settings.all_checks_path}/{extractor}/{entity_type}.yaml"
+    raw_bytes = read_bytes(path)
+    return AssetCheck.model_validate(yaml.safe_load(raw_bytes.decode("utf-8")))
 
 
 def get_rule(
