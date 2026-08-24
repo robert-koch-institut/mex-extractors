@@ -69,24 +69,9 @@ def filter_persons_with_approving_unique_consent(
     return collected_persons_with_positive_consent
 
 
-def cluster_and_filter_bibliographic_resources_by_unit(
-    merged_bibliographic_resources: list[MergedBibliographicResource],
-) -> dict[MergedOrganizationalUnitIdentifier, list[MergedBibliographicResource]]:
-    """Sort Bibliographic Resources by unit and filter out 'forbidden' units.
-
-    This function gets all the unpublishable units from the __all__/activity_filter.
-    Then it collects all units, which are departments (i.e. direct child units of PRAES)
-    Then it sorts all Bibliographic Resources into a dict by department if the
-    department or its child units contributed and if that contributing unit is not an
-    unpublishable unit.
-
-    Args:
-        merged_bibliographic_resources: Merged Bibliographic Resources as list
-
-    Returns:
-        dictionary of Bibliographic Resources by allowed units
-    """
-    settings = ExtractorsSettings.get()
+def _get_forbidden_units(
+    settings: ExtractorsSettings,
+) -> set[MergedOrganizationalUnitIdentifier]:
     all_activity_filter_mapping = ActivityFilter.model_validate(
         load_yaml(settings.publisher.mapping_path / "__all__/activity_filter.yaml")
     )
@@ -105,6 +90,60 @@ def cluster_and_filter_bibliographic_resources_by_unit(
     else:
         msg = "No units set for __all__/activity_filter.yaml"
         raise MExError(msg)
+
+    return forbidden_unit_ids
+
+
+def _cluster_publications_by_department(
+    department_unit_id: MergedOrganizationalUnitIdentifier,
+    merged_organisational_units: list[MergedOrganizationalUnit],
+    forbidden_unit_ids: set[MergedOrganizationalUnitIdentifier],
+    merged_bibliographic_resources: list[MergedBibliographicResource],
+) -> list[MergedBibliographicResource]:
+    descendant_unit_ids = set(
+        find_descendants(
+            merged_organisational_units,
+            str(department_unit_id),
+        )
+    )
+    descendant_unit_ids.add(str(department_unit_id))
+
+    return [
+        publication
+        for publication in merged_bibliographic_resources
+        if (
+            any(
+                str(unit_id) in descendant_unit_ids
+                for unit_id in publication.contributingUnit
+            )
+            and not any(
+                unit_id in forbidden_unit_ids
+                for unit_id in publication.contributingUnit
+            )
+        )
+    ]
+
+
+def cluster_and_filter_bibliographic_resources_by_unit(
+    merged_bibliographic_resources: list[MergedBibliographicResource],
+) -> dict[MergedOrganizationalUnitIdentifier, list[MergedBibliographicResource]]:
+    """Sort Bibliographic Resources by unit and filter out 'forbidden' units.
+
+    This function gets all the unpublishable units from the __all__/activity_filter.
+    Then it collects all units, which are departments (i.e. direct child units of PRAES)
+    Then it sorts all Bibliographic Resources into a dict by department if the
+    department or its child units contributed and if that contributing unit is not an
+    unpublishable unit.
+
+    Args:
+        merged_bibliographic_resources: Merged Bibliographic Resources as list
+
+    Returns:
+        dictionary of Bibliographic Resources by allowed units
+    """
+    settings = ExtractorsSettings.get()
+
+    forbidden_unit_ids = _get_forbidden_units(settings)
 
     merged_organisational_units = cast(
         "list[MergedOrganizationalUnit]",
@@ -129,29 +168,13 @@ def cluster_and_filter_bibliographic_resources_by_unit(
 
         department_unit_id = department_unit_ids[0]
 
-        if department_unit_id in forbidden_unit_ids:
-            continue
-
-        descendant_unit_ids = set(
-            find_descendants(
+        bibliographic_resource_by_department[department_unit_id] = (
+            _cluster_publications_by_department(
+                department_unit_id,
                 merged_organisational_units,
-                str(department_unit_id),
+                forbidden_unit_ids,
+                merged_bibliographic_resources,
             )
         )
-        descendant_unit_ids.add(str(department_unit_id))
-        bibliographic_resource_by_department[department_unit_id] = [
-            publication
-            for publication in merged_bibliographic_resources
-            if (
-                any(
-                    str(unit_id) in descendant_unit_ids
-                    for unit_id in publication.contributingUnit
-                )
-                and not any(
-                    unit_id in forbidden_unit_ids
-                    for unit_id in publication.contributingUnit
-                )
-            )
-        ]
 
     return bibliographic_resource_by_department
