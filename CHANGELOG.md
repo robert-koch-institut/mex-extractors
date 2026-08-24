@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - publisher is not hardcoded anymore to s3
 - added slapd healthcheck in compose file
 - update to mex-model 5.1
+- set exact version for neo4j:2026.07.1
 
 ### Changes
 
