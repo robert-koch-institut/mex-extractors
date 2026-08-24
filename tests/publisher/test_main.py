@@ -55,6 +55,7 @@ def test_publisher_items_without_actors(mocked_backend: MagicMock) -> None:
                 "MergedDistribution",
                 "MergedOrganization",
                 "MergedResource",
+                "MergedResourceSeries",
                 "MergedVariable",
                 "MergedVariableGroup",
             ],

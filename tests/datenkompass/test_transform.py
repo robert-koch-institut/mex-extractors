@@ -144,7 +144,7 @@ def test_get_german_vocabulary() -> None:
         [
             Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"],
             Frequency["IRREGULAR"],
-            License["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"],
+            License["CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL"],
         ]
     )
     assert result == [
