@@ -113,6 +113,7 @@ markers = [
     "integration: mark a test as integration test",
     "requires_rki_infrastructure: mark a test to only run in gh cli"
 ]
+norecursedirs = ["tests/datenkompass"]
 
 [tool.ruff]
 fix = true
