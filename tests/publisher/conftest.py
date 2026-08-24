@@ -226,9 +226,4 @@ def mocked_backend_publisher(monkeypatch: MonkeyPatch) -> MagicMock:
         "fetch_all_publishable_merged_items",
         backend.fetch_all_publishable_merged_items,
     )
-    monkeypatch.setattr(
-        BackendApiConnector,
-        "fetch_publishable_merged_items",
-        backend.fetch_publishable_merged_items,
-    )
     return backend

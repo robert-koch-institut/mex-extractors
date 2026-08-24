@@ -44,13 +44,9 @@ def test_get_publishable_merged_item_by_identifier(
     result = get_publishable_merged_item_by_identifier(str(expected.identifier))
 
     assert result == expected
-    backend.fetch_publishable_merged_items.assert_called_once()
-    assert backend.fetch_publishable_merged_items.call_args.kwargs["identifier"] == str(
-        expected.identifier
-    )
-    assert (
-        backend.fetch_publishable_merged_items.call_args.kwargs["publishing_target"]
-        == "invenio"
+    backend.fetch_publishable_merged_items.assert_called_once_with(
+        publishing_target="invenio",
+        identifier=str(expected.identifier),
     )
 
 

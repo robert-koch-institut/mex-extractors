@@ -176,7 +176,7 @@ class S3CsvSink(S3BaseSink):
         """Write the incoming items as an CSV directly to S3.
 
         Args:
-            items_sorted_by_year: Iterable of any kind of items
+            items_sorted_by_year: listof items sorted by publication year
             unit_name: unit name for csv naming
 
         Returns:
