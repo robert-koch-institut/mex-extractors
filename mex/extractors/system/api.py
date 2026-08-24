@@ -1,8 +1,6 @@
 from importlib.metadata import version
 from typing import TYPE_CHECKING, Any
 
-from dagster import DagsterInstance
-from dagster import __version__ as dagster_version
 from dagster_postgres.run_storage import PostgresRunStorage
 from dagster_postgres.utils import DagsterPostgresException
 from dagster_webserver.cli import main as dagster_webserver_main
@@ -16,6 +14,7 @@ from mex.common.logging import logger
 from mex.common.models import VersionStatus
 
 if TYPE_CHECKING:
+    from dagster import DagsterInstance
     from starlette.requests import Request
     from starlette.routing import BaseRoute
 
@@ -29,7 +28,7 @@ def get_postgres_status(instance: DagsterInstance) -> VersionStatus:
     """Get the status and version of the postgres database."""
     run_storage = instance.run_storage
     if not isinstance(run_storage, PostgresRunStorage):
-        return VersionStatus(status="local", version="unknown")
+        return VersionStatus(status="error", version="unknown")
     try:
         # deliberately bypassing `run_storage.connect()`, which wraps every connection
         # in `retry_pg_connection_fn` and the health check would take over 10s.
@@ -37,7 +36,7 @@ def get_postgres_status(instance: DagsterInstance) -> VersionStatus:
             server_version = connection.execute(text("SHOW server_version")).scalar()
     except DagsterPostgresException, SQLAlchemyError:
         logger.exception("error checking the postgres database status")
-        return VersionStatus(status="error", version="unknown")
+        return VersionStatus(status="offline", version="unknown")
     # strip the postgres build details from the version, e.g. "16.15 (Debian ...)"
     return VersionStatus(status="ok", version=str(server_version).split(" ")[0])
 
@@ -56,15 +55,16 @@ def get_daemon_health(instance: DagsterInstance) -> dict[str, bool] | None:
 
 def get_daemon_status(instance: DagsterInstance) -> VersionStatus:
     """Get the status and version of the dagster daemons."""
-    if get_postgres_status(instance).status == "error":
-        # exit early if we can't even access postgres
+    if get_postgres_status(instance).status != "ok":
+        # exit early if we can't even access postgres, because reading heartbeats
+        # retries the connection and would take over 10s to report an outage
         return VersionStatus(status="error", version="unknown")
     if not (daemons := get_daemon_health(instance)):
         return VersionStatus(status="error", version="unknown")
     if unhealthy := sorted(name for name, up in daemons.items() if not up):
         logger.error("unhealthy daemons: %s", ", ".join(unhealthy))
-        return VersionStatus(status="error", version="unknown")
-    return VersionStatus(status="ok", version=dagster_version)
+        return VersionStatus(status="offline", version="unknown")
+    return VersionStatus(status="ok", version=version("mex-extractors"))
 
 
 def build_system_routes(instance: DagsterInstance) -> list[Route]:

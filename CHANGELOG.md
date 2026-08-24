@@ -52,13 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- stop using `Vocabulary.__concepts__` in datencompass for fw-compat with static enums
+- stop using `Vocabulary.__concepts__` in datenkompass for fw-compat with static enums
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
 - tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
 
 ### Fixed
 
-- fix igs isPartof
+- fix igs isPartOf
 - ruff and mypy hints
 
 ## [1.18.0] - 2026-08-03
