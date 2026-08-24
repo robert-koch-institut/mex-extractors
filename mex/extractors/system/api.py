@@ -98,7 +98,7 @@ def patch_dagster_webserver() -> None:
     DagsterWebserver.build_routes = build_routes  # type: ignore[method-assign]
 
 
-def run() -> None:
+def run_webserver() -> None:
     """Run the dagster webserver with the mex system routes."""
     patch_dagster_webserver()
     dagster_webserver_main()  # type: ignore[no-untyped-call]

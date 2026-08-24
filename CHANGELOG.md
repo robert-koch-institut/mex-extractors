@@ -9,23 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add and wrap up extraction of new non-required fields
+- extrators settings has configuration option for publishing sink: extractor_settings.publisher.sink
+- allowed values for publishing sink: ndjson or S3 (default: S3)
 - mex-webserver entrypoint, serving /_system/check, /_system/postgres and
   /_system/daemon health endpoints on the dagster webserver
 - added dagster-daemon healthcheck in compose file
-- add and wrap up extraction of new non-required fields
-- extrators settings has configuration option for publishing sink: extactor_settings.publisher.sink
-- allowed values for publishing sink: ndjson or S3 (default: S3)
-
 
 ### Changes
 
 - use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
-
 - added slapd healthcheck in compose file
-
-### Changes
-
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;

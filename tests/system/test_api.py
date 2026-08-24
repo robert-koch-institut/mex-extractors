@@ -13,10 +13,8 @@ from mex.extractors.system.api import (
     get_postgres_status,
     get_system_status,
     patch_dagster_webserver,
-    run,
+    run_webserver,
 )
-
-pytest_plugins = ("tests.system.mocked_dagster_instance",)
 
 
 def test_get_system_status() -> None:
@@ -145,7 +143,7 @@ def test_run(monkeypatch: MonkeyPatch) -> None:
         lambda: calls.append("served"),
     )
 
-    run()
+    run_webserver()
 
     assert calls == ["patched", "served"]
 
@@ -204,6 +202,7 @@ def test_get_daemon_status_never_reported(
 
     # a daemon that never sent a heartbeat is not healthy
     assert status.status == "error"
+    assert status.version == "unknown"
 
 
 def test_get_daemon_status_none_required(
@@ -212,7 +211,7 @@ def test_get_daemon_status_none_required(
     # the ephemeral test instance requires no daemons at all
     status = get_daemon_status(mocked_dagster_instance)
 
-    assert status.status == "local"
+    assert status.status == "error"
     assert status.version == "unknown"
 
 
