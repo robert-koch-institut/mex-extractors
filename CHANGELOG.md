@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - allowed values for publishing sink: ndjson or S3 (default: S3)
 - mex-webserver entrypoint, serving /_system/check, /_system/postgres and
   /_system/daemon health endpoints on the dagster webserver
-- added dagster-daemon healthcheck in compose file
+- added postgres and dagster-daemon healthchecks in compose file
 
 ### Changes
 

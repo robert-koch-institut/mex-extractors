@@ -5,6 +5,12 @@ services:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
       POSTGRES_DB: dagster
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-h", "localhost", "-U", "dagster", "-d", "dagster" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - pgdata:/var/lib/postgresql/data
   dagster-daemon:
@@ -12,7 +18,8 @@ services:
       context: .
     entrypoint: [ "dagster-daemon", "run", "-w", "workspace.yaml" ]
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "dagster-daemon", "liveness-check" ]
       interval: 30s
@@ -33,7 +40,8 @@ services:
     # pick up this console script - only this service serves /_system/*.
     entrypoint: [ "mex-webserver", "--host", "0.0.0.0", "-w", "workspace.yaml" ]
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/_system/check', timeout=3).raise_for_status()" ]
       interval: 30s
