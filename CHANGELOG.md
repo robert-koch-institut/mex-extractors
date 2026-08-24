@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
-
 - added slapd healthcheck in compose file
+- update to mex-model 5.1
 
 ### Changes
 
