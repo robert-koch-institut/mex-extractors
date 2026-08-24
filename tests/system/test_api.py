@@ -11,7 +11,6 @@ from mex.extractors.system.api import (
     build_system_routes,
     get_daemon_status,
     get_postgres_status,
-    get_prometheus_metrics,
     get_system_status,
     patch_dagster_webserver,
     run,
@@ -37,30 +36,6 @@ def test_get_postgres_status_local(
     assert status.version == "unknown"
 
 
-def test_get_prometheus_metrics(
-    mocked_dagster_instance: dagster.DagsterInstance,
-) -> None:
-    metrics = get_prometheus_metrics(mocked_dagster_instance)
-
-    assert "# TYPE dagster_storage_up gauge\ndagster_storage_up 1" in metrics
-    assert "# TYPE dagster_runs_success gauge\ndagster_runs_success 0" in metrics
-
-
-def test_get_prometheus_metrics_storage_down(
-    mocked_dagster_instance: dagster.DagsterInstance, monkeypatch: MonkeyPatch
-) -> None:
-    monkeypatch.setattr(
-        "mex.extractors.system.api.get_postgres_status",
-        lambda _instance: VersionStatus(status="error", version="unknown"),
-    )
-
-    metrics = get_prometheus_metrics(mocked_dagster_instance)
-
-    # the run counts are skipped, so a scrape during an outage stays fast
-    assert "dagster_storage_up 0" in metrics
-    assert "dagster_runs_success" not in metrics
-
-
 def test_build_system_routes(mocked_dagster_instance: dagster.DagsterInstance) -> None:
     routes = build_system_routes(mocked_dagster_instance)
 
@@ -68,7 +43,6 @@ def test_build_system_routes(mocked_dagster_instance: dagster.DagsterInstance) -
         "/_system/check",
         "/_system/postgres",
         "/_system/daemon",
-        "/_system/metrics",
     ]
 
 
@@ -96,7 +70,6 @@ def test_patch_dagster_webserver(
         "/_system/check",
         "/_system/postgres",
         "/_system/daemon",
-        "/_system/metrics",
         "original-route",
     ]
 
@@ -175,22 +148,6 @@ def test_run(monkeypatch: MonkeyPatch) -> None:
     run()
 
     assert calls == ["patched", "served"]
-
-
-def test_get_prometheus_metrics_run_counts_error(
-    mocked_dagster_instance: dagster.DagsterInstance, monkeypatch: MonkeyPatch
-) -> None:
-    def raise_error(*_: object, **__: object) -> None:
-        msg = "run storage went away mid-scrape"
-        raise SQLAlchemyError(msg)
-
-    monkeypatch.setattr(mocked_dagster_instance, "get_runs_count", raise_error)
-
-    metrics = get_prometheus_metrics(mocked_dagster_instance)
-
-    # the storage probe still succeeded, so the scrape reports up but without counts
-    assert "dagster_storage_up 1" in metrics
-    assert "dagster_runs_success" not in metrics
 
 
 def _mock_daemon_statuses(**healthy_by_type: bool | None) -> MagicMock:
@@ -273,19 +230,17 @@ def test_get_daemon_status_storage_down(
     assert status.status == "error"
 
 
-def test_get_prometheus_metrics_daemon_gauges(
+def test_get_daemon_status_heartbeats_unreadable(
     mocked_dagster_instance: dagster.DagsterInstance, monkeypatch: MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(
-        mocked_dagster_instance,
-        "get_daemon_statuses",
-        lambda: _mock_daemon_statuses(SENSOR=True, SCHEDULER=False),
-    )
+    def raise_error() -> None:
+        msg = "run storage went away mid-check"
+        raise SQLAlchemyError(msg)
 
-    metrics = get_prometheus_metrics(mocked_dagster_instance)
+    monkeypatch.setattr(mocked_dagster_instance, "get_daemon_statuses", raise_error)
 
-    # one shared TYPE line, one labelled sample per daemon
-    assert "# TYPE dagster_daemon_up gauge" in metrics
-    assert 'dagster_daemon_up{daemon="SENSOR"} 1' in metrics
-    assert 'dagster_daemon_up{daemon="SCHEDULER"} 0' in metrics
-    assert metrics.count("# TYPE dagster_daemon_up") == 1
+    status = get_daemon_status(mocked_dagster_instance)
+
+    # unreadable heartbeats are an error, not an instance without required daemons
+    assert status.status == "error"
+    assert status.version == "unknown"
