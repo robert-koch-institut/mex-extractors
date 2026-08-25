@@ -549,13 +549,13 @@ def test_check_not_exactly_x_items_generalized(
         ),
         pytest.param(
             {"id-a": 15, "id-b": 1},
-            1,
+            16,
             True,
             id="passes_at_threshold",
         ),
         pytest.param(
             {"id-a": 6, "id-b": 0},
-            1,
+            10,
             False,
             id="fails_below_threshold",
         ),

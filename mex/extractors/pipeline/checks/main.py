@@ -194,13 +194,8 @@ def check_static_rule(
             return True
         return True  # TODO @MX-2298: revert to returning the result of the comparison
     if rule_name == "less_than_x_outbound":
-        # fail if any of the outbound connection counts is smaller than threshold
-        if not current_number_of_items and threshold > 0:
-            return False
-        return all(
-            count >= threshold
-            for count in current_number_of_items.values()  # type: ignore [union-attr]
-        )
+        # fail if the total number of outbound connections is smaller than threshold
+        return sum(current_number_of_items.values()) >= threshold  # type: ignore [union-attr]
     return True
 
 
