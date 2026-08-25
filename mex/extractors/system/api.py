@@ -88,13 +88,17 @@ def build_system_routes(instance: DagsterInstance) -> list[Route]:
 
 def patch_dagster_webserver() -> None:
     """Patch the dagster webserver to also serve the mex system routes."""
+    if getattr(DagsterWebserver.build_routes, "_mex_system_routes_patched", False):
+        return
+
     original_build_routes = DagsterWebserver.build_routes
 
     def build_routes(self: DagsterWebserver[Any, Any]) -> list[BaseRoute]:
-        instance = self._process_context.instance
+        instance = self._process_context.instance  # noqa: SLF001
         original_routes = original_build_routes(self)  # type: ignore[no-untyped-call]
         return [*build_system_routes(instance), *original_routes]
 
+    build_routes._mex_system_routes_patched = True  # type: ignore[attr-defined]
     DagsterWebserver.build_routes = build_routes  # type: ignore[method-assign]
 
 
