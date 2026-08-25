@@ -7,7 +7,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    AnonymizationPseudonymization,
     Identifier,
     Link,
     MergedOrganizationIdentifier,
@@ -51,6 +50,11 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in synopse_extracted_activities
     }
+    anonymization_pseudonymization_by_field = {
+        rule.forValues[0]: rule.setValues
+        for rule in resource_mapping.anonymizationPseudonymization[0].mappingRules
+        if rule.forValues and rule.setValues
+    }
     access_restriction_by_zugriffsbeschraenkung = {
         rule.forValues[0]: rule.setValues
         for rule in resource_mapping.accessRestriction[0].mappingRules
@@ -61,7 +65,9 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
     ):
         anonymization_pseudonymization = (
-            AnonymizationPseudonymization.find(resource.anonymisiert_pseudonymisiert)
+            anonymization_pseudonymization_by_field[
+                resource.anonymisiert_pseudonymisiert
+            ]
             if resource.anonymisiert_pseudonymisiert
             else None
         )
