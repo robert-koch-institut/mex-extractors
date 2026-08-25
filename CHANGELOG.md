@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add and wrap up extraction of new non-required fields
-- extrators settings has configuration option for publishing sink: extractor_settings.publisher.sink
+- extractors settings has configuration option for publishing sink: extractor_settings.publisher.sink
 - allowed values for publishing sink: ndjson or S3 (default: S3)
 - mex-webserver entrypoint, serving /_system/check, /_system/postgres and
   /_system/daemon health endpoints on the dagster webserver
