@@ -42,7 +42,7 @@ def mocked_postgres_ok(monkeypatch: MonkeyPatch) -> None:
     )
 
 
-def _mock_daemon_statuses(**healthy_by_type: bool | None) -> MagicMock:
+def _mock_daemon_statuses(**healthy_by_type: bool | None) -> dict[str, MagicMock]:
     """Build a mocked mapping of daemon type to daemon status."""
     statuses = {}
     for daemon_type, healthy in healthy_by_type.items():
