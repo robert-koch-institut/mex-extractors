@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- deprecated find method for vocabulary
+
 ### Fixed
 
 - align linting and testing workflows and Dockerfile with cookiecutter
