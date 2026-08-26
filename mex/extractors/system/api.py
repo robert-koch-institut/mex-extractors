@@ -94,11 +94,11 @@ def patch_dagster_webserver() -> None:
     original_build_routes = DagsterWebserver.build_routes
 
     def build_routes(self: DagsterWebserver[Any, Any]) -> list[BaseRoute]:
-        instance = self._process_context.instance  # noqa: SLF001
+        instance = self._process_context.instance
         original_routes = original_build_routes(self)  # type: ignore[no-untyped-call]
         return [*build_system_routes(instance), *original_routes]
 
-    build_routes._mex_system_routes_patched = True  # type: ignore[attr-defined]
+    build_routes._mex_system_routes_patched = True  # type: ignore[attr-defined]  # noqa: SLF001
     DagsterWebserver.build_routes = build_routes  # type: ignore[method-assign]
 
 
