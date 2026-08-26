@@ -49,7 +49,7 @@ def _mock_daemon_statuses(**healthy_by_type: bool | None) -> dict[str, MagicMock
         status = MagicMock()
         status.healthy = healthy
         statuses[daemon_type] = status
-    return statuses  # type: ignore[return-value]
+    return statuses
 
 
 def test_get_system_status() -> None:
