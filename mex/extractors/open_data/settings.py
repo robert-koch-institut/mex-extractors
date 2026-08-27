@@ -14,7 +14,7 @@ class OpenDataSettings(BaseModel):
         "mappings/open-data",
         description=(
             "Path to the directory with the open data mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )
     zip_path_de: str = Field(

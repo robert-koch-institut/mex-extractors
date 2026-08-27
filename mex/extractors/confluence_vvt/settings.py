@@ -22,7 +22,7 @@ class ConfluenceVvtSettings(BaseModel):
         "mappings/confluence-vvt_template_v1",
         description=(
             "Path to the directory with the confluence-vvt mapping files containing the"
-            " default values, absolute path or relative to `assets_dir`."
+            " default values, relative to `assets_dir`."
         ),
     )
     skip_pages: list[str] = Field(

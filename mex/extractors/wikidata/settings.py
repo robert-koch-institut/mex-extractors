@@ -10,6 +10,6 @@ class WikidataSettings(BaseModel):
         "mappings/wikidata",
         description=(
             "Path to the directory with the wikidata mapping files"
-            "values, absolute path or relative to `assets_dir`."
+            "values, relative to `assets_dir`."
         ),
     )

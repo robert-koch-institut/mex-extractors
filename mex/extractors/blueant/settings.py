@@ -22,6 +22,6 @@ class BlueAntSettings(BaseModel):
         "mappings/blueant",
         description=(
             "Path to the directory with the blueant mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )

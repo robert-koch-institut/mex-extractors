@@ -61,7 +61,7 @@ class ExtractorsSettings(BaseSettings):
         "mappings/__all__",
         description=(
             "Path to the directory with the biospecimen mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )
     all_checks_path: str = Field(
@@ -117,7 +117,7 @@ class ExtractorsSettings(BaseSettings):
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
             "certificate, or a path to a CA bundle to use. If a path is given, it can "
-            "be either absolute or relative to the `assets_dir`. Defaults to True."
+            "be either relative to the `assets_dir`. Defaults to True."
         ),
     )
     biospecimen: BiospecimenSettings = BiospecimenSettings()

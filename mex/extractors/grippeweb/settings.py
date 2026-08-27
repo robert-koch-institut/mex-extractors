@@ -10,7 +10,7 @@ class GrippewebSettings(BaseModel):
         "mappings/grippeweb",
         description=(
             "Path to the directory with the Grippeweb mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )
     mssql_connection_dsn: str = Field(

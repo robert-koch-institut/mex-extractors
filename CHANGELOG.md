@@ -19,11 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
-
 - added slapd healthcheck in compose file
-
-### Changes
-
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
@@ -32,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
   against the real RKI SQL server
 - move backend healthcheck into compose file
+- BREAKING: absolute path to assets no longer allowed as all files previously defined
+  through AssetsPaths are now loaded via the AssetsConnector
 
 ### Deprecated
 

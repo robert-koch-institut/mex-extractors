@@ -10,13 +10,13 @@ class SumoSettings(BaseModel):
         "raw-data/sumo",
         description=(
             "Path to the directory with the sumo excel files, "
-            "absolute path or relative to `assets_dir`."
+            " relative to `assets_dir`."
         ),
     )
     mapping_path: str = Field(
         "mappings/sumo",
         description=(
             "Path to the directory with the sumo mapping files containing the default "
-            "values, absolute path or relative to `assets_dir`."
+            "values, relative to `assets_dir`."
         ),
     )

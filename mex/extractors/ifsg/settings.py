@@ -10,7 +10,7 @@ class IFSGSettings(BaseModel):
         "mappings/ifsg",
         description=(
             "Path to the directory with the ifsg mapping files containing the default "
-            "values, absolute path or relative to `assets_dir`."
+            "values, relative to `assets_dir`."
         ),
     )
     mssql_connection_dsn: str = Field(

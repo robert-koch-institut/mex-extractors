@@ -19,32 +19,24 @@ class SynopseSettings(BaseModel):
     )
     variablenuebersicht_path: str = Field(
         "raw-data/synopse/variablenuebersicht.csv",
-        description=(
-            "Path of the export in CSV format, absolute or relative to `asset_dir`"
-        ),
+        description=("Path of the export in CSV format, relative to `asset_dir`"),
     )
     projekt_und_studienverwaltung_path: str = Field(
         "raw-data/synopse/projekt_und_studienverwaltung.csv",
-        description=(
-            "Path of the export in CSV format, absolute or relative to `asset_dir`"
-        ),
+        description=("Path of the export in CSV format, relative to `asset_dir`"),
     )
     metadaten_zu_datensaetzen_path: str = Field(
         "raw-data/synopse/metadaten_zu_datensaetzen.csv",
-        description=(
-            "Path of the export in CSV format, absolute or relative to `asset_dir`"
-        ),
+        description=("Path of the export in CSV format, relative to `asset_dir`"),
     )
     datensatzuebersicht_path: str = Field(
         "raw-data/synopse/datensatzuebersicht.csv",
-        description=(
-            "Path of the export in CSV format, absolute or relative to `asset_dir`"
-        ),
+        description=("Path of the export in CSV format, relative to `asset_dir`"),
     )
     mapping_path: str = Field(
         "mappings/synopse",
         description=(
             "Path to the directory with the synopse mapping files"
-            "values, absolute path or relative to `assets_dir`."
+            "values, relative to `assets_dir`."
         ),
     )

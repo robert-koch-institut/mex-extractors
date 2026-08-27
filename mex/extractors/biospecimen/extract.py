@@ -70,7 +70,7 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
 
     Settings:
         dir_path: Path to the biospecimen directory,
-                  absolute or relative to `assets_dir`
+                relative to `assets_dir`
 
     Returns:
         List of Biospecimen resources

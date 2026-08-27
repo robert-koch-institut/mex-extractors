@@ -37,6 +37,6 @@ class ConsentMailerSettings(BaseModel):
         "mailings",
         description=(
             "Path to the directory with the jinja template file containing the"
-            " email body template, absolute path or relative to `assets_dir`."
+            " email body template, relative to `assets_dir`."
         ),
     )

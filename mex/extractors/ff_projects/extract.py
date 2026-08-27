@@ -30,7 +30,7 @@ def extract_ff_projects_sources() -> list[FFProjectsSource]:
     """Extract FF Projects sources by loading data from MS-Excel file.
 
     Settings:
-        ff_projects.file_path: Path to the ff-projects list, absolute or relative to
+        ff_projects.file_path: Path to the ff-projects list, relative to
           `assets_dir`
 
     Returns:

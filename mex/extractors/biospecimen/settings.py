@@ -10,7 +10,7 @@ class BiospecimenSettings(BaseModel):
         "raw-data/biospecimen",
         description=(
             "Path to the directory with the biospecimen excel files, "
-            "absolute path or relative to `assets_dir`."
+            "relative to `assets_dir`."
         ),
     )
     key_col: str = Field(
@@ -25,6 +25,6 @@ class BiospecimenSettings(BaseModel):
         "mappings/biospecimen",
         description=(
             "Path to the directory with the biospecimen mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )

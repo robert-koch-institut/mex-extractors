@@ -112,7 +112,7 @@ def extract_variables() -> list[Variablenuebersicht]:
 
     Settings:
         synopse.variablenuebersicht_path: Path to the `variablenuebersicht` file,
-                                  absolute or relative to `assets_dir`
+                                   relative to `assets_dir`
 
     Returns:
         list for Synopse Variables
@@ -132,7 +132,7 @@ def extract_study_data() -> list[MetadatenZuDatensaetzen]:
 
     Settings:
         synopse.metadaten_zu_datensaetzen_path: Path to the `metadaten_zu_datensaetzen`
-          file, absolute or relative to `assets_dir`
+          file,  relative to `assets_dir`
 
     Returns:
         List of Synopse Studies
@@ -155,7 +155,7 @@ def extract_projects() -> list[ProjektUndStudienverwaltung]:
 
     Settings:
         synopse.projekt_und_studienverwaltung_path: Path to the
-          `projekt_und_studienverwaltung` file, absolute or relative to `assets_dir`
+          `projekt_und_studienverwaltung` file,  relative to `assets_dir`
 
     Returns:
         List of Synopse Projects
@@ -234,7 +234,7 @@ def extract_study_overviews() -> list[Datensatzuebersicht]:
 
     Settings:
         synopse.datensatzuebersicht_path: Path to the `datensatzuebersicht` file,
-                                  absolute or relative to `assets_dir`
+                                   relative to `assets_dir`
 
     Returns:
         List of Synopse Overviews

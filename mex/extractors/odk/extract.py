@@ -21,7 +21,7 @@ def extract_odk_raw_data() -> list[ODKData]:
 
     Settings:
         odk.raw_data_path: Path to the odk raw data,
-                           absolute or relative to `assets_dir`
+                        relative to `assets_dir`
 
     Returns:
         list of ODK data.
