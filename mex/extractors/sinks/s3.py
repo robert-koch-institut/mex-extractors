@@ -22,13 +22,13 @@ if TYPE_CHECKING:
 _LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
 
-class S3BaseSink(BaseSink):
-    """Base Sink to load models into S3 bucket."""
+class S3Base:
+    """Base class providing shared S3 functionality."""
 
     SERVICE_NAME = "s3"
 
     def __init__(self) -> None:
-        """Instantiate a new S3 sink."""
+        """Instantiate a new S3 client."""
         settings = ExtractorsSettings.get()
         self.client = boto3.client(
             service_name=self.SERVICE_NAME,
@@ -42,12 +42,8 @@ class S3BaseSink(BaseSink):
         """Close the underlying boto client."""
         self.client.close()
 
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
-        """Force subclass to implement Load method."""
-        raise NotImplementedError  # force subclass to implement
 
-
-class S3Sink(S3BaseSink):
+class S3Sink(S3Base, BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
@@ -104,7 +100,7 @@ class S3Sink(S3BaseSink):
         return f"{dumped_json}\n"
 
 
-class S3XlsxSink(S3BaseSink):
+class S3XlsxSink(S3Base, BaseSink):
     """Special sink to load models as XLSX file into S3 bucket."""
 
     def load(
@@ -164,14 +160,14 @@ class S3XlsxSink(S3BaseSink):
         yield from items_list
 
 
-class S3CsvSink(S3BaseSink):
+class S3CsvSink(S3Base):
     """Special sink to load models as CSV file into S3 bucket and publish metadata."""
 
-    def load(
+    def load_for_unit(
         self,
         items_sorted_by_year: Iterable[_LoadItemT],
         *,
-        unit_name: str | None = None,
+        unit_name: str,
     ) -> Generator[_LoadItemT]:
         """Write the incoming items as an CSV directly to S3.
 

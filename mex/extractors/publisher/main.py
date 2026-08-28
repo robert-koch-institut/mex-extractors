@@ -231,7 +231,10 @@ def publisher_csv_load(
             ),
             reverse=True,
         )
-        deque(s3csv.load(publications_sorted_by_year, unit_name=unit_name), maxlen=0)
+        deque(
+            s3csv.load_for_unit(publications_sorted_by_year, unit_name=unit_name),
+            maxlen=0,
+        )
 
 
 @entrypoint()

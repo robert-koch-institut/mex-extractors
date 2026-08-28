@@ -79,7 +79,7 @@ def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
 
 
 @pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
-def test_s3csv_load() -> None:
+def test_s3csv_load_for_unit() -> None:
     items = [
         BibliographicResourceForCsv(
             contributingUnit=["FG 1"],
@@ -94,7 +94,7 @@ def test_s3csv_load() -> None:
     ]
 
     sink = S3CsvSink()
-    returned_items = list(sink.load(items, unit_name="FG 1"))
+    returned_items = list(sink.load_for_unit(items, unit_name="FG 1"))
 
     assert returned_items == items
     assert sink.client.put_object.call_count == 2
@@ -153,24 +153,3 @@ def test_s3csv_load() -> None:
         "versions",
         "write_completed_at",
     }
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client")
-def test_s3csv_load_requires_unit_name() -> None:
-    item = BibliographicResourceForCsv(
-        contributingUnit=["FG 1"],
-        publicationYear="2024",
-        creator=["Dr. Alice Example"],
-        title=["Publication"],
-        journal=["Journal"],
-        doi="10.1234/example-a",
-        accessRestriction="open",
-        publisher=None,
-    )
-
-    sink = S3CsvSink()
-
-    with pytest.raises(
-        RuntimeError, match=r"No Unit Name provided for loading publications\."
-    ):
-        list(sink.load([item]))

@@ -32,7 +32,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.sinks.s3 import S3BaseSink
+from mex.extractors.sinks.s3 import S3Base
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
     get_wikidata_organization_ids_by_label,
@@ -149,7 +149,7 @@ def mocked_s3sink_client(monkeypatch: MonkeyPatch) -> None:
 
     mocked_client = MockedBoto()
 
-    def mocked_init(self: S3BaseSink) -> None:
+    def mocked_init(self: S3Base) -> None:
         self.client = mocked_client
 
-    monkeypatch.setattr(S3BaseSink, "__init__", mocked_init)
+    monkeypatch.setattr(S3Base, "__init__", mocked_init)
