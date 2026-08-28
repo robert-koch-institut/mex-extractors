@@ -217,7 +217,7 @@ def test_publisher_csv_load_sorts_by_publication_year(
     )
 
     sink = MagicMock()
-    sink.load.return_value = iter(())
+    sink.load_for_unit.return_value = iter(())
 
     monkeypatch.setattr(
         "mex.extractors.publisher.main.S3CsvSink",
@@ -226,7 +226,7 @@ def test_publisher_csv_load_sorts_by_publication_year(
 
     publisher_csv_load({"FG 1": [older, newer]})
 
-    sink.load.assert_called_once_with(
+    sink.load_for_unit.assert_called_once_with(
         [newer, older],
         unit_name="FG 1",
     )
