@@ -9,8 +9,9 @@ from mex.common.models import (
     MergedPrimarySource,
     PaginatedItemsContainer,
 )
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.publisher.extract import (
-    get_publishable_merged_item_by_identifier,
+    get_publishable_merged_item,
     get_publishable_merged_items,
 )
 
@@ -22,7 +23,7 @@ def test_get_publishable_merged_items_mocked() -> None:
     assert items[0] == MergedPrimarySource(identifier="fakeFakeSource")
 
 
-def test_get_publishable_merged_item_by_identifier(
+def test_get_publishable_merged_item(
     monkeypatch: pytest.MonkeyPatch,
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
 ) -> None:
@@ -41,7 +42,7 @@ def test_get_publishable_merged_item_by_identifier(
         MagicMock(return_value=backend),
     )
 
-    result = get_publishable_merged_item_by_identifier(str(expected.identifier))
+    result = get_publishable_merged_item(expected.identifier)
 
     assert result == expected
     backend.fetch_publishable_merged_items.assert_called_once_with(
@@ -63,7 +64,7 @@ def test_get_publishable_merged_item_by_identifier(
         ),
     ],
 )
-def test_get_publishable_merged_item_by_identifier_raises(
+def test_get_publishable_merged_item_raises(
     monkeypatch: pytest.MonkeyPatch,
     items: list[AnyMergedModel],
     expected_message: str,
@@ -83,4 +84,4 @@ def test_get_publishable_merged_item_by_identifier_raises(
     )
 
     with pytest.raises(MExError, match=expected_message):
-        get_publishable_merged_item_by_identifier("some-id")
+        get_publishable_merged_item(MergedPersonIdentifier("some-id"))

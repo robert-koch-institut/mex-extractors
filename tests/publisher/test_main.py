@@ -53,7 +53,7 @@ def test_run(
         fullName=["Dr. Test Person"],
     )
 
-    def mocked_get_publishable_merged_item_by_identifier(
+    def mocked_get_publishable_merged_item(
         identifier: object,
     ) -> AnyMergedModel:
         if item := merged_items_by_identifier.get(str(identifier)):
@@ -63,8 +63,8 @@ def test_run(
         raise MExError(msg)
 
     monkeypatch.setattr(
-        "mex.extractors.publisher.transform.get_publishable_merged_item_by_identifier",
-        mocked_get_publishable_merged_item_by_identifier,
+        "mex.extractors.publisher.transform.get_publishable_merged_item",
+        mocked_get_publishable_merged_item,
     )
     assert run_job_in_process("publisher")
 

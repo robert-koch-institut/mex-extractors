@@ -134,7 +134,7 @@ def test_get_resolved_names_returns_short_name(
     unit = mocked_merged_organizational_units[0]
 
     monkeypatch.setattr(
-        "mex.extractors.publisher.transform.get_publishable_merged_item_by_identifier",
+        "mex.extractors.publisher.transform.get_publishable_merged_item",
         lambda identifier: unit,
     )
 

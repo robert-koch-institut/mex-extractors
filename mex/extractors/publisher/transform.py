@@ -10,7 +10,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
-from mex.extractors.publisher.extract import get_publishable_merged_item_by_identifier
+from mex.extractors.publisher.extract import get_publishable_merged_item
 from mex.extractors.publisher.fields import (
     REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
 )
@@ -131,7 +131,7 @@ def get_resolved_names(identifier: AnyMergedIdentifier, field: str) -> str:
     Raises:
         MExError if name or merged item have the wrong type.
     """
-    merged_item = get_publishable_merged_item_by_identifier(identifier)
+    merged_item = get_publishable_merged_item(identifier)
 
     if field not in merged_item.model_fields:
         msg = f"Unknown field: '{field}' for {merged_item.entityType}"

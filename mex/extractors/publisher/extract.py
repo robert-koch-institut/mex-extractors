@@ -5,6 +5,7 @@ from mex.common.exceptions import MExError
 
 if TYPE_CHECKING:
     from mex.common.models import AnyMergedModel
+    from mex.common.types import AnyMergedIdentifier
 
 
 def get_publishable_merged_items(
@@ -25,9 +26,19 @@ def get_publishable_merged_items(
 
 
 def get_publishable_merged_item(
-    identifier: str,
+    identifier: AnyMergedIdentifier,
 ) -> AnyMergedModel:
-    """Fetch a merged item from backend identified by its identifier."""
+    """Fetch a merged item from backend identified by its identifier.
+
+    Args:
+        identifier: Identifier of merged item of any entity Type
+
+    Returns:
+        the merged item of the identitifer
+
+    Raises:
+        MExError if not exactly one item is found.
+    """
     connector = BackendApiConnector.get()
 
     result = connector.fetch_publishable_merged_items(
