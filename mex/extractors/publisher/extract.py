@@ -24,7 +24,7 @@ def get_publishable_merged_items(
     return list(response)
 
 
-def get_publishable_merged_item_by_identifier(
+def get_publishable_merged_item(
     identifier: str,
 ) -> AnyMergedModel:
     """Fetch a merged item from backend identified by its identifier."""
