@@ -15,10 +15,8 @@ if TYPE_CHECKING:
     from io import BytesIO, StringIO
 
 
-def build_directory_path(prefix: str | None) -> Path:
+def build_directory_path(prefix: str) -> Path:
     """Build directory path that includes the mex-model major and minor version."""
-    if prefix is None:
-        prefix = ""
     mex_model_version = Version(metadata.version("mex-model"))
     return Path(f"{prefix}-{mex_model_version.major}.{mex_model_version.minor}")
 
