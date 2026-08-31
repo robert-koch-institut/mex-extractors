@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.20.0] - 2026-08-31
+
+### Added
+
 - add and wrap up extraction of new non-required fields
 - assets helper functions
 - extractors settings has configuration option for publishing sink: extractor_settings.publisher.sink
@@ -35,16 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: absolute path to assets no longer allowed as all files previously defined
   through AssetsPaths are now loaded via the AssetsConnector
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - align linting and testing workflows and Dockerfile with cookiecutter
 - fixed dagster healthcheck in compose file
-
-### Security
 
 ## [1.19.0] - 2026-08-17
 
