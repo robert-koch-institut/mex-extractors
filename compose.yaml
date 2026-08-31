@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.15-trixie@sha256:e17e86066e5ef83e0952a9347f5c792b7ece00972e2aa787a6986f471b3dd3d5 # PINNED! Do not update outside MX-2398
+    image: postgres:16.13-trixie@sha256:5d143123fdf80462d1778cd4f24b9f7ca13c87174bca19141fb194c5a1ebca59 # PINNED! Do not update outside MX-2398
     environment:
       POSTGRES_USER: dagster
       POSTGRES_PASSWORD: dagster
@@ -65,7 +65,7 @@ services:
     volumes:
       - ./assets/raw-data/ldap/:/bootstrap/
   mailpit:
-    image: axllent/mailpit:v1.30@sha256:d5ecbb067db3705fa953d79e1b7f81ef84038df67aba6c52825d8c02a1ea748a
+    image: axllent/mailpit:v1.31@sha256:c96991d9bef73594c246d89ca81411d4e916f03e76a7d2d72fa2ab5dd3c9ce24
     ports:
       - 1025:1025
       - 8025:8025
@@ -87,7 +87,7 @@ services:
       retries: 5
       start_period: 30s
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.3.0@sha256:2bf56266af2cda657c995ef315b713c1feed3bfaed136cda87e7bf11cdde0127
+    image: ghcr.io/robert-koch-institut/mex-backend:4.4.0@sha256:ebeedd8301032978c06eed36cf968e8c98cd96c5b4e2804ad7e8e80c0661c517
     entrypoint: testing-backend
     depends_on:
       neo4j:
