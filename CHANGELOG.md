@@ -10,9 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add and wrap up extraction of new non-required fields
-- extrators settings has configuration option for publishing sink: extactor_settings.publisher.sink
+- extractors settings has configuration option for publishing sink: extractor_settings.publisher.sink
 - allowed values for publishing sink: ndjson or S3 (default: S3)
-
+- mex-webserver entrypoint, serving /_system/check, /_system/postgres and
+  /_system/daemon health endpoints on the dagster webserver
+- added postgres and dagster-daemon health-checks in compose file
 
 ### Changes
 
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - publisher is not hardcoded anymore to s3
 - added slapd healthcheck in compose file
 - update to mex-model 5.1
+- set exact version for neo4j:2026.07.1
 
 ### Changes
 
@@ -56,13 +59,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- stop using `Vocabulary.__concepts__` in datencompass for fw-compat with static enums
+- stop using `Vocabulary.__concepts__` in datenkompass for fw-compat with static enums
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
 - tests: make `mex.bat test` run tests marked with `requires_rki_infrastructure`
 
 ### Fixed
 
-- fix igs isPartof
+- fix igs isPartOf
 - ruff and mypy hints
 
 ## [1.18.0] - 2026-08-03
@@ -581,7 +584,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- odk resource hadPrimarysource to odk
+- odk resource hadPrimarySource to odk
 
 ### Fixed
 
