@@ -100,9 +100,7 @@ def test_get_forbidden_units(monkeypatch: pytest.MonkeyPatch) -> None:
         MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),
         MergedOrganizationalUnitIdentifier("forbiddenUnitId"),
     }
-    mocked_load_yaml.assert_called_once_with(
-        Path("mappings") / "__all__/activity_filter.yaml"
-    )
+    mocked_load_yaml.assert_called_once_with("mappings/__all__/activity_filter.yaml")
     mocked_get_unit_merged_id_by_synonym.assert_any_call("FG99")
     mocked_get_unit_merged_id_by_synonym.assert_any_call("Forbidden Unit")
 
