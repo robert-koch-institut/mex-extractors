@@ -153,8 +153,9 @@ def load_job_definitions() -> Definitions:
         asset_key, group_name = items[0]
         asset_metadata_dict = dict(asset.metadata_by_key.items())
         if "entity_type" in asset_metadata_dict.get(asset_key, {}):
-            entity_name = asset_metadata_dict[asset_key]["entity_type"]
-
+            entity_name = asset_metadata_dict[asset_key]["entity_type"].replace(
+                "_", "-"
+            )
             try:
                 rules_for_asset = load_asset_check_from_settings(
                     group_name, entity_name

@@ -1,6 +1,14 @@
-from typing import TYPE_CHECKING
+from collections import defaultdict
+from io import BytesIO
+from typing import TYPE_CHECKING, Any
+
+import pandas as pd
+from pydantic import ValidationError
 
 from mex.common.ldap.transform import analyse_person_string
+from mex.common.logging import logger
+from mex.common.models import BaseModel
+from mex.extractors.assets.helpers import read_bytes
 from mex.extractors.ldap.helpers import (
     get_ldap_merged_contact_id_by_mail,
     get_ldap_merged_person_id_by_query,
@@ -11,13 +19,13 @@ from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 from mex.extractors.synopse.models.study import MetadatenZuDatensaetzen
 from mex.extractors.synopse.models.study_overview import Datensatzuebersicht
 from mex.extractors.synopse.models.variable import Variablenuebersicht
-from mex.extractors.utils import parse_csv
+from mex.extractors.utils import get_dtypes_for_model
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Generator, Iterable
 
     from mex.common.models import AccessPlatformMapping
     from mex.common.types import (
@@ -27,12 +35,84 @@ if TYPE_CHECKING:
     )
 
 
+def parse_csv[BaseModelT: BaseModel](  # noqa: C901
+    path: str,
+    into: type[BaseModelT],
+    chunksize: int = 10000,
+    summary_batch_size: int = 10000,
+    **kwargs: Any,  # noqa: ANN401
+) -> Generator[BaseModelT]:
+    """Parse a CSV file into an iterable of the given model type.
+
+    Args:
+        path: Location of CSV file
+        into: Type of model to parse
+        chunksize: Buffer size for chunked reading
+        summary_batch_size: Batch size for summary logs
+        kwargs: Additional keywords arguments for pandas
+
+    Returns:
+        Generator for models
+    """
+    error_summary: defaultdict[str, int] = defaultdict(int)
+    total_rows_processed = 0
+    total_rows_successfully_processed = 0
+    csv_bytes = read_bytes(path)
+    with pd.read_csv(
+        BytesIO(csv_bytes),
+        chunksize=chunksize,
+        dtype=get_dtypes_for_model(into),
+        **kwargs,
+    ) as reader:
+        for i, chunk in enumerate(reader):
+            logger.info(
+                "parse_csv - %s chunk %s - OK",
+                into.__name__,
+                i,
+            )
+            for _, row in chunk.iterrows():
+                row_dict = row.to_dict()
+                for k, v in row_dict.items():
+                    if pd.isna(v) or (isinstance(v, str) and not v.strip()):
+                        row_dict[k] = None
+                try:
+                    model = into.model_validate(row_dict)
+                    total_rows_successfully_processed += 1
+                    yield model
+                except ValidationError as error:
+                    for validation_error in error.errors():
+                        error_type = validation_error["type"]
+                        error_summary[error_type] += 1
+
+                total_rows_processed += 1
+
+                if total_rows_processed % summary_batch_size == 0 and error_summary:
+                    logger.error(
+                        "Summarizing errors for batch with rows %s to %s",
+                        total_rows_processed - summary_batch_size + 1,
+                        total_rows_processed,
+                    )
+                    for error_type, count in error_summary.items():
+                        logger.error(
+                            " - Error type '%s': %s occurrences", error_type, count
+                        )
+                    error_summary.clear()
+
+    if error_summary:
+        logger.error("Summarizing errors for remaining rows")
+        for error_type, count in error_summary.items():
+            logger.error(" - Error type '%s': %s occurrences", error_type, count)
+        logger.info(
+            "Successfully processed %s items.", total_rows_successfully_processed
+        )
+
+
 def extract_variables() -> list[Variablenuebersicht]:
     """Extract variables from `variablenuebersicht` report.
 
     Settings:
         synopse.variablenuebersicht_path: Path to the `variablenuebersicht` file,
-                                  absolute or relative to `assets_dir`
+                                   relative to `assets_dir`
 
     Returns:
         list for Synopse Variables
@@ -52,7 +132,7 @@ def extract_study_data() -> list[MetadatenZuDatensaetzen]:
 
     Settings:
         synopse.metadaten_zu_datensaetzen_path: Path to the `metadaten_zu_datensaetzen`
-          file, absolute or relative to `assets_dir`
+          file,  relative to `assets_dir`
 
     Returns:
         List of Synopse Studies
@@ -75,7 +155,7 @@ def extract_projects() -> list[ProjektUndStudienverwaltung]:
 
     Settings:
         synopse.projekt_und_studienverwaltung_path: Path to the
-          `projekt_und_studienverwaltung` file, absolute or relative to `assets_dir`
+          `projekt_und_studienverwaltung` file,  relative to `assets_dir`
 
     Returns:
         List of Synopse Projects
@@ -154,7 +234,7 @@ def extract_study_overviews() -> list[Datensatzuebersicht]:
 
     Settings:
         synopse.datensatzuebersicht_path: Path to the `datensatzuebersicht` file,
-                                  absolute or relative to `assets_dir`
+                                   relative to `assets_dir`
 
     Returns:
         List of Synopse Overviews

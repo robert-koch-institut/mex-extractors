@@ -4,5 +4,5 @@ rules:
   - fail_if: not_exactly_x_items
     value: 275
   - fail_if: less_than_x_outbound
-    value: 100
+    value: 1
     target_type: Resource

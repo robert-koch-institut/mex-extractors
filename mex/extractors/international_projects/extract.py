@@ -1,5 +1,6 @@
 import re
 import warnings
+from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -13,6 +14,7 @@ from mex.common.types import (
     TemporalEntityPrecision,
     YearMonthDay,
 )
+from mex.extractors.assets.helpers import read_bytes
 from mex.extractors.international_projects.models.source import (
     InternationalProjectsSource,
 )
@@ -43,8 +45,9 @@ def extract_international_projects_sources() -> list[InternationalProjectsSource
             message="Data Validation extension is not supported and will be removed",
             category=UserWarning,
         )
+        raw_bytes = read_bytes(settings.international_projects.file_path)
         international_projects_excel = pd.read_excel(
-            settings.international_projects.file_path,
+            BytesIO(raw_bytes),
             keep_default_na=False,
             parse_dates=True,
             header=0,

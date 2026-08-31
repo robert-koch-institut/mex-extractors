@@ -18,6 +18,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.extract import (
     get_datenkompass_merged_items,
     get_filtered_primary_source_ids,
@@ -43,7 +44,6 @@ from mex.extractors.datenkompass.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.s3 import S3XlsxSink
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="datenkompass")
@@ -99,7 +99,7 @@ def datenkompass_activity_filter_mapping() -> DatenkompassFilterMapping:
     """Get filter for datenkompass activities."""
     settings = ExtractorsSettings.get()
     return DatenkompassFilterMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "activity_filter.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/activity_filter.yaml")
     )
 
 
@@ -108,7 +108,7 @@ def datenkompass_resource_filter_mapping() -> DatenkompassFilterMapping:
     """Load the Datenkompass resource filter mapping."""
     settings = ExtractorsSettings.get()
     return DatenkompassFilterMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "resource_filter.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/resource_filter.yaml")
     )
 
 
@@ -173,7 +173,7 @@ def datenkompass_merged_bibliographic_resources() -> list[MergedBibliographicRes
     settings = ExtractorsSettings.get()
     bibliographic_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
         load_yaml(
-            settings.datenkompass.mapping_path / "bibliographic-resource_filter.yaml"
+            f"{settings.datenkompass.mapping_path}/bibliographic-resource_filter.yaml"
         )
     )
     filtered_primary_sources = (
