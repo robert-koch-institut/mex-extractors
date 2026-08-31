@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, cast
 from mex.common.exceptions import MExError
 from mex.common.models import ActivityFilter
 from mex.common.organigram.helpers import find_descendants
+from mex.extractors.assets.helpers import load_yaml
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.publisher.extract import get_publishable_merged_items
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.models import (
@@ -73,7 +73,7 @@ def _get_forbidden_units(
     settings: ExtractorsSettings,
 ) -> set[MergedOrganizationalUnitIdentifier]:
     all_activity_filter_mapping = ActivityFilter.model_validate(
-        load_yaml(settings.publisher.mapping_path / "__all__/activity_filter.yaml")
+        load_yaml(f"{settings.publisher.mapping_path}/__all__/activity_filter.yaml")
     )
     activity_filter_rule_by_field = {
         field.fieldInPrimarySource: field
