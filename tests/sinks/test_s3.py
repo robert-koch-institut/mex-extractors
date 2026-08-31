@@ -62,7 +62,7 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     )
 
 
-@pytest.mark.usefixtures("mocked_s3sink_client")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
 def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
     sink = S3XlsxSink()
     deque(sink.load([extracted_organization_rki]), maxlen=0)

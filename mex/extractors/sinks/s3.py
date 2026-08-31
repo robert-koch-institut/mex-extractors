@@ -1,3 +1,4 @@
+import csv
 import json
 from io import BytesIO, StringIO
 from typing import TYPE_CHECKING, TypeVar
@@ -186,22 +187,30 @@ class S3CsvSink(S3Base):
         publications_file_name = f"Publications_{unitname}.csv"
         publications_path = (directory_path / publications_file_name).as_posix()
 
-        df = pd.DataFrame(
+        rows = [
             item.model_dump(
+                mode="json",
                 by_alias=True,
                 exclude_none=False,
-                mode="json",
             )
             for item in items_sorted_by_year
-        )
+        ]
 
         csv_buffer = StringIO(newline="")
 
-        df.to_csv(
+        if not rows:
+            return
+
+        writer = csv.DictWriter(
             csv_buffer,
-            index=False,
-            sep=";",
+            fieldnames=rows[0].keys(),
+            delimiter=";",
+            lineterminator="\n",
         )
+
+        writer.writeheader()
+        writer.writerows(rows)
+
         checksum = calculate_checksum(csv_buffer)
 
         csv_buffer.seek(0)
@@ -211,7 +220,7 @@ class S3CsvSink(S3Base):
             Key=publications_path,
             ContentType="text/csv; charset=utf-8",
         )
-        logger.info("%s - written %s items", type(self).__name__, df.shape[0])
+        logger.info("%s - written %s items", type(self).__name__, len(rows))
 
         metadata_path = (directory_path / f"metadata_{unitname}.json").as_posix()
         metadata_content = create_metadata_content(checksum)
