@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Final, cast
 
 from bs4 import BeautifulSoup
 
+from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
     DatenkompassBibliographicResource,
@@ -9,7 +10,6 @@ from mex.extractors.datenkompass.models.item import (
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
@@ -345,7 +345,7 @@ def transform_activities(
     settings = ExtractorsSettings.get()
 
     activity_mapping = DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "activity.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/activity.yaml")
     )
     delim = settings.datenkompass.list_delimiter
     min_keyword_length = settings.datenkompass.min_keyword_item_length
@@ -464,7 +464,7 @@ def transform_bibliographic_resources(
     settings = ExtractorsSettings.get()
 
     bibliographic_resource_mapping = DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "bibliographic-resource.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/bibliographic-resource.yaml")
     )
     delim = settings.datenkompass.list_delimiter
     min_word_length = settings.datenkompass.min_keyword_item_length
@@ -596,7 +596,7 @@ def transform_resources(
     """
     settings = ExtractorsSettings.get()
     resource_mapping = DatenkompassMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/resource.yaml")
     )
     delim = settings.datenkompass.list_delimiter
     min_keyword_length = settings.datenkompass.min_keyword_item_length

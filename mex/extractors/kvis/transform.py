@@ -14,6 +14,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.ldap.helpers import (
     get_ldap_merged_contact_id_by_mail,
     get_ldap_merged_person_id_by_query,
@@ -23,7 +24,6 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -44,7 +44,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
     """
     settings = ExtractorsSettings.get()
     mapping = ResourceMapping.model_validate(
-        load_yaml(settings.kvis.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.kvis.mapping_path}/resource.yaml")
     )
 
     contact = (
@@ -171,7 +171,7 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
     """
     settings = ExtractorsSettings.get()
     variable_mapping = VariableMapping.model_validate(
-        load_yaml(settings.kvis.mapping_path / "variable.yaml")
+        load_yaml(f"{settings.kvis.mapping_path}/variable.yaml")
     )
 
     # get variable names by lookup field for valueset collection:

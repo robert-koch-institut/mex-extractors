@@ -6,6 +6,7 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import MergedPrimarySourceIdentifier, MergedResourceIdentifier
+from mex.extractors.assets import load_yaml
 from mex.extractors.open_data.models.source import (
     OpenDataCreatorsOrContributors,
     OpenDataParentResource,
@@ -14,7 +15,6 @@ from mex.extractors.open_data.models.source import (
     OpenDataTableSchemaConstraints,
 )
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 from tests.open_data.mocked_open_data import create_mocked_parent_response
 
 
@@ -67,7 +67,7 @@ def mocked_open_data_distribution_mapping() -> DistributionMapping:
     """Return distribution mapping."""
     settings = ExtractorsSettings.get()
     return DistributionMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "distribution.yaml")
+        load_yaml(f"{settings.open_data.mapping_path}/distribution.yaml")
     )
 
 
@@ -76,7 +76,7 @@ def mocked_open_data_parent_resource_mapping() -> ResourceMapping:
     """Return parent resource mapping."""
     settings = ExtractorsSettings.get()
     return ResourceMapping.model_validate(
-        load_yaml(settings.open_data.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.open_data.mapping_path}/resource.yaml")
     )
 
 

@@ -7,11 +7,11 @@ from mex.common.models import (
     ConsentMapping,
     ExtractedPerson,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.endnote.model import EndnoteRecord
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -56,7 +56,7 @@ def endnote_records() -> list[EndnoteRecord]:
 def endnote_consent_mapping(settings: ExtractorsSettings) -> ConsentMapping:
     """Return endnote consent activity mapping from assets."""
     return ConsentMapping.model_validate(
-        load_yaml(settings.endnote.mapping_path / "consent.yaml")
+        load_yaml(f"{settings.endnote.mapping_path}/consent.yaml")
     )
 
 
@@ -66,7 +66,7 @@ def endnote_bibliographic_resource_mapping(
 ) -> BibliographicResourceMapping:
     """Return endnote bibliographic resource mapping from assets."""
     return BibliographicResourceMapping.model_validate(
-        load_yaml(settings.endnote.mapping_path / "bibliographic-resource.yaml")
+        load_yaml(f"{settings.endnote.mapping_path}/bibliographic-resource.yaml")
     )
 
 

@@ -2,10 +2,10 @@ from typing import TYPE_CHECKING, TypeVar
 
 from mex.common.models import ActivityFilter
 from mex.common.utils import any_contains_any
+from mex.extractors.assets import load_yaml
 from mex.extractors.logging import log_filter
 from mex.extractors.models import BaseRawData
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -27,7 +27,7 @@ def filter_by_global_rules[RawDataT: BaseRawData](
     """
     settings = ExtractorsSettings.get()
     all_activity_filter_mapping = ActivityFilter.model_validate(
-        load_yaml(settings.all_filter_mapping_path / "activity_filter.yaml")
+        load_yaml(f"{settings.all_filter_mapping_path}/activity_filter.yaml")
     )
     rule_by_field = {
         field.fieldInPrimarySource: field

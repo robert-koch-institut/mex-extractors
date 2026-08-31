@@ -1,17 +1,16 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class KVISSettings(BaseModel):
     """Settings definition for the infection protection act data."""
 
-    mapping_path: AssetsPath = Field(
-        AssetsPath("mappings/kvis"),
+    mapping_path: str = Field(
+        "mappings/kvis",
         description=(
             "Path to the directory with the KVIS mapping files containing the "
-            "default values, absolute path or relative to `assets_dir`."
+            "default values, relative to `assets_dir`."
         ),
     )
     mssql_connection_dsn: str = Field(
