@@ -133,10 +133,6 @@ def get_resolved_names(identifier: AnyMergedIdentifier, field: str) -> str:
     """
     merged_item = get_publishable_merged_item(identifier)
 
-    if field not in merged_item.model_fields:
-        msg = f"Unknown field: '{field}' for {merged_item.entityType}"
-        raise ValueError(msg)
-
     name_list = getattr(merged_item, field)
 
     if not name_list:
