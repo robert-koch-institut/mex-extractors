@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- publish CSV of publications to be downloadable on MEx
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.21.0] - 2026-09-02
+
+### Added
+
+- publish CSV of publications to be downloadable on MEx
 
 ## [1.20.0] - 2026-08-31
 
