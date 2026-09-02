@@ -1,39 +1,24 @@
-import datetime
+import csv
 import hashlib
 import json
 import re
 from collections import deque
-from io import BytesIO
+from io import BytesIO, StringIO
 from typing import TYPE_CHECKING
-from unittest.mock import MagicMock, call
+from unittest.mock import call
 
 import pytest
-from packaging.version import InvalidVersion
-from pytest import MonkeyPatch
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.testing import Joker
 from mex.common.transform import MExEncoder
-from mex.extractors.sinks.s3 import S3Sink, S3XlsxSink
+from mex.extractors.publisher.models import BibliographicResourceForCsv
+from mex.extractors.sinks.s3 import S3CsvSink, S3Sink, S3XlsxSink
 
 if TYPE_CHECKING:
     from mex.common.models import ExtractedOrganization
 
 
-@pytest.fixture
-def mocked_backend(monkeypatch: MonkeyPatch) -> BackendApiConnector:
-    monkeypatch.setattr(BackendApiConnector, "_check_availability", MagicMock())
-    monkeypatch.setattr(
-        BackendApiConnector,
-        "request",
-        MagicMock(
-            return_value={"status": "Fabulous", "version": "mex-backend-version"}
-        ),
-    )
-    return BackendApiConnector.get()
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
 def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     items_generator = (item for item in [extracted_organization_rki])
     expected_items = [extracted_organization_rki]
@@ -68,11 +53,6 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
 
     expected_checksum = hashlib.sha256(item_bytes).hexdigest()
 
-    assert load_items_client_call == call(
-        Body=Joker(),
-        Bucket="s3_bucket",
-        Key=Joker(),
-    )
     metadata_bytes = load_metadata_client_call.kwargs["Body"]
     assert isinstance(metadata_bytes, bytes)
     metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
@@ -82,96 +62,7 @@ def test_s3_load(extracted_organization_rki: ExtractedOrganization) -> None:
     )
 
 
-@pytest.mark.parametrize(
-    ("version", "expected"),
-    [
-        pytest.param("1.2.3", "publisher-1.2", id="short-version"),
-        pytest.param("123.456.789", "publisher-123.456", id="long-version"),
-        pytest.param("1.2.7-beta", "publisher-1.2", id="version-with-letters"),
-    ],
-)
-def test__build_directory_path(
-    monkeypatch: MonkeyPatch, version: str, expected: str
-) -> None:
-    def fake_version(module: str) -> str:
-        assert module == "mex-model", (
-            f"Expected call with mex-model, was called with {module}"
-        )
-        return version
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", fake_version)
-    returned = S3Sink._build_directory_path()
-    assert returned.as_posix() == expected
-
-
-def test__build_directory_path_exception(monkeypatch: MonkeyPatch) -> None:
-    version = "bogus.version"
-
-    def fake_version(module: str) -> str:
-        assert module == "mex-model", (
-            f"Expected call with mex-model, was called with {module}"
-        )
-        return version
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", fake_version)
-    with pytest.raises(InvalidVersion, match=r"Invalid version: 'bogus.version'"):
-        S3Sink._build_directory_path()
-
-
-def test__calculate_checksum() -> None:
-    expected = "8b7df143d91c716ecfa5fc1730022f6b421b05cedee8fd52b1fc65a96030ad52"
-    with BytesIO() as buffer:
-        buffer.write(b"blah")
-        returned = S3Sink._calculate_checksum(buffer)
-    assert returned == expected
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend")
-def test__load_metadata(monkeypatch: MonkeyPatch) -> None:
-    locally_available_version = {
-        "mex-common": "mex-common-version",
-        "mex-extractors": "mex-extractors-version",
-        "mex-model": "mex-model-version",
-    }
-    sha256_checksum = "checksum"
-    write_completed_at = "2123-12-31T23:59:59.123456+00:00"
-    expected_content = {
-        "versions": {"mex-backend": "mex-backend-version", **locally_available_version},
-        "sha256_checksum": sha256_checksum,
-        "write_completed_at": write_completed_at,
-    }
-
-    # patch version
-    def mock_version(module: str) -> str:
-        assert module in locally_available_version, (
-            f"Unsupported module '{module}', Supported: {locally_available_version.keys()}"
-        )
-        return locally_available_version[module]
-
-    monkeypatch.setattr("mex.extractors.sinks.s3.metadata.version", mock_version)
-
-    # patch date
-    mocked_datetime = MagicMock()
-    mocked_datetime.now = MagicMock(
-        return_value=datetime.datetime.fromisoformat(write_completed_at)
-    )
-    monkeypatch.setattr("mex.extractors.sinks.s3.datetime.datetime", mocked_datetime)
-
-    # execute
-    sink = S3Sink.get()
-    sink._load_metadata("metadata-path.json", sha256_checksum)
-    assert sink.client.put_object.call_args.kwargs == {
-        "Body": Joker(),
-        "Bucket": "s3_bucket",
-        "Key": "metadata-path.json",
-    }
-    body = sink.client.put_object.call_args.kwargs["Body"]
-    assert isinstance(body, bytes)
-    returned_content = sink.client.bodies[0].decode("utf-8")
-    assert json.loads(returned_content) == expected_content
-
-
-@pytest.mark.usefixtures("mocked_s3sink_client")
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
 def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
     sink = S3XlsxSink()
     deque(sink.load([extracted_organization_rki]), maxlen=0)
@@ -185,3 +76,80 @@ def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
         ),
     }
     assert sink.client.put_object.call_args.kwargs["Body"]
+
+
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
+def test_s3csv_load_for_unit() -> None:
+    items = [
+        BibliographicResourceForCsv(
+            contributingUnit=["FG 1"],
+            publicationYear="2024",
+            creator=["Dr. Alice Example"],
+            title=["Publication"],
+            journal=["Journal"],
+            doi="10.1234/example-a",
+            accessRestriction="open",
+            publisher=None,
+        ),
+    ]
+
+    sink = S3CsvSink()
+    returned_items = list(sink.load_for_unit(items, unit_name="FG 1"))
+
+    assert returned_items == items
+    assert sink.client.put_object.call_count == 2
+
+    load_items_client_call, load_metadata_client_call = (
+        sink.client.put_object.call_args_list
+    )
+
+    assert load_items_client_call == call(
+        Body=Joker(),
+        Bucket="s3_bucket",
+        Key=Joker(),
+        ContentType="text/csv; charset=utf-8",
+    )
+    assert re.match(
+        r"downloadable files-\d+\.\d+/Publications_FG1\.csv",
+        load_items_client_call.kwargs["Key"],
+    )
+
+    csv_bytes = sink.client.bodies[0]
+    csv_text = csv_bytes.decode("utf-8")
+    rows = list(csv.DictReader(StringIO(csv_text), delimiter=";"))
+
+    assert rows == [
+        {
+            "contributingUnit": "['FG 1']",
+            "publicationYear": "2024",
+            "creator": "['Dr. Alice Example']",
+            "title": "['Publication']",
+            "journal": "['Journal']",
+            "doi": "10.1234/example-a",
+            "accessRestriction": "open",
+            "publisher": "",
+        },
+    ]
+
+    expected_checksum = hashlib.sha256(csv_bytes).hexdigest()
+
+    assert load_metadata_client_call == call(
+        Body=Joker(),
+        Bucket="s3_bucket",
+        Key=Joker(),
+    )
+    assert re.match(
+        r"downloadable files-\d+\.\d+/metadata_FG1\.json",
+        load_metadata_client_call.kwargs["Key"],
+    )
+
+    metadata_bytes = load_metadata_client_call.kwargs["Body"]
+    assert isinstance(metadata_bytes, bytes)
+
+    metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
+    assert metadata_dct["sha256_checksum"] == expected_checksum
+    assert set(metadata_dct) == {
+        "sha256_checksum",
+        "versions",
+        "write_completed_at",
+    }

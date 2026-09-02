@@ -1,13 +1,15 @@
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from unittest.mock import MagicMock
 
 import pytest
 
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
+    MergedOrganizationalUnit,
 )
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
@@ -15,6 +17,7 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import (
     MergedPrimarySourceIdentifier,
+    Validation,
 )
 from mex.extractors.ldap.helpers import (
     get_ldap_extracted_person_by_query,
@@ -29,7 +32,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.sinks.s3 import S3BaseSink
+from mex.extractors.sinks.s3 import S3Base
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
     get_wikidata_organization_ids_by_label,
@@ -96,6 +99,24 @@ def mocked_extracted_organizational_units(
 
 
 @pytest.fixture
+def mocked_merged_organizational_units(
+    mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+) -> list[MergedOrganizationalUnit]:
+    return [
+        cast(
+            "MergedOrganizationalUnit",
+            create_merged_item(
+                identifier=extracted_unit.stableTargetId,
+                extracted_items=[extracted_unit],
+                rule_set=None,
+                validation=Validation.STRICT,
+            ),
+        )
+        for extracted_unit in mocked_extracted_organizational_units
+    ]
+
+
+@pytest.fixture
 def mocked_units_by_identifier_in_primary_source(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
 ) -> dict[str, ExtractedOrganizationalUnit]:
@@ -128,7 +149,7 @@ def mocked_s3sink_client(monkeypatch: MonkeyPatch) -> None:
 
     mocked_client = MockedBoto()
 
-    def mocked_init(self: S3BaseSink) -> None:
+    def mocked_init(self: S3Base) -> None:
         self.client = mocked_client
 
-    monkeypatch.setattr(S3BaseSink, "__init__", mocked_init)
+    monkeypatch.setattr(S3Base, "__init__", mocked_init)

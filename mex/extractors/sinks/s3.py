@@ -1,22 +1,21 @@
-import datetime
-import hashlib
+import csv
 import json
-from importlib import metadata
-from io import BytesIO
-from pathlib import Path
+from io import BytesIO, StringIO
 from typing import TYPE_CHECKING, TypeVar
 
 import boto3
 import pandas as pd
-from packaging.version import Version
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
 from mex.common.models import BaseModel
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
-from mex.common.types import UTC
 from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.sinks.write_metadata import (
+    build_directory_path,
+    calculate_checksum,
+    create_metadata_content,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
@@ -24,13 +23,13 @@ if TYPE_CHECKING:
 _LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
 
-class S3BaseSink(BaseSink):
-    """Base Sink to load models into S3 bucket."""
+class S3Base:
+    """Base class providing shared S3 functionality."""
 
     SERVICE_NAME = "s3"
 
     def __init__(self) -> None:
-        """Instantiate a new S3 sink."""
+        """Instantiate a new S3 client."""
         settings = ExtractorsSettings.get()
         self.client = boto3.client(
             service_name=self.SERVICE_NAME,
@@ -44,12 +43,8 @@ class S3BaseSink(BaseSink):
         """Close the underlying boto client."""
         self.client.close()
 
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
-        """Force subclass to implement Load method."""
-        raise NotImplementedError  # force subclass to implement
 
-
-class S3Sink(S3BaseSink):
+class S3Sink(S3Base, BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
     def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
@@ -70,7 +65,7 @@ class S3Sink(S3BaseSink):
             Generator for the loaded items
         """
         settings = ExtractorsSettings.get()
-        directory_path = self._build_directory_path()
+        directory_path = build_directory_path("publisher")
         items_path = (directory_path / "items.ndjson").as_posix()
         total_count = 0
         with BytesIO() as buffer:
@@ -79,7 +74,7 @@ class S3Sink(S3BaseSink):
                 buffer.write(item_str.encode("utf-8"))
                 total_count += 1
                 yield item
-            checksum = self._calculate_checksum(buffer)
+            checksum = calculate_checksum(buffer)
             # Reset buffer pointer before uploading
             buffer.seek(0)
             self.client.put_object(
@@ -88,8 +83,16 @@ class S3Sink(S3BaseSink):
                 Key=items_path,
             )
         logger.info("%s - written %s items", type(self).__name__, total_count)
+
         metadata_path = (directory_path / "metadata.json").as_posix()
-        self._load_metadata(metadata_path, checksum)
+        metadata_content = create_metadata_content(checksum)
+        self.client.put_object(
+            Body=metadata_content,
+            Bucket=settings.s3_bucket_key,
+            Key=metadata_path,
+        )
+
+        logger.info("%s - written metadata.json", type(self).__name__)
 
     @staticmethod
     def _convert_item_to_ndjson(item: _LoadItemT) -> str:
@@ -97,43 +100,8 @@ class S3Sink(S3BaseSink):
         dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
         return f"{dumped_json}\n"
 
-    @staticmethod
-    def _build_directory_path() -> Path:
-        """Build directory path that includes the mex-model major and minor version."""
-        mex_model_version = Version(metadata.version("mex-model"))
-        return Path(f"publisher-{mex_model_version.major}.{mex_model_version.minor}")
 
-    @staticmethod
-    def _calculate_checksum(buffer: BytesIO) -> str:
-        """Calculate sha256 checksum of the buffer."""
-        return hashlib.sha256(buffer.getbuffer()).hexdigest()
-
-    def _load_metadata(self, metadata_path: str, checksum: str) -> None:
-        """Write metadata file."""
-        settings = ExtractorsSettings.get()
-        backend_connector = BackendApiConnector.get()
-        backend_version = backend_connector.system_status().version
-        versions = {
-            "mex-backend": backend_version,
-            "mex-common": metadata.version("mex-common"),
-            "mex-extractors": metadata.version("mex-extractors"),
-            "mex-model": metadata.version("mex-model"),
-        }
-        payload = {
-            "versions": versions,
-            "sha256_checksum": checksum,
-            "write_completed_at": datetime.datetime.now(tz=UTC).isoformat(),
-        }
-        payload_json = json.dumps(payload, sort_keys=True, cls=MExEncoder, indent=4)
-        payload_bytes = payload_json.encode(encoding="utf-8")
-        self.client.put_object(
-            Body=payload_bytes,
-            Bucket=settings.s3_bucket_key,
-            Key=metadata_path,
-        )
-
-
-class S3XlsxSink(S3BaseSink):
+class S3XlsxSink(S3Base, BaseSink):
     """Special sink to load models as XLSX file into S3 bucket."""
 
     def load(
@@ -191,3 +159,76 @@ class S3XlsxSink(S3BaseSink):
         )
         logger.info(f"Wrote {len(df)} items to {file_name}")
         yield from items_list
+
+
+class S3CsvSink(S3Base):
+    """Special sink to load models as CSV file into S3 bucket and publish metadata."""
+
+    def load_for_unit(
+        self,
+        items_sorted_by_year: Iterable[_LoadItemT],
+        *,
+        unit_name: str,
+    ) -> Generator[_LoadItemT]:
+        """Write the incoming items as an CSV directly to S3.
+
+        Args:
+            items_sorted_by_year: listof items sorted by publication year
+            unit_name: unit name for csv naming
+
+        Returns:
+            Generator for the loaded items
+        """
+        settings = ExtractorsSettings.get()
+
+        unitname = unit_name.replace(" ", "")
+        directory_path = build_directory_path("downloadable files")
+
+        publications_file_name = f"Publications_{unitname}.csv"
+        publications_path = (directory_path / publications_file_name).as_posix()
+
+        rows = [
+            item.model_dump(
+                mode="json",
+                by_alias=True,
+                exclude_none=False,
+            )
+            for item in items_sorted_by_year
+        ]
+
+        csv_buffer = StringIO(newline="")
+
+        if not rows:
+            return
+
+        writer = csv.DictWriter(
+            csv_buffer,
+            fieldnames=rows[0].keys(),
+            delimiter=";",
+            lineterminator="\n",
+        )
+
+        writer.writeheader()
+        writer.writerows(rows)
+
+        checksum = calculate_checksum(csv_buffer)
+
+        csv_buffer.seek(0)
+        self.client.put_object(
+            Body=csv_buffer.getvalue().encode("utf-8"),
+            Bucket=settings.s3_bucket_key,
+            Key=publications_path,
+            ContentType="text/csv; charset=utf-8",
+        )
+        logger.info("%s - written %s items", type(self).__name__, len(rows))
+
+        metadata_path = (directory_path / f"metadata_{unitname}.json").as_posix()
+        metadata_content = create_metadata_content(checksum)
+        self.client.put_object(
+            Body=metadata_content,
+            Bucket=settings.s3_bucket_key,
+            Key=metadata_path,
+        )
+        logger.info("%s - written metadata.json", type(self).__name__)
+
+        yield from items_sorted_by_year
