@@ -160,7 +160,7 @@ def load_job_definitions() -> Definitions:
                 rules_for_asset = load_asset_check_from_settings(
                     group_name, entity_name
                 )
-            except FileNotFoundError:
+            except PermissionError:
                 continue
 
             for rule in rules_for_asset.rules:
