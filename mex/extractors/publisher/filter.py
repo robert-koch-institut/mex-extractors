@@ -85,7 +85,7 @@ def _get_forbidden_units(
             for unit_name in activity_filter_rule_by_field["responsibleUnit"]
             .filterRules[1]
             .forValues
-            for unit_id in (get_unit_merged_id_by_synonym(unit_name) or [])
+            for unit_id in (get_unit_merged_id_by_synonym(unit_name.lower()) or [])
         }
     else:
         msg = "No units set for __all__/activity_filter.yaml"
