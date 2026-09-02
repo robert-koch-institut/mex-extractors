@@ -88,7 +88,7 @@ def test_s3csv_load_for_unit() -> None:
             title=["Publication"],
             journal=["Journal"],
             doi="10.1234/example-a",
-            accessRestriction="open",
+            accessRestriction="offen",
             publisher=None,
         ),
     ]
@@ -120,14 +120,14 @@ def test_s3csv_load_for_unit() -> None:
 
     assert rows == [
         {
-            "contributingUnit": "['FG 1']",
-            "publicationYear": "2024",
-            "creator": "['Dr. Alice Example']",
-            "title": "['Publication']",
-            "journal": "['Journal']",
-            "doi": "10.1234/example-a",
-            "accessRestriction": "open",
-            "publisher": "",
+            "Mitwirkende Fachgebiete": "['FG 1']",
+            "Veröffentlichungsjahr": "2024",
+            "Autor*innen": "['Dr. Alice Example']",
+            "Titel": "['Publication']",
+            "Zeitschrift": "['Journal']",
+            "DOI": "10.1234/example-a",
+            "Zugriffsbeschränkung": "offen",
+            "Verlag": "",
         },
     ]
 
