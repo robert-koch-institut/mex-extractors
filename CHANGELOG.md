@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - align linting and testing workflows and Dockerfile with cookiecutter
 - fixed dagster healthcheck in compose file
+- ignore asset checks not found
 
 ## [1.19.0] - 2026-08-17
 
