@@ -82,7 +82,7 @@ def test_s3xlsx_load(extracted_organization_rki: ExtractedOrganization) -> None:
 def test_s3csv_load_for_unit() -> None:
     items = [
         BibliographicResourceForCsv(
-            contributingUnit=["FG 1"],
+            contributingUnit=["FG 1", "FG 2"],
             publicationYear="2024",
             creator=["Dr. Alice Example"],
             title=["Publication"],
@@ -120,11 +120,11 @@ def test_s3csv_load_for_unit() -> None:
 
     assert rows == [
         {
-            "Mitwirkende Fachgebiete": "['FG 1']",
+            "Mitwirkende Fachgebiete": "FG 1, FG 2",
             "Veröffentlichungsjahr": "2024",
-            "Autor*innen": "['Dr. Alice Example']",
-            "Titel": "['Publication']",
-            "Zeitschrift": "['Journal']",
+            "Autor*innen": "Dr. Alice Example",
+            "Titel": "Publication",
+            "Zeitschrift": "Journal",
             "DOI": "10.1234/example-a",
             "Zugriffsbeschränkung": "offen",
             "Verlag": "",

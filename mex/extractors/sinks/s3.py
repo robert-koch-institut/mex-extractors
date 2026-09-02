@@ -187,14 +187,19 @@ class S3CsvSink(S3Base):
         publications_file_name = f"Publikationen_{unitname}.csv"
         publications_path = (directory_path / publications_file_name).as_posix()
 
-        rows = [
-            item.model_dump(
+        rows = []
+
+        for item in items_sorted_by_year:
+            row = item.model_dump(
                 mode="json",
                 by_alias=True,
                 exclude_none=False,
             )
-            for item in items_sorted_by_year
-        ]
+            row = {
+                key: ", ".join(value) if isinstance(value, list) else value
+                for key, value in row.items()
+            }
+            rows.append(row)
 
         csv_buffer = StringIO(newline="")
 
