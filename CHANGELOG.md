@@ -10,9 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - publish CSV of publications to be downloadable on MEx
-- improve publisher CSV formating
 
 ### Changes
+
+- improve publisher CSV formatting
 
 ### Deprecated
 
