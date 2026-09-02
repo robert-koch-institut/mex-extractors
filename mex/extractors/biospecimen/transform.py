@@ -90,10 +90,13 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             if resource.externe_partner
             else []
         )
+        has_coding_system = (
+            resource_mapping.hasCodingSystem[0].mappingRules[0].setValues
+        )
+        has_legal_basis = resource_mapping.hasLegalBasis[0].mappingRules[0].setValues
         has_personal_data = (
             resource_mapping.hasPersonalData[0].mappingRules[0].setValues
         )
-        has_legal_basis = resource_mapping.hasLegalBasis[0].mappingRules[0].setValues
         language = resource_mapping.language[0].mappingRules[0].setValues
 
         contact: list[Identifier] = []
@@ -161,6 +164,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
                 hasCodeValues=has_code_values,
+                hasCodingSystem=has_coding_system,
                 hasLegalBasis=has_legal_basis,
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
