@@ -110,7 +110,7 @@ def test_s3csv_load_for_unit() -> None:
         ContentType="text/csv; charset=utf-8",
     )
     assert re.match(
-        r"downloadable files-\d+\.\d+/Publications_FG1\.csv",
+        r"downloadable files-\d+\.\d+/Publikationen_FG1\.csv",
         load_items_client_call.kwargs["Key"],
     )
 

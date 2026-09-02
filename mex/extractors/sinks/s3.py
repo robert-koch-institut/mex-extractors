@@ -184,7 +184,7 @@ class S3CsvSink(S3Base):
         unitname = unit_name.replace(" ", "")
         directory_path = build_directory_path("downloadable files")
 
-        publications_file_name = f"Publications_{unitname}.csv"
+        publications_file_name = f"Publikationen_{unitname}.csv"
         publications_path = (directory_path / publications_file_name).as_posix()
 
         rows = [
