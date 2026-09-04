@@ -115,6 +115,7 @@ def test_transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         "externalPartner": ["b0J5Ayp4XP3Yn8ta44Irhh"],
         "hadPrimarySource": "fBlRVJ8z9yVH1fxXU9ZsjD",
         "hasCodeValues": [{"value": "12345-6"}],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-3"],
         "hasLegalBasis": [{"value": "DSGVO", "language": "de"}],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifier": "bqGbj0OwcKeEXfce6SntlD",

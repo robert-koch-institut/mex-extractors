@@ -20,7 +20,7 @@ anonymizationPseudonymization:
         setValues:
           - https://mex.rki.de/item/anonymization-pseudonymization-1
       - forValues:
-          - pseudonomysiert
+          - pseudonymisiert
         setValues:
           - https://mex.rki.de/item/anonymization-pseudonymization-2
       - forValues:
@@ -41,6 +41,10 @@ hadPrimarySource:
 hasCodeValues:
   - mappingRules:
       - rule:
+hasCodingSystem:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/coding-system-3
 hasLegalBasis:
   - mappingRules:
       - setValues:
