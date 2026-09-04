@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- improve publisher CSV formatting
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.21.1] - 2026-09-04
+
+### Changes
+
+- improve publisher CSV formatting
 
 ## [1.21.0] - 2026-09-02
 
