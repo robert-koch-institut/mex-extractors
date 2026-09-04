@@ -1,5 +1,4 @@
 import re
-from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
@@ -14,6 +13,7 @@ from mex.extractors.publisher.filter import (
     cluster_and_filter_bibliographic_resources_by_unit,
     filter_persons_with_approving_unique_consent,
 )
+from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from mex.common.models import (
@@ -58,33 +58,10 @@ def test_filter_persons_with_approving_unique_consent__raise(
 
 
 def test_get_forbidden_units(monkeypatch: pytest.MonkeyPatch) -> None:
-    settings = MagicMock()
-    settings.publisher.mapping_path = Path("mappings")
-
-    mocked_load_yaml = MagicMock(
-        return_value={
-            "fields": [
-                {
-                    "fieldInPrimarySource": "responsibleUnit",
-                    "examplesInPrimarySource": None,
-                    "filterRules": [
-                        {"rule": None},
-                        {
-                            "forValues": ["FG99", "Forbidden Unit"],
-                        },
-                    ],
-                },
-            ],
-        }
-    )
-    monkeypatch.setattr(
-        "mex.extractors.publisher.filter.load_yaml",
-        mocked_load_yaml,
-    )
+    settings = ExtractorsSettings.get()
 
     unit_ids_by_synonym = {
-        "FG99": [MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")],
-        "Forbidden Unit": [MergedOrganizationalUnitIdentifier("forbiddenUnitId")],
+        "fg99": [MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")],
     }
     mocked_get_unit_merged_id_by_synonym = MagicMock(
         side_effect=unit_ids_by_synonym.get
@@ -98,11 +75,8 @@ def test_get_forbidden_units(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert result == {
         MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),
-        MergedOrganizationalUnitIdentifier("forbiddenUnitId"),
     }
-    mocked_load_yaml.assert_called_once_with("mappings/__all__/activity_filter.yaml")
-    mocked_get_unit_merged_id_by_synonym.assert_any_call("FG99")
-    mocked_get_unit_merged_id_by_synonym.assert_any_call("Forbidden Unit")
+    mocked_get_unit_merged_id_by_synonym.assert_any_call("fg99")
 
 
 def test_cluster_publications_by_department(

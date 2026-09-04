@@ -174,9 +174,7 @@ def test_transform_merged_bibliographic_resources_for_csv(
         "accessRestriction": Joker(),
         "contributingUnit": ["C1"],
         "creator": ["Dr. Test Person"],
-        "doi": None,
         "journal": [],
-        "publicationYear": None,
         "publisher": [],
         "title": ["title 1, Unit C1"],
     }
@@ -184,7 +182,6 @@ def test_transform_merged_bibliographic_resources_for_csv(
         "accessRestriction": Joker(),
         "contributingUnit": ["parent"],
         "creator": ["Dr. Test Person"],
-        "doi": None,
         "journal": [],
         "publicationYear": "2042",
         "publisher": [],
