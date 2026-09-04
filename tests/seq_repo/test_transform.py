@@ -5,56 +5,22 @@ import pytest
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
-    transform_seq_repo_activities_to_extracted_activities,
     transform_seq_repo_resource_to_extracted_resource,
 )
 
 if TYPE_CHECKING:
     from mex.common.models import (
         AccessPlatformMapping,
-        ActivityMapping,
         ExtractedAccessPlatform,
-        ExtractedActivity,
         ExtractedOrganization,
         ResourceMapping,
     )
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
-@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
-def test_transform_seq_repo_activities_to_extracted_activities(
-    seq_repo_sources: list[SeqRepoSource],
-    seq_repo_activity: ActivityMapping,
-) -> None:
-    expected = {
-        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
-        "identifierInPrimarySource": "TEST-ID",
-        "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
-        "title": [{"value": "FG99-ABC-123", "language": "de"}],
-        "involvedPerson": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
-        "theme": [
-            "https://mex.rki.de/item/theme-11",
-            "https://mex.rki.de/item/theme-23",
-        ],
-        "identifier": "egRPPkE5jnd2jOgr4hosz1",
-        "stableTargetId": "fPqFxu76FLQjVxUDSJpb0z",
-    }
-    extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
-        seq_repo_sources,
-        seq_repo_activity,
-    )
-    assert extracted_mex_activities
-    assert (
-        extracted_mex_activities[0].model_dump(exclude_none=True, exclude_defaults=True)
-        == expected
-    )
-
-
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
 def test_transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
-    extracted_mex_activities_dict: dict[str, ExtractedActivity],
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -66,7 +32,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "start": ["2023-08-07"],
         "modified": "2023-08-07",
-        "wasGeneratedBy": "fPqFxu76FLQjVxUDSJpb0z",
         "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
@@ -110,7 +75,6 @@ def test_transform_seq_repo_resource_to_extracted_resource(
     }
     mex_resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_sources,
-        extracted_mex_activities_dict,
         extracted_mex_access_platform,
         seq_repo_resource,
         extracted_organization_rki,
