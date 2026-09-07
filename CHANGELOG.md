@@ -9,7 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.21.1] - 2026-09-04
+
+### Changes
+
+- improve publisher CSV formatting
+
+## [1.21.0] - 2026-09-02
+
+### Added
+
+- publish CSV of publications to be downloadable on MEx
+
+## [1.20.0] - 2026-08-31
+
+### Added
+
 - add and wrap up extraction of new non-required fields
+- assets helper functions
 - extractors settings has configuration option for publishing sink: extractor_settings.publisher.sink
 - allowed values for publishing sink: ndjson or S3 (default: S3)
 - mex-webserver entrypoint, serving /_system/check, /_system/postgres and
@@ -18,14 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- use publishing endpoint for datenkompass and publisher
 - publisher is not hardcoded anymore to s3
 - added slapd healthcheck in compose file
 - update to mex-model 5.1
 - set exact version for neo4j:2026.07.1
-
-### Changes
-
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
@@ -34,10 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
   against the real RKI SQL server
 - move backend healthcheck into compose file
-
-### Deprecated
-
-### Removed
+- BREAKING: absolute path to assets no longer allowed as all files previously defined
+  through AssetsPaths are now loaded via the AssetsConnector
 
 - deprecated find method for vocabulary
 
@@ -45,8 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - align linting and testing workflows and Dockerfile with cookiecutter
 - fixed dagster healthcheck in compose file
-
-### Security
+- ignore asset checks not found
 
 ## [1.19.0] - 2026-08-17
 
@@ -69,6 +89,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ruff and mypy hints
 
 ## [1.18.0] - 2026-08-03
+
+### Added
+
+- link igs to seq-repo
 
 ### Fixed
 
@@ -99,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: Setting is renamed to ExtractorsSettings, new env prefix is MEX_EXTRACTORS_
+- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 
@@ -132,7 +157,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - implement AssetCheck `less_than_x_outbound`
 - implement AssetCheck `not_exactly_x_items`
 - implement AssetCheck `x_percent_more_than`
-- link igs to seq-repo
 
 ### Changes
 
@@ -170,7 +194,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 1.19.0
 - update lock file (2026_04_23)
 - seq-repo mapping update
-- updated synopse models according to mapping + CSV and renamed fields in snake_case
 
 ### Fixed
 

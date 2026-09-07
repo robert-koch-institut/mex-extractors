@@ -10,6 +10,7 @@ from mex.common.models import (
     ExtractedResource,
     ResourceMapping,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.seq_repo.extract import (
     extract_sources,
@@ -22,7 +23,6 @@ from mex.extractors.seq_repo.transform import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="seq_repo")
@@ -31,7 +31,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
     return extract_sources()
 
 
-@asset(group_name="seq_repo", metadata={"entity_type": "organization"})
+@asset(group_name="seq_repo", metadata={"entity_type": "activity"})
 def seq_repo_extracted_activities_by_id_str(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
@@ -39,7 +39,7 @@ def seq_repo_extracted_activities_by_id_str(
     """Extract activities from seq-repo."""
     settings = ExtractorsSettings.get()
     activity = ActivityMapping.model_validate(
-        load_yaml(settings.seq_repo.mapping_path / "activity.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/activity.yaml")
     )
     mex_activities = transform_seq_repo_activities_to_extracted_activities(
         seq_repo_sources,
@@ -58,7 +58,7 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Extract access platform from seq-repo."""
     settings = ExtractorsSettings.get()
     access_platform = AccessPlatformMapping.model_validate(
-        load_yaml(settings.seq_repo.mapping_path / "access-platform.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform.yaml")
     )
     mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
@@ -80,7 +80,7 @@ def seq_repo_resources(
     """Extract resources from seq-repo."""
     settings = ExtractorsSettings.get()
     resource = ResourceMapping.model_validate(
-        load_yaml(settings.seq_repo.mapping_path / "resource.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource.yaml")
     )
 
     resources = transform_seq_repo_resource_to_extracted_resource(

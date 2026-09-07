@@ -1,9 +1,11 @@
 import re
+from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pandas import DataFrame, ExcelFile, Series
 
+from mex.extractors.assets import glob_files, read_bytes
 from mex.extractors.biospecimen.models.source import BiospecimenResource
 from mex.extractors.ldap.helpers import get_ldap_merged_person_id_by_query
 from mex.extractors.logging import watch_progress
@@ -68,24 +70,26 @@ def extract_biospecimen_resources() -> list[BiospecimenResource]:
 
     Settings:
         dir_path: Path to the biospecimen directory,
-                  absolute or relative to `assets_dir`
+                relative to `assets_dir`
 
     Returns:
         List of Biospecimen resources
     """
     settings = ExtractorsSettings.get()
     resources = []
-    for file in watch_progress(
-        Path(settings.biospecimen.raw_data_path).glob("*.xlsx"),
+    file_path_list = glob_files(settings.biospecimen.raw_data_path, "*.xlsx")
+    for file_path in watch_progress(
+        file_path_list,
         "extract_biospecimen_resources",
     ):
-        xls = ExcelFile(file)
+        raw_bytes = read_bytes(file_path)
+        xls = ExcelFile(BytesIO(raw_bytes))
         sheets = xls.book.worksheets
         for sheet in sheets:
             if sheet.sheet_state == "visible":
                 sheet_df = xls.parse(sheet_name=sheet.title, header=1)
                 if resource := extract_biospecimen_resource(
-                    sheet_df, str(sheet.title), file.name
+                    sheet_df, str(sheet.title), file_path
                 ):
                     resources.append(resource)
     return resources
@@ -229,7 +233,7 @@ def extract_biospecimen_resource(
     sheet_name = get_clean_file_name(str(sheet_name))
 
     return BiospecimenResource(
-        file_name=file_name,
+        file_name=Path(file_name).name,
         sheet_name=sheet_name,
         zugriffsbeschraenkung=zugriffsbeschraenkung,
         alternativer_titel=alternativer_titel,

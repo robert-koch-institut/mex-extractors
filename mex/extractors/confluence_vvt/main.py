@@ -14,6 +14,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
 )
 from mex.common.types import MergedPersonIdentifier
+from mex.extractors.assets import load_yaml
 from mex.extractors.confluence_vvt.extract import (
     extract_confluence_vvt_authors,
     fetch_all_vvt_pages_ids,
@@ -32,7 +33,6 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="confluence_vvt")
@@ -50,7 +50,9 @@ def confluence_vvt_pages() -> list[ConfluenceVvtPage]:
 def confluence_vvt_activity_mapping() -> dict[str, Any]:
     """Return activity mapping."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.confluence_vvt.template_v1_mapping_path / "activity.yaml")
+    return load_yaml(
+        f"{settings.confluence_vvt.template_v1_mapping_path}/activity.yaml"
+    )
 
 
 @asset(group_name="confluence_vvt")

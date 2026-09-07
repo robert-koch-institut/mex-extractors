@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.filter import (
     filter_activities_by_organization,
     filter_merged_items_for_primary_source,
@@ -10,7 +11,6 @@ from mex.extractors.datenkompass.filter import (
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassFilterMapping
 from mex.extractors.settings import ExtractorsSettings
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.models import (
@@ -46,7 +46,7 @@ def test_filter_merged_resources_by_unit(
     }
     settings = ExtractorsSettings.get()
     mocked_resource_filter_mapping = DatenkompassFilterMapping.model_validate(
-        load_yaml(settings.datenkompass.mapping_path / "resource_filter.yaml")
+        load_yaml(f"{settings.datenkompass.mapping_path}/resource_filter.yaml")
     )
 
     result = filter_merged_resources_by_unit(

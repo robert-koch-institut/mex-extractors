@@ -6,12 +6,12 @@ from mex.common.wikidata.extract import get_wikidata_organization
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.common.types import MergedOrganizationIdentifier
@@ -44,7 +44,7 @@ def get_wikidata_organization_ids_by_label() -> dict[str, str]:
     """Extract dict of already defined wikidata ids by labels."""
     settings = ExtractorsSettings.get()
     organization_mapping = OrganizationMapping.model_validate(
-        load_yaml(settings.wikidata.mapping_path / "organization.yaml")
+        load_yaml(f"{settings.wikidata.mapping_path}/organization.yaml")
     )
     return {
         value: rule.setValues

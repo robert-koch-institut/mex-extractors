@@ -19,6 +19,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
@@ -30,7 +31,6 @@ from mex.extractors.synopse.models.variable import Variablenuebersicht
 from mex.extractors.synopse.transform import (
     transform_synopse_variables_to_mex_variable_groups,
 )
-from mex.extractors.utils import load_yaml
 
 
 @pytest.fixture
@@ -250,7 +250,7 @@ def synopse_access_platform() -> AccessPlatformMapping:
     """Return a list of extracted access platforms."""
     settings = ExtractorsSettings.get()
     return AccessPlatformMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "access-platform.yaml")
+        load_yaml(f"{settings.synopse.mapping_path}/access-platform.yaml")
     )
 
 
@@ -396,7 +396,7 @@ def extracted_variable_groups(
 def synopse_activity(settings: ExtractorsSettings) -> ActivityMapping:
     """Return a mapping model with activity default values."""
     return ActivityMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "activity_mock.yaml")
+        load_yaml(f"{settings.synopse.mapping_path}/activity_mock.yaml")
     )
 
 
@@ -404,5 +404,5 @@ def synopse_activity(settings: ExtractorsSettings) -> ActivityMapping:
 def synopse_resource(settings: ExtractorsSettings) -> ResourceMapping:
     """Return a mapping model with resource default values."""
     return ResourceMapping.model_validate(
-        load_yaml(settings.synopse.mapping_path / "resource_mock.yaml")
+        load_yaml(f"{settings.synopse.mapping_path}/resource_mock.yaml")
     )

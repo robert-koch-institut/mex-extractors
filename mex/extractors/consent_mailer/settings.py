@@ -1,7 +1,6 @@
 from pydantic import Field, SecretStr
 
 from mex.common.models import BaseModel
-from mex.common.types import AssetsPath
 
 
 class ConsentMailerSettings(BaseModel):
@@ -34,10 +33,10 @@ class ConsentMailerSettings(BaseModel):
         description="Address and port (<address>:<port>) of the SMTP server to use for"
         " the consent mailer.",
     )
-    template_path: AssetsPath = Field(
-        AssetsPath("mailings"),
+    template_path: str = Field(
+        "mailings",
         description=(
             "Path to the directory with the jinja template file containing the"
-            " email body template, absolute path or relative to `assets_dir`."
+            " email body template, relative to `assets_dir`."
         ),
     )
