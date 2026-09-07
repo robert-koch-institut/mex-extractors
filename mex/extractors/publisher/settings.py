@@ -1,6 +1,7 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
+from mex.common.types import AssetsPath
 
 
 class PublisherSettings(BaseModel):
@@ -13,6 +14,17 @@ class PublisherSettings(BaseModel):
     allowed_person_primary_sources: list[str] = Field(
         ["endnote"],
         description="Allow persons from these primary sources to be published.",
+    )
+    mapping_path: AssetsPath = Field(
+        AssetsPath("mappings"),
+        description=(
+            "Path to the directory with the filter mapping files containing the "
+            "default values, absolute path or relative to `assets_dir`."
+        ),
+    )
+    departments_for_publications_csv: list[str] = Field(
+        ["PRNT", "fg99"],
+        description="list of departments for which to publish publications.",
     )
 
     sink: str = Field(

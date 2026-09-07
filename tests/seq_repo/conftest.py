@@ -8,11 +8,11 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ResourceMapping,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
 )
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -78,14 +78,14 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 @pytest.fixture
 def seq_repo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
-        load_yaml(settings.seq_repo.mapping_path / "access-platform_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
 def seq_repo_resource(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
-        load_yaml(settings.seq_repo.mapping_path / "resource_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource_mock.yaml")
     )
 
 

@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any
 
 from dagster import AssetExecutionContext, asset
@@ -14,6 +13,8 @@ from mex.common.models import (
 from mex.common.types import (
     MergedOrganizationIdentifier,
 )
+from mex.extractors.assets import load_yaml
+from mex.extractors.assets.helpers import glob_files
 from mex.extractors.odk.extract import (
     extract_odk_raw_data,
     get_external_partner_and_publisher_by_label,
@@ -27,7 +28,6 @@ from mex.extractors.odk.transform import (
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="odk")
@@ -42,7 +42,7 @@ def odk_resource_mappings() -> list[dict[str, Any]]:
     settings = ExtractorsSettings.get()
     return [
         load_yaml(file)
-        for file in Path(settings.odk.mapping_path).glob("resource_*.yaml")
+        for file in glob_files(settings.odk.mapping_path, "resource_*.yaml")
     ]
 
 
@@ -84,7 +84,7 @@ def odk_extracted_variables(
     """Transform odk data to mex variables and load to sinks."""
     settings = ExtractorsSettings.get()
     variable_mapping = VariableMapping.model_validate(
-        load_yaml(settings.odk.mapping_path / "variable.yaml")
+        load_yaml(f"{settings.odk.mapping_path}/variable.yaml")
     )
 
     extracted_variables = transform_odk_data_to_extracted_variables(

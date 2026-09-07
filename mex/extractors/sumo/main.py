@@ -17,6 +17,7 @@ from mex.common.models import (
 from mex.common.types import (
     MergedContactPointIdentifier,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.pipeline import run_job_in_process
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
@@ -46,7 +47,6 @@ from mex.extractors.sumo.transform import (
     transform_sumo_access_platform_to_mex_access_platform,
     transform_sumo_activity_to_extracted_activity,
 )
-from mex.extractors.utils import load_yaml
 
 
 @asset(group_name="sumo")
@@ -54,7 +54,7 @@ def sumo_extracted_access_platform() -> ExtractedAccessPlatform:
     """Transform and load SUMO access platform and related persons."""
     settings = ExtractorsSettings.get()
     sumo_access_platform = AccessPlatformMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "access-platform.yaml"),
+        load_yaml(f"{settings.sumo.mapping_path}/access-platform.yaml"),
     )
     ldap_contact_points_access_platform = extract_ldap_persons_by_name(
         sumo_access_platform
@@ -92,7 +92,7 @@ def sumo_extracted_activity(
     """Extract, transform and load SUMO activity."""
     settings = ExtractorsSettings.get()
     sumo_activity = ActivityMapping.model_validate(
-        load_yaml(settings.sumo.mapping_path / "activity.yaml"),
+        load_yaml(f"{settings.sumo.mapping_path}/activity.yaml"),
     )
     transformed_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
@@ -106,14 +106,14 @@ def sumo_extracted_activity(
 def sumo_extracted_resources_nokeda() -> dict[str, Any]:
     """Extract Nokeda Resource from SUMO."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.sumo.mapping_path / "resource_nokeda.yaml")
+    return load_yaml(f"{settings.sumo.mapping_path}/resource_nokeda.yaml")
 
 
 @asset(group_name="sumo")
 def sumo_extracted_resources_feat() -> dict[str, Any]:
     """Extract Resource feat from SUMO."""
     settings = ExtractorsSettings.get()
-    return load_yaml(settings.sumo.mapping_path / "resource_feat-model.yaml")
+    return load_yaml(f"{settings.sumo.mapping_path}/resource_feat-model.yaml")
 
 
 @asset(group_name="sumo")

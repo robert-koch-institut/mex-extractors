@@ -1,6 +1,8 @@
 import json
 from typing import TYPE_CHECKING
 
+import pytest
+
 from mex.common.transform import MExEncoder
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
@@ -13,6 +15,7 @@ if TYPE_CHECKING:
     from mex.common.models import ExtractedOrganization
 
 
+@pytest.mark.usefixtures("mocked_backend_s3")
 def test_ndjson_load(
     extracted_organization_rki: ExtractedOrganization,
     tmp_path: Path,

@@ -1,9 +1,11 @@
+from io import BytesIO
 from typing import TYPE_CHECKING
 
 import numpy as np
 from pandas import ExcelFile
 
 from mex.common.ldap.transform import analyse_person_string
+from mex.extractors.assets.helpers import read_bytes
 from mex.extractors.ldap.helpers import (
     get_ldap_merged_contact_id_by_mail,
     get_ldap_merged_person_id_by_query,
@@ -33,8 +35,10 @@ def extract_cc1_data_valuesets() -> list[Cc1DataValuesets]:
         List of cc1_data_valuesets instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc1_data_valuesets_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(
+        f"{settings.sumo.raw_data_path}/cc1_data_valuesets_v3.0.3.xlsx"
+    )
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     valuesets = []
     for sheet_name in excel_file.sheet_names:
         data_valuesets = excel_file.parse(sheet_name=sheet_name)
@@ -64,8 +68,10 @@ def extract_cc1_data_model_nokeda() -> list[Cc1DataModelNoKeda]:
         List of Cc1DataModelNoKeda instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc1_data_model_NoKeda_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(
+        f"{settings.sumo.raw_data_path}/cc1_data_model_NoKeda_v3.0.3.xlsx"
+    )
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "datamodel NoKeda"
     data_model_nokeda = excel_file.parse(sheet_name=sheet_name)
     models = []
@@ -84,8 +90,8 @@ def extract_cc2_aux_model() -> list[Cc2AuxModel]:
         List of cc2_aux_model instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc2_aux_model_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(f"{settings.sumo.raw_data_path}/cc2_aux_model_v3.0.3.xlsx")
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "datamodel aux"
     aux_model = excel_file.parse(sheet_name=sheet_name)
     models = []
@@ -109,8 +115,8 @@ def extract_cc2_aux_mapping(
         List of cc2_aux_mapping instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc2_aux_mapping_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(f"{settings.sumo.raw_data_path}/cc2_aux_mapping_v3.0.3.xlsx")
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     mappings = []
     for row in sumo_cc2_aux_model:
         sheet_name = row.depends_on_nokeda_variable
@@ -135,8 +141,10 @@ def extract_cc2_aux_valuesets() -> list[Cc2AuxValuesets]:
         List of cc2_aux_valuesets instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc2_aux_valuesets_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(
+        f"{settings.sumo.raw_data_path}/cc2_aux_valuesets_v3.0.3.xlsx"
+    )
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "aux_cedis_group"
     aux_valuesets = excel_file.parse(sheet_name=sheet_name)
     valuesets = []
@@ -155,8 +163,10 @@ def extract_cc2_feat_projection() -> list[Cc2FeatProjection]:
         List of cc2_feat_projection instances
     """
     settings = ExtractorsSettings.get()
-    excel_path = settings.sumo.raw_data_path / "cc2_feat_projection_v3.0.3.xlsx"
-    excel_file = ExcelFile(excel_path)
+    raw_bytes = read_bytes(
+        f"{settings.sumo.raw_data_path}/cc2_feat_projection_v3.0.3.xlsx"
+    )
+    excel_file = ExcelFile(BytesIO(raw_bytes))
     sheet_name = "feat_syndrome"
     aux_valuesets = excel_file.parse(sheet_name=sheet_name)
     projections = []

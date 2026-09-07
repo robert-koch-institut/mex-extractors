@@ -14,8 +14,8 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     Text,
 )
+from mex.extractors.assets import load_yaml
 from mex.extractors.odk.model import ODKData
-from mex.extractors.utils import load_yaml
 
 if TYPE_CHECKING:
     from mex.extractors.settings import ExtractorsSettings
@@ -97,7 +97,7 @@ def odk_resource_mappings(settings: ExtractorsSettings) -> list[ResourceMapping]
     """Mocked odk resource mappings."""
     return [
         ResourceMapping.model_validate(
-            load_yaml(settings.odk.mapping_path / "resource_mock.yaml")
+            load_yaml(f"{settings.odk.mapping_path}/resource_mock.yaml")
         )
     ]
 
@@ -106,7 +106,7 @@ def odk_resource_mappings(settings: ExtractorsSettings) -> list[ResourceMapping]
 def odk_variable_mapping(settings: ExtractorsSettings) -> VariableMapping:
     """Mocked odk variable mappings."""
     return VariableMapping.model_validate(
-        load_yaml(settings.odk.mapping_path / "variable.yaml")
+        load_yaml(f"{settings.odk.mapping_path}/variable.yaml")
     )
 
 
