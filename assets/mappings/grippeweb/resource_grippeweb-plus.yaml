@@ -54,6 +54,11 @@ hasCodeValues:
   - mappingRules:
       - setValues:
           - "J00-J99" #Diseases of the respiratory system
+hasPurposeDescription:
+  - mappingRules:
+      - setValues:
+          - langauge: de
+            value: Erhebung
 identifierInPrimarySource:
   - mappingRules:
       - setValues: grippeweb-plus
