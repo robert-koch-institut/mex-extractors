@@ -70,7 +70,7 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             {"value": "Anzahl tests: 42", "language": "de"},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
-        "isPartOf": ["bFQoRhcVH5DHZW"],
+        "relatedResource": ["bFQoRhcVH5DHZW"],
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",
     }
 
