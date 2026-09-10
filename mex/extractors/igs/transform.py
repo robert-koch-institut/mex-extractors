@@ -110,7 +110,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
-        is_part_of = igs_seq_repo_resource_ids_by_pathogen.get(pathogen, [])
+        related_resource = igs_seq_repo_resource_ids_by_pathogen.get(pathogen, [])
         keyword = [
             *default_keywords,
             *keywords_by_pathogen[pathogen],
@@ -154,10 +154,11 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             hasLegalBasis=igs_resource_mapping.hasLegalBasis[0]
             .mappingRules[0]
             .setValues,
-            hasPurpose=igs_resource_mapping.hasPurpose[0].mappingRules[0].setValues,
+            hasPurposeDescription=igs_resource_mapping.hasPurposeDescription[0]
+            .mappingRules[0]
+            .setValues,
             healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
-            isPartOf=is_part_of,
             keyword=keyword,
             language=igs_resource_mapping.language[0].mappingRules[0].setValues,
             meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
@@ -168,6 +169,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             provenance=igs_resource_mapping.provenance[0].mappingRules[0].setValues,
             publisher=extracted_organization_rki.stableTargetId,
             qualityInformation=quality_information,
+            relatedResource=related_resource,
             resourceCreationMethod=igs_resource_mapping.resourceCreationMethod[0]
             .mappingRules[0]
             .setValues,
