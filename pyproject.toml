@@ -39,7 +39,7 @@ dev = [
     "pytest-random-order>=1",
     "pytest-xdist>=3",
     "pytest>=8",
-    "ruff>=0.15",
+    "ruff>=0.16",
     "sphinx>=9",
     "types-beautifulsoup4",
     "types-defusedxml",
