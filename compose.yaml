@@ -74,7 +74,7 @@ services:
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
   neo4j:
-    image: neo4j:2026.07.1-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76
+    image: neo4j:2026.07.1-community@sha256:956faa5d14b6beaa629b80c718bfd389ec12064f97e276ed9a58b0c53b25a323
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_dbms_usage__report_enabled=false
@@ -120,7 +120,7 @@ services:
       retries: 10
       start_period: 30s
   sql-testing-seed:
-    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:0.2.0@sha256:04e7e73e7f61cbceb8e252b9cf987a3eec5728148f551a322be6e8de262e3cee
+    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:0.2.1@sha256:c133839ece319fd4d5e82c3e30b52bfa1ee57869748fa66957aa429c954018a1
     depends_on:
       mssql:
         condition: service_healthy
