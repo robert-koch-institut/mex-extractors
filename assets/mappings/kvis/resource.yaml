@@ -45,6 +45,9 @@ externalPartner:
 hadPrimarySource:
 - mappingRules:
   - rule: 'kvis'
+hasCodingSystem:
+- mappingRules:
+  - setValues:
 hasLegalBasis:
 - mappingRules:
   - setValues:
