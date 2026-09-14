@@ -369,6 +369,20 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
             else []
         )
+        landing_page_url = [
+            related_identifiers.identifier
+            for related_identifiers in resource.metadata.related_identifiers
+            if related_identifiers.relation == "isSupplementTo"
+        ]
+        landing_page: list[Link] = []
+        if (
+            landing_page_url
+            and resource_mapping.landingPage[0].mappingRules[0].setValues
+        ):
+            landing_page = [
+                Link(url=landing_page_url, title=value.title, language=value.language)
+                for value in resource_mapping.landingPage[0].mappingRules[0].setValues
+            ]
         resource_type_general = resource_type_general_lookup.get(
             resource.metadata.resource_type.type, []
         )
@@ -388,6 +402,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 hasPersonalData=has_personal_data,
                 identifierInPrimarySource=str(resource.conceptrecid),
                 keyword=resource.metadata.keywords,
+                landingPage=landing_page,
                 language=language,
                 license=ccby_license,
                 modified=resource.modified,
