@@ -97,11 +97,9 @@ def test_s3csv_load_for_unit() -> None:
     returned_items = list(sink.load_for_unit(items, unit_name="FG 1"))
 
     assert returned_items == items
-    assert sink.client.put_object.call_count == 2
+    assert sink.client.put_object.call_count == 1
 
-    load_items_client_call, load_metadata_client_call = (
-        sink.client.put_object.call_args_list
-    )
+    load_items_client_call = sink.client.put_object.call_args_list
 
     assert load_items_client_call == call(
         Body=Joker(),
@@ -130,26 +128,3 @@ def test_s3csv_load_for_unit() -> None:
             "Verlag": "",
         },
     ]
-
-    expected_checksum = hashlib.sha256(csv_bytes).hexdigest()
-
-    assert load_metadata_client_call == call(
-        Body=Joker(),
-        Bucket="s3_bucket",
-        Key=Joker(),
-    )
-    assert re.match(
-        r"downloadable files-\d+\.\d+/metadata_FG1\.json",
-        load_metadata_client_call.kwargs["Key"],
-    )
-
-    metadata_bytes = load_metadata_client_call.kwargs["Body"]
-    assert isinstance(metadata_bytes, bytes)
-
-    metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
-    assert metadata_dct["sha256_checksum"] == expected_checksum
-    assert set(metadata_dct) == {
-        "sha256_checksum",
-        "versions",
-        "write_completed_at",
-    }
