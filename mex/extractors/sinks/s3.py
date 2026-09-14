@@ -220,7 +220,7 @@ class S3CsvSink(S3Base):
 
         csv_buffer.seek(0)
         self.client.put_object(
-            Body=csv_buffer.getvalue().encode("utf-8"),
+            Body=csv_buffer.getvalue().encode("utf-8-sig"),
             Bucket=settings.s3_bucket_key,
             Key=publications_path,
             ContentType="text/csv; charset=utf-8",
