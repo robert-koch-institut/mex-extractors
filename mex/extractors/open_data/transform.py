@@ -225,7 +225,7 @@ def transform_open_data_distributions(
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
             issued = file.created
-            media_type = MIMEType.find(str(file.mimetype))
+            media_type = MIMEType.find(str(file.mimetype))  # type: ignore[attr-defined]
             modified = file.updated
             title = file.key
             extracted_distributions.append(
