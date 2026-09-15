@@ -216,24 +216,13 @@ class S3CsvSink(S3Base):
         writer.writeheader()
         writer.writerows(rows)
 
-        checksum = calculate_checksum(csv_buffer)
-
         csv_buffer.seek(0)
         self.client.put_object(
-            Body=csv_buffer.getvalue().encode("utf-8"),
+            Body=csv_buffer.getvalue().encode("utf-8-sig"),
             Bucket=settings.s3_bucket_key,
             Key=publications_path,
             ContentType="text/csv; charset=utf-8",
         )
         logger.info("%s - written %s items", type(self).__name__, len(rows))
-
-        metadata_path = (directory_path / f"metadata_{unitname}.json").as_posix()
-        metadata_content = create_metadata_content(checksum)
-        self.client.put_object(
-            Body=metadata_content,
-            Bucket=settings.s3_bucket_key,
-            Key=metadata_path,
-        )
-        logger.info("%s - written metadata.json", type(self).__name__)
 
         yield from items_sorted_by_year
