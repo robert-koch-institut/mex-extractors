@@ -74,7 +74,7 @@ services:
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
   neo4j:
-    image: neo4j:2026.07.1-community@sha256:956faa5d14b6beaa629b80c718bfd389ec12064f97e276ed9a58b0c53b25a323
+    image: neo4j:2026.08.1-community@sha256:7f2c38fa0de8caf875d35237fa7dabda74de4f4fc2fc7c3c9e4b53c2add268ad
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_dbms_usage__report_enabled=false
