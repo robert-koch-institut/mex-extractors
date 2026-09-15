@@ -10,6 +10,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.pipeline.publishing_helpers import GERMAN_PREFLABEL_BY_CONCEPT_ID
 from mex.extractors.publisher.extract import get_publishable_merged_item
 from mex.extractors.publisher.fields import (
     REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
@@ -173,10 +174,8 @@ def transform_merged_bibliographic_resources_for_csv(
     ) in merged_bibliographic_resources_by_unit.items():
         key_unit_short_name = get_resolved_names(key_unit_id, "shortName")
         for bibliographic_resource in merged_bibliographic_resources:
-            access_restriction = (
-                type(bibliographic_resource.accessRestriction)
-                .__concepts__[0]
-                .prefLabel.de
+            access_restriction = GERMAN_PREFLABEL_BY_CONCEPT_ID.get(
+                bibliographic_resource.accessRestriction.value
             )
             contributing_unit = [
                 get_resolved_names(merged_unit_id, "shortName")

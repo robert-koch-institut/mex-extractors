@@ -1,4 +1,5 @@
 import re
+from functools import cache
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
@@ -14,6 +15,7 @@ from mex.common.models import (
     ExtractedVariableGroup,
     ResourceMapping,
 )
+from mex.common.transform import normalize
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -40,6 +42,7 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
     from mex.extractors.open_data.models.source import (
@@ -195,6 +198,41 @@ def get_or_transform_open_data_persons(
     return extracted_persons
 
 
+@cache
+def _get_mime_type_lookup_by_label() -> dict[str, MIMEType]:
+    """Get a dictionary of mime types by prefLabels and altLabels."""
+    lookup: dict[str, MIMEType] = {}
+
+    for concept in VOCABULARY_JSON_BY_NAME["mime_type"]:
+        labels = {
+            *concept["prefLabel"].values(),
+            *(
+                label
+                for alt_label in concept.get("altLabel", [])
+                for label in alt_label.values()
+            ),
+        }
+
+        for label in labels:
+            normalized_label = normalize(label)
+            identifier = MIMEType(concept["identifier"])
+
+            if normalized_label in lookup and lookup[normalized_label] != identifier:
+                msg = f"Same label for different Mime-Types: {label!r}"
+                raise MExError(msg)
+
+            lookup[normalized_label] = identifier
+
+    return lookup
+
+
+def find_mime_type(value: str | None) -> MIMEType | None:
+    """Lookup a mime type string and return the according MIME type."""
+    if value is None:
+        return None
+    return _get_mime_type_lookup_by_label().get(normalize(value))
+
+
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     distribution_mapping: DistributionMapping,
@@ -225,7 +263,7 @@ def transform_open_data_distributions(
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
             issued = file.created
-            media_type = MIMEType.find(str(file.mimetype))  # type: ignore[attr-defined]
+            media_type = find_mime_type(file.mimetype)
             modified = file.updated
             title = file.key
             extracted_distributions.append(
