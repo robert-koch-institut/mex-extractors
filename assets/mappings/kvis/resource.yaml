@@ -48,6 +48,7 @@ hadPrimarySource:
 hasCodingSystem:
 - mappingRules:
   - setValues:
+        - https://mex.rki.de/item/coding-system-1
 hasLegalBasis:
 - mappingRules:
   - setValues:
