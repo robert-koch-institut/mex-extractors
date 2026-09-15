@@ -1,6 +1,9 @@
 from subprocess import PIPE, STDOUT, Popen
 from typing import TYPE_CHECKING, Any
 
+# https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
+import pyodbc  # type: ignore[import-not-found]
+
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
 from mex.extractors.ifsg.models.meta_catalogue2item import MetaCatalogue2Item
@@ -18,20 +21,6 @@ from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
-
-
-class NoOpPyodbc:
-    """No-op pyodbc drop-in for when the libodbc dependency is not installed."""
-
-    def connect(self, _: str) -> None:  # pragma: no cover
-        """Create a new ODBC connection to a database."""
-        return
-
-
-try:
-    import pyodbc  # type: ignore[import-not-found]
-except ImportError:
-    pyodbc = NoOpPyodbc
 
 
 QUERY_BY_MODEL = {
@@ -66,7 +55,12 @@ class IFSGConnector(BaseConnector):
             )
             logger.info(stdout)
             logger.error(stderr)
-        self._connection = pyodbc.connect(settings.ifsg.mssql_connection_dsn)
+        self._connection = pyodbc.connect(
+            settings.ifsg.mssql_connection_dsn,
+            PWD=settings.ifsg.mssql_password.get_secret_value()
+            if settings.ifsg.mssql_password is not None
+            else None,
+        )
 
     def parse_rows(self, model: type[BaseModel]) -> list[dict[str, Any]]:
         """Execute whitelisted queries and zip results to column name."""
