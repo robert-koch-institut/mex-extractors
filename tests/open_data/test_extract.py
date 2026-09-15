@@ -31,6 +31,9 @@ def test_extract_parent_resources_mocked() -> None:
             "contributors": [
                 {"name": "Felicitás, Juturna", "orcid": "0000-0002-1234-5678"}
             ],
+            "related_identifiers": [
+                {"identifier": "123", "relation": "isSupplementTo"}
+            ],
             "resource_type": {"type": "dataset"},
         },
         "files": [{"id": "file_test_id"}],
@@ -51,9 +54,6 @@ def test_extract_parent_resources_mocked() -> None:
                     "affiliation": "Universität",
                     "orcid": "9876543210",
                 },
-            ],
-            "related_identifiers": [
-                {"identifier": "123", "relation": "isSupplementTo"}
             ],
             "resource_type": {"type": "something else"},
             "license": {"id": "no license"},
