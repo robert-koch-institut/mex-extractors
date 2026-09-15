@@ -9,9 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- new secrets to configure db password outside of connection dsn:
+    - mex_extractors_grippeweb__mssql_password
+    - mex_extractors_ifsg__mssql_password
+    - mex_extractors_kvis__mssql_password
+
 ### Changes
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
+
 ### Deprecated
 
 ### Removed
