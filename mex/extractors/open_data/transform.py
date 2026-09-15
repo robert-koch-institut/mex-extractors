@@ -369,11 +369,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
             if resource_mapping.contributingUnit[0].mappingRules[0].forValues
             else []
         )
-        landing_page_url = [
+        landing_page_url = next(
             related_identifiers.identifier
             for related_identifiers in resource.metadata.related_identifiers
             if related_identifiers.relation == "isSupplementTo"
-        ]
+        )
         landing_page: list[Link] = []
         if (
             landing_page_url

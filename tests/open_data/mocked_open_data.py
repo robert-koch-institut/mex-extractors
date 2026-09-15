@@ -34,6 +34,12 @@ def create_mocked_parent_response() -> dict[str, Any]:
                                 "orcid": "0000-0002-1234-5678",
                             }
                         ],
+                        "related_identifiers": [
+                            {
+                                "identifier": "123",
+                                "relation": "isSupplementTo",
+                            }
+                        ],
                         "resource_type": {"name": "test1", "type": "dataset"},
                     },
                     "files": [{"id": "file_test_id"}],

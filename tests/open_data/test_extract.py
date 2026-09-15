@@ -52,6 +52,9 @@ def test_extract_parent_resources_mocked() -> None:
                     "orcid": "9876543210",
                 },
             ],
+            "related_identifiers": [
+                {"identifier": "123", "relation": "isSupplementTo"}
+            ],
             "resource_type": {"type": "something else"},
             "license": {"id": "no license"},
         },
