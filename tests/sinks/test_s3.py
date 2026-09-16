@@ -94,12 +94,12 @@ def test_s3csv_load_for_unit() -> None:
     ]
 
     sink = S3CsvSink()
-    returned_items = list(sink.load_for_unit(items, unit_name="FG 1"))
+    returned_items = list(sink.load_for_unit(items, file_name="Publikationen_FG1.csv"))
 
     assert returned_items == items
     assert sink.client.put_object.call_count == 1
 
-    load_items_client_call = sink.client.put_object.call_args_list
+    load_items_client_call = sink.client.put_object.call_args
 
     assert load_items_client_call == call(
         Body=Joker(),
@@ -113,7 +113,9 @@ def test_s3csv_load_for_unit() -> None:
     )
 
     csv_bytes = sink.client.bodies[0]
-    csv_text = csv_bytes.decode("utf-8")
+    assert csv_bytes.startswith(b"\xef\xbb\xbf")  # Test for Encoding with Umlauts
+
+    csv_text = csv_bytes.decode("utf-8-sig")
     rows = list(csv.DictReader(StringIO(csv_text), delimiter=";"))
 
     assert rows == [
@@ -128,3 +130,35 @@ def test_s3csv_load_for_unit() -> None:
             "Verlag": "",
         },
     ]
+
+
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
+def test_s3csv_load_datapackage() -> None:
+    datapackage_content = b"""{
+        "name": "name",
+        "title": "title",
+        "created": "1970-01-101",
+        "resources": []
+    }"""
+
+    sink = S3CsvSink()
+
+    sink.load_datapackage(datapackage_content)
+
+    assert sink.client.put_object.call_count == 1
+
+    load_datapackage_client_call = sink.client.put_object.call_args_list[0]
+
+    assert load_datapackage_client_call == call(
+        Body=datapackage_content,
+        Bucket="s3_bucket",
+        Key=Joker(),
+        ContentType="application/json; charset=utf-8",
+    )
+
+    assert re.match(
+        r"downloadable files-\d+\.\d+/datapackage\.json",
+        load_datapackage_client_call.kwargs["Key"],
+    )
+
+    assert sink.client.bodies[0] == datapackage_content
