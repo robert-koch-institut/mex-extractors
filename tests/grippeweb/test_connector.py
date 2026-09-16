@@ -63,7 +63,12 @@ def test_setup_connection_kerberos_enabled(monkeypatch: MonkeyPatch) -> None:
     mock_process.communicate.assert_called_once_with(
         input=settings.kerberos_password.get_secret_value()
     )
-    mock_pyodbc_connect.assert_called_once_with(settings.grippeweb.mssql_connection_dsn)
+    mock_pyodbc_connect.assert_called_once_with(
+        settings.grippeweb.mssql_connection_dsn,
+        PWD=settings.grippeweb.mssql_password.get_secret_value()
+        if settings.grippeweb.mssql_password is not None
+        else None,
+    )
 
 
 def test_setup_connection_kerberos_disabled(monkeypatch: MonkeyPatch) -> None:
