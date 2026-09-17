@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, SecretStr
 
 from mex.common.models import BaseModel
 
@@ -20,6 +20,10 @@ class IFSGSettings(BaseModel):
             "https://learn.microsoft.com/en-us/sql/connect/odbc/"
             "dsn-connection-string-attribute"
         ),
+    )
+    mssql_password: SecretStr | None = Field(
+        None,
+        description="Password for the Mssql database",
     )
     kerberos_enabled: bool = Field(
         False,  # noqa: FBT003
