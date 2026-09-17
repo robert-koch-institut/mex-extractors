@@ -4,9 +4,7 @@ from typing import TYPE_CHECKING, cast
 
 from mex.common.models import (
     AccessPlatformMapping,
-    ActivityMapping,
     ExtractedAccessPlatform,
-    ExtractedActivity,
     ExtractedOrganization,
     ExtractedPerson,
     ExtractedResource,
@@ -33,46 +31,8 @@ if TYPE_CHECKING:
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
-def transform_seq_repo_activities_to_extracted_activities(
-    seq_repo_sources: list[SeqRepoSource],
-    seq_repo_activity: ActivityMapping,
-) -> list[ExtractedActivity]:
-    """Transform seq-repo activities to list of unique ExtractedActivity.
-
-    Args:
-        seq_repo_sources: Seq Repo extracted sources
-        seq_repo_activity: Seq Repo activity mapping models with default values
-
-    Returns:
-        list of unique ExtractedActivity
-    """
-    theme = seq_repo_activity.theme[0].mappingRules[0].setValues
-    unique_activities = []
-
-    for source in seq_repo_sources:
-        contact, responsible_units = get_resolved_project_coordinators_and_units(
-            source.project_coordinators
-        )
-        involved_person = [c for c in contact if isinstance(c, MergedPersonIdentifier)]
-        extracted_activity = ExtractedActivity(
-            contact=contact,
-            hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
-            identifierInPrimarySource=source.project_id,
-            involvedPerson=involved_person,
-            responsibleUnit=responsible_units,
-            theme=theme,
-            title=source.project_name,
-        )
-
-        if extracted_activity not in unique_activities:
-            unique_activities.append(extracted_activity)
-
-    return unique_activities
-
-
 def transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_activities: dict[str, ExtractedActivity],
     mex_access_platform: ExtractedAccessPlatform,
     seq_repo_resource: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -81,7 +41,6 @@ def transform_seq_repo_resource_to_extracted_resource(
 
     Args:
         seq_repo_sources: Seq Repo extracted sources
-        seq_repo_activities: Seq Repo extracted activity for default values from mapping
         mex_access_platform: Extracted access platform
         seq_repo_resource: Seq Repo resource mapping model with default values
         extracted_organization_rki: wikidata extracted organization
@@ -143,8 +102,6 @@ def transform_seq_repo_resource_to_extracted_resource(
             modified = max(sequencing_dates)
             start = min(sequencing_dates)
 
-        activity = seq_repo_activities.get(source.project_id)
-
         contact, units_in_charge = get_resolved_project_coordinators_and_units(
             source.project_coordinators
         )
@@ -189,7 +146,6 @@ def transform_seq_repo_resource_to_extracted_resource(
             theme=theme,
             title=title,
             unitInCharge=units_in_charge,
-            wasGeneratedBy=activity.stableTargetId if activity else None,
         )
         extracted_resources.append(extracted_resource)
 
