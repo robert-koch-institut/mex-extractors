@@ -137,7 +137,7 @@ def test_s3csv_load_datapackage() -> None:
     datapackage_content = b"""{
         "name": "name",
         "title": "title",
-        "created": "1970-01-101",
+        "created": "1970-01-01",
         "resources": []
     }"""
 
