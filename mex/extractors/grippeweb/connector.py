@@ -43,7 +43,12 @@ class GrippewebConnector(BaseConnector):
             if stderr:
                 logger.error(stderr)
 
-        return pyodbc.connect(settings.grippeweb.mssql_connection_dsn)
+        return pyodbc.connect(
+            settings.grippeweb.mssql_connection_dsn,
+            PWD=settings.grippeweb.mssql_password.get_secret_value()
+            if settings.grippeweb.mssql_password is not None
+            else None,
+        )
 
     def reconnect(self) -> None:
         """Close current connection and initiate a new one."""
