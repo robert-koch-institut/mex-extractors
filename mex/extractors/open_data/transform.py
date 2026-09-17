@@ -15,7 +15,6 @@ from mex.common.models import (
     ExtractedVariableGroup,
     ResourceMapping,
 )
-from mex.common.transform import normalize
 from mex.common.types import (
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -199,38 +198,34 @@ def get_or_transform_open_data_persons(
 
 
 @cache
-def _get_mime_type_lookup_by_label() -> dict[str, MIMEType]:
-    """Get a dictionary of mime types by prefLabels and altLabels."""
-    lookup: dict[str, MIMEType] = {}
-
-    for concept in VOCABULARY_JSON_BY_NAME["mime_type"]:
-        labels = {
-            *concept["prefLabel"].values(),
-            *(
-                label
-                for alt_label in concept.get("altLabel", [])
-                for label in alt_label.values()
-            ),
-        }
-
-        for label in labels:
-            normalized_label = normalize(label)
-            identifier = MIMEType(concept["identifier"])
-
-            if normalized_label in lookup and lookup[normalized_label] != identifier:
-                msg = f"Same label for different Mime-Types: {label!r}"
-                raise MExError(msg)
-
-            lookup[normalized_label] = identifier
-
-    return lookup
+def _get_mime_type_exact_matches() -> tuple[tuple[str, MIMEType], ...]:
+    """Get exactMatch URLs with their corresponding MIME types."""
+    return tuple(
+        (exact_match, MIMEType(concept["identifier"]))
+        for concept in VOCABULARY_JSON_BY_NAME["mime_type"]
+        for exact_match in concept.get("exactMatch", [])
+    )
 
 
 def find_mime_type(value: str | None) -> MIMEType | None:
-    """Lookup a mime type string and return the according MIME type."""
-    if value is None:
+    """Find a MIME type if the value occurs in an exactMatch URL."""
+    if not value:
         return None
-    return _get_mime_type_lookup_by_label().get(normalize(value))
+
+    matching_mime_types = {
+        mime_type
+        for exact_match, mime_type in _get_mime_type_exact_matches()
+        if value in exact_match
+    }
+
+    if len(matching_mime_types) == 0:
+        return None
+
+    if len(matching_mime_types) > 1:
+        msg = f"Found more than one match for mime-type search pattern {value!r}"
+        raise MExError(msg)
+
+    return next(iter(matching_mime_types))
 
 
 def transform_open_data_distributions(
@@ -408,9 +403,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
             else []
         )
         landing_page_url = next(
-            related_identifiers.identifier
-            for related_identifiers in resource.metadata.related_identifiers
-            if related_identifiers.relation == "isSupplementTo"
+            (
+                related_identifiers.identifier
+                for related_identifiers in resource.metadata.related_identifiers
+                if related_identifiers.relation == "isSupplementTo"
+            ),
+            None,
         )
         landing_page: list[Link] = []
         if (
