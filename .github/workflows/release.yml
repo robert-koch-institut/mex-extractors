@@ -132,7 +132,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: release
-
     permissions:
       contents: write
       id-token: write # Required for python release signing
