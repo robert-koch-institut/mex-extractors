@@ -428,7 +428,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         has_legal_basis = (
             [Text(value=study.rechte, language=TextLanguage.DE)] if study.rechte else []
         )
-        has_purpose = (
+        has_purpose_description = (
             [Text(value=study.zweck_der_datenverarbeitung, language=TextLanguage.DE)]
             if study.zweck_der_datenverarbeitung
             else []
@@ -482,7 +482,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
-                hasPurpose=has_purpose,
+                hasPurposeDescription=has_purpose_description,
                 healthCategory=synopse_resource.healthCategory[0]
                 .mappingRules[0]
                 .setValues,

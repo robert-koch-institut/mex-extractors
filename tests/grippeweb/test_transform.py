@@ -106,6 +106,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
+        "hasPurposeDescription": [{"language": "de", "value": "Erhebung"}],
         "hasCodeValues": [{"value": "J00-J99"}],
         "keyword": [{"value": "Citizen Science", "language": TextLanguage.EN}],
         "language": ["https://mex.rki.de/item/language-1"],
