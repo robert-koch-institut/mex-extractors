@@ -1,6 +1,9 @@
 from subprocess import PIPE, STDOUT, Popen
 from typing import TYPE_CHECKING, Any
 
+# https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
+import pyodbc  # type: ignore[import-not-found]
+
 from mex.common.connector import BaseConnector
 from mex.common.logging import logger
 from mex.extractors.kvis.models.table_models import (
@@ -23,9 +26,6 @@ class KVISConnector(BaseConnector):
 
     def __init__(self) -> None:
         """Create a new connector instance."""
-        # https://github.com/mkleehammer/pyodbc/wiki/Install#installing-on-linux
-        import pyodbc  # type: ignore[import-not-found]  # noqa: PLC0415
-
         settings = ExtractorsSettings.get()
         if settings.kvis.kerberos_enabled:  # pragma: no cover
             process = Popen(  # noqa: S603
@@ -40,7 +40,12 @@ class KVISConnector(BaseConnector):
             )
             logger.info(stdout)
             logger.error(stderr)
-        self._connection = pyodbc.connect(settings.kvis.mssql_connection_dsn)
+        self._connection = pyodbc.connect(
+            settings.kvis.mssql_connection_dsn,
+            PWD=settings.kvis.mssql_password.get_secret_value()
+            if settings.kvis.mssql_password is not None
+            else None,
+        )
 
     def parse_rows(self, model: type[BaseModel]) -> list[dict[str, Any]]:
         """Execute whitelisted queries and zip results to column name."""
