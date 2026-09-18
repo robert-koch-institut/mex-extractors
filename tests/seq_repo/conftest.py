@@ -6,6 +6,7 @@ from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
+    ExtractedResourceSeries,
     ResourceMapping,
 )
 from mex.extractors.assets import load_yaml
@@ -71,6 +72,24 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             species="Lab rat",
             basepair_count=7,
             reads_count=8,
+        ),
+    ]
+
+
+@pytest.fixture
+def extracted_resource_series() -> list[ExtractedResourceSeries]:
+    return [
+        ExtractedResourceSeries(
+            description="Some text with project name 'FG99-ABC-123'",
+            identifierInPrimarySource="TEST-ID",
+            hadPrimarySource="SeqRepoPrimarySource",
+            title=["FG99-ABC-123", "FG99-ABC-321", "SKIPPED BECAUSE MISSING DATE"],
+        ),
+        ExtractedResourceSeries(
+            description="Some text with project name 'FG99-ABC-789'",
+            identifierInPrimarySource="TEST-ID-2",
+            hadPrimarySource="SeqRepoPrimarySource",
+            title=["FG99-ABC-789"],
         ),
     ]
 

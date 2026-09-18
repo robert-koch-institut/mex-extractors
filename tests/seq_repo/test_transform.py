@@ -13,6 +13,7 @@ if TYPE_CHECKING:
         AccessPlatformMapping,
         ExtractedAccessPlatform,
         ExtractedOrganization,
+        ExtractedResourceSeries,
         ResourceMapping,
     )
     from mex.extractors.seq_repo.model import SeqRepoSource
@@ -23,6 +24,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_resource: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
+    extracted_resource_series: list[ExtractedResourceSeries],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     expected_resource = {
@@ -55,6 +57,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
             {"value": "virus XYZ"},
             {"value": "TEST"},
         ],
+        "inSeries": ["dtxk6Fk8iHe849ArDRywlS"],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
             {"value": "Basepairs: 1", "language": "en"},
@@ -76,6 +79,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
     mex_resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_sources,
         extracted_mex_access_platform,
+        extracted_resource_series,
         seq_repo_resource,
         extracted_organization_rki,
     )
