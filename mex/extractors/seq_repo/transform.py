@@ -128,6 +128,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
 def transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
     mex_access_platform: ExtractedAccessPlatform,
+    extracted_resource_series: list[ExtractedResourceSeries],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
@@ -136,6 +137,7 @@ def transform_seq_repo_resource_to_extracted_resource(
     Args:
         seq_repo_sources: Seq Repo extracted sources
         mex_access_platform: Extracted access platform
+        extracted_resource_series: list of ExtractedResourceSeries
         resource_mapping: Seq Repo resource mapping model with default values
         extracted_organization_rki: wikidata extracted organization
 
@@ -172,6 +174,12 @@ def transform_seq_repo_resource_to_extracted_resource(
     sequence_dates_by_identifier_in_primary_source: dict[str, list[str]] = defaultdict(
         list
     )
+
+    resource_series_merged_id_by_project_id = {
+        rs.identifierInPrimarySource: rs.stableTargetId
+        for rs in extracted_resource_series
+    }
+
     for source in seq_repo_sources:
         if source.sequencing_date:
             sequence_dates_by_identifier_in_primary_source[
@@ -226,6 +234,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
+            inSeries=resource_series_merged_id_by_project_id[source.project_id],
             modified=modified,
             publisher=extracted_organization_rki.stableTargetId,
             qualityInformation=quality_information,

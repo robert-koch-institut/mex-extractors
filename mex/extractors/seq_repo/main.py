@@ -74,6 +74,7 @@ def seq_repo_resources(
     context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
+    seq_repo_extracted_resource_series: list[ExtractedResourceSeries],
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Extract resources from seq-repo."""
@@ -85,6 +86,7 @@ def seq_repo_resources(
     resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_sources,
         seq_repo_extracted_access_platform,
+        seq_repo_extracted_resource_series,
         resource_mapping,
         extracted_organization_rki,
     )
