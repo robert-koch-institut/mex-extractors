@@ -2,13 +2,16 @@ from collections import defaultdict
 from functools import lru_cache
 from typing import TYPE_CHECKING, cast
 
+from mex.common.exceptions import MExError
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
     ExtractedOrganization,
     ExtractedPerson,
     ExtractedResource,
+    ExtractedResourceSeries,
     ResourceMapping,
+    ResourceSeriesMapping,
 )
 from mex.common.types import (
     MergedContactPointIdentifier,
@@ -31,10 +34,101 @@ if TYPE_CHECKING:
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
+def transform_seq_repo_resource_to_extracted_resource_series(
+    resource_series_mapping: ResourceSeriesMapping,
+    seq_repo_sources: list[SeqRepoSource],
+    mex_access_platform: ExtractedAccessPlatform,
+    extracted_organization_rki: ExtractedOrganization,
+) -> list[ExtractedResourceSeries]:
+    """Transform seq-repo resources to ExtractedResourceSeries.
+
+    Args:
+        resource_series_mapping: Seq Repo resource series mapping with default values
+        seq_repo_sources: Seq Repo extracted sources
+        mex_access_platform: Extracted access platform
+        extracted_organization_rki: wikidata extracted organization
+
+    Returns:
+        list of ExtractedResourceSeries
+    """
+    access_platform = mex_access_platform.stableTargetId
+    description_raw = resource_series_mapping.description[0].mappingRules[0].setValues
+    had_primary_source = get_extracted_primary_source_id_by_name("seq-repo")
+    keyword_basis = resource_series_mapping.keyword[0].mappingRules[0].setValues
+    publisher = extracted_organization_rki.stableTargetId
+
+    if not description_raw:
+        msg = "Description in Resource Series mapping must contain setValues."
+        raise MExError(msg)
+
+    if not keyword_basis:
+        msg = "Keyword in Resource Series mapping must contain setValues."
+        raise MExError(msg)
+
+    collected_project_ids: set[str] = set()
+    collected_project_name_by_project_id: dict[str, set[str]] = defaultdict(set)
+    collected_keywords_by_project_id: dict[str, set[str]] = defaultdict(set)
+    collected_project_coordinators_by_project_id: dict[str, set[str]] = defaultdict(set)
+    collected_sequencing_dates_by_project_id: dict[str, set[str]] = defaultdict(set)
+    for source in seq_repo_sources:
+        project_id = source.project_id
+
+        collected_project_ids.add(project_id)
+        collected_project_name_by_project_id[project_id].add(source.project_name)
+        collected_keywords = (
+            source.species,
+            source.pathogen_code.removesuffix("P") if source.pathogen_code else None,
+            source.sequencing_platform,
+        )
+        collected_keywords_by_project_id[project_id].update(
+            k for k in collected_keywords if k is not None
+        )
+        collected_project_coordinators_by_project_id[project_id].update(
+            source.project_coordinators
+        )
+        if source.sequencing_date is not None:
+            collected_sequencing_dates_by_project_id[project_id].add(
+                source.sequencing_date
+            )
+
+    extracted_resource_series = []
+    for project_id in collected_project_ids:
+        project_name_list = list(collected_project_name_by_project_id[project_id])
+        contact, _ = get_resolved_project_coordinators_and_units(
+            list(collected_project_coordinators_by_project_id[project_id])
+        )
+        description = [
+            Text(
+                value=d.value.replace("[project-name]", f"'{project_name_list[0]}'"),
+                language=d.language,
+            )
+            for d in description_raw
+        ]
+        keyword = keyword_basis + [
+            Text(value=item) for item in collected_keywords_by_project_id[project_id]
+        ]
+
+        extracted_resource_series.append(
+            ExtractedResourceSeries(
+                accessPlatform=[access_platform],
+                contact=contact,
+                description=description,
+                end=max(collected_sequencing_dates_by_project_id[project_id]),
+                hadPrimarySource=had_primary_source,
+                identifierInPrimarySource=project_id,
+                keyword=keyword,
+                start=min(collected_sequencing_dates_by_project_id[project_id]),
+                publisher=[publisher],
+                title=project_name_list,
+            )
+        )
+    return extracted_resource_series
+
+
 def transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
     mex_access_platform: ExtractedAccessPlatform,
-    seq_repo_resource: ResourceMapping,
+    resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResource]:
     """Transform seq-repo resources to ExtractedResource.
@@ -42,39 +136,37 @@ def transform_seq_repo_resource_to_extracted_resource(
     Args:
         seq_repo_sources: Seq Repo extracted sources
         mex_access_platform: Extracted access platform
-        seq_repo_resource: Seq Repo resource mapping model with default values
+        resource_mapping: Seq Repo resource mapping model with default values
         extracted_organization_rki: wikidata extracted organization
 
     Returns:
         list of ExtractedResource
     """
     # Resource values from mapping
-    access_restriction = (
-        seq_repo_resource.accessRestriction[0].mappingRules[0].setValues
-    )
+    access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
     accrual_periodicity = (
-        seq_repo_resource.accrualPeriodicity[0].mappingRules[0].setValues
+        resource_mapping.accrualPeriodicity[0].mappingRules[0].setValues
     )
     anonymization_pseudonymization = (
-        seq_repo_resource.anonymizationPseudonymization[0].mappingRules[0].setValues
+        resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
-    description = seq_repo_resource.description[0].mappingRules[0].setValues
-    health_category = seq_repo_resource.healthCategory[0].mappingRules[0].setValues
+    description = resource_mapping.description[0].mappingRules[0].setValues
+    health_category = resource_mapping.healthCategory[0].mappingRules[0].setValues
     resource_creation_method = (
-        seq_repo_resource.resourceCreationMethod[0].mappingRules[0].setValues
+        resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
     )
     resource_type_general = (
-        seq_repo_resource.resourceTypeGeneral[0].mappingRules[0].setValues
+        resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
     )
     resource_type_specific = (
-        seq_repo_resource.resourceTypeSpecific[0].mappingRules[0].setValues
+        resource_mapping.resourceTypeSpecific[0].mappingRules[0].setValues
     )
-    rights = seq_repo_resource.rights[0].mappingRules[0].setValues
+    rights = resource_mapping.rights[0].mappingRules[0].setValues
     state_of_data_processing = (
-        seq_repo_resource.stateOfDataProcessing[0].mappingRules[0].setValues
+        resource_mapping.stateOfDataProcessing[0].mappingRules[0].setValues
     )
-    theme = seq_repo_resource.theme[0].mappingRules[0].setValues
-    shared_keyword = seq_repo_resource.keyword[0].mappingRules[0].setValues or []
+    theme = resource_mapping.theme[0].mappingRules[0].setValues
+    shared_keyword = resource_mapping.keyword[0].mappingRules[0].setValues or []
 
     extracted_resources = []
     sequence_dates_by_identifier_in_primary_source: dict[str, list[str]] = defaultdict(
@@ -153,33 +245,33 @@ def transform_seq_repo_resource_to_extracted_resource(
 
 
 def transform_seq_repo_access_platform_to_extracted_access_platform(
-    seq_repo_access_platform: AccessPlatformMapping,
+    access_platform_mapping: AccessPlatformMapping,
 ) -> ExtractedAccessPlatform:
     """Transform seq-repo access platform to ExtractedAccessPlatform.
 
     Args:
-        seq_repo_access_platform: Seq Repo access platform mapping model
+        access_platform_mapping: Seq Repo access platform mapping model
 
     Returns:
         ExtractedAccessPlatform
     """
     alternative_title = (
-        seq_repo_access_platform.alternativeTitle[0].mappingRules[0].setValues
+        access_platform_mapping.alternativeTitle[0].mappingRules[0].setValues
     )
 
-    description = seq_repo_access_platform.description[0].mappingRules[0].setValues
-    endpoint_type = seq_repo_access_platform.endpointType[0].mappingRules[0].setValues
+    description = access_platform_mapping.description[0].mappingRules[0].setValues
+    endpoint_type = access_platform_mapping.endpointType[0].mappingRules[0].setValues
     identifier_in_primary_source = (
-        seq_repo_access_platform.identifierInPrimarySource[0].mappingRules[0].setValues
+        access_platform_mapping.identifierInPrimarySource[0].mappingRules[0].setValues
     )
-    landing_page = seq_repo_access_platform.landingPage[0].mappingRules[0].setValues
+    landing_page = access_platform_mapping.landingPage[0].mappingRules[0].setValues
 
     technical_accessibility = (
-        seq_repo_access_platform.technicalAccessibility[0].mappingRules[0].setValues
+        access_platform_mapping.technicalAccessibility[0].mappingRules[0].setValues
     )
-    title = seq_repo_access_platform.title[0].mappingRules[0].setValues
+    title = access_platform_mapping.title[0].mappingRules[0].setValues
 
-    contacts = seq_repo_access_platform.contact[0].mappingRules[0].forValues or []
+    contacts = access_platform_mapping.contact[0].mappingRules[0].forValues or []
 
     resolved_organigram = [
         unit_id
