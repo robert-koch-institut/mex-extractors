@@ -325,6 +325,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
         hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
         hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
         hasCodeValues=[hcv for hcv in has_code_values if hcv],
+        hasCodingSystem=resource_disease.hasCodingSystem[0].mappingRules[0].setValues,
         identifierInPrimarySource=(
             f"resource_disease_{meta_disease_row.id_type}_{meta_disease_row.id_schema}"
         ),

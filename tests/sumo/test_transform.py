@@ -74,7 +74,6 @@ def test_transform_resource_nokeda_to_mex_resource(
     expected = {
         "identifier": "feVlCRX2L1jeXiLYMOvHXF",
         "hadPrimarySource": "g2emcctcV6HXW0353Ye1AR",
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "test_project",
         "stableTargetId": "hyxiQKMht5DgDtOv9awxjU",
         "accessPlatform": ["bu75RAHAhH2aYxHhhA8HQH"],
@@ -89,6 +88,8 @@ def test_transform_resource_nokeda_to_mex_resource(
             {"language": "en", "title": "Confluence", "url": "https://link.com"}
         ],
         "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-2"],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": "de", "value": "keyword1"},
@@ -133,14 +134,13 @@ def test_transform_resource_feat_model_to_mex_resource(
         sumo_extracted_access_platform,
     )
     expected = {
-        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "identifier": Joker(),
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             get_extracted_primary_source_id_by_name("nokeda")
         ),
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "Syndrome",
         "stableTargetId": Joker(),
+        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
@@ -148,6 +148,8 @@ def test_transform_resource_feat_model_to_mex_resource(
         "description": [
             {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
         ],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},

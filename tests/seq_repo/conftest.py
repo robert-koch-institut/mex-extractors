@@ -5,16 +5,13 @@ import pytest
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
-    ActivityMapping,
     ExtractedAccessPlatform,
-    ExtractedActivity,
     ResourceMapping,
 )
 from mex.extractors.assets import load_yaml
 from mex.extractors.seq_repo.model import SeqRepoSource
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
-    transform_seq_repo_activities_to_extracted_activities,
 )
 
 if TYPE_CHECKING:
@@ -79,13 +76,6 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 
 
 @pytest.fixture
-def seq_repo_activity(settings: ExtractorsSettings) -> ActivityMapping:
-    return ActivityMapping.model_validate(
-        load_yaml(f"{settings.seq_repo.mapping_path}/activity_mock.yaml")
-    )
-
-
-@pytest.fixture
 def seq_repo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
         load_yaml(f"{settings.seq_repo.mapping_path}/access-platform_mock.yaml")
@@ -106,21 +96,6 @@ def extracted_mex_access_platform(
     return transform_seq_repo_access_platform_to_extracted_access_platform(
         seq_repo_access_platform,
     )
-
-
-@pytest.fixture
-def extracted_mex_activities_dict(
-    seq_repo_sources: list[SeqRepoSource],
-    seq_repo_activity: ActivityMapping,
-) -> dict[str, ExtractedActivity]:
-    extracted_mex_activities = transform_seq_repo_activities_to_extracted_activities(
-        seq_repo_sources,
-        seq_repo_activity,
-    )
-    return {
-        activity.identifierInPrimarySource: activity
-        for activity in extracted_mex_activities
-    }
 
 
 @pytest.fixture
