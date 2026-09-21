@@ -47,8 +47,9 @@ def seq_repo_extracted_access_platform() -> ExtractedAccessPlatform:
     return mex_access_platform
 
 
-@asset(group_name="seq_repo")
+@asset(group_name="seq_repo", metadata={"entity_type": "resource-series"})
 def seq_repo_extracted_resource_series(
+    context: AssetExecutionContext,
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
@@ -66,6 +67,7 @@ def seq_repo_extracted_resource_series(
         extracted_organization_rki,
     )
     load(mex_resource_series)
+    context.add_output_metadata({"num_items": len(mex_resource_series)})
     return mex_resource_series
 
 
