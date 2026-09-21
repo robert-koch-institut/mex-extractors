@@ -1,3 +1,4 @@
+from datetime import date  # noqa: TC003
 from typing import Protocol, runtime_checkable
 
 from pydantic import Field
@@ -27,3 +28,25 @@ class BibliographicResourceForCsv(BaseModel):
     doi: str | None = Field(None, serialization_alias="DOI")
     accessRestriction: str = Field(..., serialization_alias="Zugriffsbeschränkung")
     publisher: list[str] | None = Field(None, serialization_alias="Verlag")
+
+
+class CsvResource(BaseModel):
+    """pydantic model of CSV resources listed in datapackage.json."""
+
+    name: str
+    title: str
+    type: str = "table"
+    path: str
+    scheme: str = "file"
+    format: str = "csv"
+    mediatype: str = "text/csv"
+    encoding: str = "utf-8"
+
+
+class CsvDataPackage(BaseModel):
+    """pydantic model of datapacke content."""
+
+    name: str = "rki-mex-csv-publication-reports"
+    title: str = "RKI Publikationslisten"
+    created: date
+    resources: list[CsvResource]

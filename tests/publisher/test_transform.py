@@ -1,3 +1,6 @@
+import json
+from datetime import date
+
 import pytest
 
 from mex.common.models import (
@@ -14,7 +17,10 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
 )
+from mex.extractors.publisher.models import CsvResource
 from mex.extractors.publisher.transform import (
+    create_csv_resource,
+    create_datapackage_content,
     get_resolved_names,
     get_unit_id_per_person,
     transform_merged_bibliographic_resources_for_csv,
@@ -186,4 +192,54 @@ def test_transform_merged_bibliographic_resources_for_csv(
         "publicationYear": "2042",
         "publisher": [],
         "title": ["title 1, Unit Parent"],
+    }
+
+
+def test_create_csv_resource() -> None:
+    resource = create_csv_resource(
+        file_name_prefix="Publikationen",
+        unit_name="Dept. 1",
+        csv_file_name="Publikationen_Dept.1.csv",
+    )
+
+    assert resource == CsvResource(
+        name="publikationen-dept.1",
+        title="Publikationen Dept. 1",
+        path="Publikationen_Dept.1.csv",
+    )
+
+
+def test_create_csv_datapackage() -> None:
+    resources = [
+        CsvResource(
+            name="file-name-1",
+            title="File Name 1",
+            path="filename1.csv",
+        ),
+    ]
+
+    datapackage = create_datapackage_content(
+        resources,
+        created=date(2026, 4, 27),
+    )
+
+    assert isinstance(datapackage, bytes)
+
+    datapackage_dct = json.loads(datapackage.decode("utf-8"))
+    assert datapackage_dct == {
+        "name": "rki-mex-csv-publication-reports",
+        "title": "RKI Publikationslisten",
+        "created": "2026-04-27",
+        "resources": [
+            {
+                "name": "file-name-1",
+                "title": "File Name 1",
+                "type": "table",
+                "path": "filename1.csv",
+                "scheme": "file",
+                "format": "csv",
+                "mediatype": "text/csv",
+                "encoding": "utf-8",
+            },
+        ],
     }
