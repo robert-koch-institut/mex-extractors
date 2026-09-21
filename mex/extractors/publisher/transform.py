@@ -15,10 +15,15 @@ from mex.extractors.publisher.extract import get_publishable_merged_item
 from mex.extractors.publisher.fields import (
     REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
 )
-from mex.extractors.publisher.models import BibliographicResourceForCsv
+from mex.extractors.publisher.models import (
+    BibliographicResourceForCsv,
+    CsvDataPackage,
+    CsvResource,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Collection
+    from datetime import date
 
     from mex.common.models import (
         AnyMergedModel,
@@ -211,3 +216,51 @@ def transform_merged_bibliographic_resources_for_csv(
             )
 
     return bibliographic_resources_for_csv_by_unit
+
+
+def create_csv_resource(
+    *,
+    file_name_prefix: str,
+    unit_name: str,
+    csv_file_name: str,
+) -> CsvResource:
+    """Create a resource entry for a published CSV file.
+
+    Args:
+        file_name_prefix: The file name prefix.
+        unit_name: The name of the department unit.
+        csv_file_name: The name of the CSV file.
+
+    Returns:
+        a single CsvResource
+    """
+    return CsvResource(
+        name=f"{file_name_prefix.lower()}-{unit_name.replace(' ', '').lower()}",
+        title=f"{file_name_prefix} {unit_name}",
+        path=csv_file_name,
+    )
+
+
+def create_datapackage_content(
+    resources: list[CsvResource],
+    *,
+    created: date,
+) -> bytes:
+    """Create the datapackage.json content for published CSV reports.
+
+    Args:
+        resources: list of CsvResource
+        created: Date the CSV was created.
+
+    Returns:
+        the content of the datapackage as bytes
+    """
+    datapackage = CsvDataPackage(
+        created=created,
+        resources=resources,
+    )
+
+    return datapackage.model_dump_json(
+        indent=2,
+        exclude_none=True,
+    ).encode("utf-8")

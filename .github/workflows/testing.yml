@@ -25,11 +25,11 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         python-version: [ "3.14" ]
-    permissions:
-      contents: read
     timeout-minutes: 10
 
     steps:
@@ -80,7 +80,7 @@ jobs:
           make install
 
       - name: Wait for container readiness
-        run: docker compose up --wait slapd mailpit neo4j mex-backend mssql
+        run: docker compose up --wait --wait-timeout 500 slapd mailpit neo4j mex-backend mssql
 
       - name: Run test suite
         env:
