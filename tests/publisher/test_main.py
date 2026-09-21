@@ -228,5 +228,5 @@ def test_publisher_csv_load_sorts_by_publication_year(
 
     sink.load_for_unit.assert_called_once_with(
         [newer, older],
-        unit_name="FG 1",
+        file_name="Publikationen_FG1.csv",
     )

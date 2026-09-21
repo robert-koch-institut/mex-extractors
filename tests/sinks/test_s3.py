@@ -94,14 +94,12 @@ def test_s3csv_load_for_unit() -> None:
     ]
 
     sink = S3CsvSink()
-    returned_items = list(sink.load_for_unit(items, unit_name="FG 1"))
+    returned_items = list(sink.load_for_unit(items, file_name="Publikationen_FG1.csv"))
 
     assert returned_items == items
-    assert sink.client.put_object.call_count == 2
+    assert sink.client.put_object.call_count == 1
 
-    load_items_client_call, load_metadata_client_call = (
-        sink.client.put_object.call_args_list
-    )
+    load_items_client_call = sink.client.put_object.call_args
 
     assert load_items_client_call == call(
         Body=Joker(),
@@ -115,7 +113,9 @@ def test_s3csv_load_for_unit() -> None:
     )
 
     csv_bytes = sink.client.bodies[0]
-    csv_text = csv_bytes.decode("utf-8")
+    assert csv_bytes.startswith(b"\xef\xbb\xbf")  # Test for Encoding with Umlauts
+
+    csv_text = csv_bytes.decode("utf-8-sig")
     rows = list(csv.DictReader(StringIO(csv_text), delimiter=";"))
 
     assert rows == [
@@ -131,25 +131,34 @@ def test_s3csv_load_for_unit() -> None:
         },
     ]
 
-    expected_checksum = hashlib.sha256(csv_bytes).hexdigest()
 
-    assert load_metadata_client_call == call(
-        Body=Joker(),
+@pytest.mark.usefixtures("mocked_s3sink_client", "mocked_backend_s3")
+def test_s3csv_load_datapackage() -> None:
+    datapackage_content = b"""{
+        "name": "name",
+        "title": "title",
+        "created": "1970-01-01",
+        "resources": []
+    }"""
+
+    sink = S3CsvSink()
+
+    sink.load_datapackage(datapackage_content)
+
+    assert sink.client.put_object.call_count == 1
+
+    load_datapackage_client_call = sink.client.put_object.call_args_list[0]
+
+    assert load_datapackage_client_call == call(
+        Body=datapackage_content,
         Bucket="s3_bucket",
         Key=Joker(),
+        ContentType="application/json; charset=utf-8",
     )
+
     assert re.match(
-        r"downloadable files-\d+\.\d+/metadata_FG1\.json",
-        load_metadata_client_call.kwargs["Key"],
+        r"downloadable files-\d+\.\d+/datapackage\.json",
+        load_datapackage_client_call.kwargs["Key"],
     )
 
-    metadata_bytes = load_metadata_client_call.kwargs["Body"]
-    assert isinstance(metadata_bytes, bytes)
-
-    metadata_dct = json.loads(metadata_bytes.decode("utf-8"))
-    assert metadata_dct["sha256_checksum"] == expected_checksum
-    assert set(metadata_dct) == {
-        "sha256_checksum",
-        "versions",
-        "write_completed_at",
-    }
+    assert sink.client.bodies[0] == datapackage_content

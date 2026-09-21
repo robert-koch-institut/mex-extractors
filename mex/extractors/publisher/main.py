@@ -1,5 +1,7 @@
 from collections import deque
+from datetime import datetime
 from typing import TYPE_CHECKING, cast
+from zoneinfo import ZoneInfo
 
 from dagster import asset
 
@@ -29,9 +31,12 @@ from mex.extractors.publisher.filter import (
 )
 from mex.extractors.publisher.models import (
     BibliographicResourceForCsv,
+    CsvResource,
     PublisherItemsLike,
 )
 from mex.extractors.publisher.transform import (
+    create_csv_resource,
+    create_datapackage_content,
     get_unit_id_per_person,
     transform_merged_bibliographic_resources_for_csv,
     update_actor_references_where_needed,
@@ -217,12 +222,17 @@ def publisher_csv_load(
         str, list[BibliographicResourceForCsv]
     ],
 ) -> None:
-    """Write BibliographicResourceForCsv as CSV to s3 sink."""
+    """Write BibliographicResourceForCsv as CSV and datapackage.json to S3."""
     s3csv = S3CsvSink()
+    resources: list[CsvResource] = []
+
     for (
         unit_name,
         publications,
     ) in publisher_bibliographic_resources_for_csv_by_unit.items():
+        if not publications:
+            continue
+
         publications_sorted_by_year = sorted(
             publications,
             key=lambda item: (
@@ -231,10 +241,27 @@ def publisher_csv_load(
             ),
             reverse=True,
         )
+
+        file_name_prefix = "Publikationen"
+        csv_file_name = f"{file_name_prefix}_{unit_name.replace(' ', '')}.csv"
         deque(
-            s3csv.load_for_unit(publications_sorted_by_year, unit_name=unit_name),
+            s3csv.load_for_unit(publications_sorted_by_year, file_name=csv_file_name),
             maxlen=0,
         )
+        resources.append(
+            create_csv_resource(
+                file_name_prefix=file_name_prefix,
+                unit_name=unit_name,
+                csv_file_name=csv_file_name,
+            )
+        )
+
+    datapackage_content = create_datapackage_content(
+        resources,
+        created=datetime.now(ZoneInfo("Europe/Berlin")).date(),
+    )
+
+    s3csv.load_datapackage(datapackage_content)
 
 
 @entrypoint()
