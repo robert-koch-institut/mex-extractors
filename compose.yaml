@@ -87,7 +87,7 @@ services:
       retries: 5
       start_period: 30s
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.4.0@sha256:ebeedd8301032978c06eed36cf968e8c98cd96c5b4e2804ad7e8e80c0661c517
+    image: ghcr.io/robert-koch-institut/mex-backend:4.5.0@sha256:d7b0c83343047a818f4d1435abbe5e240d99e44d67f56043054dc3e932323a4b
     entrypoint: testing-backend
     depends_on:
       neo4j:
