@@ -8,6 +8,7 @@ from mex.common.models import (
     ExtractedAccessPlatform,
     ExtractedResourceSeries,
     ResourceMapping,
+    ResourceSeriesMapping,
 )
 from mex.extractors.assets import load_yaml
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -67,7 +68,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             lims_sample_id="test-sample-id",
             project_coordinators=["ResolvedR"],
             project_id="TEST-ID",
-            project_name="SKIPPED BECAUSE MISSING DATE",
+            project_name="SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
             sequencing_platform="TEST",
             species="Lab rat",
             basepair_count=7,
@@ -95,14 +96,25 @@ def extracted_resource_series() -> list[ExtractedResourceSeries]:
 
 
 @pytest.fixture
-def seq_repo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
+def seq_repo_access_platform_mapping(
+    settings: ExtractorsSettings,
+) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
         load_yaml(f"{settings.seq_repo.mapping_path}/access-platform_mock.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_resource(settings: ExtractorsSettings) -> ResourceMapping:
+def seq_repo_resource_series_mapping(
+    settings: ExtractorsSettings,
+) -> ResourceSeriesMapping:
+    return ResourceSeriesMapping.model_validate(
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource-series.yaml")
+    )
+
+
+@pytest.fixture
+def seq_repo_resource_mapping(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
         load_yaml(f"{settings.seq_repo.mapping_path}/resource_mock.yaml")
     )
@@ -110,10 +122,10 @@ def seq_repo_resource(settings: ExtractorsSettings) -> ResourceMapping:
 
 @pytest.fixture
 def extracted_mex_access_platform(
-    seq_repo_access_platform: AccessPlatformMapping,
+    seq_repo_access_platform_mapping: AccessPlatformMapping,
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
-        seq_repo_access_platform,
+        seq_repo_access_platform_mapping,
     )
 
 

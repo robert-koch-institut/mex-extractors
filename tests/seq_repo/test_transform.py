@@ -6,6 +6,7 @@ from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_resource_to_extracted_resource,
+    transform_seq_repo_resource_to_extracted_resource_series,
 )
 
 if TYPE_CHECKING:
@@ -15,14 +16,69 @@ if TYPE_CHECKING:
         ExtractedOrganization,
         ExtractedResourceSeries,
         ResourceMapping,
+        ResourceSeriesMapping,
     )
     from mex.extractors.seq_repo.model import SeqRepoSource
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
+def test_transform_seq_repo_resource_to_extracted_resource_series(
+    seq_repo_sources: list[SeqRepoSource],
+    seq_repo_resource_series_mapping: ResourceSeriesMapping,
+    extracted_mex_access_platform: ExtractedAccessPlatform,
+    extracted_organization_rki: ExtractedOrganization,
+) -> None:
+    resource_series = transform_seq_repo_resource_to_extracted_resource_series(
+        seq_repo_resource_series_mapping,
+        seq_repo_sources,
+        extracted_mex_access_platform,
+        extracted_organization_rki,
+    )
+
+    assert len(resource_series) == 2
+
+    resource_series_by_project_id = {
+        item.identifierInPrimarySource: item for item in resource_series
+    }
+
+    assert set(resource_series_by_project_id) == {
+        "TEST-ID",
+        "TEST-ID-2",
+    }
+
+    test_id_series = resource_series_by_project_id["TEST-ID"]
+
+    assert {title.value for title in test_id_series.title} == {
+        "FG99-ABC-123",
+        "FG99-ABC-321",
+        "SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
+    }
+    assert test_id_series.accessPlatform == [
+        extracted_mex_access_platform.stableTargetId
+    ]
+    assert test_id_series.publisher == [extracted_organization_rki.stableTargetId]
+
+    assert {keyword.value for keyword in test_id_series.keyword} == {
+        "Key Word",
+        "virus XYZ",
+        "Lab rat",
+        "TEST",
+    }
+
+    test_id_2_series = resource_series_by_project_id["TEST-ID-2"]
+
+    assert {title.value for title in test_id_2_series.title} == {"FG99-ABC-789"}
+    assert {keyword.value for keyword in test_id_2_series.keyword} == {
+        "Key Word",
+        "guniea pig",
+        "TEST-2",
+    }
+
+
+@pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
 def test_transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
-    seq_repo_resource: ResourceMapping,
+    seq_repo_resource_mapping: ResourceMapping,
     extracted_mex_access_platform: ExtractedAccessPlatform,
     extracted_resource_series: list[ExtractedResourceSeries],
     extracted_organization_rki: ExtractedOrganization,
@@ -80,7 +136,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
         seq_repo_sources,
         extracted_mex_access_platform,
         extracted_resource_series,
-        seq_repo_resource,
+        seq_repo_resource_mapping,
         extracted_organization_rki,
     )
 
@@ -93,7 +149,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_seq_repo_access_platform_to_extracted_access_platform(
-    seq_repo_access_platform: AccessPlatformMapping,
+    seq_repo_access_platform_mapping: AccessPlatformMapping,
 ) -> None:
     expected = {
         "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
@@ -117,7 +173,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
 
     extracted_mex_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
-            seq_repo_access_platform,
+            seq_repo_access_platform_mapping,
         )
     )
 
