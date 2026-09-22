@@ -168,24 +168,21 @@ class S3CsvSink(S3Base):
         self,
         items_sorted_by_year: Iterable[_LoadItemT],
         *,
-        unit_name: str,
+        file_name: str,
     ) -> Generator[_LoadItemT]:
         """Write the incoming items as an CSV directly to S3.
 
         Args:
             items_sorted_by_year: listof items sorted by publication year
-            unit_name: unit name for csv naming
+            file_name: file name for csv naming
 
         Returns:
             Generator for the loaded items
         """
         settings = ExtractorsSettings.get()
 
-        unitname = unit_name.replace(" ", "")
         directory_path = build_directory_path("downloadable files")
-
-        publications_file_name = f"Publikationen_{unitname}.csv"
-        publications_path = (directory_path / publications_file_name).as_posix()
+        publications_path = (directory_path / file_name).as_posix()
 
         rows = []
 
@@ -203,9 +200,6 @@ class S3CsvSink(S3Base):
 
         csv_buffer = StringIO(newline="")
 
-        if not rows:
-            return
-
         writer = csv.DictWriter(
             csv_buffer,
             fieldnames=rows[0].keys(),
@@ -216,24 +210,31 @@ class S3CsvSink(S3Base):
         writer.writeheader()
         writer.writerows(rows)
 
-        checksum = calculate_checksum(csv_buffer)
-
         csv_buffer.seek(0)
         self.client.put_object(
-            Body=csv_buffer.getvalue().encode("utf-8"),
+            Body=csv_buffer.getvalue().encode("utf-8-sig"),
             Bucket=settings.s3_bucket_key,
             Key=publications_path,
             ContentType="text/csv; charset=utf-8",
         )
         logger.info("%s - written %s items", type(self).__name__, len(rows))
 
-        metadata_path = (directory_path / f"metadata_{unitname}.json").as_posix()
-        metadata_content = create_metadata_content(checksum)
-        self.client.put_object(
-            Body=metadata_content,
-            Bucket=settings.s3_bucket_key,
-            Key=metadata_path,
-        )
-        logger.info("%s - written metadata.json", type(self).__name__)
-
         yield from items_sorted_by_year
+
+    def load_datapackage(
+        self,
+        content: bytes,
+    ) -> None:
+        """Write datapackage.json to the CSV download directory."""
+        settings = ExtractorsSettings.get()
+        directory_path = build_directory_path("downloadable files")
+        datapackage_path = (directory_path / "datapackage.json").as_posix()
+
+        self.client.put_object(
+            Body=content,
+            Bucket=settings.s3_bucket_key,
+            Key=datapackage_path,
+            ContentType="application/json; charset=utf-8",
+        )
+
+        logger.info("%s - written datapackage.json", type(self).__name__)
