@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 def transform_seq_repo_resource_to_extracted_resource_series(
     resource_series_mapping: ResourceSeriesMapping,
     seq_repo_sources: list[SeqRepoSource],
-    mex_access_platform: ExtractedAccessPlatform,
+    extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> list[ExtractedResourceSeries]:
     """Transform seq-repo resources to ExtractedResourceSeries.
@@ -45,13 +45,13 @@ def transform_seq_repo_resource_to_extracted_resource_series(
     Args:
         resource_series_mapping: Seq Repo resource series mapping with default values
         seq_repo_sources: Seq Repo extracted sources
-        mex_access_platform: Extracted access platform
+        extracted_access_platform: Extracted access platform
         extracted_organization_rki: wikidata extracted organization
 
     Returns:
         list of ExtractedResourceSeries
     """
-    access_platform = mex_access_platform.stableTargetId
+    access_platform = extracted_access_platform.stableTargetId
     description_template = (
         resource_series_mapping.description[0].mappingRules[0].setValues
     )
@@ -140,7 +140,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
 
 def transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
-    mex_access_platform: ExtractedAccessPlatform,
+    extracted_access_platform: ExtractedAccessPlatform,
     extracted_resource_series: list[ExtractedResourceSeries],
     resource_mapping: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
@@ -149,7 +149,7 @@ def transform_seq_repo_resource_to_extracted_resource(
 
     Args:
         seq_repo_sources: Seq Repo extracted sources
-        mex_access_platform: Extracted access platform
+        extracted_access_platform: Extracted access platform
         extracted_resource_series: list of ExtractedResourceSeries
         resource_mapping: Seq Repo resource mapping model with default values
         extracted_organization_rki: wikidata extracted organization
@@ -236,7 +236,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             )
         title = f"LIMS Sample ID {source.lims_sample_id} ({source.species})"
         extracted_resource = ExtractedResource(
-            accessPlatform=mex_access_platform.stableTargetId,
+            accessPlatform=extracted_access_platform.stableTargetId,
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
             anonymizationPseudonymization=anonymization_pseudonymization,

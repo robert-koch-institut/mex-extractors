@@ -25,13 +25,13 @@ if TYPE_CHECKING:
 def test_transform_seq_repo_resource_to_extracted_resource_series(
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_resource_series_mapping: ResourceSeriesMapping,
-    extracted_mex_access_platform: ExtractedAccessPlatform,
+    extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     resource_series = transform_seq_repo_resource_to_extracted_resource_series(
         seq_repo_resource_series_mapping,
         seq_repo_sources,
-        extracted_mex_access_platform,
+        extracted_access_platform,
         extracted_organization_rki,
     )
 
@@ -53,9 +53,7 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
         "FG99-ABC-321",
         "SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
     }
-    assert test_id_series.accessPlatform == [
-        extracted_mex_access_platform.stableTargetId
-    ]
+    assert test_id_series.accessPlatform == [extracted_access_platform.stableTargetId]
     assert test_id_series.publisher == [extracted_organization_rki.stableTargetId]
 
     assert {keyword.value for keyword in test_id_series.keyword} == {
@@ -79,7 +77,7 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
 def test_transform_seq_repo_resource_to_extracted_resource(
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_resource_mapping: ResourceMapping,
-    extracted_mex_access_platform: ExtractedAccessPlatform,
+    extracted_access_platform: ExtractedAccessPlatform,
     extracted_resource_series: list[ExtractedResourceSeries],
     extracted_organization_rki: ExtractedOrganization,
 ) -> None:
@@ -113,7 +111,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
             {"value": "virus XYZ"},
             {"value": "TEST"},
         ],
-        "inSeries": ["dtxk6Fk8iHe849ArDRywlS"],
+        "inSeries": [extracted_resource_series[0].stableTargetId],
         "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
         "qualityInformation": [
             {"value": "Basepairs: 1", "language": "en"},
@@ -134,7 +132,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
     }
     mex_resources = transform_seq_repo_resource_to_extracted_resource(
         seq_repo_sources,
-        extracted_mex_access_platform,
+        extracted_access_platform,
         extracted_resource_series,
         seq_repo_resource_mapping,
         extracted_organization_rki,
@@ -171,15 +169,13 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         "stableTargetId": "gLB9vC2lPMy5rCmuot99xu",
     }
 
-    extracted_mex_access_platform = (
+    extracted_access_platform = (
         transform_seq_repo_access_platform_to_extracted_access_platform(
             seq_repo_access_platform_mapping,
         )
     )
 
     assert (
-        extracted_mex_access_platform.model_dump(
-            exclude_none=True, exclude_defaults=True
-        )
+        extracted_access_platform.model_dump(exclude_none=True, exclude_defaults=True)
         == expected
     )

@@ -121,7 +121,7 @@ def seq_repo_resource_mapping(settings: ExtractorsSettings) -> ResourceMapping:
 
 
 @pytest.fixture
-def extracted_mex_access_platform(
+def extracted_access_platform(
     seq_repo_access_platform_mapping: AccessPlatformMapping,
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
