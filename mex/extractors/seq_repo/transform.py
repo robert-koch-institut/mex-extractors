@@ -52,16 +52,18 @@ def transform_seq_repo_resource_to_extracted_resource_series(
         list of ExtractedResourceSeries
     """
     access_platform = mex_access_platform.stableTargetId
-    description_raw = resource_series_mapping.description[0].mappingRules[0].setValues
+    description_template = (
+        resource_series_mapping.description[0].mappingRules[0].setValues
+    )
     had_primary_source = get_extracted_primary_source_id_by_name("seq-repo")
-    keyword_basis = resource_series_mapping.keyword[0].mappingRules[0].setValues
+    base_keywords = resource_series_mapping.keyword[0].mappingRules[0].setValues
     publisher = extracted_organization_rki.stableTargetId
 
-    if not description_raw:
+    if not description_template:
         msg = "Description in Resource Series mapping must contain setValues."
         raise MExError(msg)
 
-    if not keyword_basis:
+    if not base_keywords:
         msg = "Keyword in Resource Series mapping must contain setValues."
         raise MExError(msg)
 
@@ -81,7 +83,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
             source.sequencing_platform,
         )
         collected_keywords_by_project_id[project_id].update(
-            k for k in collected_keywords if k is not None
+            keyword for keyword in collected_keywords if keyword is not None
         )
         collected_project_coordinators_by_project_id[project_id].update(
             source.project_coordinators
@@ -92,7 +94,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
             )
 
     extracted_resource_series = []
-    for project_id in collected_project_ids:
+    for project_id in sorted(collected_project_ids):
         contact, _ = get_resolved_project_coordinators_and_units(
             sorted(collected_project_coordinators_by_project_id[project_id])
         )
@@ -101,23 +103,20 @@ def transform_seq_repo_resource_to_extracted_resource_series(
             for name in sorted(collected_project_name_by_project_id[project_id])
             if name != "Other"
         ]
-        if len(filtered_project_name_list) > 1:
-            optional_additional_project_names = (
-                f" (additional '{', '.join(filtered_project_name_list[1:])}'))"
+        project_name_text = f"'{filtered_project_name_list[0]}'"
+        if additional_project_names := filtered_project_name_list[1:]:
+            optional_project_names = ", ".join(
+                f"'{name}'" for name in additional_project_names
             )
-        else:
-            optional_additional_project_names = ""
+            project_name_text += f" (additional {optional_project_names})"
         description = [
             Text(
-                value=d.value.replace(
-                    "[project-name]",
-                    f"'{filtered_project_name_list[0]}'{optional_additional_project_names}",
-                ),
-                language=d.language,
+                value=template.value.replace("[project-name]", f"{project_name_text}"),
+                language=template.language,
             )
-            for d in description_raw
+            for template in description_template
         ]
-        keyword = keyword_basis + [
+        keyword = base_keywords + [
             Text(value=item)
             for item in sorted(collected_keywords_by_project_id[project_id])
         ]
