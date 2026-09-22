@@ -93,19 +93,33 @@ def transform_seq_repo_resource_to_extracted_resource_series(
 
     extracted_resource_series = []
     for project_id in collected_project_ids:
-        project_name_list = list(collected_project_name_by_project_id[project_id])
         contact, _ = get_resolved_project_coordinators_and_units(
-            list(collected_project_coordinators_by_project_id[project_id])
+            sorted(collected_project_coordinators_by_project_id[project_id])
         )
+        filtered_project_name_list = [
+            name
+            for name in sorted(collected_project_name_by_project_id[project_id])
+            if name != "Other"
+        ]
+        if len(filtered_project_name_list) > 1:
+            optional_additional_project_names = (
+                f" (additional '{', '.join(filtered_project_name_list[1:])}'))"
+            )
+        else:
+            optional_additional_project_names = ""
         description = [
             Text(
-                value=d.value.replace("[project-name]", f"'{project_name_list[0]}'"),
+                value=d.value.replace(
+                    "[project-name]",
+                    f"'{filtered_project_name_list[0]}'{optional_additional_project_names}",
+                ),
                 language=d.language,
             )
             for d in description_raw
         ]
         keyword = keyword_basis + [
-            Text(value=item) for item in collected_keywords_by_project_id[project_id]
+            Text(value=item)
+            for item in sorted(collected_keywords_by_project_id[project_id])
         ]
 
         extracted_resource_series.append(
@@ -119,7 +133,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
                 keyword=keyword,
                 start=min(collected_sequencing_dates_by_project_id[project_id]),
                 publisher=[publisher],
-                title=project_name_list,
+                title=sorted(collected_project_name_by_project_id[project_id]),
             )
         )
     return extracted_resource_series
