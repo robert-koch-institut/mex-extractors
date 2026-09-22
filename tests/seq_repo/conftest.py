@@ -100,7 +100,7 @@ def seq_repo_access_platform_mapping(
     settings: ExtractorsSettings,
 ) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
-        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform.yaml")
     )
 
 
@@ -116,7 +116,7 @@ def seq_repo_resource_series_mapping(
 @pytest.fixture
 def seq_repo_resource_mapping(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
-        load_yaml(f"{settings.seq_repo.mapping_path}/resource_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource.yaml")
     )
 
 
