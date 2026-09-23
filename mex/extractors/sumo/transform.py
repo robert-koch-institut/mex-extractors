@@ -197,9 +197,6 @@ def transform_resource_nokeda_to_mex_resource(
             )
         ],
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
-        hasCodingSystem=sumo_resource_nokeda.hasCodingSystem[0]
-        .mappingRules[0]
-        .setValues,
         hasPersonalData=sumo_resource_nokeda.hasPersonalData[0]
         .mappingRules[0]
         .setValues,
