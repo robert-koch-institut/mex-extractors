@@ -16,7 +16,7 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "faker>=40",
     "mex-artificial>=3,<4",
-    "mex-common>=3,<3.4",
+    "mex-common>=3,<3.5",
     "mex-model>=5,<6",
     "networkx>=3,<4",
     "numpy>=2,<3",
@@ -113,6 +113,7 @@ markers = [
     "integration: mark a test as integration test",
     "requires_rki_infrastructure: mark a test to only run in gh cli"
 ]
+norecursedirs = ["tests/datenkompass"]
 
 [tool.ruff]
 fix = true
