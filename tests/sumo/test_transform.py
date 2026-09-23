@@ -88,7 +88,6 @@ def test_transform_resource_nokeda_to_mex_resource(
             {"language": "en", "title": "Confluence", "url": "https://link.com"}
         ],
         "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
-        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-2"],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
