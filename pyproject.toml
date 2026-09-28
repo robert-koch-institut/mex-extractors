@@ -16,7 +16,7 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "faker>=40",
     "mex-artificial>=3,<4",
-    "mex-common>=3,<3.4",
+    "mex-common>=3.4,<3.5",  # TODO(MX-1810): restore a real upper bound once mex-common#854 is released, see [tool.uv.sources] below
     "mex-model>=5,<6",
     "networkx>=3,<4",
     "numpy>=2,<3",
@@ -28,6 +28,22 @@ dependencies = [
     "requests-ntlm>=1,<2",
     "requests>=2,<3",
     "xlrd>=2,<3",
+]
+
+[tool.uv.sources]
+# TEMPORARY, for local testing only: pin to the in-review mex-common branch
+# that swaps LDAPConnector from ldap3 to python-ldap
+# (robert-koch-institut/mex-common#854). Remove this override and the
+# mex-common version bound above once that PR merges and mex-common publishes
+# a release with the change.
+mex-common = { git = "https://github.com/robert-koch-institut/mex-common.git", branch = "feature/mx-1810-switch-to-maintained-ldap-library" }
+# python-ldap is a transitive dep via mex-common; it has no official Windows
+# wheels, so on Windows we pull the actively-maintained unofficial build from
+# https://github.com/cgohlke/python-ldap-build instead of building from
+# source. Bump this URL's version whenever mex-common's python-ldap version
+# changes, to keep Windows and Linux extractor runs on the same version.
+python-ldap = [
+    { url = "https://github.com/cgohlke/python-ldap-build/releases/download/v3.4.7/python_ldap-3.4.7-cp314-cp314-win_amd64.whl", marker = "sys_platform == 'win32' and python_full_version >= '3.14' and python_full_version < '3.15'" },
 ]
 
 [dependency-groups]

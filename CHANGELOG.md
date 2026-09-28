@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: adopt mex-common's replacement of `ldap3` with `python-ldap` in
+  `LDAPConnector`; building from source now requires the OpenLDAP and Cyrus
+  SASL development headers (`libldap-dev`/`libsasl2-dev` on Debian/Ubuntu),
+  see README for install instructions
+- adapt to mex-common's hardcoded vocabulary enums: `AnonymizationPseudonymization`
+  and `MIMEType` label lookups are now re-implemented against
+  `mex.model.VOCABULARY_JSON_BY_NAME` directly, since `VocabularyEnum.find`
+  and `__concepts__` were removed
+
 ### Deprecated
 
 ### Removed
@@ -18,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+- replace `ldap3` (unmaintained since 2021, no security patches) with
+  `python-ldap`, an actively maintained LDAP client
 
 ## [1.22.1] - 2026-09-18
 

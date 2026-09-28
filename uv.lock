@@ -870,18 +870,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0e/72/a3add0e4eec4eb9e2569554f7c70f4a3c27712f40e3284d483e88094cc0e/langdetect-1.0.9.tar.gz", hash = "sha256:cbc1fef89f8d062739774bd51eda3da3274006b3661d199c2655f6b3f6d605a0", size = 981474, upload-time = "2021-05-07T07:54:13.562Z" }
 
 [[package]]
-name = "ldap3"
-version = "2.9.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyasn1" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/43/ac/96bd5464e3edbc61595d0d69989f5d9969ae411866427b2500a8e5b812c0/ldap3-2.9.1.tar.gz", hash = "sha256:f3e7fc4718e3f09dda568b57100095e0ce58633bcabbed8667ce3f8fbaa4229f", size = 398830, upload-time = "2021-07-18T06:34:21.786Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/f6/71d6ec9f18da0b2201287ce9db6afb1a1f637dedb3f0703409558981c723/ldap3-2.9.1-py2.py3-none-any.whl", hash = "sha256:5869596fc4948797020d3f03b7939da938778a0f9e2009f7a072ccf92b8e8d70", size = 432192, upload-time = "2021-07-18T06:34:12.905Z" },
-]
-
-[[package]]
 name = "librt"
 version = "0.15.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1014,24 +1002,21 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "3.3.0"
-source = { registry = "https://pypi.org/simple" }
+version = "3.4.1"
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-1810-switch-to-maintained-ldap-library#6f55e1d30cd8421689fd2ff5e8904ea8021f7580" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
     { name = "langdetect" },
-    { name = "ldap3" },
     { name = "mex-model" },
     { name = "pandas" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "python-ldap", version = "3.4.7", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'win32'" },
+    { name = "python-ldap", version = "3.4.7", source = { url = "https://github.com/cgohlke/python-ldap-build/releases/download/v3.4.7/python_ldap-3.4.7-cp314-cp314-win_amd64.whl" }, marker = "sys_platform == 'win32'" },
     { name = "pytz" },
     { name = "requests" },
     { name = "tabulate" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/5c/7596edc6b35907f901642aab49d24c4b4bc8ea70170812a779f9e831373a/mex_common-3.3.0.tar.gz", hash = "sha256:5d6702b1f351c3e6f549083b034c456b2c49564205584a89ea87490f11b662e4", size = 98001, upload-time = "2026-08-19T08:45:58.662Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/5b/34915993dbcd1eae29a0711849dbe72e6a5551d988fa0f945ca14df463cd/mex_common-3.3.0-py3-none-any.whl", hash = "sha256:f375df4c3c13f5589b643e7cd7960f96d3e64654445853ec615c0413e1821873", size = 148444, upload-time = "2026-08-19T08:45:57.112Z" },
 ]
 
 [[package]]
@@ -1089,7 +1074,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", specifier = ">=3,<3.4" },
+    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-1810-switch-to-maintained-ldap-library" },
     { name = "mex-model", specifier = ">=5,<6" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
@@ -1516,6 +1501,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pyasn1-modules"
+version = "0.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyasn1" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e9/e6/78ebbb10a8c8e4b61a59249394a4a594c1a7af95593dc933a349c8d00964/pyasn1_modules-0.4.2.tar.gz", hash = "sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6", size = 307892, upload-time = "2025-03-28T02:41:22.17Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/8d/d529b5d697919ba8c11ad626e835d4039be708a35b0d22de83a269a6682c/pyasn1_modules-0.4.2-py3-none-any.whl", hash = "sha256:29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a", size = 181259, upload-time = "2025-03-28T02:41:19.028Z" },
+]
+
+[[package]]
 name = "pycparser"
 version = "3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1712,6 +1709,41 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6a/53/ed9d74092561d4b01a2ef1349d52cdbc135e526c245f366b089cfca6de49/python_dotenv-1.2.3.tar.gz", hash = "sha256:a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35", size = 58945, upload-time = "2026-08-16T16:54:54.067Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/17/c5c6b53ddc18f297992099b3d9ec16c855c0ccc83263a21fe4d1c625ec6c/python_dotenv-1.2.3-py3-none-any.whl", hash = "sha256:904552145e8bfed22162c09dab1c2b9b54fefa7b23ba780f4f26ca0316b0f0d9", size = 22780, upload-time = "2026-08-16T16:54:52.473Z" },
+]
+
+[[package]]
+name = "python-ldap"
+version = "3.4.7"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "sys_platform == 'emscripten'",
+    "sys_platform != 'emscripten' and sys_platform != 'win32'",
+]
+dependencies = [
+    { name = "pyasn1" },
+    { name = "pyasn1-modules" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b2/f4/60edeb794bbc9ed0ff2149bbaeec605f3ed331766459d195832ecbd0ba2d/python_ldap-3.4.7.tar.gz", hash = "sha256:bacd9fb680d20263d8570ade1cf234d90d281149a8beb4f079dd8f33f7613dc8", size = 387477, upload-time = "2026-05-20T13:41:04.358Z" }
+
+[[package]]
+name = "python-ldap"
+version = "3.4.7"
+source = { url = "https://github.com/cgohlke/python-ldap-build/releases/download/v3.4.7/python_ldap-3.4.7-cp314-cp314-win_amd64.whl" }
+resolution-markers = [
+    "sys_platform == 'win32'",
+]
+dependencies = [
+    { name = "pyasn1" },
+    { name = "pyasn1-modules" },
+]
+wheels = [
+    { url = "https://github.com/cgohlke/python-ldap-build/releases/download/v3.4.7/python_ldap-3.4.7-cp314-cp314-win_amd64.whl", hash = "sha256:dd81c64408600acb5263739bf3ec4e20c89b41c955bc9296bb10485c95293688" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pyasn1", specifier = ">=0.3.7" },
+    { name = "pyasn1-modules", specifier = ">=0.1.5" },
 ]
 
 [[package]]
