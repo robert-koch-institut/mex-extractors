@@ -11,6 +11,10 @@ ENV PIP_PROGRESS_BAR=off
 
 COPY . .
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libldap-dev libsasl2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir -r requirements.txt
 RUN uv export --no-dev --no-editable | uv pip install --system --no-deps -r -
 
@@ -40,7 +44,7 @@ COPY --from=builder /build/microsoft-prod.gpg /usr/share/keyrings/microsoft-prod
 COPY --from=builder /build/mssql-release.list /etc/apt/sources.list.d/mssql-release.list
 
 RUN apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y krb5-user msodbcsql18 unixodbc \
+    && ACCEPT_EULA=Y apt-get install -y krb5-user msodbcsql18 unixodbc libldap2 libsasl2-2 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages

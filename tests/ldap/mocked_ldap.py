@@ -196,9 +196,8 @@ def mocked_ldap(  # noqa: PLR0913, PLR0917
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")
         else:
-            # TODO(ND): Make this configurable in mex-common
-            # HS: turn off tls certificate validation because our mock ldap server uses a self-signed certificate
+            # turn off tls certificate validation because our mock ldap
+            # server uses a self-signed certificate
+            from mex.common.settings import BaseSettings  # noqa: PLC0415
 
-            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
-
-            monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)
+            monkeypatch.setattr(BaseSettings.get(), "verify_session", False)
