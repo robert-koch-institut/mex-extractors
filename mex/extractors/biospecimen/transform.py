@@ -19,6 +19,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import find_vocabulary_member
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -61,7 +62,9 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
     ):
         anonymization_pseudonymization = (
-            AnonymizationPseudonymization.find(resource.anonymisiert_pseudonymisiert)
+            find_vocabulary_member(
+                AnonymizationPseudonymization, resource.anonymisiert_pseudonymisiert
+            )
             if resource.anonymisiert_pseudonymisiert
             else None
         )

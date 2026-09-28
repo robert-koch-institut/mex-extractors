@@ -37,6 +37,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import find_vocabulary_member
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -225,7 +226,11 @@ def transform_open_data_distributions(
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
             issued = file.created
-            media_type = MIMEType.find(str(file.mimetype))
+            media_type = (
+                find_vocabulary_member(MIMEType, file.mimetype)
+                if file.mimetype
+                else None
+            )
             modified = file.updated
             title = file.key
             extracted_distributions.append(
