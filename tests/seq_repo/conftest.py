@@ -6,7 +6,9 @@ from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import (
     AccessPlatformMapping,
     ExtractedAccessPlatform,
+    ExtractedResourceSeries,
     ResourceMapping,
+    ResourceSeriesMapping,
 )
 from mex.extractors.assets import load_yaml
 from mex.extractors.seq_repo.model import SeqRepoSource
@@ -66,7 +68,7 @@ def seq_repo_sources() -> list[SeqRepoSource]:
             lims_sample_id="test-sample-id",
             project_coordinators=["ResolvedR"],
             project_id="TEST-ID",
-            project_name="SKIPPED BECAUSE MISSING DATE",
+            project_name="SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
             sequencing_platform="TEST",
             species="Lab rat",
             basepair_count=7,
@@ -76,25 +78,54 @@ def seq_repo_sources() -> list[SeqRepoSource]:
 
 
 @pytest.fixture
-def seq_repo_access_platform(settings: ExtractorsSettings) -> AccessPlatformMapping:
+def extracted_resource_series() -> list[ExtractedResourceSeries]:
+    return [
+        ExtractedResourceSeries(
+            description="Some text with project name 'FG99-ABC-123'",
+            identifierInPrimarySource="TEST-ID",
+            hadPrimarySource="SeqRepoPrimarySource",
+            title=["FG99-ABC-123", "FG99-ABC-321", "SKIPPED BECAUSE MISSING DATE"],
+        ),
+        ExtractedResourceSeries(
+            description="Some text with project name 'FG99-ABC-789'",
+            identifierInPrimarySource="TEST-ID-2",
+            hadPrimarySource="SeqRepoPrimarySource",
+            title=["FG99-ABC-789"],
+        ),
+    ]
+
+
+@pytest.fixture
+def seq_repo_access_platform_mapping(
+    settings: ExtractorsSettings,
+) -> AccessPlatformMapping:
     return AccessPlatformMapping.model_validate(
-        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/access-platform.yaml")
     )
 
 
 @pytest.fixture
-def seq_repo_resource(settings: ExtractorsSettings) -> ResourceMapping:
+def seq_repo_resource_series_mapping(
+    settings: ExtractorsSettings,
+) -> ResourceSeriesMapping:
+    return ResourceSeriesMapping.model_validate(
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource-series.yaml")
+    )
+
+
+@pytest.fixture
+def seq_repo_resource_mapping(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
-        load_yaml(f"{settings.seq_repo.mapping_path}/resource_mock.yaml")
+        load_yaml(f"{settings.seq_repo.mapping_path}/resource.yaml")
     )
 
 
 @pytest.fixture
-def extracted_mex_access_platform(
-    seq_repo_access_platform: AccessPlatformMapping,
+def extracted_access_platform(
+    seq_repo_access_platform_mapping: AccessPlatformMapping,
 ) -> ExtractedAccessPlatform:
     return transform_seq_repo_access_platform_to_extracted_access_platform(
-        seq_repo_access_platform,
+        seq_repo_access_platform_mapping,
     )
 
 

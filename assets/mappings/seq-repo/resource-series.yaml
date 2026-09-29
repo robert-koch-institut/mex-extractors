@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../__schema__/ResourceSeriesMapping.json
+
+accessPlatform:
+  - mappingRules:
+      - rule:
+contact:
+  - mappingRules:
+      - rule:
+description:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Some text with project name [project-name].
+end:
+  - mappingRules:
+      - rule:
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+identifierInPrimarySource:
+    mappingRules:
+      - rule:
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: en
+            value: Key Word
+start:
+  - mappingRules:
+      - rule:
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+title:
+  - mappingRules:
+      - rule:
