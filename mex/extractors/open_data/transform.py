@@ -1,4 +1,5 @@
 import re
+from functools import cache
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
@@ -40,6 +41,7 @@ from mex.extractors.sinks import load
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
+from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
     from mex.extractors.open_data.models.source import (
@@ -195,6 +197,37 @@ def get_or_transform_open_data_persons(
     return extracted_persons
 
 
+@cache
+def _get_mime_type_exact_matches() -> tuple[tuple[str, MIMEType], ...]:
+    """Get exactMatch URLs with their corresponding MIME types."""
+    return tuple(
+        (exact_match, MIMEType(concept["identifier"]))
+        for concept in VOCABULARY_JSON_BY_NAME["mime_type"]
+        for exact_match in concept.get("exactMatch", [])
+    )
+
+
+def find_mime_type(value: str | None) -> MIMEType | None:
+    """Find a MIME type if the value occurs in an exactMatch URL."""
+    if not value:
+        return None
+
+    matching_mime_types = {
+        mime_type
+        for exact_match, mime_type in _get_mime_type_exact_matches()
+        if value in exact_match
+    }
+
+    if len(matching_mime_types) == 0:
+        return None
+
+    if len(matching_mime_types) > 1:
+        msg = f"Found more than one match for mime-type search pattern {value!r}"
+        raise MExError(msg)
+
+    return next(iter(matching_mime_types))
+
+
 def transform_open_data_distributions(
     open_data_parent_resources: list[OpenDataParentResource],
     distribution_mapping: DistributionMapping,
@@ -225,7 +258,7 @@ def transform_open_data_distributions(
             download_url = Link(url=file.links.self)
             identifier_primary_source = file.file_id
             issued = file.created
-            media_type = MIMEType.find(str(file.mimetype))  # type: ignore[attr-defined]
+            media_type = find_mime_type(file.mimetype)
             modified = file.updated
             title = file.key
             extracted_distributions.append(
@@ -370,9 +403,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
             else []
         )
         landing_page_url = next(
-            related_identifiers.identifier
-            for related_identifiers in resource.metadata.related_identifiers
-            if related_identifiers.relation == "isSupplementTo"
+            (
+                related_identifiers.identifier
+                for related_identifiers in resource.metadata.related_identifiers
+                if related_identifiers.relation == "isSupplementTo"
+            ),
+            None,
         )
         landing_page: list[Link] = []
         if (

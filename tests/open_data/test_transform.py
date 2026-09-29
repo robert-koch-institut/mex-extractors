@@ -2,15 +2,18 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from mex.common.exceptions import MExError
 from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
+    MIMEType,
     TextLanguage,
 )
 from mex.extractors.open_data.transform import (
+    find_mime_type,
     get_only_child_units,
     get_or_transform_open_data_persons,
     transform_and_load_open_data_persons_not_in_ldap,
@@ -137,6 +140,72 @@ def test_transform_open_data_persons(
     }
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (
+            "text/csv",
+            MIMEType("https://mex.rki.de/item/mime-type-7"),
+        ),
+        (
+            "csv",
+            MIMEType("https://mex.rki.de/item/mime-type-7"),
+        ),
+        (
+            "tab-separated-values",
+            MIMEType("https://mex.rki.de/item/mime-type-13"),
+        ),
+        (
+            "text/tab-separated-values",
+            MIMEType("https://mex.rki.de/item/mime-type-13"),
+        ),
+        (
+            "application/json",
+            MIMEType("https://mex.rki.de/item/mime-type-19"),
+        ),
+        (
+            "https://www.iana.org/assignments/media-types/application/pdf",
+            MIMEType("https://mex.rki.de/item/mime-type-4"),
+        ),
+        ("comma-separated-values", None),
+        ("tab separated values", None),
+        ("TSV", None),
+        ("does not exist", None),
+        ("", None),
+        (None, None),
+    ],
+)
+def test_find_mime_type(
+    value: str | None,
+    expected: MIMEType | None,
+) -> None:
+    assert find_mime_type(value) == expected
+
+
+def test_find_mime_type_raises_for_multiple_matches(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "mex.extractors.open_data.transform._get_mime_type_exact_matches",
+        lambda: (
+            (
+                "https://www.iana.org/assignments/media-types/application/example",
+                MIMEType("https://mex.rki.de/item/mime-type-1"),
+            ),
+            (
+                "https://www.iana.org/assignments/media-types/application/example-other",
+                MIMEType("https://mex.rki.de/item/mime-type-2"),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        MExError,
+        match=r"Found more than one match for mime-type search pattern 'application'",
+    ):
+        find_mime_type("application")
+
+
 @pytest.mark.usefixtures("mocked_open_data")
 def test_transform_open_data_distributions(
     mocked_open_data_parent_resource: list[OpenDataParentResource],
@@ -155,6 +224,7 @@ def test_transform_open_data_distributions(
         "issued": "2021-01-01T01:01:01Z",
         "license": "https://mex.rki.de/item/license-1",
         "title": [{"value": "some text"}],
+        "mediaType": "https://mex.rki.de/item/mime-type-7",
         "downloadURL": [{"url": "www.efg.hi"}],
         "identifier": Joker(),
         "stableTargetId": Joker(),
