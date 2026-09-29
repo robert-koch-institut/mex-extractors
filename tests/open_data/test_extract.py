@@ -86,6 +86,7 @@ def test_extract_files_for_parent_resource() -> None:
         "key": "some text",
         "links": {"self": "www.efg.hi"},
         "created": "2021-01-01T01:01:01.111111+00:00",
+        "mimetype": "text/csv",
     }
 
 

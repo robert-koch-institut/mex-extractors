@@ -80,6 +80,7 @@ def create_mocked_file_response() -> dict[str, Any]:
                 "key": "some text",
                 "links": {"self": "www.efg.hi"},
                 "created": "2021-01-01T01:01:01.111111+00:00",
+                "mimetype": "text/csv",
             },
         ],
     }
