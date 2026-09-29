@@ -32,9 +32,6 @@ externalPartner:
 hadPrimarySource:
   - mappingRules:
       - rule:
-hasCodingSystem:
-  - mappingRules:
-      - setValues:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
