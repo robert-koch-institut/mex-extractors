@@ -52,7 +52,7 @@ hasCodingSystem:
 hasLegalBasis:
 - mappingRules:
   - setValues:
-hasPurpose:
+hasPurposeDescription:
 - mappingRules:
   - setValues:
 healthCategory:
