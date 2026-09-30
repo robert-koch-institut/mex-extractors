@@ -95,7 +95,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
 
     extracted_resource_series = []
     for project_id in sorted(collected_project_ids):
-        contact, _ = get_resolved_project_coordinators_and_units(
+        _, unit_id = get_resolved_project_coordinators_and_units(
             sorted(collected_project_coordinators_by_project_id[project_id])
         )
         filtered_project_name_list = [
@@ -124,7 +124,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
         extracted_resource_series.append(
             ExtractedResourceSeries(
                 accessPlatform=[access_platform],
-                contact=contact,
+                contact=unit_id,
                 description=description,
                 end=max(collected_sequencing_dates_by_project_id[project_id]),
                 hadPrimarySource=had_primary_source,
