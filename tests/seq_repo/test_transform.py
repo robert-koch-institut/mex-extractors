@@ -105,7 +105,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "start": ["2023-08-07"],
         "modified": "2023-08-07",
-        "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
+        "contact": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
