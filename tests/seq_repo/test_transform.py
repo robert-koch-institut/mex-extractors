@@ -117,6 +117,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
+        "contributor": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
         "description": [
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},

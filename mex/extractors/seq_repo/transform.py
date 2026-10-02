@@ -16,6 +16,7 @@ from mex.common.models import (
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     Text,
 )
 from mex.extractors.ldap.helpers import (
@@ -94,8 +95,10 @@ def transform_seq_repo_resource_to_extracted_resource_series(
 
     extracted_resource_series = []
     for project_id in sorted(collected_project_ids):
-        _, unit_id = get_resolved_project_coordinators_and_units(
-            sorted(collected_project_coordinators_by_project_id[project_id])
+        contacts, _, _ = (
+            resolve_project_coordinators_to_contact_and_contributors_and_units(
+                sorted(collected_project_coordinators_by_project_id[project_id])
+            )
         )
         filtered_project_name_list = [
             name
@@ -123,7 +126,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
         extracted_resource_series.append(
             ExtractedResourceSeries(
                 accessPlatform=[access_platform],
-                contact=unit_id,
+                contact=contacts,
                 description=description,
                 end=max(collected_sequencing_dates_by_project_id[project_id]),
                 hadPrimarySource=had_primary_source,
@@ -214,8 +217,10 @@ def transform_seq_repo_resource_to_extracted_resource(
             modified = max(sequencing_dates)
             start = min(sequencing_dates)
 
-        contact, units_in_charge = get_resolved_project_coordinators_and_units(
-            source.project_coordinators
+        contact, contributors, units = (
+            resolve_project_coordinators_to_contact_and_contributors_and_units(
+                source.project_coordinators
+            )
         )
         contributing_unit = get_unit_merged_id_by_synonym(source.customer_org_unit_id)
         keyword = list(shared_keyword)
@@ -241,6 +246,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             anonymizationPseudonymization=anonymization_pseudonymization,
             contact=contact,
             contributingUnit=contributing_unit,
+            contributor=contributors,
             description=description,
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
             healthCategory=health_category,
@@ -258,7 +264,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             stateOfDataProcessing=state_of_data_processing,
             theme=theme,
             title=title,
-            unitInCharge=units_in_charge,
+            unitInCharge=units,
         )
         extracted_resources.append(extracted_resource)
 
@@ -334,45 +340,49 @@ def extract_person_item_or_contact_point_id_by_name(
     return get_ldap_merged_contact_id_by_mail(mail=f"{project_coordinator}@rki.de")
 
 
-def get_resolved_project_coordinators_and_units(
+def resolve_project_coordinators_to_contact_and_contributors_and_units(
     project_coordinators: list[str],
 ) -> tuple[
     list[MergedContactPointIdentifier | MergedOrganizationalUnitIdentifier],
+    list[MergedPersonIdentifier] | None,
     list[MergedOrganizationalUnitIdentifier],
 ]:
-    """Get ldap resolved ids of project coordinators and units.
+    """Resolve project coordinators to entries for contact, contributors and units.
+
+    Use defined Fallback unit if no project coordinator could be resolved.
 
     Args:
         project_coordinators: Seq Repo raw project coordinator names
 
     Returns:
-        Resolved ids project coordinator and units
+        Merged ids of contact points or persons or units
     """
     settings = ExtractorsSettings.get()
-    project_coordinators_ids: set[
+    contact_ids: set[
         MergedContactPointIdentifier | MergedOrganizationalUnitIdentifier
     ] = set()
-    units_in_charge: set[MergedOrganizationalUnitIdentifier] = set()
+    contributor_ids: set[MergedPersonIdentifier] = set()
+    unit_ids: set[MergedOrganizationalUnitIdentifier] = set()
     for pc in project_coordinators:
         person_item_or_contact_id = extract_person_item_or_contact_point_id_by_name(pc)
         if not person_item_or_contact_id:
             continue
-        if isinstance(person_item_or_contact_id, MergedContactPointIdentifier):
-            project_coordinators_ids.add(person_item_or_contact_id)
-        elif isinstance(person_item_or_contact_id, ExtractedPerson) and (
-            unit := person_item_or_contact_id.memberOf
-        ):
-            project_coordinators_ids.update(unit)
-            units_in_charge.update(unit)
+        if isinstance(person_item_or_contact_id, ExtractedPerson):
+            contributor_ids.add(person_item_or_contact_id.stableTargetId)
+            if unit := person_item_or_contact_id.memberOf:
+                contact_ids.update(unit)
+                unit_ids.update(unit)
+        else:
+            contact_ids.add(person_item_or_contact_id)
 
-    if not project_coordinators_ids:
-        project_coordinators_ids = cast(
-            "set[MergedContactPointIdentifier|MergedOrganizationalUnitIdentifier]",
-            get_unit_merged_id_by_synonym(settings.seq_repo.fallback_unit),
-        )
-    if not units_in_charge:
-        units_in_charge = cast(
+    if not unit_ids:
+        unit_ids = cast(
             "set[MergedOrganizationalUnitIdentifier]",
             get_unit_merged_id_by_synonym(settings.seq_repo.fallback_unit),
         )
-    return sorted(project_coordinators_ids), sorted(units_in_charge)
+    if not contact_ids:
+        contact_ids = cast(
+            "set[MergedContactPointIdentifier | MergedOrganizationalUnitIdentifier]",
+            get_unit_merged_id_by_synonym(settings.seq_repo.fallback_unit),
+        )
+    return sorted(contact_ids), sorted(contributor_ids), sorted(unit_ids)
