@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Final, cast
+from typing import TYPE_CHECKING, cast
 
 from bs4 import BeautifulSoup
 
@@ -9,8 +9,8 @@ from mex.extractors.datenkompass.models.item import (
     DatenkompassResource,
 )
 from mex.extractors.datenkompass.models.mapping import DatenkompassMapping
+from mex.extractors.pipeline.publishing_helpers import GERMAN_PREFLABEL_BY_CONCEPT_ID
 from mex.extractors.settings import ExtractorsSettings
-from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -33,13 +33,6 @@ if TYPE_CHECKING:
         VocabularyEnum,
     )
     from mex.extractors.datenkompass.models.mapping import DatenkompassMappingField
-
-GERMAN_LABEL_BY_CONCEPT_ID: Final[dict[str, str]] = {
-    concept["identifier"]: pref_label["de"]
-    for concepts in VOCABULARY_JSON_BY_NAME.values()
-    for concept in concepts
-    if (pref_label := concept.get("prefLabel"))
-}
 
 
 def fix_quotes(string: str) -> str:
@@ -202,7 +195,7 @@ def get_german_vocabulary(entries: Iterable[VocabularyEnum] | None) -> list[str]
     return [
         label
         for entry in entries or []
-        if (label := GERMAN_LABEL_BY_CONCEPT_ID.get(entry.value))
+        if (label := GERMAN_PREFLABEL_BY_CONCEPT_ID.get(entry.value))
     ]
 
 

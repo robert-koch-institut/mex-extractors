@@ -12,9 +12,7 @@ anonymizationPseudonymization:
           - https://mex.rki.de/item/anonymization-pseudonymization-2
 contact:
   - mappingRules:
-      - forValues:
-          - fictitiousf@rki.de
-        rule:
+      - {}
 description:
   - mappingRules:
       - setValues:
@@ -22,26 +20,34 @@ description:
             value: Testbeschreibung
           - language: en
             value: test description
+hadPrimarySource:
+  - mappingRules:
+      - {}
 healthCategory:
   - mappingRules:
       - setValues:
+          - "https://mex.rki.de/item/health-category-1"
+identifierInPrimarySource:
+  - mappingRules:
+      - {}
 keyword:
   - mappingRules:
       - setValues:
-          - value: FASTA
-          - value: FASTQ
+          - language: de
+            value: fastc
+          - language: de
+            value: fastd
 method:
   - mappingRules:
       - setValues:
-          - language: en
+          - language: de
             value: Next-Generation Sequencing
-          - language: en
+          - language: de
             value: NGS
 publisher:
   - mappingRules:
       - forValues:
-          - Dummy Publisher
-        rule:
+          - Robert Koch-Institut
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -53,7 +59,7 @@ resourceTypeGeneral:
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
-          - language: en
+          - language: de
             value: Sequencing Data
           - language: de
             value: Sequenzdaten
@@ -61,7 +67,7 @@ rights:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Dummy rights value."
+            value: Example content
 stateOfDataProcessing:
   - mappingRules:
       - setValues:
@@ -71,17 +77,9 @@ theme:
       - setValues:
           - https://mex.rki.de/item/theme-11
           - https://mex.rki.de/item/theme-23
-hadPrimarySource:
-  - mappingRules:
-      - rule:
-identifierInPrimarySource:
-  - mappingRules:
-      - setValues: https://dummy.url.com/
 title:
   - mappingRules:
-      - setValues:
-          - language: de
-            value: Syndrome
+      - {}
 unitInCharge:
   - mappingRules:
-      - forValues:
+      - {}

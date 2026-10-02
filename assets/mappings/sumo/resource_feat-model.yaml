@@ -19,12 +19,15 @@ description:
       - setValues:
           - language: de
             value: Echtzeitdaten der Routinedokumenation
-hasPersonalData:
-  - mappingRules:
-      - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
       - rule:
+hasCodingSystem:
+  - mappingRules:
+      - setValues:
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
 healthCategory:
   - mappingRules:
       - setValues:

@@ -29,6 +29,10 @@ hadPrimarySource:
 hasCodeValues:
   - mappingRules:
       - rule:
+hasCodingSystem:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/coding-system-1
 identifierInPrimarySource:
   - fieldInPrimarySource:
     locationInPrimarySource:
