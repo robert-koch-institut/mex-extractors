@@ -24,6 +24,18 @@ hasPersonalData:
 identifierInPrimarySource:
   - mappingRules:
       - rule:
+landingPage:
+    mappingRules:
+      - rule:
+        forValues:
+          - "[identifier]"
+        setValues:
+          - url: "[identifier]"
+            title: Datensatz
+            language: de
+          - url: "[identifier]"
+            title: Dataset
+            language: en
 license:
   - mappingRules:
       - forValues:
