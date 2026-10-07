@@ -48,19 +48,36 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
 
     test_id_series = resource_series_by_project_id["TEST-ID"]
 
-    assert {title.value for title in test_id_series.title} == {
-        "FG99-ABC-123",
-        "FG99-ABC-321",
-        "SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
-    }
-    assert test_id_series.accessPlatform == [extracted_access_platform.stableTargetId]
-    assert test_id_series.publisher == [extracted_organization_rki.stableTargetId]
-
-    assert {keyword.value for keyword in test_id_series.keyword} == {
-        "Key Word",
-        "virus XYZ",
-        "Lab rat",
-        "TEST",
+    assert test_id_series.model_dump(exclude_none=True, exclude_defaults=True) == {
+        "accessPlatform": [extracted_access_platform.stableTargetId],
+        "contact": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+        "description": [
+            {
+                "value": "Some text with project name 'FG99-ABC-123' (additional 'FG99-ABC-321', 'SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS').",
+                "language": "en",
+            }
+        ],
+        "end": ["2023-08-07"],
+        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
+        "identifier": "egRPPkE5jnd2jOgr4hosz1",
+        "identifierInPrimarySource": "TEST-ID",
+        "keyword": [
+            {"value": "Key Word", "language": "en"},
+            {"value": "Lab rat"},
+            {"value": "TEST"},
+            {"value": "virus XYZ"},
+        ],
+        "publisher": [extracted_organization_rki.stableTargetId],
+        "stableTargetId": "fPqFxu76FLQjVxUDSJpb0z",
+        "start": ["2023-08-07"],
+        "title": [
+            {"value": "FG99-ABC-123", "language": "de"},
+            {"value": "FG99-ABC-321", "language": "de"},
+            {
+                "value": "SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
+                "language": "de",
+            },
+        ],
     }
 
     test_id_2_series = resource_series_by_project_id["TEST-ID-2"]
@@ -88,7 +105,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "start": ["2023-08-07"],
         "modified": "2023-08-07",
-        "contact": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
+        "contact": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
@@ -100,6 +117,7 @@ def test_transform_seq_repo_resource_to_extracted_resource(
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
+        "contributor": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
         "description": [
             {"value": "Testbeschreibung", "language": "de"},
             {"value": "test description", "language": "en"},
