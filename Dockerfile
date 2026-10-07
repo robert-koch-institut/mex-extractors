@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 
-FROM python:3.14-trixie@sha256:5b36b4b0902d26b0c89058cb5b2c35dde48f5368351f702e394854d592b9d44e AS builder
+FROM python:3.14-trixie@sha256:a11116e648ddd8a05e1120014c8e6ac259f718040b67e2dcd6a7c0b7bab3ff2c AS builder
 
 WORKDIR /build
 
