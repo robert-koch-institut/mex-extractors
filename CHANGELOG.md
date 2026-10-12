@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- linting error caused by pydantic update
+
 ### Security
 
 ## [1.22.1] - 2026-09-18
