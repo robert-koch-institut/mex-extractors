@@ -96,7 +96,7 @@ def transform_seq_repo_resource_to_extracted_resource_series(
     extracted_resource_series = []
     for project_id in sorted(collected_project_ids):
         contacts, _, _ = (
-            resolve_project_coordinators_to_contact_and_contributors_and_units(
+            resolve_project_coordinators_to_contacts_and_contributors_and_units(
                 sorted(collected_project_coordinators_by_project_id[project_id])
             )
         )
@@ -217,8 +217,8 @@ def transform_seq_repo_resource_to_extracted_resource(
             modified = max(sequencing_dates)
             start = min(sequencing_dates)
 
-        contact, contributors, units = (
-            resolve_project_coordinators_to_contact_and_contributors_and_units(
+        contacts, contributors, units = (
+            resolve_project_coordinators_to_contacts_and_contributors_and_units(
                 source.project_coordinators
             )
         )
@@ -244,7 +244,7 @@ def transform_seq_repo_resource_to_extracted_resource(
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
             anonymizationPseudonymization=anonymization_pseudonymization,
-            contact=contact,
+            contact=contacts,
             contributingUnit=contributing_unit,
             contributor=contributors,
             description=description,
@@ -340,7 +340,7 @@ def extract_person_item_or_contact_point_id_by_name(
     return get_ldap_merged_contact_id_by_mail(mail=f"{project_coordinator}@rki.de")
 
 
-def resolve_project_coordinators_to_contact_and_contributors_and_units(
+def resolve_project_coordinators_to_contacts_and_contributors_and_units(
     project_coordinators: list[str],
 ) -> tuple[
     list[MergedContactPointIdentifier | MergedOrganizationalUnitIdentifier],
@@ -372,8 +372,11 @@ def resolve_project_coordinators_to_contact_and_contributors_and_units(
             if unit := person_item_or_contact_id.memberOf:
                 contact_ids.update(unit)
                 unit_ids.update(unit)
-        else:
+        elif isinstance(person_item_or_contact_id, MergedContactPointIdentifier):
             contact_ids.add(person_item_or_contact_id)
+        else:
+            msg = f"Lookup returned unexpected entity type for entry {pc}."
+            raise MExError(msg)
 
     if not unit_ids:
         unit_ids = cast(
