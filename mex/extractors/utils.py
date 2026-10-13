@@ -5,11 +5,12 @@ if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable, Sequence
 
     from pandas._typing import Dtype
+    from typing_extensions import TypeForm
 
     from mex.common.models import BaseModel
 
 
-PANDAS_DTYPE_MAP = defaultdict(
+PANDAS_DTYPE_MAP: defaultdict[TypeForm[Any], str] = defaultdict(
     lambda: "string",
     {bool: "bool", float: "Float64", int: "Int64"},
 )
@@ -25,7 +26,9 @@ def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
         Mapping from field alias to dtype strings
     """
     return {
-        f.alias or name: PANDAS_DTYPE_MAP[f.annotation or type(None)]
+        f.alias or name: PANDAS_DTYPE_MAP[
+            f.annotation if f.annotation is not None else type(None)
+        ]
         for name, f in model.model_fields.items()
     }
 
