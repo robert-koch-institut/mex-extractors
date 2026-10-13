@@ -70,7 +70,6 @@ services:
       - 1025:1025
       - 8025:8025
     environment:
-      - MEX_BACKEND_HOST=0.0.0.0
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
@@ -96,6 +95,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      - MEX_BACKEND_HOST=0.0.0.0
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_DEBUG=true
