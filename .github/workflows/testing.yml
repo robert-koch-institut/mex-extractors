@@ -86,6 +86,7 @@ jobs:
         env:
           MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
           MEX_BACKEND_API_URL: http://localhost:8080/
+          MEX_IDENTITY_PROVIDER: backend
           MEX_BACKEND_API_KEY: write_key
           MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=GrippeWeb;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"
           MEX_EXTRACTORS_KVIS__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=KVIS;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"
