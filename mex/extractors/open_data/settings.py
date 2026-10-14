@@ -17,6 +17,11 @@ class OpenDataSettings(BaseModel):
             "default values, relative to `assets_dir`."
         ),
     )
+    # TODO @MX-2075: remove
+    fallback_unit: str = Field(
+        "mf4",
+        description="Unit used as a fallback for resources without a responsible unit.",
+    )
     zip_path_de: str = Field(
         "/files/Metadaten.zip/content",
         description="relative URL path for german spelling of the zip file name",

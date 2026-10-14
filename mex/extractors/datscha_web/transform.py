@@ -60,9 +60,9 @@ def transform_datscha_web_items_to_mex_activities(
             for unit_id in merged_ids
         ]
         # lookup actors
-        involved_person = person_stable_target_ids_by_query_string[
-            datscha_web_item.auskunftsperson  # type: ignore[index]
-        ]
+        involved_person = person_stable_target_ids_by_query_string.get(
+            datscha_web_item.auskunftsperson or "", []
+        )
         if involved_person:
             contact: list[MergedPersonIdentifier] = involved_person
         else:

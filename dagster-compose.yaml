@@ -10,3 +10,5 @@ storage:
       username: dagster
       password: dagster
       db_name: dagster
+      # sqlalchemy>=2.1 defaults `postgresql://` to psycopg 3, we ship psycopg2
+      scheme: postgresql+psycopg2

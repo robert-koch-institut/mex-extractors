@@ -9,15 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
+  and the drop api (seq-repo)
+- open-data setting `fallback_unit` to replace the hardcoded `FALLBACK_UNIT`
+- `opendata@rki.de` functional account in the ldap mock
+
 ### Changes
 
 ### Deprecated
 
 ### Removed
 
+- http-test-server mocks for blueant and datscha, these now live in mex-testing
+
 ### Fixed
 
 - linting error caused by pydantic update
+- datscha_web transform crashing on items without `Auskunftsperson`
+- dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
 
 ### Security
 

@@ -8,12 +8,13 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
-from mex.extractors.open_data import main, transform
+from mex.extractors.open_data import main
 from mex.extractors.open_data.connector import OpenDataConnector
 from mex.extractors.open_data.models.source import (
     OpenDataParentResource,
     OpenDataVersionFiles,
 )
+from mex.extractors.settings import ExtractorsSettings
 
 
 def create_mocked_parent_response() -> dict[str, Any]:
@@ -118,7 +119,7 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
 
     # TODO @MX-2075: remove
-    monkeypatch.setattr(transform, "FALLBACK_UNIT", "FG 99")
+    monkeypatch.setattr(ExtractorsSettings.get().open_data, "fallback_unit", "FG 99")
 
     # Create a mocked ZIP file with according folder structure, naming, and content."""
     json_contents = [
