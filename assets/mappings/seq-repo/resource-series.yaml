@@ -25,13 +25,13 @@ keyword:
       - setValues:
           - language: en
             value: Key Word
-start:
-  - mappingRules:
-      - rule:
 publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
+start:
+  - mappingRules:
+      - rule:
 title:
   - mappingRules:
       - rule:
