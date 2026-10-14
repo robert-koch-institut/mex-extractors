@@ -46,7 +46,7 @@ def transform_seq_repo_activities_to_extracted_activities(
     Returns:
         list of unique ExtractedActivity
     """
-    theme = seq_repo_activity.theme[0].mappingRules[0].setValues
+    theme = seq_repo_activity.theme.get_static_values()
     unique_activities = []
 
     for source in seq_repo_sources:
@@ -90,32 +90,24 @@ def transform_seq_repo_resource_to_extracted_resource(
         list of ExtractedResource
     """
     # Resource values from mapping
-    access_restriction = (
-        seq_repo_resource.accessRestriction[0].mappingRules[0].setValues
-    )
-    accrual_periodicity = (
-        seq_repo_resource.accrualPeriodicity[0].mappingRules[0].setValues
-    )
+    access_restriction = seq_repo_resource.accessRestriction.get_static_values()
+    accrual_periodicity = seq_repo_resource.accrualPeriodicity.get_static_values()
     anonymization_pseudonymization = (
-        seq_repo_resource.anonymizationPseudonymization[0].mappingRules[0].setValues
+        seq_repo_resource.anonymizationPseudonymization.get_static_values()
     )
-    description = seq_repo_resource.description[0].mappingRules[0].setValues
-    health_category = seq_repo_resource.healthCategory[0].mappingRules[0].setValues
+    description = seq_repo_resource.description.get_static_values()
+    health_category = seq_repo_resource.healthCategory.get_static_values()
     resource_creation_method = (
-        seq_repo_resource.resourceCreationMethod[0].mappingRules[0].setValues
+        seq_repo_resource.resourceCreationMethod.get_static_values()
     )
-    resource_type_general = (
-        seq_repo_resource.resourceTypeGeneral[0].mappingRules[0].setValues
-    )
-    resource_type_specific = (
-        seq_repo_resource.resourceTypeSpecific[0].mappingRules[0].setValues
-    )
-    rights = seq_repo_resource.rights[0].mappingRules[0].setValues
+    resource_type_general = seq_repo_resource.resourceTypeGeneral.get_static_values()
+    resource_type_specific = seq_repo_resource.resourceTypeSpecific.get_static_values()
+    rights = seq_repo_resource.rights.get_static_values()
     state_of_data_processing = (
-        seq_repo_resource.stateOfDataProcessing[0].mappingRules[0].setValues
+        seq_repo_resource.stateOfDataProcessing.get_static_values()
     )
-    theme = seq_repo_resource.theme[0].mappingRules[0].setValues
-    shared_keyword = seq_repo_resource.keyword[0].mappingRules[0].setValues or []
+    theme = seq_repo_resource.theme.get_static_values()
+    shared_keyword = seq_repo_resource.keyword.get_static_values() or []
 
     extracted_resources = []
     sequence_dates_by_identifier_in_primary_source: dict[str, list[str]] = defaultdict(
@@ -207,21 +199,19 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     Returns:
         ExtractedAccessPlatform
     """
-    alternative_title = (
-        seq_repo_access_platform.alternativeTitle[0].mappingRules[0].setValues
-    )
+    alternative_title = seq_repo_access_platform.alternativeTitle.get_static_values()
 
-    description = seq_repo_access_platform.description[0].mappingRules[0].setValues
-    endpoint_type = seq_repo_access_platform.endpointType[0].mappingRules[0].setValues
+    description = seq_repo_access_platform.description.get_static_values()
+    endpoint_type = seq_repo_access_platform.endpointType.get_static_values()
     identifier_in_primary_source = (
-        seq_repo_access_platform.identifierInPrimarySource[0].mappingRules[0].setValues
+        seq_repo_access_platform.identifierInPrimarySource.get_static_values()
     )
-    landing_page = seq_repo_access_platform.landingPage[0].mappingRules[0].setValues
+    landing_page = seq_repo_access_platform.landingPage.get_static_values()
 
     technical_accessibility = (
-        seq_repo_access_platform.technicalAccessibility[0].mappingRules[0].setValues
+        seq_repo_access_platform.technicalAccessibility.get_static_values()
     )
-    title = seq_repo_access_platform.title[0].mappingRules[0].setValues
+    title = seq_repo_access_platform.title.get_static_values()
 
     contacts = seq_repo_access_platform.contact[0].mappingRules[0].forValues or []
 

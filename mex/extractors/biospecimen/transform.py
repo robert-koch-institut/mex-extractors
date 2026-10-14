@@ -51,11 +51,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in synopse_extracted_activities
     }
-    access_restriction_by_zugriffsbeschraenkung = {
-        rule.forValues[0]: rule.setValues
-        for rule in resource_mapping.accessRestriction[0].mappingRules
-        if rule.forValues and rule.setValues
-    }
     resources = []
     for resource in watch_progress(
         biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
@@ -65,7 +60,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             if resource.anonymisiert_pseudonymisiert
             else None
         )
-        conforms_to = resource_mapping.conformsTo[0].mappingRules[0].setValues
+        conforms_to = resource_mapping.conformsTo.get_static_values()
         contributing_unit = (
             get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := resource.mitwirkende_fachabteilung)
@@ -84,11 +79,9 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             if resource.externe_partner
             else []
         )
-        has_personal_data = (
-            resource_mapping.hasPersonalData[0].mappingRules[0].setValues
-        )
-        has_legal_basis = resource_mapping.hasLegalBasis[0].mappingRules[0].setValues
-        language = resource_mapping.language[0].mappingRules[0].setValues
+        has_personal_data = resource_mapping.hasPersonalData.get_static_values()
+        has_legal_basis = resource_mapping.hasLegalBasis.get_static_values()
+        language = resource_mapping.language.get_static_values()
 
         contact: list[Identifier] = []
         for kontakt in resource.kontakt:
@@ -112,17 +105,15 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
-        if resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues and (
-            resource.ressourcentyp_allgemein
-            in resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues
-        ):
-            resource_type_general = (
-                resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
+        resource_type_general = (
+            resource_mapping.resourceTypeGeneral.get_mapped_values(
+                resource.ressourcentyp_allgemein
             )
-        else:
-            resource_type_general = []
+            if resource.ressourcentyp_allgemein
+            else None
+        ) or []
         resource_creation_method = (
-            resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
+            resource_mapping.resourceCreationMethod.get_static_values()
         )
         if resource.zeitlicher_bezug and "bis" in resource.zeitlicher_bezug[0]:
             start_end = resource.zeitlicher_bezug[0].split("bis")
@@ -137,12 +128,12 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         ):
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
-            theme = resource_mapping.theme[0].mappingRules[0].setValues
+            theme = resource_mapping.theme.get_static_values()
         resources.append(
             ExtractedResource(
-                accessRestriction=access_restriction_by_zugriffsbeschraenkung[
+                accessRestriction=resource_mapping.accessRestriction.get_mapped_values(
                     resource.zugriffsbeschraenkung
-                ],
+                ),
                 alternativeTitle=resource.alternativer_titel,
                 anonymizationPseudonymization=anonymization_pseudonymization,
                 conformsTo=conforms_to,
