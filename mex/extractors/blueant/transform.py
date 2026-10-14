@@ -40,19 +40,13 @@ def transform_blueant_sources_to_extracted_activities(
     Returns:
         List of ExtractedActivity instances
     """
-    activity_type_values_by_type_id = {
-        for_value: mapping_rule.setValues
-        for mapping_rule in activity.activityType[0].mappingRules
-        if mapping_rule.forValues
-        for for_value in mapping_rule.forValues
-    }
     activities = []
     seen_merged_org_ids_by_query_str: dict[str, MergedOrganizationIdentifier] = {}
     for source in watch_progress(
         blueant_sources, "transform_blueant_sources_to_extracted_activities"
     ):
         # find source type
-        activity_type = activity_type_values_by_type_id.get(source.type_, [])
+        activity_type = activity.activityType.get_mapped_values(source.type_) or []
         funder_or_commissioner: list[MergedOrganizationIdentifier] = []
         for name in source.client_names:
             if not name or name in {"Robert Koch-Institut", "RKI"}:

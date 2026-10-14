@@ -94,9 +94,7 @@ def extract_endnote_consents(
     """
     return [
         ExtractedConsent(
-            hasConsentStatus=endnote_consent_mapping.hasConsentStatus[0]
-            .mappingRules[0]
-            .setValues,
+            hasConsentStatus=endnote_consent_mapping.hasConsentStatus.get_static_values(),
             hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=f"{person.stableTargetId}_consent",

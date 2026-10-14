@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = "==3.14.*"
 resolution-markers = [
     "sys_platform == 'win32'",
@@ -1053,7 +1053,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.3.0"
-source = { registry = "https://pypi.org/simple" }
+source = { editable = "../mex-common" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -1067,10 +1067,39 @@ dependencies = [
     { name = "requests" },
     { name = "tabulate" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/5c/7596edc6b35907f901642aab49d24c4b4bc8ea70170812a779f9e831373a/mex_common-3.3.0.tar.gz", hash = "sha256:5d6702b1f351c3e6f549083b034c456b2c49564205584a89ea87490f11b662e4", size = 98001, upload-time = "2026-08-19T08:45:58.662Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/5b/34915993dbcd1eae29a0711849dbe72e6a5551d988fa0f945ca14df463cd/mex_common-3.3.0-py3-none-any.whl", hash = "sha256:f375df4c3c13f5589b643e7cd7960f96d3e64654445853ec615c0413e1821873", size = 148444, upload-time = "2026-08-19T08:45:57.112Z" },
+
+[package.metadata]
+requires-dist = [
+    { name = "backoff", specifier = ">=2,<3" },
+    { name = "click", specifier = ">=8,<9" },
+    { name = "langdetect", specifier = ">=1,<2" },
+    { name = "ldap3", specifier = ">=2,<3" },
+    { name = "mex-model", specifier = ">=5.1.2,<6" },
+    { name = "pandas", specifier = ">=3,<4" },
+    { name = "pydantic", specifier = ">=2,<3" },
+    { name = "pydantic-settings", specifier = ">=2,<3" },
+    { name = "pytz", specifier = ">=2026,<2027" },
+    { name = "requests", specifier = ">=2,<3" },
+    { name = "tabulate", specifier = ">=0.10,<1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "ipdb", specifier = ">=0.13" },
+    { name = "mypy", specifier = ">=1" },
+    { name = "pandas-stubs" },
+    { name = "pytest", specifier = ">=9" },
+    { name = "pytest-cov", specifier = ">=7" },
+    { name = "pytest-random-order", specifier = ">=1" },
+    { name = "pytest-xdist", specifier = ">=3" },
+    { name = "ruff", specifier = ">=0.16" },
+    { name = "sphinx", specifier = ">=9" },
+    { name = "types-ldap3" },
+    { name = "types-pytz" },
+    { name = "types-requests" },
+    { name = "types-tabulate" },
+]
+fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 
 [[package]]
 name = "mex-extractors"
@@ -1127,7 +1156,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", specifier = ">=3,<3.4" },
+    { name = "mex-common", editable = "../mex-common" },
     { name = "mex-model", specifier = ">=5,<6" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
@@ -1390,7 +1419,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
