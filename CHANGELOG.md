@@ -11,20 +11,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update extractors to new mex-model 5.1. Mainly:
-  - update resource mappings for several extractors
-  - remove activity extraction and add resource-series extraction for seq-repo
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [1.23.0] - 2026-10-15
+
+### Changes
+
+- update extractors to new mex-model 5.1. Mainly:
+  - update resource mappings for several extractors
+  - remove activity extraction and add resource-series extraction for seq-repo
+
+### Fixed
+
 - linting error caused by pydantic update
 - handling of deprecated find method and __concept__ for vocabulary
-
-### Security
 
 ## [1.22.1] - 2026-09-18
 
