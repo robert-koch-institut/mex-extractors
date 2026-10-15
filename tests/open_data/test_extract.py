@@ -31,6 +31,9 @@ def test_extract_parent_resources_mocked() -> None:
             "contributors": [
                 {"name": "Felicitás, Juturna", "orcid": "0000-0002-1234-5678"}
             ],
+            "related_identifiers": [
+                {"identifier": "123", "relation": "isSupplementTo"}
+            ],
             "resource_type": {"type": "dataset"},
         },
         "files": [{"id": "file_test_id"}],
@@ -83,6 +86,7 @@ def test_extract_files_for_parent_resource() -> None:
         "key": "some text",
         "links": {"self": "www.efg.hi"},
         "created": "2021-01-01T01:01:01.111111+00:00",
+        "mimetype": "text/csv",
     }
 
 

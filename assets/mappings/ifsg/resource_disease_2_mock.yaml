@@ -81,6 +81,10 @@ documentation:
           - language: de
             title: "Thüringen"
             url: https://landesrecht.thueringen.de/bsth/document/jlr-IfKrMeldAnpVTHrahmen
+hasCodingSystem:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/coding-system-1
 hadPrimarySource:
   - mappingRules:
       - {}

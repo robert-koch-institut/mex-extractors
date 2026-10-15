@@ -68,6 +68,11 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
+hasPurposeDescription:
+  - mappingRules:
+      - setValues:
+          - langauge: de
+            value: Erhebung
 identifierInPrimarySource:
   - mappingRules:
       - rule:
