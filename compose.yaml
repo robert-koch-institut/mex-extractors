@@ -97,6 +97,7 @@ services:
     environment:
       - MEX_BACKEND_HOST=0.0.0.0
       - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_IDENTITY_PROVIDER=graph
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_DEBUG=true
     healthcheck:
