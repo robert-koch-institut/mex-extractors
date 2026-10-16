@@ -87,7 +87,7 @@ services:
       retries: 5
       start_period: 30s
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.4.0@sha256:ebeedd8301032978c06eed36cf968e8c98cd96c5b4e2804ad7e8e80c0661c517
+    image: ghcr.io/robert-koch-institut/mex-backend:4.6.2@sha256:de00421715eb74758927b11ed49b16c06223c7036eeef98ca498375e3c2ba28d
     entrypoint: testing-backend
     depends_on:
       neo4j:
@@ -95,7 +95,9 @@ services:
     ports:
       - 8080:8080
     environment:
+      - MEX_BACKEND_HOST=0.0.0.0
       - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_IDENTITY_PROVIDER=graph
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_DEBUG=true
     healthcheck:

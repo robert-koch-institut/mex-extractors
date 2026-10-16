@@ -5,13 +5,13 @@ import pytest
 
 from mex.common.models import (
     AnyMergedModel,
+    ExtractedOrganizationalUnit,
     ItemsContainer,
     MergedActivity,
     MergedBibliographicResource,
     MergedOrganizationalUnit,
     MergedPerson,
 )
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -152,11 +152,21 @@ def test_get_resolved_names_returns_short_name(
 def test_transform_merged_bibliographic_resources_for_csv(
     monkeypatch: pytest.MonkeyPatch,
     merged_bibliographic_resource_list: list[MergedBibliographicResource],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
+    child_unit_id = mocked_units_by_identifier_in_primary_source[
+        "child-unit"
+    ].stableTargetId
+    parent_unit_id = mocked_units_by_identifier_in_primary_source[
+        "parent-unit"
+    ].stableTargetId
+
     def fake_get_resolved_names(identifier: str, field_name: str) -> str:
         resolved_names = {
-            ("6rqNvZSApUHlz8GkkVP48", "shortName"): "C1",
-            ("hIiJpZXVppHvoyeP0QtAoS", "shortName"): "parent",
+            (str(child_unit_id), "shortName"): "C1",
+            (str(parent_unit_id), "shortName"): "parent",
             ("PersonIdentifier", "fullName"): "Dr. Test Person",
         }
         return resolved_names[(str(identifier), field_name)]
@@ -168,16 +178,14 @@ def test_transform_merged_bibliographic_resources_for_csv(
 
     result = transform_merged_bibliographic_resources_for_csv(
         {
-            MergedOrganizationalUnitIdentifier(
-                "hIiJpZXVppHvoyeP0QtAoS"
-            ): merged_bibliographic_resource_list[0:2],
+            parent_unit_id: merged_bibliographic_resource_list[0:2],
         }
     )
 
     assert result.keys() == {"parent"}
     assert len(result["parent"]) == 2
     assert result["parent"][0].model_dump(exclude_defaults=True, mode="json") == {
-        "accessRestriction": Joker(),
+        "accessRestriction": "offen",
         "contributingUnit": ["C1"],
         "creator": ["Dr. Test Person"],
         "journal": [],
@@ -185,7 +193,7 @@ def test_transform_merged_bibliographic_resources_for_csv(
         "title": ["title 1, Unit C1"],
     }
     assert result["parent"][1].model_dump(exclude_defaults=True, mode="json") == {
-        "accessRestriction": Joker(),
+        "accessRestriction": "offen",
         "contributingUnit": ["parent"],
         "creator": ["Dr. Test Person"],
         "journal": [],
