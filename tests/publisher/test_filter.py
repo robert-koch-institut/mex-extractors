@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from mex.common.exceptions import MExError
-from mex.common.testing import Joker
 from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.extractors.publisher.filter import (
     _cluster_publications_by_department,
@@ -17,6 +16,7 @@ from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from mex.common.models import (
+        ExtractedOrganizationalUnit,
         MergedBibliographicResource,
         MergedConsent,
         MergedOrganizationalUnit,
@@ -83,10 +83,19 @@ def test_cluster_publications_by_department(
     monkeypatch: pytest.MonkeyPatch,
     merged_bibliographic_resource_list: list[MergedBibliographicResource],
     mocked_merged_organizational_units: list[MergedOrganizationalUnit],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
-    department_unit_id = MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")
-    child_unit_id = MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48")
-    forbidden_unit_id = MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")
+    department_unit_id = mocked_units_by_identifier_in_primary_source[
+        "parent-unit"
+    ].stableTargetId
+    child_unit_id = mocked_units_by_identifier_in_primary_source[
+        "child-unit"
+    ].stableTargetId
+    forbidden_unit_id = mocked_units_by_identifier_in_primary_source[
+        "fg99"
+    ].stableTargetId
 
     mocked_find_descendants = MagicMock(return_value=[str(child_unit_id)])
 
@@ -117,6 +126,9 @@ def test_cluster_publications_by_department(
 def test_cluster_and_filter_bibliographic_resources_by_unit(
     monkeypatch: pytest.MonkeyPatch,
     merged_bibliographic_resource_list: list[MergedBibliographicResource],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     mocked_find_descendants = MagicMock(return_value=[])
 
@@ -130,18 +142,31 @@ def test_cluster_and_filter_bibliographic_resources_by_unit(
     )
 
     assert mocked_find_descendants.call_count == 2
-    assert result.keys() == {"hIiJpZXVppHvoyeP0QtAoS", "cjna2jitPngp6yIV63cdi9"}
+    assert result.keys() == {
+        mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId,
+        mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+    }
     assert (
-        len(result[MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")]) == 1
+        len(
+            result[
+                mocked_units_by_identifier_in_primary_source[
+                    "parent-unit"
+                ].stableTargetId
+            ]
+        )
+        == 1
     )
     assert (
-        len(result[MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9")]) == 0
+        len(result[mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId])
+        == 0
     )
-    assert result[MergedOrganizationalUnitIdentifier("hIiJpZXVppHvoyeP0QtAoS")][
-        0
-    ].model_dump(exclude_defaults=True, mode="json") == {
-        "accessRestriction": Joker(),
-        "contributingUnit": ["hIiJpZXVppHvoyeP0QtAoS"],
+    assert result[
+        mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId
+    ][0].model_dump(exclude_defaults=True, mode="json") == {
+        "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId
+        ],
         "creator": ["PersonIdentifier"],
         "identifier": "PublicationOfPRNTUnit",
         "publicationYear": "2042",

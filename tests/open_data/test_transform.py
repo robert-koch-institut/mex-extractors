@@ -3,9 +3,8 @@ from typing import TYPE_CHECKING
 import pytest
 
 from mex.common.exceptions import MExError
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
@@ -23,13 +22,15 @@ from mex.extractors.open_data.transform import (
     transform_open_data_variable_groups,
     transform_open_data_variables,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 if TYPE_CHECKING:
     from mex.common.models import (
         DistributionMapping,
         ExtractedContactPoint,
         ExtractedDistribution,
-        ExtractedOrganization,
         ExtractedOrganizationalUnit,
         ExtractedPerson,
         ResourceMapping,
@@ -43,6 +44,9 @@ if TYPE_CHECKING:
 
 def test_get_only_child_units(
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     no_parent_units = get_only_child_units(
         [unit.stableTargetId for unit in mocked_extracted_organizational_units],
@@ -50,8 +54,8 @@ def test_get_only_child_units(
     )
 
     assert no_parent_units == [  # Parent unit PRNT is filtered out
-        MergedOrganizationalUnitIdentifier("6rqNvZSApUHlz8GkkVP48"),  # C1
-        MergedOrganizationalUnitIdentifier("cjna2jitPngp6yIV63cdi9"),  # FG 99
+        mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId,  # C1
+        mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,  # FG 99
     ]
 
 
@@ -61,7 +65,12 @@ def test_transform_open_data_person_affiliations_to_organizations(
     results = transform_open_data_person_affiliations_to_organizations(
         [mocked_open_data_creator_with_processed_affiliation],
     )
-    assert results == {"Universität": Joker()}
+    created_organization = ExtractedOrganization(
+        officialName="Universität",
+        identifierInPrimarySource="Universität",
+        hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
+    )
+    assert results == {"Universität": created_organization.stableTargetId}
 
 
 def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliation(
@@ -78,7 +87,7 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_process_affiliatio
         open_data_organization_ids_by_str,
     )
     assert person.model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Resolved, Roland",
         "affiliation": ["bFQoRhcVH5DHZ8"],
         "fullName": ["Resolved, Roland"],
@@ -102,7 +111,7 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_ignore_affiliation
         open_data_organization_ids_by_str,
     )
     assert person.model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Felicitás, Juturna",
         "fullName": ["Felicitás, Juturna"],
         "identifier": "gfCLiDlCRkSTXic8WuawRm",
@@ -115,6 +124,11 @@ def test_transform_and_load_open_data_persons_not_in_ldap_and_ignore_affiliation
 def test_transform_open_data_persons(
     mocked_open_data_creator_with_affiliation_to_ignore: OpenDataCreatorsOrContributors,
     extracted_organization_rki: ExtractedOrganization,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    wikidata_extracted_organization: ExtractedOrganization,
+    juturna_felicitas: ExtractedPerson,
 ) -> None:
     open_data_organization_ids_by_str = {
         "RKI": MergedOrganizationIdentifier.generate(seed=354)
@@ -126,17 +140,19 @@ def test_transform_open_data_persons(
     )
     assert len(persons) == 1
     assert persons[0].model_dump(exclude_defaults=True) == {
-        "affiliation": ["ga6xh6pgMwgq7DC7r6Wjqg"],
+        "affiliation": [wikidata_extracted_organization.stableTargetId],
         "email": ["felicitasj@rki.de"],
         "familyName": ["Felicitás"],
         "fullName": ["Felicitás, Juturna"],
         "givenName": ["Juturna"],
-        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("ldap"),
         "identifierInPrimarySource": "00000000-0000-4000-8000-000000000002",
         "identifier": "hiY0YTC5dUkBrf8ujMemjh",
-        "memberOf": ["cjna2jitPngp6yIV63cdi9"],
+        "memberOf": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
         "orcidId": ["https://orcid.org/0000-0002-1234-5678"],
-        "stableTargetId": "cpKNwpoZTQ4GpIzBgO8DMx",
+        "stableTargetId": juturna_felicitas.stableTargetId,
     }
 
 
@@ -217,7 +233,7 @@ def test_transform_open_data_distributions(
     )
 
     assert mex_distribution[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "accessURL": [{"url": "https://doi.org/10.3456/zenodo.7890"}],
         "identifierInPrimarySource": "file_test_id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
@@ -226,8 +242,8 @@ def test_transform_open_data_distributions(
         "title": [{"value": "some text"}],
         "mediaType": "https://mex.rki.de/item/mime-type-7",
         "downloadURL": [{"url": "www.efg.hi"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "dHGPzfgNnnEuzEWqAUQw5L",
+        "stableTargetId": "hh1vwUYabPZCAlUislSGfu",
     }
 
 
@@ -240,6 +256,9 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, 
     mocked_extracted_organizational_units: list[ExtractedOrganizationalUnit],
     mocked_open_data_distribution: list[ExtractedDistribution],
     contact_point: ExtractedContactPoint,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     mex_sources = transform_open_data_parent_resource_to_mex_resource(
         mocked_open_data_parent_resource,
@@ -253,33 +272,35 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, 
 
     assert len(mex_sources) == 1
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": "bEwCy4xNTx9gCJr9aJ7LM",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Eins",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
         "start": ["2021"],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-2",
         "landingPage": [
-            {"language": "de", "url": "123", "title": "Datensatz"},
-            {"language": "en", "url": "123", "title": "Dataset"},
+            {"language": TextLanguage.DE, "url": "123", "title": "Datensatz"},
+            {"language": TextLanguage.EN, "url": "123", "title": "Dataset"},
         ],
         "license": "https://mex.rki.de/item/license-1",
-        "contact": ["cMkmnNOoNVAohBA1XLNr9K"],
+        "contact": [contact_point.stableTargetId],
         "theme": ["https://mex.rki.de/item/theme-1"],
         "title": [{"value": "Dumdidumdidum"}],
         "unitInCharge": [
-            "cjna2jitPngp6yIV63cdi9"
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
         ],  # only child unit of Juturna Felicitás = C1
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-1"
         ],
-        "contributor": ["cpKNwpoZTQ4GpIzBgO8DMx"],
-        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],  # default, always unit "FG 99"
+        "contributor": [juturna_felicitas.stableTargetId],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],  # default, always unit "FG 99"
         "description": [
-            {"value": "Test1 <a href='test/2'>test3</a>", "language": "en"}
+            {"value": "Test1 <a href='test/2'>test3</a>", "language": TextLanguage.EN}
         ],
         "doi": "https://doi.org/10.3456/zenodo.7890",
-        "distribution": ["dMXXtqkXco7A1FslVtJWqR"],
-        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "distribution": [mocked_open_data_distribution[0].stableTargetId],
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
         "identifier": "eKh2uKxQPKQ9Z9bamF2mxy",
         "stableTargetId": "cV3l5BLBycXDZDbWA5ipwl",
@@ -296,28 +317,28 @@ def test_transform_open_data_variable_groups(
     )
 
     assert result[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "tableschema_lorem.json",
         "containedBy": ["LoremIpsumResourceId"],
         "label": [{"value": "tableschema_lorem"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "ftl4bWJd6ACRjdnfRGcGii",
+        "stableTargetId": "fIippLaxM3OB3PHuas7KE9",
     }
     assert result[1].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "tableschema_ipsum.json",
         "containedBy": ["LoremIpsumResourceId"],
         "label": [{"value": "tableschema_ipsum", "language": TextLanguage.EN}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "hEH4MPVFJlcdCgCSwRvr0r",
+        "stableTargetId": "cn1c9ewpNgLGuWlxwQ5Pn8",
     }
     assert result[2].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "tableschema_dolor.json",
         "containedBy": ["DolorResourceId"],
         "label": [{"value": "tableschema_dolor"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "cFYQLvfOaxZAoZVr71wHcN",
+        "stableTargetId": "fXYBRtMb47Fg1qUP82TprS",
     }
 
 
@@ -338,7 +359,7 @@ def test_transform_open_data_variables(
     )
 
     assert result[0].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Lorem1_tableschema_lorem.json",
         "dataType": "string",
         "label": [{"value": "Lorem1"}],
@@ -346,11 +367,11 @@ def test_transform_open_data_variables(
         "belongsTo": ["LoremVarGroupId"],
         "description": [{"value": "lorem 1"}],
         "valueSet": ["a, the letter 'a'", "b, and also 'b'"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "fU1M8H1otofz9yOzNVmTWB",
+        "stableTargetId": "ctTj4ERtPiMVcjspBSMO1y",
     }
     assert result[1].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Lorem2_tableschema_lorem.json",
         "dataType": "string",
         "label": [{"value": "Lorem2"}],
@@ -358,30 +379,30 @@ def test_transform_open_data_variables(
         "belongsTo": ["LoremVarGroupId"],
         "description": [{"value": "lorem 2"}],
         "valueSet": ["c", "d", "e", "f", "g"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "bmDAgdk9oL2DkkKKk1bH0i",
+        "stableTargetId": "blXjdPO52BX9hSmO54CxKu",
     }
     assert result[2].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Ipsum_tableschema_ipsum.json",
         "dataType": "integer",
         "label": [{"value": "Ipsum"}],
         "usedIn": ["LoremIpsumResourceId"],
         "belongsTo": ["IpsumVarGroupId"],
         "description": [
-            {"value": "no constraints and no categories", "language": Joker()}
+            {"value": "no constraints and no categories", "language": TextLanguage.EN}
         ],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "ex1syL7NIvYIT8S9d7N6FR",
+        "stableTargetId": "f7IDWo790NgOpeygCYLj8o",
     }
     assert result[3].model_dump(exclude_none=True, exclude_defaults=True) == {
-        "hadPrimarySource": Joker(),
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("open-data"),
         "identifierInPrimarySource": "Dolor_tableschema_dolor.json",
         "dataType": "boolean",
         "label": [{"value": "Dolor"}],
         "usedIn": ["DolorResourceId"],
         "belongsTo": ["DolorVarGroupId"],
         "description": [{"value": "dolor sit amet"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "fICHMnkiisF4suvb4gzJEw",
+        "stableTargetId": "D2hKMPvjhNM8E4n13Osm3",
     }

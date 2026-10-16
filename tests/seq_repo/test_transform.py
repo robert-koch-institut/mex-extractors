@@ -2,7 +2,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from mex.common.types import TextLanguage
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 from mex.extractors.seq_repo.transform import (
     transform_seq_repo_access_platform_to_extracted_access_platform,
     transform_seq_repo_resource_to_extracted_resource,
@@ -14,6 +18,8 @@ if TYPE_CHECKING:
         AccessPlatformMapping,
         ExtractedAccessPlatform,
         ExtractedOrganization,
+        ExtractedOrganizationalUnit,
+        ExtractedPerson,
         ExtractedResourceSeries,
         ResourceMapping,
         ResourceSeriesMapping,
@@ -27,6 +33,9 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
     seq_repo_resource_series_mapping: ResourceSeriesMapping,
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_organization_rki: ExtractedOrganization,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     resource_series = transform_seq_repo_resource_to_extracted_resource_series(
         seq_repo_resource_series_mapping,
@@ -50,19 +59,22 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
 
     assert test_id_series.model_dump(exclude_none=True, exclude_defaults=True) == {
         "accessPlatform": [extracted_access_platform.stableTargetId],
-        "contact": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId,
+        ],
         "description": [
             {
                 "value": "Some text with project name 'FG99-ABC-123' (additional 'FG99-ABC-321', 'SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS').",
-                "language": "en",
+                "language": TextLanguage.EN,
             }
         ],
         "end": ["2023-08-07"],
-        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifier": "egRPPkE5jnd2jOgr4hosz1",
         "identifierInPrimarySource": "TEST-ID",
         "keyword": [
-            {"value": "Key Word", "language": "en"},
+            {"value": "Key Word", "language": TextLanguage.EN},
             {"value": "Lab rat"},
             {"value": "TEST"},
             {"value": "virus XYZ"},
@@ -71,11 +83,11 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
         "stableTargetId": "fPqFxu76FLQjVxUDSJpb0z",
         "start": ["2023-08-07"],
         "title": [
-            {"value": "FG99-ABC-123", "language": "de"},
-            {"value": "FG99-ABC-321", "language": "de"},
+            {"value": "FG99-ABC-123", "language": TextLanguage.DE},
+            {"value": "FG99-ABC-321", "language": TextLanguage.DE},
             {
                 "value": "SKIPPED BECAUSE LIMS-SAMPLE-ID ALREADY EXISTS",
-                "language": "de",
+                "language": TextLanguage.DE,
             },
         ],
     }
@@ -91,59 +103,75 @@ def test_transform_seq_repo_resource_to_extracted_resource_series(
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_ldap")
-def test_transform_seq_repo_resource_to_extracted_resource(
+def test_transform_seq_repo_resource_to_extracted_resource(  # noqa: PLR0913, PLR0917
     seq_repo_sources: list[SeqRepoSource],
     seq_repo_resource_mapping: ResourceMapping,
     extracted_access_platform: ExtractedAccessPlatform,
     extracted_resource_series: list[ExtractedResourceSeries],
     extracted_organization_rki: ExtractedOrganization,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    roland_resolved: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
 ) -> None:
     expected_resource = {
-        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifierInPrimarySource": "test-sample-id",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "start": ["2023-08-07"],
         "modified": "2023-08-07",
-        "contact": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId,
+        ],
         "theme": [
             "https://mex.rki.de/item/theme-11",
             "https://mex.rki.de/item/theme-23",
         ],
         "title": [{"value": "LIMS Sample ID test-sample-id (virus XYZ)"}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9", "hIiJpZXVppHvoyeP0QtAoS"],
-        "accessPlatform": ["gLB9vC2lPMy5rCmuot99xu"],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["parent-unit"].stableTargetId,
+        ],
+        "accessPlatform": [extracted_access_platform.stableTargetId],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
-        "contributingUnit": ["cjna2jitPngp6yIV63cdi9"],
-        "contributor": ["c2Yd8aNoLKIf7u6ubTUuc3", "eXA2Qj5pKmI7HXIgcVqCfz"],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
+        "contributor": [
+            frieda_fictitious.stableTargetId,
+            roland_resolved.stableTargetId,
+        ],
         "description": [
-            {"value": "Testbeschreibung", "language": "de"},
-            {"value": "test description", "language": "en"},
+            {"value": "Testbeschreibung", "language": TextLanguage.DE},
+            {"value": "test description", "language": TextLanguage.EN},
         ],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
-            {"value": "fastc", "language": "de"},
-            {"value": "fastd", "language": "de"},
+            {"value": "fastc", "language": TextLanguage.DE},
+            {"value": "fastd", "language": TextLanguage.DE},
             {"value": "virus XYZ"},
             {"value": "TEST"},
         ],
         "inSeries": [extracted_resource_series[0].stableTargetId],
-        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "publisher": [extracted_organization_rki.stableTargetId],
         "qualityInformation": [
-            {"value": "Basepairs: 1", "language": "en"},
-            {"value": "Reads: 2", "language": "en"},
+            {"value": "Basepairs: 1", "language": TextLanguage.EN},
+            {"value": "Reads: 2", "language": TextLanguage.EN},
         ],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-4"
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
         "resourceTypeSpecific": [
-            {"value": "Sequencing Data", "language": "de"},
-            {"value": "Sequenzdaten", "language": "de"},
+            {"value": "Sequencing Data", "language": TextLanguage.DE},
+            {"value": "Sequenzdaten", "language": TextLanguage.DE},
         ],
-        "rights": [{"value": "Example content", "language": "de"}],
+        "rights": [{"value": "Example content", "language": TextLanguage.DE}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-1"],
         "identifier": "bTEDLdzkS7wXaw3ZzP3JdC",
         "stableTargetId": "c1KjL7zbtcibP9bmxpo8fr",
@@ -168,7 +196,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
     seq_repo_access_platform_mapping: AccessPlatformMapping,
 ) -> None:
     expected = {
-        "hadPrimarySource": "gFhkyRIWA7LDeKmKz9a3K",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("seq-repo"),
         "identifierInPrimarySource": "https://dummy.url.com/",
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "endpointType": "https://mex.rki.de/item/api-type-1",
@@ -177,7 +205,7 @@ def test_transform_seq_repo_access_platform_to_extracted_access_platform(
         "description": [
             {
                 "value": "This is just a sample description, don't read it.",
-                "language": "en",
+                "language": TextLanguage.EN,
             }
         ],
         "landingPage": [{"url": "https://dummy.url.com/"}],

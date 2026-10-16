@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 from pandas import Series
 
-from mex.common.types import MergedPersonIdentifier
 from mex.extractors.biospecimen.extract import (
     extract_biospecimen_contacts_by_email,
     extract_biospecimen_resources,
@@ -15,18 +14,18 @@ from mex.extractors.biospecimen.extract import (
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    from mex.common.models import ExtractedPerson
     from mex.extractors.biospecimen.models.source import BiospecimenResource
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_biospecimen_contacts_by_email(
     biospecimen_resources: Iterable[BiospecimenResource],
+    roland_resolved: ExtractedPerson,
 ) -> None:
     ldap_persons = extract_biospecimen_contacts_by_email(biospecimen_resources)
 
-    assert ldap_persons == {
-        "resolvedr@rki.de": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
-    }
+    assert ldap_persons == {"resolvedr@rki.de": roland_resolved.stableTargetId}
 
 
 def test_extract_biospecimen_resources() -> None:
