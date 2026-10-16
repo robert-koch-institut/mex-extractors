@@ -26,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- linting error caused by pydantic update
 - datscha_web transform crashing on items without `Auskunftsperson`
 - dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
 
