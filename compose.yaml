@@ -1,16 +1,3 @@
-x-extractors-environment: &extractors-environment
-  MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@ldapmock.local:636
-  MEX_EXTRACTORS_BLUEANT__URL: http://http-test-server:8050/v0/bluework/
-  MEX_EXTRACTORS_DATSCHA_WEB__URL: http://http-test-server:8050/v0/datscha_web/
-  MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://http-test-server:8050/v0/confluence_vvt/
-  MEX_EXTRACTORS_DROP_API_URL: http://http-test-server:8050/v0/drop/
-  MEX_EXTRACTORS_IGS__URL: http://http-test-server:8050/v0/igs/
-  MEX_EXTRACTORS_OPEN_DATA__URL: http://http-test-server:8050/v0/open_data/
-  MEX_EXTRACTORS_OPEN_DATA__FALLBACK_UNIT: FG 99
-  MEX_WIKI_API_URL: http://http-test-server:8050/v0/wikidata/w/api.php
-  # trust the self-signed cert that slapd generates on startup, issued for `ldapmock.local`
-  # (setting this to `false` via env does not work, mex-common parses it as a path)
-  MEX_VERIFY_SESSION: /app/slapd-ssl/ldap.crt
 services:
   postgres:
     image: postgres:16.13-trixie@sha256:5d143123fdf80462d1778cd4f24b9f7ca13c87174bca19141fb194c5a1ebca59 # PINNED! Do not update outside MX-2398
@@ -37,7 +24,19 @@ services:
         condition: service_healthy
       slapd:
         condition: service_healthy
-    environment: *extractors-environment
+    environment:
+      MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@ldapmock.local:636
+      MEX_EXTRACTORS_BLUEANT__URL: http://http-test-server:8050/v0/bluework/
+      MEX_EXTRACTORS_DATSCHA_WEB__URL: http://http-test-server:8050/v0/datscha_web/
+      MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://http-test-server:8050/v0/confluence_vvt/
+      MEX_EXTRACTORS_DROP_API_URL: http://http-test-server:8050/v0/drop/
+      MEX_EXTRACTORS_IGS__URL: http://http-test-server:8050/v0/igs/
+      MEX_EXTRACTORS_OPEN_DATA__URL: http://http-test-server:8050/v0/open_data/
+      MEX_EXTRACTORS_OPEN_DATA__FALLBACK_UNIT: FG 99
+      MEX_WIKI_API_URL: http://http-test-server:8050/v0/wikidata/w/api.php
+      # trust the self-signed cert that slapd generates on startup, issued for `ldapmock.local`
+      # (setting this to `false` via env does not work, mex-common parses it as a path)
+      MEX_VERIFY_SESSION: /app/slapd-ssl/ldap.crt
     healthcheck:
       test: [ "CMD", "dagster-daemon", "liveness-check" ]
       interval: 30s
@@ -61,11 +60,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      http-test-server:
-        condition: service_healthy
-      slapd:
-        condition: service_healthy
-    environment: *extractors-environment
     healthcheck:
       test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/_system/check', timeout=3).raise_for_status()" ]
       interval: 30s
@@ -75,7 +69,6 @@ services:
     volumes:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
-      - slapd-ssl:/app/slapd-ssl:ro
   http-test-server:
     image: ghcr.io/robert-koch-institut/mex-testing:1.0.0@sha256:c853fae4c9612e9c1d15b264fa5a105e642eca048fe9f37681949d1ad9ee30c5
     ports:
