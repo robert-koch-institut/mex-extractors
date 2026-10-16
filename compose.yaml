@@ -20,6 +20,23 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      http-test-server:
+        condition: service_healthy
+      slapd:
+        condition: service_healthy
+    environment:
+      MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@ldapmock.local:636
+      MEX_EXTRACTORS_BLUEANT__URL: http://http-test-server:8050/v0/bluework/
+      MEX_EXTRACTORS_DATSCHA_WEB__URL: http://http-test-server:8050/v0/datscha_web/
+      MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://http-test-server:8050/v0/confluence_vvt/
+      MEX_EXTRACTORS_DROP_API_URL: http://http-test-server:8050/v0/drop/
+      MEX_EXTRACTORS_IGS__URL: http://http-test-server:8050/v0/igs/
+      MEX_EXTRACTORS_OPEN_DATA__URL: http://http-test-server:8050/v0/open_data/
+      MEX_EXTRACTORS_OPEN_DATA__FALLBACK_UNIT: FG 99
+      MEX_WIKI_API_URL: http://http-test-server:8050/v0/wikidata/w/api.php
+      # trust the self-signed cert that slapd generates on startup, issued for `ldapmock.local`
+      # (setting this to `false` via env does not work, mex-common parses it as a path)
+      MEX_VERIFY_SESSION: /app/slapd-ssl/ldap.crt
     healthcheck:
       test: [ "CMD", "dagster-daemon", "liveness-check" ]
       interval: 30s
@@ -29,6 +46,7 @@ services:
     volumes:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
+      - slapd-ssl:/app/slapd-ssl:ro
   dagster-webserver:
     build:
       context: .
@@ -51,6 +69,16 @@ services:
     volumes:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
+  http-test-server:
+    image: ghcr.io/robert-koch-institut/mex-testing:1.0.0@sha256:c853fae4c9612e9c1d15b264fa5a105e642eca048fe9f37681949d1ad9ee30c5
+    ports:
+      - 8050:8050
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8050/v0/_system/check', timeout=3).raise_for_status()" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   slapd:
     image: thoteam/slapd-server-mock@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
     platform: linux/amd64
@@ -62,8 +90,13 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      default:
+        aliases:
+          - ldapmock.local
     volumes:
       - ./assets/raw-data/ldap/:/bootstrap/
+      - slapd-ssl:/etc/ldap/ssl
   mailpit:
     image: axllent/mailpit:v1.31@sha256:98b916bd3c8d61f7633a52d3ea2f58d00620cb01ca57ab59edde68c347a95365
     ports:
@@ -120,7 +153,7 @@ services:
       retries: 10
       start_period: 30s
   sql-testing-seed:
-    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:0.2.1@sha256:c133839ece319fd4d5e82c3e30b52bfa1ee57869748fa66957aa429c954018a1
+    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:1.0.0@sha256:612bdb7b11a242c91341d3daeb1ce6fab6cb55492f34d38563a013853551465d
     depends_on:
       mssql:
         condition: service_healthy
@@ -130,6 +163,7 @@ services:
     restart: "no"
 volumes:
   pgdata:
+  slapd-ssl:
   mssql:
   dagster:
     driver: local

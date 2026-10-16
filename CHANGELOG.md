@@ -9,13 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
+  and the drop api (seq-repo)
+- open-data setting `fallback_unit` to replace the hardcoded `FALLBACK_UNIT`
+- `opendata@rki.de` functional account in the ldap mock
+
 ### Changes
+
+- upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
 
 ### Deprecated
 
 ### Removed
 
+- http-test-server mocks for blueant and datscha, these now live in mex-testing
+
 ### Fixed
+
+- datscha_web transform crashing on items without `Auskunftsperson`
+- dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
 
 ### Security
 
@@ -47,9 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new secrets to configure db password outside of connection dsn:
-    - mex_extractors_grippeweb__mssql_password
-    - mex_extractors_ifsg__mssql_password
-    - mex_extractors_kvis__mssql_password
+  - mex_extractors_grippeweb__mssql_password
+  - mex_extractors_ifsg__mssql_password
+  - mex_extractors_kvis__mssql_password
 
 ### Changes
 
@@ -87,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
-  set the respective <source>.kerberos_enabled setting
+  set the respective `<source>.kerberos_enabled` setting
   (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,
   MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
   against the real RKI SQL server
