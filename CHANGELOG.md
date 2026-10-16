@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- upgrade mex-backend to 4.6.2
-
 ### Deprecated
 
 ### Removed
