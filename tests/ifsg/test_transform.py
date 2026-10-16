@@ -188,6 +188,7 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
         "contact": ["cjna2jitPngp6yIV63cdi9"],
         "description": [{"value": "Das Infektionsschutzgesetz", "language": "de"}],
         "hasCodeValues": [{"value": "A1"}],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,

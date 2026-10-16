@@ -109,6 +109,9 @@ def transform_grippeweb_resource_mappings_to_dict(
 
         has_legal_basis = resource.hasLegalBasis[0].mappingRules[0].setValues
         has_personal_data = resource.hasPersonalData[0].mappingRules[0].setValues
+        has_purpose_description = (
+            resource.hasPurposeDescription[0].mappingRules[0].setValues
+        )
         has_code_values = resource.hasCodeValues[0].mappingRules[0].setValues
         identifier_in_primary_source_mapping_rules = resource.identifierInPrimarySource[
             0
@@ -151,11 +154,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
-            hasLegalBasis=has_legal_basis,
-            hasPersonalData=has_personal_data,
-            minTypicalAge=min_typical_age,
-            populationCoverage=population_coverage,
-            resourceCreationMethod=resource_creation_method,
             accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
@@ -168,13 +166,19 @@ def transform_grippeweb_resource_mappings_to_dict(
             externalPartner=external_partner_identifier,
             hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             hasCodeValues=has_code_values,
+            hasLegalBasis=has_legal_basis,
+            hasPersonalData=has_personal_data,
+            hasPurposeDescription=has_purpose_description,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=language,
             meshId=mesh_id,
             method=method,
             methodDescription=method_description,
+            minTypicalAge=min_typical_age,
+            populationCoverage=population_coverage,
             publisher=publisher,
+            resourceCreationMethod=resource_creation_method,
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,
