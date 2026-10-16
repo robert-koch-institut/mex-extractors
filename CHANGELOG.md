@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
+
 ### Deprecated
 
 ### Removed

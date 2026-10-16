@@ -77,9 +77,7 @@ services:
       - dagster:/app/work:rw
       - slapd-ssl:/app/slapd-ssl:ro
   http-test-server:
-    # TODO(ND): switch to ghcr.io/robert-koch-institut/mex-testing:0.3.0 once released
-    build:
-      context: ../mex-testing
+    image: ghcr.io/robert-koch-institut/mex-testing:1.0.0@sha256:c853fae4c9612e9c1d15b264fa5a105e642eca048fe9f37681949d1ad9ee30c5
     ports:
       - 8050:8050
     healthcheck:
@@ -162,7 +160,7 @@ services:
       retries: 10
       start_period: 30s
   sql-testing-seed:
-    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:0.2.1@sha256:c133839ece319fd4d5e82c3e30b52bfa1ee57869748fa66957aa429c954018a1
+    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:1.0.0@sha256:612bdb7b11a242c91341d3daeb1ce6fab6cb55492f34d38563a013853551465d
     depends_on:
       mssql:
         condition: service_healthy
