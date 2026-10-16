@@ -29,10 +29,12 @@ def merged_ldap_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonWithFallbackUnit",
+            fullName="Person With Fallback Unit",
             memberOf=["ValidUnitWithEmail", "InvalidUnitNoEmail"],
         ),
         MergedPerson(
             identifier="PersonWithoutFallback",
+            fullName="Person Without Fallback",
             memberOf=[],
         ),
     ]
