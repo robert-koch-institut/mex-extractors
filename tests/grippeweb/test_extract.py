@@ -2,11 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import (
-    MergedContactPointIdentifier,
-    MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
-)
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_ldap_person_ids_by_query,
@@ -15,7 +10,13 @@ from mex.extractors.grippeweb.extract import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedContactPoint,
+        ExtractedOrganization,
+        ExtractedPerson,
+        ResourceMapping,
+    )
 
 
 @pytest.mark.usefixtures("mocked_grippeweb")
@@ -46,13 +47,14 @@ def test_extract_columns_by_table_and_column_name() -> None:
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb")
 def test_extract_ldap_actors_for_functional_accounts(
     grippeweb_resource_mappings: list[ResourceMapping],
+    contact_point: ExtractedContactPoint,
 ) -> None:
     ldap_actors = extract_ldap_actors_for_functional_accounts(
         grippeweb_resource_mappings
     )
 
     assert ldap_actors == {
-        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+        "contactc@rki.de": contact_point.stableTargetId,
     }
 
 
@@ -60,23 +62,25 @@ def test_extract_ldap_actors_for_functional_accounts(
 def test_extract_ldap_persons(
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_access_platform: AccessPlatformMapping,
+    roland_resolved: ExtractedPerson,
 ) -> None:
     ldap_persons = extract_grippeweb_ldap_person_ids_by_query(
         grippeweb_resource_mappings, grippeweb_access_platform
     )
 
     assert ldap_persons == {
-        "Roland Resolved": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz"),
-        "resolvedr@rki.de": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz"),
+        "Roland Resolved": roland_resolved.stableTargetId,
+        "resolvedr@rki.de": roland_resolved.stableTargetId,
     }
 
 
 @pytest.mark.usefixtures("mocked_wikidata", "mocked_grippeweb")
 def test_extract_grippeweb_organizations(
     grippeweb_resource_mappings: list[ResourceMapping],
+    wikidata_extracted_organization: ExtractedOrganization,
 ) -> None:
     organizations = extract_grippeweb_organizations(grippeweb_resource_mappings)
     expected = {
-        "Robert Koch-Institut": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
+        "Robert Koch-Institut": wikidata_extracted_organization.stableTargetId,
     }
     assert organizations == expected

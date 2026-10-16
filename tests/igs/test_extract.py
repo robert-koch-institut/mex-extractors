@@ -4,7 +4,6 @@ from uuid import UUID
 import pytest
 
 from mex.common.ldap.models import LDAPFunctionalAccount
-from mex.common.types import MergedResourceIdentifier
 from mex.extractors.igs.extract import (
     extract_endpoint_counts,
     extract_igs_schemas,
@@ -77,6 +76,4 @@ def test_extract_seq_repo_resource_ids_by_pathogen(
         seq_repo_resources, igs_schemas
     )
 
-    assert ids_by_pathogen == {
-        "PATHOGEN": [MergedResourceIdentifier("gjYT8loBgS914bMLbRHzP5")]
-    }
+    assert ids_by_pathogen == {"PATHOGEN": [seq_repo_resources[0].stableTargetId]}

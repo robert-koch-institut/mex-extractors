@@ -1,6 +1,7 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.types import MergedPersonIdentifier
 from mex.extractors.blueant.extract import (
     extract_blueant_project_leaders,
     extract_blueant_sources,
@@ -8,6 +9,9 @@ from mex.extractors.blueant.extract import (
 )
 from mex.extractors.blueant.models.source import BlueAntSource
 from tests.blueant.mocked_blueant import MOCKED_API_SOURCE, MOCKED_RESOLVED_ATTRIBUTES
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedPerson
 
 
 @pytest.mark.integration
@@ -31,11 +35,14 @@ def test_extract_blueant_sources_from_api_mocked() -> None:
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
-def test_extract_blueant_project_leaders(blueant_source: BlueAntSource) -> None:
+def test_extract_blueant_project_leaders(
+    blueant_source: BlueAntSource,
+    roland_resolved: ExtractedPerson,
+) -> None:
     blueant_sources = [blueant_source, blueant_source, blueant_source]
     persons = extract_blueant_project_leaders(blueant_sources)
 
-    assert persons == {"42": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")}
+    assert persons == {"42": roland_resolved.stableTargetId}
 
 
 @pytest.mark.usefixtures("mocked_ldap")

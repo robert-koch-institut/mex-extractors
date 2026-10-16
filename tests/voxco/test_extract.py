@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedOrganizationIdentifier
 from mex.extractors.voxco.extract import (
     extract_ldap_persons_voxco,
     extract_voxco_organizations,
@@ -10,7 +9,11 @@ from mex.extractors.voxco.extract import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import ExtractedPerson, ResourceMapping
+    from mex.common.models import (
+        ExtractedOrganization,
+        ExtractedPerson,
+        ResourceMapping,
+    )
 
 
 @pytest.mark.usefixtures("mocked_drop")
@@ -33,10 +36,11 @@ def test_extract_voxco_variables() -> None:
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_extract_voxco_organizations(
     voxco_resource_mappings: list[ResourceMapping],
+    wikidata_extracted_organization: ExtractedOrganization,
 ) -> None:
     organizations = extract_voxco_organizations(voxco_resource_mappings)
     assert organizations == {
-        "Robert Koch-Institut": MergedOrganizationIdentifier("ga6xh6pgMwgq7DC7r6Wjqg"),
+        "Robert Koch-Institut": wikidata_extracted_organization.stableTargetId,
     }
 
 
