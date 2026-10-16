@@ -1,20 +1,16 @@
 from mex.common.connector.http import HTTPConnector
 from mex.common.logging import logger
 from mex.common.settings import BaseSettings
+from mex.extractors.locations.query import query_content
 from mex.extractors.settings import ExtractorsSettings
 
-LOCATION_QUERY = """
-    SELECT DISTINCT ?item WHERE {
-      VALUES ?locationClass {
-        wd:Q1221156
-        wd:Q14784328
-        wd:Q22865
-        wd:Q116457956
-      }
-
-      ?item wdt:P31/wdt:P279* ?locationClass.
-    }
-"""
+REGION_TYPE_IDS = [  # Typen von Regionen in Deutschland
+    "Q1221156",  # Bundesland
+    "Q106658",  # Landkreis
+    "Q14784328",  # Landeshauptstadt
+    "Q22865",  # kreisfreie Stadt
+    "Q116457956",  # Gemeinde
+]
 
 
 class WikidataSPARQLConnector(HTTPConnector):
@@ -41,19 +37,20 @@ class WikidataSPARQLConnector(HTTPConnector):
 
         The query searches for locations defined by the Q-numbers of territories lists.
         """
-        response = self.request(
-            params={
-                "query": LOCATION_QUERY,
-                "format": "json",
-            },
-            timeout=60,
-        )
-        response.raise_for_status()
-
-        bindings = response.json()["results"]["bindings"]
-
-        logger.info(f"Extracted {len(bindings)} location IDs from wikidata")
-
-        return sorted(
-            {binding["item"]["value"].rsplit("/", 1)[-1] for binding in bindings}
-        )
+        location_ids: set[str] = set()
+        for region_type_id in REGION_TYPE_IDS:
+            response = self.request(
+                "GET",
+                params={"query": query_content(region_type_id), "format": "json"},
+                timeout=60,
+            )
+            bindings = response["results"]["bindings"]
+            logger.info(
+                "Extracted %d location IDs for %s from wikidata",
+                len(bindings),
+                region_type_id,
+            )
+            location_ids.update(
+                binding["item"]["value"].rsplit("/", 1)[-1] for binding in bindings
+            )
+        return sorted(location_ids)

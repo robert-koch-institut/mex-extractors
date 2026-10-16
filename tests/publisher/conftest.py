@@ -45,20 +45,21 @@ def merged_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonPositiveConsent",
-            fullName=["Person, with positive Consent"],
+            fullName=["Person with positive Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
             identifier="PersonNegativeConsent",
-            fullName=["Person, with negative Consent"],
+            fullName=["Person with negative Consent"],
         ),
         MergedPerson(
             identifier="PersonHasTwoConsents",
-            fullName=["Peron, with more than one Consent"],
+            fullName=["Peron with more than one Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
             identifier="PersonNoConsentLink",
+            fullName=["Person No Consent Link"],
         ),
     ]
 
@@ -168,6 +169,7 @@ def fetch_all_publishable_merged_items(
     merged_items: list[AnyMergedModel] = [
         MergedPrimarySource(
             identifier="fakeFakeSource",
+            title="fakeFakeSource",
         ),
         MergedContactPoint(
             email=["mex@rki.de"],

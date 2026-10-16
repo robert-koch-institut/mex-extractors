@@ -443,6 +443,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 license=ccby_license,
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
+                resourceCreationMethod=[
+                    "https://mex.rki.de/item/resource-creation-method-1"
+                ],
                 resourceTypeGeneral=resource_type_general,
                 start=start,
                 theme=theme,
