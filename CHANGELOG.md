@@ -32,6 +32,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.23.0] - 2026-10-15
+
+### Changes
+
+- update extractors to new mex-model 5.1. Mainly:
+  - update resource mappings for several extractors
+  - remove activity extraction and add resource-series extraction for seq-repo
+
+### Fixed
+
+- linting error caused by pydantic update
+- handling of deprecated find method and __concept__ for vocabulary
+
 ## [1.22.1] - 2026-09-18
 
 ### Changes
@@ -47,9 +60,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new secrets to configure db password outside of connection dsn:
-    - mex_extractors_grippeweb__mssql_password
-    - mex_extractors_ifsg__mssql_password
-    - mex_extractors_kvis__mssql_password
+  - mex_extractors_grippeweb__mssql_password
+  - mex_extractors_ifsg__mssql_password
+  - mex_extractors_kvis__mssql_password
 
 ### Changes
 
@@ -83,18 +96,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - publisher is not hardcoded anymore to s3
 - added slapd healthcheck in compose file
-- update to mex-model 5.1
 - set exact version for neo4j:2026.07.1
 - update to mex-common 3.2
 - use reference filters for backend api connector
 - BREAKING: Kerberos auth for the grippeweb, kvis and ifsg connectors is now opt-in;
-  set the respective <source>.kerberos_enabled setting
+  set the respective `<source>.kerberos_enabled` setting
   (e.g. MEX_EXTRACTORS_GRIPPEWEB__KERBEROS_ENABLED=true, MEX_EXTRACTORS_KVIS__KERBEROS_ENABLED=true,
   MEX_EXTRACTORS_IFSG__KERBEROS_ENABLED=true) to restore the previous kinit behavior
   against the real RKI SQL server
 - move backend healthcheck into compose file
 - BREAKING: absolute path to assets no longer allowed as all files previously defined
   through AssetsPaths are now loaded via the AssetsConnector
+- deprecated find method for vocabulary
 
 ### Fixed
 
