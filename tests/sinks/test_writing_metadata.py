@@ -96,7 +96,7 @@ def test_create_metadata_content(monkeypatch: MonkeyPatch) -> None:
         return_value=dt.datetime.fromisoformat(write_completed_at)
     )
     monkeypatch.setattr(
-        "mex.extractors.sinks.write_metadata.datetime.datetime", mocked_datetime
+        "mex.extractors.sinks.write_metadata.datetime.dt", mocked_datetime
     )
 
     # execute
