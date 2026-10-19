@@ -1,9 +1,7 @@
 from pydantic import Field
 
 from mex.common.models import BaseModel
-from mex.common.types import (
-    MergedIdentifier,
-)
+from mex.common.types import MergedIdentifier  # noqa: TC001
 
 
 class DatenkompassActivity(BaseModel):

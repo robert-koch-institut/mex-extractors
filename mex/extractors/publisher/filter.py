@@ -56,13 +56,13 @@ def filter_persons_with_approving_unique_consent(
         ):
             collected_persons_with_positive_consent.append(person)
 
-    persons_with_serveral_consents = {
+    persons_with_several_consents = {
         p: c for p, c in seen_person_ids_with_consent_ids.items() if len(c) > 1
     }
-    if persons_with_serveral_consents:
+    if persons_with_several_consents:
         msg = (
             f"The following Merged Persons are referenced by more than one "
-            f"Merged Consent: {persons_with_serveral_consents}."
+            f"Merged Consent: {persons_with_several_consents}."
         )
         raise MExError(msg)
 
@@ -96,13 +96,13 @@ def _get_forbidden_units(
 
 def _cluster_publications_by_department(
     department_unit_id: MergedOrganizationalUnitIdentifier,
-    merged_organisational_units: list[MergedOrganizationalUnit],
+    merged_organizational_units: list[MergedOrganizationalUnit],
     forbidden_unit_ids: set[MergedOrganizationalUnitIdentifier],
     merged_bibliographic_resources: list[MergedBibliographicResource],
 ) -> list[MergedBibliographicResource]:
     descendant_unit_ids = set(
         find_descendants(
-            merged_organisational_units,
+            merged_organizational_units,
             str(department_unit_id),
         )
     )
@@ -145,7 +145,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
 
     forbidden_unit_ids = _get_forbidden_units(settings)
 
-    merged_organisational_units = cast(
+    merged_organizational_units = cast(
         "list[MergedOrganizationalUnit]",
         get_publishable_merged_items(entity_type=["MergedOrganizationalUnit"]),
     )
@@ -171,7 +171,7 @@ def cluster_and_filter_bibliographic_resources_by_unit(
         bibliographic_resource_by_department[department_unit_id] = (
             _cluster_publications_by_department(
                 department_unit_id,
-                merged_organisational_units,
+                merged_organizational_units,
                 forbidden_unit_ids,
                 merged_bibliographic_resources,
             )
