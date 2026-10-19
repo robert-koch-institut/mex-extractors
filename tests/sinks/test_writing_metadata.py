@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import json
 from io import BytesIO
 from unittest.mock import MagicMock
@@ -93,7 +93,7 @@ def test_create_metadata_content(monkeypatch: MonkeyPatch) -> None:
     # patch date
     mocked_datetime = MagicMock()
     mocked_datetime.now = MagicMock(
-        return_value=datetime.datetime.fromisoformat(write_completed_at)
+        return_value=dt.datetime.fromisoformat(write_completed_at)
     )
     monkeypatch.setattr(
         "mex.extractors.sinks.write_metadata.datetime.datetime", mocked_datetime
