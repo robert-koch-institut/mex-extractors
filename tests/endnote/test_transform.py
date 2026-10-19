@@ -1,9 +1,12 @@
-from typing import TYPE_CHECKING
+from datetime import datetime, tzinfo
+from typing import TYPE_CHECKING, Self
 
 import pytest
+from pytest import MonkeyPatch
 
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import TextLanguage
+from mex.extractors.endnote import transform
 from mex.extractors.endnote.transform import (
     extract_endnote_bibliographic_resource,
     extract_endnote_consents,
@@ -18,6 +21,7 @@ if TYPE_CHECKING:
     from mex.common.models import (
         BibliographicResourceMapping,
         ConsentMapping,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
     )
     from mex.extractors.endnote.model import EndnoteRecord
@@ -40,15 +44,22 @@ def test_extract_endnote_persons_by_person_string(
         "familyName": ["Mustermann"],
         "fullName": ["Mustermann, J."],
         "givenName": ["J."],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "b6xSIhbOk5XL3FuXOiZCZl",
+        "stableTargetId": "b2lkAngQwIPA4Yd6WAdz9b",
     }
 
 
 def test_extract_endnote_consents(
+    monkeypatch: MonkeyPatch,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
     endnote_consent_mapping: ConsentMapping,
 ) -> None:
+    class FrozenDatetime(datetime):
+        @classmethod
+        def now(cls, tz: tzinfo | None = None) -> Self:
+            return cls(2024, 1, 1, 12, tzinfo=tz)
+
+    monkeypatch.setattr(transform, "datetime", FrozenDatetime)
     extracted_consents = extract_endnote_consents(
         list(endnote_extracted_persons_by_person_str.values()),
         endnote_consent_mapping,
@@ -56,12 +67,16 @@ def test_extract_endnote_consents(
 
     assert extracted_consents[0].model_dump(exclude_defaults=True) == {
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("endnote")),
-        "identifierInPrimarySource": "ccSc9u7Kjps1nNBxTw7y3l_consent",
+        "identifierInPrimarySource": (
+            f"{endnote_extracted_persons_by_person_str['Mustermann, J.'].stableTargetId}_consent"
+        ),
         "hasConsentStatus": "https://mex.rki.de/item/consent-status-2",
-        "hasDataSubject": "ccSc9u7Kjps1nNBxTw7y3l",
-        "isIndicatedAtTime": Joker(),
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "hasDataSubject": endnote_extracted_persons_by_person_str[
+            "Mustermann, J."
+        ].stableTargetId,
+        "isIndicatedAtTime": "2024-01-01T12:00:00Z",
+        "identifier": "L2W9S9zDljX50xToC91SA",
+        "stableTargetId": "bzNWxMPcrMBc0OlgYGUPg1",
     }
 
 
@@ -90,11 +105,19 @@ def test_extract_endnote_bibliographic_resource(
     endnote_records: list[EndnoteRecord],
     endnote_bibliographic_resource_mapping: BibliographicResourceMapping,
     endnote_extracted_persons_by_person_str: dict[str, ExtractedPerson],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     bibliographic_resources = extract_endnote_bibliographic_resource(
         endnote_records,
         endnote_bibliographic_resource_mapping,
         endnote_extracted_persons_by_person_str,
+    )
+    rki_publisher = ExtractedOrganization(
+        hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
+        identifierInPrimarySource="Organization_Robert-Koch Institut",
+        officialName=["Robert-Koch Institut"],
     )
 
     assert bibliographic_resources[0].model_dump(exclude_defaults=True) == {
@@ -107,7 +130,9 @@ def test_extract_endnote_bibliographic_resource(
         "publicationYear": "1890",
         "repositoryURL": [{"url": "https://www.rki.de"}],
         "volume": "5",
-        "creator": ["ccSc9u7Kjps1nNBxTw7y3l"],
+        "creator": [
+            endnote_extracted_persons_by_person_str["Mustermann, J."].stableTargetId
+        ],
         "title": [{"value": "test title", "language": TextLanguage.EN}],
         "titleOfSeries": [
             {"value": "full-title", "language": TextLanguage.EN},
@@ -117,16 +142,22 @@ def test_extract_endnote_bibliographic_resource(
         "bibliographicResourceType": [
             "https://mex.rki.de/item/bibliographic-resource-type-2"
         ],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "editor": ["eAoOVRo8MGXiVcaDyJwoaf"],
-        "editorOfSeries": ["c4Mgoj3j2OtABRXefB9vAy"],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "editor": [
+            endnote_extracted_persons_by_person_str["Erika Mustermann"].stableTargetId
+        ],
+        "editorOfSeries": [
+            endnote_extracted_persons_by_person_str["Mustermann, I."].stableTargetId
+        ],
         "isbnIssn": ["1234-5678"],
         "keyword": [
             {"value": "keyword 1", "language": TextLanguage.EN},
             {"value": "keyword 2", "language": TextLanguage.EN},
         ],
         "language": ["https://mex.rki.de/item/language-2"],
-        "publisher": ["dKesJpFog76YEZ4BhPwKuF", "dKesJpFog76YEZ4BhPwKuF"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "publisher": [rki_publisher.stableTargetId, rki_publisher.stableTargetId],
+        "identifier": "cpbH9mYS20S3BlnCNgj17d",
+        "stableTargetId": "djPDWpMKpTUaSRIfKgYdN6",
     }

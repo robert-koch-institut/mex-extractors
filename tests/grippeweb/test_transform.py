@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import (
     LinkLanguage,
     MergedContactPointIdentifier,
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from mex.common.models import (
         AccessPlatformMapping,
         ExtractedAccessPlatform,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
         ExtractedResource,
         ExtractedVariableGroup,
@@ -52,8 +53,8 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "primary-source", "language": "en"}],
         "unitInCharge": get_unit_merged_id_by_synonym("C1"),
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "eudsMxc2lR1ZEgTAjMmufp",
+        "stableTargetId": "fAYs5mMrfIYVlo35LVV4Ab",
     }
     assert (
         extracted_access_platform.model_dump(exclude_none=True, exclude_defaults=True)
@@ -62,7 +63,7 @@ def test_transform_grippeweb_access_platform_to_extracted_access_platform(
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_grippeweb_resource_mappings_to_dict(
+def test_transform_grippeweb_resource_mappings_to_dict(  # noqa: PLR0913, PLR0917
     grippeweb_resource_mappings: list[ResourceMapping],
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     roland_resolved: ExtractedPerson,
@@ -70,6 +71,9 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         str, MergedOrganizationIdentifier
     ],
     grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     parent_resource, _ = transform_grippeweb_resource_mappings_to_dict(
         grippeweb_resource_mappings,
@@ -77,6 +81,11 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         {"Roland Resolved": roland_resolved.stableTargetId},
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
+    )
+    external_partner = ExtractedOrganization(
+        officialName="Robert Koch-Institut",
+        identifierInPrimarySource="Robert Koch-Institut",
+        hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
     )
     expected = {
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("grippeweb")),
@@ -88,7 +97,9 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
         "contact": [str(grippeweb_merged_contact_point_id_by_email["contactc@rki.de"])],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "contributor": [str(roland_resolved.stableTargetId)],
         "description": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "documentation": [
@@ -98,7 +109,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
                 "url": "https://www.rki.de",
             }
         ],
-        "externalPartner": ["hIOhGEYgr1ZO2hmdN23zeg"],
+        "externalPartner": [external_partner.stableTargetId],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -106,7 +117,7 @@ def test_transform_grippeweb_resource_mappings_to_dict(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "hasPurposeDescription": [{"language": "de", "value": "Erhebung"}],
+        "hasPurposeDescription": [{"language": TextLanguage.DE, "value": "Erhebung"}],
         "hasCodeValues": [{"value": "J00-J99"}],
         "keyword": [{"value": "Citizen Science", "language": TextLanguage.EN}],
         "language": ["https://mex.rki.de/item/language-1"],
@@ -142,8 +153,8 @@ def test_transform_grippeweb_resource_mappings_to_dict(
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "GrippeWeb", "language": TextLanguage.DE}],
         "unitInCharge": get_unit_merged_id_by_synonym("C1"),
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "hOxPL5AtLLGxAbcPJNVGDl",
+        "stableTargetId": "gdXhI9P8e5V2etgOoi4df9",
     }
     assert (
         parent_resource.model_dump(exclude_none=True, exclude_defaults=True) == expected
@@ -189,8 +200,8 @@ def test_transform_grippeweb_variable_group_to_extracted_variable_groups(
         "identifierInPrimarySource": "vActualQuestion",
         "containedBy": [grippeweb_extracted_parent_resource.stableTargetId],
         "label": [{"value": "Additional Questions", "language": "en"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "bzpTa62vHvug9Dyn9mpxy3",
+        "stableTargetId": "bTfHECQk70fIkx5pBJ8X9P",
     }
     assert (
         extracted_variable_groups[0].model_dump(
@@ -216,10 +227,10 @@ def test_transform_grippeweb_variable_to_extracted_variables(
     expected = {
         "belongsTo": [extracted_variable_groups[0].stableTargetId],
         "hadPrimarySource": get_extracted_primary_source_id_by_name("grippeweb"),
-        "identifier": Joker(),
+        "identifier": "c9V6dLlCNErsesRalzCRd6",
         "identifierInPrimarySource": "Id",
         "label": [{"value": "Id"}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "hc5GA0AvxEDVTAhHu2dnKN",
         "usedIn": [grippeweb_extracted_parent_resource.stableTargetId],
         "valueSet": ["AAA", "BBB"],
     }

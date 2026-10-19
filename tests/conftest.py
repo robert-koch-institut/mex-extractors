@@ -19,6 +19,9 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Validation,
 )
+from mex.common.wikidata.transform import (
+    transform_wikidata_organization_to_extracted_organization,
+)
 from mex.extractors.ldap.helpers import (
     get_ldap_extracted_person_by_query,
     get_ldap_merged_contact_id_by_mail,
@@ -40,6 +43,8 @@ from mex.extractors.wikidata.helpers import (
 
 if TYPE_CHECKING:
     from pytest import MonkeyPatch
+
+    from mex.common.wikidata.models import WikidataOrganization
 
 
 pytest_plugins = (
@@ -85,6 +90,18 @@ def extracted_organization_rki() -> ExtractedOrganization:
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(123),
         officialName=["Robert Koch-Institut"],
     )
+
+
+@pytest.fixture
+def wikidata_extracted_organization(
+    wikidata_organization: WikidataOrganization,
+) -> ExtractedOrganization:
+    """Return the extracted organization for the mocked wikidata organization."""
+    extracted_organization = transform_wikidata_organization_to_extracted_organization(
+        wikidata_organization, get_extracted_primary_source_id_by_name("wikidata")
+    )
+    assert extracted_organization
+    return extracted_organization
 
 
 @pytest.fixture

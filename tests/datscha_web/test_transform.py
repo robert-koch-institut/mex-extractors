@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -17,6 +16,7 @@ from mex.extractors.primary_source.helpers import (
 if TYPE_CHECKING:
     from collections.abc import Hashable
 
+    from mex.common.models import ExtractedOrganizationalUnit
     from mex.extractors.datscha_web.models.item import DatschaWebItem
 
 
@@ -50,6 +50,9 @@ def test_transform_datscha_web_items_to_mex_activities(
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
     ],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     mex_sources = transform_datscha_web_items_to_mex_activities(
         [datscha_web_item],
@@ -71,12 +74,17 @@ def test_transform_datscha_web_items_to_mex_activities(
         "contact": ["ID000000001111", "ID000000002222"],
         "externalAssociate": ["ID000000000077"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("datscha-web")),
-        "identifier": Joker(),
+        "identifier": "hsbBCvjXGidJC8mpvzYWGm",
         "identifierInPrimarySource": "17",
         "involvedPerson": ["ID000000001111", "ID000000002222"],
-        "involvedUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
-        "stableTargetId": Joker(),
+        "involvedUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId,
+        ],
+        "stableTargetId": "XVVpiqQNkBpwvra5C8Njf",
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }
 
@@ -87,6 +95,9 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
     person_stable_target_ids_by_query_string: dict[str, list[MergedPersonIdentifier]],
     organizations_stable_target_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
+    ],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
     ],
 ) -> None:
     mex_sources = transform_datscha_web_items_to_mex_activities(
@@ -106,12 +117,18 @@ def test_transform_datscha_web_items_to_mex_activities_without_involved_persons(
             }
         ],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId,
+        ],
         "externalAssociate": ["ID000000000077"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("datscha-web")),
-        "identifier": Joker(),
+        "identifier": "fKPG6M0s5Rohg4SCcTJPRQ",
         "identifierInPrimarySource": "92",
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
-        "stableTargetId": Joker(),
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId,
+        ],
+        "stableTargetId": "89lJllvnzoLz9YvPSCDFM",
         "title": [{"value": "Consequuntur atque reiciendis voluptates minus."}],
     }

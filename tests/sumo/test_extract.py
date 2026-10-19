@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.sumo.extract import (
     extract_cc1_data_model_nokeda,
     extract_cc1_data_valuesets,
@@ -25,6 +24,8 @@ if TYPE_CHECKING:
 
     from mex.common.models import (
         AccessPlatformMapping,
+        ExtractedContactPoint,
+        ExtractedPerson,
         ResourceMapping,
     )
 
@@ -107,20 +108,20 @@ def test_extract_cc2_feat_projection() -> None:
 def test_extract_ldap_contact_points_by_emails(
     sumo_resources_feat: ResourceMapping,
     sumo_resources_nokeda: ResourceMapping,
+    contact_point: ExtractedContactPoint,
 ) -> None:
     contact_points = extract_ldap_contact_points_by_emails(
         [sumo_resources_feat, sumo_resources_nokeda]
     )
     assert contact_points == {
-        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+        "contactc@rki.de": contact_point.stableTargetId,
     }
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_ldap_persons_by_name(
     sumo_access_platform: AccessPlatformMapping,
+    roland_resolved: ExtractedPerson,
 ) -> None:
     sumo_contacts = extract_ldap_persons_by_name(sumo_access_platform)
-    assert sumo_contacts == {
-        "Roland Resolved": MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")
-    }
+    assert sumo_contacts == {"Roland Resolved": roland_resolved.stableTargetId}
