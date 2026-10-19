@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import (
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
         AccessPlatformMapping,
         ActivityMapping,
         ExtractedActivity,
-        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
         ExtractedResource,
         ExtractedVariableGroup,
@@ -44,23 +44,30 @@ if TYPE_CHECKING:
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_synopse_studies_into_access_platforms(
     synopse_access_platform: AccessPlatformMapping,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     expected_access_platform = {
-        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("report-server"),
         "identifierInPrimarySource": "t",
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-2",
-        "alternativeTitle": [{"value": "alternative test title", "language": "de"}],
+        "alternativeTitle": [
+            {"value": "alternative test title", "language": TextLanguage.DE}
+        ],
         "contact": ["bFQoRhcVH5DHYc"],
-        "description": [{"value": "test description", "language": "de"}],
+        "description": [{"value": "test description", "language": TextLanguage.DE}],
         "landingPage": [
             {
-                "language": "de",
+                "language": TextLanguage.DE,
                 "title": "test landing page",
                 "url": "https://www.rki.de/test_landing_page",
             }
         ],
-        "title": [{"value": "test title", "language": "de"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
+        "title": [{"value": "test title", "language": TextLanguage.DE}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "identifier": "caja5lr50xZDp3vqBFy5oN",
         "stableTargetId": "hok9BZyh5ZyU9EWzXUYLqd",
     }
@@ -90,12 +97,12 @@ def test_transform_synopse_variables_to_mex_variable_groups(
     synopse_study_overviews: list[Datensatzuebersicht],
 ) -> None:
     expected_variable_group = {
-        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("report-server"),
         "identifierInPrimarySource": "Krankheiten (1101)-12345-set1-17",
         "containedBy": [resources_by_synopse_id["12345-set1-17"].stableTargetId],
-        "label": [{"value": "Krankheiten", "language": "de"}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "label": [{"value": "Krankheiten", "language": TextLanguage.DE}],
+        "identifier": "dhDuJd4JuwlAisTlwj4FNa",
+        "stableTargetId": "gGYwMcnH67o2Ob2EutHETU",
     }
 
     variable_groups = transform_synopse_variables_to_mex_variable_groups(
@@ -134,10 +141,10 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "hadPrimarySource": str(
             get_extracted_primary_source_id_by_name("report-server")
         ),
-        "identifier": Joker(),
+        "identifier": "33C9QmrGmQPXKmwaOsXTt",
         "identifierInPrimarySource": "1",
         "label": [{"language": TextLanguage("de"), "value": "Angeborene Fehlbildung"}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "evkDk6Y3auo0xASIuyWQV9",
         "usedIn": [str(resources_by_synopse_id["12345-set1-17"].stableTargetId)],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
     }
@@ -147,9 +154,9 @@ def test_transform_synopse_variables_belonging_to_same_variable_group_to_mex_var
         "hadPrimarySource": str(
             get_extracted_primary_source_id_by_name("report-server")
         ),
-        "identifier": Joker(),
+        "identifier": "bPinodvpRBzvspGJxbAmS8",
         "label": [{"value": "KHEfiebB", "language": TextLanguage.DE}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "gqXeDXpVGbbVbXe3BkIeZr",
         "usedIn": [str(resources_by_synopse_id["12345-set1-17"].stableTargetId)],
         "identifierInPrimarySource": "2",
         "valueSet": ["Ja"],
@@ -186,13 +193,17 @@ def test_transform_synopse_variables_to_mex_variables(
     sorted_variables = sorted(variables, key=lambda v: v.identifierInPrimarySource)
     assert len(variables) == 2
     assert sorted_variables[0].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("report-server"),
         "identifierInPrimarySource": "1",
         "codingSystem": "Health Questionnaire , Frage 18",
         "dataType": "Zahl",
-        "label": [{"value": "Angeborene Fehlbildung", "language": "de"}],
-        "usedIn": [Joker()],
-        "belongsTo": [Joker()],
+        "label": [{"value": "Angeborene Fehlbildung", "language": TextLanguage.DE}],
+        "usedIn": [resources_by_synopse_id["12345-set1-17"].stableTargetId],
+        "belongsTo": [
+            variable_group_by_identifier_in_primary_source[
+                "Krankheiten (1101)-12345-set1-17"
+            ].stableTargetId
+        ],
         "valueSet": ["Nicht erhoben", "Weiß nicht"],
         "identifier": "33C9QmrGmQPXKmwaOsXTt",
         "stableTargetId": "evkDk6Y3auo0xASIuyWQV9",
@@ -200,42 +211,58 @@ def test_transform_synopse_variables_to_mex_variables(
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_synopse_data_to_mex_resources(
+def test_transform_synopse_data_to_mex_resources(  # noqa: PLR0913, PLR0917
     synopse_project: ProjektUndStudienverwaltung,
     synopse_studies: list[MetadatenZuDatensaetzen],
     extracted_activity: ExtractedActivity,
     extracted_organization_rki: ExtractedOrganization,
     synopse_resource: ResourceMapping,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
 
     expected_resource = {
-        "hadPrimarySource": "bVro4tpIg0kIjZubkhTmtE",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("report-server"),
         "identifierInPrimarySource": "12345-Titel-17",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "modified": "2022",
-        "wasGeneratedBy": "fIwPZ5WUfvpP3V2xdFFnTr",
-        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "wasGeneratedBy": extracted_activity.stableTargetId,
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"value": "Titel", "language": "de"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
+        "title": [{"value": "Titel", "language": TextLanguage.DE}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "accessPlatform": ["bFQoRhcVH5DHYe"],
-        "contributingUnit": ["cjna2jitPngp6yIV63cdi9", "6rqNvZSApUHlz8GkkVP48"],
-        "description": [{"value": "ein heikles Unterfangen.", "language": "de"}],
-        "hasLegalBasis": [{"value": "Niemand darf irgendwas.", "language": "de"}],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId,
+        ],
+        "description": [
+            {"value": "ein heikles Unterfangen.", "language": TextLanguage.DE}
+        ],
+        "hasLegalBasis": [
+            {"value": "Niemand darf irgendwas.", "language": TextLanguage.DE}
+        ],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
-            {"value": "Alkohol", "language": "de"},
-            {"value": "Alter und Geschlecht", "language": "de"},
-            {"value": "Drogen", "language": "de"},
+            {"value": "Alkohol", "language": TextLanguage.DE},
+            {"value": "Alter und Geschlecht", "language": TextLanguage.DE},
+            {"value": "Drogen", "language": TextLanguage.DE},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-2"
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-13"],
-        "resourceTypeSpecific": [{"value": "Monitoring-studie", "language": "de"}],
-        "rights": [{"value": "Lorem", "language": "de"}],
+        "resourceTypeSpecific": [
+            {"value": "Monitoring-studie", "language": TextLanguage.DE}
+        ],
+        "rights": [{"value": "Lorem", "language": TextLanguage.DE}],
         "identifier": "c8uxmFTO2QmNb7xmfUReke",
         "stableTargetId": "ecfQkgjG0kk6bqlO0pdCbx",
     }
@@ -261,6 +288,9 @@ def test_transform_synopse_projects_to_mex_activities(
         str, MergedOrganizationIdentifier
     ],
     roland_resolved: ExtractedPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     synopse_project = synopse_projects[0]
     contributor_merged_ids_by_name = {
@@ -268,12 +298,19 @@ def test_transform_synopse_projects_to_mex_activities(
     }
 
     assert synopse_project.projektende
+    external_partner = ExtractedOrganization(
+        officialName="Testpartner",
+        identifierInPrimarySource="Testpartner",
+        hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
+    )
     assert synopse_project.projektbeginn
 
     expected_activity = {
         "abstract": [{"value": synopse_project.beschreibung_studie}],
         "activityType": ["https://mex.rki.de/item/activity-type-6"],
-        "contact": ["6rqNvZSApUHlz8GkkVP48"],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "documentation": [
             {
                 "url": "file:///Z:/Projekte/Dokumentation",
@@ -281,22 +318,25 @@ def test_transform_synopse_projects_to_mex_activities(
             }
         ],
         "end": [str(TemporalEntity(synopse_project.projektende))],
-        "externalAssociate": ["bWt8MuXvqsiYEDpjwYIT2S"],
+        "externalAssociate": [external_partner.stableTargetId],
         "hadPrimarySource": str(
             get_extracted_primary_source_id_by_name("report-server")
         ),
-        "identifier": Joker(),
+        "identifier": "bqlLDVupJJHTGbdzXCoCIQ",
         "identifierInPrimarySource": synopse_project.studien_id,
-        "involvedPerson": ["eXA2Qj5pKmI7HXIgcVqCfz"],
-        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],  # C1
+        "involvedPerson": [roland_resolved.stableTargetId],
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],  # C1
         "involvedUnit": [
-            "cjna2jitPngp6yIV63cdi9",  # FG99
-            "6rqNvZSApUHlz8GkkVP48",  # C1
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId,  # FG99
+            mocked_units_by_identifier_in_primary_source[
+                "child-unit"
+            ].stableTargetId,  # C1
         ],
         "shortName": [{"value": "BBCCDD_00", "language": TextLanguage.DE}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "fIwPZ5WUfvpP3V2xdFFnTr",
         "start": [str(TemporalEntity(synopse_project.projektbeginn))],
-        "succeeds": Joker(),
         "theme": ["https://mex.rki.de/item/theme-36"],
         "title": [{"language": TextLanguage.DE, "value": "studie zu Lorem und Ipsum"}],
     }
@@ -309,4 +349,5 @@ def test_transform_synopse_projects_to_mex_activities(
     )
 
     assert len(activities) == 2
+    expected_activity["succeeds"] = [activities[0][0].stableTargetId]
     assert activities[1][0].model_dump(exclude_defaults=True) == expected_activity

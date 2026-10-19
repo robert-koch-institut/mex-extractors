@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from mex.common.types import MergedPersonIdentifier, TemporalEntity
+from mex.common.types import TemporalEntity
 from mex.extractors.international_projects.extract import (
     extract_international_projects_project_leaders,
     extract_international_projects_sources,
 )
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedPerson
 
 
 def test_extract_international_projects_sources() -> None:
@@ -69,12 +74,12 @@ def test_extract_international_projects_sources() -> None:
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
-def test_extract_international_projects_project_leaders() -> None:
+def test_extract_international_projects_project_leaders(
+    roland_resolved: ExtractedPerson,
+) -> None:
     international_projects_sources = extract_international_projects_sources()
     leaders = extract_international_projects_project_leaders(
         international_projects_sources
     )
 
-    assert leaders == {
-        "Roland Resolved": [MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")]
-    }
+    assert leaders == {"Roland Resolved": [roland_resolved.stableTargetId]}

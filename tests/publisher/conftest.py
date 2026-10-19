@@ -6,6 +6,7 @@ from pytest import MonkeyPatch
 from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.models import (
     AnyMergedModel,
+    ExtractedOrganizationalUnit,
     ItemsContainer,
     MergedBibliographicResource,
     MergedConsent,
@@ -119,15 +120,20 @@ def merged_unit_contactpoint_container() -> ItemsContainer[AnyMergedModel]:
 
 
 @pytest.fixture
-def merged_bibliographic_resource_list() -> list[MergedBibliographicResource]:
+def merged_bibliographic_resource_list(
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+) -> list[MergedBibliographicResource]:
     """Mock a list of Merged Bibliographic Resource items."""
+    units = mocked_units_by_identifier_in_primary_source
     return [
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             creator=["PersonIdentifier"],
             identifier="PublicationOfC1",
             title=[Text(value="title 1, Unit C1", language=None)],
-            contributingUnit=["6rqNvZSApUHlz8GkkVP48"],  # C1
+            contributingUnit=[units["child-unit"].stableTargetId],
         ),
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
@@ -135,14 +141,14 @@ def merged_bibliographic_resource_list() -> list[MergedBibliographicResource]:
             identifier="PublicationOfPRNTUnit",
             publicationYear="2042",
             title=[Text(value="title 1, Unit Parent", language=None)],
-            contributingUnit=["hIiJpZXVppHvoyeP0QtAoS"],  # PRNT
+            contributingUnit=[units["parent-unit"].stableTargetId],
         ),
         MergedBibliographicResource(
             accessRestriction=AccessRestriction["OPEN"],
             creator=["PersonIdentifier"],
             identifier="PublicationOfFG99",
             title=[Text(value="title 1, Unit FG99", language=None)],
-            contributingUnit=["cjna2jitPngp6yIV63cdi9"],  # FG99
+            contributingUnit=[units["fg99"].stableTargetId],
         ),
     ]
 

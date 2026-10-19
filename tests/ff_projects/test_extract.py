@@ -1,9 +1,11 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
 from pytest import MonkeyPatch
 
+from mex.common.models import ExtractedOrganization
 from mex.common.types import MergedOrganizationIdentifier, TemporalEntity
 from mex.extractors.ff_projects.extract import (
     extract_ff_projects_organizations,
@@ -14,6 +16,9 @@ from mex.extractors.ff_projects.extract import (
     get_temporal_entity_from_cell,
 )
 from mex.extractors.ff_projects.models.source import FFProjectsSource
+
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedOrganization
 
 
 def test_extract_ff_projects_sources() -> None:
@@ -95,11 +100,14 @@ def test_get_optional_string_from_cell() -> None:
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_extract_ff_projects_organizations() -> None:
+def test_extract_ff_projects_organizations(
+    wikidata_extracted_organization: ExtractedOrganization,
+) -> None:
     sources = extract_ff_projects_sources()
     organizations = extract_ff_projects_organizations([sources[0]])
-    assert organizations["Robert Koch-Institut"] == MergedOrganizationIdentifier(
-        "ga6xh6pgMwgq7DC7r6Wjqg"
+    assert (
+        organizations["Robert Koch-Institut"]
+        == wikidata_extracted_organization.stableTargetId
     )
 
 
