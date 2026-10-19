@@ -1,8 +1,5 @@
 from typing import TYPE_CHECKING, cast
 
-from mex.common.types import (
-    MergedOrganizationIdentifier,
-)
 from mex.extractors.pipeline.organigram import (
     extracted_organizational_units,
 )
@@ -19,7 +16,7 @@ def test_extracted_organizational_units(
         extracted_organizational_units(extracted_organization_rki),
     )
     assert [(u.identifierInPrimarySource, u.unitOf) for u in units] == [
-        ("parent-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
-        ("fg99", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
-        ("child-unit", [MergedOrganizationIdentifier("fxIeF3TWocUZoMGmBftJ6x")]),
+        ("parent-unit", [extracted_organization_rki.stableTargetId]),
+        ("fg99", [extracted_organization_rki.stableTargetId]),
+        ("child-unit", [extracted_organization_rki.stableTargetId]),
     ]

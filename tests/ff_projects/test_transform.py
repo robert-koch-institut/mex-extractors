@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -20,12 +19,19 @@ from mex.extractors.primary_source.helpers import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import ActivityMapping, ExtractedOrganization
+    from mex.common.models import (
+        ActivityMapping,
+        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
+    )
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_ff_projects_source_to_extracted_activity(
     ff_projects_activity: ActivityMapping,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     organization_id = MergedOrganizationIdentifier.generate(seed=44)
     organizations_stable_target_ids_by_synonym = {"Test-Institute": organization_id}
@@ -62,11 +68,13 @@ def test_transform_ff_projects_source_to_extracted_activity(
         "funderOrCommissioner": [organization_id],
         "fundingProgram": ["Funding"],
         "hadPrimarySource": get_extracted_primary_source_id_by_name("ff-projects"),
-        "identifier": Joker(),
+        "identifier": "dW6K5AWMMeSD2PefYnYMOR",
         "identifierInPrimarySource": "19",
         "involvedPerson": [person_id],
-        "responsibleUnit": ["cjna2jitPngp6yIV63cdi9"],
-        "stableTargetId": Joker(),
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
+        "stableTargetId": "g1L5mzUchHfOmjAojIYI3L",
         "start": [laufzeit_von],
         "title": [
             {"language": TextLanguage.EN, "value": "This is a project with a topic."}

@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.types import MergedContactPointIdentifier, MergedPersonIdentifier
 from mex.extractors.synopse.extract import (
     extract_projects,
     extract_study_data,
@@ -13,7 +12,11 @@ from mex.extractors.synopse.extract import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import AccessPlatformMapping
+    from mex.common.models import (
+        AccessPlatformMapping,
+        ExtractedContactPoint,
+        ExtractedPerson,
+    )
     from mex.extractors.synopse.models.project import ProjektUndStudienverwaltung
 
 
@@ -79,23 +82,23 @@ def test_extract_projects() -> None:
 @pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
 def test_extract_synopse_project_contributor_ids_by_query(
     synopse_project: ProjektUndStudienverwaltung,
+    roland_resolved: ExtractedPerson,
 ) -> None:
     persons = extract_synopse_project_contributor_ids_by_query(
         [synopse_project, synopse_project]
     )
-    assert persons == {
-        "Roland Resolved": [MergedPersonIdentifier("eXA2Qj5pKmI7HXIgcVqCfz")]
-    }
+    assert persons == {"Roland Resolved": [roland_resolved.stableTargetId]}
 
 
 @pytest.mark.usefixtures("mocked_ldap")
 def test_extract_synopse_contact(
     synopse_access_platform: AccessPlatformMapping,
+    contact_point: ExtractedContactPoint,
 ) -> None:
     actor = extract_synopse_contact(synopse_access_platform)
 
     assert actor == {
-        "contactc@rki.de": MergedContactPointIdentifier("cMkmnNOoNVAohBA1XLNr9K"),
+        "contactc@rki.de": contact_point.stableTargetId,
     }
 
 
