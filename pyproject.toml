@@ -14,9 +14,9 @@ dependencies = [
     "dagster-webserver>=1.13,<2",
     "dagster>=1.13,<2",
     "defusedxml>=0.7,<1",
-    "faker>=40",
+    "faker>=40,<41",
     "mex-artificial>=3,<4",
-    "mex-common>=3,<3.4",
+    "mex-common>=3.5,<3.6",
     "mex-model>=5,<6",
     "networkx>=3,<4",
     "numpy>=2,<3",
@@ -38,7 +38,7 @@ dev = [
     "pytest-cov>=7",
     "pytest-random-order>=1",
     "pytest>=9",
-    "ruff>=0.16",
+    "ruff>=0.17",
     "sphinx>=9",
     "types-beautifulsoup4",
     "types-defusedxml",
@@ -202,6 +202,3 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
-
-[tool.uv.sources]
-mex-common = { path = "../mex-common", editable = true}
