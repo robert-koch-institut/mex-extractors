@@ -158,23 +158,6 @@ def transform_seq_repo_resource_to_extracted_resource(
         list of ExtractedResource
     """
     # Resource values from mapping
-    access_restriction = resource_mapping.accessRestriction.get_static_values()
-    accrual_periodicity = resource_mapping.accrualPeriodicity.get_static_values()
-    anonymization_pseudonymization = (
-        resource_mapping.anonymizationPseudonymization.get_static_values()
-    )
-    description = resource_mapping.description.get_static_values()
-    health_category = resource_mapping.healthCategory.get_static_values()
-    resource_creation_method = (
-        resource_mapping.resourceCreationMethod.get_static_values()
-    )
-    resource_type_general = resource_mapping.resourceTypeGeneral.get_static_values()
-    resource_type_specific = resource_mapping.resourceTypeSpecific.get_static_values()
-    rights = resource_mapping.rights.get_static_values()
-    state_of_data_processing = (
-        resource_mapping.stateOfDataProcessing.get_static_values()
-    )
-    theme = resource_mapping.theme.get_static_values()
     shared_keyword = resource_mapping.keyword.get_static_values() or []
 
     extracted_resources = []
@@ -233,28 +216,28 @@ def transform_seq_repo_resource_to_extracted_resource(
         title = f"LIMS Sample ID {source.lims_sample_id} ({source.species})"
         extracted_resource = ExtractedResource(
             accessPlatform=extracted_access_platform.stableTargetId,
-            accessRestriction=access_restriction,
-            accrualPeriodicity=accrual_periodicity,
-            anonymizationPseudonymization=anonymization_pseudonymization,
+            accessRestriction=resource_mapping.accessRestriction.get_static_values(),
+            accrualPeriodicity=resource_mapping.accrualPeriodicity.get_static_values(),
+            anonymizationPseudonymization=resource_mapping.anonymizationPseudonymization.get_static_values(),
             contact=contacts,
             contributingUnit=contributing_unit,
             contributor=contributors,
-            description=description,
+            description=resource_mapping.description.get_static_values(),
             hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
-            healthCategory=health_category,
+            healthCategory=resource_mapping.healthCategory.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             inSeries=resource_series_merged_id_by_project_id[source.project_id],
             modified=modified,
             publisher=extracted_organization_rki.stableTargetId,
             qualityInformation=quality_information,
-            resourceCreationMethod=resource_creation_method,
-            resourceTypeGeneral=resource_type_general,
-            resourceTypeSpecific=resource_type_specific,
-            rights=rights,
+            resourceCreationMethod=resource_mapping.resourceCreationMethod.get_static_values(),
+            resourceTypeGeneral=resource_mapping.resourceTypeGeneral.get_static_values(),
+            resourceTypeSpecific=resource_mapping.resourceTypeSpecific.get_static_values(),
+            rights=resource_mapping.rights.get_static_values(),
             start=start,
-            stateOfDataProcessing=state_of_data_processing,
-            theme=theme,
+            stateOfDataProcessing=resource_mapping.stateOfDataProcessing.get_static_values(),
+            theme=resource_mapping.theme.get_static_values(),
             title=title,
             unitInCharge=units,
         )
@@ -274,20 +257,6 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     Returns:
         ExtractedAccessPlatform
     """
-    alternative_title = access_platform_mapping.alternativeTitle.get_static_values()
-
-    description = access_platform_mapping.description.get_static_values()
-    endpoint_type = access_platform_mapping.endpointType.get_static_values()
-    identifier_in_primary_source = (
-        access_platform_mapping.identifierInPrimarySource.get_static_values()
-    )
-    landing_page = access_platform_mapping.landingPage.get_static_values()
-
-    technical_accessibility = (
-        access_platform_mapping.technicalAccessibility.get_static_values()
-    )
-    title = access_platform_mapping.title.get_static_values()
-
     contacts = access_platform_mapping.contact.get_mappable_values()
 
     resolved_organigram = [
@@ -298,15 +267,15 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     ]
 
     return ExtractedAccessPlatform(
-        alternativeTitle=alternative_title,
+        alternativeTitle=access_platform_mapping.alternativeTitle.get_static_values(),
         contact=resolved_organigram,
-        description=description,
-        endpointType=endpoint_type,
+        description=access_platform_mapping.description.get_static_values(),
+        endpointType=access_platform_mapping.endpointType.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("seq-repo"),
-        identifierInPrimarySource=identifier_in_primary_source,
-        landingPage=landing_page,
-        technicalAccessibility=technical_accessibility,
-        title=title,
+        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values(),
+        landingPage=access_platform_mapping.landingPage.get_static_values(),
+        technicalAccessibility=access_platform_mapping.technicalAccessibility.get_static_values(),
+        title=access_platform_mapping.title.get_static_values(),
         unitInCharge=resolved_organigram,
     )
 

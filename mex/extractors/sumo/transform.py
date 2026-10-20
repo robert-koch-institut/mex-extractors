@@ -523,12 +523,10 @@ def transform_sumo_activity_to_extracted_activity(
     Returns:
         ExtractedActivity
     """
-    abstract = sumo_activity.abstract.get_static_values()
     contact = [
         contact_merged_ids_by_emails[contact]
         for contact in sumo_activity.contact.get_mappable_values()
     ]
-    documentation = sumo_activity.documentation.get_static_values()
     involved_unit: list[MergedOrganizationalUnitIdentifier] = []
     if unit_synonyms := sumo_activity.involvedUnit.get_mappable_values():
         for unit in unit_synonyms:
@@ -539,32 +537,23 @@ def transform_sumo_activity_to_extracted_activity(
         for unit in unit_synonyms:
             if unit_merged_id := get_unit_merged_id_by_synonym(unit):
                 responsible_unit.extend(unit_merged_id)
-    short_name = sumo_activity.shortName.get_static_values()
-    title = sumo_activity.title.get_static_values()
-    theme = sumo_activity.theme.get_static_values()
-    website = sumo_activity.website.get_static_values()
     external_associate = sumo_activity.externalAssociate.get_mappable_values()[0]
-    start = sumo_activity.start.get_static_values()
-    activity_type = sumo_activity.activityType.get_static_values()
-    identifier_in_primary_source = (
-        sumo_activity.identifierInPrimarySource.get_static_values()
-    )
 
     return ExtractedActivity(
-        abstract=abstract,
-        activityType=activity_type,
+        abstract=sumo_activity.abstract.get_static_values(),
+        activityType=sumo_activity.activityType.get_static_values(),
         contact=contact,
-        documentation=documentation,
+        documentation=sumo_activity.documentation.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
-        identifierInPrimarySource=identifier_in_primary_source,
+        identifierInPrimarySource=sumo_activity.identifierInPrimarySource.get_static_values(),
         involvedUnit=involved_unit,
         publication=[],  # TODO(KA): add bibliographic resource item
         responsibleUnit=responsible_unit,
-        shortName=short_name,
-        start=start,
-        theme=theme,
-        title=title,
-        website=website,
+        shortName=sumo_activity.shortName.get_static_values(),
+        start=sumo_activity.start.get_static_values(),
+        theme=sumo_activity.theme.get_static_values(),
+        title=sumo_activity.title.get_static_values(),
+        website=sumo_activity.website.get_static_values(),
         externalAssociate=[
             create_new_organization_with_official_name(external_associate)
         ],

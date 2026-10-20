@@ -46,7 +46,6 @@ def transform_blueant_sources_to_extracted_activities(
         blueant_sources, "transform_blueant_sources_to_extracted_activities"
     ):
         # find source type
-        activity_type = activity.activityType.get_mapped_values(source.type_)
 
         funder_or_commissioner: list[MergedOrganizationIdentifier] = []
         for name in source.client_names:
@@ -95,7 +94,7 @@ def transform_blueant_sources_to_extracted_activities(
         activities.append(
             ExtractedActivity(
                 start=source.start,
-                activityType=activity_type,
+                activityType=activity.activityType.get_mapped_values(source.type_),
                 contact=contact,
                 involvedPerson=person_stable_target_ids_by_employee_id.get(
                     source.projectLeaderEmployeeId  # type: ignore[arg-type]
@@ -103,7 +102,7 @@ def transform_blueant_sources_to_extracted_activities(
                 hadPrimarySource=get_extracted_primary_source_id_by_name("blueant"),
                 responsibleUnit=department_ids,
                 funderOrCommissioner=funder_or_commissioner,
-                title=title or [],
+                title=title,
                 identifierInPrimarySource=source.number,
             )
         )

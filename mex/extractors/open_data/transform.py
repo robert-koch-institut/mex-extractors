@@ -242,7 +242,6 @@ def transform_open_data_distributions(
         List of ExtractedDistribution instances
     """
     extracted_distributions = []
-    access_restriction = distribution_mapping.accessRestriction.get_static_values()
     for resource in open_data_parent_resources:
         access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
         ccby_license = next(
@@ -263,7 +262,7 @@ def transform_open_data_distributions(
             title = file.key
             extracted_distributions.append(
                 ExtractedDistribution(
-                    accessRestriction=access_restriction,
+                    accessRestriction=distribution_mapping.accessRestriction.get_static_values(),
                     accessURL=access_url,
                     downloadURL=download_url,
                     hadPrimarySource=get_extracted_primary_source_id_by_name(
@@ -316,10 +315,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         p.fullName[0]: get_only_child_units(p.memberOf, extracted_organizational_units)
         for p in open_data_extracted_persons
     }
-    access_restriction = resource_mapping.accessRestriction.get_static_values()
-    anonymization_pseudonymization = (
-        resource_mapping.anonymizationPseudonymization.get_static_values()
-    )
     contact_open_data = [
         contact.stableTargetId for contact in open_data_extracted_contact_points
     ]
@@ -327,8 +322,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         distribution.identifierInPrimarySource: distribution.stableTargetId
         for distribution in open_data_distribution
     }
-    has_personal_data = resource_mapping.hasPersonalData.get_static_values()
-    theme = resource_mapping.theme.get_static_values()
     for resource in open_data_parent_resource:
         unit_in_charge = list(
             {
@@ -413,14 +406,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 for value in landing_page_links
             ]
 
-        resource_type_general = resource_mapping.resourceTypeGeneral.get_mapped_values(
-            resource.metadata.resource_type.type
-        )
-
         extracted_resource.append(
             ExtractedResource(
-                accessRestriction=access_restriction,
-                anonymizationPseudonymization=anonymization_pseudonymization,
+                accessRestriction=resource_mapping.accessRestriction.get_static_values(),
+                anonymizationPseudonymization=resource_mapping.anonymizationPseudonymization.get_static_values(),
                 contact=contact,
                 contributingUnit=contributing_unit,
                 contributor=contributor,
@@ -430,7 +419,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 documentation=documentation,
                 doi=doi,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("open-data"),
-                hasPersonalData=has_personal_data,
+                hasPersonalData=resource_mapping.hasPersonalData.get_static_values(),
                 identifierInPrimarySource=str(resource.conceptrecid),
                 keyword=resource.metadata.keywords,
                 landingPage=landing_page,
@@ -438,9 +427,11 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 license=ccby_license,
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
-                resourceTypeGeneral=resource_type_general,
+                resourceTypeGeneral=resource_mapping.resourceTypeGeneral.get_mapped_values(
+                    resource.metadata.resource_type.type
+                ),
                 start=start,
-                theme=theme,
+                theme=resource_mapping.theme.get_static_values(),
                 title=resource.title,
                 unitInCharge=unit_in_charge,
             )

@@ -83,7 +83,6 @@ def transform_resource_state_to_mex_resource(
     """
     if contact_synonym := resource_state.contact.get_mappable_values():
         contact = get_unit_merged_id_by_synonym(contact_synonym[0])
-    keyword = resource_state.keyword.get_static_values()
     if unit_in_charge_synonym := resource_state.unitInCharge.get_mappable_values():
         unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
     return [
@@ -100,7 +99,7 @@ def transform_resource_state_to_mex_resource(
             hasLegalBasis=resource_state.hasLegalBasis.get_static_values(),
             hasPersonalData=resource_state.hasPersonalData.get_static_values(),
             identifierInPrimarySource=id_bundesland,
-            keyword=keyword,
+            keyword=resource_state.keyword.get_static_values(),
             language=resource_state.language.get_static_values(),
             relatedResource=ifsg_extracted_resource_parent.stableTargetId,
             resourceCreationMethod=resource_state.resourceCreationMethod.get_static_values(),

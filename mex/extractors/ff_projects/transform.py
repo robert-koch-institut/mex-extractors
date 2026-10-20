@@ -70,10 +70,6 @@ def transform_ff_projects_source_to_extracted_activity(
         organization_stable_target_id_by_synonyms,
     )
 
-    activity_type = ff_projects_activity.activityType.get_mapped_values(
-        ff_projects_source.rki_az
-    )
-
     start = (
         [
             YearMonthDay(
@@ -94,7 +90,9 @@ def transform_ff_projects_source_to_extracted_activity(
     )
     return ExtractedActivity(
         title=ff_projects_source.thema_des_projekts,
-        activityType=activity_type,
+        activityType=ff_projects_activity.activityType.get_mapped_values(
+            ff_projects_source.rki_az
+        ),
         contact=project_lead or responsible_unit,
         involvedPerson=project_lead,
         start=start,

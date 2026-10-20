@@ -84,11 +84,6 @@ def transform_grippeweb_resource_mappings_to_dict(
     """
     resource_dict = {}
     for resource in grippeweb_resource_mappings:
-        access_restriction = resource.accessRestriction.get_static_values()
-        accrual_periodicity = resource.accrualPeriodicity.get_static_values()
-        anonymization_pseudonymization = (
-            resource.anonymizationPseudonymization.get_static_values()
-        )
         contact = grippeweb_merged_contact_point_id_by_email[
             resource.contact.get_mappable_values()[0]
         ]
@@ -100,79 +95,57 @@ def transform_grippeweb_resource_mappings_to_dict(
             for name in resource.contributor.get_mappable_values()
             if (person_id := grippeweb_extracted_persons.get(name))
         ]
-        description = resource.description.get_static_values()
-        documentation = resource.documentation.get_static_values()
         external_partner_identifier = get_or_create_external_partner(
             resource,
             grippeweb_merged_organization_ids_by_query_str,
         )
 
-        has_legal_basis = resource.hasLegalBasis.get_static_values()
-        has_personal_data = resource.hasPersonalData.get_static_values()
-        has_purpose_description = resource.hasPurposeDescription.get_static_values()
-        has_code_values = resource.hasCodeValues.get_static_values()
         identifier_in_primary_source = (
             resource.identifierInPrimarySource.get_static_values()
             or resource.identifierInPrimarySource.get_mappable_values()[0]
         )
 
-        keyword = resource.keyword.get_static_values()
-        language = resource.language.get_static_values()
-        mesh_id = resource.meshId.get_static_values()
-        method = resource.method.get_static_values()
-        method_description = resource.methodDescription.get_static_values()
-        min_typical_age = resource.minTypicalAge.get_static_values()
-        population_coverage = resource.populationCoverage.get_static_values()
         publisher = grippeweb_merged_organization_ids_by_query_str.get(
             resource.publisher.get_mappable_values()[0]
         )
 
-        resource_creation_method = resource.resourceCreationMethod.get_static_values()
-        resource_type_general = resource.resourceTypeGeneral.get_static_values()
-        resource_type_specific = resource.resourceTypeSpecific.get_static_values()
-        rights = resource.rights.get_static_values()
-        spatial = resource.spatial.get_static_values()
-        start = resource.start.get_static_values()
-        state_of_data_processing = resource.stateOfDataProcessing.get_static_values()
-        theme = resource.theme.get_static_values()
-        title = resource.title.get_static_values()
         unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge.get_mappable_values()[0]
         )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
-            accessRestriction=access_restriction,
-            accrualPeriodicity=accrual_periodicity,
-            anonymizationPseudonymization=anonymization_pseudonymization,
+            accessRestriction=resource.accessRestriction.get_static_values(),
+            accrualPeriodicity=resource.accrualPeriodicity.get_static_values(),
+            anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
             contact=contact,
             contributingUnit=contributing_unit,
             contributor=contributor,
-            description=description,
-            documentation=documentation,
+            description=resource.description.get_static_values(),
+            documentation=resource.documentation.get_static_values(),
             externalPartner=external_partner_identifier,
             hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
-            hasCodeValues=has_code_values,
-            hasLegalBasis=has_legal_basis,
-            hasPersonalData=has_personal_data,
-            hasPurposeDescription=has_purpose_description,
+            hasCodeValues=resource.hasCodeValues.get_static_values(),
+            hasLegalBasis=resource.hasLegalBasis.get_static_values(),
+            hasPersonalData=resource.hasPersonalData.get_static_values(),
+            hasPurposeDescription=resource.hasPurposeDescription.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,
-            keyword=keyword,
-            language=language,
-            meshId=mesh_id,
-            method=method,
-            methodDescription=method_description,
-            minTypicalAge=min_typical_age,
-            populationCoverage=population_coverage,
+            keyword=resource.keyword.get_static_values(),
+            language=resource.language.get_static_values(),
+            meshId=resource.meshId.get_static_values(),
+            method=resource.method.get_static_values(),
+            methodDescription=resource.methodDescription.get_static_values(),
+            minTypicalAge=resource.minTypicalAge.get_static_values(),
+            populationCoverage=resource.populationCoverage.get_static_values(),
             publisher=publisher,
-            resourceCreationMethod=resource_creation_method,
-            resourceTypeGeneral=resource_type_general,
-            resourceTypeSpecific=resource_type_specific,
-            rights=rights,
-            spatial=spatial,
-            start=start,
-            stateOfDataProcessing=state_of_data_processing,
-            theme=theme,
-            title=title,
+            resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
+            resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
+            resourceTypeSpecific=resource.resourceTypeSpecific.get_static_values(),
+            rights=resource.rights.get_static_values(),
+            spatial=resource.spatial.get_static_values(),
+            start=resource.start.get_static_values(),
+            stateOfDataProcessing=resource.stateOfDataProcessing.get_static_values(),
+            theme=resource.theme.get_static_values(),
+            title=resource.title.get_static_values(),
             unitInCharge=unit_in_charge,
         )
     return resource_dict["grippeweb"], resource_dict["grippeweb-plus"]
@@ -226,19 +199,10 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     Returns:
         ExtractedAccessPlatform grippeweb
     """
-    identifier_in_primary_source = (
-        grippeweb_access_platform.identifierInPrimarySource.get_static_values()
-    )
-
     contact = [
         grippeweb_extracted_persons[email]
         for email in grippeweb_access_platform.contact.get_mappable_values()
     ]
-
-    technical_accessibility = (
-        grippeweb_access_platform.technicalAccessibility.get_static_values()
-    )
-    title = grippeweb_access_platform.title.get_static_values()
 
     unit_in_charge = get_unit_merged_id_by_synonym(
         grippeweb_access_platform.unitInCharge.get_mappable_values()[0]
@@ -247,9 +211,9 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
     return ExtractedAccessPlatform(
         contact=contact,
         hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
-        identifierInPrimarySource=identifier_in_primary_source,
-        technicalAccessibility=technical_accessibility,
-        title=title,
+        identifierInPrimarySource=grippeweb_access_platform.identifierInPrimarySource.get_static_values(),
+        technicalAccessibility=grippeweb_access_platform.technicalAccessibility.get_static_values(),
+        title=grippeweb_access_platform.title.get_static_values(),
         unitInCharge=unit_in_charge,
     )
 

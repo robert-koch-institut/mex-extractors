@@ -67,7 +67,6 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         if rule.forValues and rule.rule
         for for_value in rule.forValues
     }
-    start = igs_resource_mapping.start.get_static_values()
     unit_in_charge = (
         get_unit_merged_id_by_synonym(for_value[0])
         if (for_value := igs_resource_mapping.unitInCharge.get_mappable_values())
@@ -77,7 +76,6 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
     default_keywords = cast(
         "list[Text]", igs_resource_mapping.keyword.get_static_values()
     )
-    health_category = igs_resource_mapping.healthCategory.get_static_values()
     quality_information_intro = (
         igs_resource_mapping.qualityInformation.get_static_values()[0].value  # type: ignore[index]
     )
@@ -134,7 +132,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
             hasLegalBasis=igs_resource_mapping.hasLegalBasis.get_static_values(),
             hasPurposeDescription=igs_resource_mapping.hasPurposeDescription.get_static_values(),
-            healthCategory=health_category,
+            healthCategory=igs_resource_mapping.healthCategory.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=igs_resource_mapping.language.get_static_values(),
@@ -151,7 +149,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             rights=igs_resource_mapping.rights.get_static_values(),
             spatial=igs_resource_mapping.spatial.get_static_values(),
             sizeOfDataBasis=size_of_databasis,
-            start=start,
+            start=igs_resource_mapping.start.get_static_values(),
             theme=igs_resource_mapping.theme.get_static_values(),
             title=title,
             unitInCharge=unit_in_charge,

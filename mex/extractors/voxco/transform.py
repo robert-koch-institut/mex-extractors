@@ -47,16 +47,10 @@ def transform_voxco_resource_mappings_to_extracted_resources(
         for activity in international_projects_extracted_activities
     }
     for resource in voxco_resource_mappings:
-        access_restriction = resource.accessRestriction.get_static_values()
-        anonymization_pseudonymization = (
-            resource.anonymizationPseudonymization.get_static_values()
-        )
-        alternative_title = resource.alternativeTitle.get_static_values()
         if contact_values := resource.contact.get_mappable_values():
             contact = voxco_extracted_persons[contact_values[1]]
         else:
             contact = None
-        description = resource.description.get_static_values()
 
         if external_partners := resource.externalPartner.get_mappable_values():
             external_partner = voxco_merged_organization_ids_by_query_string.get(
@@ -64,24 +58,11 @@ def transform_voxco_resource_mappings_to_extracted_resources(
             )
         else:
             external_partner = None
-        health_category = resource.healthCategory.get_static_values()
         identifier_in_primary_source: str = (
             resource.identifierInPrimarySource.get_static_values()  # type: ignore[assignment]
         )
-        keyword = resource.keyword.get_static_values()
-        language = resource.language.get_static_values()
-        mesh_id = resource.meshId.get_static_values()
-        method = resource.method.get_static_values()
         publisher = extracted_organization_rki.stableTargetId
 
-        resource_creation_method = resource.resourceCreationMethod.get_static_values()
-        resource_type_general = resource.resourceTypeGeneral.get_static_values()
-        resource_type_specific = resource.resourceTypeSpecific.get_static_values()
-        quality_information = resource.qualityInformation.get_static_values()
-        rights = resource.rights.get_static_values()
-        spatial = resource.spatial.get_static_values()
-        theme = resource.theme.get_static_values()
-        title = resource.title.get_static_values()
         unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge.get_mappable_values()[0]
         )
@@ -95,28 +76,28 @@ def transform_voxco_resource_mappings_to_extracted_resources(
             was_generated_by = None
 
         resource_dict[identifier_in_primary_source] = ExtractedResource(
-            accessRestriction=access_restriction,
-            anonymizationPseudonymization=anonymization_pseudonymization,
-            alternativeTitle=alternative_title,
+            accessRestriction=resource.accessRestriction.get_static_values(),
+            anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
+            alternativeTitle=resource.alternativeTitle.get_static_values(),
             contact=contact,
-            description=description,
+            description=resource.description.get_static_values(),
             externalPartner=external_partner,
             hadPrimarySource=get_extracted_primary_source_id_by_name("voxco"),
-            healthCategory=health_category,
+            healthCategory=resource.healthCategory.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,
-            keyword=keyword,
-            language=language,
-            meshId=mesh_id,
-            method=method,
+            keyword=resource.keyword.get_static_values(),
+            language=resource.language.get_static_values(),
+            meshId=resource.meshId.get_static_values(),
+            method=resource.method.get_static_values(),
             publisher=publisher,
-            resourceCreationMethod=resource_creation_method,
-            resourceTypeGeneral=resource_type_general,
-            resourceTypeSpecific=resource_type_specific,
-            qualityInformation=quality_information,
-            rights=rights,
-            spatial=spatial,
-            theme=theme,
-            title=title,
+            resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
+            resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
+            resourceTypeSpecific=resource.resourceTypeSpecific.get_static_values(),
+            qualityInformation=resource.qualityInformation.get_static_values(),
+            rights=resource.rights.get_static_values(),
+            spatial=resource.spatial.get_static_values(),
+            theme=resource.theme.get_static_values(),
+            title=resource.title.get_static_values(),
             unitInCharge=unit_in_charge,
             wasGeneratedBy=was_generated_by,
         )

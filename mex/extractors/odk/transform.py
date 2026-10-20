@@ -45,22 +45,12 @@ def transform_odk_resources_to_mex_resources(
     }
     resources_tuple: tuple[list[ExtractedResource], list[ExtractedResource]] = ([], [])
     for resource in odk_resource_mappings:
-        alternative_title = resource.alternativeTitle.get_static_values()
         contributing_unit = [
             unit_id
             for synonym in resource.contributingUnit.get_mappable_values()
             if (unit_ids := get_unit_merged_id_by_synonym(synonym))
             for unit_id in unit_ids
         ]
-        description = resource.description.get_static_values()
-        has_legal_basis = resource.hasLegalBasis.get_static_values()
-        identifier_in_primary_source = (
-            resource.identifierInPrimarySource.get_static_values()
-        )
-        method_description = resource.methodDescription.get_static_values()
-        number_of_unique_individuals = (
-            resource.numberOfUniqueIndividuals.get_static_values()
-        )
 
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
@@ -86,25 +76,25 @@ def transform_odk_resources_to_mex_resources(
         ]
         resources_tuple[bool(resource.relatedResource)].append(
             ExtractedResource(
-                identifierInPrimarySource=identifier_in_primary_source,
+                identifierInPrimarySource=resource.identifierInPrimarySource.get_static_values(),
                 accessRestriction=resource.accessRestriction.get_static_values(),
-                alternativeTitle=alternative_title,
+                alternativeTitle=resource.alternativeTitle.get_static_values(),
                 contact=get_unit_merged_id_by_synonym(
                     resource.contact.get_mappable_values()[0]
                 ),
                 contributingUnit=contributing_unit,
-                description=description,
+                description=resource.description.get_static_values(),
                 end=resource.end.get_static_values(),
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
-                hasLegalBasis=has_legal_basis,
+                hasLegalBasis=resource.hasLegalBasis.get_static_values(),
                 healthCategory=resource.healthCategory.get_static_values(),
                 keyword=resource.keyword.get_static_values(),
                 language=resource.language.get_static_values(),
                 meshId=resource.meshId.get_static_values(),
                 method=resource.method.get_static_values(),
-                methodDescription=method_description,
-                numberOfUniqueIndividuals=number_of_unique_individuals,
+                methodDescription=resource.methodDescription.get_static_values(),
+                numberOfUniqueIndividuals=resource.numberOfUniqueIndividuals.get_static_values(),
                 publisher=publisher,
                 resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
                 resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
