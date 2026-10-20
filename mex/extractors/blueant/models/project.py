@@ -1,5 +1,5 @@
 from mex.common.models import BaseModel
-from mex.common.types import TemporalEntity
+from mex.common.types import TemporalEntity  # noqa: TC001
 
 
 class BlueAntClient(BaseModel):
