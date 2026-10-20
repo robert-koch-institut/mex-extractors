@@ -14,7 +14,7 @@ class PublisherItemsLike(Protocol):
 
 
 class BibliographicResourceForCsv(BaseModel):
-    """pydantic model of Bibliographic Resources for writing to csv."""
+    """Pydantic model of Bibliographic Resources for writing to csv."""
 
     contributingUnit: list[str] | None = Field(
         None, serialization_alias="Mitwirkende Fachgebiete"
@@ -31,7 +31,7 @@ class BibliographicResourceForCsv(BaseModel):
 
 
 class CsvResource(BaseModel):
-    """pydantic model of CSV resources listed in datapackage.json."""
+    """Pydantic model of CSV resources listed in datapackage.json."""
 
     name: str
     title: str
@@ -44,7 +44,7 @@ class CsvResource(BaseModel):
 
 
 class CsvDataPackage(BaseModel):
-    """pydantic model of datapacke content."""
+    """Pydantic model of datapackage content."""
 
     name: str = "rki-mex-csv-publication-reports"
     title: str = "RKI Publikationslisten"

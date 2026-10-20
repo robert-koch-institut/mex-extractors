@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - upgrade mex-backend to 4.6.2
+- upgrade ruff to 0.17
 
 ### Deprecated
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- publisher uses `REQUIRED_FIELDS_BY_CLASS_NAME` instead of `is_required()`
 - use concrete enums instead of string values in test assertions to reduce false diffs
   in test failure summaries
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers

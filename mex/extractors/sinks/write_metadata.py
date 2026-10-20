@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import hashlib
 import json
 from importlib import metadata
@@ -45,7 +45,7 @@ def create_metadata_content(checksum: str) -> bytes:
     payload = {
         "versions": versions,
         "sha256_checksum": checksum,
-        "write_completed_at": datetime.datetime.now(tz=UTC).isoformat(),
+        "write_completed_at": dt.datetime.now(tz=UTC).isoformat(),
     }
     payload_json = json.dumps(payload, sort_keys=True, cls=MExEncoder, indent=4)
 
