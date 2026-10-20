@@ -84,74 +84,60 @@ def transform_grippeweb_resource_mappings_to_dict(
     """
     resource_dict = {}
     for resource in grippeweb_resource_mappings:
-        access_restriction = resource.accessRestriction[0].mappingRules[0].setValues
-        accrual_periodicity = resource.accrualPeriodicity[0].mappingRules[0].setValues
+        access_restriction = resource.accessRestriction.get_static_values()
+        accrual_periodicity = resource.accrualPeriodicity.get_static_values()
         anonymization_pseudonymization = (
-            resource.anonymizationPseudonymization[0].mappingRules[0].setValues
+            resource.anonymizationPseudonymization.get_static_values()
         )
         contact = grippeweb_merged_contact_point_id_by_email[
-            resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
+            resource.contact.get_mappable_values()[0]
         ]
         contributing_unit = get_unit_merged_id_by_synonym(
-            resource.contributingUnit[0].mappingRules[0].forValues[0]  # type: ignore[index]
+            resource.contributingUnit.get_mappable_values()[0]
         )
         contributor = [
             person_id
-            for name in (resource.contributor[0].mappingRules[0].forValues or [])
+            for name in resource.contributor.get_mappable_values()
             if (person_id := grippeweb_extracted_persons.get(name))
         ]
-        description = resource.description[0].mappingRules[0].setValues
-        documentation = resource.documentation[0].mappingRules[0].setValues
+        description = resource.description.get_static_values()
+        documentation = resource.documentation.get_static_values()
         external_partner_identifier = get_or_create_external_partner(
             resource,
             grippeweb_merged_organization_ids_by_query_str,
         )
 
-        has_legal_basis = resource.hasLegalBasis[0].mappingRules[0].setValues
-        has_personal_data = resource.hasPersonalData[0].mappingRules[0].setValues
-        has_purpose_description = (
-            resource.hasPurposeDescription[0].mappingRules[0].setValues
-        )
-        has_code_values = resource.hasCodeValues[0].mappingRules[0].setValues
-        identifier_in_primary_source_mapping_rules = resource.identifierInPrimarySource[
-            0
-        ].mappingRules[0]
-        if set_values := identifier_in_primary_source_mapping_rules.setValues:
-            identifier_in_primary_source = set_values
-        else:
-            identifier_in_primary_source = (
-                identifier_in_primary_source_mapping_rules.forValues[0]  # type: ignore[index]
-            )
-        keyword = resource.keyword[0].mappingRules[0].setValues
-        language = resource.language[0].mappingRules[0].setValues
-        mesh_id = resource.meshId[0].mappingRules[0].setValues
-        method = resource.method[0].mappingRules[0].setValues
-        method_description = resource.methodDescription[0].mappingRules[0].setValues
-        min_typical_age = resource.minTypicalAge[0].mappingRules[0].setValues
-        population_coverage = resource.populationCoverage[0].mappingRules[0].setValues
-        publisher = grippeweb_merged_organization_ids_by_query_str.get(
-            resource.publisher[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        has_legal_basis = resource.hasLegalBasis.get_static_values()
+        has_personal_data = resource.hasPersonalData.get_static_values()
+        has_purpose_description = resource.hasPurposeDescription.get_static_values()
+        has_code_values = resource.hasCodeValues.get_static_values()
+        identifier_in_primary_source = (
+            resource.identifierInPrimarySource.get_static_values()
+            or resource.identifierInPrimarySource.get_mappable_values()[0]
         )
 
-        resource_creation_method = (
-            resource.resourceCreationMethod[0].mappingRules[0].setValues
+        keyword = resource.keyword.get_static_values()
+        language = resource.language.get_static_values()
+        mesh_id = resource.meshId.get_static_values()
+        method = resource.method.get_static_values()
+        method_description = resource.methodDescription.get_static_values()
+        min_typical_age = resource.minTypicalAge.get_static_values()
+        population_coverage = resource.populationCoverage.get_static_values()
+        publisher = grippeweb_merged_organization_ids_by_query_str.get(
+            resource.publisher.get_mappable_values()[0]
         )
-        resource_type_general = (
-            resource.resourceTypeGeneral[0].mappingRules[0].setValues
-        )
-        resource_type_specific = (
-            resource.resourceTypeSpecific[0].mappingRules[0].setValues
-        )
-        rights = resource.rights[0].mappingRules[0].setValues
-        spatial = resource.spatial[0].mappingRules[0].setValues
-        start = resource.start[0].mappingRules[0].setValues
-        state_of_data_processing = (
-            resource.stateOfDataProcessing[0].mappingRules[0].setValues
-        )
-        theme = resource.theme[0].mappingRules[0].setValues
-        title = resource.title[0].mappingRules[0].setValues
+
+        resource_creation_method = resource.resourceCreationMethod.get_static_values()
+        resource_type_general = resource.resourceTypeGeneral.get_static_values()
+        resource_type_specific = resource.resourceTypeSpecific.get_static_values()
+        rights = resource.rights.get_static_values()
+        spatial = resource.spatial.get_static_values()
+        start = resource.start.get_static_values()
+        state_of_data_processing = resource.stateOfDataProcessing.get_static_values()
+        theme = resource.theme.get_static_values()
+        title = resource.title.get_static_values()
         unit_in_charge = get_unit_merged_id_by_synonym(
-            resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
+            resource.unitInCharge.get_mappable_values()[0]
         )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
@@ -209,7 +195,7 @@ def get_or_create_external_partner(
         dict extracted grippeweb resource by identifier in primary source
     """
     if external_partner_dict := resource.externalPartner:
-        external_partner_string = external_partner_dict[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        external_partner_string = external_partner_dict.get_mappable_values()[0]
         if external_partner_string in resource.model_fields:
             external_partner_identifier = [
                 grippeweb_merged_organization_ids_by_query_str[external_partner_string]
@@ -240,23 +226,21 @@ def transform_grippeweb_access_platform_to_extracted_access_platform(
         ExtractedAccessPlatform grippeweb
     """
     identifier_in_primary_source = (
-        grippeweb_access_platform.identifierInPrimarySource[0].mappingRules[0].setValues
+        grippeweb_access_platform.identifierInPrimarySource.get_static_values()
     )
 
     contact = [
         grippeweb_extracted_persons[email]
-        for email in (
-            grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
-        )
+        for email in grippeweb_access_platform.contact.get_mappable_values()
     ]
 
     technical_accessibility = (
-        grippeweb_access_platform.technicalAccessibility[0].mappingRules[0].setValues
+        grippeweb_access_platform.technicalAccessibility.get_static_values()
     )
-    title = grippeweb_access_platform.title[0].mappingRules[0].setValues
+    title = grippeweb_access_platform.title.get_static_values()
 
     unit_in_charge = get_unit_merged_id_by_synonym(
-        grippeweb_access_platform.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        grippeweb_access_platform.unitInCharge.get_mappable_values()[0]
     )
 
     return ExtractedAccessPlatform(
@@ -284,16 +268,12 @@ def transform_grippeweb_variable_group_to_extracted_variable_groups(
     Returns:
         list of extracted variable groups
     """
-    label_by_table_name = {
-        mapping_rule.forValues[0]: mapping_rule.setValues  # type: ignore[index]
-        for mapping_rule in grippeweb_variable_group.label[0].mappingRules
-    }
     return [
         ExtractedVariableGroup(
             containedBy=grippeweb_extracted_parent_resource.stableTargetId,
             hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             identifierInPrimarySource=table_name,
-            label=label_by_table_name[table_name],
+            label=grippeweb_variable_group.label.get_mapped_values(table_name),
         )
         for table_name in grippeweb_columns
     ]

@@ -130,8 +130,8 @@ def extract_ldap_actors_by_mail(
         LDAP actors by mail
     """
     connector = LDAPConnector.get()
-    mail_list = igs_resource_mapping.contact[0].mappingRules[0].forValues or []
-    if ac_contact := igs_access_platform_mapping.contact[0].mappingRules[0].forValues:
+    mail_list = igs_resource_mapping.contact.get_mappable_values()
+    if ac_contact := igs_access_platform_mapping.contact.get_mappable_values():
         mail_list.extend(ac_contact)
 
     return {mail: connector.get_functional_account(mail=mail) for mail in mail_list}

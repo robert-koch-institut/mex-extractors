@@ -52,11 +52,9 @@ def transform_seq_repo_resource_to_extracted_resource_series(
         list of ExtractedResourceSeries
     """
     access_platform = extracted_access_platform.stableTargetId
-    description_template = (
-        resource_series_mapping.description[0].mappingRules[0].setValues
-    )
+    description_template = resource_series_mapping.description.get_static_values()
     had_primary_source = get_extracted_primary_source_id_by_name("seq-repo")
-    base_keywords = resource_series_mapping.keyword[0].mappingRules[0].setValues
+    base_keywords = resource_series_mapping.keyword.get_static_values()
     publisher = extracted_organization_rki.stableTargetId
 
     if not description_template:
@@ -160,30 +158,24 @@ def transform_seq_repo_resource_to_extracted_resource(
         list of ExtractedResource
     """
     # Resource values from mapping
-    access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
-    accrual_periodicity = (
-        resource_mapping.accrualPeriodicity[0].mappingRules[0].setValues
-    )
+    access_restriction = resource_mapping.accessRestriction.get_static_values()
+    accrual_periodicity = resource_mapping.accrualPeriodicity.get_static_values()
     anonymization_pseudonymization = (
-        resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
+        resource_mapping.anonymizationPseudonymization.get_static_values()
     )
-    description = resource_mapping.description[0].mappingRules[0].setValues
-    health_category = resource_mapping.healthCategory[0].mappingRules[0].setValues
+    description = resource_mapping.description.get_static_values()
+    health_category = resource_mapping.healthCategory.get_static_values()
     resource_creation_method = (
-        resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
+        resource_mapping.resourceCreationMethod.get_static_values()
     )
-    resource_type_general = (
-        resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
-    )
-    resource_type_specific = (
-        resource_mapping.resourceTypeSpecific[0].mappingRules[0].setValues
-    )
-    rights = resource_mapping.rights[0].mappingRules[0].setValues
+    resource_type_general = resource_mapping.resourceTypeGeneral.get_static_values()
+    resource_type_specific = resource_mapping.resourceTypeSpecific.get_static_values()
+    rights = resource_mapping.rights.get_static_values()
     state_of_data_processing = (
-        resource_mapping.stateOfDataProcessing[0].mappingRules[0].setValues
+        resource_mapping.stateOfDataProcessing.get_static_values()
     )
-    theme = resource_mapping.theme[0].mappingRules[0].setValues
-    shared_keyword = resource_mapping.keyword[0].mappingRules[0].setValues or []
+    theme = resource_mapping.theme.get_static_values()
+    shared_keyword = resource_mapping.keyword.get_static_values() or []
 
     extracted_resources = []
     sequence_dates_by_identifier_in_primary_source: dict[str, list[str]] = defaultdict(
@@ -282,23 +274,21 @@ def transform_seq_repo_access_platform_to_extracted_access_platform(
     Returns:
         ExtractedAccessPlatform
     """
-    alternative_title = (
-        access_platform_mapping.alternativeTitle[0].mappingRules[0].setValues
-    )
+    alternative_title = access_platform_mapping.alternativeTitle.get_static_values()
 
-    description = access_platform_mapping.description[0].mappingRules[0].setValues
-    endpoint_type = access_platform_mapping.endpointType[0].mappingRules[0].setValues
+    description = access_platform_mapping.description.get_static_values()
+    endpoint_type = access_platform_mapping.endpointType.get_static_values()
     identifier_in_primary_source = (
-        access_platform_mapping.identifierInPrimarySource[0].mappingRules[0].setValues
+        access_platform_mapping.identifierInPrimarySource.get_static_values()
     )
-    landing_page = access_platform_mapping.landingPage[0].mappingRules[0].setValues
+    landing_page = access_platform_mapping.landingPage.get_static_values()
 
     technical_accessibility = (
-        access_platform_mapping.technicalAccessibility[0].mappingRules[0].setValues
+        access_platform_mapping.technicalAccessibility.get_static_values()
     )
-    title = access_platform_mapping.title[0].mappingRules[0].setValues
+    title = access_platform_mapping.title.get_static_values()
 
-    contacts = access_platform_mapping.contact[0].mappingRules[0].forValues or []
+    contacts = access_platform_mapping.contact.get_mappable_values()
 
     resolved_organigram = [
         unit_id

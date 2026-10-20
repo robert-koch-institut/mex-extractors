@@ -47,43 +47,39 @@ def transform_odk_resources_to_mex_resources(
     for resource in odk_resource_mappings:
         alternative_title = None
         if rules := resource.alternativeTitle:
-            alternative_title = rules[0].mappingRules[0].setValues
+            alternative_title = rules.get_static_values()
         contributing_unit = None
         if resource.contributingUnit:
             contributing_unit = [
                 unit_id
-                for synonym in (
-                    resource.contributingUnit[0].mappingRules[0].forValues or []
-                )
+                for synonym in resource.contributingUnit.get_mappable_values()
                 if (unit_ids := get_unit_merged_id_by_synonym(synonym))
                 for unit_id in unit_ids
             ]
         description = None
         if resource.description:
-            description = resource.description[0].mappingRules[0].setValues
+            description = resource.description.get_static_values()
         has_legal_basis = (
-            resource.hasLegalBasis[0].mappingRules[0].setValues
-            if resource.hasLegalBasis
-            else []
+            resource.hasLegalBasis.get_static_values() if resource.hasLegalBasis else []
         )
         identifier_in_primary_source = (
-            resource.identifierInPrimarySource[0].mappingRules[0].setValues
+            resource.identifierInPrimarySource.get_static_values()
         )
         method_description = None
         if resource.methodDescription:
-            method_description = resource.methodDescription[0].mappingRules[0].setValues
+            method_description = resource.methodDescription.get_static_values()
         number_of_unique_individuals = None
         if resource.numberOfUniqueIndividuals:
             number_of_unique_individuals = (
-                resource.numberOfUniqueIndividuals[0].mappingRules[0].setValues
+                resource.numberOfUniqueIndividuals.get_static_values()
             )
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
-                resource.wasGeneratedBy[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                resource.wasGeneratedBy.get_mappable_values()[0]
             ]
         )
         external_partner: list[MergedOrganizationIdentifier] = []
-        for partner in resource.externalPartner[0].mappingRules[0].forValues or []:
+        for partner in resource.externalPartner.get_mappable_values():
             if partner in odk_merged_organization_ids_by_str:
                 external_partner.append(odk_merged_organization_ids_by_str[partner])
             else:
@@ -96,49 +92,41 @@ def transform_odk_resources_to_mex_resources(
                 external_partner.append(organization.stableTargetId)
         publisher = [
             partner
-            for name in (resource.publisher[0].mappingRules[0].forValues or [])
+            for name in resource.publisher.get_mappable_values()
             if (partner := odk_merged_organization_ids_by_str.get(name))  # type: ignore[assignment]
         ]
         resources_tuple[bool(resource.relatedResource)].append(
             ExtractedResource(
                 identifierInPrimarySource=identifier_in_primary_source,
-                accessRestriction=resource.accessRestriction[0]
-                .mappingRules[0]
-                .setValues,
+                accessRestriction=resource.accessRestriction.get_static_values(),
                 alternativeTitle=alternative_title,
                 contact=get_unit_merged_id_by_synonym(
-                    resource.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                    resource.contact.get_mappable_values()[0]
                 ),
                 contributingUnit=contributing_unit,
                 description=description,
-                end=resource.end[0].mappingRules[0].setValues,
+                end=resource.end.get_static_values(),
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("odk"),
                 hasLegalBasis=has_legal_basis,
-                healthCategory=resource.healthCategory[0].mappingRules[0].setValues,
-                keyword=resource.keyword[0].mappingRules[0].setValues,
-                language=resource.language[0].mappingRules[0].setValues,
-                meshId=resource.meshId[0].mappingRules[0].setValues,
-                method=resource.method[0].mappingRules[0].setValues,
+                healthCategory=resource.healthCategory.get_static_values(),
+                keyword=resource.keyword.get_static_values(),
+                language=resource.language.get_static_values(),
+                meshId=resource.meshId.get_static_values(),
+                method=resource.method.get_static_values(),
                 methodDescription=method_description,
                 numberOfUniqueIndividuals=number_of_unique_individuals,
                 publisher=publisher,
-                resourceCreationMethod=resource.resourceCreationMethod[0]
-                .mappingRules[0]
-                .setValues,
-                resourceTypeGeneral=resource.resourceTypeGeneral[0]
-                .mappingRules[0]
-                .setValues,
-                resourceTypeSpecific=resource.resourceTypeSpecific[0]
-                .mappingRules[0]
-                .setValues,
-                rights=resource.rights[0].mappingRules[0].setValues,
-                spatial=resource.spatial[0].mappingRules[0].setValues,
-                start=resource.start[0].mappingRules[0].setValues,
-                theme=resource.theme[0].mappingRules[0].setValues,
-                title=resource.title[0].mappingRules[0].setValues,
+                resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
+                resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
+                resourceTypeSpecific=resource.resourceTypeSpecific.get_static_values(),
+                rights=resource.rights.get_static_values(),
+                spatial=resource.spatial.get_static_values(),
+                start=resource.start.get_static_values(),
+                theme=resource.theme.get_static_values(),
+                title=resource.title.get_static_values(),
                 unitInCharge=get_unit_merged_id_by_synonym(
-                    resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
+                    resource.unitInCharge.get_mappable_values()[0]
                 ),
                 wasGeneratedBy=was_generated_by,
             )
@@ -196,6 +184,7 @@ def transform_odk_data_to_extracted_variables(
         for row_index, type_row in enumerate(file.type_survey):
             if is_invalid_odk_variable(type_row):
                 continue
+            # only the first rule (forValues without setValues) drops the data type
             if (
                 variable_mapping.dataType[0].mappingRules[0].forValues
                 and type_row in variable_mapping.dataType[0].mappingRules[0].forValues
