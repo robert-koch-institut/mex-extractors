@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
@@ -19,13 +19,13 @@ def test_parse_rows(monkeypatch: MonkeyPatch) -> None:
             (
                 1,
                 0,
-                datetime.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
+                dt.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
                 b"\x00\x00\x00\x00\x00\x0b\xf6p",
             ),
             (
                 1,
                 11,
-                datetime.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
+                dt.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
                 b"\x00\x00\x00\x00\x00\x0b\xf6q",
             ),
         ]
@@ -42,13 +42,13 @@ def test_parse_rows(monkeypatch: MonkeyPatch) -> None:
         {
             "IdSchema": 1,
             "IdType": 0,
-            "UpdatedAt": datetime.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
+            "UpdatedAt": dt.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
             "ts": b"\x00\x00\x00\x00\x00\x0b\xf6p",
         },
         {
             "IdSchema": 1,
             "IdType": 11,
-            "UpdatedAt": datetime.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
+            "UpdatedAt": dt.datetime(2015, 1, 12, 8, 24, 23, 413000),  # noqa: DTZ001
             "ts": b"\x00\x00\x00\x00\x00\x0b\xf6q",
         },
     ]
