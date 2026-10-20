@@ -45,34 +45,23 @@ def transform_odk_resources_to_mex_resources(
     }
     resources_tuple: tuple[list[ExtractedResource], list[ExtractedResource]] = ([], [])
     for resource in odk_resource_mappings:
-        alternative_title = None
-        if rules := resource.alternativeTitle:
-            alternative_title = rules.get_static_values()
-        contributing_unit = None
-        if resource.contributingUnit:
-            contributing_unit = [
-                unit_id
-                for synonym in resource.contributingUnit.get_mappable_values()
-                if (unit_ids := get_unit_merged_id_by_synonym(synonym))
-                for unit_id in unit_ids
-            ]
-        description = None
-        if resource.description:
-            description = resource.description.get_static_values()
-        has_legal_basis = (
-            resource.hasLegalBasis.get_static_values() if resource.hasLegalBasis else []
-        )
+        alternative_title = resource.alternativeTitle.get_static_values()
+        contributing_unit = [
+            unit_id
+            for synonym in resource.contributingUnit.get_mappable_values()
+            if (unit_ids := get_unit_merged_id_by_synonym(synonym))
+            for unit_id in unit_ids
+        ]
+        description = resource.description.get_static_values()
+        has_legal_basis = resource.hasLegalBasis.get_static_values()
         identifier_in_primary_source = (
             resource.identifierInPrimarySource.get_static_values()
         )
-        method_description = None
-        if resource.methodDescription:
-            method_description = resource.methodDescription.get_static_values()
-        number_of_unique_individuals = None
-        if resource.numberOfUniqueIndividuals:
-            number_of_unique_individuals = (
-                resource.numberOfUniqueIndividuals.get_static_values()
-            )
+        method_description = resource.methodDescription.get_static_values()
+        number_of_unique_individuals = (
+            resource.numberOfUniqueIndividuals.get_static_values()
+        )
+
         was_generated_by = (
             international_projects_stable_target_id_by_identifier_in_primary_source[
                 resource.wasGeneratedBy.get_mappable_values()[0]

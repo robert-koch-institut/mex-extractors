@@ -132,11 +132,14 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
             theme = resource_mapping.theme.get_static_values()
+        access_restrictions = resource_mapping.accessRestriction.get_mapped_values(
+            resource.zugriffsbeschraenkung
+        )
+        if not access_restrictions:
+            raise KeyError(resource.zugriffsbeschraenkung)
         resources.append(
             ExtractedResource(
-                accessRestriction=resource_mapping.accessRestriction.get_mapped_values(
-                    resource.zugriffsbeschraenkung
-                )[0],
+                accessRestriction=access_restrictions[0],
                 alternativeTitle=resource.alternativer_titel,
                 anonymizationPseudonymization=anonymization_pseudonymization,
                 conformsTo=conforms_to,

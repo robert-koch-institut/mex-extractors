@@ -47,27 +47,20 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         load_yaml(f"{settings.kvis.mapping_path}/resource.yaml")
     )
 
-    contact = (
-        [
-            get_ldap_merged_contact_id_by_mail(mail=c)
-            for c in mapping.contact.get_mappable_values()
-        ]
-        if mapping.contact.get_mappable_values()
-        else []
-    )
+    contact = [
+        get_ldap_merged_contact_id_by_mail(mail=c)
+        for c in mapping.contact.get_mappable_values()
+    ]
     contributing_unit = (
         get_unit_merged_id_by_synonym(mapping.contributingUnit.get_mappable_values()[0])
         if mapping.contributingUnit.get_mappable_values()
         else None
     )
-    contributor = (
-        [
-            get_ldap_merged_person_id_by_query(mail=c)
-            for c in mapping.contributor.get_mappable_values()
-        ]
-        if mapping.contributor.get_mappable_values()
-        else []
-    )
+    contributor = [
+        get_ldap_merged_person_id_by_query(mail=c)
+        for c in mapping.contributor.get_mappable_values()
+    ]
+
     external_partner = (
         [partner_id]
         if mapping.externalPartner.get_mappable_values()

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from mex.extractors.voxco.model import VoxcoVariable
 
 
-def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
+def transform_voxco_resource_mappings_to_extracted_resources(
     voxco_resource_mappings: list[ResourceMapping],
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -48,28 +48,19 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
     }
     for resource in voxco_resource_mappings:
         access_restriction = resource.accessRestriction.get_static_values()
-        if resource.anonymizationPseudonymization:
-            anonymization_pseudonymization = (
-                resource.anonymizationPseudonymization.get_static_values()
-            )
-        else:
-            anonymization_pseudonymization = None
-        if at := resource.alternativeTitle:
-            alternative_title = at.get_static_values()
-        else:
-            alternative_title = None
+        anonymization_pseudonymization = (
+            resource.anonymizationPseudonymization.get_static_values()
+        )
+        alternative_title = resource.alternativeTitle.get_static_values()
         if contact_values := resource.contact.get_mappable_values():
             contact = voxco_extracted_persons[contact_values[1]]
         else:
             contact = None
-        if description_top_level := resource.description:
-            description = description_top_level.get_static_values()
-        else:
-            description = None
+        description = resource.description.get_static_values()
 
-        if (ep := resource.externalPartner) and ep.get_mappable_values():
+        if external_partners := resource.externalPartner.get_mappable_values():
             external_partner = voxco_merged_organization_ids_by_query_string.get(
-                ep.get_mappable_values()[0]
+                external_partners[0]
             )
         else:
             external_partner = None
@@ -77,10 +68,7 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
         identifier_in_primary_source: str = (
             resource.identifierInPrimarySource.get_static_values()  # type: ignore[assignment]
         )
-        if keyword_top_level := resource.keyword:
-            keyword = keyword_top_level.get_static_values()
-        else:
-            keyword = None
+        keyword = resource.keyword.get_static_values()
         language = resource.language.get_static_values()
         mesh_id = resource.meshId.get_static_values()
         method = resource.method.get_static_values()
@@ -97,14 +85,15 @@ def transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0912
         unit_in_charge = get_unit_merged_id_by_synonym(
             resource.unitInCharge.get_mappable_values()[0]
         )
-        if wgb := resource.wasGeneratedBy:
+        if was_generated_by_ids := resource.wasGeneratedBy.get_mappable_values():
             was_generated_by = (
                 international_project_by_identifier_in_primary_source.get(
-                    wgb.get_mappable_values()[0]
+                    was_generated_by_ids[0]
                 )
             )
         else:
             was_generated_by = None
+
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             accessRestriction=access_restriction,
             anonymizationPseudonymization=anonymization_pseudonymization,

@@ -194,8 +194,9 @@ def get_or_create_external_partner(
     Returns:
         dict extracted grippeweb resource by identifier in primary source
     """
-    if external_partner_dict := resource.externalPartner:
-        external_partner_string = external_partner_dict.get_mappable_values()[0]
+    if external_partners := resource.externalPartner.get_mappable_values():
+        external_partner_string = external_partners[0]
+
         if external_partner_string in resource.model_fields:
             external_partner_identifier = [
                 grippeweb_merged_organization_ids_by_query_str[external_partner_string]

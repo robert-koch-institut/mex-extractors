@@ -93,8 +93,9 @@ def extract_grippeweb_organizations(
     """
     organization_by_name = {}
     for resource in grippeweb_resource_mappings:
-        if external_partner_dict := resource.externalPartner:
-            external_partner = external_partner_dict.get_mappable_values()[0]
+        if external_partners := resource.externalPartner.get_mappable_values():
+            external_partner = external_partners[0]
+
             if org := get_wikidata_extracted_organization_id_by_name(external_partner):
                 organization_by_name[external_partner] = org
         publisher_name = resource.publisher.get_mappable_values()[0]
