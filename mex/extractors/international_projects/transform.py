@@ -4,7 +4,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    MappingList,
+    MappingField,
 )
 from mex.common.types import (
     Link,
@@ -187,7 +187,7 @@ def transform_international_projects_sources_to_extracted_activities(
 
 
 def get_theme_for_activity_or_topic(
-    theme: MappingList[list[Theme]],
+    theme: list[MappingField[list[Theme]]],
     activity1: str | None,
     activity2: str | None,
     topic1: str | None,
@@ -205,11 +205,22 @@ def get_theme_for_activity_or_topic(
     Returns:
         Sorted list of Theme
     """
-    default_theme_from_mapping = cast("list[Theme]", theme.get_static_values())[0]
+    themes_dict_from_mapping: dict[str, Theme] = {}
+    default_theme_from_mapping = cast(
+        "list[Theme]",
+        theme[0].mappingRules[0].setValues,
+    )[0]
+
+    for theme_item in theme:
+        for mapping_rule in theme_item.mappingRules:
+            if mapping_rule.forValues and mapping_rule.setValues:
+                themes_dict_from_mapping.update(
+                    dict.fromkeys(mapping_rule.forValues, mapping_rule.setValues[0])
+                )
 
     def get_theme_or_default(key: str | None) -> Theme:
-        if key and (mapped_themes := theme.get_mapped_values(key)):
-            return mapped_themes[0]
+        if key and (theme := themes_dict_from_mapping.get(key)):
+            return theme
         return default_theme_from_mapping
 
     theme_set = set()

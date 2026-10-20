@@ -96,14 +96,14 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
     )
 
     return ExtractedResource(
-        accessRestriction=mapping.accessRestriction.get_static_values(),
-        accrualPeriodicity=mapping.accrualPeriodicity.get_static_values(),
-        alternativeTitle=mapping.alternativeTitle.get_static_values(),
+        accessRestriction=mapping.accessRestriction[0].mappingRules[0].setValues,
+        accrualPeriodicity=mapping.accrualPeriodicity[0].mappingRules[0].setValues,
+        alternativeTitle=mapping.alternativeTitle[0].mappingRules[0].setValues,
         contact=contact,
         contributingUnit=contributing_unit,
         contributor=contributor,
-        description=mapping.description.get_static_values(),
-        documentation=mapping.documentation.get_static_values(),
+        description=mapping.description[0].mappingRules[0].setValues,
+        documentation=mapping.documentation[0].mappingRules[0].setValues,
         externalPartner=external_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasCodingSystem=mapping.hasCodingSystem[0].mappingRules[0].setValues,
@@ -121,13 +121,15 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         populationCoverage=mapping.populationCoverage[0].mappingRules[0].setValues,
         provenance=mapping.provenance[0].mappingRules[0].setValues,
         publisher=[publisher],
-        resourceCreationMethod=mapping.resourceCreationMethod.get_static_values(),
-        resourceTypeGeneral=mapping.resourceTypeGeneral.get_static_values(),
-        resourceTypeSpecific=mapping.resourceTypeSpecific.get_static_values(),
-        spatial=mapping.spatial.get_static_values(),
-        start=mapping.start.get_static_values(),
-        theme=mapping.theme.get_static_values(),
-        title=mapping.title.get_static_values(),
+        resourceCreationMethod=mapping.resourceCreationMethod[0]
+        .mappingRules[0]
+        .setValues,
+        resourceTypeGeneral=mapping.resourceTypeGeneral[0].mappingRules[0].setValues,
+        resourceTypeSpecific=mapping.resourceTypeSpecific[0].mappingRules[0].setValues,
+        spatial=mapping.spatial[0].mappingRules[0].setValues,
+        start=mapping.start[0].mappingRules[0].setValues,
+        theme=mapping.theme[0].mappingRules[0].setValues,
+        title=mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,
     )
 

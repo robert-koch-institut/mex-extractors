@@ -70,7 +70,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         if rule.forValues and rule.rule
         for for_value in rule.forValues
     }
-    start = igs_resource_mapping.start.get_static_values()
+    start = igs_resource_mapping.start[0].mappingRules[0].setValues
     unit_in_charge = (
         get_unit_merged_id_by_synonym(for_value[0])
         if (for_value := igs_resource_mapping.unitInCharge[0].mappingRules[0].forValues)
@@ -83,11 +83,11 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         if rule.forValues and rule.setValues
     }
     default_keywords = cast(
-        "list[Text]", igs_resource_mapping.keyword.get_static_values()
+        "list[Text]", igs_resource_mapping.keyword[0].mappingRules[0].setValues
     )
-    health_category = igs_resource_mapping.healthCategory.get_static_values()
+    health_category = igs_resource_mapping.healthCategory[0].mappingRules[0].setValues
     quality_information_intro = (
-        igs_resource_mapping.qualityInformation.get_static_values()[0].value  # type: ignore[index]
+        igs_resource_mapping.qualityInformation[0].mappingRules[0].setValues[0].value  # type: ignore[index]
     )
     quality_information_values_by_field_in_primary_source = {
         field.fieldInPrimarySource: field.mappingRules[0]
@@ -95,6 +95,11 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         .value.split("[")[0]
         for field in igs_resource_mapping.qualityInformation[1:]
         if field.mappingRules[0].setValues
+    }
+    title_by_pathogen = {
+        rule.forValues[0]: rule.setValues
+        for rule in igs_resource_mapping.title[0].mappingRules
+        if rule.forValues and rule.setValues
     }
     extracted_resources_by_pathogen: dict[str, ExtractedResource] = {}
     for pathogen in pathogens:
@@ -127,18 +132,24 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             and (count := igs_endpoint_counts[f"pathogen_{pathogen}"]) != "0"
         ):
             size_of_databasis = f"Anzahl Proben: {count}"
-        title = igs_resource_mapping.title.get_mapped_values(
-            pathogen
-        ) or igs_resource_mapping.title.get_mapped_values("[*]")
+        title = title_by_pathogen.get(pathogen, title_by_pathogen["[*]"])
         extracted_resources_by_pathogen[pathogen] = ExtractedResource(
             accessPlatform=igs_extracted_access_platform.stableTargetId,
-            accessRestriction=igs_resource_mapping.accessRestriction.get_static_values(),
-            accrualPeriodicity=igs_resource_mapping.accrualPeriodicity.get_static_values(),
-            alternativeTitle=igs_resource_mapping.alternativeTitle.get_static_values(),
+            accessRestriction=igs_resource_mapping.accessRestriction[0]
+            .mappingRules[0]
+            .setValues,
+            accrualPeriodicity=igs_resource_mapping.accrualPeriodicity[0]
+            .mappingRules[0]
+            .setValues,
+            alternativeTitle=igs_resource_mapping.alternativeTitle[0]
+            .mappingRules[0]
+            .setValues,
             contact=contact,
             contributingUnit=contributing_units,
-            description=igs_resource_mapping.description.get_static_values(),
-            documentation=igs_resource_mapping.documentation.get_static_values(),
+            description=igs_resource_mapping.description[0].mappingRules[0].setValues,
+            documentation=igs_resource_mapping.documentation[0]
+            .mappingRules[0]
+            .setValues,
             hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
             hasLegalBasis=igs_resource_mapping.hasLegalBasis[0]
             .mappingRules[0]
@@ -149,11 +160,13 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
-            language=igs_resource_mapping.language.get_static_values(),
-            meshId=igs_resource_mapping.meshId.get_static_values(),
-            method=igs_resource_mapping.method.get_static_values(),
-            populationCoverage=igs_resource_mapping.populationCoverage.get_static_values(),
-            provenance=igs_resource_mapping.provenance.get_static_values(),
+            language=igs_resource_mapping.language[0].mappingRules[0].setValues,
+            meshId=igs_resource_mapping.meshId[0].mappingRules[0].setValues,
+            method=igs_resource_mapping.method[0].mappingRules[0].setValues,
+            populationCoverage=igs_resource_mapping.populationCoverage[0]
+            .mappingRules[0]
+            .setValues,
+            provenance=igs_resource_mapping.provenance[0].mappingRules[0].setValues,
             publisher=extracted_organization_rki.stableTargetId,
             qualityInformation=quality_information,
             relatedResource=related_resource,
@@ -170,7 +183,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
             sizeOfDataBasis=size_of_databasis,
             start=start,
-            theme=igs_resource_mapping.theme.get_static_values(),
+            theme=igs_resource_mapping.theme[0].mappingRules[0].setValues,
             title=title,
             unitInCharge=unit_in_charge,
         )
@@ -200,16 +213,32 @@ def transform_igs_access_platform(
     )
     unit_in_charge = get_unit_merged_id_by_synonym(unit_string[0])
     return ExtractedAccessPlatform(
-        endpointDescription=igs_access_platform_mapping.endpointDescription.get_static_values(),
-        endpointType=igs_access_platform_mapping.endpointType.get_static_values(),
-        endpointURL=igs_access_platform_mapping.endpointURL.get_static_values(),
+        endpointDescription=igs_access_platform_mapping.endpointDescription[0]
+        .mappingRules[0]
+        .setValues,
+        endpointType=igs_access_platform_mapping.endpointType[0]
+        .mappingRules[0]
+        .setValues,
+        endpointURL=igs_access_platform_mapping.endpointURL[0]
+        .mappingRules[0]
+        .setValues,
         contact=contact,
-        description=igs_access_platform_mapping.description.get_static_values(),
+        description=igs_access_platform_mapping.description[0]
+        .mappingRules[0]
+        .setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
-        identifierInPrimarySource=igs_access_platform_mapping.identifierInPrimarySource.get_static_values(),
-        landingPage=igs_access_platform_mapping.landingPage.get_static_values(),
-        technicalAccessibility=igs_access_platform_mapping.technicalAccessibility.get_static_values(),
-        title=igs_access_platform_mapping.title.get_static_values(),
+        identifierInPrimarySource=igs_access_platform_mapping.identifierInPrimarySource[
+            0
+        ]
+        .mappingRules[0]
+        .setValues,
+        landingPage=igs_access_platform_mapping.landingPage[0]
+        .mappingRules[0]
+        .setValues,
+        technicalAccessibility=igs_access_platform_mapping.technicalAccessibility[0]
+        .mappingRules[0]
+        .setValues,
+        title=igs_access_platform_mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,
     )
 

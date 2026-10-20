@@ -42,25 +42,35 @@ def transform_resource_parent_to_mex_resource(
         resource parent transformed to ExtractedResource
     """
     return ExtractedResource(
-        accessRestriction=resource_parent.accessRestriction.get_static_values(),
-        accrualPeriodicity=resource_parent.accrualPeriodicity.get_static_values(),
-        alternativeTitle=resource_parent.alternativeTitle.get_static_values(),
+        accessRestriction=resource_parent.accessRestriction[0]
+        .mappingRules[0]
+        .setValues,
+        accrualPeriodicity=resource_parent.accrualPeriodicity[0]
+        .mappingRules[0]
+        .setValues,
+        alternativeTitle=resource_parent.alternativeTitle[0].mappingRules[0].setValues,
         contact=get_unit_merged_id_by_synonym(
             resource_parent.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ),
-        description=resource_parent.description.get_static_values(),
+        description=resource_parent.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
-        hasLegalBasis=resource_parent.hasLegalBasis.get_static_values(),
-        hasPersonalData=resource_parent.hasPersonalData.get_static_values(),
-        identifierInPrimarySource=resource_parent.identifierInPrimarySource.get_static_values(),
-        keyword=resource_parent.keyword.get_static_values(),
-        language=resource_parent.language.get_static_values(),
-        resourceCreationMethod=resource_parent.resourceCreationMethod.get_static_values(),
-        resourceTypeGeneral=resource_parent.resourceTypeGeneral.get_static_values(),
-        rights=resource_parent.rights.get_static_values(),
-        spatial=resource_parent.spatial.get_static_values(),
-        theme=resource_parent.theme.get_static_values(),
-        title=resource_parent.title.get_static_values(),
+        hasLegalBasis=resource_parent.hasLegalBasis[0].mappingRules[0].setValues,
+        hasPersonalData=resource_parent.hasPersonalData[0].mappingRules[0].setValues,
+        identifierInPrimarySource=resource_parent.identifierInPrimarySource[0]
+        .mappingRules[0]
+        .setValues,
+        keyword=resource_parent.keyword[0].mappingRules[0].setValues,
+        language=resource_parent.language[0].mappingRules[0].setValues,
+        resourceCreationMethod=resource_parent.resourceCreationMethod[0]
+        .mappingRules[0]
+        .setValues,
+        resourceTypeGeneral=resource_parent.resourceTypeGeneral[0]
+        .mappingRules[0]
+        .setValues,
+        rights=resource_parent.rights[0].mappingRules[0].setValues,
+        spatial=resource_parent.spatial[0].mappingRules[0].setValues,
+        theme=resource_parent.theme[0].mappingRules[0].setValues,
+        title=resource_parent.title[0].mappingRules[0].setValues,
         unitInCharge=get_unit_merged_id_by_synonym(
             resource_parent.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ),
@@ -91,7 +101,7 @@ def transform_resource_state_to_mex_resource(
         value.forValues[0]: value.setValues  # type: ignore[index]
         for value in resource_state.documentation[0].mappingRules
     }
-    keyword = resource_state.keyword.get_static_values()
+    keyword = resource_state.keyword[0].mappingRules[0].setValues
     spatial_by_bundesland_id = None
     if resource_state.spatial:
         spatial_by_bundesland_id = {
@@ -121,24 +131,34 @@ def transform_resource_state_to_mex_resource(
         documentation = documentation_by_bundesland_id.get(id_bundesland, [])
         mex_resource_state.append(
             ExtractedResource(
-                accessRestriction=resource_state.accessRestriction.get_static_values(),
-                accrualPeriodicity=resource_state.accrualPeriodicity.get_static_values(),
+                accessRestriction=resource_state.accessRestriction[0]
+                .mappingRules[0]
+                .setValues,
+                accrualPeriodicity=resource_state.accrualPeriodicity[0]
+                .mappingRules[0]
+                .setValues,
                 alternativeTitle=bundesland_meldedaten,
                 contact=contact,
-                description=resource_state.description.get_static_values(),
+                description=resource_state.description[0].mappingRules[0].setValues,
                 documentation=documentation,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
-                hasLegalBasis=resource_state.hasLegalBasis.get_static_values(),
-                hasPersonalData=resource_state.hasPersonalData.get_static_values(),
+                hasLegalBasis=resource_state.hasLegalBasis[0].mappingRules[0].setValues,
+                hasPersonalData=resource_state.hasPersonalData[0]
+                .mappingRules[0]
+                .setValues,
                 identifierInPrimarySource=id_bundesland,
                 keyword=keyword,
-                language=resource_state.language.get_static_values(),
+                language=resource_state.language[0].mappingRules[0].setValues,
                 relatedResource=ifsg_extracted_resource_parent.stableTargetId,
-                resourceCreationMethod=resource_state.resourceCreationMethod.get_static_values(),
-                resourceTypeGeneral=resource_state.resourceTypeGeneral.get_static_values(),
-                rights=resource_state.rights.get_static_values(),
+                resourceCreationMethod=resource_state.resourceCreationMethod[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeGeneral=resource_state.resourceTypeGeneral[0]
+                .mappingRules[0]
+                .setValues,
+                rights=resource_state.rights[0].mappingRules[0].setValues,
                 spatial=spatial,
-                theme=resource_state.theme.get_static_values(),
+                theme=resource_state.theme[0].mappingRules[0].setValues,
                 title=title_by_bundesland_id[id_bundesland],
                 unitInCharge=unit_in_charge,
             )
@@ -283,23 +303,27 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
 
     spatial: list[Text] = []
     if meta_disease_row.ifsg_bundesland == 0:
-        spatial = resource_disease.spatial.get_static_values()  # type: ignore[assignment]
+        spatial = resource_disease.spatial[0].mappingRules[0].setValues  # type: ignore[assignment]
     elif meta_disease_row.ifsg_bundesland == 1 and meta_disease_row.in_bundesland:
         for bundesland_id in meta_disease_row.in_bundesland.split(","):
             if bundesland_id in bundesland_by_in_bundesland:
                 spatial.append(bundesland_by_in_bundesland[bundesland_id])
 
     return ExtractedResource(
-        accessRestriction=resource_disease.accessRestriction.get_static_values(),
-        accrualPeriodicity=resource_disease.accrualPeriodicity.get_static_values(),
+        accessRestriction=resource_disease.accessRestriction[0]
+        .mappingRules[0]
+        .setValues,
+        accrualPeriodicity=resource_disease.accrualPeriodicity[0]
+        .mappingRules[0]
+        .setValues,
         alternativeTitle=code_by_id_type[meta_disease_row.id_type],
         contact=get_unit_merged_id_by_synonym(
             resource_disease.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ),
-        description=resource_disease.description.get_static_values(),
+        description=resource_disease.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
-        hasLegalBasis=resource_disease.hasLegalBasis.get_static_values(),
-        hasPersonalData=resource_disease.hasPersonalData.get_static_values(),
+        hasLegalBasis=resource_disease.hasLegalBasis[0].mappingRules[0].setValues,
+        hasPersonalData=resource_disease.hasPersonalData[0].mappingRules[0].setValues,
         hasCodeValues=[hcv for hcv in has_code_values if hcv],
         hasCodingSystem=resource_disease.hasCodingSystem[0].mappingRules[0].setValues,
         identifierInPrimarySource=(
@@ -307,14 +331,18 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
         ),
         instrumentToolOrApparatus=instrument_tool_or_apparatus,
         keyword=keyword,
-        language=resource_disease.language.get_static_values(),
+        language=resource_disease.language[0].mappingRules[0].setValues,
         publisher=extracted_organization_rki.stableTargetId,
         relatedResource=related_resource,
-        resourceCreationMethod=resource_disease.resourceCreationMethod.get_static_values(),
-        resourceTypeGeneral=resource_disease.resourceTypeGeneral.get_static_values(),
-        rights=resource_disease.rights.get_static_values(),
+        resourceCreationMethod=resource_disease.resourceCreationMethod[0]
+        .mappingRules[0]
+        .setValues,
+        resourceTypeGeneral=resource_disease.resourceTypeGeneral[0]
+        .mappingRules[0]
+        .setValues,
+        rights=resource_disease.rights[0].mappingRules[0].setValues,
         spatial=spatial,
-        theme=resource_disease.theme.get_static_values(),
+        theme=resource_disease.theme[0].mappingRules[0].setValues,
         title=f"Meldedaten nach Infektionsschutzgesetz (IfSG) zu {name} "
         f"(SurvNet Schema {meta_disease_row.id_schema})",
         unitInCharge=get_unit_merged_id_by_synonym(

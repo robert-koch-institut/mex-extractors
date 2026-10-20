@@ -71,7 +71,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             if resource.anonymisiert_pseudonymisiert
             else None
         )
-        conforms_to = resource_mapping.conformsTo.get_static_values()
+        conforms_to = resource_mapping.conformsTo[0].mappingRules[0].setValues
         contributing_unit = (
             get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := resource.mitwirkende_fachabteilung)
@@ -121,15 +121,17 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
-        resource_type_general = (
-            resource_mapping.resourceTypeGeneral.get_mapped_values(
-                resource.ressourcentyp_allgemein
+        if resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues and (
+            resource.ressourcentyp_allgemein
+            in resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues
+        ):
+            resource_type_general = (
+                resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
             )
-            if resource.ressourcentyp_allgemein
-            else None
-        ) or []
+        else:
+            resource_type_general = []
         resource_creation_method = (
-            resource_mapping.resourceCreationMethod.get_static_values()
+            resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
         )
         if resource.zeitlicher_bezug and "bis" in resource.zeitlicher_bezug[0]:
             start_end = resource.zeitlicher_bezug[0].split("bis")
@@ -144,12 +146,12 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         ):
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
-            theme = resource_mapping.theme.get_static_values()
+            theme = resource_mapping.theme[0].mappingRules[0].setValues
         resources.append(
             ExtractedResource(
-                accessRestriction=resource_mapping.accessRestriction.get_mapped_values(
+                accessRestriction=access_restriction_by_zugriffsbeschraenkung[
                     resource.zugriffsbeschraenkung
-                ),
+                ],
                 alternativeTitle=resource.alternativer_titel,
                 anonymizationPseudonymization=anonymization_pseudonymization,
                 conformsTo=conforms_to,

@@ -68,18 +68,22 @@ def transform_synopse_studies_into_access_platforms(
     ):
         unit_in_charge = get_unit_merged_id_by_synonym(unit_in_charge_synonym[0])
     return ExtractedAccessPlatform(
-        alternativeTitle=access_platform_mapping.alternativeTitle.get_static_values(),
+        alternativeTitle=access_platform_mapping.alternativeTitle[0]
+        .mappingRules[0]
+        .setValues,
         contact=synopse_merged_contact_point_ids_by_query_string[
             access_platform_mapping.contact[0].mappingRules[0].forValues[0]  # type: ignore[index]
         ],
-        description=access_platform_mapping.description.get_static_values(),
+        description=access_platform_mapping.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
-        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values()[
-            0
-        ],  # type: ignore[index]
-        landingPage=access_platform_mapping.landingPage.get_static_values(),
-        technicalAccessibility=access_platform_mapping.technicalAccessibility.get_static_values(),
-        title=access_platform_mapping.title.get_static_values(),
+        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource[0]
+        .mappingRules[0]
+        .setValues[0],  # type: ignore[index]
+        landingPage=access_platform_mapping.landingPage[0].mappingRules[0].setValues,
+        technicalAccessibility=access_platform_mapping.technicalAccessibility[0]
+        .mappingRules[0]
+        .setValues,
+        title=access_platform_mapping.title[0].mappingRules[0].setValues,
         unitInCharge=unit_in_charge,
     )
 
@@ -335,6 +339,12 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     Returns:
         list for extracted resources
     """
+    access_restriction_by_zugangsbeschraenkung = {
+        for_value: rule.setValues
+        for rule in synopse_resource.accessRestriction[0].mappingRules
+        if rule.forValues
+        for for_value in rule.forValues
+    }
     extracted_activities_by_study_ids = {
         a.identifierInPrimarySource: a for a in extracted_activities
     }
@@ -344,6 +354,10 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     description_by_study_id: dict[str, str | None] = {}
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
     title_by_study_id: dict[str, Text] = {}
+    rights_by_dstyp_id = {
+        rule.forValues[0]: rule.setValues  # type: ignore[index]
+        for rule in synopse_resource.rights[0].mappingRules
+    }
     extracted_resources: list[ExtractedResource] = []
     for study in synopse_studies:
         if study.studien_id in synopse_projects_by_study_ids:
@@ -356,10 +370,13 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             in synopse_resource.accessPlatform[0].mappingRules[0].forValues
         ):
             access_platform.append(synopse_access_platform_id)
-        access_restriction = synopse_resource.accessRestriction.get_mapped_values(
-            study.zugangsbeschraenkung.split(":")[0]
-        )
-        if not access_restriction:
+        if (
+            zugangsbeschraenkung := study.zugangsbeschraenkung.split(":")[0]
+        ) and zugangsbeschraenkung in access_restriction_by_zugangsbeschraenkung:
+            access_restriction = access_restriction_by_zugangsbeschraenkung[
+                zugangsbeschraenkung
+            ]
+        else:
             continue
         contact: list[
             MergedOrganizationalUnitIdentifier
@@ -440,12 +457,14 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if project.studien_art_typ
             else []
         )
-        rights = synopse_resource.rights.get_mapped_values(str(study.dstyp_id))
+        rights = rights_by_dstyp_id[str(study.dstyp_id)]
         start = TemporalEntity(study.feldstart) if study.feldstart else None
 
         theme = (
-            synopse_resource.theme.get_mapped_values(study.studien_id)
-            or synopse_resource.theme.get_static_values()
+            synopse_resource.theme[0].mappingRules[0].setValues
+            if study.studien_id
+            in (synopse_resource.theme[0].mappingRules[0].forValues or ())
+            else synopse_resource.theme[0].mappingRules[1].setValues
         )
         unit_in_charge = get_unit_merged_id_by_synonym(project.verantwortliche_oe)
         if not unit_in_charge:
@@ -471,15 +490,19 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                     study.studien_id
                 ],
                 keyword=keyword,
-                language=synopse_resource.language.get_static_values(),
+                language=synopse_resource.language[0].mappingRules[0].setValues,
                 maxTypicalAge=study.typisches_alter_max,
                 minTypicalAge=study.typisches_alter_min,
                 modified=modified,
                 populationCoverage=population_coverage,
                 provenance=provenance,
                 publisher=[extracted_organization.stableTargetId],
-                resourceCreationMethod=synopse_resource.resourceCreationMethod.get_static_values(),
-                resourceTypeGeneral=synopse_resource.resourceTypeGeneral.get_static_values(),
+                resourceCreationMethod=synopse_resource.resourceCreationMethod[0]
+                .mappingRules[0]
+                .setValues,
+                resourceTypeGeneral=synopse_resource.resourceTypeGeneral[0]
+                .mappingRules[0]
+                .setValues,
                 resourceTypeSpecific=resource_type_specific,
                 rights=rights,
                 spatial=study.raeumlicher_bezug,
@@ -665,12 +688,14 @@ def transform_synopse_project_to_activity(  # noqa: C901, PLR0912
             contributor_merged_ids_by_name.get(synopse_project.beitragende) or []
         )
     theme = (
-        synopse_activity.theme.get_mapped_values(synopse_project.studien_id)
-        or synopse_activity.theme.get_static_values()
+        synopse_activity.theme[0].mappingRules[0].setValues
+        if synopse_project.studien_id
+        in (synopse_activity.theme[0].mappingRules[0].forValues or ())
+        else synopse_activity.theme[0].mappingRules[1].setValues
     )
     return ExtractedActivity(
         abstract=synopse_project.beschreibung_studie,
-        activityType=synopse_activity.activityType.get_static_values(),
+        activityType=synopse_activity.activityType[0].mappingRules[0].setValues,
         contact=contact,
         documentation=documentation,
         end=(

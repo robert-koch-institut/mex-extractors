@@ -242,11 +242,17 @@ def transform_open_data_distributions(
         List of ExtractedDistribution instances
     """
     extracted_distributions = []
-    access_restriction = distribution_mapping.accessRestriction.get_static_values()
+    access_restriction = (
+        distribution_mapping.accessRestriction[0].mappingRules[0].setValues
+    )
     for resource in open_data_parent_resources:
         access_url = Link(url=f"https://doi.org/{resource.conceptdoi}")
-        ccby_license = distribution_mapping.license.get_mapped_values(
-            str(resource.metadata.license.id)
+        ccby_license = (
+            distribution_mapping.license[0].mappingRules[0].setValues
+            if distribution_mapping.license[0].mappingRules[0].forValues
+            and str(resource.metadata.license.id)
+            in distribution_mapping.license[0].mappingRules[0].forValues
+            else None
         )
         for file in extract_files_for_parent_resource(resource.id):
             download_url = Link(url=file.links.self)
@@ -310,9 +316,9 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         p.fullName[0]: get_only_child_units(p.memberOf, extracted_organizational_units)
         for p in open_data_extracted_persons
     }
-    access_restriction = resource_mapping.accessRestriction.get_static_values()
+    access_restriction = resource_mapping.accessRestriction[0].mappingRules[0].setValues
     anonymization_pseudonymization = (
-        resource_mapping.anonymizationPseudonymization.get_static_values()
+        resource_mapping.anonymizationPseudonymization[0].mappingRules[0].setValues
     )
     contact_open_data = [
         contact.stableTargetId for contact in open_data_extracted_contact_points
@@ -321,8 +327,13 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         distribution.identifierInPrimarySource: distribution.stableTargetId
         for distribution in open_data_distribution
     }
-    has_personal_data = resource_mapping.hasPersonalData.get_static_values()
-    theme = resource_mapping.theme.get_static_values()
+    has_personal_data = resource_mapping.hasPersonalData[0].mappingRules[0].setValues
+    resource_type_general_lookup = {
+        rule.forValues[0]: rule.setValues
+        for rule in resource_mapping.resourceTypeGeneral[0].mappingRules
+        if rule.forValues
+    }
+    theme = resource_mapping.theme[0].mappingRules[0].setValues
     language_by_keyword = {
         rule.forValues[0]: rule.setValues[0]
         for rule in resource_mapping.language[0].mappingRules
@@ -377,8 +388,12 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
             if resource.metadata.language
             else None
         )
-        ccby_license = resource_mapping.license.get_mapped_values(
-            str(resource.metadata.license.id)
+        ccby_license = (
+            resource_mapping.license[0].mappingRules[0].setValues
+            if resource_mapping.license[0].mappingRules[0].forValues
+            and str(resource.metadata.license.id)
+            in resource_mapping.license[0].mappingRules[0].forValues
+            else None
         )
         contributing_unit = (
             get_unit_merged_id_by_synonym(
