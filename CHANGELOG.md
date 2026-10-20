@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
 - upgrade mex-backend to 4.6.2
+- upgrade ruff to 0.17
 
 ### Deprecated
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - datscha_web transform crashing on items without `Auskunftsperson`
 - dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
+- publisher uses `REQUIRED_FIELDS_BY_CLASS_NAME` instead of `is_required()`
 - use concrete enums instead of string values in test assertions to reduce false diffs
   in test failure summaries
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers

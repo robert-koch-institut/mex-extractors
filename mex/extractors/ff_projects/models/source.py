@@ -1,7 +1,10 @@
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
-from mex.common.types import TemporalEntity
+from mex.common.types import TemporalEntity  # noqa: TC001
 from mex.extractors.models import BaseRawData
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class FFProjectsSource(BaseRawData):

@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import json
 import shutil
 import subprocess
@@ -18,7 +18,7 @@ def system_fetch_old_dagster_run_ids() -> list[str]:
     instance = DagsterInstance.get()
     settings = ExtractorsSettings.get()
     # calculate the date threshold
-    cutoff_date = datetime.datetime.now(tz=UTC) - datetime.timedelta(
+    cutoff_date = dt.datetime.now(tz=UTC) - dt.timedelta(
         days=settings.system.max_run_age_in_days
     )
 
