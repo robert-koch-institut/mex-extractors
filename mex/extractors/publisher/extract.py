@@ -34,7 +34,7 @@ def get_publishable_merged_item(
         identifier: Identifier of merged item of any entity Type
 
     Returns:
-        the merged item of the identitifer
+        the merged item of the identifier
 
     Raises:
         MExError if not exactly one item is found.

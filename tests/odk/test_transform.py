@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
@@ -38,13 +38,21 @@ def test_transform_odk_resources_to_mex_resources(
             international_projects_extracted_activities,
         )
     ).stableTargetId
+    created_partners = {
+        name: ExtractedOrganization(
+            identifierInPrimarySource=name,
+            officialName=name,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("mex"),
+        )
+        for name in ("consetetur", "invidunt", "sadipscing")
+    }
     resources = transform_odk_resources_to_mex_resources(
         odk_resource_mappings,
         odk_merged_organization_ids_by_str,
         international_projects_extracted_activities,
     )
     expected = {
-        "identifier": Joker(),
+        "identifier": "hmcUUdGYbt69kRB1uoFLx3",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("odk"),
         "hasLegalBasis": [
             {
@@ -53,7 +61,7 @@ def test_transform_odk_resources_to_mex_resources(
             },
         ],
         "identifierInPrimarySource": "test_raw_data",
-        "stableTargetId": Joker(),
+        "stableTargetId": "hfwaHKf5ldNoarjA1J6tUL",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "alternativeTitle": [
             {"value": "dolor", "language": TextLanguage.EN},
@@ -66,7 +74,7 @@ def test_transform_odk_resources_to_mex_resources(
         "externalPartner": [
             str(odk_merged_organization_ids_by_str["consetetur"]),
             str(odk_merged_organization_ids_by_str["invidunt"]),
-            "gnhGhU3ATowGuV0KJwGuxB",
+            created_partners["sadipscing"].stableTargetId,
         ],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
@@ -124,11 +132,7 @@ def test_transform_odk_resources_to_mex_resources(
     )
     assert resources_organizations_empty_or_created[0][0].model_dump()[
         "externalPartner"
-    ] == [
-        "dHOP0smFLofntMGAA4Z89M",
-        "hmAkmTAONYQFjxpqrElERm",
-        "gnhGhU3ATowGuV0KJwGuxB",
-    ]
+    ] == [partner.stableTargetId for partner in created_partners.values()]
 
 
 def test_transform_odk_data_to_extracted_variables(
@@ -142,27 +146,27 @@ def test_transform_odk_data_to_extracted_variables(
         odk_variable_mapping,
     )
     expected = {
-        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("odk"),
         "identifierInPrimarySource": "start_test_raw_data",
         "dataType": "yes_no",
         "label": [{"value": "start"}],
-        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
+        "usedIn": [odk_extracted_resources[0].stableTargetId],
         "valueSet": ["yes_no, Yes", "yes_no", "yes_no, No", "yes_no"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "f0Z6CTv27SJfNkeDGQ7YIc",
+        "stableTargetId": "eoVaPy606Odw2eGyrHv8WY",
     }
     assert extracted_variables[0].model_dump(exclude_defaults=True) == expected
     expected = {
-        "hadPrimarySource": "cdIHcORh7ClqN0YCaCPQ8q",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("odk"),
         "identifierInPrimarySource": "username_test_raw_data",
         "dataType": "username",
-        "label": [{"value": "username", "language": "en"}],
-        "usedIn": ["fYOpRIonO2AedXxBxX9ZBk"],
+        "label": [{"value": "username", "language": TextLanguage.EN}],
+        "usedIn": [odk_extracted_resources[0].stableTargetId],
         "description": [
-            {"value": "Store username of interviewer.", "language": "en"},
-            {"value": "Store username of interviewer.", "language": "en"},
+            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
+            {"value": "Store username of interviewer.", "language": TextLanguage.EN},
         ],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "eiKjvxBR3fSxOlGTUbNoEW",
+        "stableTargetId": "dOgUm2oCiF2KD7HaLmxnIC",
     }
     assert extracted_variables[1].model_dump(exclude_defaults=True) == expected

@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
 from mex.common.types import (
     Identifier,
     MergedPersonIdentifier,
@@ -16,7 +15,7 @@ from mex.extractors.primary_source.helpers import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import ActivityMapping
+    from mex.common.models import ActivityMapping, ExtractedOrganizationalUnit
     from mex.extractors.blueant.models.source import BlueAntSource
 
 
@@ -25,6 +24,9 @@ def test_transform_blueant_sources_to_extracted_activities(
     blueant_source: BlueAntSource,
     blueant_source_without_leader: BlueAntSource,
     blueant_activity: ActivityMapping,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     stable_target_ids_by_employee_id = {
         "42": MergedPersonIdentifier.generate(seed=99),
@@ -37,12 +39,14 @@ def test_transform_blueant_sources_to_extracted_activities(
     assert len(mex_sources) == 2
     assert mex_sources[0].model_dump(exclude_none=True, exclude_defaults=True) == {
         "contact": [str(Identifier.generate(seed=99))],
-        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "identifier": Joker(),
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "identifier": "fnDJ6yQQGsKNs9ZRe1Z72C",
         "identifierInPrimarySource": "00123",
         "involvedPerson": ["bFQoRhcVH5DHV1"],
         "title": [{"value": "Prototype Space Rocket", "language": TextLanguage.EN}],
         "start": ["2019-01-07"],
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("blueant")),
-        "stableTargetId": Joker(),
+        "stableTargetId": "bs7E1sZ9q1SSHwR53nBtpv",
     }

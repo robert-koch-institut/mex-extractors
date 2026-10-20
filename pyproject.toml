@@ -1,6 +1,6 @@
 [project]
 name = "mex-extractors"
-version = "1.22.1"
+version = "1.23.0"
 description = "ETL pipelines for the RKI Metadata Exchange."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -161,8 +161,6 @@ select = ["ALL"]
 "mex/extractors/mapping/types.py" = [
     "A005",     # Allow custom mapping types module to shadow standard-library
 ]
-"mex/**/models/**/*.py" = ["TC001","TC002","TC003"]
-"mex/tests/**/*.py" = ["TC001","TC002","TC003"]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
 ]

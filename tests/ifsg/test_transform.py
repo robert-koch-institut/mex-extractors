@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
 from mex.common.types import (
     Text,
     TextLanguage,
@@ -22,6 +21,7 @@ from mex.extractors.primary_source.helpers import (
 if TYPE_CHECKING:
     from mex.common.models import (
         ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedResource,
         ExtractedVariableGroup,
         ResourceMapping,
@@ -42,27 +42,32 @@ if TYPE_CHECKING:
 @pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_resource_parent_to_mex_resource(
     resource_parent: ResourceMapping,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_resource = transform_resource_parent_to_mex_resource(resource_parent)
     expected = {
-        "identifier": Joker(),
+        "identifier": "dOJvdpBF6MzHwksxQzSvKA",
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "ifsg-parent",
-        "stableTargetId": Joker(),
+        "stableTargetId": "hx19mZMrxa85VBJzDZRmqA",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "alternativeTitle": [{"value": "IfSG Meldedaten", "language": TextLanguage.DE}],
-        "contact": ["cjna2jitPngp6yIV63cdi9"],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
         "description": [
             {"value": "Das Infektionsschutzgesetz", "language": TextLanguage.DE}
         ],
         "hasLegalBasis": [
             {
-                "language": "de",
+                "language": TextLanguage.DE,
                 "value": "Infektionsschutzgesetz (IfSG)",
             },
             {
-                "language": "en",
+                "language": TextLanguage.EN,
                 "value": "German Federal Law on the Prevention of Infectious Diseases "
                 "(IfSG)",
             },
@@ -83,7 +88,9 @@ def test_transform_resource_parent_to_mex_resource(
                 "language": TextLanguage.DE,
             }
         ],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
     }
     assert extracted_resource.model_dump(exclude_defaults=True) == expected
 
@@ -92,6 +99,9 @@ def test_transform_resource_parent_to_mex_resource(
 def test_transform_resource_state_to_mex_resource(
     resource_states: list[ResourceMapping],
     ifsg_extracted_resource_parent: ExtractedResource,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_resources = [
         transform_resource_state_to_mex_resource(
@@ -101,17 +111,21 @@ def test_transform_resource_state_to_mex_resource(
         for resource_state in resource_states
     ]
     expected = {
-        "identifier": Joker(),
+        "identifier": "L1t28UtnwFZnbjA1amAFA",
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "01",
-        "stableTargetId": Joker(),
+        "stableTargetId": "ezyCT9U2ZhjReYg56DJ83k",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [
             {"value": "Meldedaten Schleswig-Holstein", "language": TextLanguage.DE}
         ],
-        "contact": ["cjna2jitPngp6yIV63cdi9"],
-        "description": [{"language": "de", "value": "Das Infektionsschutzgesetz"}],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
+        "description": [
+            {"language": TextLanguage.DE, "value": "Das Infektionsschutzgesetz"}
+        ],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -137,7 +151,9 @@ def test_transform_resource_state_to_mex_resource(
         "spatial": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Schleswig-Holstein", "language": TextLanguage.DE}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
     }
     assert extracted_resources[0][0].model_dump(exclude_defaults=True) == expected
 
@@ -164,6 +180,9 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
     meta_type: list[MetaType],
     meta_disease: list[MetaDisease],
     extracted_organization_rki: ExtractedOrganization,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_resource = [
         transform_resource_disease_to_mex_resource(
@@ -178,16 +197,21 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
         for resource_disease in resource_diseases
     ]
     expected = {
-        "identifier": Joker(),
+        "identifier": "dQxBvVZWlL5pUrEh7U2oIn",
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "identifierInPrimarySource": "resource_disease_101_1",
-        "stableTargetId": Joker(),
+        "stableTargetId": "dv4MYrpFnn1akbYp4zdwvf",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "alternativeTitle": [{"value": "ABC"}],
-        "contact": ["cjna2jitPngp6yIV63cdi9"],
-        "description": [{"value": "Das Infektionsschutzgesetz", "language": "de"}],
+        "contact": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
+        "description": [
+            {"value": "Das Infektionsschutzgesetz", "language": TextLanguage.DE}
+        ],
         "hasCodeValues": [{"value": "A1"}],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
         "hasLegalBasis": [
             {
                 "language": TextLanguage.DE,
@@ -239,7 +263,9 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
                 "value": "Meldedaten nach Infektionsschutzgesetz (IfSG) zu virus (SurvNet Schema 1)",
             }
         ],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
     }
     assert extracted_resource[0][0].model_dump(exclude_defaults=True) == expected
 
@@ -256,10 +282,10 @@ def test_transform_ifsg_data_to_mex_variable_group(
         [101],
     )
     expected = {
-        "identifier": Joker(),
+        "identifier": "dy76Pr7t5xk1AN9q1VrPze",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("ifsg"),
         "identifierInPrimarySource": "101_Epi",
-        "stableTargetId": Joker(),
+        "stableTargetId": "cp53EWTlPaIwyReswGti1B",
         "containedBy": [ifsg_extracted_resources_disease[0].stableTargetId],
         "label": [
             {"value": "Epidemiologische Informationen", "language": TextLanguage.DE}
@@ -290,11 +316,11 @@ def test_transform_ifsg_data_to_mex_variable(  # noqa: PLR0913, PLR0917
     )
 
     expected = {
-        "identifier": Joker(),
+        "identifier": "hPtgPF3YUENiCDlUpXKS05",
         "hadPrimarySource": str(get_extracted_primary_source_id_by_name("ifsg")),
         "dataType": "DummyType",
         "identifierInPrimarySource": "variable_1_10",
-        "stableTargetId": Joker(),
+        "stableTargetId": "bPeWOlnPLtLyN2yQhA9pXH",
         "belongsTo": [str(ifsg_extracted_variable_groups[0].stableTargetId)],
         "description": [{"value": "lokaler"}],
         "label": [

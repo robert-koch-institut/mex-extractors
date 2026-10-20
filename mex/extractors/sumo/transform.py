@@ -100,11 +100,15 @@ def transform_resource_feat_model_to_mex_resource(
             ]
         ],
         contributingUnit=contributing_unit,
-        description=sumo_resource_feat.description.get_static_values(),
-        hasPersonalData=sumo_resource_feat.hasPersonalData.get_static_values(),
+        description=sumo_resource_feat.description[0].mappingRules[0].setValues,
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
-        healthCategory=sumo_resource_feat.healthCategory.get_static_values(),
-        identifierInPrimarySource=sumo_resource_feat.title.get_static_values()[0].value,  # type: ignore[index]
+        hasCodingSystem=sumo_resource_feat.hasCodingSystem[0].mappingRules[0].setValues,
+        hasPersonalData=sumo_resource_feat.hasPersonalData[0].mappingRules[0].setValues,
+        healthCategory=sumo_resource_feat.healthCategory[0].mappingRules[0].setValues,
+        identifierInPrimarySource=sumo_resource_feat.title[0]
+        .mappingRules[0]
+        .setValues[0]  # type: ignore[index]
+        .value,
         keyword=keyword,
         meshId=sumo_resource_feat.meshId.get_static_values()[0],  # type: ignore[index]
         relatedResource=mex_resource_nokeda.stableTargetId,
@@ -180,12 +184,15 @@ def transform_resource_nokeda_to_mex_resource(
                 sumo_resource_nokeda.externalPartner[0].mappingRules[0].forValues[0],  # type: ignore[index]
             )
         ],
-        hasPersonalData=sumo_resource_nokeda.hasPersonalData.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
-        healthCategory=sumo_resource_nokeda.healthCategory.get_static_values(),
-        identifierInPrimarySource=sumo_resource_nokeda.title.get_static_values()[
-            0
-        ].value,  # type: ignore[index]
+        hasPersonalData=sumo_resource_nokeda.hasPersonalData[0]
+        .mappingRules[0]
+        .setValues,
+        healthCategory=sumo_resource_nokeda.healthCategory[0].mappingRules[0].setValues,
+        identifierInPrimarySource=sumo_resource_nokeda.title[0]
+        .mappingRules[0]
+        .setValues[0]  # type: ignore[index]
+        .value,
         keyword=keyword,
         meshId=sumo_resource_nokeda.meshId.get_static_values(),
         publication=[],

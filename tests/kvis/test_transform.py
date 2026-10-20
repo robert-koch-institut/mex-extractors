@@ -9,10 +9,15 @@ from mex.extractors.kvis.transform import (
     transform_kvis_table_entries_to_extracted_variables,
     transform_kvis_variables_to_extracted_variable_groups,
 )
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
+)
 
 if TYPE_CHECKING:
     from mex.common.models import (
         ExtractedContactPoint,
+        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
         ExtractedVariableGroup,
     )
@@ -24,35 +29,44 @@ def test_transform_kvis_resource_to_extracted_resource(
     contact_point: ExtractedContactPoint,
     juturna_felicitas: ExtractedPerson,
     frieda_fictitious: ExtractedPerson,
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
+    wikidata_extracted_organization: ExtractedOrganization,
 ) -> None:
     extracted_resource = transform_kvis_resource_to_extracted_resource()
     assert extracted_resource.model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
-        "alternativeTitle": [{"value": "KVIS", "language": "de"}],
+        "alternativeTitle": [{"value": "KVIS", "language": TextLanguage.DE}],
         "contact": [contact_point.stableTargetId],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "contributor": [
             juturna_felicitas.stableTargetId,
             frieda_fictitious.stableTargetId,
         ],
-        "description": [{"value": "Wörter", "language": "de"}],
+        "description": [{"value": "Wörter", "language": TextLanguage.DE}],
         "documentation": [
-            {"language": "de", "title": "a", "url": "http://www.a.b"},
-            {"language": "de", "title": "c", "url": "http://www.c.d"},
+            {"language": TextLanguage.DE, "title": "a", "url": "http://www.a.b"},
+            {"language": TextLanguage.DE, "title": "c", "url": "http://www.c.d"},
         ],
-        "externalPartner": ["ga6xh6pgMwgq7DC7r6Wjqg"],
-        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "externalPartner": [wikidata_extracted_organization.stableTargetId],
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("kvis"),
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "identifierInPrimarySource": "kvis_resource",
-        "keyword": [{"value": "Schlüsselwort", "language": "de"}],
+        "keyword": [{"value": "Schlüsselwort", "language": TextLanguage.DE}],
         "language": ["https://mex.rki.de/item/language-1"],
-        "publisher": ["ga6xh6pgMwgq7DC7r6Wjqg"],
+        "publisher": [wikidata_extracted_organization.stableTargetId],
         "start": ["1999"],
         "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"value": "Titel", "language": "de"}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
+        "title": [{"value": "Titel", "language": TextLanguage.DE}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
     }
 
 
@@ -68,7 +82,7 @@ def test_transform_kvis_variables_to_extracted_variable_groups(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
         "containedBy": [str(mocked_extracted_resource_id)],
-        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("kvis"),
         "identifierInPrimarySource": "kvis_file with strings and bools",
         "label": [
             {"language": TextLanguage.DE, "value": "file with strings and bools"}
@@ -104,10 +118,10 @@ def test_transform_kvis_table_entries_to_extracted_variables(
     assert extracted_variables[0].model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "belongsTo": ["CooqBBvfd2q077RJ1qc1S"],
+        "belongsTo": [mocked_extracted_variable_groups[0].stableTargetId],
         "dataType": "integer field",
         "description": [{"value": "some integer field", "language": TextLanguage.DE}],
-        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("kvis"),
         "identifierInPrimarySource": "kvis_int",
         "label": [{"value": "Integer", "language": TextLanguage.DE}],
         "usedIn": ["bFQoRhcVH5DK7x"],
@@ -116,12 +130,12 @@ def test_transform_kvis_table_entries_to_extracted_variables(
     assert extracted_variables[2].model_dump(
         exclude_defaults=True, exclude_none=True, exclude_computed_fields=True
     ) == {
-        "belongsTo": ["gSCYeMkhBrsWdo8Xoei8bk"],
+        "belongsTo": [mocked_extracted_variable_groups[1].stableTargetId],
         "dataType": "bool field",
         "description": [
             {"language": TextLanguage.DE, "value": "a boolean field for flagging"}
         ],
-        "hadPrimarySource": "eKx0G7GVS8o9v537kCUM3i",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("kvis"),
         "identifierInPrimarySource": "kvis_bool",
         "label": [{"value": "boolean", "language": TextLanguage.DE}],
         "usedIn": ["bFQoRhcVH5DK7x"],

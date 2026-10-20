@@ -105,7 +105,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             for unit in units
         ]
         identifier_in_primary_source = f"{igs_info.title}_{pathogen}"
-        is_part_of = igs_seq_repo_resource_ids_by_pathogen.get(pathogen, [])
+        related_resource = igs_seq_repo_resource_ids_by_pathogen.get(pathogen, [])
         keyword = [
             *default_keywords,
             *keywords_by_pathogen[pathogen],
@@ -140,11 +140,14 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             description=igs_resource_mapping.description.get_static_values(),
             documentation=igs_resource_mapping.documentation.get_static_values(),
             hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
-            hasLegalBasis=igs_resource_mapping.hasLegalBasis.get_static_values(),
-            hasPurpose=igs_resource_mapping.hasPurpose.get_static_values(),
+            hasLegalBasis=igs_resource_mapping.hasLegalBasis[0]
+            .mappingRules[0]
+            .setValues,
+            hasPurposeDescription=igs_resource_mapping.hasPurposeDescription[0]
+            .mappingRules[0]
+            .setValues,
             healthCategory=health_category,
             identifierInPrimarySource=identifier_in_primary_source,
-            isPartOf=is_part_of,
             keyword=keyword,
             language=igs_resource_mapping.language.get_static_values(),
             meshId=igs_resource_mapping.meshId.get_static_values(),
@@ -153,11 +156,18 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             provenance=igs_resource_mapping.provenance.get_static_values(),
             publisher=extracted_organization_rki.stableTargetId,
             qualityInformation=quality_information,
-            resourceCreationMethod=igs_resource_mapping.resourceCreationMethod.get_static_values(),
-            resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral.get_static_values(),
-            resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific.get_static_values(),
-            rights=igs_resource_mapping.rights.get_static_values(),
-            spatial=igs_resource_mapping.spatial.get_static_values(),
+            relatedResource=related_resource,
+            resourceCreationMethod=igs_resource_mapping.resourceCreationMethod[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral[0]
+            .mappingRules[0]
+            .setValues,
+            resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific[0]
+            .mappingRules[0]
+            .setValues,
+            rights=igs_resource_mapping.rights[0].mappingRules[0].setValues,
+            spatial=igs_resource_mapping.spatial[0].mappingRules[0].setValues,
             sizeOfDataBasis=size_of_databasis,
             start=start,
             theme=igs_resource_mapping.theme.get_static_values(),

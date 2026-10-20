@@ -29,12 +29,12 @@ externalPartner:
   - mappingRules:
       - forValues:
           - Register
-hasPersonalData:
-  - mappingRules:
-      - setValues: https://mex.rki.de/item/personal-data-1
 hadPrimarySource:
   - mappingRules:
       - rule:
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-1
 healthCategory:
   - mappingRules:
       - setValues:

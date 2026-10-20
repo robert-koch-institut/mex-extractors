@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedOrganizationIdentifier,
     TextLanguage,
@@ -19,6 +18,7 @@ if TYPE_CHECKING:
     from mex.common.models import (
         ExtractedActivity,
         ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedPerson,
         ExtractedResource,
         ResourceMapping,
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_voxco_resource_mappings_to_extracted_resources(
+def test_transform_voxco_resource_mappings_to_extracted_resources(  # noqa: PLR0913, PLR0917
     voxco_resource_mappings: list[ResourceMapping],
     voxco_merged_organization_ids_by_query_string: dict[
         str, MergedOrganizationIdentifier
@@ -35,6 +35,9 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
     roland_resolved: ExtractedPerson,
     extracted_organization_rki: ExtractedOrganization,
     international_projects_extracted_activities: list[ExtractedActivity],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     resource_dict = transform_voxco_resource_mappings_to_extracted_resources(
         voxco_resource_mappings,
@@ -53,7 +56,9 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
         "contact": [str(roland_resolved.stableTargetId)],
         "theme": ["https://mex.rki.de/item/theme-37"],
         "title": [{"value": "voxco-Plus", "language": TextLanguage.DE}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "anonymizationPseudonymization": [
             "https://mex.rki.de/item/anonymization-pseudonymization-2"
         ],
@@ -83,8 +88,8 @@ def test_transform_voxco_resource_mappings_to_extracted_resources(
         ],
         "rights": [{"value": "Die Daten", "language": TextLanguage.DE}],
         "spatial": [{"value": "Deutschland", "language": TextLanguage.DE}],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "fM00hbuKDc13qejwvfsRpa",
+        "stableTargetId": "hTx4lpQ5ZEeUjLx2HQgGEa",
         "wasGeneratedBy": str(
             international_projects_extracted_activities[0].stableTargetId
         ),
@@ -112,8 +117,8 @@ def test_transform_voxco_variable_mappings_to_extracted_variables(
         "dataType": "Text",
         "description": [{"value": "Discrete", "language": TextLanguage.DE}],
         "valueSet": ["Januar", "Februar"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "identifier": "g7R7zJDDJkSpWoShAKjMv2",
+        "stableTargetId": "Wdj4ygWxrS3G8HBT4zJsd",
     }
     assert (
         extracted_variables[0].model_dump(exclude_none=True, exclude_defaults=True)

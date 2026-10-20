@@ -107,20 +107,28 @@ def transform_grippeweb_resource_mappings_to_dict(
             grippeweb_merged_organization_ids_by_query_str,
         )
 
-        has_legal_basis = resource.hasLegalBasis.get_static_values()
-        has_personal_data = resource.hasPersonalData.get_static_values()
-        has_code_values = resource.hasCodeValues.get_static_values()
-        identifier_in_primary_source = (
-            resource.identifierInPrimarySource.get_static_values()
-            or resource.identifierInPrimarySource[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        has_legal_basis = resource.hasLegalBasis[0].mappingRules[0].setValues
+        has_personal_data = resource.hasPersonalData[0].mappingRules[0].setValues
+        has_purpose_description = (
+            resource.hasPurposeDescription[0].mappingRules[0].setValues
         )
-        keyword = resource.keyword.get_static_values()
-        language = resource.language.get_static_values()
-        mesh_id = resource.meshId.get_static_values()
-        method = resource.method.get_static_values()
-        method_description = resource.methodDescription.get_static_values()
-        min_typical_age = resource.minTypicalAge.get_static_values()
-        population_coverage = resource.populationCoverage.get_static_values()
+        has_code_values = resource.hasCodeValues[0].mappingRules[0].setValues
+        identifier_in_primary_source_mapping_rules = resource.identifierInPrimarySource[
+            0
+        ].mappingRules[0]
+        if set_values := identifier_in_primary_source_mapping_rules.setValues:
+            identifier_in_primary_source = set_values
+        else:
+            identifier_in_primary_source = (
+                identifier_in_primary_source_mapping_rules.forValues[0]  # type: ignore[index]
+            )
+        keyword = resource.keyword[0].mappingRules[0].setValues
+        language = resource.language[0].mappingRules[0].setValues
+        mesh_id = resource.meshId[0].mappingRules[0].setValues
+        method = resource.method[0].mappingRules[0].setValues
+        method_description = resource.methodDescription[0].mappingRules[0].setValues
+        min_typical_age = resource.minTypicalAge[0].mappingRules[0].setValues
+        population_coverage = resource.populationCoverage[0].mappingRules[0].setValues
         publisher = grippeweb_merged_organization_ids_by_query_str.get(
             resource.publisher[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
@@ -138,11 +146,6 @@ def transform_grippeweb_resource_mappings_to_dict(
             resource.unitInCharge[0].mappingRules[0].forValues[0]  # type: ignore[index]
         )
         resource_dict[identifier_in_primary_source] = ExtractedResource(
-            hasLegalBasis=has_legal_basis,
-            hasPersonalData=has_personal_data,
-            minTypicalAge=min_typical_age,
-            populationCoverage=population_coverage,
-            resourceCreationMethod=resource_creation_method,
             accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
             accessRestriction=access_restriction,
             accrualPeriodicity=accrual_periodicity,
@@ -155,13 +158,19 @@ def transform_grippeweb_resource_mappings_to_dict(
             externalPartner=external_partner_identifier,
             hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
             hasCodeValues=has_code_values,
+            hasLegalBasis=has_legal_basis,
+            hasPersonalData=has_personal_data,
+            hasPurposeDescription=has_purpose_description,
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=keyword,
             language=language,
             meshId=mesh_id,
             method=method,
             methodDescription=method_description,
+            minTypicalAge=min_typical_age,
+            populationCoverage=population_coverage,
             publisher=publisher,
+            resourceCreationMethod=resource_creation_method,
             resourceTypeGeneral=resource_type_general,
             resourceTypeSpecific=resource_type_specific,
             rights=rights,

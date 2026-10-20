@@ -2,6 +2,10 @@ from collections import defaultdict
 from typing import TYPE_CHECKING
 
 from mex.common.exceptions import MExError
+from mex.common.fields import (
+    REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
+    REQUIRED_FIELDS_BY_CLASS_NAME,
+)
 from mex.common.logging import logger
 from mex.common.types import (
     AnyMergedIdentifier,
@@ -10,14 +14,13 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
 )
+from mex.extractors.pipeline.publishing_helpers import GERMAN_PREFLABEL_BY_CONCEPT_ID
 from mex.extractors.publisher.extract import get_publishable_merged_item
-from mex.extractors.publisher.fields import (
-    REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
-)
 from mex.extractors.publisher.models import (
     BibliographicResourceForCsv,
     CsvDataPackage,
     CsvResource,
+    PublisherItemsLike,
 )
 
 if TYPE_CHECKING:
@@ -29,7 +32,6 @@ if TYPE_CHECKING:
         MergedBibliographicResource,
         MergedPerson,
     )
-    from mex.extractors.publisher.models import PublisherItemsLike
 
 
 def get_unit_id_per_person(
@@ -110,7 +112,7 @@ def update_actor_references_where_needed(
         # if there is still no allowed actor: set to fallback contact point, if possible
         if not identifiers and "MergedContactPoint" in ref_types:
             identifiers = fallback_contact_identifiers
-        if not identifiers and item.model_fields[field].is_required():
+        if not identifiers and field in REQUIRED_FIELDS_BY_CLASS_NAME[item.entityType]:
             logger.error(
                 "%s(identifier='%s') has no valid references "
                 "for required field %s, publishing broken references",
@@ -127,7 +129,7 @@ def get_resolved_names(identifier: AnyMergedIdentifier, field: str) -> str:
 
     Args:
         identifier: identifier of referenced merged item of which to get the name.
-        entitiy_type: entity type of the merged item.
+        entity_type: entity type of the merged item.
         field: field of the merged item in which the name needs to be looked up.
 
     Returns:
@@ -178,10 +180,8 @@ def transform_merged_bibliographic_resources_for_csv(
     ) in merged_bibliographic_resources_by_unit.items():
         key_unit_short_name = get_resolved_names(key_unit_id, "shortName")
         for bibliographic_resource in merged_bibliographic_resources:
-            access_restriction = (
-                type(bibliographic_resource.accessRestriction)
-                .__concepts__[0]
-                .prefLabel.de
+            access_restriction = GERMAN_PREFLABEL_BY_CONCEPT_ID.get(
+                bibliographic_resource.accessRestriction.value
             )
             contributing_unit = [
                 get_resolved_names(merged_unit_id, "shortName")

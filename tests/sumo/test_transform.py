@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
+from mex.common.models import ExtractedOrganization
 from mex.common.types import (
     LinkLanguage,
     MergedContactPointIdentifier,
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
         ExtractedAccessPlatform,
         ExtractedActivity,
         ExtractedContactPoint,
-        ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ExtractedResource,
         ExtractedVariableGroup,
         ResourceMapping,
@@ -57,12 +57,15 @@ def test_get_contact_merged_ids_by_emails(contact_point: ExtractedContactPoint) 
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_resource_nokeda_to_mex_resource(
+def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913, PLR0917
     sumo_resources_nokeda: ResourceMapping,
     extracted_organization_rki: ExtractedOrganization,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     mex_source = transform_resource_nokeda_to_mex_resource(
         sumo_resources_nokeda,
@@ -71,59 +74,78 @@ def test_transform_resource_nokeda_to_mex_resource(
         transformed_activity,
         sumo_extracted_access_platform,
     )
+    external_partner = ExtractedOrganization(
+        officialName="Register",
+        identifierInPrimarySource="Register",
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
+    )
     expected = {
         "identifier": "feVlCRX2L1jeXiLYMOvHXF",
-        "hadPrimarySource": "g2emcctcV6HXW0353Ye1AR",
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "test_project",
         "stableTargetId": "hyxiQKMht5DgDtOv9awxjU",
-        "accessPlatform": ["bu75RAHAhH2aYxHhhA8HQH"],
+        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-15",
         "contact": ["bFQoRhcVH5DHVf"],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "description": [
-            {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
+            {
+                "language": TextLanguage.DE,
+                "value": "Echtzeitdaten der Routinedokumenation",
+            }
         ],
         "documentation": [
-            {"language": "en", "title": "Confluence", "url": "https://link.com"}
+            {
+                "language": TextLanguage.EN,
+                "title": "Confluence",
+                "url": "https://link.com",
+            }
         ],
-        "externalPartner": ["djvbQHx5Drsuf5ZEOBru4x"],
+        "externalPartner": [external_partner.stableTargetId],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
-            {"language": "de", "value": "keyword1"},
-            {"language": "de", "value": "keyword2"},
+            {"language": TextLanguage.DE, "value": "keyword1"},
+            {"language": TextLanguage.DE, "value": "keyword2"},
         ],
         "meshId": ["http://id.nlm.nih.gov/mesh/D004636"],
-        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "publisher": [extracted_organization_rki.stableTargetId],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
         ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
-        "resourceTypeSpecific": [{"language": "de", "value": "Daten"}],
+        "resourceTypeSpecific": [{"language": TextLanguage.DE, "value": "Daten"}],
         "rights": [
             {
-                "language": "de",
+                "language": TextLanguage.DE,
                 "value": "Die Daten sind zweckgebunden und können nicht ohne Weiteres innerhalb des RKI zur Nutzung zur Verfügung gestellt werden.",
             }
         ],
-        "spatial": [{"language": "de", "value": "Deutschland"}],
+        "spatial": [{"language": TextLanguage.DE, "value": "Deutschland"}],
         "stateOfDataProcessing": ["https://mex.rki.de/item/data-processing-state-2"],
         "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"language": "de", "value": "test_project"}],
-        "unitInCharge": ["cjna2jitPngp6yIV63cdi9"],
-        "wasGeneratedBy": "3wCwpXX9YZ9UF4WCcMMvD",
+        "title": [{"language": TextLanguage.DE, "value": "test_project"}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["fg99"].stableTargetId
+        ],
+        "wasGeneratedBy": transformed_activity.stableTargetId,
     }
     assert mex_source.model_dump(exclude_defaults=True) == expected
 
 
 @pytest.mark.usefixtures("mocked_wikidata")
-def test_transform_resource_feat_model_to_mex_resource(
+def test_transform_resource_feat_model_to_mex_resource(  # noqa: PLR0913, PLR0917
     sumo_resources_feat: ResourceMapping,
     mex_resources_nokeda: ExtractedResource,
     transformed_activity: ExtractedActivity,
     sumo_extracted_access_platform: ExtractedAccessPlatform,
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     mex_source = transform_resource_feat_model_to_mex_resource(
         sumo_resources_feat,
@@ -133,21 +155,24 @@ def test_transform_resource_feat_model_to_mex_resource(
         sumo_extracted_access_platform,
     )
     expected = {
-        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
-        "identifier": Joker(),
+        "identifier": "gmrZQz3O0H3Cl2cv54ivdH",
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             get_extracted_primary_source_id_by_name("nokeda")
         ),
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "identifierInPrimarySource": "Syndrome",
-        "stableTargetId": Joker(),
+        "stableTargetId": "gB9VPeKtEcfnFi4Yvk3pHp",
+        "accessPlatform": [sumo_extracted_access_platform.stableTargetId],
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "accrualPeriodicity": "https://mex.rki.de/item/frequency-17",
         "contact": [MergedContactPointIdentifier.generate(51)],
-        "contributingUnit": [Joker()],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "description": [
             {"language": "de", "value": "Echtzeitdaten der Routinedokumenation"}
         ],
+        "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
+        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword 1"},
@@ -188,10 +213,10 @@ def test_transform_nokeda_aux_variable_to_mex_variable_group(
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             get_extracted_primary_source_id_by_name("nokeda")
         ),
-        "identifier": Joker(),
+        "identifier": "dLJrTntZSYrR4vXWmEd4w2",
         "identifierInPrimarySource": "age",
         "label": [{"language": TextLanguage.EN, "value": "age"}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "b0lnzpQV1eaOUmKNdPVOf",
     }
     transformed_data = transform_nokeda_aux_variable_to_mex_variable_group(
         cc2_aux_model,
@@ -210,13 +235,13 @@ def test_transform_model_nokeda_variable_to_mex_variable_group(
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             get_extracted_primary_source_id_by_name("nokeda")
         ),
-        "identifier": Joker(),
+        "identifier": "dVcZQbiOPNOOwUw0RL5jq5",
         "identifierInPrimarySource": "data supply",
         "label": [
             {"language": TextLanguage.DE, "value": "Datenbereitstellung"},
             {"language": TextLanguage.EN, "value": "data supply"},
         ],
-        "stableTargetId": Joker(),
+        "stableTargetId": "dwLBKgtYsw0WiYbmIad27x",
     }
     transformed_data = transform_model_nokeda_variable_to_mex_variable_group(
         cc1_data_model_nokeda,
@@ -235,10 +260,10 @@ def test_transform_feat_variable_to_mex_variable_group(
         "hadPrimarySource": MergedPrimarySourceIdentifier(
             get_extracted_primary_source_id_by_name("nokeda")
         ),
-        "identifier": Joker(),
+        "identifier": "d7ckkw0i2C1B4g6ryQs4Pt",
         "identifierInPrimarySource": "feat_syndrome RSV",
         "label": [{"value": "feat_syndrome RSV"}],
-        "stableTargetId": Joker(),
+        "stableTargetId": "dQa2t7IBL5YkzdoeUboAru",
     }
     transformed_data = transform_feat_variable_to_mex_variable_group(
         cc2_feat_projection,
@@ -262,10 +287,10 @@ def test_transform_nokeda_model_variable_to_mex_variable(
     }
     variable = cc1_data_model_nokeda[0]
     expected = {
-        "identifier": Joker(),
+        "identifier": "5VN5knoRpP069tOe7eo3o",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "nokeda_edis_software",
-        "stableTargetId": Joker(),
+        "stableTargetId": "cxnV9VsLVqyU9h3XJKwyTH",
         "belongsTo": [stable_target_id_by_label_values[variable.domain]],
         "dataType": "string",
         "description": [
@@ -311,25 +336,25 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
     assert len(transformed_data) == 2
     variable = cc2_aux_model[0]
     expected = {
-        "identifier": Joker(),
+        "identifier": "gFj7nVj8vFwbwcIuV8sn01",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "aux_age21_min",
-        "stableTargetId": Joker(),
+        "stableTargetId": "dEwNoKNU3me73IIYVtRdzu",
         "belongsTo": [stable_target_id_by_label_values[variable.domain]],
         "description": [
             {"language": TextLanguage.EN, "value": "the lowest age in the age group"}
         ],
         "label": [{"value": "aux_age21_min"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
-        "valueSet": Joker(),
+        "valueSet": ["0", "1", "2"],
     }
     assert transformed_data[0].model_dump(exclude_defaults=True) == expected
     variable = list(cc2_aux_model)[1]
     expected = {
-        "identifier": Joker(),
+        "identifier": "dAj7vR7qoELFOvZacxVMDU",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "aux_cedis_group",
-        "stableTargetId": Joker(),
+        "stableTargetId": "clau0lWHd9obUMS9RCxGut",
         "belongsTo": [stable_target_id_by_label_values[variable.domain]],
         "description": [
             {
@@ -339,7 +364,7 @@ def test_transform_nokeda_aux_variable_to_mex_variable(
         ],
         "label": [{"value": "aux_cedis_group"}],
         "usedIn": [mex_resources_nokeda.stableTargetId],
-        "valueSet": Joker(),
+        "valueSet": ["001", "002", "003", "Kardiovaskulär", "Cardiovascular"],
     }
     assert transformed_data[1].model_dump(exclude_defaults=True) == expected
 
@@ -354,10 +379,10 @@ def test_transform_feat_projection_variable_to_mex_variable(
     }
     variable = cc2_feat_projection[0]
     expected = {
-        "identifier": Joker(),
+        "identifier": "gMBUtVidyN4BQRnWFShylD",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "feat_syndrome RSV 1",
-        "stableTargetId": Joker(),
+        "stableTargetId": "dNkNO06121ho5tHXaBcqAU",
         "belongsTo": [
             stable_target_id_by_label_values[
                 f"{variable.feature_domain} {variable.feature_subdomain}"
@@ -394,10 +419,10 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
         "Roland Resolved": MergedPersonIdentifier.generate(seed=30)
     }
     expected = {
-        "identifier": Joker(),
+        "identifier": "f0pit6LuO68GWcV6V3hbuo",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "sumo-db",
-        "stableTargetId": Joker(),
+        "stableTargetId": "gQiqLx2smZuq9E1rfgBDT5",
         "contact": [person_stable_target_ids_by_query_string["Roland Resolved"]],
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "title": [{"value": "SUMO Datenbank", "language": TextLanguage.DE}],
@@ -415,17 +440,25 @@ def test_transform_sumo_access_platform_to_mex_access_platform(
 def test_transform_sumo_activity_to_extracted_activity(
     sumo_activity: ActivityMapping,
     contact_merged_ids_by_emails: dict[str, MergedContactPointIdentifier],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_activity = transform_sumo_activity_to_extracted_activity(
         sumo_activity,
         contact_merged_ids_by_emails,
     )
+    external_associate = ExtractedOrganization(
+        officialName="Dummy Associate",
+        identifierInPrimarySource="Dummy Associate",
+        hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
+    )
 
     expected = {
-        "identifier": Joker(),
+        "identifier": "dwcttrh8Ok2b47urZYNKCW",
         "hadPrimarySource": get_extracted_primary_source_id_by_name("nokeda"),
         "identifierInPrimarySource": "https://url.url",
-        "stableTargetId": Joker(),
+        "stableTargetId": "cGpnZklZZ3ky4r3DPdTkwM",
         "abstract": [{"value": "Dummy abstract", "language": TextLanguage.DE}],
         "activityType": ["https://mex.rki.de/item/activity-type-3"],
         "contact": [MergedContactPointIdentifier.generate(seed=51)],
@@ -436,9 +469,13 @@ def test_transform_sumo_activity_to_extracted_activity(
                 "url": "https://url.url",
             }
         ],
-        "externalAssociate": Joker(),
-        "involvedUnit": ["6rqNvZSApUHlz8GkkVP48"],
-        "responsibleUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "externalAssociate": [external_associate.stableTargetId],
+        "involvedUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "responsibleUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "shortName": [{"value": "SUMO", "language": TextLanguage.DE}],
         "start": [YearMonthDay("2018-07-01")],
         "theme": [

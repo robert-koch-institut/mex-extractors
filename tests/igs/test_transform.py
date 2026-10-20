@@ -2,16 +2,19 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from mex.common.testing import Joker
 from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
+    TextLanguage,
 )
 from mex.extractors.igs.transform import (
     transform_igs_access_platform,
     transform_igs_extracted_resource,
     transform_igs_schemas_to_variables,
     transformed_igs_schemas_to_variable_group,
+)
+from mex.extractors.primary_source.helpers import (
+    get_extracted_primary_source_id_by_name,
 )
 
 if TYPE_CHECKING:
@@ -20,6 +23,7 @@ if TYPE_CHECKING:
         ExtractedAccessPlatform,
         ExtractedContactPoint,
         ExtractedOrganization,
+        ExtractedOrganizationalUnit,
         ResourceMapping,
         VariableMapping,
     )
@@ -35,6 +39,9 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
     igs_schemas: dict[str, IGSSchema],
     igs_info: IGSInfo,
     igs_endpoint_counts: dict[str, str],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_resource = transform_igs_extracted_resource(
         igs_resource_mapping,
@@ -47,30 +54,36 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         {"PATHOGEN": [MergedResourceIdentifier.generate(seed=342)]},
     )
     assert extracted_resource["PATHOGEN"].model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("igs"),
         "identifierInPrimarySource": "test_title_PATHOGEN",
         "accessRestriction": "https://mex.rki.de/item/access-restriction-2",
         "start": ["1970"],
         "sizeOfDataBasis": "Anzahl Proben: 7",
-        "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
+        "contact": [
+            igs_extracted_contact_points_by_mail_str["contactc@rki.de"].stableTargetId
+        ],
         "theme": ["https://mex.rki.de/item/theme-11"],
-        "title": [{"value": "Pathogen", "language": "de"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
-        "accessPlatform": ["g72piPlFnLPbe8dkRoCBsx"],
-        "contributingUnit": ["6rqNvZSApUHlz8GkkVP48"],
+        "title": [{"value": "Pathogen", "language": TextLanguage.DE}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "accessPlatform": [extracted_access_platform.stableTargetId],
+        "contributingUnit": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
         "keyword": [
-            {"value": "test keyword", "language": "de"},
-            {"value": "Pathogen", "language": "de"},
+            {"value": "test keyword", "language": TextLanguage.DE},
+            {"value": "Pathogen", "language": TextLanguage.DE},
             {"value": "PATHOGEN"},
         ],
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
-        "publisher": ["fxIeF3TWocUZoMGmBftJ6x"],
+        "publisher": [extracted_organization_rki.stableTargetId],
         "qualityInformation": [
-            {"value": "Test Präfix", "language": "de"},
-            {"value": "Anzahl tests: 42", "language": "de"},
+            {"value": "Test Präfix", "language": TextLanguage.DE},
+            {"value": "Anzahl tests: 42", "language": TextLanguage.DE},
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
-        "isPartOf": ["bFQoRhcVH5DHZW"],
+        "relatedResource": ["bFQoRhcVH5DHZW"],
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",
     }
 
@@ -79,6 +92,9 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
 def test_transform_igs_access_platform(
     igs_access_platform_mapping: AccessPlatformMapping,
     igs_extracted_contact_points_by_mail_str: dict[str, ExtractedContactPoint],
+    mocked_units_by_identifier_in_primary_source: dict[
+        str, ExtractedOrganizationalUnit
+    ],
 ) -> None:
     extracted_access_platform = transform_igs_access_platform(
         igs_access_platform_mapping,
@@ -86,23 +102,27 @@ def test_transform_igs_access_platform(
     )
 
     assert extracted_access_platform.model_dump(exclude_defaults=True) == {
-        "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("igs"),
         "identifierInPrimarySource": "https://igs",
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-1",
         "endpointDescription": {
-            "language": "en",
+            "language": TextLanguage.EN,
             "title": "test title",
             "url": "https://rki.de:4200/api",
         },
         "endpointType": "https://mex.rki.de/item/api-type-1",
         "endpointURL": {"url": "https://rki.de:4100"},
-        "contact": ["g0ZXxKhXuUiSqdpAdhuKlb"],
-        "description": [{"value": "test description", "language": "en"}],
+        "contact": [
+            igs_extracted_contact_points_by_mail_str["contactc@rki.de"].stableTargetId
+        ],
+        "description": [{"value": "test description", "language": TextLanguage.EN}],
         "landingPage": [{"url": "https://rki.de:4100/docs"}],
-        "title": [{"language": "en", "value": "IGS Open API"}],
-        "unitInCharge": ["6rqNvZSApUHlz8GkkVP48"],
-        "identifier": Joker(),
-        "stableTargetId": Joker(),
+        "title": [{"language": TextLanguage.EN, "value": "IGS Open API"}],
+        "unitInCharge": [
+            mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
+        ],
+        "identifier": "ciq6oOPVAqov2QX9KQcsFd",
+        "stableTargetId": "g72piPlFnLPbe8dkRoCBsx",
     }
 
 
@@ -114,10 +134,10 @@ def test_transformed_igs_schemas_to_variable_group(
         filtered_igs_schemas, [MergedResourceIdentifier.generate(seed=42)]
     )
     expected = {
-        "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("igs"),
         "identifierInPrimarySource": "variable-group-SchemaCreation",
         "containedBy": ["bFQoRhcVH5DHU6"],
-        "label": [{"value": "SchemaCreation", "language": "en"}],
+        "label": [{"value": "SchemaCreation", "language": TextLanguage.EN}],
         "identifier": "uVz9KCEmkU9Nj3IM5Rphv",
         "stableTargetId": "cpwz2hs0xnNLRJYlngToaG",
     }
@@ -140,11 +160,11 @@ def test_transform_igs_schemas_to_variables(
         igs_variable_mapping,
     )
     expected = {
-        "hadPrimarySource": "cT4pY9osJlUwPx5ODOGLvk",
+        "hadPrimarySource": get_extracted_primary_source_id_by_name("igs"),
         "identifierInPrimarySource": "variable-group-SchemaCreation_schemas",
         "dataType": "date",
         "description": [{"value": "test_description"}],
-        "label": [{"value": "schemas", "language": "de"}],
+        "label": [{"value": "schemas", "language": TextLanguage.DE}],
         "usedIn": ["bFQoRhcVH5DHU6"],
         "belongsTo": ["bFQoRhcVH5DHU7"],
         "identifier": "cnZF2Q4cKgTkXrItCRthOY",
