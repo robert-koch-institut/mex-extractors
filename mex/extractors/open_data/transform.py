@@ -396,7 +396,6 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
         )
         landing_page: list[Link] = []
         if landing_page_url and (
-            # the rule has a placeholder forValue, so we read its setValues directly
             landing_page_links := resource_mapping.landingPage[0]
             .mappingRules[0]
             .setValues

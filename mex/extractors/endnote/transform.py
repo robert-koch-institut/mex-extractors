@@ -184,13 +184,13 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         language = (
             next(
                 iter(language_mapping.get_mapped_values(record.language)),
-                Language["ENGLISH"],
+                Language.ENGLISH,
             )
             if record.language
-            else Language["ENGLISH"]
+            else Language.ENGLISH
         )
         text_language = (
-            TextLanguage.DE if language == Language["GERMAN"] else TextLanguage.EN
+            TextLanguage.DE if language == Language.GERMAN else TextLanguage.EN
         )
         abstract = (
             [Text(value=record.abstract, language=text_language)]

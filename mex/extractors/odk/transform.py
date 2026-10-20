@@ -163,7 +163,6 @@ def transform_odk_data_to_extracted_variables(
         for row_index, type_row in enumerate(file.type_survey):
             if is_invalid_odk_variable(type_row):
                 continue
-            # only the first rule (forValues without setValues) drops the data type
             if (
                 variable_mapping.dataType[0].mappingRules[0].forValues
                 and type_row in variable_mapping.dataType[0].mappingRules[0].forValues

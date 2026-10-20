@@ -112,7 +112,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
 
     return ExtractedActivity(
         abstract=[Text(value=abstract, language=TextLanguage.DE)] if abstract else [],
-        activityType=ActivityType["OTHER"],
+        activityType=ActivityType.OTHER,
         contact=contact_merged_ids
         or involved_person_merged_ids
         or responsible_unit_merged_ids,
