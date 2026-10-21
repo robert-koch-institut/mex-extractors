@@ -19,6 +19,7 @@ def wikidata_primary_source() -> ExtractedPrimarySource:
     return ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="wikidata",
+        title=["wikidata_primary_source"],
     )
 
 

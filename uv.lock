@@ -1053,7 +1053,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.4.2"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2434_extract_location_from_wikidata#eb45e66e36f1ae2478bbe0ab4078da8d09b2bc92" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -1066,10 +1066,6 @@ dependencies = [
     { name = "pytz" },
     { name = "requests" },
     { name = "tabulate" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/09/ce/30cb6d1958ca567353fadb59336736d2a8f5a0ff828e9904dbd3e126fb63/mex_common-3.4.2.tar.gz", hash = "sha256:d39921ce135138d5423bdcf568337e5ac7b640edc70f450634b7205c817e62de", size = 102559, upload-time = "2026-10-08T13:42:47.306Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3e/b9/a9bad4ad1792970695de2fa20b493b4b9e344c0a069bbf45a180dce45e4b/mex_common-3.4.2-py3-none-any.whl", hash = "sha256:3ed7f3e684cdcec592b9d4132edd8a5ea77ca6aac0d075535919ab072cd3b206", size = 152366, upload-time = "2026-10-08T13:42:46.025Z" },
 ]
 
 [[package]]
@@ -1127,7 +1123,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "faker", specifier = ">=40" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", specifier = ">=3,<3.5" },
+    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2434_extract_location_from_wikidata" },
     { name = "mex-model", specifier = ">=5,<6" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },

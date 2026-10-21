@@ -120,6 +120,9 @@ def synopse_resources() -> list[ExtractedResource]:
             hadPrimarySource=Identifier.generate(),
             accessRestriction=AccessRestriction["OPEN"],
             contact=[Identifier.generate()],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             unitInCharge=[Identifier.generate()],
             theme="https://mex.rki.de/item/theme-36",
         ),
@@ -129,6 +132,9 @@ def synopse_resources() -> list[ExtractedResource]:
             hadPrimarySource=Identifier.generate(),
             accessRestriction=AccessRestriction["OPEN"],
             contact=[Identifier.generate()],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             unitInCharge=[Identifier.generate()],
             theme="https://mex.rki.de/item/theme-36",
         ),
@@ -138,6 +144,9 @@ def synopse_resources() -> list[ExtractedResource]:
             hadPrimarySource=Identifier.generate(),
             accessRestriction=AccessRestriction["OPEN"],
             contact=[Identifier.generate()],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             unitInCharge=[Identifier.generate()],
             theme="https://mex.rki.de/item/theme-36",
         ),
