@@ -218,10 +218,8 @@ def extract_synopse_contact(
         merged contact point id by mail
     """
     contact_list: list[str] = []
-    if access_platform_mapping.contact[0].mappingRules[0].forValues:
-        contact_list.extend(
-            access_platform_mapping.contact[0].mappingRules[0].forValues
-        )
+    if access_platform_mapping.contact.get_mappable_values():
+        contact_list.extend(access_platform_mapping.contact.get_mappable_values())
     return {
         mail: contact_id
         for mail in contact_list

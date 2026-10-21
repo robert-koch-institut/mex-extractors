@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use mapping-value helpers from mex-common 3.5.0
 - upgrade mex-backend to 4.6.2
 - upgrade ruff to 0.17
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- added missing dependencies that were explicitly imported
 - publisher uses `REQUIRED_FIELDS_BY_CLASS_NAME` instead of `is_required()`
 - use concrete enums instead of string values in test assertions to reduce false diffs
   in test failure summaries
@@ -55,9 +57,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new secrets to configure db password outside of connection dsn:
-    - mex_extractors_grippeweb__mssql_password
-    - mex_extractors_ifsg__mssql_password
-    - mex_extractors_kvis__mssql_password
+  - mex_extractors_grippeweb__mssql_password
+  - mex_extractors_ifsg__mssql_password
+  - mex_extractors_kvis__mssql_password
 
 ### Changes
 

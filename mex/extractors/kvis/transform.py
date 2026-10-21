@@ -47,89 +47,72 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         load_yaml(f"{settings.kvis.mapping_path}/resource.yaml")
     )
 
-    contact = (
-        [
-            get_ldap_merged_contact_id_by_mail(mail=c)
-            for c in mapping.contact[0].mappingRules[0].forValues
-        ]
-        if mapping.contact[0].mappingRules[0].forValues
-        else []
-    )
+    contact = [
+        get_ldap_merged_contact_id_by_mail(mail=c)
+        for c in mapping.contact.get_mappable_values()
+    ]
     contributing_unit = (
-        get_unit_merged_id_by_synonym(
-            mapping.contributingUnit[0].mappingRules[0].forValues[0]
-        )
-        if mapping.contributingUnit[0].mappingRules[0].forValues
+        get_unit_merged_id_by_synonym(mapping.contributingUnit.get_mappable_values()[0])
+        if mapping.contributingUnit.get_mappable_values()
         else None
     )
-    contributor = (
-        [
-            get_ldap_merged_person_id_by_query(mail=c)
-            for c in mapping.contributor[0].mappingRules[0].forValues
-        ]
-        if mapping.contributor[0].mappingRules[0].forValues
-        else []
-    )
+    contributor = [
+        get_ldap_merged_person_id_by_query(mail=c)
+        for c in mapping.contributor.get_mappable_values()
+    ]
+
     external_partner = (
         [partner_id]
-        if mapping.externalPartner[0].mappingRules[0].forValues
+        if mapping.externalPartner.get_mappable_values()
         and (
             partner_id := get_wikidata_extracted_organization_id_by_name(
-                mapping.externalPartner[0].mappingRules[0].forValues[0]
+                mapping.externalPartner.get_mappable_values()[0]
             )
         )
         else []
     )
     publisher = (
         get_wikidata_extracted_organization_id_by_name(
-            mapping.publisher[0].mappingRules[0].forValues[0]
+            mapping.publisher.get_mappable_values()[0]
         )
-        if mapping.publisher[0].mappingRules[0].forValues
+        if mapping.publisher.get_mappable_values()
         else None
     )
     unit_in_charge = (
-        get_unit_merged_id_by_synonym(
-            mapping.unitInCharge[0].mappingRules[0].forValues[0]
-        )
-        if mapping.unitInCharge[0].mappingRules[0].forValues
+        get_unit_merged_id_by_synonym(mapping.unitInCharge.get_mappable_values()[0])
+        if mapping.unitInCharge.get_mappable_values()
         else None
     )
 
     return ExtractedResource(
-        accessRestriction=mapping.accessRestriction[0].mappingRules[0].setValues,
-        accrualPeriodicity=mapping.accrualPeriodicity[0].mappingRules[0].setValues,
-        alternativeTitle=mapping.alternativeTitle[0].mappingRules[0].setValues,
+        accessRestriction=mapping.accessRestriction.get_static_values(),
+        accrualPeriodicity=mapping.accrualPeriodicity.get_static_values(),
+        alternativeTitle=mapping.alternativeTitle.get_static_values(),
         contact=contact,
         contributingUnit=contributing_unit,
         contributor=contributor,
-        description=mapping.description[0].mappingRules[0].setValues,
-        documentation=mapping.documentation[0].mappingRules[0].setValues,
+        description=mapping.description.get_static_values(),
+        documentation=mapping.documentation.get_static_values(),
         externalPartner=external_partner,
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
-        hasCodingSystem=mapping.hasCodingSystem[0].mappingRules[0].setValues,
-        hasLegalBasis=mapping.hasLegalBasis[0].mappingRules[0].setValues,
-        hasPurposeDescription=mapping.hasPurposeDescription[0]
-        .mappingRules[0]
-        .setValues,
-        healthCategory=mapping.healthCategory[0].mappingRules[0].setValues,
-        identifierInPrimarySource=mapping.identifierInPrimarySource[0]
-        .mappingRules[0]
-        .setValues,
-        keyword=mapping.keyword[0].mappingRules[0].setValues,
-        language=mapping.language[0].mappingRules[0].setValues,
-        method=mapping.method[0].mappingRules[0].setValues,
-        populationCoverage=mapping.populationCoverage[0].mappingRules[0].setValues,
-        provenance=mapping.provenance[0].mappingRules[0].setValues,
+        hasCodingSystem=mapping.hasCodingSystem.get_static_values(),
+        hasLegalBasis=mapping.hasLegalBasis.get_static_values(),
+        hasPurposeDescription=mapping.hasPurposeDescription.get_static_values(),
+        healthCategory=mapping.healthCategory.get_static_values(),
+        identifierInPrimarySource=mapping.identifierInPrimarySource.get_static_values(),
+        keyword=mapping.keyword.get_static_values(),
+        language=mapping.language.get_static_values(),
+        method=mapping.method.get_static_values(),
+        populationCoverage=mapping.populationCoverage.get_static_values(),
+        provenance=mapping.provenance.get_static_values(),
         publisher=[publisher],
-        resourceCreationMethod=mapping.resourceCreationMethod[0]
-        .mappingRules[0]
-        .setValues,
-        resourceTypeGeneral=mapping.resourceTypeGeneral[0].mappingRules[0].setValues,
-        resourceTypeSpecific=mapping.resourceTypeSpecific[0].mappingRules[0].setValues,
-        spatial=mapping.spatial[0].mappingRules[0].setValues,
-        start=mapping.start[0].mappingRules[0].setValues,
-        theme=mapping.theme[0].mappingRules[0].setValues,
-        title=mapping.title[0].mappingRules[0].setValues,
+        resourceCreationMethod=mapping.resourceCreationMethod.get_static_values(),
+        resourceTypeGeneral=mapping.resourceTypeGeneral.get_static_values(),
+        resourceTypeSpecific=mapping.resourceTypeSpecific.get_static_values(),
+        spatial=mapping.spatial.get_static_values(),
+        start=mapping.start.get_static_values(),
+        theme=mapping.theme.get_static_values(),
+        title=mapping.title.get_static_values(),
         unitInCharge=unit_in_charge,
     )
 
@@ -178,27 +161,21 @@ def transform_kvis_fieldvalues_table_entries_to_setvalues(
     )
 
     # get variable names by lookup field for valueset collection:
-    valueset_variables_by_lookupfield = {
-        rule.fieldInPrimarySource: rule.mappingRules[0].forValues
-        for rule in variable_mapping.valueSet
-    }
+    field_value_variables = variable_mapping.valueSet.get_mappable_values(
+        field_in_primary_source="FieldValue"
+    )
+    field_value_long_text_variables = variable_mapping.valueSet.get_mappable_values(
+        field_in_primary_source="FieldValueLongText"
+    )
 
     # Collect valueSets from table per variable according to lookup field
     valuesets_by_variable_name: dict[str, list[str]] = defaultdict(list)
     for item in kvis_fieldvalues_table_entries:
-        if (
-            valueset_variables_by_lookupfield["FieldValue"]
-            and item.field_value_list_name
-            in valueset_variables_by_lookupfield["FieldValue"]
-        ):
+        if item.field_value_list_name in field_value_variables:
             valuesets_by_variable_name[item.field_value_list_name].append(
                 item.field_value
             )
-        elif (
-            valueset_variables_by_lookupfield["FieldValueLongText"]
-            and item.field_value_list_name
-            in valueset_variables_by_lookupfield["FieldValueLongText"]
-        ):
+        elif item.field_value_list_name in field_value_long_text_variables:
             valuesets_by_variable_name[item.field_value_list_name].append(
                 item.field_value_long_text
             )
