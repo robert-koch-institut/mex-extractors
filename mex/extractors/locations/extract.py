@@ -16,7 +16,7 @@ def extract_country_wikidata_ids_from_eu_vocabularies_json() -> list[str]:
     return [Country.model_validate(raw).wikidata_id[0] for raw in raw_countries]
 
 
-def query_region_wikidata_ids_from_wikidata() -> list[str]:
+def extract_region_wikidata_ids() -> list[str]:
     """Query region wikidata ids from Wikidata."""
     connector = WikidataSPARQLConnector.get()
 
