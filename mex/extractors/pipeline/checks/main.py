@@ -93,7 +93,7 @@ def get_historical_events(events: Sequence[EventLogRecord]) -> dict[datetime, in
     return result
 
 
-def get_latest_num_items(  # noqa: C901
+def get_latest_num_items(
     events: Sequence[EventLogRecord],
     rule_name: str,
     target_type: str | None = None,
@@ -113,10 +113,6 @@ def get_latest_num_items(  # noqa: C901
         metadata_key = target_type
     else:
         metadata_key = "num_items"
-
-    if metadata_key not in latest_materialization.metadata:
-        msg = f"Metadata for key {metadata_key} not found for assetCheck {rule_name}."
-        raise ValueError(msg)
 
     num_items_metadata = latest_materialization.metadata.get(metadata_key)
 
