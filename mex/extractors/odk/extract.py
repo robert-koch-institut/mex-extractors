@@ -87,12 +87,12 @@ def get_external_partner_and_publisher_by_label(
     labels = {
         value
         for resource in odk_resource_mappings
-        for for_values in [
-            resource.publisher[0].mappingRules[0].forValues,
-            resource.externalPartner[0].mappingRules[0].forValues,
+        for value in [
+            *resource.publisher.get_mappable_values(),
+            *resource.externalPartner.get_mappable_values(),
         ]
-        for value in for_values  # type: ignore[union-attr]
     }
+
     odk_merged_organization_ids_by_str: dict[str, MergedOrganizationIdentifier] = {}
     for label in labels:
         if organization_id := get_wikidata_extracted_organization_id_by_name(label):

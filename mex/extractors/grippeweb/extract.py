@@ -45,7 +45,7 @@ def extract_ldap_actors_for_functional_accounts(
     return {
         mail: contact_id
         for mapping in grippeweb_resource_mappings
-        for mail in (mapping.contact[0].mappingRules[0].forValues or [])
+        for mail in mapping.contact.get_mappable_values()
         if (contact_id := get_ldap_merged_contact_id_by_mail(mail=mail))
     }
 
@@ -66,7 +66,7 @@ def extract_grippeweb_ldap_person_ids_by_query(
     return {
         name: person_id
         for mapping in grippeweb_resource_mappings
-        for name in (mapping.contributor[0].mappingRules[0].forValues or [])
+        for name in mapping.contributor.get_mappable_values()
         if (
             person_id := get_ldap_merged_person_id_by_query(
                 given_name=name.split(" ")[0], surname=name.split(" ")[1]
@@ -74,9 +74,7 @@ def extract_grippeweb_ldap_person_ids_by_query(
         )
     } | {
         mail: person_id
-        for mail in (
-            grippeweb_access_platform.contact[0].mappingRules[0].forValues or []
-        )
+        for mail in grippeweb_access_platform.contact.get_mappable_values()
         if (person_id := get_ldap_merged_person_id_by_query(mail=mail))
     }
 
@@ -95,11 +93,12 @@ def extract_grippeweb_organizations(
     """
     organization_by_name = {}
     for resource in grippeweb_resource_mappings:
-        if external_partner_dict := resource.externalPartner:
-            external_partner = external_partner_dict[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        if external_partners := resource.externalPartner.get_mappable_values():
+            external_partner = external_partners[0]
+
             if org := get_wikidata_extracted_organization_id_by_name(external_partner):
                 organization_by_name[external_partner] = org
-        publisher_name = resource.publisher[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        publisher_name = resource.publisher.get_mappable_values()[0]
         if publisher := get_wikidata_extracted_organization_id_by_name(publisher_name):
             organization_by_name[publisher_name] = publisher
     return organization_by_name

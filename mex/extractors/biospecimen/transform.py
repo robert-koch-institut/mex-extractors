@@ -50,28 +50,17 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         activity.identifierInPrimarySource: activity.stableTargetId
         for activity in synopse_extracted_activities
     }
-    anonymization_pseudonymization_by_field = {
-        rule.forValues[0]: rule.setValues
-        for rule in resource_mapping.anonymizationPseudonymization[0].mappingRules
-        if rule.forValues and rule.setValues
-    }
-    access_restriction_by_zugriffsbeschraenkung = {
-        rule.forValues[0]: rule.setValues
-        for rule in resource_mapping.accessRestriction[0].mappingRules
-        if rule.forValues and rule.setValues
-    }
     resources = []
     for resource in watch_progress(
         biospecimen_resources, "transform_biospecimen_resource_to_mex_resource"
     ):
         anonymization_pseudonymization = (
-            anonymization_pseudonymization_by_field[
+            resource_mapping.anonymizationPseudonymization.get_mapped_values(
                 resource.anonymisiert_pseudonymisiert
-            ]
+            )
             if resource.anonymisiert_pseudonymisiert
             else None
         )
-        conforms_to = resource_mapping.conformsTo[0].mappingRules[0].setValues
         contributing_unit = (
             get_unit_merged_id_by_synonym(unit_name)
             if (unit_name := resource.mitwirkende_fachabteilung)
@@ -90,14 +79,6 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
             if resource.externe_partner
             else []
         )
-        has_coding_system = (
-            resource_mapping.hasCodingSystem[0].mappingRules[0].setValues
-        )
-        has_legal_basis = resource_mapping.hasLegalBasis[0].mappingRules[0].setValues
-        has_personal_data = (
-            resource_mapping.hasPersonalData[0].mappingRules[0].setValues
-        )
-        language = resource_mapping.language[0].mappingRules[0].setValues
 
         contact: list[Identifier] = []
         for kontakt in resource.kontakt:
@@ -121,18 +102,14 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         mesh_id = [
             f"http://id.nlm.nih.gov/mesh/{id_}" for id_ in resource.id_mesh_begriff
         ]
-        if resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues and (
-            resource.ressourcentyp_allgemein
-            in resource_mapping.resourceTypeGeneral[0].mappingRules[0].forValues
-        ):
-            resource_type_general = (
-                resource_mapping.resourceTypeGeneral[0].mappingRules[0].setValues
+        resource_type_general = (
+            resource_mapping.resourceTypeGeneral.get_mapped_values(
+                resource.ressourcentyp_allgemein
             )
-        else:
-            resource_type_general = []
-        resource_creation_method = (
-            resource_mapping.resourceCreationMethod[0].mappingRules[0].setValues
+            if resource.ressourcentyp_allgemein
+            else []
         )
+
         if resource.zeitlicher_bezug and "bis" in resource.zeitlicher_bezug[0]:
             start_end = resource.zeitlicher_bezug[0].split("bis")
             start = start_end[0].strip()
@@ -146,15 +123,18 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
         ):
             theme = resource_mapping.theme[0].mappingRules[1].setValues
         else:
-            theme = resource_mapping.theme[0].mappingRules[0].setValues
+            theme = resource_mapping.theme.get_static_values()
+        access_restrictions = resource_mapping.accessRestriction.get_mapped_values(
+            resource.zugriffsbeschraenkung
+        )
+        if not access_restrictions:
+            raise KeyError(resource.zugriffsbeschraenkung)
         resources.append(
             ExtractedResource(
-                accessRestriction=access_restriction_by_zugriffsbeschraenkung[
-                    resource.zugriffsbeschraenkung
-                ],
+                accessRestriction=access_restrictions,
                 alternativeTitle=resource.alternativer_titel,
                 anonymizationPseudonymization=anonymization_pseudonymization,
-                conformsTo=conforms_to,
+                conformsTo=resource_mapping.conformsTo.get_static_values(),
                 contact=contact,
                 contributingUnit=contributing_unit,
                 contributor=contributor,
@@ -164,19 +144,19 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
                 externalPartner=external_partner,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("biospecimen"),
                 hasCodeValues=has_code_values,
-                hasCodingSystem=has_coding_system,
-                hasLegalBasis=has_legal_basis,
-                hasPersonalData=has_personal_data,
+                hasCodingSystem=resource_mapping.hasCodingSystem.get_static_values(),
+                hasLegalBasis=resource_mapping.hasLegalBasis.get_static_values(),
+                hasPersonalData=resource_mapping.hasPersonalData.get_static_values(),
                 identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
                 instrumentToolOrApparatus=resource.tools_instrumente_oder_apparate,
                 keyword=resource.schlagworte,
-                language=language,
+                language=resource_mapping.language.get_static_values(),
                 meshId=mesh_id,
                 method=resource.methoden,
                 methodDescription=resource.methodenbeschreibung,
                 numberOfRecords=resource.vorhandene_anzahl_der_proben,
                 publisher=extracted_organization_rki.stableTargetId,
-                resourceCreationMethod=resource_creation_method,
+                resourceCreationMethod=resource_mapping.resourceCreationMethod.get_static_values(),
                 resourceTypeGeneral=resource_type_general,
                 resourceTypeSpecific=resource.ressourcentyp_speziell,
                 rights=resource.rechte,
@@ -185,7 +165,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
                 theme=theme,
                 title=resource.offizieller_titel_der_probensammlung,
                 unitInCharge=unit_in_charge,
-                wasGeneratedBy=was_generated_by or None,
+                wasGeneratedBy=was_generated_by,
             )
         )
     return resources

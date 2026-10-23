@@ -15,7 +15,6 @@ from mex.common.models import (
 from mex.common.models.bibliographic_resource import DoiStr
 from mex.common.types import (
     UTC,
-    AccessRestriction,
     Language,
     MergedOrganizationIdentifier,
     TemporalEntity,
@@ -94,9 +93,7 @@ def extract_endnote_consents(
     """
     return [
         ExtractedConsent(
-            hasConsentStatus=endnote_consent_mapping.hasConsentStatus[0]
-            .mappingRules[0]
-            .setValues,
+            hasConsentStatus=endnote_consent_mapping.hasConsentStatus.get_static_values(),
             hadPrimarySource=get_extracted_primary_source_id_by_name("endnote"),
             hasDataSubject=person.stableTargetId,
             identifierInPrimarySource=f"{person.stableTargetId}_consent",
@@ -156,24 +153,10 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
     Return:
         list of extracted bibliographic resource
     """
-    language_by_language_field = {
-        for_value: rule.setValues[0]
-        for rule in endnote_bib_resource_mapping.language[0].mappingRules
-        if rule.forValues and rule.setValues
-        for for_value in rule.forValues
-    }
-    access_restriction_by_custom6: dict[str | None, AccessRestriction | None] = {
-        "default": endnote_bib_resource_mapping.accessRestriction[0]
-        .mappingRules[2]
-        .setValues,
-    }
-    access_restriction_by_custom6.update(
-        {
-            for_value: rule.setValues
-            for rule in endnote_bib_resource_mapping.accessRestriction[0].mappingRules
-            if rule.forValues and rule.setValues
-            for for_value in rule.forValues
-        }
+    language_mapping = endnote_bib_resource_mapping.language
+    access_restriction_mapping = endnote_bib_resource_mapping.accessRestriction
+    bibliographic_resource_type_mapping = (
+        endnote_bib_resource_mapping.bibliographicResourceType
     )
     ern_for_value = (
         endnote_bib_resource_mapping.alternateIdentifier[0]  # type: ignore[index]
@@ -195,45 +178,32 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
         .mappingRules[1]
         .setValues[0]
     )
-    bibliographical_resource_type_by_ref_type = {
-        "default": (
-            endnote_bib_resource_mapping.bibliographicResourceType[0]
-            .mappingRules[2]
-            .setValues[0]
-        )
-        if endnote_bib_resource_mapping.bibliographicResourceType[0]
-        .mappingRules[2]
-        .setValues
-        else None
-    }
-    bibliographical_resource_type_by_ref_type.update(
-        {
-            for_value: rule.setValues[0]
-            for rule in endnote_bib_resource_mapping.bibliographicResourceType[
-                0
-            ].mappingRules
-            if rule.forValues and rule.setValues
-            for for_value in rule.forValues
-        }
-    )
     bibliographical_resources: list[ExtractedBibliographicResource] = []
     already_loaded_publisher_organizations: dict[str, MergedOrganizationIdentifier] = {}
     for record in endnote_records:
         language = (
-            language_by_language_field.get(record.language, Language["ENGLISH"])
+            next(
+                iter(language_mapping.get_mapped_values(record.language)),
+                Language.ENGLISH,
+            )
             if record.language
-            else Language["ENGLISH"]
+            else Language.ENGLISH
         )
         text_language = (
-            TextLanguage.DE if language == Language["GERMAN"] else TextLanguage.EN
+            TextLanguage.DE if language == Language.GERMAN else TextLanguage.EN
         )
         abstract = (
             [Text(value=record.abstract, language=text_language)]
             if record.abstract
             else []
         )
-        access_restriction = access_restriction_by_custom6.get(
-            record.custom6, access_restriction_by_custom6["default"]
+        access_restriction = next(
+            iter(
+                access_restriction_mapping.get_mapped_values(record.custom6)
+                if record.custom6
+                else []
+            ),
+            access_restriction_mapping.get_static_values(),
         )
         alternate_identifier_ern = (
             ern.replace(ern_for_value, ern_set_value)
@@ -347,9 +317,11 @@ def extract_endnote_bibliographic_resource(  # noqa: C901, PLR0915
                 abstract=abstract,
                 accessRestriction=access_restriction,
                 alternateIdentifier=alternate_identifier,
-                bibliographicResourceType=bibliographical_resource_type_by_ref_type.get(
-                    record.ref_type,
-                    bibliographical_resource_type_by_ref_type["default"],
+                bibliographicResourceType=(
+                    bibliographic_resource_type_mapping.get_mapped_values(
+                        record.ref_type
+                    )
+                    or bibliographic_resource_type_mapping.get_static_values()
                 ),
                 contributingUnit=contributing_unit,
                 creator=creator,

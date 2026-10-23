@@ -38,7 +38,7 @@ from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.s3 import S3Base
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
-    get_wikidata_organization_ids_by_label,
+    get_wikidata_organization_mapping,
 )
 
 if TYPE_CHECKING:
@@ -80,7 +80,7 @@ def isolate_caches() -> None:
     get_ldap_extracted_person_by_query.cache_clear()
     get_ldap_merged_contact_id_by_mail.cache_clear()
     get_wikidata_extracted_organization_id_by_name.cache_clear()
-    get_wikidata_organization_ids_by_label.cache_clear()
+    get_wikidata_organization_mapping.cache_clear()
 
 
 @pytest.fixture

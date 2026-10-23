@@ -5,6 +5,7 @@ from mex.common.models import (
     ExtractedOrganization,
 )
 from mex.common.types import (
+    ActivityType,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -93,7 +94,7 @@ def transform_datscha_web_items_to_mex_activities(
         activities.append(
             ExtractedActivity(
                 abstract=datscha_web_item.kurzbeschreibung,
-                activityType="https://mex.rki.de/item/activity-type-6",
+                activityType=ActivityType.OTHER,
                 contact=contact,
                 externalAssociate=external_associate,
                 hadPrimarySource=get_extracted_primary_source_id_by_name("datscha-web"),
