@@ -14,6 +14,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from mex.common.types import (
@@ -131,10 +132,12 @@ def assign_resource_relations_and_load(
         == "BCHW_ZIG2_FG37_main_questionnaire_01052021"
     ).stableTargetId
     load(resources_tuple[0])
-    for resource in resources_tuple[1]:
-        resource.relatedResource = [main_questionnaire_id]
-    load(resources_tuple[1])
-    return [*resources_tuple[0], *resources_tuple[1]]
+    related_resources = [
+        model_copy_validated(resource, {"relatedResource": [main_questionnaire_id]})
+        for resource in resources_tuple[1]
+    ]
+    load(related_resources)
+    return [*resources_tuple[0], *related_resources]
 
 
 def transform_odk_data_to_extracted_variables(

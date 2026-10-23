@@ -37,6 +37,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -548,13 +549,13 @@ def transform_synopse_projects_to_mex_activities(
         if anschlussprojekt := anschlussprojekt_by_activity_stable_target_id.get(
             activity.stableTargetId
         ):
-            activity.succeeds = [
-                cast(
-                    "MergedActivityIdentifier",
-                    activity_stable_target_id_by_short_name[anschlussprojekt],
-                )
-            ]
-            child_activities.append(activity)
+            succeeds = cast(
+                "MergedActivityIdentifier",
+                activity_stable_target_id_by_short_name[anschlussprojekt],
+            )
+            child_activities.append(
+                model_copy_validated(activity, {"succeeds": [succeeds]})
+            )
         else:
             non_child_activities.append(activity)
     return non_child_activities, child_activities
