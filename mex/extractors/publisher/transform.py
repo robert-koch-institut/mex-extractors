@@ -22,6 +22,7 @@ from mex.extractors.publisher.models import (
     CsvResource,
     PublisherItemsLike,
 )
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from collections.abc import Collection
@@ -71,7 +72,7 @@ def update_actor_references_where_needed(
     fallback_unit_identifiers_by_person: dict[
         MergedPersonIdentifier, list[MergedOrganizationalUnitIdentifier]
     ],
-) -> None:
+) -> AnyMergedModel:
     """Update references to actors, where needed.
 
     We filter all fields that allow Person references to only contain references to
@@ -83,7 +84,11 @@ def update_actor_references_where_needed(
     references, we keep the broken ones in order to keep mex-model compliance.
     Would we skip those items instead, we might break other items relying on the former
     item, and start a recursive de-publication process - which we don't want.
+
+    Returns:
+        A validated copy of the item with updated actor references
     """
+    changes: dict[str, list[AnyMergedIdentifier]] = {}
     for field, ref_types in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[
         item.entityType
     ].items():
@@ -121,7 +126,8 @@ def update_actor_references_where_needed(
                 field,
             )
         else:
-            setattr(item, field, identifiers)
+            changes[field] = identifiers
+    return model_copy_validated(item, changes)
 
 
 def get_resolved_names(identifier: AnyMergedIdentifier, field: str) -> str:

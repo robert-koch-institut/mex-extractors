@@ -6,6 +6,7 @@ import pytest
 
 from mex.extractors.grippeweb.connector import QUERY_BY_TABLE_NAME, GrippewebConnector
 from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from pytest import MonkeyPatch
@@ -39,7 +40,11 @@ def test_parse_rows_success() -> None:
 
 def test_setup_connection_kerberos_enabled(monkeypatch: MonkeyPatch) -> None:
     settings = ExtractorsSettings.get()
-    monkeypatch.setattr(settings.grippeweb, "kerberos_enabled", True)
+    monkeypatch.setattr(
+        settings,
+        "grippeweb",
+        model_copy_validated(settings.grippeweb, {"kerberos_enabled": True}),
+    )
 
     mock_process = MagicMock()
     mock_process.communicate.return_value = ("kinit success", "")
@@ -73,7 +78,11 @@ def test_setup_connection_kerberos_enabled(monkeypatch: MonkeyPatch) -> None:
 
 def test_setup_connection_kerberos_disabled(monkeypatch: MonkeyPatch) -> None:
     settings = ExtractorsSettings.get()
-    monkeypatch.setattr(settings.grippeweb, "kerberos_enabled", False)
+    monkeypatch.setattr(
+        settings,
+        "grippeweb",
+        model_copy_validated(settings.grippeweb, {"kerberos_enabled": False}),
+    )
 
     mock_popen = MagicMock()
     monkeypatch.setattr("mex.extractors.grippeweb.connector.Popen", mock_popen)
