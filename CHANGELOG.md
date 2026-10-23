@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use mapping-value helpers from mex-common 3.5.0
 - upgrade mex-backend to 4.6.2
 - upgrade ruff to 0.17
-- BREAKING: `update_actor_references_where_needed` returns a validated copy of the
+- `update_actor_references_where_needed` returns a validated copy of the
   item instead of updating it in place
 - derive changed models with the new `model_copy_validated` helper instead of
   assigning fields, to prepare for frozen models in future mex-common release
