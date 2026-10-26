@@ -40,18 +40,21 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
 
 # TODO(ND): move this helper to mex-common
 @lru_cache(maxsize=1)
-def get_wikidata_organization_ids_by_label() -> dict[str, str]:
-    """Extract dict of already defined wikidata ids by labels."""
+def get_wikidata_organization_mapping() -> OrganizationMapping:
+    """Load the organization mapping with already defined wikidata ids."""
     settings = ExtractorsSettings.get()
-    organization_mapping = OrganizationMapping.model_validate(
+    return OrganizationMapping.model_validate(
         load_yaml(f"{settings.wikidata.mapping_path}/organization.yaml")
     )
-    return {
-        value: rule.setValues
-        for rule in organization_mapping.identifierInPrimarySource[0].mappingRules
-        if rule.setValues and rule.forValues
-        for value in rule.forValues
-    }
+
+
+def get_wikidata_organization_id_by_label(label: str) -> str | None:
+    """Return an already defined wikidata id for the given label, if any."""
+    organization_mapping = get_wikidata_organization_mapping()
+    return next(
+        iter(organization_mapping.identifierInPrimarySource.get_mapped_values(label)),
+        None,
+    )
 
 
 @lru_cache(maxsize=1024)
@@ -67,11 +70,8 @@ def get_wikidata_extracted_organization_id_by_name(
         ExtractedOrganization stableTargetId if one matching organization is found.
         None if multiple matches / no match is found
     """
-    wikidata_organization_ids_by_label = get_wikidata_organization_ids_by_label()
-    if (name in wikidata_organization_ids_by_label) and (
-        extracted_organization := get_wikidata_organization_by_id(
-            wikidata_organization_ids_by_label[name]
-        )
+    if (wikidata_id := get_wikidata_organization_id_by_label(name)) and (
+        extracted_organization := get_wikidata_organization_by_id(wikidata_id)
     ):
         return extracted_organization.stableTargetId
     return None

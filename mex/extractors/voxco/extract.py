@@ -46,7 +46,7 @@ def extract_voxco_organizations(
     """
     voxco_resource_organizations = {}
     external_partners = [
-        mapping.externalPartner[0].mappingRules[0].forValues[0]  # type: ignore[index]
+        mapping.externalPartner.get_mappable_values()[0]
         for mapping in voxco_resource_mappings
         if mapping.externalPartner
     ]
@@ -72,6 +72,6 @@ def extract_ldap_persons_voxco(
     return {
         contact[1]: person_id
         for mapping in voxco_resource_mappings
-        if (contact := mapping.contact[0].mappingRules[0].forValues)
+        if (contact := mapping.contact.get_mappable_values())
         and (person_id := get_ldap_merged_person_id_by_query(mail=contact[1]))
     }

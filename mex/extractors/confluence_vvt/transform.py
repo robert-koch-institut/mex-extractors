@@ -66,10 +66,9 @@ def transform_confluence_vvt_page_to_extracted_activity(
     documentation = [
         Link(
             url=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
-            title=confluence_vvt_activity_mapping.documentation[0]  # type: ignore[index]
-            .mappingRules[0]
-            .setValues[0]
-            .title,
+            title=confluence_vvt_activity_mapping.documentation.get_static_values()[  # type: ignore[index]
+                0
+            ].title,
         )
     ]
     involved_person_merged_ids = [
@@ -113,7 +112,7 @@ def transform_confluence_vvt_page_to_extracted_activity(
 
     return ExtractedActivity(
         abstract=[Text(value=abstract, language=TextLanguage.DE)] if abstract else [],
-        activityType=ActivityType["OTHER"],
+        activityType=ActivityType.OTHER,
         contact=contact_merged_ids
         or involved_person_merged_ids
         or responsible_unit_merged_ids,

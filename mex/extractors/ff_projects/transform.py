@@ -70,16 +70,6 @@ def transform_ff_projects_source_to_extracted_activity(
         organization_stable_target_id_by_synonyms,
     )
 
-    if ff_projects_source.rki_az in (
-        ff_projects_activity.activityType[0].mappingRules[0].forValues or ()
-    ):
-        activity_type = ff_projects_activity.activityType[0].mappingRules[0].setValues
-    elif ff_projects_source.rki_az in (
-        ff_projects_activity.activityType[0].mappingRules[1].forValues or ()
-    ):
-        activity_type = ff_projects_activity.activityType[0].mappingRules[1].setValues
-    else:
-        activity_type = []
     start = (
         [
             YearMonthDay(
@@ -100,7 +90,9 @@ def transform_ff_projects_source_to_extracted_activity(
     )
     return ExtractedActivity(
         title=ff_projects_source.thema_des_projekts,
-        activityType=activity_type,
+        activityType=ff_projects_activity.activityType.get_mapped_values(
+            ff_projects_source.rki_az
+        ),
         contact=project_lead or responsible_unit,
         involvedPerson=project_lead,
         start=start,

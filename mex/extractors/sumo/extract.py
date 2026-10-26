@@ -186,7 +186,8 @@ def extract_ldap_contact_points_by_emails(
     Returns:
         dictionary of merged contact point identifier by mail
     """
-    emails = {r.contact[0].mappingRules[0].forValues[0] for r in resources}  # type: ignore[index]
+    emails = {r.contact.get_mappable_values()[0] for r in resources}
+
     return {
         mail: contact_id
         for mail in emails
@@ -205,7 +206,7 @@ def extract_ldap_persons_by_name(
     Returns:
         dictionary of ldap persons with query
     """
-    names = sumo_access_platform.contact[0].mappingRules[0].forValues or []
+    names = sumo_access_platform.contact.get_mappable_values()
     split_names = [
         split_name for name in names for split_name in analyse_person_string(name)
     ]

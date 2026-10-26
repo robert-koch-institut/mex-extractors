@@ -4,7 +4,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
-    MappingField,
+    MappingFieldList,
 )
 from mex.common.types import (
     Link,
@@ -87,15 +87,12 @@ def transform_international_projects_source_to_extracted_activity(
             if (wfc := funding_sources_stable_target_id_by_query.get(fc))
         )
 
-    activity_type_from_mapping = international_projects_activity.activityType[
-        0
-    ].mappingRules
-    if source.funding_type == activity_type_from_mapping[0].forValues[0]:  # type: ignore[index]
-        activity_type = activity_type_from_mapping[0].setValues[0]  # type: ignore[index]
-    elif source.funding_type == activity_type_from_mapping[1].forValues[0]:  # type: ignore[index]
-        activity_type = activity_type_from_mapping[1].setValues[0]  # type: ignore[index]
-    else:
-        activity_type = activity_type_from_mapping[2].setValues[0]  # type: ignore[index]
+    activity_type_mapping = international_projects_activity.activityType
+    activity_type = (
+        activity_type_mapping.get_mapped_values(source.funding_type)
+        or activity_type_mapping.get_static_values()
+        or []
+    )[0]
 
     theme = international_projects_activity.theme
 
@@ -187,7 +184,7 @@ def transform_international_projects_sources_to_extracted_activities(
 
 
 def get_theme_for_activity_or_topic(
-    theme: list[MappingField[list[Theme]]],
+    theme: MappingFieldList[list[Theme]],
     activity1: str | None,
     activity2: str | None,
     topic1: str | None,
@@ -205,22 +202,11 @@ def get_theme_for_activity_or_topic(
     Returns:
         Sorted list of Theme
     """
-    themes_dict_from_mapping: dict[str, Theme] = {}
-    default_theme_from_mapping = cast(
-        "list[Theme]",
-        theme[0].mappingRules[0].setValues,
-    )[0]
-
-    for theme_item in theme:
-        for mapping_rule in theme_item.mappingRules:
-            if mapping_rule.forValues and mapping_rule.setValues:
-                themes_dict_from_mapping.update(
-                    dict.fromkeys(mapping_rule.forValues, mapping_rule.setValues[0])
-                )
+    default_theme_from_mapping = cast("list[Theme]", theme.get_static_values())[0]
 
     def get_theme_or_default(key: str | None) -> Theme:
-        if key and (theme := themes_dict_from_mapping.get(key)):
-            return theme
+        if key and (themes := theme.get_mapped_values(key)):
+            return themes[0]
         return default_theme_from_mapping
 
     theme_set = set()
