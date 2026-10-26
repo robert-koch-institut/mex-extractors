@@ -1057,7 +1057,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.6.0"
-source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2434_extract_location_from_wikidata#4a7503ac8ba1893b41eb12ce086d6db12b6f7dee" }
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?branch=feature%2Fmx-2434_extract_location_from_wikidata#b0b9a31221fdafa3bb15795aea315e9498893a77" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
