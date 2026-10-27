@@ -147,6 +147,7 @@ def transform_biospecimen_resource_to_mex_resource(  # noqa: PLR0913, PLR0917
                 hasCodingSystem=resource_mapping.hasCodingSystem.get_static_values(),
                 hasLegalBasis=resource_mapping.hasLegalBasis.get_static_values(),
                 hasPersonalData=resource_mapping.hasPersonalData.get_static_values(),
+                hasPurpose=resource_mapping.hasPurpose.get_static_values(),
                 identifierInPrimarySource=f"{resource.file_name.split('.')[0]}_{resource.sheet_name}",
                 instrumentToolOrApparatus=resource.tools_instrumente_oder_apparate,
                 keyword=resource.schlagworte,
