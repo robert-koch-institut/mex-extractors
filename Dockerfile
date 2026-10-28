@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
 
-FROM python:3.14-trixie@sha256:484d69f37ccf7dfa527c4ce7db8894f543a6455123dc873765f629f970795326 AS builder
+FROM python:3.14-trixie@sha256:b16c25b07f6c4e3822b9c381867b9f935f67671c13a53f7176049e4b96b6be5c AS builder
 
 WORKDIR /build
 
@@ -20,7 +20,7 @@ RUN curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEE4D7792
         https://packages.microsoft.com/debian/13/prod trixie main" \
         > /build/mssql-release.list
 
-FROM python:3.14-slim-trixie@sha256:fbecd461fc72d21b2143c6eaba25143738079154a6d0ea3da3aec724f50eed4a
+FROM python:3.14-slim-trixie@sha256:cd89c30eda26ee911a4611b18680086e0ea42e6f5f8cbe653d07fa7958c9cec8
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="ETL pipelines for the RKI Metadata Exchange."
