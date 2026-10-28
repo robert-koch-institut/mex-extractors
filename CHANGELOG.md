@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use concrete enums instead of string values in test assertions to reduce false diffs
   in test failure summaries
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers
+- fix assetcheck for less than x outbound
 
 ### Security
 
