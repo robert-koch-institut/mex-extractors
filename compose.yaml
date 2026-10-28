@@ -98,7 +98,7 @@ services:
       - ./assets/raw-data/ldap/:/bootstrap/
       - slapd-ssl:/etc/ldap/ssl
   mailpit:
-    image: axllent/mailpit:v1.31@sha256:98b916bd3c8d61f7633a52d3ea2f58d00620cb01ca57ab59edde68c347a95365
+    image: axllent/mailpit:v1.31@sha256:23fe39e81bde596a918000b3135c0f85dc8bb4c9ea6be274b051143f3e300387
     ports:
       - 1025:1025
       - 8025:8025
@@ -107,7 +107,7 @@ services:
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_UI_AUTH=user:password
   neo4j:
-    image: neo4j:2026.09.0-community@sha256:d6269a020149934597c8c3df926d080a612796dbbb48861ca9d5b1109cabf0d8
+    image: neo4j:2026.10.1-community@sha256:86f8e01402fd0d5fd23e8968375fefdc21284a5c1751fa3fa3de8091a08b6dd6
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_dbms_usage__report_enabled=false
@@ -120,7 +120,7 @@ services:
       retries: 5
       start_period: 30s
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.6.2@sha256:de00421715eb74758927b11ed49b16c06223c7036eeef98ca498375e3c2ba28d
+    image: ghcr.io/robert-koch-institut/mex-backend:4.7.0@sha256:91aea5d3544f6129a21109fce352d75d90d1488815ddfa88396fcd7f7720c282
     entrypoint: testing-backend
     depends_on:
       neo4j:

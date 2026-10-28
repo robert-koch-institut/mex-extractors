@@ -39,6 +39,7 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
+from mex.extractors.utils import model_copy_validated
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
 )
@@ -187,7 +188,9 @@ def get_or_transform_open_data_persons(
             )
 
         if person.orcid and not extracted_person.orcidId:
-            extracted_person.orcidId = [f"https://orcid.org/{person.orcid}"]
+            extracted_person = model_copy_validated(
+                extracted_person, {"orcidId": [f"https://orcid.org/{person.orcid}"]}
+            )
             load([extracted_person])
 
         extracted_persons.append(extracted_person)
