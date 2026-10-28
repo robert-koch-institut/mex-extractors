@@ -2,9 +2,10 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:  # pragma: no cover
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable, Mapping, Sequence
 
     from pandas._typing import Dtype
+    from pydantic import BaseModel as PydanticBaseModel
     from typing_extensions import TypeForm
 
     from mex.common.models import BaseModel
@@ -68,3 +69,23 @@ def collect_related_identifier_counts(
         identifier_counts[identifier] = identifier_counts.get(identifier, 0) + 1
 
     return identifier_counts
+
+
+def model_copy_validated[ModelT: PydanticBaseModel](
+    model: ModelT, update: Mapping[str, Any]
+) -> ModelT:
+    """Return a validated copy of a model with some fields updated.
+
+    Unlike `model_copy`, this runs all field and model validators on the result and
+    does not rely on assigning to the original, so it also works for frozen models.
+
+    Args:
+        model: Model instance to copy
+        update: Values to change in the copy, keyed by field name
+
+    Returns:
+        New validated instance of the same model class
+    """
+    # TODO(ND): replace with `BaseModel.model_copy_validated` from future mex-common
+    data = {name: getattr(model, name) for name in model.model_fields_set}
+    return model.model_validate({**data, **update})
