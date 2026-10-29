@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.14.*"
 resolution-markers = [
     "sys_platform == 'win32'",
@@ -1052,7 +1052,7 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "3.5.0"
+version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
@@ -1067,9 +1067,9 @@ dependencies = [
     { name = "requests" },
     { name = "tabulate" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/12/34/9420113d9a361b2daf18c049f83182de9f87254e29b2a5761ccfa500e652/mex_common-3.5.0.tar.gz", hash = "sha256:77d1e210e6e19d385b9076c5578f9c1dfcb5273a38f9faadec044f3e485257fe", size = 105549, upload-time = "2026-10-20T11:29:33.272Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/49/b564725eaa6beba25c325528e2bb848ed655fbb1fa43db9c115b400d66a2/mex_common-3.6.0.tar.gz", hash = "sha256:1d3d5b22c4cc34986efc8bf4539f7d8734be74b180a0e580ef9e164a21fc1c70", size = 103753, upload-time = "2026-10-21T12:20:57.043Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/c4/efc337222abeed8211a2f85527927d88f62ba27a390c26ce92bf48ba41e7/mex_common-3.5.0-py3-none-any.whl", hash = "sha256:d349b1c6f81afd8fade645a88195e013049ad3099de64ad3ad3303b398366a3d", size = 154063, upload-time = "2026-10-20T11:29:31.731Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/15/b06f94023dfc0c5082b32a84d5d42120830dfadd7a8008b305793c1506d1/mex_common-3.6.0-py3-none-any.whl", hash = "sha256:1f2b027201f90d7f22bd245d29cfa47a0fe6b1ac8538b1e46ecd9380ff42b5e0", size = 154265, upload-time = "2026-10-21T12:20:55.464Z" },
 ]
 
 [[package]]
@@ -1135,7 +1135,7 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "jinja2", specifier = ">=3,<4" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", specifier = ">=3.5,<3.6" },
+    { name = "mex-common", specifier = ">=3.6,<3.7" },
     { name = "mex-model", specifier = ">=5.2,<5.3" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
@@ -1404,7 +1404,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
