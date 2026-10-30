@@ -156,6 +156,7 @@ def mex_resources_feat() -> ExtractedResource:
         contributingUnit=[Identifier.generate(seed=5)],
         keyword=["keyword 1", "keyword 2"],
         meshId=["http://id.nlm.nih.gov/mesh/D004636"],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
         resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-14"],
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Syndrome"],

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- extractor for locations from wikidata and json
+
 ### Changes
 
 - use mapping-value helpers from mex-common 3.5.0
