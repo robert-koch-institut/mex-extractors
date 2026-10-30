@@ -16,6 +16,7 @@ from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
 from mex.extractors.sinks import load
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from mex.common.types import (
@@ -55,8 +56,9 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
         grippeweb_merged_organization_ids_by_query_str,
         grippeweb_merged_contact_point_id_by_email,
     )
-    child_resource.relatedResource = [parent_resource.stableTargetId]
-    return parent_resource, child_resource
+    return parent_resource, model_copy_validated(
+        child_resource, {"relatedResource": [parent_resource.stableTargetId]}
+    )
 
 
 def transform_grippeweb_resource_mappings_to_dict(
