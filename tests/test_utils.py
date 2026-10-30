@@ -5,6 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from mex.common.models import BaseModel, ExtractedResource
+from mex.common.testing import Joker
 from mex.extractors.utils import (
     collect_related_identifier_counts,
     collect_related_identifiers,
@@ -65,6 +66,7 @@ def test_model_copy_validated() -> None:
         identifierInPrimarySource="resource-1",
         accessRestriction="https://mex.rki.de/item/access-restriction-1",
         contact=["bFQoRhcVH5DHU6"],
+        resourceCreationMethod=Joker(),
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Resource"],
         unitInCharge=["bFQoRhcVH5DHU8"],
@@ -88,6 +90,7 @@ def test_model_copy_validated_validates_update() -> None:
         identifierInPrimarySource="resource-1",
         accessRestriction="https://mex.rki.de/item/access-restriction-1",
         contact=["bFQoRhcVH5DHU6"],
+        resourceCreationMethod=Joker(),
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Resource"],
         unitInCharge=["bFQoRhcVH5DHU8"],

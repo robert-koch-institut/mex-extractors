@@ -230,5 +230,5 @@ def open_data_extracted_variables(
 
 @entrypoint()
 def run() -> None:  # pragma: no cover
-    """Run the odk extractor job in-process."""
+    """Run the open-data extractor job in-process."""
     run_job_in_process("open_data")
