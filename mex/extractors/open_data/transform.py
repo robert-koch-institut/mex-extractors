@@ -37,6 +37,7 @@ from mex.extractors.organigram.helpers import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import model_copy_validated
 from mex.extractors.wikidata.helpers import (
@@ -50,9 +51,6 @@ if TYPE_CHECKING:
         OpenDataParentResource,
         OpenDataTableSchema,
     )
-
-# TODO @MX-2075: remove
-FALLBACK_UNIT = "mf4"
 
 
 def get_only_child_units(
@@ -305,8 +303,10 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
     Returns:
         list of ExtractedResource instances
     """
-    if not (fallback_unit_id := get_unit_merged_id_by_synonym(FALLBACK_UNIT)):
-        msg = f"No ID found for {FALLBACK_UNIT}"
+    settings = ExtractorsSettings.get()
+    fallback_unit = settings.open_data.fallback_unit
+    if not (fallback_unit_id := get_unit_merged_id_by_synonym(fallback_unit)):
+        msg = f"No ID found for {fallback_unit}"
         raise MExError(msg)
 
     extracted_resource = []
