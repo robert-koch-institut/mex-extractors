@@ -131,6 +131,7 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             documentation=igs_resource_mapping.documentation.get_static_values(),
             hadPrimarySource=get_extracted_primary_source_id_by_name("igs"),
             hasLegalBasis=igs_resource_mapping.hasLegalBasis.get_static_values(),
+            hasPurpose=igs_resource_mapping.hasPurpose.get_static_values(),
             hasPurposeDescription=igs_resource_mapping.hasPurposeDescription.get_static_values(),
             healthCategory=igs_resource_mapping.healthCategory.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,

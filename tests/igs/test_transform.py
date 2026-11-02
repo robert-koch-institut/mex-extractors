@@ -82,6 +82,9 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             {"value": "Test Präfix", "language": TextLanguage.DE},
             {"value": "Anzahl tests: 42", "language": TextLanguage.DE},
         ],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
+        ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
         "relatedResource": ["bFQoRhcVH5DHZW"],
         "stableTargetId": "vqycPRN9Z9KC97eLt9oAP",

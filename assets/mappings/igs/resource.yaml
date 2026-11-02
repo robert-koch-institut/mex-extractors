@@ -112,6 +112,7 @@ qualityInformation:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
