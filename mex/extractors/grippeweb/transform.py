@@ -127,6 +127,7 @@ def transform_grippeweb_resource_mappings_to_dict(
             hasCodeValues=resource.hasCodeValues.get_static_values(),
             hasLegalBasis=resource.hasLegalBasis.get_static_values(),
             hasPersonalData=resource.hasPersonalData.get_static_values(),
+            hasPurpose=resource.hasPurpose.get_static_values(),
             hasPurposeDescription=resource.hasPurposeDescription.get_static_values(),
             identifierInPrimarySource=identifier_in_primary_source,
             keyword=resource.keyword.get_static_values(),
