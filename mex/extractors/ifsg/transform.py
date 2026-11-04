@@ -52,6 +52,7 @@ def transform_resource_parent_to_mex_resource(
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_parent.hasLegalBasis.get_static_values(),
         hasPersonalData=resource_parent.hasPersonalData.get_static_values(),
+        hasPurpose=resource_parent.hasPurpose.get_static_values(),
         identifierInPrimarySource=resource_parent.identifierInPrimarySource.get_static_values(),
         keyword=resource_parent.keyword.get_static_values(),
         language=resource_parent.language.get_static_values(),
@@ -98,6 +99,7 @@ def transform_resource_state_to_mex_resource(
             hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
             hasLegalBasis=resource_state.hasLegalBasis.get_static_values(),
             hasPersonalData=resource_state.hasPersonalData.get_static_values(),
+            hasPurpose=resource_state.hasPurpose.get_static_values(),
             identifierInPrimarySource=id_bundesland,
             keyword=resource_state.keyword.get_static_values(),
             language=resource_state.language.get_static_values(),
@@ -249,6 +251,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
         hasLegalBasis=resource_disease.hasLegalBasis.get_static_values(),
         hasPersonalData=resource_disease.hasPersonalData.get_static_values(),
+        hasPurpose=resource_disease.hasPurpose.get_static_values(),
         hasCodeValues=[hcv for hcv in has_code_values if hcv],
         hasCodingSystem=resource_disease.hasCodingSystem.get_static_values(),
         identifierInPrimarySource=(
