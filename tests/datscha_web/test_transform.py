@@ -29,7 +29,6 @@ def person_stable_target_ids_by_query_string() -> dict[
             MergedPersonIdentifier("ID000000001111"),
             MergedPersonIdentifier("ID000000002222"),
         ],
-        None: [],
     }
 
 
