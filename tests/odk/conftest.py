@@ -149,6 +149,9 @@ def odk_extracted_resources() -> list[ExtractedResource]:
             methodDescription=[Text(value="tempor", language="en")],
             numberOfUniqueIndividuals=999,
             publisher=["bFQoRhcVH5DHU6"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
             rights=[Text(value="ut labore", language="de")],
             spatial=[

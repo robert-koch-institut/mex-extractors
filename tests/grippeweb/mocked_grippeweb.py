@@ -153,6 +153,7 @@ def grippeweb_extracted_parent_resource() -> ExtractedResource:
         meshId=["http://id.nlm.nih.gov/mesh/D012140"],
         method=[Text(value="Online-Befragung", language="de")],
         methodDescription=[Text(value="Online-Surveillanceintrument", language="de")],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
         resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
         resourceTypeSpecific=[
             Text(value="bevölkerungsbasierte Surveillancedaten", language="de")

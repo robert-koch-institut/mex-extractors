@@ -240,6 +240,7 @@ def ifsg_extracted_resource_parent() -> ExtractedResource:
         keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
         language=["https://mex.rki.de/item/language-1"],
         relatedResource=[],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
         resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
         resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
         rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
@@ -282,6 +283,9 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
             relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
@@ -314,6 +318,9 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
             relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
@@ -346,6 +353,9 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
             relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
@@ -378,6 +388,9 @@ def ifsg_extracted_resources_state() -> list[ExtractedResource]:
             keyword=[Text(value="Infektionsschutzgesetz", language=TextLanguage.DE)],
             language=["https://mex.rki.de/item/language-1"],
             relatedResource=["eMzHOpNx0evkZAHMle6ZKd"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
+            ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
             rights=[Text(value="Gesundheitsdaten.", language=TextLanguage.DE)],
@@ -424,6 +437,9 @@ def ifsg_extracted_resources_disease() -> list[ExtractedResource]:
                 "hWaaedrfn2ammVuBSZL4TD",
                 "dwbN9TmQwDrEp6a0qriDIf",
                 "dEefZZfVSd6l9Lj8JZqjg",
+            ],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-1"
             ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-13"],
             resourceTypeSpecific=[Text(value="Meldedaten", language=TextLanguage.DE)],
