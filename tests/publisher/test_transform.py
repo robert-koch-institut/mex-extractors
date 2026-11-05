@@ -13,6 +13,7 @@ from mex.common.models import (
     MergedPerson,
 )
 from mex.common.types import (
+    AccessRestriction,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
@@ -68,7 +69,7 @@ def test_get_unit_id_per_person(
 def test_update_actor_references_where_needed_with_contactpoint_fallback(
     merged_activity_contacts_with_contactpoint_fallback: MergedActivity,
 ) -> None:
-    update_actor_references_where_needed(
+    updated = update_actor_references_where_needed(
         merged_activity_contacts_with_contactpoint_fallback,
         [
             MergedPersonIdentifier("thisIdentifierIsOkay"),
@@ -82,9 +83,7 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
             MergedPersonIdentifier("PersonWithoutFallback"): [],
         },
     )
-    assert merged_activity_contacts_with_contactpoint_fallback.model_dump(
-        exclude_defaults=True, mode="json"
-    ) == {
+    assert updated.model_dump(exclude_defaults=True, mode="json") == {
         "identifier": "activityCPointFallback",
         # contact fallback applied to contact point
         "contact": ["thisIsTheFallbackId"],
@@ -101,7 +100,7 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
 def test_update_actor_references_where_needed_with_unit_fallback(
     merged_activity_contacts_with_unit_fallback: MergedActivity,
 ) -> None:
-    update_actor_references_where_needed(
+    updated = update_actor_references_where_needed(
         merged_activity_contacts_with_unit_fallback,
         [
             MergedPersonIdentifier("thisIdentifierIsOkay"),
@@ -117,9 +116,7 @@ def test_update_actor_references_where_needed_with_unit_fallback(
             MergedPersonIdentifier("PersonWithoutFallback"): [],
         },
     )
-    assert merged_activity_contacts_with_unit_fallback.model_dump(
-        exclude_defaults=True, mode="json"
-    ) == {
+    assert updated.model_dump(exclude_defaults=True, mode="json") == {
         "identifier": "activityUnitFallback",
         # contact fallback applied to unit with email
         "contact": ["ValidUnitWithEmail"],
@@ -131,6 +128,39 @@ def test_update_actor_references_where_needed_with_unit_fallback(
         "responsibleUnit": ["thisUnitIsResponsible"],
         "title": [{"value": "Activity with Unit ID Fallback", "language": "en"}],
     }
+
+
+def test_update_actor_references_where_needed_keeps_required_references() -> None:
+    item = MergedBibliographicResource(
+        identifier="bibResourceBlocked",
+        accessRestriction=AccessRestriction["OPEN"],
+        creator=["thisIdIsBlocked"],
+        editor=["thisIdIsBlocked", "thisIdentifierIsOkay"],
+        title=["Bibliographic resource with only blocked creators"],
+    )
+    updated = update_actor_references_where_needed(
+        item,
+        [MergedPersonIdentifier("thisIdentifierIsOkay")],
+        [MergedContactPointIdentifier("thisIsTheFallbackId")],
+        {},
+    )
+    assert updated is not item
+    assert updated.model_dump(exclude_defaults=True, mode="json") == {
+        "identifier": "bibResourceBlocked",
+        "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
+        # required field without contact point range keeps its broken references
+        "creator": ["thisIdIsBlocked"],
+        # optional field is filtered to exclude invalid references
+        "editor": ["thisIdentifierIsOkay"],
+        "title": [
+            {
+                "value": "Bibliographic resource with only blocked creators",
+                "language": "en",
+            },
+        ],
+    }
+    # the original item is left untouched
+    assert item.editor == ["thisIdIsBlocked", "thisIdentifierIsOkay"]
 
 
 def test_get_resolved_names_returns_short_name(
