@@ -31,6 +31,7 @@ from mex.extractors.publisher.models import BibliographicResourceForCsv
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.ndjson import NdjsonSink
 from mex.extractors.sinks.s3 import S3Sink
+from mex.extractors.utils import model_copy_validated
 
 if TYPE_CHECKING:
     from mex.extractors.publisher.models import PublisherItemsLike
@@ -177,7 +178,11 @@ def test_publisher_sink_load(
     sink_class: type[Any],
 ) -> None:
     settings = ExtractorsSettings.get()
-    settings.publisher.sink = sink_name
+    monkeypatch.setattr(
+        settings,
+        "publisher",
+        model_copy_validated(settings.publisher, {"sink": sink_name}),
+    )
 
     sink = MagicMock()
     sink.load.return_value = iter(())

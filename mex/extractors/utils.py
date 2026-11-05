@@ -5,6 +5,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
 
     from pandas._typing import Dtype
+    from pydantic import BaseModel as PydanticBaseModel
     from typing_extensions import TypeForm
 
     from mex.common.models import BaseModel
@@ -23,7 +24,10 @@ def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
         model: Model class for which to get pandas data types per field alias
 
     Returns:
-        Mapping from field alias to dtype strings
+        
+        
+        
+        ing from field alias to dtype strings
     """
     return {
         f.alias or name: PANDAS_DTYPE_MAP[
@@ -46,3 +50,23 @@ def collect_related_identifier_counts(
         )
 
     return identifier_counts
+
+
+def model_copy_validated[ModelT: PydanticBaseModel](
+    model: ModelT, update: Mapping[str, Any]
+) -> ModelT:
+    """Return a validated copy of a model with some fields updated.
+
+    Unlike `model_copy`, this runs all field and model validators on the result and
+    does not rely on assigning to the original, so it also works for frozen models.
+
+    Args:
+        model: Model instance to copy
+        update: Values to change in the copy, keyed by field name
+
+    Returns:
+        New validated instance of the same model class
+    """
+    # TODO(ND): replace with `BaseModel.model_copy_validated` from future mex-common
+    data = {name: getattr(model, name) for name in model.model_fields_set}
+    return model.model_validate({**data, **update})

@@ -1,10 +1,14 @@
 from datetime import date  # noqa: TC003
 from types import SimpleNamespace
 
-from mex.common.models import BaseModel
+import pytest
+from pydantic import ValidationError
+
+from mex.common.models import BaseModel, ExtractedResource
 from mex.extractors.utils import (
     collect_related_identifier_counts,
     get_dtypes_for_model,
+    model_copy_validated,
 )
 
 
@@ -38,3 +42,41 @@ def test_collect_related_identifier_counts_groups_duplicate_references() -> None
         "2": 1,
         "3": 2,
     }
+
+
+def test_model_copy_validated() -> None:
+    original = ExtractedResource(
+        hadPrimarySource="00000000000000",
+        identifierInPrimarySource="resource-1",
+        accessRestriction="https://mex.rki.de/item/access-restriction-1",
+        contact=["bFQoRhcVH5DHU6"],
+        theme=["https://mex.rki.de/item/theme-11"],
+        title=["Resource"],
+        unitInCharge=["bFQoRhcVH5DHU8"],
+    )
+
+    copied = model_copy_validated(original, {"relatedResource": ["bFQoRhcVH5DHU9"]})
+
+    assert copied is not original
+    assert copied.relatedResource == ["bFQoRhcVH5DHU9"]
+    assert original.relatedResource == []
+    assert copied.identifier == original.identifier
+    assert copied.stableTargetId == original.stableTargetId
+    assert copied.model_dump(exclude={"relatedResource"}) == original.model_dump(
+        exclude={"relatedResource"}
+    )
+
+
+def test_model_copy_validated_validates_update() -> None:
+    original = ExtractedResource(
+        hadPrimarySource="00000000000000",
+        identifierInPrimarySource="resource-1",
+        accessRestriction="https://mex.rki.de/item/access-restriction-1",
+        contact=["bFQoRhcVH5DHU6"],
+        theme=["https://mex.rki.de/item/theme-11"],
+        title=["Resource"],
+        unitInCharge=["bFQoRhcVH5DHU8"],
+    )
+
+    with pytest.raises(ValidationError, match="theme"):
+        model_copy_validated(original, {"theme": []})

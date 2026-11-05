@@ -8,6 +8,7 @@ from mex.extractors.blueant.extract import (
     remove_prefixes_from_name,
 )
 from mex.extractors.blueant.models.source import BlueAntSource
+from mex.extractors.utils import model_copy_validated
 from tests.blueant.mocked_blueant import MOCKED_API_SOURCE, MOCKED_RESOLVED_ATTRIBUTES
 
 if TYPE_CHECKING:
@@ -49,7 +50,9 @@ def test_extract_blueant_project_leaders(
 def test_extract_blueant_project_leaders_from_source_without_leader(
     blueant_source: BlueAntSource,
 ) -> None:
-    blueant_source.projectLeaderEmployeeId = None
+    blueant_source = model_copy_validated(
+        blueant_source, {"projectLeaderEmployeeId": None}
+    )
     persons = extract_blueant_project_leaders([blueant_source])
     assert not persons
 

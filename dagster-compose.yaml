@@ -3,6 +3,8 @@ python_logs:
     - mex
 telemetry:
   enabled: false
+run_queue:
+  max_concurrent_runs: 1
 storage:
   postgres:
     postgres_db:
@@ -10,3 +12,4 @@ storage:
       username: dagster
       password: dagster
       db_name: dagster
+      scheme: postgresql+psycopg2

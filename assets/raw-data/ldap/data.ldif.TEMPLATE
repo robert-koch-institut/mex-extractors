@@ -72,3 +72,17 @@ cn: Contact
 ou: Funktion
 objectGUID: 00000000-0000-4000-8000-000000000004
 mail: contactc@rki.de
+
+# Functional Account
+dn: uid=OpenData,OU=Funktion,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+sAMAccountName: OpenData
+sn: OpenData
+cn: OpenData
+ou: Funktion
+objectGUID: 00000000-0000-4000-8000-000000000005
+mail: opendata@rki.de
