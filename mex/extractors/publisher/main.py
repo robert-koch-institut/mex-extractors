@@ -170,15 +170,17 @@ def publisher_items(
         actor.identifier
         for actor in publisher_persons.items + publisher_contact_points_and_units.items
     }
-    for item in publisher_items_without_actors.items:
+    items_with_actors = [
         update_actor_references_where_needed(
             item,
             allowed_actors,
             publisher_fallback_contact_identifiers,
             publisher_fallback_unit_identifiers_by_person,
         )
+        for item in publisher_items_without_actors.items
+    ]
     return ItemsContainer(
-        items=publisher_items_without_actors.items
+        items=items_with_actors
         + publisher_persons.items
         + publisher_contact_points_and_units.items
     )

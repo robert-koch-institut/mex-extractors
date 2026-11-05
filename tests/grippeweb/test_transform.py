@@ -223,7 +223,6 @@ def test_transform_grippeweb_variable_to_extracted_variables(
         mocked_grippeweb_sql_tables,
         grippeweb_extracted_parent_resource,
     )
-    extracted_variables[0].valueSet = sorted(extracted_variables[0].valueSet)
     expected = {
         "belongsTo": [extracted_variable_groups[0].stableTargetId],
         "hadPrimarySource": get_extracted_primary_source_id_by_name("grippeweb"),
@@ -232,9 +231,7 @@ def test_transform_grippeweb_variable_to_extracted_variables(
         "label": [{"value": "Id"}],
         "stableTargetId": "hc5GA0AvxEDVTAhHu2dnKN",
         "usedIn": [grippeweb_extracted_parent_resource.stableTargetId],
-        "valueSet": ["AAA", "BBB"],
     }
-    assert (
-        extracted_variables[0].model_dump(exclude_none=True, exclude_defaults=True)
-        == expected
-    )
+    dumped = extracted_variables[0].model_dump(exclude_none=True, exclude_defaults=True)
+    assert sorted(dumped.pop("valueSet")) == ["AAA", "BBB"]
+    assert dumped == expected
