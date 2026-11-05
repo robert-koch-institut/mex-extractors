@@ -46,6 +46,7 @@ from mex.extractors.primary_source.helpers import (
 )
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
+from mex.extractors.utils import collect_related_identifier_counts
 
 OPEN_DATA_EMAIL = "opendata@rki.de"
 
@@ -153,7 +154,17 @@ def open_data_parent_extracted_resources(  # noqa: PLR0913, PLR0917
 
     load(mex_sources)
 
-    context.add_output_metadata({"num_items": len(mex_sources)})
+    outbound_connections_distribution = collect_related_identifier_counts(
+        mex_sources,
+        "distribution",
+    )
+
+    context.add_output_metadata(
+        {
+            "num_items": len(mex_sources),
+            "Distribution": outbound_connections_distribution,
+        }
+    )
     return mex_sources
 
 

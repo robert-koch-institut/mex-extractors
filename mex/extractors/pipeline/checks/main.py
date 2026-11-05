@@ -106,18 +106,11 @@ def get_latest_num_items(
     if latest_materialization is None:
         return None
 
-    metadata_key_by_rule = {
-        (
-            "less_than_x_outbound",
-            "VariableGroup",
-        ): "outbound_connections_variable_group",
-        ("less_than_x_outbound", "Resource"): "outbound_connections_resource",
-    }
     if rule_name == "less_than_x_outbound":
         if target_type is None:
             msg = f"target_type is required for rule '{rule_name}'"
             raise ValueError(msg)
-        metadata_key = metadata_key_by_rule.get((rule_name, target_type), "num_items")
+        metadata_key = target_type
     else:
         metadata_key = "num_items"
 
@@ -283,7 +276,8 @@ def check_item_count_rule(  # noqa: PLR0913, PLR0917
     if rule_name in STATIC_RULES:
         if not check_static_rule(rule_name, current_number_of_items, rule):
             msg = (
-                f"Asset {asset_key} failed {rule_name} check: "
+                f"Asset {asset_key} failed {rule_name} "
+                f"check for target type {target_type}: "
                 f"{current_number_of_items} not meeting threshold of {rule['value']}."
             )
             raise ValueError(msg)

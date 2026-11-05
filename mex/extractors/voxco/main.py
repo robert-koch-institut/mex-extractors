@@ -104,12 +104,10 @@ def voxco_extracted_variables(
     load(extracted_variables)
     outbound_connections_resource = collect_related_identifier_counts(
         extracted_variables,
-        ["usedIn"],
+        "usedIn",
     )
 
-    context.add_output_metadata(
-        {"outbound_connections_resource": outbound_connections_resource}
-    )
+    context.add_output_metadata({"Resource": outbound_connections_resource})
     return extracted_variables
 
 
