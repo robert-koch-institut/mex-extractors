@@ -1,10 +1,10 @@
 from datetime import date  # noqa: TC003
-from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
 
-from mex.common.models import BaseModel, ExtractedResource
+from mex.common.models import BaseModel, ExtractedContactPoint, ExtractedResource
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.extractors.utils import (
     collect_related_identifier_counts,
     get_dtypes_for_model,
@@ -31,16 +31,32 @@ def test_get_dtypes_for_model() -> None:
 
 
 def test_collect_related_identifier_counts_groups_duplicate_references() -> None:
+    identifier1 = MergedPrimarySourceIdentifier.generate(1)
+    identifier2 = MergedPrimarySourceIdentifier.generate(2)
+    identifier3 = MergedPrimarySourceIdentifier.generate(3)
+
     items = [
-        SimpleNamespace(usedIn=["resource-a"], stableTargetId="1"),
-        SimpleNamespace(usedIn=["resource-a"], stableTargetId="2"),
-        SimpleNamespace(usedIn=["resource-b", "resource-b"], stableTargetId="3"),
+        ExtractedContactPoint(
+            email=["resource@a.com"],
+            hadPrimarySource=identifier1,
+            identifierInPrimarySource="1",
+        ),
+        ExtractedContactPoint(
+            email=["resource@a.com"],
+            hadPrimarySource=identifier2,
+            identifierInPrimarySource="2",
+        ),
+        ExtractedContactPoint(
+            email=["resource@b.com", "resource@b.com"],
+            hadPrimarySource=identifier3,
+            identifierInPrimarySource="3",
+        ),
     ]
 
-    assert collect_related_identifier_counts(items, "usedIn") == {
-        "1": 1,
-        "2": 1,
-        "3": 2,
+    assert collect_related_identifier_counts(items, "email") == {
+        items[0].stableTargetId: 1,
+        items[1].stableTargetId: 1,
+        items[2].stableTargetId: 2,
     }
 
 
