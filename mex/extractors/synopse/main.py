@@ -274,18 +274,18 @@ def synopse_extracted_variables(
     load(extracted_variables)
     outbound_connections_variable_group = collect_related_identifier_counts(
         extracted_variables,
-        ["belongsTo"],
+        "belongsTo",
     )
     outbound_connections_resource = collect_related_identifier_counts(
         extracted_variables,
-        ["usedIn"],
+        "usedIn",
     )
 
     context.add_output_metadata(
         {
             "num_items": len(extracted_variables),
-            "outbound_connections_variable_group": outbound_connections_variable_group,
-            "outbound_connections_resource": outbound_connections_resource,
+            "VariableGroup": outbound_connections_variable_group,
+            "Resource": outbound_connections_resource,
         }
     )
     return extracted_variables

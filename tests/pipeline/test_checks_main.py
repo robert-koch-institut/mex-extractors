@@ -144,9 +144,7 @@ def test_get_historical_events(
                 DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
-                        "outbound_connections_variable_group": SimpleNamespace(
-                            value={"id-a": 4, "id-b": 2}
-                        )
+                        "VariableGroup": SimpleNamespace(value={"id-a": 4, "id-b": 2})
                     },
                 ),
             ],
@@ -159,9 +157,7 @@ def test_get_historical_events(
                 DummyEventLogRecord(
                     timestamp=datetime(2025, 7, 29, 12, 0, tzinfo=UTC).timestamp(),
                     metadata={
-                        "outbound_connections_resource": SimpleNamespace(
-                            value={"id-a": 2, "id-b": 1}
-                        )
+                        "Resource": SimpleNamespace(value={"id-a": 2, "id-b": 1})
                     },
                 ),
             ],
@@ -568,11 +564,7 @@ def test_check_less_than_x_outbound_generalized(
     class MockEvent:
         def __init__(self, outbound_connections: dict[str, int]) -> None:
             self.asset_materialization = SimpleNamespace(
-                metadata={
-                    "outbound_connections_variable_group": SimpleNamespace(
-                        value=outbound_connections
-                    )
-                }
+                metadata={"VariableGroup": SimpleNamespace(value=outbound_connections)}
             )
 
     class MockInstance:
