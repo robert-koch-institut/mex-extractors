@@ -105,7 +105,6 @@ def test_transform_resource_nokeda_to_mex_resource(  # noqa: PLR0913, PLR0917
             }
         ],
         "externalPartner": [external_partner.stableTargetId],
-        "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "healthCategory": ["https://mex.rki.de/item/health-category-1"],
         "keyword": [
             {"language": TextLanguage.DE, "value": "keyword1"},

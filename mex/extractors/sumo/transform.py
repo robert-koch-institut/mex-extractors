@@ -98,7 +98,9 @@ def transform_resource_feat_model_to_mex_resource(
         description=sumo_resource_feat.description.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         hasCodingSystem=sumo_resource_feat.hasCodingSystem.get_static_values(),
+        hasLegalBasis=sumo_resource_feat.hasLegalBasis.get_static_values(),
         hasPersonalData=sumo_resource_feat.hasPersonalData.get_static_values(),
+        hasPurpose=sumo_resource_feat.hasPurpose.get_static_values(),
         healthCategory=sumo_resource_feat.healthCategory.get_static_values(),
         identifierInPrimarySource=sumo_resource_feat.title.get_static_values()[0].value,  # type: ignore[index]
         keyword=keyword,
@@ -175,7 +177,8 @@ def transform_resource_nokeda_to_mex_resource(
             )
         ],
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
-        hasPersonalData=sumo_resource_nokeda.hasPersonalData.get_static_values(),
+        hasLegalBasis=sumo_resource_nokeda.hasLegalBasis.get_static_values(),
+        hasPurpose=sumo_resource_nokeda.hasPurpose.get_static_values(),
         healthCategory=sumo_resource_nokeda.healthCategory.get_static_values(),
         identifierInPrimarySource=sumo_resource_nokeda.title.get_static_values()[
             0
