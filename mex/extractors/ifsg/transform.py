@@ -226,7 +226,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
             meta_disease_row.disease_name,
             meta_disease_row.disease_name_en,
             meta_disease_row.specimen_name,
-            *[rule.setValues[0] for rule in resource_disease.keyword[0].mappingRules],  # type: ignore[index]
+            *(resource_disease.keyword.get_static_values() or []),
         ]
         if keyword
     ]

@@ -204,15 +204,17 @@ def load_job_definitions() -> Definitions:
     ]
 
     sensors = []
+    schedules = []
 
-    schedules = [
-        ScheduleDefinition(
-            job=job,
-            cron_schedule=settings.schedule,
-            default_status=DefaultScheduleStatus.RUNNING,
-        )
-        for job in jobs
-    ]
+    if settings.schedule_enabled:
+        schedules = [
+            ScheduleDefinition(
+                job=job,
+                cron_schedule=settings.schedule,
+                default_status=DefaultScheduleStatus.RUNNING,
+            )
+            for job in jobs
+        ]
 
     jobs.append(
         define_asset_job(

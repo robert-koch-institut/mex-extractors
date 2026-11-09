@@ -159,7 +159,6 @@ keyword:
       - setValues:
           - language: de
             value: Infektionsschutzgesetz
-      - setValues:
           - language: de
             value: Infektionsschutz
 language:
