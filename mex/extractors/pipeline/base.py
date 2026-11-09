@@ -212,6 +212,7 @@ def load_job_definitions() -> Definitions:
             default_status=DefaultScheduleStatus.RUNNING,
         )
         for job in jobs
+        if job.name != "locations"
     ]
 
     jobs.append(
