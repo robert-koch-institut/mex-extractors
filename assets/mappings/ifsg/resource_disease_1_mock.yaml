@@ -95,7 +95,8 @@ hasLegalBasis:
   - mappingRules:
       - setValues:
           - language: de
-            value: Infektionsschutzgesetz (IfSG)
+            title: Infektionsschutzgesetz (IfSG)
+            url: https://www.gesetze-im-internet.de/ifsg/index.html
           - language: en
             value: German Federal Law on the Prevention of Infectious Diseases (IfSG)
 hasPersonalData:

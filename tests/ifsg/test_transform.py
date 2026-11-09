@@ -214,13 +214,13 @@ def test_transform_resource_disease_to_mex_resource(  # noqa: PLR0913, PLR0917
         "hasCodingSystem": ["https://mex.rki.de/item/coding-system-1"],
         "hasLegalBasis": [
             {
-                "language": TextLanguage.DE,
-                "value": "Infektionsschutzgesetz (IfSG)",
+                "language": "de",
+                "title": "Infektionsschutzgesetz (IfSG)",
+                "url": "https://www.gesetze-im-internet.de/ifsg/index.html",
             },
             {
-                "language": TextLanguage.EN,
-                "value": "German Federal Law on the Prevention of Infectious Diseases "
-                "(IfSG)",
+                "value": "German Federal Law on the Prevention of Infectious Diseases (IfSG)",
+                "language": "en",
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",

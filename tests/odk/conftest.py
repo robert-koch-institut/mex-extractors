@@ -150,7 +150,7 @@ def odk_extracted_resources() -> list[ExtractedResource]:
             numberOfUniqueIndividuals=999,
             publisher=["bFQoRhcVH5DHU6"],
             resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
+                "https://mex.rki.de/item/resource-creation-method-2"
             ],
             resourceTypeGeneral=["https://mex.rki.de/item/resource-type-general-15"],
             rights=[Text(value="ut labore", language="de")],

@@ -1,68 +1,90 @@
 [
     {
-        "identifier": "mex"
+        "identifier": "mex",
+        "title": "mex"
     },
     {
-        "identifier": "biospecimen"
+        "identifier": "biospecimen",
+        "title": "biospecimen"
     },
     {
-        "identifier": "blueant"
+        "identifier": "blueant",
+        "title": "blueant"
     },
     {
-        "identifier": "confluence-vvt"
+        "identifier": "confluence-vvt",
+        "title": "confluence-vvt"
     },
     {
-        "identifier": "datscha-web"
+        "identifier": "datscha-web",
+        "title": "datscha-web"
     },
     {
-        "identifier": "endnote"
+        "identifier": "endnote",
+        "title": "endnote"
     },
     {
-        "identifier": "ff-projects"
+        "identifier": "ff-projects",
+        "title": "ff-projects"
     },
     {
-        "identifier": "grippeweb"
+        "identifier": "grippeweb",
+        "title": "grippeweb"
     },
     {
-        "identifier": "ifsg"
+        "identifier": "ifsg",
+        "title": "ifsg"
     },
     {
-        "identifier": "igs"
+        "identifier": "igs",
+        "title": "igs"
     },
     {
-        "identifier": "international-projects"
+        "identifier": "international-projects",
+        "title": "international-projects"
     },
     {
-        "identifier": "kvis"
+        "identifier": "kvis",
+        "title": "kvis"
     },
     {
-        "identifier": "ldap"
+        "identifier": "ldap",
+        "title": "ldap"
     },
     {
-        "identifier": "odk"
+        "identifier": "odk",
+        "title": "odk"
     },
     {
-        "identifier": "open-data"
+        "identifier": "open-data",
+        "title": "open-data"
     },
     {
-        "identifier": "orcid"
+        "identifier": "orcid",
+        "title": "orcid"
     },
     {
-        "identifier": "organigram"
+        "identifier": "organigram",
+        "title": "organigram"
     },
     {
-        "identifier": "seq-repo"
+        "identifier": "seq-repo",
+        "title": "seq-repo"
     },
     {
-        "identifier": "nokeda"
+        "identifier": "nokeda",
+        "title": "nokeda"
     },
     {
-        "identifier": "report-server"
+        "identifier": "report-server",
+        "title": "report-server"
     },
     {
-        "identifier": "voxco"
+        "identifier": "voxco",
+        "title": "voxco"
     },
     {
-        "identifier": "wikidata"
+        "identifier": "wikidata",
+        "title": "wikidata"
     }
 ]

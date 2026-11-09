@@ -108,6 +108,7 @@ def extracted_access_platform() -> ExtractedAccessPlatform:
             "contact": ["cGyT8sVLtQTF7vK24LoOk6"],
             "description": [{"value": "test description", "language": "en"}],
             "landingPage": [{"url": "https://rki.de:4100/docs"}],
+            "title": "test title",
             "unitInCharge": ["bFQoRhcVH5DHU8"],
         }
     )

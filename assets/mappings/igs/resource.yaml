@@ -43,6 +43,13 @@ hadPrimarySource:
 hasLegalBasis:
   - mappingRules:
       - setValues:
+          - language: de
+            title: § 13 Infektionsschutzgesetz (IfSG)
+            url: https://www.gesetze-im-internet.de/ifsg/__13.html
+hasPurpose:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/purpose-12
 hasPurposeDescription:
   - mappingRules:
       - setValues:
@@ -112,6 +119,7 @@ qualityInformation:
 resourceCreationMethod:
   - mappingRules:
       - setValues:
+          - https://mex.rki.de/item/resource-creation-method-3
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
