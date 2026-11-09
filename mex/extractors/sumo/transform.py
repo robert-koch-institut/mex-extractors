@@ -178,6 +178,7 @@ def transform_resource_nokeda_to_mex_resource(
         ],
         hadPrimarySource=get_extracted_primary_source_id_by_name("nokeda"),
         hasLegalBasis=sumo_resource_nokeda.hasLegalBasis.get_static_values(),
+        hasPersonalData=sumo_resource_nokeda.hasPersonalData.get_static_values(),
         hasPurpose=sumo_resource_nokeda.hasPurpose.get_static_values(),
         healthCategory=sumo_resource_nokeda.healthCategory.get_static_values(),
         identifierInPrimarySource=sumo_resource_nokeda.title.get_static_values()[
