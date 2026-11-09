@@ -433,6 +433,14 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if study.herkunft_der_daten
             else []
         )
+        if project.studien_art_typ:
+            resource_creation_method = (
+                synopse_resource.resourceCreationMethod.get_mapped_values(
+                    project.studien_art_typ
+                )
+            )
+        else:
+            continue
         resource_type_specific = (
             [Text(value=project.studien_art_typ, language=TextLanguage.DE)]
             if project.studien_art_typ
@@ -462,6 +470,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 hadPrimarySource=get_extracted_primary_source_id_by_name(
                     "report-server"
                 ),
+                hasPurpose=synopse_resource.hasPurpose.get_static_values(),
                 hasPurposeDescription=has_purpose_description,
                 healthCategory=synopse_resource.healthCategory.get_static_values(),
                 identifierInPrimarySource=identifier_in_primary_source_by_study_id[
@@ -475,7 +484,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
                 populationCoverage=population_coverage,
                 provenance=provenance,
                 publisher=[extracted_organization.stableTargetId],
-                resourceCreationMethod=synopse_resource.resourceCreationMethod.get_static_values(),
+                resourceCreationMethod=resource_creation_method,
                 resourceTypeGeneral=synopse_resource.resourceTypeGeneral.get_static_values(),
                 resourceTypeSpecific=resource_type_specific,
                 rights=rights,
