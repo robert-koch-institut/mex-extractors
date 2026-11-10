@@ -433,14 +433,11 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
             if study.herkunft_der_daten
             else []
         )
-        if project.studien_art_typ:
-            resource_creation_method = (
-                synopse_resource.resourceCreationMethod.get_mapped_values(
-                    project.studien_art_typ
-                )
+        resource_creation_method = (
+            synopse_resource.resourceCreationMethod.get_mapped_values(
+                project.studien_art_typ or "null"
             )
-        else:
-            continue
+        )
         resource_type_specific = (
             [Text(value=project.studien_art_typ, language=TextLanguage.DE)]
             if project.studien_art_typ
