@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
+- remove default settings from dagster metadata
 
 ### Fixed
 
