@@ -4,7 +4,6 @@ import pytest
 
 from mex.common.models import ExtractedOrganization
 from mex.common.types import (
-    LinkLanguage,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationIdentifier,
@@ -51,7 +50,7 @@ def test_transform_synopse_studies_into_access_platforms(
 ) -> None:
     expected_access_platform = {
         "hadPrimarySource": get_extracted_primary_source_id_by_name("report-server"),
-        "identifierInPrimarySource": "test id",
+        "identifierInPrimarySource": "t",
         "technicalAccessibility": "https://mex.rki.de/item/technical-accessibility-2",
         "alternativeTitle": [
             {"value": "alternative test title", "language": TextLanguage.DE}
@@ -60,7 +59,7 @@ def test_transform_synopse_studies_into_access_platforms(
         "description": [{"value": "test description", "language": TextLanguage.DE}],
         "landingPage": [
             {
-                "language": LinkLanguage.DE,
+                "language": TextLanguage.DE,
                 "title": "test landing page",
                 "url": "https://www.rki.de/test_landing_page",
             }
@@ -69,8 +68,8 @@ def test_transform_synopse_studies_into_access_platforms(
         "unitInCharge": [
             mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
         ],
-        "identifier": "cqjxQBaoPYqS99H56SIUx7",
-        "stableTargetId": "f5u4Nd7E3nof9R64U9WJQB",
+        "identifier": "caja5lr50xZDp3vqBFy5oN",
+        "stableTargetId": "hok9BZyh5ZyU9EWzXUYLqd",
     }
 
     access_platforms = transform_synopse_studies_into_access_platforms(
