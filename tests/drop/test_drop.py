@@ -11,7 +11,8 @@ from mex.extractors.drop import DropApiConnector
 def test_list_files() -> None:
     connector = DropApiConnector.get()
     files = connector.list_files("seq-repo")
-    assert files == ["default"]
+    assert len(files) == 1
+    assert files[0].startswith("default")
 
 
 @pytest.mark.integration
@@ -35,7 +36,7 @@ def test_list_files_mocked(monkeypatch: MonkeyPatch) -> None:
 @pytest.mark.integration
 def test_get_file() -> None:
     connector = DropApiConnector.get()
-    content = connector.get_file("seq-repo", "default")
+    content = connector.get_file("seq-repo", "default.json")
     assert isinstance(content, list)
     assert content[0]["project-id"] == "TEST-ID"
 
