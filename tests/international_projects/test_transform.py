@@ -69,7 +69,10 @@ def test_transform_international_projects_source_to_mex_source(
         ],
         "shortName": [{"value": "testAAbr"}],
         "start": ["2021-07-27"],
-        "theme": ["https://mex.rki.de/item/theme-37"],
+        "theme": [
+            "https://mex.rki.de/item/theme-37",
+            "https://mex.rki.de/item/theme-36",
+        ],
         "title": [
             {"value": "This is a test project full title", "language": TextLanguage.EN}
         ],
