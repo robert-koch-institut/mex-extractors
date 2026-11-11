@@ -1,6 +1,5 @@
 from importlib import import_module
-from importlib.metadata import version
-from typing import Any, cast
+from typing import cast
 
 from dagster import (
     AssetCheckExecutionContext,
@@ -16,7 +15,6 @@ from dagster import (
     DefaultSensorStatus,
     Definitions,
     FilesystemIOManager,
-    MetadataValue,
     RunRequest,
     RunsFilter,
     ScheduleDefinition,
@@ -186,18 +184,11 @@ def load_job_definitions() -> Definitions:
             *settings.skip_extractors,
         ]
     }
-    metadata: dict[str, Any] = {
-        "settings": MetadataValue.md(
-            f"```json\n{settings.model_dump_json(indent=4)}```"
-        ),
-        "version": MetadataValue.text(version("mex-extractors")),
-    }
 
     jobs = [
         define_asset_job(
             group_name,
             AssetSelection.groups(group_name).upstream(),
-            metadata={**metadata, "group_name": group_name},
             tags={"job_category": "extractor"},
         )
         for group_name in extractor_group_names
@@ -219,7 +210,6 @@ def load_job_definitions() -> Definitions:
         define_asset_job(
             "all_extractors",
             AssetSelection.groups(*extractor_group_names).upstream(),
-            metadata=metadata,
             tags={"job_category": "extractor"},
         )
     )
@@ -228,7 +218,6 @@ def load_job_definitions() -> Definitions:
     consent_mailer_job = define_asset_job(
         "consent_mailer",
         AssetSelection.groups("consent_mailer").upstream(),
-        metadata=metadata,
         tags={"job_category": "consent_mailer"},
     )
     jobs.append(consent_mailer_job)
@@ -245,7 +234,6 @@ def load_job_definitions() -> Definitions:
     datenkompass_job = define_asset_job(
         "datenkompass",
         AssetSelection.groups("datenkompass").upstream(),
-        metadata=metadata,
         tags={"job_category": "publisher"},
     )
     jobs.append(datenkompass_job)
@@ -262,7 +250,6 @@ def load_job_definitions() -> Definitions:
     publisher_job = define_asset_job(
         "publisher",
         AssetSelection.groups("publisher").upstream(),
-        metadata=metadata,
         tags={"job_category": "publisher"},
     )
     jobs.append(publisher_job)
