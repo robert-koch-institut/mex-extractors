@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("mocked_ldap")
 def test_ldap_connector_get_person_by_employee_id(
     ldap_roland_resolved: LDAPPerson,
 ) -> None:
@@ -21,7 +20,6 @@ def test_ldap_connector_get_person_by_employee_id(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("mocked_ldap")
 def test_ldap_connector_get_person_by_mail(
     ldap_roland_resolved: LDAPPerson,
 ) -> None:
@@ -33,7 +31,6 @@ def test_ldap_connector_get_person_by_mail(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("mocked_ldap")
 def test_ldap_connector_get_person_by_name(
     ldap_roland_resolved: LDAPPerson,
 ) -> None:

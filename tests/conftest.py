@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from mex.common.ldap import connector as ldap_connector_module
 from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     ExtractedOrganization,
@@ -69,6 +70,13 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 def settings() -> ExtractorsSettings:
     """Load the settings for this pytest session."""
     return ExtractorsSettings.get()
+
+
+@pytest.fixture(autouse=True)
+def disable_ldap_tls(monkeypatch: MonkeyPatch) -> None:
+    """Skip TLS setup, because the mock LDAP server uses a self-signed certificate."""
+    # TODO(ND): Make this configurable in mex-common
+    monkeypatch.setattr(ldap_connector_module, "Tls", lambda *_, **__: None)
 
 
 @pytest.fixture(autouse=True)

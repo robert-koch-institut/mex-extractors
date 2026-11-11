@@ -158,47 +158,31 @@ def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
     return mock_search
 
 
-@pytest.fixture(params=["ldap_patched_connector", "ldap_mock_server"])
-def mocked_ldap(  # noqa: PLR0913, PLR0917
-    request: pytest.FixtureRequest,
+@pytest.fixture
+def mocked_ldap(
     monkeypatch: MonkeyPatch,
     ldap_contact_point: LDAPFunctionalAccount,
     ldap_roland_resolved: LDAPPerson,
     ldap_juturna_felicitas: LDAPPerson,
     ldap_frieda_fictitious: LDAPPerson,
-    is_integration_test: bool,  # noqa: FBT001
 ) -> None:
-    """Run each test with patched connector and/or against a mock server."""
-    if request.param == "ldap_patched_connector":
-        monkeypatch.setattr(
-            LDAPConnector,
-            "__init__",
-            lambda self: setattr(self, "_connection", MagicMock()),
-        )
-        monkeypatch.setattr(
-            LDAPConnector,
-            "get_functional_accounts",
-            ldap_mock_searcher(
-                [ldap_contact_point],
-            ),
-        )
-        person_search = ldap_mock_searcher(
-            [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
-        )
-        monkeypatch.setattr(LDAPConnector, "get_persons", person_search)
-        monkeypatch.setattr(
-            LDAPConnector,
-            "get_person",
-            lambda *a, **kw: person_search(*a, **kw).items[0],
-        )
-
-    elif request.param == "ldap_mock_server":
-        if not is_integration_test:
-            pytest.skip("Unit tests don't run against test server")
-        else:
-            # TODO(ND): Make this configurable in mex-common
-            # TODO(HS): turn off tls certificate validation because our mock ldap server uses a self-signed certificate
-
-            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
-
-            monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)
+    """Patch the LDAP connector to return static test actors."""
+    monkeypatch.setattr(
+        LDAPConnector,
+        "__init__",
+        lambda self: setattr(self, "_connection", MagicMock()),
+    )
+    monkeypatch.setattr(
+        LDAPConnector,
+        "get_functional_accounts",
+        ldap_mock_searcher([ldap_contact_point]),
+    )
+    person_search = ldap_mock_searcher(
+        [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
+    )
+    monkeypatch.setattr(LDAPConnector, "get_persons", person_search)
+    monkeypatch.setattr(
+        LDAPConnector,
+        "get_person",
+        lambda *a, **kw: person_search(*a, **kw).items[0],
+    )

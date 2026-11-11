@@ -30,7 +30,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_confluence_vvt_page_to_extracted_activity(
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
@@ -83,7 +83,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("mocked_ldap", "mocked_wikidata")
+@pytest.mark.usefixtures("mocked_wikidata")
 def test_transform_confluence_vvt_page_to_extracted_activities(
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
