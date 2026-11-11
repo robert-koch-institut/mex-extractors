@@ -301,6 +301,9 @@ def test_transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, 
         "doi": "https://doi.org/10.3456/zenodo.7890",
         "distribution": [mocked_open_data_distribution[0].stableTargetId],
         "publisher": [extracted_organization_rki.stableTargetId],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-1"
+        ],
         "resourceTypeGeneral": ["https://mex.rki.de/item/resource-type-general-14"],
         "identifier": "eKh2uKxQPKQ9Z9bamF2mxy",
         "stableTargetId": "cV3l5BLBycXDZDbWA5ipwl",

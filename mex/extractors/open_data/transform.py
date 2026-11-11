@@ -429,6 +429,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 license=ccby_license,
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
+                resourceCreationMethod=resource_mapping.resourceCreationMethod.get_static_values(),
                 resourceTypeGeneral=resource_mapping.resourceTypeGeneral.get_mapped_values(
                     resource.metadata.resource_type.type
                 ),
