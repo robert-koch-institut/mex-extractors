@@ -33,7 +33,6 @@ services:
       MEX_EXTRACTORS_DROP_API_URL: http://http-test-server:8050/v0/drop/
       MEX_EXTRACTORS_IGS__URL: http://http-test-server:8050/v0/igs/
       MEX_EXTRACTORS_OPEN_DATA__URL: http://http-test-server:8050/v0/open_data/
-      MEX_EXTRACTORS_OPEN_DATA__FALLBACK_UNIT: FG 99
       MEX_ORCID_API_URL: http://http-test-server:8050/v0/orcid/
       MEX_WIKI_API_URL: http://http-test-server:8050/v0/wikidata/w/api.php
       # trust the self-signed cert that slapd generates on startup, issued for `ldapmock.local`
