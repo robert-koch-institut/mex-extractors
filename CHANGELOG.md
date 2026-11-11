@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
 - upgrade mex-backend to 4.6.2
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
+- remove default settings from dagster metadata
 
 ### Fixed
 
@@ -42,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use concrete enums instead of string values in test assertions to reduce false diffs
   in test failure summaries
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers
-- fix assetcheck for less than x outbound
+- fix asset_check for less than x outbound
+- fix mssql driver install for ubuntu 26.04
 
 ### Security
 
