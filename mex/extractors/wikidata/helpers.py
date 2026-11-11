@@ -2,14 +2,8 @@ from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from mex.common.models import ExtractedOrganization, OrganizationMapping
-from mex.common.wikidata.extract import get_wikidata_organization
-from mex.common.wikidata.transform import (
-    transform_wikidata_organization_to_extracted_organization,
-)
+from mex.common.wikidata.helpers import get_wikidata_organization_with_locations
 from mex.extractors.assets import load_yaml
-from mex.extractors.primary_source.helpers import (
-    get_extracted_primary_source_id_by_name,
-)
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 
@@ -26,16 +20,14 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     Returns:
         extracted organization if found in wikidata
     """
-    wikidata_organization = get_wikidata_organization(
-        wikidata_id.rsplit("/", maxsplit=1)[-1]
-    )
-    extracted_organization = transform_wikidata_organization_to_extracted_organization(
-        wikidata_organization, get_extracted_primary_source_id_by_name("wikidata")
-    )
-    if extracted_organization:
-        load([extracted_organization])
-        return extracted_organization
-    return None
+    result = get_wikidata_organization_with_locations(wikidata_id)
+
+    if result is None:
+        return None
+
+    load([result.organization, *result.locations, result.primary_source])
+
+    return result.organization
 
 
 # TODO(ND): move this helper to mex-common
