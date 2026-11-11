@@ -435,7 +435,7 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         )
         resource_creation_method = (
             synopse_resource.resourceCreationMethod.get_mapped_values(
-                project.studien_art_typ or "null"
+                project.studien_art_typ
             )
         )
         resource_type_specific = (
