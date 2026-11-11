@@ -1,5 +1,4 @@
 import json
-import os
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 from uuid import UUID
@@ -193,12 +192,9 @@ def mocked_ldap(  # noqa: PLR0913, PLR0917
         )
 
     elif request.param == "ldap_mock_server":
-        if "MEX_LDAP_SEARCH_BASE" not in os.environ:
-            pytest.skip("Ldap mock server not configured")
-        else:
-            # TODO(ND): Make this configurable in mex-common
-            # HS: turn off tls certificate validation because our mock ldap server uses a self-signed certificate
+        # TODO(ND): Make this configurable in mex-common
+        # TODO(HS): turn off tls certificate validation because our mock ldap server uses a self-signed certificate
 
-            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
+        from mex.common.ldap import connector as connector_module  # noqa: PLC0415
 
-            monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)
+        monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)

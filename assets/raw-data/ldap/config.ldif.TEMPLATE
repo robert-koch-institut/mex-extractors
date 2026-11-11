@@ -38,6 +38,7 @@ olcAttributetypes: ( 1.2.840.113556.1.4.862
 add: olcAttributetypes
 olcAttributetypes: ( 1.2.840.113556.1.4.221
   NAME 'sAMAccountName'
+  EQUALITY caseIgnoreMatch
   SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'
   SINGLE-VALUE )
 -

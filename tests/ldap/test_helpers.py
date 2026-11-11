@@ -25,8 +25,6 @@ def test_get_ldap_merged_person_id_by_query(
 def test_get_ldap_merged_contact_id_by_mail(
     contact_point: ExtractedContactPoint,
 ) -> None:
-    merged_contact_point_id = get_ldap_merged_contact_id_by_mail(
-        mail="resolvedr@rki.de"
-    )
+    merged_contact_point_id = get_ldap_merged_contact_id_by_mail(mail="contactc@rki.de")
 
     assert merged_contact_point_id == contact_point.stableTargetId
