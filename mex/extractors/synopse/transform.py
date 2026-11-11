@@ -74,9 +74,7 @@ def transform_synopse_studies_into_access_platforms(
         ],
         description=access_platform_mapping.description.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
-        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values()[
-            0
-        ],  # type: ignore[index]
+        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values(),
         landingPage=access_platform_mapping.landingPage.get_static_values(),
         technicalAccessibility=access_platform_mapping.technicalAccessibility.get_static_values(),
         title=access_platform_mapping.title.get_static_values(),
