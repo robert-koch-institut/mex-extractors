@@ -39,7 +39,9 @@ jobs:
           fetch-depth: 1
 
       - name: Start containers
-        run: docker compose up --detach slapd mailpit neo4j mex-backend mssql sql-testing-seed
+        id: containers
+        background: true
+        run: docker compose up --detach http-test-server slapd mailpit neo4j mex-backend mssql sql-testing-seed
 
       - name: Install Microsoft ODBC Driver 18
         run: |
@@ -79,14 +81,23 @@ jobs:
           echo ${{ matrix.python-version }} > .python-version
           make install
 
+      - name: Wait for containers to start
+        wait: containers
+
       - name: Wait for container readiness
-        run: docker compose up --wait --wait-timeout 500 slapd mailpit neo4j mex-backend mssql
+        run: docker compose up --wait --wait-timeout 500 http-test-server slapd mailpit neo4j mex-backend mssql
 
       - name: Run test suite
         env:
           MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
           MEX_BACKEND_API_URL: http://localhost:8080/
           MEX_BACKEND_API_KEY: write_key
+          MEX_WIKI_API_URL: http://localhost:8050/v0/wikidata/w/api.php
+          MEX_EXTRACTORS_BLUEANT__URL: http://localhost:8050/v0/bluework/
+          MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://localhost:8050/v0/confluence_vvt/
+          MEX_EXTRACTORS_DATSCHA_WEB__URL: http://localhost:8050/v0/datscha_web/
+          MEX_EXTRACTORS_DROP_API_URL: http://localhost:8050/v0/drop/
+          MEX_EXTRACTORS_IGS__URL: http://localhost:8050/v0/igs/
           MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=GrippeWeb;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"
           MEX_EXTRACTORS_KVIS__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=KVIS;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"
           MEX_EXTRACTORS_IFSG__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=SurvNet3Meta;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"

@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- `requires_rki_infrastructure` pytest marker, the affected tests now run as regular
+  integration tests against the http-test-server
+
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
 
 ### Fixed
@@ -42,6 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers
 - fix asset_check for less than x outbound
 - fix mssql driver install for ubuntu 26.04
+- strip surrounding whitespace from igs endpoint counts
+- remove double slash from confluence-vvt documentation links when the url has a
+  trailing slash
 
 ### Security
 

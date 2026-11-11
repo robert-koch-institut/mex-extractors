@@ -63,9 +63,10 @@ def transform_confluence_vvt_page_to_extracted_activity(
         for contact in get_contact_from_page(page, confluence_vvt_activity_mapping)
         for merged_id in merged_ids_by_query_string[contact]
     ]
+    base_url = settings.confluence_vvt.url.rstrip("/")
     documentation = [
         Link(
-            url=f"{settings.confluence_vvt.url}/pages/viewpage.action?pageId={page.id}",
+            url=f"{base_url}/pages/viewpage.action?pageId={page.id}",
             title=confluence_vvt_activity_mapping.documentation.get_static_values()[  # type: ignore[index]
                 0
             ].title,
