@@ -166,6 +166,7 @@ def mocked_ldap(  # noqa: PLR0913, PLR0917
     ldap_roland_resolved: LDAPPerson,
     ldap_juturna_felicitas: LDAPPerson,
     ldap_frieda_fictitious: LDAPPerson,
+    is_integration_test: bool,  # noqa: FBT001
 ) -> None:
     """Run each test with patched connector and/or against a mock server."""
     if request.param == "ldap_patched_connector":
@@ -192,9 +193,12 @@ def mocked_ldap(  # noqa: PLR0913, PLR0917
         )
 
     elif request.param == "ldap_mock_server":
-        # TODO(ND): Make this configurable in mex-common
-        # TODO(HS): turn off tls certificate validation because our mock ldap server uses a self-signed certificate
+        if not is_integration_test:
+            pytest.skip("Unit tests don't run against test server")
+        else:
+            # TODO(ND): Make this configurable in mex-common
+            # TODO(HS): turn off tls certificate validation because our mock ldap server uses a self-signed certificate
 
-        from mex.common.ldap import connector as connector_module  # noqa: PLC0415
+            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
 
-        monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)
+            monkeypatch.setattr(connector_module, "Tls", lambda *_, **__: None)

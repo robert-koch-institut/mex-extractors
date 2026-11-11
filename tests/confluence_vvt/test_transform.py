@@ -21,6 +21,7 @@ from mex.extractors.confluence_vvt.transform import (
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
     from mex.common.models import ActivityMapping
@@ -33,6 +34,8 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 def test_transform_confluence_vvt_page_to_extracted_activity(
     confluence_vvt_activity_mapping: ActivityMapping,
 ) -> None:
+    settings = ExtractorsSettings.get()
+    confluence_vvt_url = settings.confluence_vvt.url.rstrip("/")
     expected = {
         "hadPrimarySource": "dhVuI8dsGq7mwtc1xzj3be",
         "identifierInPrimarySource": "2024-002",
@@ -46,7 +49,7 @@ def test_transform_confluence_vvt_page_to_extracted_activity(
         "documentation": [
             {
                 "title": "Eintrag im Verzeichnis der Verarbeitungstätigkeiten des RKI",
-                "url": "http://localhost:8050/v0/confluence_vvt/pages/viewpage.action?pageId=123457",
+                "url": f"{confluence_vvt_url}/pages/viewpage.action?pageId=123457",
             }
         ],
         "involvedUnit": ["6rqNvZSApUHlz8GkkVP48", "cjna2jitPngp6yIV63cdi9"],
