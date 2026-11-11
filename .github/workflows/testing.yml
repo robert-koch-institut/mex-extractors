@@ -39,9 +39,7 @@ jobs:
           fetch-depth: 1
 
       - name: Start containers
-        id: containers
-        background: true
-        run: docker compose up --detach http-test-server slapd mailpit neo4j mex-backend mssql sql-testing-seed
+        run: docker compose up --detach slapd mailpit neo4j mex-backend mssql sql-testing-seed http-test-server
 
       - name: Install Microsoft ODBC Driver 18
         run: |
@@ -81,11 +79,8 @@ jobs:
           echo ${{ matrix.python-version }} > .python-version
           make install
 
-      - name: Wait for containers to start
-        wait: containers
-
       - name: Wait for container readiness
-        run: docker compose up --wait --wait-timeout 500 http-test-server slapd mailpit neo4j mex-backend mssql
+        run: docker compose up --wait --wait-timeout 500 slapd mailpit neo4j mex-backend mssql http-test-server
 
       - name: Run test suite
         env:
