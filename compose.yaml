@@ -71,7 +71,7 @@ services:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
   http-test-server:
-    image: ghcr.io/robert-koch-institut/mex-testing:1.0.0@sha256:c853fae4c9612e9c1d15b264fa5a105e642eca048fe9f37681949d1ad9ee30c5
+    image: ghcr.io/robert-koch-institut/mex-testing:1.1.0@sha256:a1d8f2909fd02406d2fae6191e4ae9581e96e7dd3d170691e7ae55494dc3e268
     ports:
       - 8050:8050
     healthcheck:
