@@ -22,6 +22,7 @@ from mex.extractors.ifsg.settings import IFSGSettings
 from mex.extractors.igs.settings import IGSSettings
 from mex.extractors.international_projects.settings import InternationalProjectsSettings
 from mex.extractors.kvis.settings import KVISSettings
+from mex.extractors.locations.settings import LocationsSettings
 from mex.extractors.odk.settings import ODKSettings
 from mex.extractors.open_data.settings import OpenDataSettings
 from mex.extractors.publisher.settings import PublisherSettings
@@ -136,6 +137,7 @@ class ExtractorsSettings(BaseSettings):
         InternationalProjectsSettings()
     )
     kvis: KVISSettings = KVISSettings()
+    locations: LocationsSettings = LocationsSettings()
     odk: ODKSettings = ODKSettings()
     open_data: OpenDataSettings = OpenDataSettings()
     publisher: PublisherSettings = PublisherSettings()

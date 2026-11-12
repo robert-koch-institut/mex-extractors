@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- extractor for locations from wikidata and json
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
   and the drop api (seq-repo)
 - open-data setting `fallback_unit` to replace the hardcoded `FALLBACK_UNIT`
