@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 def extract_country_wikidata_ids_from_eu_vocabularies_json() -> list[str]:
-    """Read and validate countries from the EU vocabularies countries JSON file."""
+    """Read and validate countries from the EU vocabulary JSON file."""
     settings = ExtractorsSettings.get()
     connector = get_assets_connector()
 
