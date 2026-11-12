@@ -156,7 +156,7 @@ services:
       retries: 10
       start_period: 30s
   sql-testing-seed:
-    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:1.0.0@sha256:612bdb7b11a242c91341d3daeb1ce6fab6cb55492f34d38563a013853551465d
+    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:1.1.0@sha256:007069c472d8df4bcd9e419525f9a2a226c88791acecdb54109017148e5b825a
     depends_on:
       mssql:
         condition: service_healthy
