@@ -33,7 +33,7 @@ def locations_transform_wikidata_ids_to_extracted_locations(
     """Extract, transform, and load Wikidata locations."""
     wikidata_primary_source_id = get_extracted_primary_source_id_by_name("wikidata")
 
-    wikidata_locations = extract_wikidata_locations(sorted(locations_wikidata_ids))
+    wikidata_locations = extract_wikidata_locations(locations_wikidata_ids)
 
     extracted_locations = list(
         transform_wikidata_locations_to_extracted_locations(

@@ -11,7 +11,7 @@ from mex.extractors.locations.models import Country
 from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterable, Iterator
 
     from mex.common.wikidata.models import WikidataLocation
 
@@ -41,7 +41,7 @@ def extract_region_wikidata_ids() -> list[str]:
 
 
 def extract_wikidata_locations(
-    wikidata_ids: list[str],
+    wikidata_ids: Iterable[str],
 ) -> Iterator[WikidataLocation]:
     """Extract locations from Wikidata by their identifiers."""
     yield from get_wikidata_locations(sorted(wikidata_ids))
