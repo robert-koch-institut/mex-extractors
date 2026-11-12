@@ -5,7 +5,7 @@ def build_wikidata_query(region_type_id: str) -> str:
         region_type_id: id of region to query.
 
     Returns:
-        str: completed query string
+        Wikidata query string
     """
     return f"""\
         SELECT DISTINCT ?item WHERE {{
