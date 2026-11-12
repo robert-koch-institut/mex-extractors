@@ -1,5 +1,5 @@
 def build_wikidata_query(region_type_id: str) -> str:
-    """Query items from Wikidata which belong to the according region type.
+    """Query Wikidata items belonging to the specified region type..
 
     Args:
         region_type_id (str): Id for which to query Wikidata for.
