@@ -11,8 +11,7 @@ from mex.extractors.drop import DropApiConnector
 def test_list_files() -> None:
     connector = DropApiConnector.get()
     files = connector.list_files("seq-repo")
-    assert len(files) == 1
-    assert files[0].startswith("default")
+    assert files == ["default.json"]
 
 
 @pytest.mark.integration

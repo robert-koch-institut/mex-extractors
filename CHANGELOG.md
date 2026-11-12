@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
-- upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
+- upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
 - upgrade mex-backend to 4.7.0
 - upgrade ruff to 0.17
@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `requires_rki_infrastructure` pytest marker, the affected tests now run as regular
   integration tests against the http-test-server
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
-- settings and version metadata from dagster job definitions
+- remove default settings from dagster metadata
 
 ### Fixed
 
