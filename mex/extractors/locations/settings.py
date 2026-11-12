@@ -4,7 +4,7 @@ from mex.common.models import BaseModel
 
 
 class LocationsSettings(BaseModel):
-    """Settings definition for the infection protection act data."""
+    """Settings definition for the Locations Extractor."""
 
     country_list_path: str = Field(
         "raw-data/eu-vocabularies/countries-and-territories.json",
