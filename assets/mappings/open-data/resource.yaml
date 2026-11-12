@@ -51,6 +51,10 @@ language:
           - eng
         setValues:
           - https://mex.rki.de/item/language-2 # English
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-1
 resourceTypeGeneral:
   - mappingRules:
       - forValues:
