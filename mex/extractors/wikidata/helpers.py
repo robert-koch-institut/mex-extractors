@@ -25,7 +25,7 @@ def get_wikidata_organization_by_id(wikidata_id: str) -> ExtractedOrganization |
     if result is None:
         return None
 
-    load([result.organization, *result.locations, result.primary_source])
+    load([result.primary_source, *result.locations, result.organization])
 
     return result.organization
 
