@@ -35,7 +35,7 @@ class WikidataSPARQLConnector(HTTPConnector):
     def extract_wikidata_location_ids(self) -> list[str]:
         """Retrieve location IDs from Wikidata via SPARQL.
 
-        The query searches for locations defined by the Q-numbers of territories lists.
+        The query searches for locations defined by the Q-number list of territories.
         """
         location_ids: set[str] = set()
         for region_type_id in REGION_TYPE_IDS:
