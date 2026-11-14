@@ -4,6 +4,7 @@ from mex.common.models import (
     ActivityMapping,
     ExtractedActivity,
     ExtractedOrganization,
+    MappingField,
     MappingFieldList,
 )
 from mex.common.types import (
@@ -184,7 +185,7 @@ def transform_international_projects_sources_to_extracted_activities(
 
 
 def get_theme_for_activity_or_topic(
-    theme: MappingFieldList[list[Theme]],
+    themes: MappingFieldList[list[Theme]],
     activity1: str | None,
     activity2: str | None,
     topic1: str | None,
@@ -193,7 +194,7 @@ def get_theme_for_activity_or_topic(
     """Get theme identifier for activities and topics.
 
     Args:
-        theme: theme extracted from mapping
+        themes: theme extracted from mapping
         activity1: activity 1 from the international-projects raw data file
         activity2: activity 2 from the international-projects raw data file
         topic1: topic 1 from the international-projects raw data file
@@ -202,18 +203,20 @@ def get_theme_for_activity_or_topic(
     Returns:
         Sorted list of Theme
     """
-    default_theme_from_mapping = cast("list[Theme]", theme.get_static_values())[0]
+    default_theme_from_mapping = cast("list[Theme]", themes[0].get_static_values())[0]
 
-    def get_theme_or_default(key: str | None) -> Theme:
+    def get_theme_or_default(
+        theme: MappingField[list[Theme]], key: str | None
+    ) -> Theme:
         if key and (themes := theme.get_mapped_values(key)):
             return themes[0]
         return default_theme_from_mapping
 
     theme_set = set()
-    theme_set.add(get_theme_or_default(activity1))
-    theme_set.add(get_theme_or_default(activity2))
-    theme_set.add(get_theme_or_default(topic1))
-    theme_set.add(get_theme_or_default(topic2))
+    theme_set.add(get_theme_or_default(themes[0], activity1))
+    theme_set.add(get_theme_or_default(themes[0], activity2))
+    theme_set.add(get_theme_or_default(themes[1], topic1))
+    theme_set.add(get_theme_or_default(themes[1], topic2))
 
     return sorted(theme_set, key=lambda x: x.name)
 

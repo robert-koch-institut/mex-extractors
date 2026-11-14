@@ -88,6 +88,10 @@ class ExtractorsSettings(BaseSettings):
         "0 0 * * *",
         description="A valid cron string defining when to run extractor jobs",
     )
+    schedule_enabled: bool = Field(
+        default=False,
+        description="Indicator if the jobs should be scheduled or not.",
+    )
     kerberos_user: str = Field(
         "user@domain.tld",
         description="Kerberos user to authenticate against MSSQL server.",

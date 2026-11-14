@@ -13,7 +13,6 @@ from mex.common.models import (
     ResourceMapping,
 )
 from mex.common.types import (
-    Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -77,7 +76,6 @@ def transform_resource_feat_model_to_mex_resource(
     Returns:
         ExtractedResource
     """
-    keyword = [k.setValues[0] for k in sumo_resource_feat.keyword[0].mappingRules]  # type: ignore[index]
     if (
         contributing_unit_synonym
         := sumo_resource_feat.contributingUnit.get_mappable_values()
@@ -101,17 +99,15 @@ def transform_resource_feat_model_to_mex_resource(
         hasPersonalData=sumo_resource_feat.hasPersonalData.get_static_values(),
         healthCategory=sumo_resource_feat.healthCategory.get_static_values(),
         identifierInPrimarySource=sumo_resource_feat.title.get_static_values()[0].value,  # type: ignore[index]
-        keyword=keyword,
-        meshId=sumo_resource_feat.meshId.get_static_values()[0],  # type: ignore[index]
+        keyword=sumo_resource_feat.keyword.get_static_values(),
+        meshId=sumo_resource_feat.meshId.get_static_values(),
         relatedResource=mex_resource_nokeda.stableTargetId,
-        resourceCreationMethod=sumo_resource_feat.resourceCreationMethod.get_static_values()[
-            0
-        ],  # type: ignore[index]
+        resourceCreationMethod=sumo_resource_feat.resourceCreationMethod.get_static_values(),
         resourceTypeGeneral=sumo_resource_feat.resourceTypeGeneral.get_static_values(),
         resourceTypeSpecific=sumo_resource_feat.resourceTypeSpecific.get_static_values(),
-        spatial=sumo_resource_feat.spatial.get_static_values()[0],  # type: ignore[index]
+        spatial=sumo_resource_feat.spatial.get_static_values(),
         theme=sumo_resource_feat.theme.get_static_values(),
-        title=sumo_resource_feat.title.get_static_values()[0],  # type: ignore[index]
+        title=sumo_resource_feat.title.get_static_values(),
         unitInCharge=unit_in_charge,
         wasGeneratedBy=transformed_activity.stableTargetId,
     )
@@ -143,7 +139,6 @@ def transform_resource_nokeda_to_mex_resource(
         := sumo_resource_nokeda.contributingUnit.get_mappable_values()
     ):
         contributing_unit = get_unit_merged_id_by_synonym(contributing_unit_synonym[0])
-    keyword = [k.setValues[0] for k in sumo_resource_nokeda.keyword[0].mappingRules]  # type: ignore[index]
     if (
         unit_in_charge_synonym
         := sumo_resource_nokeda.unitInCharge.get_mappable_values()
@@ -159,16 +154,8 @@ def transform_resource_nokeda_to_mex_resource(
             ]
         ],
         contributingUnit=contributing_unit,
-        description=[
-            Text.model_validate(
-                sumo_resource_nokeda.description.get_static_values()[0]  # type: ignore[index]
-            )
-        ],
-        documentation=[
-            Link.model_validate(
-                sumo_resource_nokeda.documentation.get_static_values()[0]  # type: ignore[index]
-            )
-        ],
+        description=sumo_resource_nokeda.description.get_static_values(),
+        documentation=sumo_resource_nokeda.documentation.get_static_values(),
         externalPartner=[
             create_new_organization_with_official_name(
                 sumo_resource_nokeda.externalPartner.get_mappable_values()[0],
@@ -180,28 +167,18 @@ def transform_resource_nokeda_to_mex_resource(
         identifierInPrimarySource=sumo_resource_nokeda.title.get_static_values()[
             0
         ].value,  # type: ignore[index]
-        keyword=keyword,
+        keyword=sumo_resource_nokeda.keyword.get_static_values(),
         meshId=sumo_resource_nokeda.meshId.get_static_values(),
         publication=[],
         publisher=extracted_organization_rki.stableTargetId,
-        resourceCreationMethod=sumo_resource_nokeda.resourceCreationMethod.get_static_values()[
-            0
-        ],  # type: ignore[index]
-        resourceTypeGeneral=sumo_resource_nokeda.resourceTypeGeneral.get_static_values()[
-            0
-        ],  # type: ignore[index]
+        resourceCreationMethod=sumo_resource_nokeda.resourceCreationMethod.get_static_values(),
+        resourceTypeGeneral=sumo_resource_nokeda.resourceTypeGeneral.get_static_values(),
         resourceTypeSpecific=sumo_resource_nokeda.resourceTypeSpecific.get_static_values(),
-        rights=[
-            Text.model_validate(
-                sumo_resource_nokeda.rights.get_static_values()[0]  # type: ignore[index]
-            )
-        ],
-        spatial=sumo_resource_nokeda.spatial.get_static_values()[0],  # type: ignore[index]
-        stateOfDataProcessing=sumo_resource_nokeda.stateOfDataProcessing.get_static_values()[
-            0
-        ],  # type: ignore[index]
+        rights=sumo_resource_nokeda.rights.get_static_values(),
+        spatial=sumo_resource_nokeda.spatial.get_static_values(),
+        stateOfDataProcessing=sumo_resource_nokeda.stateOfDataProcessing.get_static_values(),
         theme=sumo_resource_nokeda.theme.get_static_values(),
-        title=sumo_resource_nokeda.title.get_static_values()[0],  # type: ignore[index]
+        title=sumo_resource_nokeda.title.get_static_values(),
         unitInCharge=unit_in_charge,
         wasGeneratedBy=transformed_activity.stableTargetId,
     )

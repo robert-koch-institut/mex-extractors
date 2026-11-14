@@ -73,7 +73,10 @@ def test_transform_resource_parent_to_mex_resource(
             },
         ],
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
-        "keyword": [{"value": "Infektionsschutzgesetz", "language": TextLanguage.DE}],
+        "keyword": [
+            {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
+            {"value": "Infektionsschutz", "language": TextLanguage.DE},
+        ],
         "language": ["https://mex.rki.de/item/language-1"],
         "resourceCreationMethod": [
             "https://mex.rki.de/item/resource-creation-method-3"
@@ -140,6 +143,7 @@ def test_transform_resource_state_to_mex_resource(
         "hasPersonalData": "https://mex.rki.de/item/personal-data-1",
         "keyword": [
             {"value": "Infektionsschutzgesetz", "language": TextLanguage.DE},
+            {"value": "Infektionsschutz", "language": TextLanguage.DE},
         ],
         "language": ["https://mex.rki.de/item/language-1"],
         "relatedResource": [str(ifsg_extracted_resource_parent.stableTargetId)],

@@ -49,6 +49,15 @@ theme:
           - Infection prevention and control
         setValues:
           - https://mex.rki.de/item/theme-11 # Infectious Diseases and Epidemiology
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-37 # International Health Protection
+      - forValues:
+          - Non-communicable diseases
+        setValues:
+          - https://mex.rki.de/item/theme-36 # Non-Communicable Diseases and Health Surveillance
 title:
   - fieldInPrimarySource:
     mappingRules:

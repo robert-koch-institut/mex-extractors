@@ -40,3 +40,4 @@ class SynopseSettings(BaseModel):
             "values, relative to `assets_dir`."
         ),
     )
+    contact_point_74: str = Field("contact@rki.de", description=("email for ID 74"))
