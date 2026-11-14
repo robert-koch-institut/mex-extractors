@@ -4,6 +4,8 @@ from mex.extractors.consent_mailer.extract import (
     extract_consent_mailer_ldap_persons,
     extract_consents_for_persons,
 )
+from mex.extractors.settings import ExtractorsSettings
+from mex.extractors.utils import model_copy_validated
 
 
 @pytest.mark.usefixtures("mocked_consent_backend_api_connector")
@@ -12,10 +14,16 @@ def test_extract_ldap_persons() -> None:
     assert len(persons) == 2
 
 
-@pytest.mark.usefixtures("mocked_consent_backend_api_connector")
 def test_extract_consents_for_persons(
     mocked_consent_backend_api_connector: dict[str, int],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    settings = ExtractorsSettings.get()
+    monkeypatch.setattr(
+        settings,
+        "consent_mailer",
+        model_copy_validated(settings.consent_mailer, {"backend_fetch_chunk_size": 1}),
+    )
     # due to its mocked, we dont need any param
     persons = extract_consent_mailer_ldap_persons()
     consents = extract_consents_for_persons(persons)

@@ -11,25 +11,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
   and the drop api (seq-repo)
-- open-data setting `fallback_unit` to replace the hardcoded `FALLBACK_UNIT`
+- open-data setting `fallback_unit` (default `FG 99`) to replace the hardcoded `FALLBACK_UNIT`
 - `opendata@rki.de` functional account in the ldap mock
 
 ### Changes
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
-- upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
+- upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
-- upgrade mex-backend to 4.6.2
+- upgrade mex-backend to 4.7.0
 - upgrade ruff to 0.17
 - `update_actor_references_where_needed` returns a validated copy of the
   item instead of updating it in place
 - derive changed models with the new `model_copy_validated` helper instead of
   assigning fields, to prepare for frozen models in future mex-common release
+- raise consent-mailer `backend_fetch_chunk_size` default from 1 to 100
+- rename compose services `dagster-daemon` and `dagster-webserver` to
+  `mex-extractors-daemon` and `mex-extractors-webserver`
+- ldap mock matches `sAMAccountName` case-insensitively
 
 ### Deprecated
 
 ### Removed
 
+- `requires_rki_infrastructure` pytest marker, the affected tests now run as regular
+  integration tests against the http-test-server
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
 - remove default settings from dagster metadata
 
@@ -44,6 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use concrete extracted items' identifiers instead of verbatim strings or Jokers
 - fix asset_check for less than x outbound
 - fix mssql driver install for ubuntu 26.04
+- strip surrounding whitespace from igs endpoint counts
+- remove double slash from confluence-vvt documentation links when the url has a
+  trailing slash
 
 ### Security
 

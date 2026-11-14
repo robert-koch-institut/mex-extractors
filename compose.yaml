@@ -13,7 +13,7 @@ services:
       start_period: 10s
     volumes:
       - pgdata:/var/lib/postgresql/data
-  dagster-daemon:
+  mex-extractors-daemon:
     build:
       context: .
     entrypoint: [ "dagster-daemon", "run", "-w", "workspace.yaml" ]
@@ -26,13 +26,14 @@ services:
         condition: service_healthy
     environment:
       MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@ldapmock.local:636
+      MEX_BACKEND_API_URL: http://mex-backend:8080
       MEX_EXTRACTORS_BLUEANT__URL: http://http-test-server:8050/v0/bluework/
       MEX_EXTRACTORS_DATSCHA_WEB__URL: http://http-test-server:8050/v0/datscha_web/
       MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://http-test-server:8050/v0/confluence_vvt/
       MEX_EXTRACTORS_DROP_API_URL: http://http-test-server:8050/v0/drop/
       MEX_EXTRACTORS_IGS__URL: http://http-test-server:8050/v0/igs/
       MEX_EXTRACTORS_OPEN_DATA__URL: http://http-test-server:8050/v0/open_data/
-      MEX_EXTRACTORS_OPEN_DATA__FALLBACK_UNIT: FG 99
+      MEX_ORCID_API_URL: http://http-test-server:8050/v0/orcid/
       MEX_WIKI_API_URL: http://http-test-server:8050/v0/wikidata/w/api.php
       # trust the self-signed cert that slapd generates on startup, issued for `ldapmock.local`
       # (setting this to `false` via env does not work, mex-common parses it as a path)
@@ -47,7 +48,7 @@ services:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
       - slapd-ssl:/app/slapd-ssl:ro
-  dagster-webserver:
+  mex-extractors-webserver:
     build:
       context: .
     ports:
