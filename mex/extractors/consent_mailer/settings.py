@@ -7,7 +7,7 @@ class ConsentMailerSettings(BaseModel):
     """Settings definition class for the consent mailer."""
 
     backend_fetch_chunk_size: int = Field(
-        1,
+        100,
         description="The chunk size for fetching against the backend.",
     )
     mailpit_api_url: str = Field(

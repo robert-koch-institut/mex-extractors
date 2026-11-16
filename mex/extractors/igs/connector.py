@@ -51,4 +51,4 @@ class IGSConnector(HTTPConnector):
         """
         response = self.request_raw("GET", endpoint=endpoint, params=params)
 
-        return response.text
+        return response.text.strip()
