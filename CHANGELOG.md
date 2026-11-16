@@ -19,12 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.0.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
-- upgrade mex-backend to 4.6.2
+- upgrade mex-backend to 4.7.0
 - upgrade ruff to 0.17
 - `update_actor_references_where_needed` returns a validated copy of the
   item instead of updating it in place
 - derive changed models with the new `model_copy_validated` helper instead of
   assigning fields, to prepare for frozen models in future mex-common release
+- set mailpit and slapd to explicit tags for consistency (but keeping the digest)
 
 ### Deprecated
 

@@ -80,7 +80,7 @@ services:
       retries: 5
       start_period: 10s
   slapd:
-    image: thoteam/slapd-server-mock@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
+    image: thoteam/slapd-server-mock:latest@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
     platform: linux/amd64
     ports:
       - 636:636
@@ -98,7 +98,7 @@ services:
       - ./assets/raw-data/ldap/:/bootstrap/
       - slapd-ssl:/etc/ldap/ssl
   mailpit:
-    image: axllent/mailpit:v1.33@sha256:aef2aacc11f075ec0fb6874275ee4a421e688e11a96ebb296134d1735c7761ce
+    image: axllent/mailpit:v1.33.1@sha256:aef2aacc11f075ec0fb6874275ee4a421e688e11a96ebb296134d1735c7761ce
     ports:
       - 1025:1025
       - 8025:8025
