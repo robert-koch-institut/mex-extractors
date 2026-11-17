@@ -119,7 +119,9 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             size_of_databasis = f"Anzahl Proben: {count}"
         title = igs_resource_mapping.title.get_mapped_values(
             pathogen
-        ) or igs_resource_mapping.title.get_mapped_values("[*]")
+        ) or igs_resource_mapping.title.get_mapped_values("[*]")[0].value.replace(
+            "[*]", pathogen
+        )
         extracted_resources_by_pathogen[pathogen] = ExtractedResource(
             accessPlatform=igs_extracted_access_platform.stableTargetId,
             accessRestriction=igs_resource_mapping.accessRestriction.get_static_values(),
@@ -147,8 +149,8 @@ def transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
             resourceTypeGeneral=igs_resource_mapping.resourceTypeGeneral.get_static_values(),
             resourceTypeSpecific=igs_resource_mapping.resourceTypeSpecific.get_static_values(),
             rights=igs_resource_mapping.rights.get_static_values(),
-            spatial=igs_resource_mapping.spatial.get_static_values(),
             sizeOfDataBasis=size_of_databasis,
+            spatial=igs_resource_mapping.spatial.get_static_values(),
             start=igs_resource_mapping.start.get_static_values(),
             theme=igs_resource_mapping.theme.get_static_values(),
             title=title,

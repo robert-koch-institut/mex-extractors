@@ -226,7 +226,7 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
             meta_disease_row.disease_name,
             meta_disease_row.disease_name_en,
             meta_disease_row.specimen_name,
-            *[rule.setValues[0] for rule in resource_disease.keyword[0].mappingRules],  # type: ignore[index]
+            *(resource_disease.keyword.get_static_values() or []),
         ]
         if keyword
     ]
@@ -247,10 +247,10 @@ def transform_resource_disease_to_mex_resource_row(  # noqa: PLR0913, PLR0917
         ),
         description=resource_disease.description.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("ifsg"),
-        hasLegalBasis=resource_disease.hasLegalBasis.get_static_values(),
-        hasPersonalData=resource_disease.hasPersonalData.get_static_values(),
         hasCodeValues=[hcv for hcv in has_code_values if hcv],
         hasCodingSystem=resource_disease.hasCodingSystem.get_static_values(),
+        hasLegalBasis=resource_disease.hasLegalBasis.get_static_values(),
+        hasPersonalData=resource_disease.hasPersonalData.get_static_values(),
         identifierInPrimarySource=(
             f"resource_disease_{meta_disease_row.id_type}_{meta_disease_row.id_schema}"
         ),

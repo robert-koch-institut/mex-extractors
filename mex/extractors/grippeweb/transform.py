@@ -104,7 +104,6 @@ def transform_grippeweb_resource_mappings_to_dict(
 
         identifier_in_primary_source = (
             resource.identifierInPrimarySource.get_static_values()
-            or resource.identifierInPrimarySource.get_mappable_values()[0]
         )
 
         publisher = grippeweb_merged_organization_ids_by_query_str.get(
