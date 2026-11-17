@@ -19,7 +19,7 @@ from mex.extractors.sinks import load
 
 @asset(group_name="locations")
 def locations_wikidata_ids() -> set[str]:
-    """Extract country wikidata IDs from json list."""
+    """Extract location wikidata IDs from different sources."""
     return set(
         extract_country_wikidata_ids_from_eu_vocabularies_json()
         + extract_region_wikidata_ids()
@@ -30,7 +30,7 @@ def locations_wikidata_ids() -> set[str]:
 def locations_transform_wikidata_ids_to_extracted_locations(
     locations_wikidata_ids: set[str],
 ) -> list[ExtractedLocation]:
-    """Extract, transform, and load Wikidata locations."""
+    """Extract, transform, and load Wikidata locations based on their ID."""
     wikidata_primary_source_id = get_extracted_primary_source_id_by_name("wikidata")
 
     wikidata_locations = extract_wikidata_locations(locations_wikidata_ids)
