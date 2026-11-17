@@ -695,10 +695,7 @@ def transform_resources(
                     max_keyword_string_length,
                 )
                 datennutzungszweck_erweitert = (
-                    delim.join(
-                        [hp.value for hp in item.hasPurpose if hp.value is not None]
-                    )
-                    or None
+                    delim.join(get_german_vocabulary(item.hasPurpose)) or None
                 )
                 datenkompass_resources.append(
                     DatenkompassResource(

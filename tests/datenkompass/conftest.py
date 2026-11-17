@@ -169,7 +169,7 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="has basis", language="en"),
                 Text(value="hat weitere Basis", language="de"),
             ],
-            hasPurpose=[Text(value="has purpose", language=None)],
+            hasPurpose=["https://mex.rki.de/item/purpose-1"],  # MONITORING_SURVEILLANCE
             keyword=[
                 Text(value="word 1", language="en"),
                 Text(value="Wort 2", language="de"),
