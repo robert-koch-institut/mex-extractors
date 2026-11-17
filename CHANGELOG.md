@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- settings variable if a dagster schedule should be enabled or not
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
   and the drop api (seq-repo)
 - open-data setting `fallback_unit` (default `FG 99`) to replace the hardcoded `FALLBACK_UNIT`
@@ -16,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to 3.8 and mex-model to 5.2.2
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
@@ -41,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- usage of get_static_values
 - datscha_web transform crashing on items without `Auskunftsperson`
 - dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
 - added missing dependencies that were explicitly imported

@@ -17,8 +17,8 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "jinja2>=3,<4",
     "mex-artificial>=3,<4",
-    "mex-common>=3.6,<3.7",
-    "mex-model>=5.2,<5.3",
+    "mex-common>=3.8,<3.9",
+    "mex-model>=5.2.2,<5.3",
     "networkx>=3,<4",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
@@ -101,9 +101,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "boto3.*"
 ignore_missing_imports = true
-
-[tool.pydantic-mypy]
-warn_untyped_fields = true
 
 [tool.pytest.ini_options]
 addopts = [

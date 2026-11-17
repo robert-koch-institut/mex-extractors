@@ -77,8 +77,8 @@ def transform_voxco_resource_mappings_to_extracted_resources(
 
         resource_dict[identifier_in_primary_source] = ExtractedResource(
             accessRestriction=resource.accessRestriction.get_static_values(),
-            anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
             alternativeTitle=resource.alternativeTitle.get_static_values(),
+            anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
             contact=contact,
             description=resource.description.get_static_values(),
             externalPartner=external_partner,

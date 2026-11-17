@@ -30,10 +30,12 @@ def merged_ldap_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonWithFallbackUnit",
+            fullName=["Person, with Fallback Unit"],
             memberOf=["ValidUnitWithEmail", "InvalidUnitNoEmail"],
         ),
         MergedPerson(
             identifier="PersonWithoutFallback",
+            fullName=["Person, without Fallback"],
             memberOf=[],
         ),
     ]
@@ -58,6 +60,7 @@ def merged_person_list() -> list[MergedPerson]:
         ),
         MergedPerson(
             identifier="PersonNoConsentLink",
+            fullName=["Person, without Consent Link"],
         ),
     ]
 
@@ -172,6 +175,7 @@ def fetch_all_publishable_merged_items(
     merged_items: list[AnyMergedModel] = [
         MergedPrimarySource(
             identifier="fakeFakeSource",
+            title=[Text(value="Fake Source")],
         ),
         MergedContactPoint(
             email=["mex@rki.de"],

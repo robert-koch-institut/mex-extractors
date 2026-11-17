@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, cast
 
 from bs4 import BeautifulSoup
 
+from mex.common.types import Link
 from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -13,7 +14,7 @@ from mex.extractors.pipeline.publishing_helpers import GERMAN_PREFLABEL_BY_CONCE
 from mex.extractors.settings import ExtractorsSettings
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable, Mapping, Sequence
 
     from pydantic import BaseModel
 
@@ -51,8 +52,8 @@ def fix_quotes(string: str) -> str:
 
 
 def get_unit_shortname(
-    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units_by_id: dict[
+    responsible_unit_ids: Sequence[MergedOrganizationalUnitIdentifier],
+    merged_organizational_units_by_id: Mapping[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
     delim: str,
@@ -86,8 +87,8 @@ def get_unit_shortname(
 
 
 def get_email(
-    responsible_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    merged_organizational_units_by_id: dict[
+    responsible_unit_ids: Sequence[MergedOrganizationalUnitIdentifier],
+    merged_organizational_units_by_id: Mapping[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
 ) -> str | None:
@@ -112,15 +113,17 @@ def get_email(
 
 
 def get_resource_email(
-    responsible_reference_ids: list[
+    responsible_reference_ids: Sequence[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
         | MergedContactPointIdentifier
     ],
-    merged_organizational_units_by_id: dict[
+    merged_organizational_units_by_id: Mapping[
         MergedOrganizationalUnitIdentifier, MergedOrganizationalUnit
     ],
-    merged_contact_points_by_id: dict[MergedContactPointIdentifier, MergedContactPoint],
+    merged_contact_points_by_id: Mapping[
+        MergedContactPointIdentifier, MergedContactPoint
+    ],
 ) -> str | None:
     """Get the first email address of referenced responsible units or contact points.
 
@@ -147,7 +150,7 @@ def get_resource_email(
     return None
 
 
-def get_german_text(text_entries: list[Text]) -> list[str]:
+def get_german_text(text_entries: Sequence[Text]) -> list[str]:
     """Get german entries of list as strings, if any exist.
 
      If no german entry exists, return original list entries as strings.
@@ -215,11 +218,11 @@ def get_datenbank(item: MergedBibliographicResource) -> str | None:
     return None
 
 
-def get_abstract_or_description(abstracts: list[Text], delim: str) -> str:
-    """Get German list entries, join them and reformat html-formated links.
+def get_abstract_or_description(abstracts: Sequence[Text], delim: str) -> str:
+    """Get German list entries, join them and reformat html-formatted links.
 
     Args:
-        abstracts: list of mixed language strings with possible html-formated links
+        abstracts: list of mixed language strings with possible html-formatted links
         delim: list delimiter for joining the strings in list
 
     Returns:
@@ -530,7 +533,9 @@ def transform_bibliographic_resources(
         voraussetzungen = next(
             handle_setval(rule.setValues)
             for rule in default_by_fieldname["voraussetzungen"].mappingRules
-            if rule.forValues and rule.forValues[0] == item.accessRestriction.name
+            if rule.forValues
+            and item.accessRestriction
+            and rule.forValues[0] == item.accessRestriction.name
         )
         schlagwort = filter_schlagworte(
             [word.value for word in item.keyword] if item.keyword else [],
@@ -641,6 +646,7 @@ def transform_resources(
                     handle_setval(rule.setValues)
                     for rule in default_by_fieldname["voraussetzungen"].mappingRules
                     if rule.forValues
+                    and item.accessRestriction
                     and rule.forValues[0] == item.accessRestriction.name
                 )
                 frequenz = (
@@ -669,7 +675,10 @@ def transform_resources(
                     )
                 )
                 rechtsgrundlagen_benennung_collection = [
-                    entry.value for entry in item.hasLegalBasis
+                    (entry.title or entry.url)
+                    if isinstance(entry, Link)
+                    else entry.value
+                    for entry in item.hasLegalBasis
                 ] + get_german_vocabulary(
                     [item.license] if item.license else [],
                 )
