@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use new mex-common helper get_wikidata_organization_with_locations (instead of
+  get_wikidata_organization) to return and load organization, locations and wikidata primary source
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
