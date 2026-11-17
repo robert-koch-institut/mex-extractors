@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
 def test_extract_blueant_sources_from_api() -> None:
     sources = extract_blueant_sources()
     assert sources[0].model_fields_set == BlueAntSource.model_fields.keys()

@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from mex.common.ldap import connector as ldap_connector_module
 from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     ExtractedOrganization,
@@ -15,6 +16,7 @@ from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
+from mex.common.settings import MEX_ASSETS_DIR
 from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Validation,
@@ -62,13 +64,31 @@ pytest_plugins = (
     "tests.system.mocked_dagster_instance",
 )
 
-TEST_DATA_DIR = Path(__file__).parent / "test_data"
+ASSETS_DIR = Path(__file__).parent.parent / "assets"
 
 
 @pytest.fixture(autouse=True)
-def settings() -> ExtractorsSettings:
+def isolate_assets_dir(monkeypatch: MonkeyPatch) -> None:
+    """Point `MEX_ASSETS_DIR` at the repo assets for all tests, incl. integration.
+
+    The mex-common plugin only unsets it for unit tests, so a locally configured
+    value would leak into integration tests. Setting the env var (instead of
+    deleting it) also takes precedence over any `.env` file.
+    """
+    monkeypatch.setenv(MEX_ASSETS_DIR, str(ASSETS_DIR))
+
+
+@pytest.fixture(autouse=True)
+def settings(isolate_assets_dir: None) -> ExtractorsSettings:  # noqa: ARG001
     """Load the settings for this pytest session."""
     return ExtractorsSettings.get()
+
+
+@pytest.fixture(autouse=True)
+def disable_ldap_tls(monkeypatch: MonkeyPatch) -> None:
+    """Skip TLS setup, because the mock LDAP server uses a self-signed certificate."""
+    # TODO(ND): Make this configurable in mex-common
+    monkeypatch.setattr(ldap_connector_module, "Tls", lambda *_, **__: None)
 
 
 @pytest.fixture(autouse=True)
