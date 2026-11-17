@@ -1,17 +1,8 @@
-import os
-
 import pytest
 
 from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, ExtractedContactPoint
 from mex.common.sinks.backend_api import BackendApiSink
-
-IN_CI = os.environ.get("CI") == "true"
-
-pytestmark = [
-    # skip backend integration tests outside CI for now, to avoid manual backend setup, addressed in MX-1523
-    pytest.mark.skipif(not IN_CI, reason="Test requires CI environment"),
-]
 
 
 @pytest.mark.integration

@@ -8,7 +8,7 @@ class OpenDataSettings(BaseModel):
 
     url: str = Field("https://zenodo", description="Zenodo instance URL")
     community_rki: str = Field(
-        "robertkochinstitut", description="Zenodo communitiy of rki"
+        "robertkochinstitut", description="Zenodo community of rki"
     )
     mapping_path: str = Field(
         "mappings/open-data",
@@ -18,7 +18,7 @@ class OpenDataSettings(BaseModel):
         ),
     )
     fallback_unit: str = Field(
-        "mf4",
+        "FG 99",
         description="Unit used as a fallback for resources without a responsible unit.",
     )
     zip_path_de: str = Field(
