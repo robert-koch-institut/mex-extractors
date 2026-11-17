@@ -4,12 +4,12 @@ from mex.common.settings import BaseSettings
 from mex.extractors.locations.query import build_wikidata_query
 from mex.extractors.settings import ExtractorsSettings
 
-REGION_TYPE_IDS = (  # Typen von Regionen in Deutschland
-    "Q1221156",  # Bundesland
-    "Q106658",  # Landkreis
-    "Q14784328",  # Landeshauptstadt
-    "Q22865",  # kreisfreie Stadt
-    "Q116457956",  # Gemeinde
+REGION_TYPE_IDS = (  # Types of regions in Germany
+    "Q1221156",  # federated state (Bundesland)
+    "Q106658",  # district (Landkreis)
+    "Q14784328",  # state capital (Landeshauptstadt)
+    "Q22865",  # independent city (kreisfreie Stadt)
+    "Q116457956",  # municipality without town privileges (Gemeinde)
 )
 
 
@@ -35,7 +35,7 @@ class WikidataSPARQLConnector(HTTPConnector):
     def extract_wikidata_location_ids(self) -> list[str]:
         """Retrieve location IDs from Wikidata via SPARQL.
 
-        The query searches for locations defined by the Q-numbers of territories lists.
+        The query searches for locations defined by the Q-number list of regions.
         """
         location_ids: set[str] = set()
         for region_type_id in REGION_TYPE_IDS:

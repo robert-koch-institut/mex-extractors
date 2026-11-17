@@ -7,23 +7,17 @@ from requests.exceptions import HTTPError
 from mex.extractors.drop import DropApiConnector
 
 
-@pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
 @pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
 def test_list_files() -> None:
     connector = DropApiConnector.get()
-    files = connector.list_files("test")
-    assert files == ["default"]
+    files = connector.list_files("seq-repo")
+    assert files == ["default.json"]
 
 
-@pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
 @pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
 def test_list_files_of_non_existing_x_system() -> None:
     connector = DropApiConnector.get()
-    with pytest.raises(
-        HTTPError, match=r"404.*The requested x-system was not found on this server"
-    ):
+    with pytest.raises(HTTPError, match=r"404 .*Not Found"):
         connector.list_files("does-not-exist")
 
 
@@ -38,24 +32,19 @@ def test_list_files_mocked(monkeypatch: MonkeyPatch) -> None:
     assert files == ["default"]
 
 
-@pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
 @pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
 def test_get_file() -> None:
     connector = DropApiConnector.get()
-    content = connector.get_file("test", "default")
-    assert content == {"foo": "bar", "list": [1, 2, "foo"], "nested": {"foo": "bar"}}
+    content = connector.get_file("seq-repo", "default.json")
+    assert isinstance(content, list)
+    assert content[0]["project-id"] == "TEST-ID"
 
 
-@pytest.mark.skip("Mex-drop might not be running. To be fixed in MX-1576")
 @pytest.mark.integration
-@pytest.mark.requires_rki_infrastructure
 def test_get_file_that_does_not_exist() -> None:
     connector = DropApiConnector.get()
-    with pytest.raises(
-        HTTPError, match=r"404 .*The requested data was not found on this server"
-    ):
-        connector.get_file("test", "does-not-exist")
+    with pytest.raises(HTTPError, match=r"404 .*Not Found"):
+        connector.get_file("seq-repo", "does-not-exist")
 
 
 def test_get_file_mocked(monkeypatch: MonkeyPatch) -> None:
