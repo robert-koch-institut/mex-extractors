@@ -64,9 +64,9 @@ def test_model_copy_validated() -> None:
     original = ExtractedResource(
         hadPrimarySource="00000000000000",
         identifierInPrimarySource="resource-1",
-        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
         accessRestriction="https://mex.rki.de/item/access-restriction-1",
         contact=["bFQoRhcVH5DHU6"],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-3"],
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Resource"],
         unitInCharge=["bFQoRhcVH5DHU8"],
@@ -88,9 +88,9 @@ def test_model_copy_validated_validates_update() -> None:
     original = ExtractedResource(
         hadPrimarySource="00000000000000",
         identifierInPrimarySource="resource-1",
-        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-1"],
         accessRestriction="https://mex.rki.de/item/access-restriction-1",
         contact=["bFQoRhcVH5DHU6"],
+        resourceCreationMethod=["https://mex.rki.de/item/resource-creation-method-3"],
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Resource"],
         unitInCharge=["bFQoRhcVH5DHU8"],

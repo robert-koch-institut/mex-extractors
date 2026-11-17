@@ -148,9 +148,6 @@ def mocked_merged_resource() -> list[MergedResource]:
     return [
         MergedResource(
             accessRestriction=AccessRestriction["OPEN"],
-            resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
-            ],
             description=[
                 Text(value="english description", language="en"),
                 Text(
@@ -169,10 +166,13 @@ def mocked_merged_resource() -> list[MergedResource]:
                 Text(value="has basis", language="en"),
                 Text(value="hat weitere Basis", language="de"),
             ],
-            hasPurpose=["https://mex.rki.de/item/purpose-1"],  # MONITORING_SURVEILLANCE
+            hasPurpose=["https://mex.rki.de/item/purpose-12"],
             keyword=[
                 Text(value="word 1", language="en"),
                 Text(value="Wort 2", language="de"),
+            ],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-3"
             ],
             start=["1970-01-01"],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
@@ -183,10 +183,10 @@ def mocked_merged_resource() -> list[MergedResource]:
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
-            resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
-            ],
             contact=["PersonIdentifier4Peppa"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-3"
+            ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Resource with unit FG 99"],
             wasGeneratedBy=["MergedActivityNoORG"],
@@ -195,10 +195,10 @@ def mocked_merged_resource() -> list[MergedResource]:
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
-            resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
-            ],
             contact=["PersonIdentifier4Peppa"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-3"
+            ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Resource with no relevant unit"],
             wasGeneratedBy=["MergedActivityNoORG"],
@@ -207,10 +207,10 @@ def mocked_merged_resource() -> list[MergedResource]:
         ),
         MergedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
-            resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
-            ],
             contact=["PersonIdentifier4Peppa"],
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-3"
+            ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Merged Resource with Extracted Resource to be filtered out"],
             wasGeneratedBy=["MergedActivityWithORG2"],
@@ -226,12 +226,12 @@ def mocked_extracted_resource() -> list[ExtractedResource]:
     return [
         ExtractedResource(
             accessRestriction=AccessRestriction["RESTRICTED"],
-            resourceCreationMethod=[
-                "https://mex.rki.de/item/resource-creation-method-1"
-            ],
             contact=["PersonIdentifier4Peppa"],
             hadPrimarySource="identifierRelevantPS",
             identifierInPrimarySource="Extracted Resource for Merged Resource",
+            resourceCreationMethod=[
+                "https://mex.rki.de/item/resource-creation-method-3"
+            ],
             theme=["https://mex.rki.de/item/theme-11"],  # INFECTIOUS_DISEASES_AND_...
             title=["Extracted Resource for Merged Resource to be filtered out"],
             wasGeneratedBy=["MergedActivityWithORG2"],

@@ -9,7 +9,7 @@ from mex.common.models import (
     MergedPrimarySource,
     PaginatedItemsContainer,
 )
-from mex.common.types import MergedPersonIdentifier, Text
+from mex.common.types import MergedPersonIdentifier
 from mex.extractors.publisher.extract import (
     get_publishable_merged_item,
     get_publishable_merged_items,
@@ -21,7 +21,7 @@ def test_get_publishable_merged_items_mocked() -> None:
     items = get_publishable_merged_items()
     assert len(items) == 6
     assert items[0] == MergedPrimarySource(
-        identifier="fakeFakeSource", title=[Text(value="Fake Source")]
+        identifier="fakeFakeSource", title="test title"
     )
 
 
@@ -59,12 +59,8 @@ def test_get_publishable_merged_item(
         ([], "does not exist or is not publishable"),
         (
             [
-                MergedPrimarySource(
-                    identifier="aaaaaaaaaaaaaa", title=[Text(value="A")]
-                ),
-                MergedPrimarySource(
-                    identifier="bbbbbbbbbbbbbb", title=[Text(value="B")]
-                ),
+                MergedPrimarySource(identifier="aaaaaaaaaaaaaa", title="test title"),
+                MergedPrimarySource(identifier="bbbbbbbbbbbbbb", title="test title"),
             ],
             "More than one merged item found",
         ),

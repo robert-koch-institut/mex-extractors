@@ -7,7 +7,6 @@ from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ExtractedPrimarySource,
 )
-from mex.common.types import Text
 from mex.extractors.primary_source import helpers
 from mex.extractors.primary_source.helpers import (
     cached_load_extracted_primary_source_by_name,
@@ -20,7 +19,7 @@ def wikidata_primary_source() -> ExtractedPrimarySource:
     return ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="wikidata",
-        title=[Text(value="Wikidata")],
+        title="test title",
     )
 
 

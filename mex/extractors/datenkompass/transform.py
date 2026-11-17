@@ -2,7 +2,10 @@ from typing import TYPE_CHECKING, cast
 
 from bs4 import BeautifulSoup
 
-from mex.common.types import Link
+from mex.common.types import (
+    Link,
+    Text,
+)
 from mex.extractors.assets import load_yaml
 from mex.extractors.datenkompass.models.item import (
     DatenkompassActivity,
@@ -30,7 +33,6 @@ if TYPE_CHECKING:
         MergedContactPointIdentifier,
         MergedOrganizationalUnitIdentifier,
         MergedPersonIdentifier,
-        Text,
         VocabularyEnum,
     )
     from mex.extractors.datenkompass.models.mapping import DatenkompassMappingField
@@ -674,12 +676,13 @@ def transform_resources(
                         default_by_fieldname["beschreibung"].mappingRules[0].setValues
                     )
                 )
-                rechtsgrundlagen_benennung_collection = [
-                    (entry.title or entry.url)
-                    if isinstance(entry, Link)
-                    else entry.value
-                    for entry in item.hasLegalBasis
-                ] + get_german_vocabulary(
+                rechtsgrundlagen_benennung_collection: list[str] = []
+                for entry in item.hasLegalBasis:
+                    if isinstance(entry, Text):
+                        rechtsgrundlagen_benennung_collection.append(entry.value)
+                    if isinstance(entry, Link) and entry.title:
+                        rechtsgrundlagen_benennung_collection.append(entry.title)
+                rechtsgrundlagen_benennung_collection += get_german_vocabulary(
                     [item.license] if item.license else [],
                 )
                 rechtsgrundlagen_benennung = (

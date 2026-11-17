@@ -429,7 +429,7 @@ def test_transform_resources(
         "beschreibung": "deutsche Beschreibung http://mit.link.",
         "datenbank": "https://doi.org/10.1234_example",
         "rechtsgrundlagen_benennung": "has basis; hat weitere Basis",
-        "datennutzungszweck_erweitert": "Monitoring & Surveillance",
+        "datennutzungszweck_erweitert": "Erkennen von ungewöhnlichen Ereignissen und Frühwarnung",
         "schlagwort": "Infektionskrankheiten und -epidemiologie; word 1",  # 'Wort 2' cut
         "dk_format": "Format",
         "titel": "Resource with unit C1",
