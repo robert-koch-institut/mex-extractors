@@ -1,14 +1,13 @@
 import csv
 import json
 from io import BytesIO, StringIO
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 import boto3
 import pandas as pd
 
 from mex.common.logging import logger
-from mex.common.models import BaseModel
-from mex.common.sinks.base import BaseSink
+from mex.common.sinks.base import BaseSink, LoadItemT
 from mex.common.transform import MExEncoder
 from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks.write_metadata import (
@@ -19,8 +18,6 @@ from mex.extractors.sinks.write_metadata import (
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
-
-_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
 
 class S3Base:
@@ -47,7 +44,7 @@ class S3Base:
 class S3Sink(S3Base, BaseSink):
     """Standard sink to load models as NDJSON file into S3 bucket."""
 
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT]:
+    def load(self, items: Iterable[LoadItemT]) -> Generator[LoadItemT]:
         """Write items.ndjson and metadata.json to S3.
 
         Write to directory
@@ -95,7 +92,7 @@ class S3Sink(S3Base, BaseSink):
         logger.info("%s - written metadata.json", type(self).__name__)
 
     @staticmethod
-    def _convert_item_to_ndjson(item: _LoadItemT) -> str:
+    def _convert_item_to_ndjson(item: LoadItemT) -> str:
         """Convert an item to an ndjson string."""
         dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
         return f"{dumped_json}\n"
@@ -106,11 +103,11 @@ class S3XlsxSink(S3Base, BaseSink):
 
     def load(
         self,
-        items: Iterable[_LoadItemT],
+        items: Iterable[LoadItemT],
         *,
         primary_source_name: str | None = None,
         unit_name: str | None = None,
-    ) -> Generator[_LoadItemT]:
+    ) -> Generator[LoadItemT]:
         """Write the incoming items as an XLSX directly to S3.
 
         Args:
@@ -166,10 +163,10 @@ class S3CsvSink(S3Base):
 
     def load_for_unit(
         self,
-        items_sorted_by_year: Iterable[_LoadItemT],
+        items_sorted_by_year: Iterable[LoadItemT],
         *,
         file_name: str,
-    ) -> Generator[_LoadItemT]:
+    ) -> Generator[LoadItemT]:
         """Write the incoming items as an CSV directly to S3.
 
         Args:

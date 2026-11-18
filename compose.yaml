@@ -141,7 +141,7 @@ services:
       retries: 12
       start_period: 20s
   mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest@sha256:07d7dedecdbfcf6776035dc5eefb5bfd9aa1804b2f6b99f7dedb397d8a599069
+    image: mcr.microsoft.com/mssql/server:2019-latest@sha256:debdc21628cddd1a4433371c601c8dee9bad3533ae8b18fe9dc8c5596368b10d
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=MEx_testing1234
