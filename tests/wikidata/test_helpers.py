@@ -8,7 +8,7 @@ from mex.common.models import ExtractedLocation
 from mex.common.primary_source.helpers import (
     get_extracted_primary_source_by_name,
 )
-from mex.common.wikidata.helpers import WikidataOrganizationResult
+from mex.common.wikidata.models import WikidataOrganizationResult
 from mex.extractors.wikidata import helpers
 from mex.extractors.wikidata.helpers import (
     get_wikidata_extracted_organization_id_by_name,
