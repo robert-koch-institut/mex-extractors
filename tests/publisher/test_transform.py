@@ -88,7 +88,7 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
         # contact fallback applied to contact point
         "contact": ["thisIsTheFallbackId"],
         # externalAssociate is filtered to exclude invalid references
-        "externalAssociate": ["thisIdentifierIsOkay"],
+        "externalAssociate": ["thisIdIsBlocked", "thisIdentifierIsOkay"],
         # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
@@ -121,7 +121,11 @@ def test_update_actor_references_where_needed_with_unit_fallback(
         # contact fallback applied to unit with email
         "contact": ["ValidUnitWithEmail"],
         # externalAssociate is just filtered, because no unit IDs allowed in that field
-        "externalAssociate": ["thisIdentifierIsOkay"],
+        "externalAssociate": [
+            "thisIdIsBlocked",
+            "thisIdentifierIsOkay",
+            "PersonWithFallbackUnit",
+        ],
         # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
