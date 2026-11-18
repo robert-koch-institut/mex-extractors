@@ -20,7 +20,9 @@ from mex.extractors.publisher.extract import (
 def test_get_publishable_merged_items_mocked() -> None:
     items = get_publishable_merged_items()
     assert len(items) == 6
-    assert items[0] == MergedPrimarySource(identifier="fakeFakeSource", title="Fake")
+    assert items[0] == MergedPrimarySource(
+        identifier="fakeFakeSource", title="test title"
+    )
 
 
 def test_get_publishable_merged_item(
@@ -57,8 +59,8 @@ def test_get_publishable_merged_item(
         ([], "does not exist or is not publishable"),
         (
             [
-                MergedPrimarySource(identifier="aaaaaaaaaaaaaa", title="aaaaaaaaaaaaa"),
-                MergedPrimarySource(identifier="bbbbbbbbbbbbbb", title="bbbbbbbbbbbbb"),
+                MergedPrimarySource(identifier="aaaaaaaaaaaaaa", title="test title"),
+                MergedPrimarySource(identifier="bbbbbbbbbbbbbb", title="test title"),
             ],
             "More than one merged item found",
         ),

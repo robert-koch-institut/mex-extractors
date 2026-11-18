@@ -19,7 +19,7 @@ def wikidata_primary_source() -> ExtractedPrimarySource:
     return ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="wikidata",
-        title=["wikidata_primary_source"],
+        title="test title",
     )
 
 
@@ -42,6 +42,7 @@ def test_cached_load_extracted_primary_source_by_name(
         "identifierInPrimarySource": "wikidata",
         "identifier": "gNrpqARBAlwazXAva81Tuq",
         "stableTargetId": wikidata_primary_source.stableTargetId,
+        "title": [{"value": "wikidata"}],
     }
     assert cached_load_extracted_primary_source_by_name(query_nonsense) is None
 
