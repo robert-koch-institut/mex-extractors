@@ -195,16 +195,18 @@ def load_job_definitions() -> Definitions:
     ]
 
     sensors = []
+    schedules = []
 
-    schedules = [
-        ScheduleDefinition(
-            job=job,
-            cron_schedule=settings.schedule,
-            default_status=DefaultScheduleStatus.RUNNING,
-        )
-        for job in jobs
-        if job.name != "locations"
-    ]
+    if settings.schedule_enabled:
+        schedules = [
+            ScheduleDefinition(
+                job=job,
+                cron_schedule=settings.schedule,
+                default_status=DefaultScheduleStatus.RUNNING,
+            )
+            for job in jobs
+            if job.name != "locations"
+        ]
 
     jobs.append(
         define_asset_job(
@@ -221,7 +223,7 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "consent_mailer"},
     )
     jobs.append(consent_mailer_job)
-    if settings.consent_mailer.schedule:
+    if settings.schedule_enabled and settings.consent_mailer.schedule:
         schedules.append(
             ScheduleDefinition(
                 job=consent_mailer_job,
@@ -237,7 +239,7 @@ def load_job_definitions() -> Definitions:
         tags={"job_category": "publisher"},
     )
     jobs.append(datenkompass_job)
-    if settings.datenkompass.schedule:
+    if settings.schedule_enabled and settings.datenkompass.schedule:
         schedules.append(
             ScheduleDefinition(
                 job=datenkompass_job,

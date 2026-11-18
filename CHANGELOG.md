@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - extractor for locations from wikidata and json
+- settings variable if a dagster schedule should be enabled or not
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
   and the drop api (seq-repo)
 - open-data setting `fallback_unit` (default `FG 99`) to replace the hardcoded `FALLBACK_UNIT`
@@ -44,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- usage of get_static_values
 - datscha_web transform crashing on items without `Auskunftsperson`
 - dagster compose config failing to connect to postgres after sqlalchemy 2.1 update
 - added missing dependencies that were explicitly imported

@@ -31,11 +31,13 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.extractors.ldap.helpers import get_ldap_merged_contact_id_by_mail
 from mex.extractors.logging import watch_progress
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
 )
+from mex.extractors.settings import ExtractorsSettings
 from mex.extractors.sinks import load
 from mex.extractors.utils import model_copy_validated
 
@@ -74,9 +76,7 @@ def transform_synopse_studies_into_access_platforms(
         ],
         description=access_platform_mapping.description.get_static_values(),
         hadPrimarySource=get_extracted_primary_source_id_by_name("report-server"),
-        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values()[
-            0
-        ],  # type: ignore[index]
+        identifierInPrimarySource=access_platform_mapping.identifierInPrimarySource.get_static_values(),
         landingPage=access_platform_mapping.landingPage.get_static_values(),
         technicalAccessibility=access_platform_mapping.technicalAccessibility.get_static_values(),
         title=access_platform_mapping.title.get_static_values(),
@@ -335,11 +335,13 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
     Returns:
         list for extracted resources
     """
+    settings = ExtractorsSettings.get()
     extracted_activities_by_study_ids = {
         a.identifierInPrimarySource: a for a in extracted_activities
     }
-    if contact_point_synonym := synopse_resource.contact.get_mappable_values():
-        contact_point = get_unit_merged_id_by_synonym(contact_point_synonym[0])
+    contact_point = get_ldap_merged_contact_id_by_mail(
+        mail=settings.synopse.contact_point_74
+    )
     synopse_projects_by_study_ids = {p.studien_id: p for p in synopse_projects}
     description_by_study_id: dict[str, str | None] = {}
     identifier_in_primary_source_by_study_id: dict[str, str] = {}
@@ -367,9 +369,9 @@ def transform_synopse_data_to_mex_resources(  # noqa: C901, PLR0912, PLR0913, PL
         ] = []
         if (
             contact_point
-            and study.dstyp_id == synopse_resource.contact.get_mappable_values()[0]  # type: ignore[comparison-overlap]
+            and str(study.dstyp_id) in synopse_resource.contact.get_mappable_values()
         ):
-            contact.extend(contact_point)
+            contact.append(contact_point)
         if project.verantwortliche_oe and (
             unit_merged_ids := get_unit_merged_id_by_synonym(project.verantwortliche_oe)
         ):
