@@ -34,7 +34,8 @@ def merged_activity_contacts_with_contactpoint_fallback() -> MergedActivity:
     return MergedActivity(
         identifier="activityCPointFallback",
         contact=["thisIdIsBlocked"],
-        involvedPerson=["thisIdIsBlocked", "thisIdentifierIsOkay"],
+        externalAssociate=["thisIdIsBlocked", "thisIdentifierIsOkay"],
+        involvedPerson=["thisIdentifierIsOkay"],
         responsibleUnit=["thisUnitIsResponsible"],
         title=["Activity with contact point Fallback"],
     )
@@ -45,11 +46,12 @@ def merged_activity_contacts_with_unit_fallback() -> MergedActivity:
     return MergedActivity(
         identifier="activityUnitFallback",
         contact=["PersonWithFallbackUnit", "PersonWithoutFallback"],
-        involvedPerson=[
+        externalAssociate=[
             "thisIdIsBlocked",
             "thisIdentifierIsOkay",
             "PersonWithFallbackUnit",
         ],
+        involvedPerson=["thisIdentifierIsOkay"],
         responsibleUnit=["thisUnitIsResponsible"],
         title=["Activity with Unit ID Fallback"],
     )
@@ -85,7 +87,9 @@ def test_update_actor_references_where_needed_with_contactpoint_fallback(
         "identifier": "activityCPointFallback",
         # contact fallback applied to contact point
         "contact": ["thisIsTheFallbackId"],
-        # involvedPerson is filtered to exclude invalid references
+        # externalAssociate is filtered to exclude invalid references
+        "externalAssociate": ["thisIdIsBlocked", "thisIdentifierIsOkay"],
+        # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
         "responsibleUnit": ["thisUnitIsResponsible"],
@@ -116,7 +120,13 @@ def test_update_actor_references_where_needed_with_unit_fallback(
         "identifier": "activityUnitFallback",
         # contact fallback applied to unit with email
         "contact": ["ValidUnitWithEmail"],
-        # involvedPerson is just filtered, because no unit IDs allowed in that field
+        # externalAssociate is just filtered, because no unit IDs allowed in that field
+        "externalAssociate": [
+            "thisIdIsBlocked",
+            "thisIdentifierIsOkay",
+            "PersonWithFallbackUnit",
+        ],
+        # involvedPerson not updated because identifier not blocked
         "involvedPerson": ["thisIdentifierIsOkay"],
         # responsibleUnit not updated because not relating to persons
         "responsibleUnit": ["thisUnitIsResponsible"],
