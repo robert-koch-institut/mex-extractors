@@ -46,16 +46,16 @@ def merged_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
             identifier="PersonPositiveConsent",
-            fullName=["Person with positive Consent"],
+            fullName=["Person, with positive Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
             identifier="PersonNegativeConsent",
-            fullName=["Person with negative Consent"],
+            fullName=["Person, with negative Consent"],
         ),
         MergedPerson(
             identifier="PersonHasTwoConsents",
-            fullName=["Peron with more than one Consent"],
+            fullName=["Peron, with more than one Consent"],
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
