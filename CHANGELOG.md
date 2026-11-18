@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `opendata@rki.de` functional account in the ldap mock
 
 ### Changes
-
+- model update v 5.2: update resources for biospecimen, grippeweb, ifsg, igs, kvis,
+  odk, open-data, sumo, synopse, voxco
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
