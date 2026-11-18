@@ -47,14 +47,14 @@ def filter_persons_with_approving_unique_consent(
     collected_persons_with_positive_consent: list[MergedPerson] = []
 
     for consent in consent_items:
-        person_id = consent.hasDataSubject
-        seen_person_ids_with_consent_ids[person_id].append(consent.identifier)
-
-        if (
-            consent.hasConsentStatus.name == "VALID_FOR_PROCESSING"
-            and (person := person_items_by_id.get(person_id)) is not None
-        ):
-            collected_persons_with_positive_consent.append(person)
+        if person_id := consent.hasDataSubject:
+            seen_person_ids_with_consent_ids[person_id].append(consent.identifier)
+            if (
+                consent.hasConsentStatus
+                and consent.hasConsentStatus.name == "VALID_FOR_PROCESSING"
+                and (person := person_items_by_id.get(person_id)) is not None
+            ):
+                collected_persons_with_positive_consent.append(person)
 
     persons_with_several_consents = {
         p: c for p, c in seen_person_ids_with_consent_ids.items() if len(c) > 1
