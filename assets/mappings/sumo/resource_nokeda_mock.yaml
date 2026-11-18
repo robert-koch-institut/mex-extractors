@@ -52,7 +52,6 @@ keyword:
       - setValues:
           - language: de
             value: keyword1
-      - setValues:
           - language: de
             value: keyword2
 meshId:
