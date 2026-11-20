@@ -46,6 +46,8 @@ from mex.extractors.wikidata.helpers import (
 from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from mex.extractors.open_data.models.source import (
         OpenDataCreatorsOrContributors,
         OpenDataParentResource,
@@ -54,8 +56,10 @@ if TYPE_CHECKING:
 
 
 def get_only_child_units(
-    selected_merged_organizational_unit_ids: list[MergedOrganizationalUnitIdentifier],
-    extracted_organizational_units: list[ExtractedOrganizationalUnit],
+    selected_merged_organizational_unit_ids: Sequence[
+        MergedOrganizationalUnitIdentifier
+    ],
+    extracted_organizational_units: Sequence[ExtractedOrganizationalUnit],
 ) -> list[MergedOrganizationalUnitIdentifier]:
     """Return only those units which are no parents to other units within a list.
 
@@ -429,6 +433,7 @@ def transform_open_data_parent_resource_to_mex_resource(  # noqa: PLR0913, PLR09
                 license=ccby_license,
                 modified=resource.modified,
                 publisher=extracted_organization_rki.stableTargetId,
+                resourceCreationMethod=resource_mapping.resourceCreationMethod.get_static_values(),
                 resourceTypeGeneral=resource_mapping.resourceTypeGeneral.get_mapped_values(
                     resource.metadata.resource_type.type
                 ),

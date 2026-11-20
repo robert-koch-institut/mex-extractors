@@ -37,8 +37,10 @@ language:
       - setValues:
           - https://mex.rki.de/item/language-1
 resourceCreationMethod:
-  - mappingRules:
-      - setValues:
+    mappingRules:
+    - forValues:
+          - Monitoring-studie
+      setValues:
           - https://mex.rki.de/item/resource-creation-method-2
 resourceTypeGeneral:
   - mappingRules:

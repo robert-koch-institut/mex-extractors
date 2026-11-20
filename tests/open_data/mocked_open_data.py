@@ -125,7 +125,12 @@ def mocked_open_data(monkeypatch: MonkeyPatch) -> None:
 
     monkeypatch.setattr(OpenDataConnector, "__init__", __init__)
 
-    monkeypatch.setattr(ExtractorsSettings.get().open_data, "fallback_unit", "FG 99")
+    settings = ExtractorsSettings.get()
+    monkeypatch.setattr(
+        settings,
+        "open_data",
+        settings.open_data.model_copy(update={"fallback_unit": "FG 99"}),
+    )
 
     # Create a mocked ZIP file with according folder structure, naming, and content."""
     json_contents = [

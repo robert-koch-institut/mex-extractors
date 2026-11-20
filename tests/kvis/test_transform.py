@@ -61,6 +61,9 @@ def test_transform_kvis_resource_to_extracted_resource(
         "keyword": [{"value": "Schlüsselwort", "language": TextLanguage.DE}],
         "language": ["https://mex.rki.de/item/language-1"],
         "publisher": [wikidata_extracted_organization.stableTargetId],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
+        ],
         "start": ["1999"],
         "theme": ["https://mex.rki.de/item/theme-11"],
         "title": [{"value": "Titel", "language": TextLanguage.DE}],

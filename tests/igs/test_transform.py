@@ -71,6 +71,14 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         "contributingUnit": [
             mocked_units_by_identifier_in_primary_source["child-unit"].stableTargetId
         ],
+        "hasLegalBasis": [
+            {
+                "language": "de",
+                "title": "§ 13 Infektionsschutzgesetz (IfSG)",
+                "url": "https://www.gesetze-im-internet.de/ifsg/__13.html",
+            }
+        ],
+        "hasPurpose": ["https://mex.rki.de/item/purpose-12"],
         "keyword": [
             {"value": "test keyword", "language": TextLanguage.DE},
             {"value": "Pathogen", "language": TextLanguage.DE},
@@ -81,6 +89,9 @@ def test_transform_igs_extracted_resource(  # noqa: PLR0913, PLR0917
         "qualityInformation": [
             {"value": "Test Präfix", "language": TextLanguage.DE},
             {"value": "Anzahl tests: 42", "language": TextLanguage.DE},
+        ],
+        "resourceCreationMethod": [
+            "https://mex.rki.de/item/resource-creation-method-3"
         ],
         "identifier": "eV8CKqNqhgnJ5UUtMCziDi",
         "relatedResource": ["bFQoRhcVH5DHZW"],
