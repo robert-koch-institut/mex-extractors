@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- extractor for locations from wikidata and json
 - settings variable if a dagster schedule should be enabled or not
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
   and the drop api (seq-repo)

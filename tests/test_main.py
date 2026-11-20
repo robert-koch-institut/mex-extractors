@@ -15,6 +15,7 @@ from mex.extractors.pipeline import run_job_in_process
     "mocked_ldap",
     "mocked_open_data",
     "mocked_wikidata",
+    "mocked_wikidata_locations",
 )
 def test_job() -> None:
     assert run_job_in_process("all_extractors")
