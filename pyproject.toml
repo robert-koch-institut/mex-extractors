@@ -29,7 +29,6 @@ dependencies = [
     "pyodbc>=5,<6",
     "pytz>=2026",
     "pyyaml>=6,<7",
-    "requests-ntlm>=1,<2",
     "requests>=2,<3",
     "sqlalchemy>=2,<3",
     "starlette>=1,<2",
@@ -94,10 +93,6 @@ context = 5
 show_error_codes = true
 strict = true
 plugins = ["pydantic.mypy"]
-
-[[tool.mypy.overrides]]
-module = "requests_ntlm.*"
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "boto3.*"

@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - upgrade mex-testing to 1.1.0 for http-test-server and sql-testing-seed
 - use mapping-value helpers from mex-common 3.5.0
-- upgrade mex-backend to 4.7.0
+- upgrade mex-backend to 4.8.0
 - upgrade ruff to 0.17
 - `update_actor_references_where_needed` returns a validated copy of the
   item instead of updating it in place
@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   integration tests against the http-test-server
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
 - remove default settings from dagster metadata
+- remove unused report-server connector along with all 3 report_server_* settings
 
 ### Fixed
 
