@@ -29,10 +29,12 @@ from mex.common.types import (
 def merged_ldap_person_list() -> list[MergedPerson]:
     return [
         MergedPerson(
+            fullName="Dr. Fake",
             identifier="PersonWithFallbackUnit",
             memberOf=["ValidUnitWithEmail", "InvalidUnitNoEmail"],
         ),
         MergedPerson(
+            fullName="Dr. Fake",
             identifier="PersonWithoutFallback",
             memberOf=[],
         ),
@@ -57,6 +59,7 @@ def merged_person_list() -> list[MergedPerson]:
             memberOf=["SomeUnitIdentifier"],
         ),
         MergedPerson(
+            fullName="Dr. Fake",
             identifier="PersonNoConsentLink",
         ),
     ]
@@ -170,9 +173,7 @@ def fetch_all_publishable_merged_items(
     reference_filters: list[ReferenceFilter] | None = None,  # noqa: ARG001
 ) -> list[AnyMergedModel]:
     merged_items: list[AnyMergedModel] = [
-        MergedPrimarySource(
-            identifier="fakeFakeSource",
-        ),
+        MergedPrimarySource(identifier="fakeFakeSource", title="test title"),
         MergedContactPoint(
             email=["mex@rki.de"],
             identifier="fakeFakeContact",

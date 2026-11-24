@@ -1,0 +1,38 @@
+[
+    {
+        "identifier": [
+            "http://publications.europa.eu/resource/authority/country/DEU"
+        ],
+        "name": [
+            {
+                "language": "de",
+                "value": "Deutschland"
+            },
+            {
+                "language": "en",
+                "value": "Germany"
+            }
+        ],
+        "wikidataId": [
+            "http://www.wikidata.org/entity/Q183"
+        ]
+    },
+    {
+        "identifier": [
+            "http://publications.europa.eu/resource/authority/country/ZWE"
+        ],
+        "name": [
+            {
+                "language": "de",
+                "value": "Simbabwe"
+            },
+            {
+                "language": "en",
+                "value": "Zimbabwe"
+            }
+        ],
+        "wikidataId": [
+            "https://www.wikidata.org/wiki/Q954"
+        ]
+    }
+]

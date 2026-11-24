@@ -97,6 +97,7 @@ def transform_kvis_resource_to_extracted_resource() -> ExtractedResource:
         hadPrimarySource=get_extracted_primary_source_id_by_name("kvis"),
         hasCodingSystem=mapping.hasCodingSystem.get_static_values(),
         hasLegalBasis=mapping.hasLegalBasis.get_static_values(),
+        hasPurpose=mapping.hasPurpose.get_static_values(),
         hasPurposeDescription=mapping.hasPurposeDescription.get_static_values(),
         healthCategory=mapping.healthCategory.get_static_values(),
         identifierInPrimarySource=mapping.identifierInPrimarySource.get_static_values(),

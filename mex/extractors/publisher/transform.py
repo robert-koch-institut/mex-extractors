@@ -186,8 +186,12 @@ def transform_merged_bibliographic_resources_for_csv(
     ) in merged_bibliographic_resources_by_unit.items():
         key_unit_short_name = get_resolved_names(key_unit_id, "shortName")
         for bibliographic_resource in merged_bibliographic_resources:
-            access_restriction = GERMAN_PREFLABEL_BY_CONCEPT_ID.get(
-                bibliographic_resource.accessRestriction.value
+            access_restriction = (
+                GERMAN_PREFLABEL_BY_CONCEPT_ID.get(
+                    bibliographic_resource.accessRestriction.value
+                )
+                if bibliographic_resource.accessRestriction
+                else None
             )
             contributing_unit = [
                 get_resolved_names(merged_unit_id, "shortName")
