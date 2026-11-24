@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.0.0] - 2026-11-24
+
+### Added
+
 - extractor for locations from wikidata and json
 - settings variable if a dagster schedule should be enabled or not
 - http-test-server in compose, wired up for blueant, confluence-vvt, datscha_web, igs, open-data
@@ -35,8 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `mex-extractors-daemon` and `mex-extractors-webserver`
 - ldap mock matches `sAMAccountName` case-insensitively
 
-### Deprecated
-
 ### Removed
 
 - `requires_rki_infrastructure` pytest marker, the affected tests now run as regular
@@ -60,8 +72,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - strip surrounding whitespace from igs endpoint counts
 - remove double slash from confluence-vvt documentation links when the url has a
   trailing slash
-
-### Security
 
 ## [1.23.0] - 2026-10-15
 
