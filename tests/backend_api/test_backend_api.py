@@ -45,6 +45,8 @@ def test_ingest_roundtrip() -> None:
 
     connector = BackendApiConnector.get()
     result = connector.fetch_extracted_items(
+        query_string="",
+        entity_type=[],
         reference_filters=[
             ReferenceFilter(
                 field="stableTargetId", identifiers=[str(contact_point.stableTargetId)]
