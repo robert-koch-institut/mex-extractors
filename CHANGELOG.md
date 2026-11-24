@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   integration tests against the http-test-server
 - http-test-server mocks for blueant and datscha, these now live in mex-testing
 - remove default settings from dagster metadata
+- remove unused report-server connector along with all 3 report_server_* settings
 
 ### Fixed
 
