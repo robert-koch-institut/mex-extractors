@@ -17,8 +17,8 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "jinja2>=3,<4",
     "mex-artificial>=3,<4",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/model-5.3",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@feature/init_mod_04",
+    "mex-common>=3",
+    "mex-model>=5.3,<5.4",
     "networkx>=3,<4",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
@@ -199,3 +199,6 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
+
+[tool.uv.sources]
+mex-common = { git = "https://github.com/robert-koch-institut/mex-common.git", rev = "refs/pull/930/head" }

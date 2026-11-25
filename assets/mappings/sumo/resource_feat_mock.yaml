@@ -47,11 +47,9 @@ keyword:
             value: keyword 1
           - language: de
             value: keyword 2
-meshId:
-  - comment:
-    mappingRules:
-      - setValues:
-          - http://id.nlm.nih.gov/mesh/D004636
+          - language: en
+            title: keyword url
+            url: http://keyword.url.com
 resourceCreationMethod:
   - mappingRules:
       - setValues:
@@ -70,9 +68,8 @@ resourceTypeSpecific:
             value: Dummy resource type
 spatial:
   - mappingRules:
-      - setValues:
-          - language: de
-            value: Dummy spatial
+      - forValues:
+          - "http://www.wikidata.org/entity/Q183" # Deutschland
 theme:
   - mappingRules:
       - setValues:

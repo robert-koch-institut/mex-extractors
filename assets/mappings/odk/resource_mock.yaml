@@ -65,16 +65,14 @@ keyword:
             value: sed
           - language: en
             value: diam
+          - language: en
+            title: COVID-19
+            url: http://covid19.testurl.com
 language:
   - mappingRules:
       - rule:
         setValues:
           - https://mex.rki.de/item/language-2
-meshId:
-  - mappingRules:
-      - rule:
-        setValues:
-          - http://id.nlm.nih.gov/mesh/D000086382
 method:
   - mappingRules:
       - rule:
@@ -100,6 +98,11 @@ publisher:
           - invidunt
           - consetetur
         rule:
+relatedActivity:
+  - mappingRules:
+      - forValues:
+          - 0000-1000
+        rule:
 resourceCreationMethod:
   - mappingRules:
       - rule:
@@ -124,12 +127,8 @@ rights:
             value: ut labore
 spatial:
   - mappingRules:
-      - rule:
-        setValues:
-          - language: de
-            value: magna
-          - language: en
-            value: magna
+      - forValues:
+          - "http://www.wikidata.org/entity/Q183"
 start:
   - mappingRules:
       - setValues: "2021-12-31"
@@ -151,9 +150,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-        rule:
-wasGeneratedBy:
-  - mappingRules:
-      - forValues:
-          - 0000-1000
         rule:

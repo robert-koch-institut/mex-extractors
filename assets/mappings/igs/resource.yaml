@@ -37,6 +37,10 @@ description:
 documentation:
   - mappingRules:
       - setValues:
+geopoliticalResolution:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/geopolitical-resolution-1 # National
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -67,6 +71,9 @@ keyword:
       - setValues:
           - value: "test keyword"
             language: de
+          - language: en
+            title: "test keyword url"
+            url: http://keyword.testurl.com
   - fieldInPrimarySource:
     locationInPrimarySource:
     mappingRules:
@@ -77,9 +84,6 @@ keyword:
           - language: de
             value: Pathogen
 language:
-  - mappingRules:
-      - setValues:
-meshId:
   - mappingRules:
       - setValues:
 method:
@@ -137,7 +141,8 @@ sizeOfDataBasis:
         setValues:
 spatial:
   - mappingRules:
-      - setValues:
+     - forValues:
+        - "http://www.wikidata.org/entity/Q183" # Deutschland
 start:
   - mappingRules:
       - setValues: "1970"
