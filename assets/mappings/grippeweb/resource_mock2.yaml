@@ -19,7 +19,7 @@ anonymizationPseudonymization:
 contact:
   - mappingRules:
       - forValues:
-          - contactc@rki.de
+          - "parent-unit"
         rule:
 contributingUnit:
   - mappingRules:
@@ -53,13 +53,18 @@ externalPartner:
       - forValues:
           - Robert Koch-Institut
         rule:
+geopoliticalResolution:
+  - mappingRules:
+    - setValues:
+        - https://mex.rki.de/item/geopolitical-resolution-3
+        - https://mex.rki.de/item/geopolitical-resolution-4
 hadPrimarySource:
   - mappingRules:
       - rule:
 hasCodeValues:
   - mappingRules:
       - setValues:
-          - J00-J99
+          - value: "J00-J99"
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -68,6 +73,11 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
+hasPurpose:
+  - mappingRules:
+      - setValues:
+        - https://mex.rki.de/item/purpose-1
+        - https://mex.rki.de/item/purpose-2
 hasPurposeDescription:
   - mappingRules:
       - setValues:
@@ -85,6 +95,10 @@ keyword:
       - setValues:
           - language: en
             value: Citizen Science
+          - value: SARS-CoV-2
+          - language: en
+            title: Influenza, Human
+            url: http://id.nlm.nih.gov/mesh/D007251
 language:
   - mappingRules:
       - setValues:
@@ -92,10 +106,6 @@ language:
 license:
   - mappingRules:
       - {}
-meshId:
-  - mappingRules:
-      - setValues:
-          - http://id.nlm.nih.gov/mesh/D012140
 method:
   - mappingRules:
       - setValues:
@@ -151,9 +161,8 @@ rights:
             value: Verfahren
 spatial:
   - mappingRules:
-      - setValues:
-          - language: de
-            value: Deutschland
+      - forValues:
+        - http://www.wikidata.org/entity/Q183
 start:
   - mappingRules:
       - setValues: "2011"
