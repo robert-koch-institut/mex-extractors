@@ -10,7 +10,7 @@ identifierInPrimarySource:
 contact:
   - mappingRules:
       - forValues:
-          - "resolvedr@rki.de"
+          - "fg99"
         rule:
 technicalAccessibility:
   - mappingRules:
