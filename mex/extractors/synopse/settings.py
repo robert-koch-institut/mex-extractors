@@ -1,4 +1,4 @@
-from pydantic import Field, SecretStr
+from pydantic import Field
 
 from mex.common.models import BaseModel
 
@@ -6,17 +6,6 @@ from mex.common.models import BaseModel
 class SynopseSettings(BaseModel):
     """Synopse settings submodel definition for the Synopse extractor."""
 
-    report_server_url: str = Field(
-        "https://report-server/", description="Report Server instance URL"
-    )
-    report_server_username: SecretStr = Field(
-        SecretStr("username"),
-        description="Report Server user name",
-    )
-    report_server_password: SecretStr = Field(
-        SecretStr("password"),
-        description="Report Server password",
-    )
     variablenuebersicht_path: str = Field(
         "raw-data/synopse/variablenuebersicht.csv",
         description=("Path of the export in CSV format, relative to `asset_dir`"),
