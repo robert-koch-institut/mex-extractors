@@ -18,10 +18,11 @@ activityType:
           - https://mex.rki.de/item/activity-type-6 # Other
 contact:
   - fieldInPrimarySource:
+    locationInPrimarySource:
     mappingRules:
-      - forValues:
-          - ZIG-GS
       - rule:
+      - forValues:
+          - FG99
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -37,7 +38,7 @@ responsibleUnit:
     mappingRules:
       - rule:
       - forValues:
-          - ZIG-GS
+          - FG99
       - rule:
 theme:
   - fieldInPrimarySource:
