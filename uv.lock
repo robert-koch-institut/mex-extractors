@@ -962,7 +962,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.8.0"
-source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead#875496959f757514cd1256e2f5675ad72fbfb116" }
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead#93675d32f1f51ee5c88108a81845a13d0b914c69" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
