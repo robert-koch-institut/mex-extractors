@@ -962,7 +962,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.8.0"
-source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=feature%2Fmodel-5.3#95dcde63df488c155236d6538f99b667eccd4d43" }
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead#93675d32f1f51ee5c88108a81845a13d0b914c69" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -1039,8 +1039,8 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "jinja2", specifier = ">=3,<4" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?rev=feature%2Fmodel-5.3" },
-    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=feature%2Finit_mod_04" },
+    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead" },
+    { name = "mex-model", specifier = ">=5.3,<5.4" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "openpyxl", specifier = ">=3,<4" },
@@ -1078,8 +1078,12 @@ dev = [
 
 [[package]]
 name = "mex-model"
-version = "5.2.2"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=feature%2Finit_mod_04#f687cbc1e61be57ae08f8578d8d5ba9e5b354683" }
+version = "5.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/39/4628eff1eec2668dad595a8be32d0dc17e17666f37e21a377c7251322b2f/mex_model-5.3.0.tar.gz", hash = "sha256:a73d11bf6e5d03c1585bc63dd6a0bcb6783b131a0a83dd70a02c1fb74d9c2fcd", size = 122347, upload-time = "2026-11-25T12:07:47.113Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/30/a1d6fe0ad0e1d2b383a29d73dd853e14f602942728d1cf641991af6232e5/mex_model-5.3.0-py3-none-any.whl", hash = "sha256:20ee95407dd2001ee1cde31b6f10079cd1b0dcf319b0bef4489f3b96b3d416f5", size = 165557, upload-time = "2026-11-25T12:07:45.936Z" },
+]
 
 [[package]]
 name = "multidict"
