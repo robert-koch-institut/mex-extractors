@@ -90,7 +90,6 @@ jobs:
           MEX_WIKI_API_URL: http://localhost:8050/v0/wikidata/w/api.php
           MEX_EXTRACTORS_BLUEANT__URL: http://localhost:8050/v0/bluework/
           MEX_EXTRACTORS_CONFLUENCE_VVT__URL: http://localhost:8050/v0/confluence_vvt/
-          MEX_EXTRACTORS_DATSCHA_WEB__URL: http://localhost:8050/v0/datscha_web/
           MEX_EXTRACTORS_DROP_API_URL: http://localhost:8050/v0/drop/
           MEX_EXTRACTORS_IGS__URL: http://localhost:8050/v0/igs/
           MEX_EXTRACTORS_GRIPPEWEB__MSSQL_CONNECTION_DSN: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1433;DATABASE=GrippeWeb;UID=sa;PWD=MEx_testing1234;TrustServerCertificate=yes"

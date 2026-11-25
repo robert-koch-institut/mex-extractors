@@ -15,8 +15,12 @@ activityType:
         setValues:
           - https://mex.rki.de/item/activity-type-6
 contact:
-  - mappingRules:
-      - {}
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
+      - forValues:
+          - FG99
 hadPrimarySource:
   - mappingRules:
       - {}

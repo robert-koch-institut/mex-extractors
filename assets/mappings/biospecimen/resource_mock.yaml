@@ -28,10 +28,6 @@ anonymizationPseudonymization:
         setValues:
           - https://mex.rki.de/item/anonymization-pseudonymization-1
           - https://mex.rki.de/item/anonymization-pseudonymization-2
-conformsTo:
-  - mappingRules:
-      - setValues:
-          - LOINC
 contact:
   - mappingRules:
       - {}
