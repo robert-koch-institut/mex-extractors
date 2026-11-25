@@ -71,7 +71,9 @@ services:
       - ./dagster-compose.yaml:/app/dagster/dagster.yaml:ro
       - dagster:/app/work:rw
   http-test-server:
-    image: ghcr.io/robert-koch-institut/mex-testing:1.1.0@sha256:a1d8f2909fd02406d2fae6191e4ae9581e96e7dd3d170691e7ae55494dc3e268
+    # TEMP: build from mex-testing branch until model 5.3 is released, then re-pin image
+    build:
+      context: https://github.com/robert-koch-institut/mex-testing.git#feature/model-5.3
     ports:
       - 8050:8050
     healthcheck:
@@ -156,7 +158,10 @@ services:
       retries: 10
       start_period: 30s
   sql-testing-seed:
-    image: ghcr.io/robert-koch-institut/mex-testing/sql-testing-seed:1.1.0@sha256:007069c472d8df4bcd9e419525f9a2a226c88791acecdb54109017148e5b825a
+    # TEMP: build from mex-testing branch until model 5.3 is released, then re-pin image
+    build:
+      context: https://github.com/robert-koch-institut/mex-testing.git#feature/model-5.3
+      dockerfile: sql-testing-seed.Dockerfile
     depends_on:
       mssql:
         condition: service_healthy
