@@ -54,11 +54,9 @@ keyword:
             value: keyword1
           - language: de
             value: keyword2
-meshId:
-  - comment:
-    mappingRules:
-      - setValues:
-          - http://id.nlm.nih.gov/mesh/D004636
+          - language: en
+            title: keywordUrl
+            url: http://keyword.url.com
 publication:
   - mappingRules:
       - setValues:
@@ -90,9 +88,8 @@ rights:
               \ des RKI zur Nutzung zur Verfügung gestellt werden."
 spatial:
   - mappingRules:
-      - setValues:
-          - language: de
-            value: Deutschland
+      - forValues:
+          - "http://www.wikidata.org/entity/Q183" # Deutschland
 stateOfDataProcessing:
   - comment:
     mappingRules:
