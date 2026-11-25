@@ -53,7 +53,6 @@ pytest_plugins = (
     "mex.common.testing.plugin",
     "tests.blueant.mocked_blueant",
     "tests.confluence_vvt.mocked_confluence_vvt",
-    "tests.datscha_web.mocked_datscha_web",
     "tests.drop.mocked_drop",
     "tests.grippeweb.mocked_grippeweb",
     "tests.ifsg.mocked_ifsg",
