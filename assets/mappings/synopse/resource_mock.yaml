@@ -36,6 +36,11 @@ language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1
+wasGeneratedBy:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
 resourceCreationMethod:
     mappingRules:
     - forValues:
