@@ -16,7 +16,7 @@ anonymizationPseudonymization:
 contact:
   - mappingRules:
       - forValues:
-          - "parent-unit"
+          - "contactc@rki.de"
         rule:
 contributingUnit:
   - mappingRules:
@@ -39,6 +39,17 @@ documentation:
           - language: de
             title: RKI Website
             url: https://www.rki.de
+geopoliticalResolution:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/geopolitical-resolution-1 # National
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasCodeValues:
+  - mappingRules:
+      - setValues:
+          - value: "J00-J99"
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -47,13 +58,6 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
-hadPrimarySource:
-  - mappingRules:
-      - rule:
-hasCodeValues:
-  - mappingRules:
-      - setValues:
-          - value: "J00-J99"
 hasPurpose:
   - mappingRules:
       - setValues:

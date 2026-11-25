@@ -44,7 +44,7 @@ def grippeweb_merged_organization_ids_by_query_str() -> dict[
 def grippeweb_access_platform() -> AccessPlatformMapping:
     settings = ExtractorsSettings.get()
     return AccessPlatformMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/access-platform_mock.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/access-platform.yaml")
     )
 
 
@@ -52,10 +52,10 @@ def grippeweb_access_platform() -> AccessPlatformMapping:
 def grippeweb_resource_mappings() -> list[ResourceMapping]:
     settings = ExtractorsSettings.get()
     resource_1 = ResourceMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/resource_mock1.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/resource_grippeweb-plus.yaml")
     )
     resource_2 = ResourceMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/resource_mock2.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/resource_grippeweb.yaml")
     )
     return [resource_1, resource_2]
 
@@ -121,7 +121,7 @@ def mocked_grippeweb_sql_tables() -> dict[str, dict[str, list[str | None]]]:
 def grippeweb_variable_group() -> VariableGroupMapping:
     settings = ExtractorsSettings.get()
     return VariableGroupMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/variable-group_mock.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/variable-group.yaml")
     )
 
 
@@ -129,7 +129,7 @@ def grippeweb_variable_group() -> VariableGroupMapping:
 def grippeweb_variable() -> VariableMapping:
     settings = ExtractorsSettings.get()
     return VariableMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/variable_mock.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/variable.yaml")
     )
 
 
