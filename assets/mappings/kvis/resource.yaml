@@ -42,6 +42,10 @@ externalPartner:
 - mappingRules:
   - forValues:
     - RKI
+geopoliticalResolution:
+  - mappingRules:
+    - setValues:
+      - https://mex.rki.de/item/geopolitical-resolution-4 # Landkreis
 hadPrimarySource:
 - mappingRules:
   - rule: 'kvis'
@@ -97,7 +101,8 @@ resourceTypeSpecific:
   - setValues:
 spatial:
 - mappingRules:
-  - setValues:
+  - forValues:
+    - "http://www.wikidata.org/entity/Q183" # Deutschland
 start:
 - mappingRules:
   - setValues: "1999"
