@@ -144,11 +144,11 @@ wheels = [
 
 [[package]]
 name = "babel"
-version = "2.18.0"
+version = "2.19.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7d/b2/51899539b6ceeeb420d40ed3cd4b7a40519404f9baf3d4ac99dc413a834b/babel-2.18.0.tar.gz", hash = "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d", size = 9959554, upload-time = "2026-02-01T12:30:56.078Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/32/44/744169ce3677a541439bc9506ef08bd85674e9d6e3895ebe5a87ff65fb7a/babel-2.19.0.tar.gz", hash = "sha256:fddd2cbbbac7c299af3c2880be23609c331bd94f0912baca6cb0abfe054dfc27", size = 10695455, upload-time = "2026-11-24T20:14:32.427Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl", hash = "sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35", size = 10196845, upload-time = "2026-02-01T12:30:53.445Z" },
+    { url = "https://files.pythonhosted.org/packages/71/3b/ddf4b07be846bfa361683729b5948c9c61a87fbdf09e69540d8e586bb7c5/babel-2.19.0-py3-none-any.whl", hash = "sha256:6d49734aed1d595b2c065d012174df8c83964692f26fc461702281634dd7555b", size = 10983582, upload-time = "2026-11-24T20:14:30.163Z" },
 ]
 
 [[package]]
@@ -175,30 +175,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.44.10"
+version = "1.44.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/86/35/69d4f2406245a94e03ef4812902913c3f1d899c4dbc5438be2f55c5c0e51/boto3-1.44.10.tar.gz", hash = "sha256:4d5761c368ea199c2488401b86cfd966c132cbdb3c43b0390b25db69041f7989", size = 112760, upload-time = "2026-11-23T21:28:46.543Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1f/53/82efbf7018401b60be90ee33e07d6a975a29e681c5c32a755abcaa8c3120/boto3-1.44.11.tar.gz", hash = "sha256:afb34bb96846a60ee4fb054777272e442838a0997050205b67c3d7dc7255abdd", size = 112839, upload-time = "2026-11-24T20:24:16.211Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/d2/809886fa059a287b8c994c48e00c5dd8c8814438852db61812e6e5c436e2/boto3-1.44.10-py3-none-any.whl", hash = "sha256:2ec7370e9f387bf5ba3ae93024d18b3a9fd07eb697062d81165e3672f16a9335", size = 140171, upload-time = "2026-11-23T21:28:44.368Z" },
+    { url = "https://files.pythonhosted.org/packages/78/e2/b4b0764d2da73c91c0ee3d224c95a5d6039217419e2787bde2d2297da975/boto3-1.44.11-py3-none-any.whl", hash = "sha256:a39a4d09ee47ab9a12e1dccf14b184d6002c5ae699d9205fda119aac69910119", size = 140171, upload-time = "2026-11-24T20:24:15.003Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.44.10"
+version = "1.44.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/26/7f/078f165812bd6bf0852f7656681ed2ec8e83038ee16fa4df4db0006bb63d/botocore-1.44.10.tar.gz", hash = "sha256:6fc109eefd1b02899196499d798141be6df70ca257b399741adc9975569d41b6", size = 17218430, upload-time = "2026-11-23T21:28:41.412Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/d5/4adb74ed2633ac703e7574d8f48765a3ac7b0b3e38d82e5a24711af55c09/botocore-1.44.11.tar.gz", hash = "sha256:c889792a88e04cc9f0b6eebc742112e5edb2710fe932f4c9a3ba784f92f09d75", size = 17222107, upload-time = "2026-11-24T20:24:11.902Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/12/0915f9467a7c6f2fcdb56a2f415e0831a993825a424d8c033cdf8edd1dc0/botocore-1.44.10-py3-none-any.whl", hash = "sha256:d9c8602d24df40e366bbe80157c6f94155c91c367eaaabeceb26d47532f6baba", size = 16919968, upload-time = "2026-11-23T21:28:36.977Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/ad/f4e0e67eda1cfd402726abbc82da14a0d9129f3ff0795acbfadcc9060497/botocore-1.44.11-py3-none-any.whl", hash = "sha256:441c5ebbad9bb2911120d12bda448d4b55793fc52fc7425d9392ebb02f4814a4", size = 16920498, upload-time = "2026-11-24T20:24:07.15Z" },
 ]
 
 [[package]]
@@ -962,7 +962,7 @@ wheels = [
 [[package]]
 name = "mex-common"
 version = "3.8.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead#93675d32f1f51ee5c88108a81845a13d0b914c69" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -975,10 +975,6 @@ dependencies = [
     { name = "pytz" },
     { name = "requests" },
     { name = "tabulate" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/11/7c/0606303d708a569c0e66c6ea94b51f9032ec6912252df591fa5d562ed379/mex_common-3.8.0.tar.gz", hash = "sha256:9b596eb1ff8a9a482025e786a9852ee3ab5f0511fa32e5f3b16092b77d6da8a3", size = 107872, upload-time = "2026-11-17T12:42:41.877Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/68/e7e1e008943e63a37e0b95d274ff10eb8e6b9f24b80b01215c488c4e2ee0/mex_common-3.8.0-py3-none-any.whl", hash = "sha256:f1a4695398e0f3810f65dc7b41cd4afb44f911efa106c7ab48df8076abffd43d", size = 159455, upload-time = "2026-11-17T12:42:40.396Z" },
 ]
 
 [[package]]
@@ -1043,8 +1039,8 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7,<1" },
     { name = "jinja2", specifier = ">=3,<4" },
     { name = "mex-artificial", specifier = ">=3,<4" },
-    { name = "mex-common", specifier = ">=3.8,<3.9" },
-    { name = "mex-model", specifier = ">=5.2.2,<5.3" },
+    { name = "mex-common", git = "https://github.com/robert-koch-institut/mex-common.git?rev=refs%2Fpull%2F930%2Fhead" },
+    { name = "mex-model", specifier = ">=5.3,<5.4" },
     { name = "networkx", specifier = ">=3,<4" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "openpyxl", specifier = ">=3,<4" },
@@ -1082,11 +1078,11 @@ dev = [
 
 [[package]]
 name = "mex-model"
-version = "5.2.2"
+version = "5.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a2/f0/5ed5b85496c57d68043ff4aa8aea3c34e6139f1c224f0baf0d18fb7f70a5/mex_model-5.2.2.tar.gz", hash = "sha256:fe1a53bab2293b199b9df1db8fce1981506118dc38a826f6ad8301d65a5c6244", size = 73237, upload-time = "2026-10-27T13:47:38.819Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/39/4628eff1eec2668dad595a8be32d0dc17e17666f37e21a377c7251322b2f/mex_model-5.3.0.tar.gz", hash = "sha256:a73d11bf6e5d03c1585bc63dd6a0bcb6783b131a0a83dd70a02c1fb74d9c2fcd", size = 122347, upload-time = "2026-11-25T12:07:47.113Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/e0/a08e9abeb25959d6daf193d017ddb12cff2d6310c3393cfe3840e0c069ee/mex_model-5.2.2-py3-none-any.whl", hash = "sha256:b3f5bfe95f586074eba35eef407a564121b002f0fd0598661c2f64ee32aa8417", size = 116045, upload-time = "2026-10-27T13:47:37.576Z" },
+    { url = "https://files.pythonhosted.org/packages/15/30/a1d6fe0ad0e1d2b383a29d73dd853e14f602942728d1cf641991af6232e5/mex_model-5.3.0-py3-none-any.whl", hash = "sha256:20ee95407dd2001ee1cde31b6f10079cd1b0dcf319b0bef4489f3b96b3d416f5", size = 165557, upload-time = "2026-11-25T12:07:45.936Z" },
 ]
 
 [[package]]
@@ -2173,15 +2169,15 @@ wheels = [
 
 [[package]]
 name = "universal-pathlib"
-version = "0.3.10"
+version = "0.3.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fsspec" },
     { name = "pathlib-abc" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/6e/d997a70ee8f4c61f9a7e2f4f8af721cf072a3326848fc881b05187e52558/universal_pathlib-0.3.10.tar.gz", hash = "sha256:4487cbc90730a48cfb64f811d99e14b6faed6d738420cd5f93f59f48e6930bfb", size = 261110, upload-time = "2026-02-22T14:40:58.87Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/5e/d77774773ae2deabe479c7a1c742ee15ec94d37923aca0cbfbfd2121bf07/universal_pathlib-0.3.11.tar.gz", hash = "sha256:097c3542596a55e3dfef6f97c0c90a0665280c378c35c4eeed6f8917c8819eb7", size = 295322, upload-time = "2026-11-24T19:22:45.707Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/1a/5d9a402b39ec892d856bbdd9db502ff73ce28cdf4aff72eb1ce1d6843506/universal_pathlib-0.3.10-py3-none-any.whl", hash = "sha256:dfaf2fb35683d2eb1287a3ed7b215e4d6016aa6eaf339c607023d22f90821c66", size = 83528, upload-time = "2026-02-22T14:40:57.316Z" },
+    { url = "https://files.pythonhosted.org/packages/26/3f/a08d3b134340ad4e0edc2f1042d3e0e869ca047cb625bb1fa2c2072be605/universal_pathlib-0.3.11-py3-none-any.whl", hash = "sha256:1b62ec635ba808022eb776a65e57b7534d582286460ab872fcae2ea9fa785bcd", size = 89744, upload-time = "2026-11-24T19:22:44.404Z" },
 ]
 
 [[package]]

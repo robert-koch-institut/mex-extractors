@@ -17,8 +17,8 @@ dependencies = [
     "defusedxml>=0.7,<1",
     "jinja2>=3,<4",
     "mex-artificial>=3,<4",
-    "mex-common>=3.8,<3.9",
-    "mex-model>=5.2.2,<5.3",
+    "mex-common>=3",
+    "mex-model>=5.3,<5.4",
     "networkx>=3,<4",
     "numpy>=2,<3",
     "openpyxl>=3,<4",
@@ -62,7 +62,6 @@ blueant = "mex.extractors.blueant.main:run"
 consent-mailer = "mex.extractors.consent_mailer.main:run"
 confluence-vvt = "mex.extractors.confluence_vvt.main:run"
 contact-point = "mex.extractors.contact_point.main:run"
-datscha-web = "mex.extractors.datscha_web.main:run"
 endnote = "mex.extractors.endnote.main:run"
 ff-projects = "mex.extractors.ff_projects.main:run"
 grippeweb = "mex.extractors.grippeweb.main:run"
@@ -199,3 +198,6 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
+
+[tool.uv.sources]
+mex-common = { git = "https://github.com/robert-koch-institut/mex-common.git", rev = "refs/pull/930/head" }

@@ -162,10 +162,6 @@ cosign verify-blob \
 
 - `uv run contact-point` extracts default contact points
 
-### datscha-web extractor
-
-- `uv run datscha-web` extracts sources from the datscha web app
-
 ### endnote extractor
 
 - `uv run endnote` extracts from endnote XML files

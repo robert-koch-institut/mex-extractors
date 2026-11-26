@@ -89,6 +89,11 @@ publisher:
       - forValues:
           - Robert Koch-Institut
       - rule:
+relatedActivity:
+  - fieldInPrimarySource:
+    locationInPrimarySource:
+    mappingRules:
+      - rule:
 resourceCreationMethod:
     mappingRules:
     - forValues:
@@ -149,9 +154,4 @@ unitInCharge:
   - mappingRules:
       - forValues:
           - C1
-      - rule:
-wasGeneratedBy:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
-    mappingRules:
       - rule:

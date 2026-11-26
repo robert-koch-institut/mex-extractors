@@ -39,6 +39,17 @@ documentation:
           - language: de
             title: RKI Website
             url: https://www.rki.de
+geopoliticalResolution:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/geopolitical-resolution-1 # National
+hadPrimarySource:
+  - mappingRules:
+      - rule:
+hasCodeValues:
+  - mappingRules:
+      - setValues:
+          - value: "J00-J99"
 hasLegalBasis:
   - mappingRules:
       - setValues:
@@ -47,13 +58,11 @@ hasLegalBasis:
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
-hadPrimarySource:
-  - mappingRules:
-      - rule:
-hasCodeValues:
+hasPurpose:
   - mappingRules:
       - setValues:
-          - "J00-J99" #Diseases of the respiratory system
+        - https://mex.rki.de/item/purpose-1
+        - https://mex.rki.de/item/purpose-2
 hasPurposeDescription:
   - mappingRules:
       - setValues:
@@ -68,14 +77,14 @@ keyword:
       - setValues:
           - language: en
             value: Citizen Science
+          - value: SARS-CoV-2
+          - language: en
+            title: Influenza, Human
+            url: http://id.nlm.nih.gov/mesh/D007251
 language:
   - mappingRules:
       - setValues:
           - https://mex.rki.de/item/language-1 #German
-meshId:
-  - mappingRules:
-      - setValues:
-          - http://id.nlm.nih.gov/mesh/D012140 #Respiratory Tract Diseases
 method:
   - mappingRules:
       - setValues:
@@ -124,9 +133,8 @@ rights:
             value: "Verfahren"
 spatial:
   - mappingRules:
-      - setValues:
-          - language: de
-            value: Deutschland
+      - forValues:
+        - http://www.wikidata.org/entity/Q183
 start:
   - mappingRules:
       - setValues: "2011"

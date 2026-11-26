@@ -3,7 +3,7 @@
 contact:
   - mappingRules:
       - forValues:
-          - Roland Resolved
+          - c1
         rule:
 hadPrimarySource:
   - mappingRules:

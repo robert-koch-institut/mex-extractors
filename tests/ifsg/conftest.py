@@ -181,14 +181,14 @@ def meta_field() -> list[MetaField]:
 @pytest.fixture
 def ifsg_variable_group(settings: ExtractorsSettings) -> VariableGroupMapping:
     return VariableGroupMapping.model_validate(
-        load_yaml(f"{settings.ifsg.mapping_path}/variable-group_mock.yaml")
+        load_yaml(f"{settings.ifsg.mapping_path}/variable-group.yaml")
     )
 
 
 @pytest.fixture
 def resource_parent(settings: ExtractorsSettings) -> ResourceMapping:
     return ResourceMapping.model_validate(
-        load_yaml(f"{settings.ifsg.mapping_path}/resource_parent_mock.yaml")
+        load_yaml(f"{settings.ifsg.mapping_path}/resource_parent.yaml")
     )
 
 
@@ -196,7 +196,7 @@ def resource_parent(settings: ExtractorsSettings) -> ResourceMapping:
 def resource_states(settings: ExtractorsSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
-            load_yaml(f"{settings.ifsg.mapping_path}/resource_state_1_mock.yaml")
+            load_yaml(f"{settings.ifsg.mapping_path}/resource_state.yaml")
         ),
     ]
 
@@ -205,7 +205,7 @@ def resource_states(settings: ExtractorsSettings) -> list[ResourceMapping]:
 def resource_diseases(settings: ExtractorsSettings) -> list[ResourceMapping]:
     return [
         ResourceMapping.model_validate(
-            load_yaml(f"{settings.ifsg.mapping_path}/resource_disease_1_mock.yaml")
+            load_yaml(f"{settings.ifsg.mapping_path}/resource_disease.yaml")
         ),
     ]
 
