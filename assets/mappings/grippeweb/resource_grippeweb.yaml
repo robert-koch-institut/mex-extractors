@@ -1,163 +1,273 @@
-# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/ResourceMapping.json
-
 accessPlatform:
   - mappingRules:
-      - rule:
+      - rule: Assign stableTargetId of item described by grippeweb access-platform mapping
 accessRestriction:
   - mappingRules:
-      - setValues: https://mex.rki.de/item/access-restriction-2 #restricted
+      - setValues: https://mex.rki.de/item/access-restriction-2
 accrualPeriodicity:
   - mappingRules:
-      - setValues: https://mex.rki.de/item/frequency-15 #daily
+      - setValues: https://mex.rki.de/item/frequency-12
 anonymizationPseudonymization:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/anonymization-pseudonymization-2 #pseudonymized
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
 contact:
   - mappingRules:
       - forValues:
-          - "contactc@rki.de"
-        rule:
+          - ContactC@rki.de
+        rule: Match value by using ldap extract extractor.
 contributingUnit:
   - mappingRules:
       - forValues:
-          - "C1"
-        rule:
+          - fg99
+        rule: Match value with identifier using organigram extractor.
 contributor:
   - mappingRules:
       - forValues:
-          - "Roland Resolved"
-        rule:
+          - Juturna Felicitás
+          - Frieda Fictitious
+        rule: Match values using ldap extractor.
 description:
   - mappingRules:
       - setValues:
           - language: de
-            value: "GrippeWeb"
+            value: me help past wait whatever discover mother chair father challenge someone
+              beyond present successful enough where no season take play week choice force
+              bit show back way to return give marriage opportunity blood health leader four
+              popular push while democratic old me level tree near ever assume support why
+              official whole address better serve though inside see thank still relate process
+              ability population minute their trip goal either show gas score truth at cut
+              whose out doctor edge suggest change suggest of line benefit be front type movie
+              worker might boy fish ok film seat capital officer go teacher win now Democrat
+              successful player officer people field light benefit pick success image free
+              parent effort fill create current term culture alone position realize ever maybe
+              authority behind respond sometimes case under citizen wind American thousand
+              be water scene wind themselves now result include third season network fact
+              nearly task
+          - language: de
+            value: eat time dinner want respond perform that kind particularly face little
+              mind recent put school whom student heavy beautiful
 documentation:
   - mappingRules:
       - setValues:
           - language: de
-            title: RKI Website
-            url: https://www.rki.de
+            title: but season discussion hot study
+            url: http://mccoy.com/
+externalPartner:
+  - mappingRules:
+      - forValues:
+          - RKI
+        rule: Match values using wikidata extractor. If wikidata match fails (no match), create
+          new organization with value as officialName.
 geopoliticalResolution:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/geopolitical-resolution-1 # National
+          - https://mex.rki.de/item/geopolitical-resolution-6
+          - https://mex.rki.de/item/geopolitical-resolution-7
 hadPrimarySource:
   - mappingRules:
-      - rule:
+      - rule: Assign stableTargetId of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json.
 hasCodeValues:
   - mappingRules:
       - setValues:
-          - value: "J00-J99"
+          - value: bringen
+          - value: steigen
+          - value: der vielleicht
 hasLegalBasis:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Bei dem Verfahren GrippeWeb."
+            value: aus trinken Nacht Papa wenn wissen Meer nimmt schlagen bekommen anfangen
+              darauf Pferd einmal nun uns nah dann hinter Blume helfen unser zwei damit arbeiten
+              nun an Ende Zeit zu einige sehen darauf lassen es selbst Tante bei wissen schlafen
+              an mich Jahr offen bringen unten fressen Beispiel fallen beißen reich gehen
+              haben kam ein bei letzte Küche auch nicht bringen Schule über hinter Erde fressen
+              hart Welt sich lachen Vater weiter wichtig müssen drei Schuh schenken erschrecken
+              ziehen spielen Bauer stellen Schiff doch verlieren Dorf groß Mann fliegen danach
+              nicht wie kaufen sagen durch allein Land schlagen ihn weit müssen Wald lieb
+              Wetter gerade reiten Hand hin unter rufen fliegen die Mädchen schnell allein
+              kommen sind Bett gleich sieht aus mich führen dein Feuer Spaß wünschen laufen
+              halbe nächste ganz schenken
+          - language: de
+            title: sofort
+            url: https://www.jessel.biz/
 hasPersonalData:
   - mappingRules:
       - setValues: https://mex.rki.de/item/personal-data-1
 hasPurpose:
   - mappingRules:
       - setValues:
-        - https://mex.rki.de/item/purpose-1
-        - https://mex.rki.de/item/purpose-2
+          - https://mex.rki.de/item/purpose-31
+          - https://mex.rki.de/item/purpose-13
+          - https://mex.rki.de/item/purpose-33
+          - https://mex.rki.de/item/purpose-21
+          - https://mex.rki.de/item/purpose-12
+          - https://mex.rki.de/item/purpose-13
+          - https://mex.rki.de/item/purpose-13
 hasPurposeDescription:
   - mappingRules:
       - setValues:
-          - langauge: de
-            value: Erhebung
+          - language: de
+            value: human see type report out two join almost interest try science out kid
+              sport recognize security any company like attack event science coach likely
+              news value message whatever option PM someone a usually American miss gas forget
+              third manage apply table test type task just cup official property because third
+              share case administration interest resource key four about different address
+              series somebody able
 identifierInPrimarySource:
   - mappingRules:
-      - setValues: grippeweb
-        rule:
+      - setValues: '934421'
 keyword:
   - mappingRules:
       - setValues:
           - language: en
-            value: Citizen Science
-          - value: SARS-CoV-2
+            value: product beat age
           - language: en
-            title: Influenza, Human
-            url: http://id.nlm.nih.gov/mesh/D007251
+            value: face white local such structure
+          - language: en
+            value: business
+          - language: de
+            value: training establish cell ready
+          - language: de
+            value: near technology rather
+          - language: de
+            value: quite hand building try clear
+          - language: de
+            value: family today after
+          - language: de
+            value: and amount describe
+          - language: de
+            value: responsibility event open
+          - language: de
+            value: forward your
+          - language: de
+            value: hit writer out where
+          - language: de
+            value: time
+          - language: de
+            value: and throughout so
+          - language: de
+            value: science political
+          - language: de
+            value: reality
+          - language: de
+            value: miss seem quickly weight
+          - value: low push learn
+          - value: hotel try
+          - language: en
+            title: experience goal green strategy
+            url: http://www.matthews-smith.com/
+          - language: en
+            title: common citizen past figure herself
+            url: https://www.chan-johnson.com/
+          - language: en
+            title: foot country tough
+            url: https://www.wilson-cross.com/
+          - language: en
+            title: bit option when medical
+            url: http://houston-evans.com/
+          - language: en
+            title: last always five government
+            url: https://martinez-wilson.info/
 language:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/language-1 #German
+          - https://mex.rki.de/item/language-6
 method:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Online-Befragung"
+            value: sure purpose begin attorney system become decade so do ask image across
+              billion
 methodDescription:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Online-Surveillanceintrument"
+            value: only natural figure list wife middle story pattern send respond director
+              land because home discussion every pay standard compare lawyer dark her building
+              attack term treat tonight science ahead weight never live soldier research defense
+              by modern information establish despite put and yourself subject direction price
+              child book decade low human high office the city book pick method choose organization
+              into pull response land understand near mission respond whose view future these
+              moment moment prove religious two defense occur poor word discuss act grow season
+              skin way friend television fund also network choose two even player step clearly
+              thousand hundred pass financial serious seat surface many attorney such become
+              name trouble whole among attorney down case amount first administration song
+              three list give training college such church trouble reality magazine hot mouth
+              idea wear next morning along painting believe resource study support national
+              son plan ball skin last western somebody design figure north wear piece key
+              that meet through strong important political peace east today treatment success
+              again realize value a sit court five movement over environmental go attorney
+              minute trade everybody yes thank floor spring involve if take identify
 minTypicalAge:
   - mappingRules:
-      - setValues: 0
+      - setValues: 2
 populationCoverage:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Alle Personen."
-publication:
-  - mappingRules:
-      - forValues:
-          - "study"
-        rule:
+            value: Feuer gab setzen und gleich bauen Woche arbeiten laufen in denken Lehrer
+              weg von nimmt sehen Bild schenken Schuh dick tot über halbe ihr arbeiten nämlich
+              können Himmel kommen Auto bringen Land stark dick am Apfel nichts
 publisher:
   - mappingRules:
       - forValues:
           - Robert Koch-Institut
-        rule:
+        rule: Match value with organization item using wikidata extractor.
 resourceCreationMethod:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/resource-creation-method-3 # Surveillance
+          - https://mex.rki.de/item/resource-creation-method-6
 resourceTypeGeneral:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/resource-type-general-13 #Surveillance data
+          - https://mex.rki.de/item/resource-type-general-17
 resourceTypeSpecific:
   - mappingRules:
       - setValues:
           - language: de
-            value: bevölkerungsbasierte Surveillancedaten
+            value: day identify step standard star military
+          - language: de
+            value: bring upon as poor school manage
 rights:
   - mappingRules:
       - setValues:
           - language: de
-            value: "Verfahren"
+            value: rather capital rest sell pretty fine story time care which impact successful
+              finally whom skill turn responsibility take campaign natural traditional stock
+              current American station including light hot something cut lose heavy strategy
+              project bag another week world among mention especially wear agreement you nature
+              reflect outside owner type direction drug better stand ten usually visit product
+              state morning say need kitchen movement focus young build child last wait others
+              knowledge wind become would book just at bit just staff clearly similar allow
+              strong likely lawyer rich key all model wide treat garden seven entire bar he
+              avoid campaign her role all hair happen could action then during tell history
+              avoid pick walk character despite about democratic reason report sign writer
+              wear candidate small account finally home road ago worker
 spatial:
   - mappingRules:
       - forValues:
-        - http://www.wikidata.org/entity/Q183
+          - http://www.wikidata.org/entity/Q183
+        rule: Use value to match with 'identifierInPrimarySource' of location extractor. Assign
+          stableTargetId of the respective location item.
 start:
   - mappingRules:
-      - setValues: "2011"
+      - setValues: '2024'
 stateOfDataProcessing:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/data-processing-state-2 #Secondary data
+          - https://mex.rki.de/item/data-processing-state-4
 theme:
   - mappingRules:
       - setValues:
-          - https://mex.rki.de/item/theme-11 #Infectious Diseases
+          - https://mex.rki.de/item/theme-25
 title:
   - mappingRules:
       - setValues:
           - language: de
-            value: GrippeWeb
+            value: second evening
 unitInCharge:
   - mappingRules:
       - forValues:
-          - "C1"
-        rule:
-wasGeneratedBy:
-  - mappingRules:
-      - forValues:
-          - C1
-        rule:
+          - fg99
+        rule: Match value using organigram extractor.

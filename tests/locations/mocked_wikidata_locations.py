@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from pytest import MonkeyPatch
 
 
+MOCKED_LOCATION_IDS = {"Q183", "Q42", "Q954"}
+
+
 def create_raw_wikidata_location(item_id: str) -> dict[str, Any]:
     """Create a minimal raw Wikidata location, as returned by `wbgetentities`."""
     return {
@@ -55,4 +58,20 @@ def mocked_wikidata_locations(monkeypatch: MonkeyPatch) -> None:
         WikidataAPIConnector,
         "get_wikidata_item_details_by_ids",
         get_wikidata_item_details_by_ids,
+    )
+
+    # answer single-item requests for locations, keep any earlier mock for the rest
+    get_item_details_by_id = WikidataAPIConnector.get_wikidata_item_details_by_id
+
+    def get_wikidata_item_details_by_id(
+        self: WikidataAPIConnector, item_id: str
+    ) -> dict[str, Any]:
+        if item_id in MOCKED_LOCATION_IDS:
+            return create_raw_wikidata_location(item_id)
+        return get_item_details_by_id(self, item_id)
+
+    monkeypatch.setattr(
+        WikidataAPIConnector,
+        "get_wikidata_item_details_by_id",
+        get_wikidata_item_details_by_id,
     )

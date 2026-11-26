@@ -11,7 +11,6 @@ from mex.extractors.grippeweb.extract import (
 
 if TYPE_CHECKING:
     from mex.common.models import (
-        AccessPlatformMapping,
         ExtractedContactPoint,
         ExtractedOrganization,
         ExtractedPerson,
@@ -31,14 +30,16 @@ def test_extract_columns_by_table_and_column_name() -> None:
                 "2024-01-01 00:00:00.0000000",
             ],
             "RepeatAfterDays": ["1", "2"],
+            "Title": ["COVID-19-Impfung", "Influenza-Impfung"],
         },
         "vWeeklyResponsesMEx": {
             "GuidTeilnehmer": [None, None],
-            "Haushalt_Registrierer": [None, None],
+            "Geschlecht": ["Female", None],
         },
         "vMasterDataMEx": {
             "GuidTeilnehmer": [None, None],
-            "Haushalt_Registrierer": [None, None],
+            "Geschlecht": ["Diverse", "Female"],
+            "Bundesland_TN": ["Berlin", None],
         },
     }
     assert columns == expected
@@ -54,23 +55,23 @@ def test_extract_ldap_actors_for_functional_accounts(
     )
 
     assert ldap_actors == {
-        "contactc@rki.de": contact_point.stableTargetId,
+        "ContactC@rki.de": contact_point.stableTargetId,
     }
 
 
 @pytest.mark.usefixtures("mocked_ldap", "mocked_grippeweb", "mocked_wikidata")
 def test_extract_ldap_persons(
     grippeweb_resource_mappings: list[ResourceMapping],
-    grippeweb_access_platform: AccessPlatformMapping,
-    roland_resolved: ExtractedPerson,
+    juturna_felicitas: ExtractedPerson,
+    frieda_fictitious: ExtractedPerson,
 ) -> None:
     ldap_persons = extract_grippeweb_ldap_person_ids_by_query(
-        grippeweb_resource_mappings, grippeweb_access_platform
+        grippeweb_resource_mappings
     )
 
     assert ldap_persons == {
-        "Roland Resolved": roland_resolved.stableTargetId,
-        "resolvedr@rki.de": roland_resolved.stableTargetId,
+        "Juturna Felicitás": juturna_felicitas.stableTargetId,
+        "Frieda Fictitious": frieda_fictitious.stableTargetId,
     }
 
 
@@ -81,6 +82,7 @@ def test_extract_grippeweb_organizations(
 ) -> None:
     organizations = extract_grippeweb_organizations(grippeweb_resource_mappings)
     expected = {
+        "RKI": wikidata_extracted_organization.stableTargetId,
         "Robert Koch-Institut": wikidata_extracted_organization.stableTargetId,
     }
     assert organizations == expected

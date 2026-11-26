@@ -10,7 +10,7 @@ from mex.extractors.wikidata.helpers import (
 )
 
 if TYPE_CHECKING:
-    from mex.common.models import AccessPlatformMapping, ResourceMapping
+    from mex.common.models import ResourceMapping
     from mex.common.types import (
         MergedContactPointIdentifier,
         MergedOrganizationIdentifier,
@@ -52,16 +52,14 @@ def extract_ldap_actors_for_functional_accounts(
 
 def extract_grippeweb_ldap_person_ids_by_query(
     grippeweb_resource_mappings: list[ResourceMapping],
-    grippeweb_access_platform: AccessPlatformMapping,
 ) -> dict[str, MergedPersonIdentifier]:
-    """Extract persons for grippeweb.
+    """Extract persons for grippeweb resource contributors.
 
     Args:
         grippeweb_resource_mappings: list of resources default value mapping models
-        grippeweb_access_platform: grippeweb access platform mapping model
 
     Returns:
-        persons by name or mail
+        persons by name
     """
     return {
         name: person_id
@@ -72,10 +70,6 @@ def extract_grippeweb_ldap_person_ids_by_query(
                 given_name=name.split(" ")[0], surname=name.split(" ")[1]
             )
         )
-    } | {
-        mail: person_id
-        for mail in grippeweb_access_platform.contact.get_mappable_values()
-        if (person_id := get_ldap_merged_person_id_by_query(mail=mail))
     }
 
 
