@@ -1,40 +1,38 @@
-# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/VariableGroupMapping.json
-
 containedBy:
   - mappingRules:
-      - rule:
+      - rule: Assign stableTargetId of item described by grippeweb resource_grippeweb mapping
 hadPrimarySource:
   - mappingRules:
-      - rule:
+      - rule: Assign stableTargetId of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
+  - fieldInPrimarySource: label of the SQL-table
+    locationInPrimarySource: Tabellen
     mappingRules:
       - forValues:
-          - "vActualQuestion"
-        setValues: "vActualQuestion"
+          - vActualQuestion
+        setValues: item-487
       - forValues:
-          - "vMasterData"
-        setValues: "vMasterData"
+          - vMasterData
+        setValues: item-938
       - forValues:
-          - "vWeeklyResponses"
-        setValues: "vWeeklyResponses"
+          - vWeeklyResponses
+        setValues: '948924'
 label:
-  - fieldInPrimarySource:
-    locationInPrimarySource:
+  - fieldInPrimarySource: label of the SQL-table
+    locationInPrimarySource: Tabellen
     mappingRules:
       - forValues:
-          - "vActualQuestion"
+          - vActualQuestion
         setValues:
           - language: en
-            value: "Additional Questions"
+            value: weit versuchen schlimm
       - forValues:
-          - "vMasterDataMEx"
+          - vMasterDataMEx
         setValues:
           - language: en
-            value: "Master Data"
+            value: marriage opportunity
       - forValues:
-          - "vWeeklyResponsesMEx"
+          - vWeeklyResponsesMEx
         setValues:
           - language: en
-            value: "Weekly Responses"
+            value: halten kalt Geschenk

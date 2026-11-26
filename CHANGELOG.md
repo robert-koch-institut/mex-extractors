@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - upgrade mex-model to 5.3
+- model update v 5.3: update grippeweb according to the new mappings
+  (access platform contact is now a unit, spatial resolves to locations,
+  geopoliticalResolution is mapped)
+- add `get_location_merged_id_by_wikidata_id` helper for locations
 
 ### Deprecated
 
@@ -20,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datscha-web extractor
 
 ### Fixed
+
+- grippeweb external partners are now matched via wikidata before falling back
+  to creating a new organization
 
 ### Security
 

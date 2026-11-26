@@ -30,7 +30,7 @@ from mex.extractors.settings import ExtractorsSettings
 def grippeweb_merged_contact_point_id_by_email() -> dict[
     str, MergedContactPointIdentifier
 ]:
-    return {"contactc@rki.de": MergedContactPointIdentifier.generate(42)}
+    return {"ContactC@rki.de": MergedContactPointIdentifier.generate(42)}
 
 
 @pytest.fixture
@@ -51,13 +51,12 @@ def grippeweb_access_platform() -> AccessPlatformMapping:
 @pytest.fixture
 def grippeweb_resource_mappings() -> list[ResourceMapping]:
     settings = ExtractorsSettings.get()
-    resource_1 = ResourceMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/resource_grippeweb-plus.yaml")
-    )
-    resource_2 = ResourceMapping.model_validate(
-        load_yaml(f"{settings.grippeweb.mapping_path}/resource_grippeweb.yaml")
-    )
-    return [resource_1, resource_2]
+    return [
+        ResourceMapping.model_validate(
+            load_yaml(f"{settings.grippeweb.mapping_path}/{file_name}")
+        )
+        for file_name in ("resource_grippeweb.yaml", "resource_grippeweb-plus.yaml")
+    ]
 
 
 @pytest.fixture
@@ -105,14 +104,16 @@ def mocked_grippeweb_sql_tables() -> dict[str, dict[str, list[str | None]]]:
                 "2024-01-01 00:00:00.0000000",
             ],
             "RepeatAfterDays": ["1", "2"],
+            "Title": ["COVID-19-Impfung", "Influenza-Impfung"],
         },
         "vWeeklyResponsesMEx": {
             "GuidTeilnehmer": [None, None],
-            "Haushalt_Registrierer": [None, None],
+            "Geschlecht": ["Female", None],
         },
         "vMasterDataMEx": {
             "GuidTeilnehmer": [None, None],
-            "Haushalt_Registrierer": [None, None],
+            "Geschlecht": ["Diverse", "Female"],
+            "Bundesland_TN": ["Berlin", None],
         },
     }
 

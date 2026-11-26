@@ -1,26 +1,24 @@
-# yaml-language-server: $schema=../../../../mex-assets/mappings/__schema__/AccessPlatformMapping.json
-
 hadPrimarySource:
   - mappingRules:
-      - rule:
+      - rule: Assign stableTargetId of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json.
 identifierInPrimarySource:
   - mappingRules:
-      - setValues: "primary-source"
-        rule:
+      - setValues: item-487
+        rule: use value as indicated.
 contact:
   - mappingRules:
       - forValues:
-          - "fg99"
-        rule:
+          - fg99
+        rule: Match value using organigram extractor. Assign stableTargetId of unit.
 technicalAccessibility:
   - mappingRules:
-      - setValues: "https://mex.rki.de/item/technical-accessibility-1" #internal
+      - setValues: https://mex.rki.de/item/technical-accessibility-1
 title:
   - mappingRules:
       - setValues:
-          - value: "primary-source"
+          - value: challenge someone beyond
 unitInCharge:
   - mappingRules:
       - forValues:
-          - "C1"
-        rule:
+          - fg99
+        rule: Match value using organigram extractor.

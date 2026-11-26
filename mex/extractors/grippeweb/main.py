@@ -19,7 +19,6 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.extractors.assets import load_yaml
-from mex.extractors.assets.helpers import glob_files
 from mex.extractors.grippeweb.extract import (
     extract_columns_by_table_and_column_name,
     extract_grippeweb_ldap_person_ids_by_query,
@@ -54,12 +53,11 @@ def grippeweb_access_platform() -> dict[str, Any]:
 
 @asset(group_name="grippeweb")
 def grippeweb_resource_mappings() -> list[dict[str, Any]]:
-    """Extract Grippeweb resource mappings."""
+    """Extract Grippeweb resource mappings: the parent first, then the child."""
     settings = ExtractorsSettings.get()
-
     return [
-        load_yaml(file)
-        for file in glob_files(settings.grippeweb.mapping_path, "resource_*.yaml")
+        load_yaml(f"{settings.grippeweb.mapping_path}/{file_name}")
+        for file_name in ("resource_grippeweb.yaml", "resource_grippeweb-plus.yaml")
     ]
 
 
@@ -90,12 +88,10 @@ def grippeweb_merged_contact_point_id_by_email(
 @asset(group_name="grippeweb")
 def grippeweb_extracted_persons(
     grippeweb_resource_mappings: list[dict[str, Any]],
-    grippeweb_access_platform: dict[str, Any],
 ) -> dict[str, MergedPersonIdentifier]:
     """Extract persons and return their merged person id by query."""
     return extract_grippeweb_ldap_person_ids_by_query(
-        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
-        AccessPlatformMapping.model_validate(grippeweb_access_platform),
+        [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings]
     )
 
 
@@ -112,13 +108,11 @@ def grippeweb_merged_organization_ids_by_query_str(
 @asset(group_name="grippeweb")
 def grippeweb_extracted_access_platform(
     grippeweb_access_platform: dict[str, Any],
-    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform Grippeweb mappings to extracted access platform and load to sinks."""
     grippeweb_extracted_access_platform = (
         transform_grippeweb_access_platform_to_extracted_access_platform(
             AccessPlatformMapping.model_validate(grippeweb_access_platform),
-            grippeweb_extracted_persons,
         )
     )
     load([grippeweb_extracted_access_platform])
@@ -137,9 +131,13 @@ def grippeweb_extracted_parent_resource(  # noqa: PLR0913, PLR0917
     grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
 ) -> ExtractedResource:
     """Transform Grippeweb default values to extracted resources and load to sinks."""
+    parent_mapping, child_mapping = (
+        ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings
+    )
     parent_resource, child_resource = (
         transform_grippeweb_resource_mappings_to_extracted_resources(
-            [ResourceMapping.model_validate(r) for r in grippeweb_resource_mappings],
+            parent_mapping,
+            child_mapping,
             grippeweb_extracted_access_platform,
             grippeweb_extracted_persons,
             grippeweb_merged_organization_ids_by_query_str,

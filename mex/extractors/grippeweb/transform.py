@@ -11,6 +11,7 @@ from mex.common.models import (
     VariableGroupMapping,
     VariableMapping,
 )
+from mex.extractors.locations.helpers import get_location_merged_id_by_wikidata_id
 from mex.extractors.organigram.helpers import get_unit_merged_id_by_synonym
 from mex.extractors.primary_source.helpers import (
     get_extracted_primary_source_id_by_name,
@@ -26,8 +27,9 @@ if TYPE_CHECKING:
     )
 
 
-def transform_grippeweb_resource_mappings_to_extracted_resources(
-    grippeweb_resource_mappings: list[ResourceMapping],
+def transform_grippeweb_resource_mappings_to_extracted_resources(  # noqa: PLR0913, PLR0917
+    grippeweb_parent_resource_mapping: ResourceMapping,
+    grippeweb_child_resource_mapping: ResourceMapping,
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
     grippeweb_merged_organization_ids_by_query_str: dict[
@@ -38,7 +40,8 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
     """Transform grippe web values to extracted resources and link them.
 
     Args:
-        grippeweb_resource_mappings: grippeweb resource mapping models
+        grippeweb_parent_resource_mapping: mapping for the grippeweb resource
+        grippeweb_child_resource_mapping: mapping for the grippeweb-plus resource
         grippeweb_extracted_access_platform: extracted grippeweb access platform
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
@@ -47,33 +50,39 @@ def transform_grippeweb_resource_mappings_to_extracted_resources(
             extracted grippeweb mex functional accounts
 
     Returns:
-        tuple of grippeweb resources
+        tuple of parent and child grippeweb resources
     """
-    parent_resource, child_resource = transform_grippeweb_resource_mappings_to_dict(
-        grippeweb_resource_mappings,
-        grippeweb_extracted_access_platform,
-        grippeweb_extracted_persons,
-        grippeweb_merged_organization_ids_by_query_str,
-        grippeweb_merged_contact_point_id_by_email,
+    parent_resource, child_resource = (
+        transform_grippeweb_resource_mapping_to_extracted_resource(
+            mapping,
+            grippeweb_extracted_access_platform,
+            grippeweb_extracted_persons,
+            grippeweb_merged_organization_ids_by_query_str,
+            grippeweb_merged_contact_point_id_by_email,
+        )
+        for mapping in (
+            grippeweb_parent_resource_mapping,
+            grippeweb_child_resource_mapping,
+        )
     )
     return parent_resource, model_copy_validated(
         child_resource, {"relatedResource": [parent_resource.stableTargetId]}
     )
 
 
-def transform_grippeweb_resource_mappings_to_dict(
-    grippeweb_resource_mappings: list[ResourceMapping],
+def transform_grippeweb_resource_mapping_to_extracted_resource(
+    resource: ResourceMapping,
     grippeweb_extracted_access_platform: ExtractedAccessPlatform,
     grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
     grippeweb_merged_organization_ids_by_query_str: dict[
         str, MergedOrganizationIdentifier
     ],
     grippeweb_merged_contact_point_id_by_email: dict[str, MergedContactPointIdentifier],
-) -> tuple[ExtractedResource, ExtractedResource]:
-    """Transform grippe web values to extracted resources.
+) -> ExtractedResource:
+    """Transform a single grippe web resource mapping to an extracted resource.
 
     Args:
-        grippeweb_resource_mappings: grippeweb resource mapping models
+        resource: grippeweb resource mapping model
         grippeweb_extracted_access_platform: extracted grippeweb access platform
         grippeweb_extracted_persons: extracted grippeweb mex persons
         grippeweb_merged_organization_ids_by_query_str:
@@ -82,75 +91,72 @@ def transform_grippeweb_resource_mappings_to_dict(
             extracted grippeweb mex functional accounts
 
     Returns:
-        tuple of grippeweb resources
+        extracted grippeweb resource
     """
-    resource_dict = {}
-    for resource in grippeweb_resource_mappings:
-        contact = grippeweb_merged_contact_point_id_by_email[
-            resource.contact.get_mappable_values()[0]
-        ]
-        contributing_unit = get_unit_merged_id_by_synonym(
-            resource.contributingUnit.get_mappable_values()[0]
-        )
-        contributor = [
-            person_id
-            for name in resource.contributor.get_mappable_values()
-            if (person_id := grippeweb_extracted_persons.get(name))
-        ]
-        external_partner_identifier = get_or_create_external_partner(
-            resource,
-            grippeweb_merged_organization_ids_by_query_str,
-        )
-
-        identifier_in_primary_source = (
-            resource.identifierInPrimarySource.get_static_values()
-        )
-
-        publisher = grippeweb_merged_organization_ids_by_query_str.get(
-            resource.publisher.get_mappable_values()[0]
-        )
-
-        unit_in_charge = get_unit_merged_id_by_synonym(
-            resource.unitInCharge.get_mappable_values()[0]
-        )
-        resource_dict[identifier_in_primary_source] = ExtractedResource(
-            accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
-            accessRestriction=resource.accessRestriction.get_static_values(),
-            accrualPeriodicity=resource.accrualPeriodicity.get_static_values(),
-            anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
-            contact=contact,
-            contributingUnit=contributing_unit,
-            contributor=contributor,
-            description=resource.description.get_static_values(),
-            documentation=resource.documentation.get_static_values(),
-            externalPartner=external_partner_identifier,
-            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
-            hasCodeValues=resource.hasCodeValues.get_static_values(),
-            hasLegalBasis=resource.hasLegalBasis.get_static_values(),
-            hasPersonalData=resource.hasPersonalData.get_static_values(),
-            hasPurpose=resource.hasPurpose.get_static_values(),
-            hasPurposeDescription=resource.hasPurposeDescription.get_static_values(),
-            identifierInPrimarySource=identifier_in_primary_source,
-            keyword=resource.keyword.get_static_values(),
-            language=resource.language.get_static_values(),
-            meshId=resource.meshId.get_static_values(),
-            method=resource.method.get_static_values(),
-            methodDescription=resource.methodDescription.get_static_values(),
-            minTypicalAge=resource.minTypicalAge.get_static_values(),
-            populationCoverage=resource.populationCoverage.get_static_values(),
-            publisher=publisher,
-            resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
-            resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
-            resourceTypeSpecific=resource.resourceTypeSpecific.get_static_values(),
-            rights=resource.rights.get_static_values(),
-            spatial=resource.spatial.get_static_values(),
-            start=resource.start.get_static_values(),
-            stateOfDataProcessing=resource.stateOfDataProcessing.get_static_values(),
-            theme=resource.theme.get_static_values(),
-            title=resource.title.get_static_values(),
-            unitInCharge=unit_in_charge,
-        )
-    return resource_dict["grippeweb"], resource_dict["grippeweb-plus"]
+    contact = grippeweb_merged_contact_point_id_by_email[
+        resource.contact.get_mappable_values()[0]
+    ]
+    contributing_unit = get_unit_merged_id_by_synonym(
+        resource.contributingUnit.get_mappable_values()[0]
+    )
+    contributor = [
+        person_id
+        for name in resource.contributor.get_mappable_values()
+        if (person_id := grippeweb_extracted_persons.get(name))
+    ]
+    external_partner_identifier = get_or_create_external_partner(
+        resource,
+        grippeweb_merged_organization_ids_by_query_str,
+    )
+    publisher = grippeweb_merged_organization_ids_by_query_str.get(
+        resource.publisher.get_mappable_values()[0]
+    )
+    spatial = [
+        location_id
+        for wikidata_id in resource.spatial.get_mappable_values()
+        if (location_id := get_location_merged_id_by_wikidata_id(wikidata_id))
+    ]
+    unit_in_charge = get_unit_merged_id_by_synonym(
+        resource.unitInCharge.get_mappable_values()[0]
+    )
+    return ExtractedResource(
+        accessPlatform=grippeweb_extracted_access_platform.stableTargetId,
+        accessRestriction=resource.accessRestriction.get_static_values(),
+        accrualPeriodicity=resource.accrualPeriodicity.get_static_values(),
+        anonymizationPseudonymization=resource.anonymizationPseudonymization.get_static_values(),
+        contact=contact,
+        contributingUnit=contributing_unit,
+        contributor=contributor,
+        description=resource.description.get_static_values(),
+        documentation=resource.documentation.get_static_values(),
+        externalPartner=external_partner_identifier,
+        geopoliticalResolution=resource.geopoliticalResolution.get_static_values(),
+        hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
+        hasCodeValues=resource.hasCodeValues.get_static_values(),
+        hasLegalBasis=resource.hasLegalBasis.get_static_values(),
+        hasPersonalData=resource.hasPersonalData.get_static_values(),
+        hasPurpose=resource.hasPurpose.get_static_values(),
+        hasPurposeDescription=resource.hasPurposeDescription.get_static_values(),
+        identifierInPrimarySource=resource.identifierInPrimarySource.get_static_values(),
+        keyword=resource.keyword.get_static_values(),
+        language=resource.language.get_static_values(),
+        meshId=resource.meshId.get_static_values(),
+        method=resource.method.get_static_values(),
+        methodDescription=resource.methodDescription.get_static_values(),
+        minTypicalAge=resource.minTypicalAge.get_static_values(),
+        populationCoverage=resource.populationCoverage.get_static_values(),
+        publisher=publisher,
+        resourceCreationMethod=resource.resourceCreationMethod.get_static_values(),
+        resourceTypeGeneral=resource.resourceTypeGeneral.get_static_values(),
+        resourceTypeSpecific=resource.resourceTypeSpecific.get_static_values(),
+        rights=resource.rights.get_static_values(),
+        spatial=spatial,
+        start=resource.start.get_static_values(),
+        stateOfDataProcessing=resource.stateOfDataProcessing.get_static_values(),
+        theme=resource.theme.get_static_values(),
+        title=resource.title.get_static_values(),
+        unitInCharge=unit_in_charge,
+    )
 
 
 def get_or_create_external_partner(
@@ -167,45 +173,40 @@ def get_or_create_external_partner(
             extracted grippeweb organizations dict
 
     Returns:
-        dict extracted grippeweb resource by identifier in primary source
+        list with the external partner organization id, or None if not mapped
     """
     if external_partners := resource.externalPartner.get_mappable_values():
         external_partner_string = external_partners[0]
-
-        if external_partner_string in resource.model_fields:
-            external_partner_identifier = [
-                grippeweb_merged_organization_ids_by_query_str[external_partner_string]
-            ]
-        else:
-            external_partner_organization = ExtractedOrganization(
-                officialName=external_partner_string,
-                identifierInPrimarySource=external_partner_string,
-                hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
-            )
-            load([external_partner_organization])
-            external_partner_identifier = [external_partner_organization.stableTargetId]
-        return external_partner_identifier
+        if organization_id := grippeweb_merged_organization_ids_by_query_str.get(
+            external_partner_string
+        ):
+            return [organization_id]
+        external_partner_organization = ExtractedOrganization(
+            officialName=external_partner_string,
+            identifierInPrimarySource=external_partner_string,
+            hadPrimarySource=get_extracted_primary_source_id_by_name("grippeweb"),
+        )
+        load([external_partner_organization])
+        return [external_partner_organization.stableTargetId]
     return None
 
 
 def transform_grippeweb_access_platform_to_extracted_access_platform(
     grippeweb_access_platform: AccessPlatformMapping,
-    grippeweb_extracted_persons: dict[str, MergedPersonIdentifier],
 ) -> ExtractedAccessPlatform:
     """Transform grippeweb access platform to ExtractedAccessPlatform.
 
     Args:
         grippeweb_access_platform: grippeweb access platform mapping model
-        grippeweb_extracted_persons: extracted grippeweb persons
 
     Returns:
         ExtractedAccessPlatform grippeweb
     """
     contact = [
-        grippeweb_extracted_persons[email]
-        for email in grippeweb_access_platform.contact.get_mappable_values()
+        unit_id
+        for synonym in grippeweb_access_platform.contact.get_mappable_values()
+        for unit_id in get_unit_merged_id_by_synonym(synonym) or []
     ]
-
     unit_in_charge = get_unit_merged_id_by_synonym(
         grippeweb_access_platform.unitInCharge.get_mappable_values()[0]
     )
@@ -290,8 +291,10 @@ def transform_grippeweb_variable_to_extracted_variables(
                     {
                         k: None
                         for k in (
-                            grippeweb_columns["vMasterDataMEx"][column_name]
-                            + grippeweb_columns["vWeeklyResponsesMEx"][column_name]
+                            grippeweb_columns["vMasterDataMEx"].get(column_name, [])
+                            + grippeweb_columns["vWeeklyResponsesMEx"].get(
+                                column_name, []
+                            )
                         )
                         if k is not None
                     }

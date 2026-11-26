@@ -28,6 +28,7 @@ from mex.extractors.ldap.helpers import (
     get_ldap_extracted_person_by_query,
     get_ldap_merged_contact_id_by_mail,
 )
+from mex.extractors.locations.helpers import get_location_merged_id_by_wikidata_id
 from mex.extractors.organigram.helpers import (
     _cached_get_extracted_organizational_units,
     _get_cached_unit_merged_ids_by_synonyms,
@@ -101,6 +102,7 @@ def isolate_caches() -> None:
     get_ldap_merged_contact_id_by_mail.cache_clear()
     get_wikidata_extracted_organization_id_by_name.cache_clear()
     get_wikidata_organization_mapping.cache_clear()
+    get_location_merged_id_by_wikidata_id.cache_clear()
 
 
 @pytest.fixture
