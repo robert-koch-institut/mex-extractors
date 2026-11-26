@@ -16,7 +16,7 @@ anonymizationPseudonymization:
 contact:
   - mappingRules:
       - forValues:
-          - "parent-unit"
+          - "contactc@rki.de"
         rule:
 contributingUnit:
   - mappingRules:
@@ -56,11 +56,6 @@ hasCodeValues:
   - mappingRules:
       - setValues:
           - value: "J00-J99"
-hasPurpose:
-  - mappingRules:
-      - setValues:
-        - https://mex.rki.de/item/purpose-1
-        - https://mex.rki.de/item/purpose-2
 hasPurposeDescription:
   - mappingRules:
       - setValues:

@@ -23,6 +23,10 @@ description:
       - setValues:
           - language: de
             value: "Das Infektionsschutzgesetz"
+geopoliticalResolution:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/geopolitical-resolution-1 # National
 hadPrimarySource:
   - mappingRules:
       - rule:
@@ -157,50 +161,17 @@ spatial:
     locationInPrimarySource:
     mappingRules:
       - forValues:
-          - "07"
-        setValues:
-          - language: de
-            value: "Rheinland-Pfalz"
+          - "01"
+        transformValues:
+            - http://www.wikidata.org/entity/Q183
       - forValues:
-          - "09"
-        setValues:
-          - language: de
-            value: "Bayern"
+          - "02"
+        transformValues:
+          - http://www.wikidata.org/entity/Q183
       - forValues:
-          - "10"
-        setValues:
-          - language: de
-            value: "Saarland"
-      - forValues:
-          - "11"
-        setValues:
-          - language: de
-            value: "Berlin"
-      - forValues:
-          - "12"
-        setValues:
-          - language: de
-            value: "Brandenburg"
-      - forValues:
-          - "13"
-        setValues:
-          - language: de
-            value: "Mecklenburg-Vorpommern"
-      - forValues:
-          - "14"
-        setValues:
-          - language: de
-            value: "Sachsen"
-      - forValues:
-          - "15"
-        setValues:
-          - language: de
-            value: "Sachsen-Anhalt"
-      - forValues:
-          - "16"
-        setValues:
-          - language: de
-            value: "Thüringen"
+          - "03"
+        transformValues:
+          - http://www.wikidata.org/entity/Q183
 theme:
   - mappingRules:
       - setValues:

@@ -115,7 +115,7 @@ rights:
 spatial:
   - mappingRules:
       - setValues:
-          - "http://www.wikidata.org/entity/Q262"
+          - "http://www.wikidata.org/entity/Q183"
 stateOfDataProcessing:
   - comment:
     mappingRules:

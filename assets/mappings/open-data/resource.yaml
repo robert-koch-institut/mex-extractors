@@ -9,7 +9,8 @@ anonymizationPseudonymization:
           - https://mex.rki.de/item/anonymization-pseudonymization-1 # anonymized
 contact:
   - mappingRules:
-      - rule:
+      - forValues:
+          contactC@rki.de
 contributingUnit:
   - mappingRules:
       - forValues:
