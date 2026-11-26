@@ -1,0 +1,242 @@
+accessPlatform:
+  - mappingRules:
+      - rule: assign stableTargetId of item described by grippeweb access-platform mapping
+accessRestriction:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/access-restriction-2
+accrualPeriodicity:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/frequency-12
+anonymizationPseudonymization:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/anonymization-pseudonymization-2
+contact:
+  - mappingRules:
+      - forValues:
+          - ContactC@rki.de
+        rule: Match value using ldap extractor.
+contributingUnit:
+  - mappingRules:
+      - forValues:
+          - c1
+        rule: Match identifier using organigram extractor.
+contributor:
+  - mappingRules:
+      - forValues:
+          - Juturna Felicitás
+          - Frieda Fictitious
+        rule: Match values using ldap extractor.
+description:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: me help past wait whatever discover mother chair father challenge someone
+              beyond present successful enough where no season take play week choice force
+              bit show back way to return give marriage opportunity blood health leader four
+              popular push while democratic old me level tree near ever assume support why
+              official whole address better serve though inside see thank still relate process
+              ability population minute their trip goal either show gas score truth at cut
+              whose out doctor edge suggest change suggest of line benefit be front type movie
+              worker might boy fish ok film seat capital officer go teacher win now Democrat
+              successful player officer people field light benefit pick success image free
+              parent effort fill create current term culture alone position realize ever maybe
+              authority behind respond sometimes case under citizen wind American
+documentation:
+  - mappingRules:
+      - setValues:
+          - language: de
+            title: weil schlafen nein Uhr wollen
+            url: https://heinz.com/
+hadPrimarySource:
+  - mappingRules:
+      - rule: Assign stableTargetId of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json.
+hasCodeValues:
+  - mappingRules:
+      - setValues:
+          - value: particularly
+          - value: face little
+          - value: mind recent
+hasLegalBasis:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: beautiful garden position business message people professor government
+              through customer eight admit sign experience but season discussion hot study
+              conference go last team assume blood stay child top save discuss answer technology
+              painting protect where would nor play response back agreement capital prove
+              current police then parent call include benefit hospital these business although
+              police age day crime serious candidate measure develop short such ask write
+              respond agency off large pressure blood thing ever available do away radio fish
+              hard least couple ask most manage among pick blood scene include decision ever
+              her west sign many this week why over condition save remember Democrat speak
+              article story require cold through color guess next enough buy picture will
+              letter reduce continue add market responsibility it we outside two movie whose
+              foreign range heavy important third really enough class option rock actually
+              lot site bar government single answer off fast central
+          - language: de
+            title: your wait
+            url: http://bishop-nunez.org/
+hasPersonalData:
+  - mappingRules:
+      - setValues: https://mex.rki.de/item/personal-data-2
+hasPurposeDescription:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: smile join them rather be ability phone dark say good collection education
+              dog public line human see type report out two join almost interest try science
+              out kid sport recognize security any company like attack event science coach
+              likely news value message whatever
+identifierInPrimarySource:
+  - mappingRules:
+      - setValues: '547063'
+keyword:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: unter Seite dauern über als
+          - language: de
+            value: hängen wollen schlafen
+          - language: en
+            value: in Geschenk
+          - language: de
+            value: Abend Essen als
+          - language: de
+            value: sehen
+          - language: en
+            value: Sommer
+          - language: de
+            value: Abend zusammen
+          - language: de
+            value: Tür schicken
+          - language: en
+            value: man nämlich
+          - language: de
+            value: Brief Eis danach
+          - language: de
+            value: nur reiten
+          - language: de
+            value: er Wald gehen führen Schnee
+          - value: zurück einfach
+          - value: bringen langsam
+          - language: en
+            title: vom Frau dazu richtig lustig
+            url: https://www.hofig.com/
+          - language: en
+            title: auch erst schlagen frei Musik
+            url: https://www.holsten.com/
+          - language: en
+            title: rot leicht Schüler
+            url: https://berger.org/
+language:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/language-21
+method:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: hotel try note could despite how people film act certainly city experience
+              goal green strategy hold serious better ground state pressure also analysis
+              expect common citizen past figure herself indicate official carry finally building
+              mean side
+methodDescription:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: wirklich Auto Geld eigentlich vier machen setzen beißen gehen hören unten
+              ging gegen immer böse Brief Mädchen wenn laufen lange Glück vergessen Tag zur
+              tragen groß darauf lassen damit Schule leise jeder Arzt gehen gleich sie Schluss
+              Weihnachten Ding wichtig drehen Oma möglich Herr Tier zum plötzlich blau beim
+              Tisch bis er sofort fallen bei Himmel Affe Brief hoch Monate Luft gar Kind wie
+              legen stellen neben sechs schlafen fahren ja bin heißen Fahrrad überall fressen
+              neben Stadt drehen jung Eltern hart dafür beide turnen von viel schwarz Angst
+              weiß Mama klein sollen Schiff erklären danach leise Hund Frau erzählen Polizei
+              auf Wohnung Tag etwas ohne der Bruder er kommen Herz hat Milch um dick Bruder
+              überall nicht zwischen Leben deshalb mögen ich Platz schlagen ja warm lustig
+              leicht schlafen Wetter Wasser gesund unser lernen lernen Pferd scheinen Wald
+              erklären merken nächste wir Fahrrad Affe Gott Schwester Zeit so weit Geschichte
+              trinken gestern arbeiten mal deshalb Wald Frau nimmt Stein Ding verkaufen heute
+              natürlich
+minTypicalAge:
+  - mappingRules:
+      - setValues: 7
+populationCoverage:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: Tante bis los vorbei werfen auch beim fangen dauern auch gegen als Sonntag
+              verlieren Kind Glas vom Dorf Tante dich vorbei rot Kopf Zimmer her Leute hier
+              weiter Mann letzte Arbeit Nacht Blume schlafen Stück Tier Luft Sonntag
+publisher:
+  - mappingRules:
+      - forValues:
+          - Robert Koch-Institut
+        rule: Match value with organization item using wikidata extractor.
+relatedResource:
+  - mappingRules:
+      - rule: Assign stableTargetId of item described by grippeweb resource_grippeweb mapping
+resourceCreationMethod:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-creation-method-9
+          - https://mex.rki.de/item/resource-creation-method-3
+resourceTypeGeneral:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/resource-type-general-16
+          - https://mex.rki.de/item/resource-type-general-16
+resourceTypeSpecific:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: that meet through
+          - language: de
+            value: strong important
+          - language: de
+            value: political peace east
+          - language: de
+            value: today treatment
+rights:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: rufen waschen ab sind einfach gehen Licht müssen fragen glauben beim Lehrerin
+              voll Freude Woche Uhr gehören spät ihm Hilfe tot Hilfe bei dort Polizei wirklich
+              das Feuer gab setzen und gleich bauen Woche arbeiten laufen in denken Lehrer
+              weg von nimmt sehen Bild schenken Schuh dick tot über halbe ihr arbeiten nämlich
+              können Himmel kommen Auto bringen Land stark dick am Apfel nichts oder davon
+              Opa gesund Bruder Schule Minutenmir reiten gut Ende Hilfe Stein Stadt stark
+              Lehrer da warum Baum nächste Schule Küche ob packen wirklich Glück rennen darauf
+              zu schlecht sechs oft Geburtstag stellen verstehen das zehn wer hin Tante geben
+              Wetter sitzen wahr zehn schlagen zwischen tot daran Luft voll Stelle einmal
+              Arzt steigen hinter kein her Sonne Eis kochen Hand Straße packen Berg Zahl Auge
+              weiter wirklich auch leben fragen weiter anfangen wohl
+start:
+  - mappingRules:
+      - setValues: '2003'
+spatial:
+  - mappingRules:
+      - forValues:
+          - http://www.wikidata.org/entity/Q183
+        rule: Use value to match with 'identifierInPrimarySource' of location extractor. Assign
+          stableTargetId of the respective location item.
+stateOfDataProcessing:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/data-processing-state-5
+theme:
+  - mappingRules:
+      - setValues:
+          - https://mex.rki.de/item/theme-11
+title:
+  - mappingRules:
+      - setValues:
+          - language: de
+            value: jeder Weg möglich
+unitInCharge:
+  - mappingRules:
+      - forValues:
+          - fg99
+        rule: Match value using organigram extractor.

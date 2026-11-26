@@ -1,0 +1,170 @@
+belongsTo:
+  - fieldInPrimarySource: label of SQL-table
+    mappingRules:
+      - rule: Use identifierInPrimarySource of the corresponding variable group. Assign stableTargetId
+          of the variable-group item.
+hadPrimarySource:
+  - mappingRules:
+      - rule: Assign stableTargetId of primary source with identifier 'grippeweb' in /raw-data/primary-sources/primary-sources.json.
+identifierInPrimarySource:
+  - fieldInPrimarySource: label of the column
+    examplesInPrimarySource:
+      - GuidTeilnehmer
+      - Spitzname
+      - Koerpergroesse_in_cm
+    mappingRules:
+      - rule: Use value as given.
+label:
+  - fieldInPrimarySource: label of the column
+    examplesInPrimarySource:
+      - GuidTeilnehmer
+      - Spitzname
+      - Koerpergroesse_in_cm
+      - Id
+      - StartedOn
+      - RepeatAfterDays
+    mappingRules:
+      - rule: Extract original value.
+usedIn:
+  - mappingRules:
+      - rule: Assign stableTargetId of item described by grippeweb resource_grippeweb mapping
+valueSet:
+  - fieldInPrimarySource: Geschlecht
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - Diverse
+      - Female
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Beschaeftigung
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - Apprenticeship
+      - Kindergarten
+      - Other
+      - School
+      - Work
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Verkehrsmittel
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - Bicycle
+      - Car
+      - Other
+      - Public Transport
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Herzerkrankung
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'No'
+      - Unknown
+      - 'Yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Bronchitis
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'No'
+      - Unknown
+      - 'Yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Asthma
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'No'
+      - Unknown
+      - 'Yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Diabetes
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'No'
+      - Unknown
+      - 'Yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Raucher
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'No'
+      - 'Yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Kreiskennziffer_TN
+    locationInPrimarySource: vMasterDataMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - LK Aachen
+      - LK Ahrweiler
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Bundesland_TN
+    locationInPrimarySource: vMasterDataMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - Baden-Württemberg
+      - Bayern
+      - Berlin
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Haushalttyp
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - CommunityFacility
+      - Hostel
+      - Household
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Bekannt_durch
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - Doctor
+      - Friends
+      - Internet
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Geloescht
+    locationInPrimarySource: vMasterDataMEx AND vWeeklyResponsesMEx
+    examplesInPrimarySource:
+      - 'NULL'
+      - 'no'
+      - 'yes'
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Title
+    locationInPrimarySource: vActualQuestion
+    examplesInPrimarySource:
+      - COVID-19-Impfung
+      - COVID-19-Infektion
+      - Influenza-Impfung
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Text
+    locationInPrimarySource: vActualQuestion
+    examplesInPrimarySource:
+      - Haben Sie im Oktober 2023 eine (weitere) COVID-19-Impfung erhalten?
+      - Haben Sie im November 2023 eine (weitere) COVID-19-Impfung erhalten?
+      - Wurden Sie seit Saisonbeginn (1. August 2010) bereits gegen Grippe geimpft?
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
+  - fieldInPrimarySource: Tag
+    locationInPrimarySource: vActualQuestion
+    examplesInPrimarySource:
+      - covid-infection
+      - covid-vaccination-last-month
+      - influenza
+    mappingRules:
+      - rule: SELECT DISTINCT [fieldInPrimarySource] FROM [locationInPrimarySource]
