@@ -32,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use new mex-common helper get_wikidata_organization_with_locations (instead of
+  get_wikidata_organization) to load organization, locations and wikidata primary source,
+  and to return the organization
 - update mex-common to 3.8 and mex-model to 5.2.2
 - model update v 5.2: update resources for biospecimen, grippeweb, ifsg, igs, kvis,
   odk, open-data, sumo, synopse, voxco
